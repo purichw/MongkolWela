@@ -1,4 +1,4 @@
-import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260605-8";
+import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260605-9";
 
 const selectors = {
   deck: "[data-tarot-deck]",
@@ -103,11 +103,16 @@ function getCardPosition(index, total) {
 }
 
 function renderCardBack(index) {
+  const variants = ["eye", "sun", "moon"];
+  const variant = variants[index % variants.length];
+
   return `
-    <span class="tarot-card-back" aria-hidden="true">
-      <span class="tarot-back-number">${String(index + 1).padStart(2, "0")}</span>
-      <span class="tarot-back-sigil">๙</span>
-      <span class="tarot-back-line"></span>
+    <span class="tarot-card-back tarot-card-back-${variant}" aria-hidden="true">
+      <span class="tarot-back-corners"></span>
+      <span class="tarot-back-sigil">
+        <span class="tarot-back-core"></span>
+      </span>
+      <span class="tarot-back-stars"></span>
     </span>
   `;
 }

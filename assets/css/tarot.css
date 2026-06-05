@@ -301,47 +301,177 @@
 
 .tarot-card-back {
   place-items: center;
-  color: var(--gold-soft);
+  color: #d99a42;
   background:
-    radial-gradient(circle at 50% 28%, rgba(234, 211, 160, 0.22), transparent 30%),
-    linear-gradient(135deg, #123d34, #591d19);
+    radial-gradient(circle at 50% 50%, rgba(217, 154, 66, 0.12), transparent 30%),
+    radial-gradient(circle at 16% 18%, rgba(255, 225, 166, 0.1) 0 1px, transparent 2px),
+    radial-gradient(circle at 82% 24%, rgba(255, 225, 166, 0.12) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 78%, rgba(255, 225, 166, 0.1) 0 1px, transparent 2px),
+    linear-gradient(145deg, #151013, #211318 52%, #100d10);
+  box-shadow:
+    inset 0 0 0 2px rgba(102, 56, 30, 0.65),
+    inset 0 0 18px rgba(0, 0, 0, 0.72),
+    0 8px 18px rgba(0, 0, 0, 0.18);
 }
 
 .tarot-card-back::before,
 .tarot-card-back::after {
   position: absolute;
-  inset: 9px;
-  border: 1px solid rgba(234, 211, 160, 0.28);
+  inset: 7px;
+  border: 1px solid rgba(217, 154, 66, 0.68);
   border-radius: 7px;
   content: "";
 }
 
 .tarot-card-back::after {
-  inset: 15px;
-  border-radius: 50%;
+  inset: 12px;
+  border-color: rgba(217, 154, 66, 0.34);
 }
 
-.tarot-back-number {
+.tarot-back-corners,
+.tarot-back-stars,
+.tarot-back-sigil,
+.tarot-back-core {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  font-size: 0.58rem;
-  font-weight: 800;
+  pointer-events: none;
+}
+
+.tarot-back-corners {
+  inset: 9px;
+  background:
+    linear-gradient(135deg, currentColor 0 1px, transparent 1px 16px, currentColor 16px 17px, transparent 17px) top left / 28px 28px no-repeat,
+    linear-gradient(225deg, currentColor 0 1px, transparent 1px 16px, currentColor 16px 17px, transparent 17px) top right / 28px 28px no-repeat,
+    linear-gradient(45deg, currentColor 0 1px, transparent 1px 16px, currentColor 16px 17px, transparent 17px) bottom left / 28px 28px no-repeat,
+    linear-gradient(315deg, currentColor 0 1px, transparent 1px 16px, currentColor 16px 17px, transparent 17px) bottom right / 28px 28px no-repeat;
+  opacity: 0.8;
 }
 
 .tarot-back-sigil {
-  position: relative;
-  z-index: 1;
-  font-size: clamp(1.2rem, 3vw, 2rem);
-  font-weight: 800;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 48%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(217, 154, 66, 0.66);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.tarot-back-line {
+.tarot-back-sigil::before,
+.tarot-back-sigil::after,
+.tarot-back-core::before,
+.tarot-back-core::after {
   position: absolute;
+  content: "";
+}
+
+.tarot-back-core {
+  top: 50%;
+  left: 50%;
   width: 42%;
+  aspect-ratio: 1;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tarot-back-core::before {
+  top: 50%;
+  left: -76%;
+  width: 252%;
   height: 1px;
-  background: rgba(234, 211, 160, 0.44);
-  transform: rotate(-38deg);
+  background: currentColor;
+  opacity: 0.78;
+  transform: translateY(-50%);
+}
+
+.tarot-back-core::after {
+  top: -76%;
+  left: 50%;
+  width: 1px;
+  height: 252%;
+  background: currentColor;
+  opacity: 0.78;
+  transform: translateX(-50%);
+}
+
+.tarot-back-stars {
+  inset: 14px;
+  background:
+    radial-gradient(circle at 50% 5%, currentColor 0 1px, transparent 2px),
+    radial-gradient(circle at 50% 95%, currentColor 0 1px, transparent 2px),
+    radial-gradient(circle at 8% 50%, currentColor 0 1px, transparent 2px),
+    radial-gradient(circle at 92% 50%, currentColor 0 1px, transparent 2px);
+  opacity: 0.74;
+}
+
+.tarot-card-back-eye .tarot-back-sigil {
+  width: 54%;
+  border-radius: 50%;
+  box-shadow: 0 0 0 10px rgba(217, 154, 66, 0.06);
+}
+
+.tarot-card-back-eye .tarot-back-sigil::before {
+  inset: 27% -12%;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.tarot-card-back-eye .tarot-back-sigil::after {
+  inset: -14%;
+  border: 1px solid rgba(217, 154, 66, 0.42);
+  border-radius: 50%;
+}
+
+.tarot-card-back-sun .tarot-back-sigil {
+  width: 42%;
+  border-style: solid;
+  box-shadow:
+    0 -20px 0 -18px currentColor,
+    0 20px 0 -18px currentColor,
+    20px 0 0 -18px currentColor,
+    -20px 0 0 -18px currentColor;
+}
+
+.tarot-card-back-sun .tarot-back-sigil::before {
+  inset: -38%;
+  background:
+    conic-gradient(from 8deg, transparent 0 8deg, currentColor 8deg 11deg, transparent 11deg 24deg);
+  opacity: 0.82;
+  -webkit-mask: radial-gradient(circle, transparent 42%, #000 44% 63%, transparent 65%);
+  mask: radial-gradient(circle, transparent 42%, #000 44% 63%, transparent 65%);
+}
+
+.tarot-card-back-sun .tarot-back-sigil::after {
+  inset: -58%;
+  border: 1px solid rgba(217, 154, 66, 0.26);
+  border-radius: 50%;
+}
+
+.tarot-card-back-moon .tarot-back-sigil {
+  width: 34%;
+  border-radius: 999px;
+}
+
+.tarot-card-back-moon .tarot-back-sigil::before {
+  top: -88%;
+  left: 50%;
+  width: 1px;
+  height: 276%;
+  background: currentColor;
+  opacity: 0.72;
+  transform: translateX(-50%);
+}
+
+.tarot-card-back-moon .tarot-back-sigil::after {
+  inset: -44% -20%;
+  background:
+    radial-gradient(circle at 50% 0, transparent 0 14%, currentColor 15% 17%, transparent 18%),
+    radial-gradient(circle at 50% 27%, transparent 0 14%, currentColor 15% 17%, transparent 18%),
+    radial-gradient(circle at 50% 50%, transparent 0 14%, currentColor 15% 17%, transparent 18%),
+    radial-gradient(circle at 50% 73%, transparent 0 14%, currentColor 15% 17%, transparent 18%),
+    radial-gradient(circle at 50% 100%, transparent 0 14%, currentColor 15% 17%, transparent 18%);
+  opacity: 0.82;
 }
 
 .tarot-card-face {

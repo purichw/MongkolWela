@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ดูดวงโหราศาสตร์ไทย | มงคลเวลา</title>
+    <meta
+      name="description"
+      content="ดูดวงโหราศาสตร์ไทยแบบละเอียด ผูกดวงเบื้องต้นจากวันเวลาเกิด ลัคนา ภพ 12 ราศี ดาวพระเคราะห์ และดวงจร พร้อมแหล่งข้อมูลอ้างอิง"
+    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="../../styles.css?v=20260605-9">
+  </head>
+  <body class="thai-astrology-page">
+    <header class="site-header">
+      <div class="topbar">
+        <a href="#thai-astrology-tool">ผูกดวงโหราศาสตร์ไทย</a>
+        <span>อ่านลัคนา ภพ ดาวกำเนิด และดวงจรแบบเข้าใจง่าย</span>
+        <a href="../../#consult">ปรึกษาครูโหร</a>
+      </div>
+
+      <nav class="navbar" aria-label="เมนูหลัก">
+        <a class="brand" href="../../" aria-label="มงคลเวลา หน้าแรก">
+          <span class="brand-mark" aria-hidden="true">๙</span>
+          <span>
+            <strong>มงคลเวลา</strong>
+            <small lang="en">Monkol Wela</small>
+          </span>
+        </a>
+
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-menu">
+          <span aria-hidden="true"></span>
+          <span class="sr-only">เปิดเมนู</span>
+        </button>
+
+        <div class="nav-menu" id="primary-menu">
+          <div class="nav-item">
+            <a href="../../#horoscope">ดูดวง</a>
+            <div class="mega-panel">
+              <a href="../life-graph/">กราฟชีวิต</a>
+              <a href="../../#horoscope">เลข ๗ ตัว</a>
+              <a href="./">โหราศาสตร์ไทย</a>
+              <a href="../../tarot/daily/">ไพ่ยิปซี</a>
+              <a href="../../#horoscope">สมพงษ์คู่รัก</a>
+            </div>
+          </div>
+          <div class="nav-item">
+            <a href="../../#calendar">ฤกษ์และปฏิทิน</a>
+            <div class="mega-panel">
+              <a href="../../#calendar">ปฏิทินจันทรคติ</a>
+              <a href="../../#calendar">ฤกษ์ออกรถ</a>
+              <a href="../../#calendar">ฤกษ์แต่งงาน</a>
+              <a href="../../#calendar">วันพระ</a>
+              <a href="../../#calendar">ปฏิทินจีน</a>
+            </div>
+          </div>
+          <a class="plain-link" href="../../#names">ชื่อและตัวเลข</a>
+          <a class="plain-link" href="../../#rituals">บทสวดและพิธี</a>
+          <a class="plain-link" href="../../#learn">ความรู้</a>
+          <a class="plain-link" href="../../#consult">ปรึกษาหมอดู</a>
+        </div>
+
+        <div class="nav-actions">
+          <button class="icon-button" type="button" aria-label="ค้นหา">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
+            </svg>
+          </button>
+          <a class="language" href="../../en/" hreflang="en" lang="en">EN</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="thai-astro-hero">
+        <div>
+          <nav class="thai-astro-breadcrumb" aria-label="breadcrumb">
+            <a href="../../">หน้าแรก</a>
+            <span>/</span>
+            <span>โหราศาสตร์ไทย</span>
+          </nav>
+          <p class="section-kicker">Thai Astrology</p>
+          <h1>ดูดวงโหราศาสตร์ไทย</h1>
+          <p>
+            ผูกดวงจากวัน เวลา และสถานที่เกิด อ่านลัคนา ภพ 12 ราศี
+            ดาวพระเคราะห์ และดวงจรในภาษาที่คนทั่วไปเข้าใจได้
+            โดยแยกชั้นคำนวณออกจากชั้นคำทำนายเพื่อรองรับ ephemeris จริงในอนาคต
+          </p>
+        </div>
+
+        <div class="thai-astro-orbit" aria-hidden="true">
+          <span>ลั</span>
+          <span>จร</span>
+          <span>ภพ</span>
+          <span>ดาว</span>
+          <strong>๑๒</strong>
+        </div>
+      </section>
+
+      <section class="thai-astro-tool" id="thai-astrology-tool">
+        <form class="thai-astro-form" data-thai-astrology-form>
+          <div>
+            <p class="section-kicker">ข้อมูลผูกดวง</p>
+            <h2>กรอกวันเวลาเกิด</h2>
+          </div>
+
+          <label>
+            <span>ชื่อสำหรับแสดงผล</span>
+            <input name="name" type="text" value="เจ้าชะตา" autocomplete="name">
+          </label>
+
+          <label>
+            <span>วันเดือนปีเกิด</span>
+            <input name="birthDate" type="date" required>
+          </label>
+
+          <div class="thai-astro-form-row">
+            <label>
+              <span>ชั่วโมงเกิด</span>
+              <select name="birthHour" required data-hour-options></select>
+            </label>
+            <label>
+              <span>นาทีเกิด</span>
+              <select name="birthMinute" required data-minute-options></select>
+            </label>
+          </div>
+
+          <label>
+            <span>สถานที่เกิด</span>
+            <select name="birthPlace">
+              <option value="bangkok">กรุงเทพมหานคร</option>
+              <option value="chiangmai">เชียงใหม่</option>
+              <option value="khonkaen">ขอนแก่น</option>
+              <option value="songkhla">สงขลา</option>
+              <option value="phuket">ภูเก็ต</option>
+              <option value="foreign">ต่างประเทศ / ระบุภายหลัง</option>
+            </select>
+          </label>
+
+          <div class="thai-astro-form-row">
+            <label>
+              <span>ชนิดดวง</span>
+              <select name="chartType">
+                <option value="natal">ดวงกำเนิด</option>
+                <option value="transit">ดวงจร</option>
+                <option value="newmoon">ดวงอมาวสี</option>
+                <option value="fullmoon">ดวงปูรณมี</option>
+              </select>
+            </label>
+            <label>
+              <span>ระบบคำนวณ</span>
+              <select name="calculationSystem">
+                <option value="suriyayatra">สุริยยาตร์ไทย</option>
+                <option value="lahiri">นิรายนะ ลาหิรี</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            <span>วันจร / วันที่ทำนาย</span>
+            <input name="transitDate" type="date" required data-transit-date>
+          </label>
+
+          <button class="primary-action" type="submit">ผูกดวง</button>
+          <p class="thai-astro-form-note">
+            MVP นี้ใช้สมผุสดาว “โดยประมาณ” เพื่อทดลอง UX และคำอ่าน
+            ยังไม่ใช่ปฏิทินโหรฉบับสมบูรณ์สำหรับงานฤกษ์หรือคำวินิจฉัยจริง
+          </p>
+        </form>
+
+        <div class="thai-astro-output" data-thai-astrology-output>
+          <div class="output-empty">
+            <span>ลั</span>
+            <strong>ตั้งข้อมูลเพื่อผูกดวง</strong>
+            <p>ผังดวง ตารางดาว และคำอ่านรายเรื่องจะแสดงที่นี่</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="thai-astro-section">
+        <div class="thai-astro-section-head">
+          <div>
+            <p class="section-kicker">โครงสร้างที่ต่อยอดจาก MyHora</p>
+            <h2>จากเครื่องมือโหรเต็มรูปแบบ สู่ประสบการณ์ที่อ่านง่ายขึ้น</h2>
+          </div>
+          <p>
+            MyHora วางโครงเครื่องมือไว้ละเอียดมาก ทั้งดวงกำเนิด ดวงจร สมผุสดาว
+            ลัคนาหลายแบบ ทักษา นวางค์ ทศา มุมสัมพันธ์ และตารางเปรียบเทียบปฏิทิน
+            หน้า MVP นี้จึงเริ่มจาก “เส้นทางผู้ใช้” ก่อน แล้วค่อยเสียบ engine คำนวณจริงทีละชั้น
+          </p>
+        </div>
+
+        <div class="thai-astro-card-grid">
+          <article class="thai-astro-card">
+            <span>01</span>
+            <h3>ลัคนาเป็นประตูของดวง</h3>
+            <p>ผู้ใช้ทั่วไปมักจำราศีเกิด แต่โหราศาสตร์ไทยให้ความสำคัญกับลัคนาเพราะเป็นจุดตั้งภพและอ่านเรื่องเฉพาะตัวได้มากกว่า</p>
+          </article>
+          <article class="thai-astro-card">
+            <span>02</span>
+            <h3>ภพ 12 ทำให้คำทำนายมีหัวข้อ</h3>
+            <p>ตนุ กดุมภะ สหัชชะ พันธุ ปุตตะ อริ ปัตนิ มรณะ ศุภะ กัมมะ ลาภะ วินาศ ช่วยแยกชีวิตเป็นหมวดที่อ่านง่าย</p>
+          </article>
+          <article class="thai-astro-card">
+            <span>03</span>
+            <h3>ดวงจรคือจังหวะปัจจุบัน</h3>
+            <p>พื้นดวงบอกแนวโน้มเดิม ส่วนดวงจรช่วยดูว่าช่วงเวลานี้เรื่องใดถูกกระตุ้น จึงควรอ่านคู่กันมากกว่าอ่านอย่างใดอย่างหนึ่ง</p>
+          </article>
+          <article class="thai-astro-card">
+            <span>04</span>
+            <h3>นิรายนะกับสายนะต้องไม่ปนกัน</h3>
+            <p>โหราศาสตร์ไทยนิยมระบบนิรายนะหรือจักรราศีคงที่ ขณะที่โหราศาสตร์สากลจำนวนมากใช้สายนะซึ่งอิงฤดูกาล ตำแหน่งราศีจึงต่างกันได้</p>
+          </article>
+          <article class="thai-astro-card">
+            <span>05</span>
+            <h3>ปฏิทินโหรเป็นหัวใจความแม่น</h3>
+            <p>ถ้าจะใช้จริง ต้องมี ephemeris ที่ระบุระบบคำนวณ อายนางศะ เวลา และพิกัดสถานที่ชัดเจน ไม่อย่างนั้นผลลัคนาและดาวอาจคลาดเคลื่อน</p>
+          </article>
+          <article class="thai-astro-card">
+            <span>06</span>
+            <h3>คำทำนายต้องอ่านแบบมีน้ำหนัก</h3>
+            <p>ดาวหนึ่งดวงไม่ควรถูกแปลโดด ๆ ต้องอ่านร่วมกับราศี ภพ เจ้าเรือน มุมสัมพันธ์ และบริบทชีวิตของผู้รับคำทำนาย</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="thai-astro-sources">
+        <div class="thai-astro-section-head">
+          <div>
+            <p class="section-kicker">แหล่งข้อมูล</p>
+            <h2>ฐานอ้างอิงสำหรับรอบถัดไป</h2>
+          </div>
+          <p>
+            แหล่งเหล่านี้ใช้เพื่อวางกรอบความเข้าใจและ feature scope
+            ส่วนสูตรสมผุสดาวจริงควรต่อกับ ephemeris หรือฐานข้อมูลปฏิทินโหรที่มีสิทธิ์ใช้งานและตรวจสอบได้
+          </p>
+        </div>
+        <div class="thai-source-grid">
+          <a href="https://myhora.com/astrology/thai.aspx" target="_blank" rel="noreferrer">
+            <strong>MyHora - ดูดวงโหราศาสตร์ไทย</strong>
+            <span>reference โครง feature: ดวงกำเนิด ดวงจร ปฏิทินโหร ลัคนา ทักษา นวางค์ ทศา และมุมสัมพันธ์</span>
+          </a>
+          <a href="https://www.scimath.org/article-earthscience/item/1336-ecliptic" target="_blank" rel="noreferrer">
+            <strong>SciMath - สุริยวิถีอยู่ที่ไหน</strong>
+            <span>อธิบายสุริยวิถีและความสัมพันธ์กับกลุ่มดาวจักรราศี</span>
+          </a>
+          <a href="https://science.nasa.gov/resource/axial-precession-wobble" target="_blank" rel="noreferrer">
+            <strong>NASA Science - Axial Precession</strong>
+            <span>อธิบายการส่ายของแกนโลก ซึ่งเกี่ยวข้องกับการเลื่อนของจุดอ้างอิงบนท้องฟ้า</span>
+          </a>
+          <a href="https://www.britannica.com/topic/zodiac" target="_blank" rel="noreferrer">
+            <strong>Britannica - Zodiac</strong>
+            <span>พื้นฐาน zodiac, ecliptic และผลของ precession ต่อกลุ่มดาวจักรราศี</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="consult">
+      <div>
+        <strong>มงคลเวลา</strong>
+        <p>ดูดวง ฤกษ์ ปฏิทินมงคล บทสวด และความรู้โหราศาสตร์ไทยจีน</p>
+      </div>
+      <div class="footer-links">
+        <a href="../../">TH</a>
+        <a href="../../en/" lang="en">EN</a>
+        <a href="../../#consult">ติดต่อครูโหร</a>
+        <a href="../../#rituals">บทสวดและพิธี</a>
+      </div>
+    </footer>
+
+    <script type="module" src="../../script.js?v=20260605-9"></script>
+    <script type="module" src="../../assets/js/thai-astrology.js?v=20260605-9"></script>
+  </body>
+</html>
