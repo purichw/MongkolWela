@@ -14,6 +14,28 @@ const selectors = {
 let deck = shuffleCards([...tarotCards]);
 let selectedCard;
 let isAnimating = false;
+const isEnglish = document.documentElement.lang === "en" || location.pathname.startsWith("/en/");
+const text = isEnglish
+  ? {
+      chooseCard: (index) => `Choose card ${index + 1}`,
+      shuffled: "The deck has been shuffled. Settle your mind, then choose one card.",
+      cut: "The deck has been cut. Choose the card that calls your attention.",
+      pickFirst: "Please choose one card before opening the reading.",
+      selected: (card) => `You chose ${card.name}. Press "Read" to open the guidance.`,
+      ready: "Settle your mind, shuffle or cut the deck, then choose one card.",
+      shuffling: "Shuffling the deck...",
+      cutting: "Cutting the deck...",
+    }
+  : {
+      chooseCard: (index) => `เลือกไพ่ใบที่ ${index + 1}`,
+      shuffled: "ไพ่ถูกสับใหม่แล้ว ตั้งจิตให้สงบ แล้วเลือกไพ่ 1 ใบ",
+      cut: "ตัดไพ่เรียบร้อยแล้ว เลือกไพ่ที่เรียกสายตาหรือใจของคุณ",
+      pickFirst: "กรุณาเลือกไพ่ 1 ใบก่อนรับคำทำนาย",
+      selected: (card) => `คุณเลือก ${card.thName} แล้ว คลิกปุ่ม "ทำนาย" เพื่ออ่านคำพยากรณ์`,
+      ready: "ตั้งจิตให้สงบ สับไพ่หรือตัดไพ่ แล้วเลือกไพ่ 1 ใบ",
+      shuffling: "กำลังสับไพ่...",
+      cutting: "กำลังตัดไพ่...",
+    };
 
 export function initDailyTarot() {
   const deckElement = document.querySelector(selectors.deck);
@@ -43,7 +65,7 @@ export function initDailyTarot() {
       deck = shuffleCards(deck);
       resetReading();
       renderDeck(deckElement);
-      updateStatus("ไพ่ถูกสับใหม่แล้ว ตั้งจิตให้สงบ แล้วเลือกไพ่ 1 ใบ");
+      updateStatus(text.shuffled);
     });
   });
 
@@ -52,14 +74,14 @@ export function initDailyTarot() {
       deck = cutDeck(deck);
       resetReading();
       renderDeck(deckElement);
-      updateStatus("ตัดไพ่เรียบร้อยแล้ว เลือกไพ่ที่เรียกสายตาหรือใจของคุณ");
+      updateStatus(text.cut);
     });
   });
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     if (!selectedCard) {
-      updateStatus("กรุณาเลือกไพ่ 1 ใบก่อนรับคำทำนาย");
+      updateStatus(text.pickFirst);
       return;
     }
 
@@ -82,7 +104,7 @@ function renderDeck(deckElement) {
 function renderCardButton(card, index) {
   const isSelected = selectedCard?.id === card.id;
   const isDisabled = Boolean(selectedCard) && !isSelected;
-  const label = isSelected ? `${card.thName} ${card.name}` : `เลือกไพ่ใบที่ ${index + 1}`;
+  const label = isSelected ? `${isEnglish ? card.name : card.thName} ${card.name}` : text.chooseCard(index);
   const position = getCardPosition(index, deck.length);
 
   return `
@@ -139,7 +161,7 @@ function updateReadingState() {
   if (countInput) countInput.value = selectedCard ? "1" : "0";
 
   if (selectedCard) {
-    updateStatus(`คุณเลือก ${selectedCard.thName} แล้ว คลิกปุ่ม "ทำนาย" เพื่ออ่านคำพยากรณ์`);
+    updateStatus(text.selected(selectedCard));
   }
 }
 
@@ -158,7 +180,7 @@ function resetReading() {
   if (hiddenInput) hiddenInput.value = "";
   if (countInput) countInput.value = "0";
 
-  updateStatus("ตั้งจิตให้สงบ สับไพ่หรือตัดไพ่ แล้วเลือกไพ่ 1 ใบ");
+  updateStatus(text.ready);
 }
 
 function updateStatus(message) {
@@ -171,7 +193,7 @@ function animateDeck(deckElement, className, afterAnimation) {
 
   isAnimating = true;
   deckElement.classList.add(className);
-  updateStatus(className === "is-shuffling" ? "กำลังสับไพ่..." : "กำลังตัดไพ่...");
+  updateStatus(className === "is-shuffling" ? text.shuffling : text.cutting);
 
   window.setTimeout(() => {
     afterAnimation();

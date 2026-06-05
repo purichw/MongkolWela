@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const mainContent = `<main id="calendar-top">
+  <section class="thai-calendar-hero">
+    <div>
+      <nav class="calendar-breadcrumb" aria-label="breadcrumb">
+        <a href="../">Home</a>
+        <span>/</span>
+        <span>Thai Calendar</span>
+      </nav>
+      <p class="section-kicker">Auspicious Calendar</p>
+      <h1>Open the Thai calendar and read deeper than the date number</h1>
+      <p>
+        Choose a Buddhist Era year from 2300-2700 to explore Thai lunar dates,
+        Buddhist holy days, public holidays, festivals, and traditional markers
+        before opening a daily detail view.
+      </p>
+    </div>
+    <div class="calendar-hero-card" aria-label="Calendar preview">
+      <h2>June 2026</h2>
+      <div class="mini-calendar">
+        <span>1</span><span>2</span><span>3</span><span>4</span><span class="is-selected">5</span><span>6</span><span>7</span>
+        <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+        <span>15</span><span>16</span><span class="is-holy">17</span><span>18</span><span>19</span><span>20</span><span>21</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="calendar-control-shell">
+    <div class="calendar-controls">
+      <form data-calendar-form>
+        <label for="calendar-year">Choose B.E. year</label>
+        <select id="calendar-year" name="year" data-calendar-year></select>
+      </form>
+      <nav class="calendar-month-nav" data-calendar-months aria-label="Choose month"></nav>
+      <a class="primary-action" data-calendar-today href="./day/">Today</a>
+    </div>
+  </div>
+
+  <section class="calendar-shell" aria-live="polite">
+    <div class="calendar-summary" data-calendar-summary></div>
+    <div class="calendar-year-grid" data-calendar-grid></div>
+  </section>
+</main>`;
+const extraScripts = ["/assets/js/thai-calendar-year.js"];
+---
+
+<BaseLayout
+  title="Thai Calendar | Mongkol Wela"
+  description="Thai lunar calendar from B.E. 2300-2700 with Buddhist holy days, auspicious markers, notes, and daily detail pages."
+  lang="en"
+  locale="en"
+  page="calendar"
+  bodyClass="thai-calendar-page"
+  extraScripts={extraScripts}
+>
+  <Fragment set:html={mainContent} />
+</BaseLayout>

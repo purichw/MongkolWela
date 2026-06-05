@@ -11,6 +11,58 @@ import {
 } from "./thai-calendar-core.js";
 
 const detailRoot = document.querySelector("[data-calendar-day-detail]");
+const isEnglish = document.documentElement.lang === "en" || location.pathname.startsWith("/en/");
+const t = isEnglish
+  ? {
+      home: "Home",
+      calendar: "Thai Calendar",
+      detail: "Day Detail",
+      dateTitle: (info) => formatDate(info.date),
+      previous: "Previous day",
+      backYear: "Back to year calendar",
+      next: "Next day",
+      lunar: "Thai lunar date",
+      month: "Month",
+      zodiac: "Zodiac year",
+      yearType: "Year type",
+      diagram: "Day diagram",
+      wheelTitle: "Day and lunar markers",
+      good: "Supportive markers",
+      avoid: "What to avoid",
+      advice: "Today advice",
+      source: "Data source",
+      sourceTitle: "Use as an introductory auspicious calendar",
+      noEvents: "No major holiday or festival",
+      holy: "Buddhist holy day",
+      sourceCopy: (note) => `${note} Important days and traditional markers are modeled from Thai astrological calendar rules. Detailed planetary positions should later connect to a verified ephemeris or licensed astrologer's calendar before being used for formal auspicious timing.`,
+      sourceNote: "This phase is for day-reading UX and data modeling. Once verified calendar sources are connected, Mongkol Wela will show source and confidence details in the content database.",
+    }
+  : {
+      home: "หน้าแรก",
+      calendar: "ปฏิทินไทย",
+      detail: "รายละเอียดวัน",
+      dateTitle: (info) => `วันที่ ${formatThaiDate(info)}`,
+      previous: "วันก่อนหน้า",
+      backYear: "กลับปฏิทินปี",
+      next: "วันถัดไป",
+      lunar: "จันทรคติ",
+      month: "เดือน",
+      zodiac: "ปีนักษัตร",
+      yearType: "ประเภทปี",
+      diagram: "แผนภาพวัน",
+      wheelTitle: "จักรวันและดิถี",
+      good: "ฤกษ์ที่เกื้อหนุน",
+      avoid: "ข้อควรหลีกเลี่ยง",
+      advice: "คำแนะนำวันนี้",
+      source: "ที่มาของข้อมูล",
+      sourceTitle: "ใช้เป็นปฏิทินมงคลเบื้องต้น",
+      noEvents: "ไม่มีวันหยุดหรือเทศกาลหลัก",
+      holy: "วันพระ",
+      sourceCopy: (note) => `${note} วันสำคัญและกฎดิถีอ้างโครงตำราโหราศาสตร์ไทย เช่น ดิถีพิฆาต
+        ดิถีเรียงหมอน วันทรธึก และวันลอยวันจมวันฟู ส่วนสมผุสดาวละเอียดควรต่อฐาน ephemeris
+        หรือปฏิทินโหรที่มีสิทธิ์ใช้งานก่อนใช้ตัดสินฤกษ์จริง`,
+      sourceNote: "ระยะนี้ใช้สำหรับการอ่านวันและวาง UX ก่อน เมื่อเชื่อมฐานข้อมูลโหรฉบับตรวจสอบได้ ระบบจะระบุระดับความแม่นของข้อมูลและที่มาภายในฐานข้อมูลของมงคลเวลา",
+    };
 
 if (detailRoot) {
   initDayDetail();
@@ -23,25 +75,25 @@ function initDayDetail() {
   const previous = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
   const next = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 
-  document.title = `${formatThaiDate(info)} | ปฏิทินไทย มงคลเวลา`;
+  document.title = `${isEnglish ? formatDate(info.date) : formatThaiDate(info)} | ${isEnglish ? "Thai Calendar, Mongkol Wela" : "ปฏิทินไทย มงคลเวลา"}`;
   detailRoot.innerHTML = `
     <section class="calendar-day-hero">
       <nav class="calendar-breadcrumb" aria-label="breadcrumb">
-        <a href="../../">หน้าแรก</a>
+        <a href="${isEnglish ? "/en/" : "/"}">${t.home}</a>
         <span>/</span>
-        <a href="../?year=${info.beYear}">ปฏิทินไทย</a>
+        <a href="../?year=${info.beYear}">${t.calendar}</a>
         <span>/</span>
-        <span>${formatThaiDate(info)}</span>
+        <span>${isEnglish ? formatDate(info.date) : formatThaiDate(info)}</span>
       </nav>
       <div>
-        <p class="section-kicker">รายละเอียดวัน</p>
-        <h1>วันที่ ${formatThaiDate(info)}</h1>
+        <p class="section-kicker">${t.detail}</p>
+        <h1>${t.dateTitle(info)}</h1>
         <p>${info.weekdayName} ${formatLunarLabel(info.lunar, info.zodiac.name)}</p>
       </div>
       <div class="day-nav">
-        <a href="./?date=${toIso(previous)}">วันก่อนหน้า</a>
-        <a href="../?year=${info.beYear}">กลับปฏิทินปี</a>
-        <a href="./?date=${toIso(next)}">วันถัดไป</a>
+        <a href="./?date=${toIso(previous)}">${t.previous}</a>
+        <a href="../?year=${info.beYear}">${t.backYear}</a>
+        <a href="./?date=${toIso(next)}">${t.next}</a>
       </div>
     </section>
 
@@ -49,57 +101,54 @@ function initDayDetail() {
       <article class="day-reading-panel">
         <div class="day-title-row">
           <div>
-            <p class="section-kicker">จันทรคติ</p>
+            <p class="section-kicker">${t.lunar}</p>
             <h2>${info.weekdayName} ${info.lunar.phase} ${toThaiNumeral(info.lunar.day)} ค่ำ</h2>
           </div>
           ${renderMoonIcon(info.lunar.moon)}
         </div>
         <dl class="day-facts">
-          <div><dt>เดือน</dt><dd>${formatLunarMonthName(info.lunar)}</dd></div>
-          <div><dt>ปีนักษัตร</dt><dd>ปี${info.zodiac.name}</dd></div>
+          <div><dt>${t.month}</dt><dd>${formatLunarMonthName(info.lunar)}</dd></div>
+          <div><dt>${t.zodiac}</dt><dd>${isEnglish ? "" : "ปี"}${info.zodiac.name}</dd></div>
           <div><dt>จ.ศ.</dt><dd>${info.chulaSakarat}</dd></div>
           <div><dt>ม.ศ.</dt><dd>${info.mahasakarat}</dd></div>
           <div><dt>ร.ศ.</dt><dd>${info.rattanakosinSok}</dd></div>
-          <div><dt>ประเภทปี</dt><dd>${info.yearType}</dd></div>
+          <div><dt>${t.yearType}</dt><dd>${info.yearType}</dd></div>
         </dl>
         ${renderEventList(info)}
       </article>
 
       <article class="astro-wheel-panel">
         <div>
-          <p class="section-kicker">แผนภาพวัน</p>
-          <h2>จักรวันและดิถี</h2>
+          <p class="section-kicker">${t.diagram}</p>
+          <h2>${t.wheelTitle}</h2>
         </div>
         ${renderAstroWheel(info)}
       </article>
     </section>
 
     <section class="day-omen-grid">
-      ${renderOmenCard("ฤกษ์ที่เกื้อหนุน", getGoodReadings(info), "good")}
-      ${renderOmenCard("ข้อควรหลีกเลี่ยง", getAvoidReadings(info), "avoid")}
-      ${renderOmenCard("คำแนะนำวันนี้", getAdvice(info), "neutral")}
+      ${renderOmenCard(t.good, getGoodReadings(info), "good")}
+      ${renderOmenCard(t.avoid, getAvoidReadings(info), "avoid")}
+      ${renderOmenCard(t.advice, getAdvice(info), "neutral")}
     </section>
 
     <section class="calendar-reference">
       <div>
-        <p class="section-kicker">ที่มาของข้อมูล</p>
-        <h2>ใช้เป็นปฏิทินมงคลเบื้องต้น</h2>
+        <p class="section-kicker">${t.source}</p>
+        <h2>${t.sourceTitle}</h2>
       </div>
       <p>
-        ${getCalendarSourceNote()} วันสำคัญและกฎดิถีอ้างโครงตำราโหราศาสตร์ไทย เช่น ดิถีพิฆาต
-        ดิถีเรียงหมอน วันทรธึก และวันลอยวันจมวันฟู ส่วนสมผุสดาวละเอียดควรต่อฐาน ephemeris
-        หรือปฏิทินโหรที่มีสิทธิ์ใช้งานก่อนใช้ตัดสินฤกษ์จริง
+        ${t.sourceCopy(getCalendarSourceNote())}
       </p>
       <p class="calendar-reference-note">
-        ระยะนี้ใช้สำหรับการอ่านวันและวาง UX ก่อน เมื่อเชื่อมฐานข้อมูลโหรฉบับตรวจสอบได้
-        ระบบจะระบุระดับความแม่นของข้อมูลและที่มาภายในฐานข้อมูลของมงคลเวลา
+        ${t.sourceNote}
       </p>
     </section>
   `;
 }
 
 function renderEventList(info) {
-  const events = info.events.length ? info.events : [{ title: "ไม่มีวันหยุดหรือเทศกาลหลัก", tone: "quiet" }];
+  const events = info.events.length ? info.events : [{ title: t.noEvents, tone: "quiet" }];
   return `
     <div class="event-list">
       ${events.map((event) => `<span class="event-pill is-${event.tone}">${event.title}</span>`).join("")}
@@ -208,4 +257,12 @@ function renderMoonIcon(type) {
 
 function toIso(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function formatDate(date) {
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
 }

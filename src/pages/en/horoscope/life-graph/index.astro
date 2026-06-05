@@ -1,0 +1,83 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+const mainContent = `<main class="life-graph-page">
+  <section class="life-graph-hero">
+    <div>
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="../../../">Home</a>
+        <span>/</span>
+        <span>Life Graph</span>
+      </nav>
+      <p class="section-kicker">Life Graph • Base-12 Reading</p>
+      <h1>Life Graph</h1>
+      <p>
+        Explore timing from birth date, birth time, and a transit date through a
+        12-house graph. It helps show when to move, when to steady yourself,
+        and which life areas deserve attention.
+      </p>
+    </div>
+    <aside class="life-graph-note">
+      <strong>Base-12 formula</strong>
+      <p>
+        The prototype uses weekday, lunar month, and zodiac year as its starting
+        axes, then asks the ThaiCalendarProvider for calendar context before
+        plotting the graph.
+      </p>
+    </aside>
+  </section>
+
+  <section class="life-graph-tool" aria-label="Life graph tool">
+    <form class="life-graph-form" data-life-graph-form>
+      <div class="form-heading">
+        <p class="section-kicker">Starting Data</p>
+        <h2>Enter birth and transit details</h2>
+      </div>
+      <label><span>Name</span><input name="name" type="text" value="Guest" maxlength="80"></label>
+      <label><span>Birth date</span><input name="birthDate" type="date" required></label>
+      <div class="form-row">
+        <label><span>Birth hour</span><select name="birthHour" required data-hour-options></select></label>
+        <label><span>Birth minute</span><select name="birthMinute" required data-minute-options></select></label>
+      </div>
+      <label><span>Transit / reading date</span><input name="transitDate" type="date" required></label>
+      <button class="primary-action" type="submit">Calculate life graph</button>
+      <p class="form-footnote">
+        This base-12 prototype uses weekday, lunar month, and zodiac year as core axes.
+        Birth time is kept for later cross-system expansion.
+      </p>
+    </form>
+    <div class="life-graph-output" data-life-graph-output>
+      <div class="output-empty">
+        <span>12</span>
+        <strong>Enter details to open the graph</strong>
+        <p>The graph, number table, and house readings will appear here.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="life-graph-principles">
+    <div>
+      <p class="section-kicker">Our Approach</p>
+      <h2>Make the graph easier to read without flattening its tradition</h2>
+    </div>
+    <div class="principle-grid">
+      <article><strong>Formula and reading are separate</strong><p>The base-12 engine is separate from the interpretation layer so language and tone can change by locale.</p></article>
+      <article><strong>The graph should be interactive</strong><p>Readers can click a house and focus on the area they care about instead of scanning a long wall of text.</p></article>
+      <article><strong>Written in our own voice</strong><p>The guidance is original to Mongkol Wela and framed as support for reflection, not a fixed verdict.</p></article>
+    </div>
+  </section>
+</main>`;
+const extraScripts = ["/assets/js/life-graph.js"];
+---
+
+<BaseLayout
+  title="Life Graph | Mongkol Wela"
+  description="Interactive base-12 life graph prototype using birth date, birth time, and transit date."
+  lang="en"
+  locale="en"
+  page="lifeGraph"
+  bodyClass=""
+  extraScripts={extraScripts}
+>
+  <Fragment set:html={mainContent} />
+</BaseLayout>

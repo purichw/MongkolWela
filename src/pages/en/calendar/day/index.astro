@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+const mainContent = `<main data-calendar-day-detail></main>`;
+const extraScripts = ["/assets/js/thai-calendar-day.js"];
+---
+
+<BaseLayout
+  title="Day Detail | Thai Calendar, Mongkol Wela"
+  description="Daily Thai calendar detail with lunar date, Buddhist holy day status, supportive markers, cautions, and a day diagram."
+  lang="en"
+  locale="en"
+  page="calendarDay"
+  bodyClass="calendar-day-page"
+  extraScripts={extraScripts}
+>
+  <Fragment set:html={mainContent} />
+</BaseLayout>

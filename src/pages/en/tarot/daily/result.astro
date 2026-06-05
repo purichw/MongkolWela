@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+const mainContent = `<main>
+  <section class="tarot-result-shell" data-tarot-result>
+    <div class="tarot-result-copy"><p class="section-kicker">Daily Tarot</p><h1>Opening your reading</h1><p>Please wait a moment...</p></div>
+  </section>
+  <section class="tarot-related">
+    <p class="section-kicker">After the reading</p>
+    <h2>Use the card as a small light, not a cage</h2>
+    <p>If the card warns you, receive it with care. If it encourages you, use it as a beginning for good action today.</p>
+  </section>
+</main>`;
+const extraScripts = ["/assets/js/tarot-result.js"];
+---
+
+<BaseLayout
+  title="Daily Tarot Result | Mongkol Wela"
+  description="Daily tarot result with theme, interpretation, advice, caution, auspicious color, and timing."
+  lang="en"
+  locale="en"
+  page="tarotResult"
+  bodyClass="tarot-page tarot-result-page"
+  extraScripts={extraScripts}
+>
+  <Fragment set:html={mainContent} />
+</BaseLayout>

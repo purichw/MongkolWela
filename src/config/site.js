@@ -160,54 +160,54 @@ export const siteConfig = {
     nav: [
       {
         label: "Horoscope",
-        href: "#horoscope",
+        href: "/en/#horoscope",
         items: [
-          { label: "Life graph", href: "horoscope/life-graph/" },
-          { label: "Daily tarot", href: "tarot/daily/" },
-          { label: "Seven-star numerology", href: "#horoscope" },
-          { label: "Thai astrology", href: "horoscope/thai-astrology/" },
-          { label: "Kau chim oracle", href: "horoscope/seamsi/" },
-          { label: "Love compatibility", href: "#horoscope" },
+          { label: "Life graph", href: "/en/horoscope/life-graph/" },
+          { label: "Daily tarot", href: "/en/tarot/daily/" },
+          { label: "Seven-star numerology", href: "/en/#horoscope" },
+          { label: "Thai astrology", href: "/en/horoscope/thai-astrology/" },
+          { label: "Kau chim oracle", href: "/en/horoscope/seamsi/" },
+          { label: "Love compatibility", href: "/en/#horoscope" },
         ],
       },
       {
         label: "Dates and Calendar",
-        href: "calendar/",
+        href: "/en/calendar/",
         items: [
-          { label: "Thai lunar calendar", href: "calendar/" },
-          { label: "Car blessing dates", href: "calendar/" },
-          { label: "Wedding dates", href: "calendar/" },
-          { label: "Buddhist holy days", href: "calendar/" },
-          { label: "Chinese calendar", href: "#calendar" },
+          { label: "Thai lunar calendar", href: "/en/calendar/" },
+          { label: "Car blessing dates", href: "/en/calendar/" },
+          { label: "Wedding dates", href: "/en/calendar/" },
+          { label: "Buddhist holy days", href: "/en/calendar/" },
+          { label: "Chinese calendar", href: "/en/#calendar" },
         ],
       },
       {
         label: "Names and Numbers",
-        href: "#names",
+        href: "/en/#names",
         items: [
-          { label: "Baby names", href: "#names" },
-          { label: "Name analysis", href: "#names" },
-          { label: "Phone numbers", href: "#names" },
-          { label: "License plates", href: "#names" },
-          { label: "Personal numbers", href: "#names" },
+          { label: "Baby names", href: "/en/#names" },
+          { label: "Name analysis", href: "/en/#names" },
+          { label: "Phone numbers", href: "/en/#names" },
+          { label: "License plates", href: "/en/#names" },
+          { label: "Personal numbers", href: "/en/#names" },
         ],
       },
       {
         label: "Prayers and Rituals",
-        href: "#rituals",
+        href: "/en/#rituals",
         items: [
-          { label: "Buddhist chants", href: "#rituals" },
-          { label: "Metta prayers", href: "#rituals" },
-          { label: "Remedy rituals", href: "#rituals" },
-          { label: "Lucky colors", href: "#rituals" },
-          { label: "Year clash", href: "#rituals" },
+          { label: "Buddhist chants", href: "/en/#rituals" },
+          { label: "Metta prayers", href: "/en/#rituals" },
+          { label: "Remedy rituals", href: "/en/#rituals" },
+          { label: "Lucky colors", href: "/en/#rituals" },
+          { label: "Year clash", href: "/en/#rituals" },
         ],
       },
     ],
     utilityNav: [
-      { label: "Auspicious Temples", href: "#temples" },
-      { label: "Learn", href: "#learn" },
-      { label: "Consult", href: "#consult" },
+      { label: "Auspicious Temples", href: "/en/#temples" },
+      { label: "Learn", href: "/en/#learn" },
+      { label: "Consult", href: "/en/#consult" },
     ],
     pages: {
       home: {
@@ -217,6 +217,55 @@ export const siteConfig = {
           { label: "Consult an astrologer", href: "#consult" },
         ],
         footerVariant: "home",
+      },
+      calendar: {
+        topbar: [
+          { label: "Thai calendar", href: "/en/calendar/" },
+          { label: "Holy days, lunar markers, auspicious notes, and daily detail" },
+          { label: "Consult an astrologer", href: "/en/#consult" },
+        ],
+      },
+      calendarDay: {
+        topbar: [
+          { label: "Thai calendar", href: "/en/calendar/" },
+          { label: "Read the day before choosing an auspicious time" },
+          { label: "Consult an astrologer", href: "/en/#consult" },
+        ],
+      },
+      lifeGraph: {
+        topbar: [
+          { label: "Life graph", href: "/en/horoscope/life-graph/" },
+          { label: "A timing guide, not a fixed verdict" },
+          { label: "Consult an astrologer", href: "/en/#consult" },
+        ],
+      },
+      seamsi: {
+        topbar: [
+          { label: "Set your intention", href: "/en/horoscope/seamsi/#seamsi-oracle" },
+          { label: "Ask one important question calmly and respectfully" },
+          { label: "Consult an astrologer", href: "/en/#consult" },
+        ],
+      },
+      thaiAstrology: {
+        topbar: [
+          { label: "Thai astrology chart", href: "/en/horoscope/thai-astrology/#thai-astrology-tool" },
+          { label: "Read ascendant, houses, natal planets, and transits in plain language" },
+          { label: "Consult an astrologer", href: "/en/#consult" },
+        ],
+      },
+      tarotDaily: {
+        topbar: [
+          { label: "Daily tarot", href: "/en/tarot/daily/#daily-tarot" },
+          { label: "Draw once a day to keep the reading meaningful" },
+          { label: "Consult an astrologer", href: "/en/#consult" },
+        ],
+      },
+      tarotResult: {
+        topbar: [
+          { label: "Draw another card", href: "/en/tarot/daily/" },
+          { label: "Receive the reading mindfully and use it as guidance" },
+          { label: "Consult an astrologer", href: "/en/#consult" },
+        ],
       },
     },
   },

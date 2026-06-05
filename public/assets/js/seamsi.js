@@ -13,6 +13,53 @@ const selectors = {
 
 let activeFortune;
 let isShaking = false;
+const isEnglish = document.documentElement.lang === "en" || location.pathname.startsWith("/en/");
+const t = isEnglish
+  ? {
+      categories: {
+        overview: "Life overview",
+        work: "Work",
+        money: "Money",
+        love: "Love",
+        health: "Mind and body",
+        luck: "Luck and opportunity",
+      },
+      ready: "Set your intention, choose a topic, then shake the cup.",
+      shaking: "Shaking the fortune sticks. Keep your mind calm...",
+      received: (fortune, category) => `You drew fortune slip ${fortune.number} for ${category}`,
+      emptyLabel: "Kau chim",
+      emptyTitle: "No slip drawn yet",
+      emptyCopy: "After you shake the cup, the fortune slip and reading will appear here.",
+      slip: "Slip",
+      topic: (category) => category,
+      question: "Question",
+      reading: "Reading",
+      advice: "Advice",
+      caution: "Caution",
+      blessing: "Auspicious note",
+      reset: "Draw again",
+      consult: "Consult an astrologer",
+      personalize: (advice, category) => `${advice} For ${category}, keep the intention calm and avoid repeating the question only to get the answer you prefer.`,
+    }
+  : {
+      categories: Object.fromEntries(seamsiCategories.map((category) => [category.id, category.label])),
+      ready: "ตั้งจิต เลือกเรื่องที่ถาม แล้วกดกระบอกเซียมซี",
+      shaking: "กำลังเขย่าเซียมซี โปรดตั้งจิตให้สงบ...",
+      received: (fortune, category) => `ได้ใบเซียมซีที่ ${fortune.number} เรื่อง${category}`,
+      emptyLabel: "เซียมซี",
+      emptyTitle: "ยังไม่ได้เสี่ยงทาย",
+      emptyCopy: "เมื่อเขย่ากระบอกแล้ว ใบเซียมซีและคำทำนายจะแสดงตรงนี้",
+      slip: "ใบที่",
+      topic: (category) => `เรื่อง${category}`,
+      question: "คำถาม",
+      reading: "คำทำนาย",
+      advice: "คำแนะนำ",
+      caution: "ข้อควรระวัง",
+      blessing: "มงคลประจำใบ",
+      reset: "เสี่ยงใหม่",
+      consult: "ปรึกษาครูโหร",
+      personalize: (advice, category) => `${advice} สำหรับเรื่อง${category} ให้ยึดเจตนาที่สงบและไม่ถามซ้ำเพียงเพื่อเอาคำตอบที่ถูกใจ`,
+    };
 
 initSeamsi();
 
@@ -40,7 +87,7 @@ function initSeamsi() {
     if (!event.target.closest(selectors.reset)) return;
     activeFortune = undefined;
     renderEmptyResult(result);
-    updateStatus(status, "ตั้งจิต เลือกเรื่องที่ถาม แล้วกดกระบอกเซียมซี");
+    updateStatus(status, t.ready);
     oracle.classList.remove("has-result");
     form.querySelector(selectors.button)?.focus();
   });
@@ -51,7 +98,7 @@ function fillCategories(form) {
   if (!categorySelect) return;
 
   categorySelect.innerHTML = seamsiCategories
-    .map((category) => `<option value="${category.id}">${category.label}</option>`)
+    .map((category) => `<option value="${category.id}">${t.categories[category.id] || category.label}</option>`)
     .join("");
 }
 
@@ -60,18 +107,19 @@ function shakeSeamsi(form, oracle, result, status) {
 
   const categoryId = form.querySelector(selectors.category)?.value ?? "overview";
   const question = form.querySelector(selectors.question)?.value.trim() ?? "";
-  const category = seamsiCategories.find((item) => item.id === categoryId) ?? seamsiCategories[0];
+  const categoryItem = seamsiCategories.find((item) => item.id === categoryId) ?? seamsiCategories[0];
+  const category = t.categories[categoryItem.id] || categoryItem.label;
   const fortune = pickFortune();
 
   isShaking = true;
   activeFortune = fortune;
   oracle.classList.remove("has-result");
   oracle.classList.add("is-shaking");
-  updateStatus(status, "กำลังเขย่าเซียมซี โปรดตั้งจิตให้สงบ...");
+  updateStatus(status, t.shaking);
 
   window.setTimeout(() => {
     oracle.classList.add("has-result");
-    updateStatus(status, `ได้ใบเซียมซีที่ ${fortune.number} เรื่อง${category.label}`);
+    updateStatus(status, t.received(fortune, category));
   }, 880);
 
   window.setTimeout(() => {
@@ -103,9 +151,9 @@ function randomIndex(length) {
 function renderEmptyResult(result) {
   result.innerHTML = `
     <div class="seamsi-empty">
-      <span>เซียมซี</span>
-      <strong>ยังไม่ได้เสี่ยงทาย</strong>
-      <p>เมื่อเขย่ากระบอกแล้ว ใบเซียมซีและคำทำนายจะแสดงตรงนี้</p>
+      <span>${t.emptyLabel}</span>
+      <strong>${t.emptyTitle}</strong>
+      <p>${t.emptyCopy}</p>
     </div>
   `;
 }
@@ -114,24 +162,24 @@ function renderFortune(result, fortune, category, question) {
   result.innerHTML = `
     <article class="seamsi-result-card">
       <div class="seamsi-result-head">
-        <span>ใบที่</span>
+        <span>${t.slip}</span>
         <strong>${fortune.number}</strong>
         <small>${fortune.tone}</small>
       </div>
       <div class="seamsi-result-copy">
-        <p class="section-kicker">เรื่อง${category.label}</p>
+        <p class="section-kicker">${t.topic(category)}</p>
         <h2>${fortune.title}</h2>
-        ${question ? `<p class="seamsi-question">คำถาม: ${escapeHtml(question)}</p>` : ""}
+        ${question ? `<p class="seamsi-question">${t.question}: ${escapeHtml(question)}</p>` : ""}
         <blockquote>${fortune.verse}</blockquote>
         <dl class="seamsi-reading-list">
-          ${renderReadingItem("คำทำนาย", fortune.interpretation)}
-          ${renderReadingItem("คำแนะนำ", personalizeAdvice(fortune.advice, category))}
-          ${renderReadingItem("ข้อควรระวัง", fortune.caution)}
-          ${renderReadingItem("มงคลประจำใบ", fortune.blessing)}
+          ${renderReadingItem(t.reading, fortune.interpretation)}
+          ${renderReadingItem(t.advice, personalizeAdvice(fortune.advice, category))}
+          ${renderReadingItem(t.caution, fortune.caution)}
+          ${renderReadingItem(t.blessing, fortune.blessing)}
         </dl>
         <div class="seamsi-result-actions">
-          <button class="secondary-action" type="button" data-seamsi-reset>เสี่ยงใหม่</button>
-          <a class="primary-action" href="../../#consult">ปรึกษาครูโหร</a>
+          <button class="secondary-action" type="button" data-seamsi-reset>${t.reset}</button>
+          <a class="primary-action" href="${isEnglish ? "/en/#consult" : "/#consult"}">${t.consult}</a>
         </div>
       </div>
     </article>
@@ -148,8 +196,8 @@ function renderReadingItem(title, body) {
 }
 
 function personalizeAdvice(advice, category) {
-  if (category.id === "overview") return advice;
-  return `${advice} สำหรับเรื่อง${category.label} ให้ยึดเจตนาที่สงบและไม่ถามซ้ำเพียงเพื่อเอาคำตอบที่ถูกใจ`;
+  if (category === (t.categories.overview || "ภาพรวมชีวิต")) return advice;
+  return t.personalize(advice, category);
 }
 
 function updateStatus(status, message) {

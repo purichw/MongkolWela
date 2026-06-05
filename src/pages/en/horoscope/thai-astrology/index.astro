@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+const mainContent = `<main>
+  <section class="thai-astro-hero">
+    <div>
+      <nav class="thai-astro-breadcrumb" aria-label="breadcrumb"><a href="../../../">Home</a><span>/</span><span>Thai Astrology</span></nav>
+      <p class="section-kicker">Thai Astrology</p>
+      <h1>Thai Astrology Reading</h1>
+      <p>
+        Build a prototype chart from birth date, birth time, and birthplace, then read
+        ascendant, 12 houses, planets, and transits in language designed for everyday users.
+      </p>
+    </div>
+    <div class="thai-astro-orbit" aria-hidden="true"><span>Asc</span><span>Tr</span><span>Hs</span><span>Pl</span><strong>12</strong></div>
+  </section>
+
+  <section class="thai-astro-tool" id="thai-astrology-tool">
+    <form class="thai-astro-form" data-thai-astrology-form>
+      <div><p class="section-kicker">Chart Data</p><h2>Enter birth details</h2></div>
+      <label><span>Display name</span><input name="name" type="text" value="Native" autocomplete="name"></label>
+      <label><span>Birth date</span><input name="birthDate" type="date" required></label>
+      <div class="thai-astro-form-row">
+        <label><span>Birth hour</span><select name="birthHour" required data-hour-options></select></label>
+        <label><span>Birth minute</span><select name="birthMinute" required data-minute-options></select></label>
+      </div>
+      <label><span>Birthplace</span><select name="birthPlace"><option value="bangkok">Bangkok</option><option value="chiangmai">Chiang Mai</option><option value="khonkaen">Khon Kaen</option><option value="songkhla">Songkhla</option><option value="phuket">Phuket</option><option value="foreign">Outside Thailand / specify later</option></select></label>
+      <div class="thai-astro-form-row">
+        <label><span>Chart type</span><select name="chartType"><option value="natal">Natal chart</option><option value="transit">Transit chart</option><option value="newmoon">New moon chart</option><option value="fullmoon">Full moon chart</option></select></label>
+        <label><span>Calculation system</span><select name="calculationSystem"><option value="suriyayatra">Thai Suriyayatra</option><option value="lahiri">Lahiri sidereal</option></select></label>
+      </div>
+      <label><span>Transit / reading date</span><input name="transitDate" type="date" required data-transit-date></label>
+      <button class="primary-action" type="submit">Build chart</button>
+      <p class="thai-astro-form-note">This prototype uses approximate planetary positions for UX design before connecting a verified ephemeris.</p>
+    </form>
+    <div class="thai-astro-output" data-thai-astrology-output>
+      <div class="output-empty"><span>Asc</span><strong>Enter details to build the chart</strong><p>The chart wheel, planet table, and topic readings will appear here.</p></div>
+    </div>
+  </section>
+</main>`;
+const extraScripts = ["/assets/js/thai-astrology.js"];
+---
+
+<BaseLayout
+  title="Thai Astrology Reading | Mongkol Wela"
+  description="Thai astrology prototype with ascendant, 12 houses, planets, and transit reading."
+  lang="en"
+  locale="en"
+  page="thaiAstrology"
+  bodyClass="thai-astrology-page"
+  extraScripts={extraScripts}
+>
+  <Fragment set:html={mainContent} />
+</BaseLayout>

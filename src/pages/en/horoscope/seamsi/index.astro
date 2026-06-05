@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+const mainContent = `<main>
+  <section class="seamsi-hero">
+    <div>
+      <nav class="seamsi-breadcrumb" aria-label="breadcrumb">
+        <a href="../../../">Home</a><span>/</span><span>Kau Chim Oracle</span>
+      </nav>
+      <p class="section-kicker">Kau Chim Oracle</p>
+      <h1>Kau Chim Oracle</h1>
+      <p>
+        Settle your mind, choose one question, and shake the fortune-stick cup
+        to receive an original Mongkol Wela reading. The text is not copied from
+        any temple or existing fortune slip.
+      </p>
+    </div>
+  </section>
+
+  <section class="seamsi-shell" id="seamsi-oracle">
+    <form class="seamsi-form" data-seamsi-form>
+      <div><p class="section-kicker">Set Intention</p><h2>Choose one topic before shaking</h2></div>
+      <label><span>Topic</span><select name="category" data-seamsi-category></select></label>
+      <label>
+        <span>Question in mind</span>
+        <textarea name="question" maxlength="180" data-seamsi-question placeholder="Keep it short, for example: should I move forward with this work?"></textarea>
+      </label>
+      <button class="primary-action" type="submit" data-seamsi-shake>Shake fortune sticks</button>
+      <p class="seamsi-form-note">Ask one important question at a time and avoid repeating the same question only to get a preferred answer.</p>
+    </form>
+    <div class="seamsi-main">
+      <section class="seamsi-stage">
+        <div class="seamsi-stage-copy">
+          <p class="section-kicker">Oracle</p>
+          <h2>Tap the cup to shake the sticks</h2>
+          <p>Take a slow breath, hold your question gently, then press the cup. The system will draw a fortune slip with a short animation.</p>
+          <p class="seamsi-status" data-seamsi-status aria-live="polite">Set your intention, choose a topic, then shake the cup.</p>
+        </div>
+        <div class="seamsi-oracle-wrap">
+          <button class="seamsi-oracle" type="button" data-seamsi-oracle aria-label="Shake fortune sticks">
+            <span class="seamsi-stick" data-stick="1"></span><span class="seamsi-stick" data-stick="7"></span><span class="seamsi-stick" data-stick="9"></span><span class="seamsi-stick" data-stick="12"></span><span class="seamsi-stick" data-stick="21"></span><span class="seamsi-stick" data-stick="28"></span>
+            <span class="seamsi-falling-stick"></span><span class="seamsi-cup"></span>
+          </button>
+          <span class="seamsi-tap-hint">Tap the cup or press the shake button</span>
+        </div>
+      </section>
+      <section class="seamsi-result" data-seamsi-result aria-live="polite"></section>
+    </div>
+  </section>
+
+  <section class="seamsi-prayer-section">
+    <div class="seamsi-prayer-grid">
+      <div><p class="section-kicker">Intention</p><h2>Say this quietly before drawing</h2></div>
+      <article class="seamsi-prayer-card"><p>May my mind be calm. May this oracle become a small light for reflection, caution, and wise action.</p></article>
+    </div>
+  </section>
+</main>`;
+const extraScripts = ["/assets/js/seamsi.js"];
+---
+
+<BaseLayout
+  title="Kau Chim Oracle | Mongkol Wela"
+  description="Interactive online kau chim oracle with an original fortune-stick reading."
+  lang="en"
+  locale="en"
+  page="seamsi"
+  bodyClass="seamsi-page"
+  extraScripts={extraScripts}
+>
+  <Fragment set:html={mainContent} />
+</BaseLayout>

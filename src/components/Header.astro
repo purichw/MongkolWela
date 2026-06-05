@@ -22,6 +22,12 @@ const { locale = "th", page = "home" } = Astro.props as {
 const config = siteConfig[locale] || siteConfig.th;
 const pages = config.pages as Record<string, { topbar?: TopbarItem[]; footerVariant?: string }>;
 const pageConfig = pages[page] || pages.home;
+const currentPath = Astro.url.pathname;
+const alternateHref = locale === "en"
+  ? currentPath.replace(/^\/en(?=\/|$)/, "") || "/"
+  : currentPath === "/"
+    ? "/en/"
+    : `/en${currentPath}`;
 
 function resolveHref(href = "") {
   if (!href) return "/";
@@ -82,7 +88,7 @@ function resolveHref(href = "") {
       </button>
       <a
         class="language"
-        href={resolveHref(config.languageHref)}
+        href={alternateHref}
         hreflang={config.languageHrefLang}
         lang={config.languageLang}
       >

@@ -18,6 +18,36 @@ const monthNav = document.querySelector("[data-calendar-months]");
 const calendarGrid = document.querySelector("[data-calendar-grid]");
 const yearSummary = document.querySelector("[data-calendar-summary]");
 const todayLink = document.querySelector("[data-calendar-today]");
+const isEnglish = document.documentElement.lang === "en" || location.pathname.startsWith("/en/");
+const labels = isEnglish
+  ? {
+      calendar: "Thai calendar",
+      be: "B.E.",
+      cs: "C.S.",
+      yearSystem: "Year type",
+      note: "Note",
+      top: "Back to top",
+      holy: "Holy day",
+      summary: (beYear, ceYear, firstDay, songkranDay) => `
+        ${beYear} / ${ceYear} begins in the zodiac year of ${firstDay.zodiac.en || firstDay.zodiac.name}
+        and changes after Songkran to ${songkranDay.zodiac.en || songkranDay.zodiac.name}.
+        It includes Buddhist holy days, lunar markers, notes, and daily links.
+      `,
+    }
+  : {
+      calendar: "ปฏิทินไทย",
+      be: "พ.ศ.",
+      cs: "จ.ศ.",
+      yearSystem: "ระบบปี",
+      note: "หมายเหตุ",
+      top: "กลับด้านบน",
+      holy: "วันพระ",
+      summary: (beYear, ceYear, firstDay, songkranDay) => `
+        ${beYear} / ${ceYear} เริ่มด้วยปี${firstDay.zodiac.name}
+        และเปลี่ยนรอบนักษัตรหลังสงกรานต์เป็นปี${songkranDay.zodiac.name}
+        พร้อมวันพระ ดิถี หมายเหตุ และแรมค่ำเดือนปีสำหรับทุกวัน
+      `,
+    };
 
 if (yearForm && yearSelect && calendarGrid) {
   initThaiCalendar();
@@ -54,23 +84,21 @@ function renderYear(beYear) {
 
   yearSummary.innerHTML = `
     <div class="calendar-summary-copy">
-      <p class="section-kicker">ปฏิทินไทย ${beYear}</p>
-      <h1>ปฏิทินไทย พ.ศ.${beYear}</h1>
+      <p class="section-kicker">${labels.calendar} ${beYear}</p>
+      <h1>${labels.calendar} ${labels.be === "B.E." ? `B.E. ${beYear}` : `พ.ศ.${beYear}`}</h1>
       <p>
-        ${beYear} / ${ceYear} เริ่มด้วยปี${firstDay.zodiac.name}
-        และเปลี่ยนรอบนักษัตรหลังสงกรานต์เป็นปี${songkranDay.zodiac.name}
-        พร้อมวันพระ ดิถี หมายเหตุ และแรมค่ำเดือนปีสำหรับทุกวัน
+        ${labels.summary(beYear, ceYear, firstDay, songkranDay)}
       </p>
     </div>
     <dl>
-      <div><dt>จ.ศ.</dt><dd>${firstDay.chulaSakarat} - ${songkranDay.chulaSakarat}</dd></div>
-      <div><dt>ระบบปี</dt><dd>${firstDay.yearType}</dd></div>
-      <div><dt>หมายเหตุ</dt><dd>${getCalendarSourceNote()}</dd></div>
+      <div><dt>${labels.cs}</dt><dd>${firstDay.chulaSakarat} - ${songkranDay.chulaSakarat}</dd></div>
+      <div><dt>${labels.yearSystem}</dt><dd>${firstDay.yearType}</dd></div>
+      <div><dt>${labels.note}</dt><dd>${getCalendarSourceNote()}</dd></div>
     </dl>
   `;
 
   monthNav.innerHTML = thaiMonthNames
-    .map((month, index) => `<a href="#month-${index + 1}">${month.slice(0, 3)}</a>`)
+    .map((month, index) => `<a href="#month-${index + 1}">${isEnglish ? monthNameEn(index).slice(0, 3) : month.slice(0, 3)}</a>`)
     .join("");
 
   calendarGrid.innerHTML = thaiMonthNames.map((month, index) => renderMonth(beYear, month, index)).join("");
@@ -83,10 +111,10 @@ function renderMonth(beYear, monthName, monthIndex) {
     <section class="thai-month" id="month-${monthIndex + 1}" aria-labelledby="month-${monthIndex + 1}-title">
       <header class="thai-month-head">
         <div>
-          <h2 id="month-${monthIndex + 1}-title">${monthName} ${beYear}</h2>
+          <h2 id="month-${monthIndex + 1}-title">${isEnglish ? monthNameEn(monthIndex) : monthName} ${beYear}</h2>
           <span lang="en">${monthNameEn(monthIndex)} ${beYear - 543}</span>
         </div>
-        <a href="#calendar-top" aria-label="กลับด้านบน">↑</a>
+        <a href="#calendar-top" aria-label="${labels.top}">↑</a>
       </header>
       <div class="thai-weekdays" aria-hidden="true">
         ${weekdayNames.map((day) => `<span>${day}</span>`).join("")}
@@ -105,7 +133,7 @@ function renderDay(info) {
   const auspicious = info.dithi.find((marker) => marker.tone === "auspicious" || marker.tone === "power");
   const avoid = info.dithi.find((marker) => marker.tone === "avoid");
   const badges = [
-    info.isWanPhra ? '<span class="day-badge is-holy">วันพระ</span>' : "",
+    info.isWanPhra ? `<span class="day-badge is-holy">${labels.holy}</span>` : "",
     primaryEvent && primaryEvent.title !== "วันพระ" ? `<span class="day-badge is-event">${primaryEvent.title}</span>` : "",
     auspicious ? `<span class="day-badge is-good">${auspicious.name}</span>` : "",
     avoid ? `<span class="day-badge is-avoid">${avoid.name}</span>` : "",

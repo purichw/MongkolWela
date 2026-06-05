@@ -1,9 +1,37 @@
 import { getCardArtClass, getTarotCardById } from "./tarot-data.js?v=20260605-2";
 
-const fallbackMessage = {
-  title: "ยังไม่มีไพ่สำหรับคำทำนาย",
-  copy: "กลับไปเลือกไพ่ 1 ใบก่อน เพื่อเปิดคำทำนายรายวันของคุณ",
-};
+const isEnglish = document.documentElement.lang === "en" || location.pathname.startsWith("/en/");
+const t = isEnglish
+  ? {
+      fallbackTitle: "No card selected for this reading",
+      fallbackCopy: "Go back and choose one card to open your daily tarot guidance.",
+      kicker: "Daily Tarot Reading",
+      theme: "Theme",
+      interpretation: "Interpretation",
+      advice: "Advice",
+      caution: "Caution",
+      color: "Auspicious color",
+      time: "Auspicious time",
+      mantra: "Prayer / intention",
+      drawAgain: "Draw again",
+      home: "Back to home",
+      noCard: "Go choose a card",
+    }
+  : {
+      fallbackTitle: "ยังไม่มีไพ่สำหรับคำทำนาย",
+      fallbackCopy: "กลับไปเลือกไพ่ 1 ใบก่อน เพื่อเปิดคำทำนายรายวันของคุณ",
+      kicker: "คำทำนายไพ่ยิปซีรายวัน",
+      theme: "ธีม",
+      interpretation: "คำแปลความ",
+      advice: "คำแนะนำ",
+      caution: "ข้อควรระวัง",
+      color: "สีมงคล",
+      time: "เวลามงคล",
+      mantra: "มนต์ภาวนา / คำอธิษฐาน",
+      drawAgain: "จับไพ่ใหม่",
+      home: "กลับหน้าหลัก",
+      noCard: "กลับไปเลือกไพ่",
+    };
 
 initTarotResult();
 
@@ -26,44 +54,44 @@ function initTarotResult() {
       ${renderLargeCard(card)}
     </div>
     <div class="tarot-result-copy">
-      <p class="section-kicker">คำทำนายไพ่ยิปซีรายวัน</p>
-      <h1>${card.thName}</h1>
+      <p class="section-kicker">${t.kicker}</p>
+      <h1>${isEnglish ? card.name : card.thName}</h1>
       <p class="tarot-result-name">${card.name}</p>
       <dl class="tarot-reading-list">
         <div>
-          <dt>ธีม</dt>
+          <dt>${t.theme}</dt>
           <dd>${card.theme}</dd>
         </div>
         <div>
-          <dt>คำแปลความ</dt>
+          <dt>${t.interpretation}</dt>
           <dd>${card.interpretation}</dd>
         </div>
         <div>
-          <dt>คำแนะนำ</dt>
+          <dt>${t.advice}</dt>
           <dd>${card.advice}</dd>
         </div>
         <div>
-          <dt>ข้อควรระวัง</dt>
+          <dt>${t.caution}</dt>
           <dd>${card.caution}</dd>
         </div>
       </dl>
       <div class="tarot-auspicious-grid">
         <article>
-          <span>สีมงคล</span>
+          <span>${t.color}</span>
           <strong>${card.color}</strong>
         </article>
         <article>
-          <span>เวลามงคล</span>
+          <span>${t.time}</span>
           <strong>${card.time}</strong>
         </article>
       </div>
       <div class="tarot-prayer">
-        <span>มนต์ภาวนา / คำอธิษฐาน</span>
+        <span>${t.mantra}</span>
         <p>${card.mantra}</p>
       </div>
       <div class="tarot-result-actions">
-        <a class="primary-action" href="./">จับไพ่ใหม่</a>
-        <a class="secondary-action" href="../../">กลับหน้าหลัก</a>
+        <a class="primary-action" href="../">${t.drawAgain}</a>
+        <a class="secondary-action" href="${isEnglish ? "/en/" : "/"}">${t.home}</a>
       </div>
     </div>
   `;
@@ -73,9 +101,9 @@ function renderFallback(resultRoot) {
   resultRoot.innerHTML = `
     <div class="tarot-result-copy tarot-empty-result">
       <p class="section-kicker">Daily Tarot</p>
-      <h1>${fallbackMessage.title}</h1>
-      <p>${fallbackMessage.copy}</p>
-      <a class="primary-action" href="./">กลับไปเลือกไพ่</a>
+      <h1>${t.fallbackTitle}</h1>
+      <p>${t.fallbackCopy}</p>
+      <a class="primary-action" href="../">${t.noCard}</a>
     </div>
   `;
 }
