@@ -77,10 +77,6 @@
   padding: 22px;
 }
 
-.seamsi-form > div:first-child {
-  order: -2;
-}
-
 .seamsi-form h2,
 .seamsi-stage h2,
 .seamsi-result h2,
@@ -130,12 +126,6 @@
   color: var(--ink-soft);
   font-size: 0.84rem;
   line-height: 1.45;
-}
-
-.seamsi-form .primary-action {
-  order: -1;
-  min-height: 48px;
-  box-shadow: 0 12px 24px rgba(142, 45, 36, 0.18);
 }
 
 .seamsi-main {
@@ -598,10 +588,6 @@
 
   .seamsi-form {
     position: static;
-  }
-
-  .seamsi-form .primary-action {
-    box-shadow: none;
   }
 
   .seamsi-stage,
