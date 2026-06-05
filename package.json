@@ -1,0 +1,31 @@
+{
+  "name": "hora-astro",
+  "version": "1.0.0",
+  "description": "Thai-first auspicious, horoscope, calendar, and spiritual knowledge website built with Astro.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/purichw/hora-astro.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/purichw/hora-astro/issues"
+  },
+  "homepage": "https://github.com/purichw/hora-astro#readme",
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "astro": "^6.4.4",
+    "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "yaml": "^2.8.3"
+  }
+}

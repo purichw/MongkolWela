@@ -1,26 +1,41 @@
 # Hora Astro
 
-Static homepage for a Thai-first auspicious, horoscope, calendar, and spiritual knowledge website.
+Thai-first auspicious, horoscope, calendar, and spiritual knowledge website built with Astro.
 
 ## Preview
 
-Open `index.html` directly in a browser, or run a local static server:
+Install dependencies and start the Astro dev server:
 
 ```sh
-python3 -m http.server 4177 --bind 127.0.0.1
+npm install
+npm run dev
 ```
 
-Then visit `http://127.0.0.1:4177/`.
+Then visit the local URL shown by Astro.
 
-The English homepage is available at `http://127.0.0.1:4177/en/`.
+Useful routes:
 
-The interactive daily tarot feature is available at `http://127.0.0.1:4177/tarot/daily/`.
+- `/` - Thai homepage
+- `/en/` - English homepage
+- `/tarot/daily/` - interactive daily tarot
+- `/calendar/` - Thai calendar
+
+## Checks
+
+```sh
+npm run check
+npm run build
+npm run preview
+```
 
 ## Structure
 
-- `index.html` - homepage markup and content
-- `styles.css` - CSS entrypoint
-- `assets/css/` - design tokens, base rules, header, homepage sections, and responsive behavior
-- `script.js` - JavaScript entrypoint
-- `assets/js/` - interactive behavior
-- `assets/images/` - local visual assets
+- `src/pages/` - Astro routes
+- `src/layouts/` - page layout shells
+- `src/components/` - shared header, footer, and SVG icons
+- `src/config/` - shared site/navigation/page config
+- `public/styles.css` - CSS entrypoint
+- `public/assets/css/` - design tokens, base rules, sections, and responsive behavior
+- `public/script.js` - browser interaction entrypoint
+- `public/assets/js/` - feature modules
+- `public/assets/images/` - local visual assets

@@ -1,0 +1,93 @@
+---
+import { siteConfig } from "../config/site.js";
+import BrandMark from "./icons/BrandMark.astro";
+import MenuIcon from "./icons/MenuIcon.astro";
+import SearchIcon from "./icons/SearchIcon.astro";
+
+type Locale = keyof typeof siteConfig;
+type NavItem = {
+  label: string;
+  href: string;
+  items?: NavItem[];
+};
+type TopbarItem = {
+  label: string;
+  href?: string;
+};
+
+const { locale = "th", page = "home" } = Astro.props as {
+  locale?: Locale;
+  page?: string;
+};
+const config = siteConfig[locale] || siteConfig.th;
+const pages = config.pages as Record<string, { topbar?: TopbarItem[]; footerVariant?: string }>;
+const pageConfig = pages[page] || pages.home;
+
+function resolveHref(href = "") {
+  if (!href) return "/";
+  if (/^(https?:|mailto:|tel:)/.test(href)) return href;
+  if (href.startsWith("#")) return `/${href}`;
+  if (href.startsWith("/")) return href;
+  return `/${href}`;
+}
+---
+
+<header class="site-header">
+  <div class="topbar">
+    {(pageConfig.topbar || pages.home.topbar || []).map((item: TopbarItem) =>
+      item.href ? (
+        <a href={resolveHref(item.href)}>{item.label}</a>
+      ) : (
+        <span>{item.label}</span>
+      )
+    )}
+  </div>
+
+  <nav class="navbar" aria-label={config.navLabel}>
+    <a class="brand" href="/" aria-label={config.brandLabel}>
+      <BrandMark />
+      <span>
+        <strong>{config.brandName}</strong>
+        <small lang={/^[A-Za-z\s]+$/.test(config.brandSubtitle) ? "en" : undefined}>
+          {config.brandSubtitle}
+        </small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-menu">
+      <MenuIcon />
+      <span class="sr-only">{config.openMenuLabel}</span>
+    </button>
+
+    <div class="nav-menu" id="primary-menu">
+      {(config.nav as NavItem[]).map((item: NavItem) => (
+        <div class="nav-item">
+          <a href={resolveHref(item.href)}>{item.label}</a>
+          <div class="mega-panel">
+            {(item.items || []).map((panelItem: NavItem) => (
+              <a href={resolveHref(panelItem.href)}>{panelItem.label}</a>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {(config.utilityNav as NavItem[]).map((item: NavItem) => (
+        <a class="plain-link" href={resolveHref(item.href)}>{item.label}</a>
+      ))}
+    </div>
+
+    <div class="nav-actions">
+      <button class="icon-button" type="button" aria-label={config.searchLabel}>
+        <SearchIcon />
+      </button>
+      <a
+        class="language"
+        href={resolveHref(config.languageHref)}
+        hreflang={config.languageHrefLang}
+        lang={config.languageLang}
+      >
+        {config.languageLabel}
+      </a>
+    </div>
+  </nav>
+</header>

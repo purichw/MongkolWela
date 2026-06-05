@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const mainContent = "<main data-calendar-day-detail></main>";
+const extraScripts = ["/assets/js/thai-calendar-day.js"];
+---
+
+<BaseLayout
+  title="รายละเอียดวัน | ปฏิทินไทย มงคลเวลา"
+  description="รายละเอียดวันตามปฏิทินไทย จันทรคติ วันพระ ดิถี ฤกษ์ที่เกื้อหนุน ข้อควรหลีกเลี่ยง และแผนภาพวัน"
+  lang="th"
+  locale="th"
+  page="calendarDay"
+  bodyClass="calendar-day-page"
+  extraScripts={extraScripts}
+>
+  <Fragment set:html={mainContent} />
+</BaseLayout>
