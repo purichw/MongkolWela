@@ -6,7 +6,7 @@ const extraScripts = ["/assets/js/temple-directory.js"];
 
 <BaseLayout
   title="วัดทั่วประเทศไทย | มงคลเวลา"
-  description="ค้นหารายการวัดทั่วประเทศไทยจากไฟล์ทะเบียนวัด พร้อมตัวกรองชื่อวัด ประเภทวัด นิกาย จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา"
+  description="ค้นหารายการวัดทั่วประเทศไทยจากระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ พร้อมตัวกรองชื่อวัด ประเภทวัด นิกาย จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา"
   lang="th"
   locale="th"
   page="templesThailand"
@@ -22,7 +22,6 @@ const extraScripts = ["/assets/js/temple-directory.js"];
       </nav>
       <p class="section-kicker">ทะเบียนวัด</p>
       <h1>วัดทั่วประเทศไทย</h1>
-      <p>ค้นหารายการวัดจากไฟล์ข้อมูลที่แนบมา โดยแสดงเฉพาะคอลัมน์ A-M และเก็บสถานะวิสุงคามสีมาไว้สำหรับตัวกรอง</p>
     </section>
 
     <section class="temple-search-panel" aria-label="ค้นหาวัดทั่วประเทศไทย">
@@ -84,11 +83,25 @@ const extraScripts = ["/assets/js/temple-directory.js"];
           <p class="section-kicker">ผลการค้นหา</p>
           <h2 data-temple-count>กำลังโหลดข้อมูลวัด</h2>
         </div>
-        <p data-temple-source>ใช้ข้อมูลจากไฟล์ Report_Temple 2.numbers</p>
+        <p data-temple-source>แหล่งที่มา: ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ</p>
       </div>
 
       <div class="temple-table-wrap">
         <table class="temple-table">
+          <colgroup>
+            <col class="temple-col-order" />
+            <col class="temple-col-code" />
+            <col class="temple-col-name" />
+            <col class="temple-col-type" />
+            <col class="temple-col-sect" />
+            <col class="temple-col-register" />
+            <col class="temple-col-found-date" />
+            <col class="temple-col-wisung-date" />
+            <col class="temple-col-subdistrict" />
+            <col class="temple-col-district" />
+            <col class="temple-col-province" />
+            <col class="temple-col-postal" />
+          </colgroup>
           <thead data-temple-table-head></thead>
           <tbody data-temple-table-body>
             <tr>

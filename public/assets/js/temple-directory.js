@@ -6,11 +6,13 @@ const pageSize = 20;
 
 const labels = {
   all: "-- ทั้งหมด --",
+  chooseProvinceFirst: "-- เลือกจังหวัดก่อน --",
+  chooseDistrictFirst: "-- เลือกอำเภอก่อน --",
   loading: "กำลังโหลดข้อมูลวัด",
   loadError: "โหลดข้อมูลวัดไม่สำเร็จ",
   count: (shown, total) => `พบ ${shown.toLocaleString("th-TH")} จาก ${total.toLocaleString("th-TH")} วัด`,
   noResults: "ไม่พบวัดที่ตรงกับเงื่อนไขค้นหา",
-  source: (count) => `ใช้ข้อมูลจากไฟล์ Report_Temple 2.numbers จำนวน ${count.toLocaleString("th-TH")} รายการ`,
+  source: "แหล่งที่มา: ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ",
   previous: "ก่อนหน้า",
   next: "ถัดไป",
   pageStatus: (page, pages) => `หน้า ${page.toLocaleString("th-TH")} / ${pages.toLocaleString("th-TH")}`,
@@ -46,7 +48,7 @@ async function initializeTempleDirectory(rootElement) {
     populateStaticOptions(form, rows, t);
     updateAreaOptions(form, rows, t);
     updateView();
-    if (sourceNode) sourceNode.textContent = t.source(rows.length);
+    if (sourceNode) sourceNode.textContent = t.source;
   } catch (error) {
     console.error(error);
     countNode.textContent = t.loadError;
@@ -102,7 +104,7 @@ async function initializeTempleDirectory(rootElement) {
 function renderHead(tableHead, headers) {
   tableHead.innerHTML = `
     <tr>
-      ${columnIndexes.map((index) => `<th class="${numericColumns.has(index) ? "is-number" : ""}">${escapeHtml(headers[index] || "")}</th>`).join("")}
+      ${columnIndexes.map((index) => `<th class="${getColumnClass(index)}">${escapeHtml(headers[index] || "")}</th>`).join("")}
     </tr>
   `;
 }
@@ -118,7 +120,7 @@ function renderRows(tableBody, rows, page, headers, t) {
   tableBody.innerHTML = visibleRows.map((row) => `
     <tr>
       ${columnIndexes.map((index) => `
-        <td class="${numericColumns.has(index) ? "is-number" : ""}" data-label="${escapeHtml(headers[index] || "")}">
+        <td class="${getColumnClass(index)}" data-label="${escapeHtml(headers[index] || "")}">
           ${escapeHtml(row[index] || "-")}
         </td>
       `).join("")}
@@ -164,12 +166,28 @@ function updateAreaOptions(form, rows, t) {
   const districtSelect = form.querySelector("[data-temple-district]");
   const subdistrictSelect = form.querySelector("[data-temple-subdistrict]");
   const district = districtSelect.value;
-  const scopedRows = province ? rows.filter((row) => row[11] === province) : rows;
+  if (!province) {
+    fillOptions(districtSelect, [], t.chooseProvinceFirst, "");
+    fillOptions(subdistrictSelect, [], t.chooseDistrictFirst, "");
+    districtSelect.disabled = true;
+    subdistrictSelect.disabled = true;
+    return;
+  }
+
+  districtSelect.disabled = false;
+  const scopedRows = rows.filter((row) => row[11] === province);
   const districtOptions = unique(scopedRows, 10);
   fillOptions(districtSelect, districtOptions, t.all, districtOptions.includes(district) ? district : "");
 
   const activeDistrict = districtSelect.value;
-  const subdistrictRows = activeDistrict ? scopedRows.filter((row) => row[10] === activeDistrict) : scopedRows;
+  if (!activeDistrict) {
+    fillOptions(subdistrictSelect, [], t.chooseDistrictFirst, "");
+    subdistrictSelect.disabled = true;
+    return;
+  }
+
+  subdistrictSelect.disabled = false;
+  const subdistrictRows = scopedRows.filter((row) => row[10] === activeDistrict);
   const previousSubdistrict = subdistrictSelect.value;
   const subdistrictOptions = unique(subdistrictRows, 9);
   fillOptions(subdistrictSelect, subdistrictOptions, t.all, subdistrictOptions.includes(previousSubdistrict) ? previousSubdistrict : "");
@@ -206,6 +224,14 @@ function unique(rows, index) {
 function fillOptions(select, options, allLabel, selected = select.value) {
   select.innerHTML = `<option value="">${allLabel}</option>${options.map((option) => `<option value="${escapeHtml(option)}">${escapeHtml(option)}</option>`).join("")}`;
   select.value = selected;
+}
+
+function getColumnClass(index) {
+  return [
+    `temple-cell-${index}`,
+    numericColumns.has(index) ? "is-number" : "",
+    index === 2 ? "" : "is-nowrap",
+  ].filter(Boolean).join(" ");
 }
 
 function normalize(value) {

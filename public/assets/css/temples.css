@@ -36,13 +36,6 @@
   line-height: 1;
 }
 
-.temple-directory-head p:last-child {
-  max-width: 820px;
-  margin: 20px 0 0;
-  color: var(--ink-soft);
-  font-size: 1.04rem;
-}
-
 .temple-search-panel,
 .temple-results {
   background: rgba(255, 250, 240, 0.78);
@@ -90,6 +83,12 @@
 .temple-field select:focus {
   border-color: rgba(194, 141, 53, 0.72);
   box-shadow: 0 0 0 3px rgba(194, 141, 53, 0.16);
+}
+
+.temple-field select:disabled {
+  color: rgba(77, 56, 41, 0.44);
+  background: rgba(236, 226, 210, 0.62);
+  cursor: not-allowed;
 }
 
 .temple-actions {
@@ -166,10 +165,11 @@
 }
 
 .temple-table {
-  width: 100%;
-  min-width: 1180px;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   font-size: 0.92rem;
+  table-layout: fixed;
 }
 
 .temple-table th,
@@ -200,7 +200,55 @@
 .temple-table td.is-number,
 .temple-table th.is-number {
   text-align: center;
+}
+
+.temple-table .is-nowrap {
   white-space: nowrap;
+}
+
+.temple-col-order {
+  width: 72px;
+}
+
+.temple-col-code {
+  width: 156px;
+}
+
+.temple-col-name {
+  width: 190px;
+}
+
+.temple-col-type {
+  width: 132px;
+}
+
+.temple-col-sect {
+  width: 108px;
+}
+
+.temple-col-register {
+  width: 230px;
+}
+
+.temple-col-found-date {
+  width: 150px;
+}
+
+.temple-col-wisung-date {
+  width: 210px;
+}
+
+.temple-col-subdistrict,
+.temple-col-district {
+  width: 174px;
+}
+
+.temple-col-province {
+  width: 194px;
+}
+
+.temple-col-postal {
+  width: 128px;
 }
 
 .temple-empty {

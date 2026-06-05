@@ -1,0 +1,31 @@
+.section-kicker,
+.eyebrow {
+  line-height: 1.38;
+}
+
+.section-kicker + h1,
+.eyebrow + h1 {
+  margin-top: clamp(14px, 1.8vw, 24px);
+}
+
+.hero h1,
+.tarot-hero h1,
+.tarot-result-copy h1,
+.seamsi-hero h1,
+.life-graph-hero h1,
+.thai-astro-hero h1,
+.thai-calendar-hero h1,
+.calendar-day-hero h1,
+.calendar-summary h1,
+.temple-directory-head h1,
+.not-found-panel h1 {
+  line-height: 1.14;
+  text-wrap: balance;
+}
+
+@media (max-width: 720px) {
+  .section-kicker + h1,
+  .eyebrow + h1 {
+    margin-top: 12px;
+  }
+}
