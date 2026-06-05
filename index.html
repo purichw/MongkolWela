@@ -96,6 +96,20 @@
 
     <main>
       <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-carousel" data-carousel>
+          <div class="hero-slide is-active">
+            <img src="./assets/images/hero-jtha-98.jpg" alt="">
+          </div>
+          <div class="hero-slide">
+            <img src="./assets/images/hero-jtha-83.jpg" alt="">
+          </div>
+          <div class="hero-slide">
+            <img src="./assets/images/hero-jtha-80.jpg" alt="">
+          </div>
+          <div class="hero-slide">
+            <img src="./assets/images/hero-temple-red.jpg" alt="">
+          </div>
+        </div>
         <div class="hero-shade"></div>
         <div class="hero-content">
           <p class="eyebrow">ปฏิทินชีวิต • ฤกษ์งาม • คำพยากรณ์</p>
@@ -120,6 +134,20 @@
             <a href="#names">ตั้งชื่อมงคล</a>
             <a href="#rituals">บทสวดก่อนเดินทาง</a>
           </div>
+        </div>
+        <div class="hero-controls" aria-label="ภาพประกอบหน้าแรก">
+          <button class="hero-arrow" type="button" data-carousel-prev aria-label="ภาพก่อนหน้า">
+            <span aria-hidden="true">‹</span>
+          </button>
+          <div class="hero-dots" aria-label="เลือกภาพประกอบ">
+            <button class="is-active" type="button" data-carousel-dot aria-label="ภาพที่ 1" aria-pressed="true"></button>
+            <button type="button" data-carousel-dot aria-label="ภาพที่ 2" aria-pressed="false"></button>
+            <button type="button" data-carousel-dot aria-label="ภาพที่ 3" aria-pressed="false"></button>
+            <button type="button" data-carousel-dot aria-label="ภาพที่ 4" aria-pressed="false"></button>
+          </div>
+          <button class="hero-arrow" type="button" data-carousel-next aria-label="ภาพถัดไป">
+            <span aria-hidden="true">›</span>
+          </button>
         </div>
       </section>
 
@@ -297,7 +325,7 @@
         <a href="#">เครดิตรูปภาพ</a>
       </div>
       <p class="credits" lang="en">
-        Images: “Buddhist offerings” by Steve Jurvetson, CC BY 2.0;
+        Images: hero murals supplied by the project owner;
         “Burning incense coils in the Man Mo temple” by Aethelfirth, CC BY-SA 4.0.
       </p>
     </footer>

@@ -5,25 +5,53 @@
   min-height: min(760px, 78vh);
   padding: 96px 28px 78px;
   overflow: hidden;
-  background-image: url("../images/thai-offerings-hero.jpg");
-  background-position: center 44%;
-  background-size: cover;
 }
 
 .hero::after {
   position: absolute;
+  z-index: 1;
   inset: auto 0 0;
   height: 42%;
   background: linear-gradient(180deg, transparent, rgba(251, 246, 235, 0.96));
   content: "";
+  pointer-events: none;
+}
+
+.hero-carousel,
+.hero-slide {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-carousel {
+  z-index: 0;
+  background: var(--jade-dark);
+}
+
+.hero-slide {
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+}
+
+.hero-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .hero-shade {
   position: absolute;
+  z-index: 1;
   inset: 0;
   background:
     linear-gradient(90deg, rgba(30, 24, 21, 0.82) 0%, rgba(46, 30, 21, 0.66) 43%, rgba(46, 30, 21, 0.2) 72%),
     radial-gradient(circle at 24% 32%, rgba(194, 141, 53, 0.28), transparent 36%);
+  pointer-events: none;
 }
 
 .hero-content {
@@ -93,6 +121,61 @@
   border: 1px solid rgba(255, 244, 210, 0.35);
   border-radius: 999px;
   background: rgba(45, 30, 23, 0.36);
+}
+
+.hero-controls {
+  position: absolute;
+  right: max(28px, calc((100vw - var(--container)) / 2 + 28px));
+  bottom: 58px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  background: rgba(30, 24, 21, 0.36);
+  border: 1px solid rgba(255, 244, 210, 0.28);
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+}
+
+.hero-arrow,
+.hero-dots button {
+  display: grid;
+  place-items: center;
+  color: #fff7e6;
+  background: rgba(255, 250, 240, 0.12);
+  border: 1px solid rgba(255, 244, 210, 0.28);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.hero-arrow {
+  width: 36px;
+  height: 36px;
+  font-size: 1.65rem;
+  line-height: 1;
+}
+
+.hero-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.hero-dots button {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+}
+
+.hero-arrow:hover,
+.hero-arrow:focus-visible,
+.hero-dots button:hover,
+.hero-dots button:focus-visible,
+.hero-dots button.is-active {
+  color: var(--ink);
+  background: var(--gold-soft);
+  outline: 0;
 }
 
 .today-panel {
