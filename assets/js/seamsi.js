@@ -1,4 +1,4 @@
-import { seamsiCategories, seamsiFortunes } from "./seamsi-data.js?v=20260605-21";
+import { seamsiCategories, seamsiFortunes } from "./seamsi-data.js?v=20260605-22";
 
 const selectors = {
   form: "[data-seamsi-form]",
