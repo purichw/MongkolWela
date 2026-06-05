@@ -1,0 +1,18 @@
+:root {
+  --ink: #251d1a;
+  --ink-soft: #5d514a;
+  --paper: #fbf6eb;
+  --paper-deep: #f1e3c9;
+  --lacquer: #8e2d24;
+  --lacquer-dark: #591d19;
+  --jade: #276a52;
+  --jade-dark: #123d34;
+  --gold: #c28d35;
+  --gold-soft: #ead3a0;
+  --line: rgba(77, 56, 41, 0.18);
+  --shadow: 0 18px 50px rgba(39, 29, 20, 0.16);
+  --container: 1220px;
+  --radius: 8px;
+  --font-thai: "Noto Sans Thai", system-ui, sans-serif;
+  --font-english: Helvetica, Arial, sans-serif;
+}

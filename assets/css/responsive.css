@@ -1,0 +1,246 @@
+@media (min-width: 721px) and (max-width: 1080px) {
+  .navbar {
+    gap: 14px;
+    min-height: 74px;
+    padding: 0 20px;
+  }
+
+  .brand {
+    min-width: 150px;
+  }
+
+  .nav-menu {
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-menu::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-item > a,
+  .plain-link {
+    padding: 0 10px;
+    font-size: 0.9rem;
+  }
+
+  .nav-actions {
+    gap: 8px;
+  }
+
+  .hero {
+    min-height: 680px;
+    padding: 96px 36px 82px;
+    background-position: center 42%;
+  }
+
+  .hero-content {
+    width: min(680px, 88%);
+    margin-left: max(36px, calc((100vw - var(--container)) / 2));
+  }
+
+  .today-panel {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .today-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .category-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .category-card {
+    min-height: 236px;
+    padding: 20px;
+  }
+
+  .feature-band {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+    gap: 28px;
+    padding: 42px;
+  }
+
+  .tool-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tradition-section {
+    grid-template-columns: 40% 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
+    gap: 2px 12px;
+    min-height: auto;
+    padding: 7px 14px;
+    overflow: visible;
+    text-align: left;
+    white-space: normal;
+    font-size: 0.76rem;
+    line-height: 1.35;
+  }
+
+  .topbar span {
+    grid-column: 1 / -1;
+    order: 2;
+    color: rgba(247, 234, 210, 0.88);
+  }
+
+  .topbar a:last-child {
+    text-align: right;
+  }
+
+  .navbar {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    min-height: 68px;
+    padding: 0 18px;
+  }
+
+  .brand {
+    min-width: auto;
+  }
+
+  .brand small,
+  .nav-actions {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: grid;
+  }
+
+  .nav-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 14px;
+    right: 14px;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+    background: #fffaf0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-height: calc(100vh - 140px);
+    overflow: auto;
+  }
+
+  .nav-menu.is-open {
+    display: flex;
+  }
+
+  .nav-item > a,
+  .plain-link {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .mega-panel {
+    position: static;
+    width: 100%;
+    margin: 0 0 8px;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .hero {
+    min-height: 74vh;
+    padding: 72px 20px;
+    background-position: 62% center;
+  }
+
+  .hero-shade {
+    background:
+      linear-gradient(90deg, rgba(30, 24, 21, 0.88), rgba(46, 30, 21, 0.58)),
+      radial-gradient(circle at 20% 35%, rgba(194, 141, 53, 0.24), transparent 42%);
+  }
+
+  .hero-search {
+    grid-template-columns: auto 1fr;
+    padding: 10px 14px;
+  }
+
+  .hero-search button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .today-panel,
+  .section-shell,
+  .feature-band,
+  .tradition-section,
+  .learn-strip,
+  .site-footer {
+    width: min(100% - 28px, var(--container));
+  }
+
+  .today-panel,
+  .feature-band,
+  .tradition-section,
+  .site-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .today-grid,
+  .category-grid,
+  .tool-grid,
+  .calendar-preview dl {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .category-card,
+  .tool-card {
+    min-height: auto;
+  }
+
+  .feature-band {
+    padding: 28px 20px;
+  }
+
+  .tradition-section {
+    gap: 24px;
+  }
+
+  .footer-links {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 380px) {
+  .topbar {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar a:last-child {
+    text-align: left;
+  }
+
+  .hero h1 {
+    font-size: 3.45rem;
+  }
+
+  .hero-copy {
+    font-size: 0.96rem;
+  }
+
+  .today-grid strong {
+    font-size: 1.25rem;
+  }
+}

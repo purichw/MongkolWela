@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>มงคลเวลา | ดูดวง ฤกษ์ ปฏิทินไทย และนามมงคล</title>
+    <meta
+      name="description"
+      content="ต้นแบบหน้าแรกสำหรับแพลตฟอร์มดูดวง ฤกษ์ ปฏิทินไทย ไพ่ยิปซี นามศาสตร์ เลขศาสตร์ และบทสวดมนต์ รองรับภาษาไทยและอังกฤษในอนาคต"
+    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="topbar">
+        <a href="#today">วันนี้ ขึ้น ๕ ค่ำ เดือน ๗</a>
+        <span>วันศุกร์ที่ 5 มิถุนายน 2569</span>
+        <a href="#consult">ปรึกษาครูโหร</a>
+      </div>
+
+      <nav class="navbar" aria-label="เมนูหลัก">
+        <a class="brand" href="#" aria-label="มงคลเวลา หน้าแรก">
+          <span class="brand-mark" aria-hidden="true">๙</span>
+          <span>
+            <strong>มงคลเวลา</strong>
+            <small lang="en">Monkol Wela</small>
+          </span>
+        </a>
+
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-menu">
+          <span aria-hidden="true"></span>
+          <span class="sr-only">เปิดเมนู</span>
+        </button>
+
+        <div class="nav-menu" id="primary-menu">
+          <div class="nav-item">
+            <a href="#horoscope">ดูดวง</a>
+            <div class="mega-panel">
+              <a href="#horoscope">กราฟชีวิต</a>
+              <a href="#horoscope">เลข ๗ ตัว</a>
+              <a href="#horoscope">โหราศาสตร์ไทย</a>
+              <a href="#horoscope">ไพ่ยิปซี</a>
+              <a href="#horoscope">สมพงษ์คู่รัก</a>
+            </div>
+          </div>
+          <div class="nav-item">
+            <a href="#calendar">ฤกษ์และปฏิทิน</a>
+            <div class="mega-panel">
+              <a href="#calendar">ปฏิทินจันทรคติ</a>
+              <a href="#calendar">ฤกษ์ออกรถ</a>
+              <a href="#calendar">ฤกษ์แต่งงาน</a>
+              <a href="#calendar">วันพระ</a>
+              <a href="#calendar">ปฏิทินจีน</a>
+            </div>
+          </div>
+          <div class="nav-item">
+            <a href="#names">ชื่อและตัวเลข</a>
+            <div class="mega-panel">
+              <a href="#names">ตั้งชื่อลูก</a>
+              <a href="#names">วิเคราะห์ชื่อ</a>
+              <a href="#names">เบอร์โทรศัพท์</a>
+              <a href="#names">ทะเบียนรถ</a>
+              <a href="#names">เลขประจำตัว</a>
+            </div>
+          </div>
+          <div class="nav-item">
+            <a href="#rituals">บทสวดและพิธี</a>
+            <div class="mega-panel">
+              <a href="#rituals">บทสวดมนต์</a>
+              <a href="#rituals">คาถาเมตตา</a>
+              <a href="#rituals">สะเดาะเคราะห์</a>
+              <a href="#rituals">สีมงคล</a>
+              <a href="#rituals">ปีชง</a>
+            </div>
+          </div>
+          <a class="plain-link" href="#learn">ความรู้</a>
+          <a class="plain-link" href="#consult">ปรึกษาหมอดู</a>
+        </div>
+
+        <div class="nav-actions">
+          <button class="icon-button" type="button" aria-label="ค้นหา">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
+            </svg>
+          </button>
+          <a class="language" href="#" hreflang="en" lang="en">EN</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-shade"></div>
+        <div class="hero-content">
+          <p class="eyebrow">ปฏิทินชีวิต • ฤกษ์งาม • คำพยากรณ์</p>
+          <h1 id="hero-title">มงคลเวลา</h1>
+          <p class="hero-copy">
+            ศูนย์รวมดูดวง ปฏิทินไทย นามมงคล เลขศาสตร์ ไพ่ยิปซี และบทสวด
+            สำหรับการตัดสินใจที่ต้องการทั้งเหตุผล จังหวะเวลา และความเป็นสิริมงคล
+          </p>
+
+          <form class="hero-search" action="#" role="search">
+            <label class="sr-only" for="site-search">ค้นหา</label>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
+            </svg>
+            <input id="site-search" name="q" type="search" placeholder="ค้นหา: ฤกษ์แต่งงาน, ตั้งชื่อ, ไพ่ยิปซี, ปฏิทินจีน">
+            <button type="submit">ค้นหา</button>
+          </form>
+
+          <div class="hero-links" aria-label="ทางลัด">
+            <a href="#today">ดวงวันนี้</a>
+            <a href="#calendar">ฤกษ์ประจำเดือน</a>
+            <a href="#names">ตั้งชื่อมงคล</a>
+            <a href="#rituals">บทสวดก่อนเดินทาง</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="today-panel" id="today" aria-labelledby="today-title">
+        <div>
+          <p class="section-kicker">วันนี้</p>
+          <h2 id="today-title">จังหวะมงคลประจำวัน</h2>
+        </div>
+        <div class="today-grid">
+          <article>
+            <span>จันทรคติ</span>
+            <strong>ขึ้น ๕ ค่ำ</strong>
+            <p>เดือน ๗ ปีมะเมีย</p>
+          </article>
+          <article>
+            <span>สีส่งเสริม</span>
+            <strong>เขียวหยก</strong>
+            <p>งาน เจรจา เริ่มต้นสิ่งใหม่</p>
+          </article>
+          <article>
+            <span>ควรตั้งใจ</span>
+            <strong>สวดเมตตา</strong>
+            <p>ก่อนพบผู้ใหญ่หรือพูดคุยเรื่องสำคัญ</p>
+          </article>
+          <article>
+            <span>ฤกษ์เบื้องต้น</span>
+            <strong>09:19 - 10:36</strong>
+            <p>เหมาะกับงานเอกสารและคำขอ</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-shell" id="horoscope">
+        <div class="section-heading">
+          <p class="section-kicker">หมวดหลัก</p>
+          <h2>เลือกตามสิ่งที่อยากรู้</h2>
+        </div>
+
+        <div class="category-grid">
+          <a class="category-card" href="#">
+            <span class="category-symbol">☉</span>
+            <strong>ดูดวงและโหราศาสตร์</strong>
+            <p>กราฟชีวิต เลข ๗ ตัว โหราศาสตร์ไทย ดวงจร ความรัก การงาน การเงิน</p>
+          </a>
+          <a class="category-card" href="#calendar">
+            <span class="category-symbol">☾</span>
+            <strong>ฤกษ์และปฏิทิน</strong>
+            <p>ปฏิทินไทย วันพระ ฤกษ์ออกรถ ฤกษ์แต่งงาน วันดี วันห้าม</p>
+          </a>
+          <a class="category-card" href="#names">
+            <span class="category-symbol">๙</span>
+            <strong>ชื่อและตัวเลข</strong>
+            <p>ตั้งชื่อ วิเคราะห์ชื่อ เบอร์โทรศัพท์ ทะเบียนรถ เลขศาสตร์ชีวิต</p>
+          </a>
+          <a class="category-card" href="#">
+            <span class="category-symbol">✦</span>
+            <strong>เสี่ยงทาย</strong>
+            <p>ไพ่ยิปซี เซียมซี ลูกเต๋า ทำนายฝัน เลขนำโชค</p>
+          </a>
+          <a class="category-card" href="#rituals">
+            <span class="category-symbol">✺</span>
+            <strong>บทสวดและพิธี</strong>
+            <p>บทสวดมนต์ คาถาเมตตา สะเดาะเคราะห์ บูชาพระประจำวันเกิด</p>
+          </a>
+          <a class="category-card" href="#learn">
+            <span class="category-symbol">北</span>
+            <strong>จีนและศาสตร์ตะวันออก</strong>
+            <p>ปฏิทินจีน ปีชง นักษัตร ธาตุ ฮวงจุ้ย และเทศกาลสำคัญ</p>
+          </a>
+        </div>
+      </section>
+
+      <section class="feature-band" id="calendar" aria-labelledby="calendar-title">
+        <div class="feature-copy">
+          <p class="section-kicker">ปฏิทินมงคล</p>
+          <h2 id="calendar-title">เริ่มจากวัน แล้วค่อยลงลึกถึงดวง</h2>
+          <p>
+            ตรวจวันไทย วันพระ ดิถี ฤกษ์ล่าง ฤกษ์บน และหมายเหตุสำคัญ
+            ก่อนเลือกช่วงเวลาสำหรับงานมงคล การเดินทาง การเจรจา หรือการเริ่มต้นเรื่องใหม่
+          </p>
+          <div class="feature-actions">
+            <a class="primary-action" href="#">เปิดปฏิทินไทย</a>
+            <a class="secondary-action" href="#">ดูฤกษ์ประจำเดือน</a>
+          </div>
+        </div>
+        <div class="calendar-preview" aria-label="ตัวอย่างปฏิทิน">
+          <div class="calendar-title">
+            <span>มิถุนายน 2569</span>
+            <strong>ศุกร์</strong>
+          </div>
+          <div class="calendar-days">
+            <span>1</span><span>2</span><span>3</span><span>4</span><b>5</b><span>6</span><span>7</span>
+            <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+            <span>15</span><span>16</span><i>17</i><span>18</span><span>19</span><span>20</span><span>21</span>
+          </div>
+          <dl>
+            <div><dt>วันพระ</dt><dd>17 มิ.ย.</dd></div>
+            <div><dt>ฤกษ์เด่น</dt><dd>งานเจรจา</dd></div>
+            <div><dt>หลีกเลี่ยง</dt><dd>ลงนามเร่งด่วน</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="section-shell" id="names">
+        <div class="section-heading">
+          <p class="section-kicker">เครื่องมือยอดนิยม</p>
+          <h2>งานที่ผู้ใช้กลับมาใช้ซ้ำ</h2>
+        </div>
+
+        <div class="tool-grid">
+          <article class="tool-card">
+            <span>01</span>
+            <h3>ตั้งชื่อมงคล</h3>
+            <p>ค้นหาชื่อจากวันเกิด เพศ นามสกุล ทักษา เลขศาสตร์ และความหมาย</p>
+            <a href="#">เริ่มค้นหา</a>
+          </article>
+          <article class="tool-card">
+            <span>02</span>
+            <h3>ดูไพ่ประจำวัน</h3>
+            <p>เลือกไพ่หนึ่งใบเพื่ออ่านคำแนะนำด้านใจ งาน เงิน และความสัมพันธ์</p>
+            <a href="#">เลือกไพ่</a>
+          </article>
+          <article class="tool-card">
+            <span>03</span>
+            <h3>วิเคราะห์เบอร์</h3>
+            <p>อ่านผลรวม คู่เลขเด่น และความเหมาะสมกับเจ้าของเบอร์</p>
+            <a href="#">ตรวจเลข</a>
+          </article>
+          <article class="tool-card">
+            <span>04</span>
+            <h3>ทำนายฝัน</h3>
+            <p>ค้นหาความหมาย ลางบอกเหตุ และเลขนำโชคจากความฝัน</p>
+            <a href="#">ค้นฝัน</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="tradition-section" id="rituals" aria-labelledby="rituals-title">
+        <img src="./assets/images/chinese-incense-card.jpg" alt="ธูปวงแขวนในวัดจีน">
+        <div>
+          <p class="section-kicker">ประเพณีและพิธี</p>
+          <h2 id="rituals-title">พื้นที่สำหรับบทสวด เคล็ดลาง และวัฒนธรรม</h2>
+          <p>
+            รวมบทสวด คาถา สีมงคล ปีชง เครื่องบูชา และธรรมเนียมไทยจีน
+            พร้อมคำอธิบายที่เคารพครูบาอาจารย์และเหมาะกับการนำไปปฏิบัติในชีวิตประจำวัน
+          </p>
+          <div class="ritual-list">
+            <a href="#">บทสวดทำวัตร</a>
+            <a href="#">คาถาเมตตามหานิยม</a>
+            <a href="#">สะเดาะเคราะห์ด้วยตนเอง</a>
+            <a href="#">ปีชงและปฏิทินจีน</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="learn-strip" id="learn">
+        <p>คลังความรู้</p>
+        <a href="#">ลัคนาคืออะไร</a>
+        <a href="#">การนับวันทางโหราศาสตร์</a>
+        <a href="#">ฤกษ์บน ฤกษ์ล่าง</a>
+        <a href="#">ทักษาและกาลกิณี</a>
+        <a href="#">ปฏิทินจีนเบื้องต้น</a>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="consult">
+      <div>
+        <strong>มงคลเวลา</strong>
+        <p>ดูดวง ฤกษ์ ปฏิทินมงคล บทสวด และความรู้โหราศาสตร์ไทยจีน</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">TH</a>
+        <a href="#" lang="en">EN</a>
+        <a href="#">ติดต่อครูโหร</a>
+        <a href="#">เครดิตรูปภาพ</a>
+      </div>
+      <p class="credits" lang="en">
+        Images: “Buddhist offerings” by Steve Jurvetson, CC BY 2.0;
+        “Burning incense coils in the Man Mo temple” by Aethelfirth, CC BY-SA 4.0.
+      </p>
+    </footer>
+
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>
