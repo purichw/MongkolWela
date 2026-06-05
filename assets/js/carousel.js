@@ -15,8 +15,6 @@ export function initHeroCarousel() {
   const hero = carousel.closest(".hero");
   const slides = Array.from(carousel.querySelectorAll(selectors.slide));
   const dots = Array.from(document.querySelectorAll(selectors.dot));
-  const previous = document.querySelector(selectors.previous);
-  const next = document.querySelector(selectors.next);
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (slides.length < 2) return;
@@ -39,6 +37,8 @@ export function initHeroCarousel() {
       dot.classList.toggle("is-active", isActive);
       dot.setAttribute("aria-pressed", String(isActive));
     });
+
+    hero?.style.setProperty("--active-slide", String(activeIndex + 1));
   }
 
   function moveBy(offset) {
@@ -64,14 +64,31 @@ export function initHeroCarousel() {
     start();
   }
 
-  previous?.addEventListener("click", () => moveBy(-1));
-  next?.addEventListener("click", () => moveBy(1));
+  document.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    if (!target || !hero?.contains(target)) return;
 
-  dots.forEach((dot, dotIndex) => {
-    dot.addEventListener("click", () => {
-      setActiveSlide(dotIndex);
-      restart();
-    });
+    const previousTrigger = target.closest(selectors.previous);
+    const nextTrigger = target.closest(selectors.next);
+    const dotTrigger = target.closest(selectors.dot);
+
+    if (previousTrigger) {
+      moveBy(-1);
+      return;
+    }
+
+    if (nextTrigger) {
+      moveBy(1);
+      return;
+    }
+
+    if (dotTrigger) {
+      const dotIndex = dots.indexOf(dotTrigger);
+      if (dotIndex >= 0) {
+        setActiveSlide(dotIndex);
+        restart();
+      }
+    }
   });
 
   hero?.addEventListener("keydown", (event) => {
