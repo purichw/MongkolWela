@@ -6,8 +6,8 @@ import LoadingScreen from "../components/LoadingScreen.astro";
 interface Props {
   title: string;
   description?: string;
-  lang?: "th" | "en";
-  locale?: "th" | "en";
+  lang?: "th";
+  locale?: "th";
   page?: string;
   bodyClass?: string;
   extraScripts?: string[];
@@ -23,7 +23,7 @@ const {
   extraScripts = [],
 } = Astro.props as Props;
 
-const assetVersion = "20260606-10";
+const assetVersion = "20260606-12";
 const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
 ---
 

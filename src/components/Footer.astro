@@ -1,11 +1,9 @@
 ---
 import { siteConfig } from "../config/site.js";
 
-type Locale = keyof typeof siteConfig;
 type FooterLink = {
   label: string;
   href: string;
-  lang?: string;
 };
 type PageConfig = {
   footerLinks?: FooterLink[];
@@ -13,7 +11,7 @@ type PageConfig = {
 };
 
 const { locale = "th", page = "home" } = Astro.props as {
-  locale?: Locale;
+  locale?: "th";
   page?: string;
 };
 const config = siteConfig[locale] || siteConfig.th;
@@ -29,8 +27,6 @@ function resolveHref(href = "") {
 }
 
 const footerLinks = pageConfig.footerLinks || [
-  { label: "TH", href: "", lang: "th" },
-  { label: "EN", href: "en/", lang: "en" },
   { label: config.footer.contact, href: "#consult" },
   {
     label: pageConfig.footerVariant === "home" ? config.footer.credits : config.footer.rituals,
@@ -46,10 +42,10 @@ const footerLinks = pageConfig.footerLinks || [
   </div>
   <div class="footer-links">
     {footerLinks.map((item: FooterLink) => (
-      <a href={resolveHref(item.href)} lang={item.lang}>{item.label}</a>
+      <a href={resolveHref(item.href)}>{item.label}</a>
     ))}
   </div>
   {pageConfig.footerVariant === "home" && (
-    <p class="credits" lang="en">{config.footer.imageCredits}</p>
+    <p class="credits">{config.footer.imageCredits}</p>
   )}
 </footer>

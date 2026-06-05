@@ -1,37 +1,20 @@
 import { getCardArtClass, getTarotCardById } from "./tarot-data.js?v=20260605-2";
 
-const isEnglish = document.documentElement.lang === "en" || location.pathname.startsWith("/en/");
-const t = isEnglish
-  ? {
-      fallbackTitle: "No card selected for this reading",
-      fallbackCopy: "Go back and choose one card to open your daily tarot guidance.",
-      kicker: "Daily Tarot Reading",
-      theme: "Theme",
-      interpretation: "Interpretation",
-      advice: "Advice",
-      caution: "Caution",
-      color: "Auspicious color",
-      time: "Auspicious time",
-      mantra: "Prayer / intention",
-      drawAgain: "Draw again",
-      home: "Back to home",
-      noCard: "Go choose a card",
-    }
-  : {
-      fallbackTitle: "ยังไม่มีไพ่สำหรับคำทำนาย",
-      fallbackCopy: "กลับไปเลือกไพ่ 1 ใบก่อน เพื่อเปิดคำทำนายรายวันของคุณ",
-      kicker: "คำทำนายไพ่ยิปซีรายวัน",
-      theme: "ธีม",
-      interpretation: "คำแปลความ",
-      advice: "คำแนะนำ",
-      caution: "ข้อควรระวัง",
-      color: "สีมงคล",
-      time: "เวลามงคล",
-      mantra: "มนต์ภาวนา / คำอธิษฐาน",
-      drawAgain: "จับไพ่ใหม่",
-      home: "กลับหน้าหลัก",
-      noCard: "กลับไปเลือกไพ่",
-    };
+const t = {
+  fallbackTitle: "ยังไม่มีไพ่สำหรับคำทำนาย",
+  fallbackCopy: "กลับไปเลือกไพ่ 1 ใบก่อน เพื่อเปิดคำทำนายรายวันของคุณ",
+  kicker: "คำทำนายไพ่ยิปซีรายวัน",
+  theme: "ธีม",
+  interpretation: "คำแปลความ",
+  advice: "คำแนะนำ",
+  caution: "ข้อควรระวัง",
+  color: "สีมงคล",
+  time: "เวลามงคล",
+  mantra: "มนต์ภาวนา / คำอธิษฐาน",
+  drawAgain: "จับไพ่ใหม่",
+  home: "กลับหน้าหลัก",
+  noCard: "กลับไปเลือกไพ่",
+};
 
 initTarotResult();
 
@@ -55,7 +38,7 @@ function initTarotResult() {
     </div>
     <div class="tarot-result-copy">
       <p class="section-kicker">${t.kicker}</p>
-      <h1>${isEnglish ? card.name : card.thName}</h1>
+      <h1>${card.thName}</h1>
       <p class="tarot-result-name">${card.name}</p>
       <dl class="tarot-reading-list">
         <div>
@@ -91,7 +74,7 @@ function initTarotResult() {
       </div>
       <div class="tarot-result-actions">
         <a class="primary-action" href="../">${t.drawAgain}</a>
-        <a class="secondary-action" href="${isEnglish ? "/en/" : "/"}">${t.home}</a>
+        <a class="secondary-action" href="/">${t.home}</a>
       </div>
     </div>
   `;

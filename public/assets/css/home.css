@@ -96,11 +96,6 @@
   text-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
-html[lang="en"] .hero h1 {
-  font-size: clamp(3.6rem, 8vw, 7rem);
-  line-height: 0.98;
-}
-
 .hero-copy {
   max-width: 650px;
   margin: 24px 0 28px;

@@ -5,28 +5,15 @@ const numericColumns = new Set([0, 1, 6, 8, 12]);
 const pageSize = 20;
 
 const labels = {
-  th: {
-    all: "-- ทั้งหมด --",
-    loading: "กำลังโหลดข้อมูลวัด",
-    loadError: "โหลดข้อมูลวัดไม่สำเร็จ",
-    count: (shown, total) => `พบ ${shown.toLocaleString("th-TH")} จาก ${total.toLocaleString("th-TH")} วัด`,
-    noResults: "ไม่พบวัดที่ตรงกับเงื่อนไขค้นหา",
-    source: (count) => `ใช้ข้อมูลจากไฟล์ Report_Temple 2.numbers จำนวน ${count.toLocaleString("th-TH")} รายการ`,
-    previous: "ก่อนหน้า",
-    next: "ถัดไป",
-    pageStatus: (page, pages) => `หน้า ${page.toLocaleString("th-TH")} / ${pages.toLocaleString("th-TH")}`,
-  },
-  en: {
-    all: "-- All --",
-    loading: "Loading temple data",
-    loadError: "Could not load temple data",
-    count: (shown, total) => `${shown.toLocaleString("en-US")} of ${total.toLocaleString("en-US")} temples`,
-    noResults: "No temples match these filters",
-    source: (count) => `Data source: Report_Temple 2.numbers, ${count.toLocaleString("en-US")} records`,
-    previous: "Previous",
-    next: "Next",
-    pageStatus: (page, pages) => `Page ${page.toLocaleString("en-US")} / ${pages.toLocaleString("en-US")}`,
-  },
+  all: "-- ทั้งหมด --",
+  loading: "กำลังโหลดข้อมูลวัด",
+  loadError: "โหลดข้อมูลวัดไม่สำเร็จ",
+  count: (shown, total) => `พบ ${shown.toLocaleString("th-TH")} จาก ${total.toLocaleString("th-TH")} วัด`,
+  noResults: "ไม่พบวัดที่ตรงกับเงื่อนไขค้นหา",
+  source: (count) => `ใช้ข้อมูลจากไฟล์ Report_Temple 2.numbers จำนวน ${count.toLocaleString("th-TH")} รายการ`,
+  previous: "ก่อนหน้า",
+  next: "ถัดไป",
+  pageStatus: (page, pages) => `หน้า ${page.toLocaleString("th-TH")} / ${pages.toLocaleString("th-TH")}`,
 };
 
 if (root) {
@@ -34,8 +21,7 @@ if (root) {
 }
 
 async function initializeTempleDirectory(rootElement) {
-  const locale = rootElement.dataset.locale === "en" ? "en" : "th";
-  const t = labels[locale];
+  const t = labels;
   const form = rootElement.querySelector("[data-temple-form]");
   const clearButton = rootElement.querySelector("[data-temple-clear]");
   const countNode = rootElement.querySelector("[data-temple-count]");

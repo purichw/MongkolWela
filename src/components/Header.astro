@@ -4,7 +4,6 @@ import BrandMark from "./icons/BrandMark.astro";
 import MenuIcon from "./icons/MenuIcon.astro";
 import SearchIcon from "./icons/SearchIcon.astro";
 
-type Locale = keyof typeof siteConfig;
 type NavItem = {
   label: string;
   href: string;
@@ -16,18 +15,12 @@ type TopbarItem = {
 };
 
 const { locale = "th", page = "home" } = Astro.props as {
-  locale?: Locale;
+  locale?: "th";
   page?: string;
 };
 const config = siteConfig[locale] || siteConfig.th;
 const pages = config.pages as Record<string, { topbar?: TopbarItem[]; footerVariant?: string }>;
 const pageConfig = pages[page] || pages.home;
-const currentPath = Astro.url.pathname;
-const alternateHref = locale === "en"
-  ? currentPath.replace(/^\/en(?=\/|$)/, "") || "/"
-  : currentPath === "/"
-    ? "/en/"
-    : `/en${currentPath}`;
 
 function resolveHref(href = "") {
   if (!href) return "/";
@@ -54,9 +47,7 @@ function resolveHref(href = "") {
       <BrandMark />
       <span>
         <strong>{config.brandName}</strong>
-        <small lang={/^[A-Za-z\s]+$/.test(config.brandSubtitle) ? "en" : undefined}>
-          {config.brandSubtitle}
-        </small>
+        <small>{config.brandSubtitle}</small>
       </span>
     </a>
 
@@ -86,14 +77,6 @@ function resolveHref(href = "") {
       <button class="icon-button" type="button" aria-label={config.searchLabel}>
         <SearchIcon />
       </button>
-      <a
-        class="language"
-        href={alternateHref}
-        hreflang={config.languageHrefLang}
-        lang={config.languageLang}
-      >
-        {config.languageLabel}
-      </a>
     </div>
   </nav>
 </header>

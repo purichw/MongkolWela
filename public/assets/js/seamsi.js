@@ -13,53 +13,25 @@ const selectors = {
 
 let activeFortune;
 let isShaking = false;
-const isEnglish = document.documentElement.lang === "en" || location.pathname.startsWith("/en/");
-const t = isEnglish
-  ? {
-      categories: {
-        overview: "Life overview",
-        work: "Work",
-        money: "Money",
-        love: "Love",
-        health: "Mind and body",
-        luck: "Luck and opportunity",
-      },
-      ready: "Set your intention, choose a topic, then shake the cup.",
-      shaking: "Shaking the fortune sticks. Keep your mind calm...",
-      received: (fortune, category) => `You drew fortune slip ${fortune.number} for ${category}`,
-      emptyLabel: "Kau chim",
-      emptyTitle: "No slip drawn yet",
-      emptyCopy: "After you shake the cup, the fortune slip and reading will appear here.",
-      slip: "Slip",
-      topic: (category) => category,
-      question: "Question",
-      reading: "Reading",
-      advice: "Advice",
-      caution: "Caution",
-      blessing: "Auspicious note",
-      reset: "Draw again",
-      consult: "Consult an astrologer",
-      personalize: (advice, category) => `${advice} For ${category}, keep the intention calm and avoid repeating the question only to get the answer you prefer.`,
-    }
-  : {
-      categories: Object.fromEntries(seamsiCategories.map((category) => [category.id, category.label])),
-      ready: "ตั้งจิต เลือกเรื่องที่ถาม แล้วกดกระบอกเซียมซี",
-      shaking: "กำลังเขย่าเซียมซี โปรดตั้งจิตให้สงบ...",
-      received: (fortune, category) => `ได้ใบเซียมซีที่ ${fortune.number} เรื่อง${category}`,
-      emptyLabel: "เซียมซี",
-      emptyTitle: "ยังไม่ได้เสี่ยงทาย",
-      emptyCopy: "เมื่อเขย่ากระบอกแล้ว ใบเซียมซีและคำทำนายจะแสดงตรงนี้",
-      slip: "ใบที่",
-      topic: (category) => `เรื่อง${category}`,
-      question: "คำถาม",
-      reading: "คำทำนาย",
-      advice: "คำแนะนำ",
-      caution: "ข้อควรระวัง",
-      blessing: "มงคลประจำใบ",
-      reset: "เสี่ยงใหม่",
-      consult: "ปรึกษาครูโหร",
-      personalize: (advice, category) => `${advice} สำหรับเรื่อง${category} ให้ยึดเจตนาที่สงบและไม่ถามซ้ำเพียงเพื่อเอาคำตอบที่ถูกใจ`,
-    };
+const t = {
+  categories: Object.fromEntries(seamsiCategories.map((category) => [category.id, category.label])),
+  ready: "ตั้งจิต เลือกเรื่องที่ถาม แล้วกดกระบอกเซียมซี",
+  shaking: "กำลังเขย่าเซียมซี โปรดตั้งจิตให้สงบ...",
+  received: (fortune, category) => `ได้ใบเซียมซีที่ ${fortune.number} เรื่อง${category}`,
+  emptyLabel: "เซียมซี",
+  emptyTitle: "ยังไม่ได้เสี่ยงทาย",
+  emptyCopy: "เมื่อเขย่ากระบอกแล้ว ใบเซียมซีและคำทำนายจะแสดงตรงนี้",
+  slip: "ใบที่",
+  topic: (category) => `เรื่อง${category}`,
+  question: "คำถาม",
+  reading: "คำทำนาย",
+  advice: "คำแนะนำ",
+  caution: "ข้อควรระวัง",
+  blessing: "มงคลประจำใบ",
+  reset: "เสี่ยงใหม่",
+  consult: "ปรึกษาครูโหร",
+  personalize: (advice, category) => `${advice} สำหรับเรื่อง${category} ให้ยึดเจตนาที่สงบและไม่ถามซ้ำเพียงเพื่อเอาคำตอบที่ถูกใจ`,
+};
 
 initSeamsi();
 
@@ -179,7 +151,7 @@ function renderFortune(result, fortune, category, question) {
         </dl>
         <div class="seamsi-result-actions">
           <button class="secondary-action" type="button" data-seamsi-reset>${t.reset}</button>
-          <a class="primary-action" href="${isEnglish ? "/en/#consult" : "/#consult"}">${t.consult}</a>
+          <a class="primary-action" href="/#consult">${t.consult}</a>
         </div>
       </div>
     </article>

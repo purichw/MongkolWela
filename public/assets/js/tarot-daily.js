@@ -14,28 +14,16 @@ const selectors = {
 let deck = shuffleCards([...tarotCards]);
 let selectedCard;
 let isAnimating = false;
-const isEnglish = document.documentElement.lang === "en" || location.pathname.startsWith("/en/");
-const text = isEnglish
-  ? {
-      chooseCard: (index) => `Choose card ${index + 1}`,
-      shuffled: "The deck has been shuffled. Settle your mind, then choose one card.",
-      cut: "The deck has been cut. Choose the card that calls your attention.",
-      pickFirst: "Please choose one card before opening the reading.",
-      selected: (card) => `You chose ${card.name}. Press "Read" to open the guidance.`,
-      ready: "Settle your mind, shuffle or cut the deck, then choose one card.",
-      shuffling: "Shuffling the deck...",
-      cutting: "Cutting the deck...",
-    }
-  : {
-      chooseCard: (index) => `เลือกไพ่ใบที่ ${index + 1}`,
-      shuffled: "ไพ่ถูกสับใหม่แล้ว ตั้งจิตให้สงบ แล้วเลือกไพ่ 1 ใบ",
-      cut: "ตัดไพ่เรียบร้อยแล้ว เลือกไพ่ที่เรียกสายตาหรือใจของคุณ",
-      pickFirst: "กรุณาเลือกไพ่ 1 ใบก่อนรับคำทำนาย",
-      selected: (card) => `คุณเลือก ${card.thName} แล้ว คลิกปุ่ม "ทำนาย" เพื่ออ่านคำพยากรณ์`,
-      ready: "ตั้งจิตให้สงบ สับไพ่หรือตัดไพ่ แล้วเลือกไพ่ 1 ใบ",
-      shuffling: "กำลังสับไพ่...",
-      cutting: "กำลังตัดไพ่...",
-    };
+const text = {
+  chooseCard: (index) => `เลือกไพ่ใบที่ ${index + 1}`,
+  shuffled: "ไพ่ถูกสับใหม่แล้ว ตั้งจิตให้สงบ แล้วเลือกไพ่ 1 ใบ",
+  cut: "ตัดไพ่เรียบร้อยแล้ว เลือกไพ่ที่เรียกสายตาหรือใจของคุณ",
+  pickFirst: "กรุณาเลือกไพ่ 1 ใบก่อนรับคำทำนาย",
+  selected: (card) => `คุณเลือก ${card.thName} แล้ว คลิกปุ่ม "ทำนาย" เพื่ออ่านคำพยากรณ์`,
+  ready: "ตั้งจิตให้สงบ สับไพ่หรือตัดไพ่ แล้วเลือกไพ่ 1 ใบ",
+  shuffling: "กำลังสับไพ่...",
+  cutting: "กำลังตัดไพ่...",
+};
 
 export function initDailyTarot() {
   const deckElement = document.querySelector(selectors.deck);
@@ -104,7 +92,7 @@ function renderDeck(deckElement) {
 function renderCardButton(card, index) {
   const isSelected = selectedCard?.id === card.id;
   const isDisabled = Boolean(selectedCard) && !isSelected;
-  const label = isSelected ? `${isEnglish ? card.name : card.thName} ${card.name}` : text.chooseCard(index);
+  const label = isSelected ? `${card.thName} ${card.name}` : text.chooseCard(index);
   const position = getCardPosition(index, deck.length);
 
   return `
