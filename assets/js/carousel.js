@@ -23,12 +23,15 @@ export function initHeroCarousel() {
 
   let activeIndex = Math.max(0, slides.findIndex((slide) => slide.classList.contains("is-active")));
   let timerId;
+  let pointerStartX;
 
   function setActiveSlide(index) {
     activeIndex = (index + slides.length) % slides.length;
 
     slides.forEach((slide, slideIndex) => {
-      slide.classList.toggle("is-active", slideIndex === activeIndex);
+      const isActive = slideIndex === activeIndex;
+      slide.classList.toggle("is-active", isActive);
+      slide.setAttribute("aria-hidden", String(!isActive));
     });
 
     dots.forEach((dot, dotIndex) => {
@@ -69,6 +72,37 @@ export function initHeroCarousel() {
       setActiveSlide(dotIndex);
       restart();
     });
+  });
+
+  hero?.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      moveBy(-1);
+    }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      moveBy(1);
+    }
+  });
+
+  hero?.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    pointerStartX = event.clientX;
+  });
+
+  hero?.addEventListener("pointerup", (event) => {
+    if (typeof pointerStartX !== "number") return;
+
+    const deltaX = event.clientX - pointerStartX;
+    pointerStartX = undefined;
+
+    if (Math.abs(deltaX) < 48) return;
+    moveBy(deltaX < 0 ? 1 : -1);
+  });
+
+  hero?.addEventListener("pointercancel", () => {
+    pointerStartX = undefined;
   });
 
   hero?.addEventListener("mouseenter", stop);
