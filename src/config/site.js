@@ -65,9 +65,15 @@ export const siteConfig = {
           { label: "ปีชง", href: "#rituals" },
         ],
       },
+      {
+        label: "วัดดังเสริมมงคล",
+        href: "temples/thailand/",
+        items: [
+          { label: "วัดทั่วประเทศไทย", href: "temples/thailand/" },
+        ],
+      },
     ],
     utilityNav: [
-      { label: "วัดดังเสริมมงคล", href: "#temples" },
       { label: "ความรู้", href: "#learn" },
       { label: "ปรึกษาหมอดู", href: "#consult" },
     ],
@@ -133,6 +139,13 @@ export const siteConfig = {
           { label: "EN", href: "en/", lang: "en" },
           { label: "จับไพ่ใหม่", href: "tarot/daily/" },
           { label: "ติดต่อครูโหร", href: "#consult" },
+        ],
+      },
+      templesThailand: {
+        topbar: [
+          { label: "วัดทั่วประเทศไทย", href: "temples/thailand/" },
+          { label: "ค้นหาจากทะเบียนวัดตามไฟล์ข้อมูลที่แนบมา" },
+          { label: "ปรึกษาครูโหร", href: "#consult" },
         ],
       },
     },
@@ -203,9 +216,15 @@ export const siteConfig = {
           { label: "Year clash", href: "/en/#rituals" },
         ],
       },
+      {
+        label: "Auspicious Temples",
+        href: "/en/temples/thailand/",
+        items: [
+          { label: "All Temples in Thailand", href: "/en/temples/thailand/" },
+        ],
+      },
     ],
     utilityNav: [
-      { label: "Auspicious Temples", href: "/en/#temples" },
       { label: "Learn", href: "/en/#learn" },
       { label: "Consult", href: "/en/#consult" },
     ],
@@ -264,6 +283,13 @@ export const siteConfig = {
         topbar: [
           { label: "Draw another card", href: "/en/tarot/daily/" },
           { label: "Receive the reading mindfully and use it as guidance" },
+          { label: "Consult an astrologer", href: "/en/#consult" },
+        ],
+      },
+      templesThailand: {
+        topbar: [
+          { label: "All Temples in Thailand", href: "/en/temples/thailand/" },
+          { label: "Search the temple registry from the attached source file" },
           { label: "Consult an astrologer", href: "/en/#consult" },
         ],
       },

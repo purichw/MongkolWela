@@ -1,0 +1,104 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const extraScripts = ["/assets/js/temple-directory.js"];
+---
+
+<BaseLayout
+  title="วัดทั่วประเทศไทย | มงคลเวลา"
+  description="ค้นหารายการวัดทั่วประเทศไทยจากไฟล์ทะเบียนวัด พร้อมตัวกรองชื่อวัด ประเภทวัด นิกาย จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา"
+  lang="th"
+  locale="th"
+  page="templesThailand"
+  bodyClass="temple-directory-page"
+  extraScripts={extraScripts}
+>
+  <main class="temple-directory" data-temple-directory data-locale="th">
+    <section class="temple-directory-head">
+      <nav class="temple-breadcrumb" aria-label="breadcrumb">
+        <a href="../../">หน้าแรก</a>
+        <span>/</span>
+        <span>วัดดังเสริมมงคล</span>
+      </nav>
+      <p class="section-kicker">ทะเบียนวัด</p>
+      <h1>วัดทั่วประเทศไทย</h1>
+      <p>ค้นหารายการวัดจากไฟล์ข้อมูลที่แนบมา โดยแสดงเฉพาะคอลัมน์ A-M และเก็บสถานะวิสุงคามสีมาไว้สำหรับตัวกรอง</p>
+    </section>
+
+    <section class="temple-search-panel" aria-label="ค้นหาวัดทั่วประเทศไทย">
+      <form class="temple-search-form" data-temple-form>
+        <label class="temple-field temple-field-wide">
+          <span>ชื่อวัด</span>
+          <input type="search" name="name" placeholder="ค้นหาจากชื่อวัด" autocomplete="off" data-temple-name />
+        </label>
+
+        <label class="temple-field">
+          <span>ประเภทวัด</span>
+          <select name="type" data-temple-type></select>
+        </label>
+
+        <label class="temple-field">
+          <span>นิกาย</span>
+          <select name="sect" data-temple-sect></select>
+        </label>
+
+        <label class="temple-field">
+          <span>จังหวัด</span>
+          <select name="province" data-temple-province></select>
+        </label>
+
+        <label class="temple-field">
+          <span>อำเภอ / เขต</span>
+          <select name="district" data-temple-district></select>
+        </label>
+
+        <label class="temple-field">
+          <span>ตำบล / แขวง</span>
+          <select name="subdistrict" data-temple-subdistrict></select>
+        </label>
+
+        <label class="temple-field">
+          <span>รหัสไปรษณีย์</span>
+          <input type="search" name="postalCode" inputmode="numeric" placeholder="เช่น 10150" autocomplete="off" data-temple-postal />
+        </label>
+
+        <label class="temple-field">
+          <span>ได้รับวิสุงคามสีมา</span>
+          <select name="wisung" data-temple-wisung>
+            <option value="">-- ทั้งหมด --</option>
+            <option value="ไม่ได้รับ">ไม่ได้รับ</option>
+            <option value="ได้รับ">ได้รับ</option>
+          </select>
+        </label>
+
+        <div class="temple-actions">
+          <button class="temple-search-button" type="submit">ค้นหา</button>
+          <button class="temple-clear-button" type="button" data-temple-clear>เคลียร์ข้อมูล</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="temple-results" aria-live="polite">
+      <div class="temple-results-head">
+        <div>
+          <p class="section-kicker">ผลการค้นหา</p>
+          <h2 data-temple-count>กำลังโหลดข้อมูลวัด</h2>
+        </div>
+        <p data-temple-source>ใช้ข้อมูลจากไฟล์ Report_Temple 2.numbers</p>
+      </div>
+
+      <div class="temple-table-wrap">
+        <table class="temple-table">
+          <thead data-temple-table-head></thead>
+          <tbody data-temple-table-body>
+            <tr>
+              <td>กำลังโหลดข้อมูล</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="temple-pagination" data-temple-pagination></div>
+    </section>
+  </main>
+</BaseLayout>
