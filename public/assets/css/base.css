@@ -62,7 +62,8 @@ option {
   z-index: 10000;
   width: 100%;
   height: 3px;
-  overflow: hidden;
+  overflow: visible;
+  color: var(--gold-soft);
   background: transparent;
   opacity: 0;
   transform: translateY(-3px);
@@ -72,26 +73,100 @@ option {
 
 .is-loading .site-loader,
 .is-navigating .site-loader {
-  opacity: 1;
+  height: 3px !important;
+  overflow: visible !important;
+  opacity: 1 !important;
   transform: translateY(0);
 }
 
-.site-loader span {
+.loader-icon-strip {
   position: absolute;
-  inset: 0 auto 0 0;
+  top: 8px;
+  right: max(18px, calc((100vw - var(--container)) / 2));
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  padding: 2px 8px;
+  background: rgba(20, 71, 58, 0.88);
+  border: 1px solid rgba(194, 141, 53, 0.28);
+  border-radius: 999px;
+  box-shadow:
+    0 6px 18px rgba(20, 71, 58, 0.14),
+    inset 0 1px 0 rgba(255, 248, 226, 0.18);
+}
+
+.loader-mark {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: rgba(234, 211, 160, 0.66);
+  opacity: 0.46;
+  transform: scale(0.9);
+  animation: loader-mark-cycle 5s ease-in-out infinite;
+}
+
+.loader-mark-astro {
+  animation-delay: 0s;
+}
+
+.loader-mark-tarot {
+  animation-delay: 1s;
+}
+
+.loader-mark-number {
+  animation-delay: 2s;
+}
+
+.loader-mark-feng {
+  animation-delay: 3s;
+}
+
+.loader-mark-spirit {
+  animation-delay: 4s;
+}
+
+.site-loader > span {
+  position: absolute;
+  right: auto;
+  bottom: 0;
+  left: 0;
   width: 8%;
+  height: 3px;
   background:
     linear-gradient(90deg, var(--lacquer), var(--gold-soft) 52%, #fff3c4);
   box-shadow: 0 0 16px rgba(194, 141, 53, 0.45);
   transition: width 180ms ease;
 }
 
-.site-loader span::after {
+.site-loader > span::after {
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.62), transparent);
   animation: loader-sheen 1.2s ease-in-out infinite;
   content: "";
+}
+
+@keyframes loader-mark-cycle {
+  0%,
+  100% {
+    color: rgba(234, 211, 160, 0.58);
+    opacity: 0.44;
+    transform: translateY(0) scale(0.9);
+  }
+
+  12%,
+  24% {
+    color: #fff3c4;
+    opacity: 1;
+    transform: translateY(-1px) scale(1.04);
+  }
+
+  36% {
+    color: rgba(194, 141, 53, 0.82);
+    opacity: 0.62;
+    transform: translateY(0) scale(0.92);
+  }
 }
 
 @keyframes loader-sheen {
@@ -104,14 +179,27 @@ option {
   }
 }
 
+@media (max-width: 720px) {
+  .loader-icon-strip {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .site-loader,
-  .site-loader span {
+  .site-loader > span,
+  .loader-mark {
     transition: none;
   }
 
-  .site-loader span::after {
+  .site-loader > span::after,
+  .loader-mark {
     animation: none;
+  }
+
+  .loader-mark {
+    opacity: 0.78;
+    transform: none;
   }
 }
 
