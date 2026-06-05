@@ -12,6 +12,8 @@ python3 -m http.server 4177 --bind 127.0.0.1
 
 Then visit `http://127.0.0.1:4177/`.
 
+The English homepage is available at `http://127.0.0.1:4177/en/`.
+
 ## Structure
 
 - `index.html` - homepage markup and content
