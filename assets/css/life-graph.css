@@ -220,19 +220,20 @@
 .life-table-card {
   min-width: 0;
   margin-bottom: 18px;
-  padding: 18px;
+  padding: 14px;
 }
 
 .life-chart-toolbar {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .life-chart-toolbar strong {
   display: block;
   font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .life-chart-toolbar span {
@@ -240,53 +241,108 @@
   font-size: 0.9rem;
 }
 
+.life-oracle-paper {
+  overflow: hidden;
+  border: 1px solid rgba(35, 31, 28, 0.44);
+  border-radius: 12px;
+  background:
+    linear-gradient(90deg, rgba(73, 61, 45, 0.035) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(73, 61, 45, 0.028) 1px, transparent 1px),
+    #fffdfa;
+  background-size: 34px 34px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .7);
+}
+
+.life-paper-head {
+  display: flex;
+  min-height: 46px;
+  padding: 10px 14px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid rgba(35, 31, 28, 0.34);
+  color: #1f1b19;
+}
+
+.life-paper-head strong {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.life-paper-head span {
+  color: #5c534c;
+  font-size: .88rem;
+}
+
 .life-chart-wrap {
   position: relative;
   max-width: 100%;
   min-width: 0;
   overflow-x: auto;
-  border: 1px solid rgba(77, 56, 41, 0.14);
-  border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 50% 42%, rgba(234, 211, 160, 0.3), transparent 38%),
-    #fffdf6;
+  border: 0;
+  border-top: 1px solid rgba(35, 31, 28, 0.34);
+  background: transparent;
 }
 
 .life-chart {
   display: block;
-  width: max(100%, 760px);
+  width: max(100%, 900px);
   max-width: none;
   height: auto;
 }
 
+.life-chart-paper {
+  fill: rgba(255, 253, 250, .58);
+}
+
 .life-grid line {
-  stroke: rgba(77, 56, 41, 0.13);
-  stroke-width: 1;
+  stroke: rgba(26, 23, 21, 0.32);
+  stroke-width: 0.8;
 }
 
 .life-grid line.major {
-  stroke: rgba(194, 141, 53, 0.42);
+  stroke: rgba(26, 23, 21, 0.48);
 }
 
 .life-grid text {
-  fill: var(--ink-soft);
+  fill: #2d2925;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 400;
   text-anchor: middle;
 }
 
-.life-grid .x-label {
-  fill: var(--ink);
+.life-grid .y-number {
   font-size: 13px;
+  text-anchor: end;
+}
+
+.life-grid .right-house {
+  font-size: 13px;
+  text-anchor: start;
+}
+
+.life-grid .x-label {
+  fill: #1f1b19;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .life-grid .x-period {
-  fill: var(--ink-soft);
+  fill: #4d4640;
   font-size: 11px;
 }
 
-.life-area {
-  fill: rgba(39, 106, 82, 0.12);
+.life-diagonal {
+  stroke: rgba(178, 46, 41, .72);
+  stroke-width: .9;
+  vector-effect: non-scaling-stroke;
+}
+
+.life-midline {
+  stroke: rgba(24, 95, 190, .72);
+  stroke-dasharray: 4 4;
+  stroke-width: .9;
+  vector-effect: non-scaling-stroke;
 }
 
 .life-line-shadow,
@@ -297,13 +353,13 @@
 }
 
 .life-line-shadow {
-  stroke: rgba(37, 29, 26, 0.18);
-  stroke-width: 9;
+  stroke: rgba(37, 29, 26, 0.12);
+  stroke-width: 5;
 }
 
 .life-line {
-  stroke: var(--jade);
-  stroke-width: 4;
+  stroke: #4d8f12;
+  stroke-width: 2.8;
 }
 
 .life-point-layer {
@@ -311,45 +367,64 @@
   top: 0;
   bottom: 0;
   left: 0;
-  width: max(100%, 760px);
+  width: max(100%, 900px);
   pointer-events: none;
 }
 
 .life-point {
   position: absolute;
-  left: calc(var(--x) / 920 * 100%);
-  top: calc(var(--y) / 470 * 100%);
+  left: calc(var(--x) / 1040 * 100%);
+  top: calc(var(--y) / 560 * 100%);
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  color: #fffaf0;
-  background: var(--jade);
-  border: 2px solid #fffdf6;
+  width: 13px;
+  height: 13px;
+  color: #101010;
+  background: #cf2f2b;
+  border: 1px solid #cf2f2b;
   border-radius: 50%;
-  box-shadow: 0 8px 16px rgba(39, 29, 20, 0.18);
+  box-shadow: 0 0 0 2px rgba(255, 253, 250, .7);
   cursor: pointer;
   pointer-events: auto;
   transform: translate(-50%, -50%);
 }
 
 .life-point.high {
-  background: var(--lacquer);
+  background: #cf2f2b;
 }
 
 .life-point.low {
-  background: #5d514a;
+  background: #cf2f2b;
 }
 
 .life-point span {
-  font-size: 0.82rem;
-  font-weight: 800;
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 2px);
+  color: #173d19;
+  font-size: .72rem;
+  font-weight: 600;
+  line-height: 1;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.life-point small {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  color: #07094b;
+  font-size: .68rem;
+  font-weight: 500;
+  line-height: 1.15;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 
 .life-point:hover,
 .life-point:focus-visible {
   outline: 0;
-  transform: translate(-50%, -50%) scale(1.12);
+  transform: translate(-50%, -50%) scale(1.35);
 }
 
 .life-table-card h3,
@@ -362,47 +437,60 @@
   max-width: 100%;
   min-width: 0;
   overflow-x: auto;
-  border: 1px solid rgba(77, 56, 41, 0.14);
-  border-radius: var(--radius);
+  border: 0;
+  border-radius: 0;
 }
 
 .life-basis-table {
-  width: max(100%, 860px);
+  width: max(100%, 900px);
   border-collapse: collapse;
-  background: #fffdf6;
-  font-size: 0.88rem;
+  background: rgba(255, 253, 250, .48);
+  font-size: 0.82rem;
 }
 
 .life-basis-table th,
 .life-basis-table td {
   min-width: 62px;
-  padding: 9px 8px;
-  border: 1px solid rgba(77, 56, 41, 0.12);
+  padding: 6px 7px;
+  border: 1px solid rgba(35, 31, 28, 0.34);
   text-align: center;
 }
 
 .life-basis-table th {
-  color: var(--ink-soft);
-  background: #fbf2df;
-  font-weight: 800;
+  color: #1f1b19;
+  background: rgba(255, 253, 250, .4);
+  font-weight: 500;
 }
 
 .life-basis-table tbody th {
-  color: var(--ink);
+  min-width: 96px;
+  color: #1f1b19;
   text-align: left;
   white-space: nowrap;
 }
 
 .life-basis-table td {
-  color: var(--ink);
-  font-weight: 700;
+  color: #171411;
+  font-weight: 400;
 }
 
 .life-basis-table .is-graph-row th,
 .life-basis-table .is-graph-row td {
-  color: var(--lacquer);
-  background: rgba(194, 141, 53, 0.12);
-  font-weight: 800;
+  color: #171411;
+  background: rgba(234, 211, 160, 0.12);
+  font-weight: 600;
+}
+
+.life-path-row td {
+  height: 74px;
+  vertical-align: middle;
+}
+
+.life-path-row td span {
+  display: inline-block;
+  font-weight: 500;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
 }
 
 .life-house-grid {

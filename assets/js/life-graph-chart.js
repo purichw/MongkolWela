@@ -1,18 +1,17 @@
-import { formatThaiDate } from "./life-graph-engine.js?v=20260605-19";
+import { formatThaiDate } from "./life-graph-engine.js?v=20260605-20";
 
 const chart = {
-  width: 920,
-  height: 470,
-  padLeft: 62,
-  padRight: 32,
-  padTop: 32,
-  padBottom: 86,
+  width: 1040,
+  height: 560,
+  padLeft: 112,
+  padRight: 146,
+  padTop: 34,
+  padBottom: 82,
 };
 
 export function renderLifeGraph(result) {
   const points = getPoints(result.houses);
   const path = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
-  const areaPath = `${path} L ${points[points.length - 1].x} ${chart.height - chart.padBottom} L ${points[0].x} ${chart.height - chart.padBottom} Z`;
 
   return `
     <section class="life-reading-head">
@@ -38,16 +37,18 @@ export function renderLifeGraph(result) {
     <section class="life-chart-card">
       <div class="life-chart-toolbar">
         <div>
-          <strong>กราฟ 12 เรือน</strong>
+          <strong>ตารางกราฟชีวิต</strong>
           <span>จุดสูง: ${result.summary.strongest.label} • จุดต่ำ: ${result.summary.weakest.label}</span>
         </div>
       </div>
-      ${renderSvg(points, path, areaPath)}
-    </section>
-
-    <section class="life-table-card">
-      <h3>ตารางฐาน 12</h3>
-      ${renderBasisTable(result)}
+      <div class="life-oracle-paper">
+        <div class="life-paper-head">
+          <strong>ตารางกราฟชีวิต</strong>
+          <span>โดย Mongkol Wela</span>
+        </div>
+        ${renderBasisTable(result)}
+        ${renderSvg(points, path, result)}
+      </div>
     </section>
 
     <section class="life-house-list">
@@ -59,7 +60,7 @@ export function renderLifeGraph(result) {
   `;
 }
 
-function renderSvg(points, path, areaPath) {
+function renderSvg(points, path, result) {
   const horizontal = Array.from({ length: 12 }, (_, index) => {
     const level = index + 1;
     const y = yForValue(level);
@@ -67,7 +68,8 @@ function renderSvg(points, path, areaPath) {
     return `
       <g>
         <line class="${isMajor ? "major" : ""}" x1="${chart.padLeft}" y1="${y}" x2="${chart.width - chart.padRight}" y2="${y}"></line>
-        <text x="${chart.padLeft - 18}" y="${y + 4}">${level}</text>
+        <text class="y-number" x="${chart.padLeft - 28}" y="${y + 4}">${level}</text>
+        <text class="right-house" x="${chart.width - chart.padRight + 18}" y="${y + 4}">${result.houses[12 - level]?.shortLabel ?? ""}</text>
       </g>
     `;
   }).join("");
@@ -75,22 +77,27 @@ function renderSvg(points, path, areaPath) {
   const vertical = points.map((point) => `
     <g>
       <line x1="${point.x}" y1="${chart.padTop}" x2="${point.x}" y2="${chart.height - chart.padBottom}"></line>
-      <text class="x-label" x="${point.x}" y="${chart.height - 48}">${point.house.shortLabel}</text>
-      <text class="x-period" x="${point.x}" y="${chart.height - 28}">${point.house.period.label}</text>
+      <text class="x-label" x="${point.x}" y="${chart.height - 44}">${point.house.shortLabel}</text>
+      <text class="x-period" x="${point.x}" y="${chart.height - 24}">${point.house.period.label}</text>
     </g>
   `).join("");
 
   const markers = points.map((point) => `
     <button class="life-point ${point.house.band.tone}" type="button" data-life-house="${point.house.id}" style="--x:${point.x}; --y:${point.y};">
       <span>${point.house.value}</span>
+      <small>${point.house.period.label}</small>
     </button>
   `).join("");
 
   return `
     <div class="life-chart-wrap">
       <svg class="life-chart" viewBox="0 0 ${chart.width} ${chart.height}" role="img" aria-label="กราฟชีวิต 12 เรือน">
+        <rect class="life-chart-paper" x="0" y="0" width="${chart.width}" height="${chart.height}"></rect>
         <g class="life-grid">${horizontal}${vertical}</g>
-        <path class="life-area" d="${areaPath}"></path>
+        <line class="life-diagonal" x1="${chart.padLeft}" y1="${chart.height - chart.padBottom}" x2="${chart.width - chart.padRight}" y2="${chart.padTop}"></line>
+        <line class="life-diagonal" x1="${chart.padLeft}" y1="${chart.padTop}" x2="${chart.width - chart.padRight}" y2="${chart.height - chart.padBottom}"></line>
+        <line class="life-midline" x1="${chart.padLeft}" y1="${yForValue(8)}" x2="${chart.width - chart.padRight}" y2="${yForValue(8)}"></line>
+        <line class="life-midline" x1="${chart.padLeft}" y1="${yForValue(2)}" x2="${chart.width - chart.padRight}" y2="${yForValue(2)}"></line>
         <path class="life-line-shadow" d="${path}"></path>
         <path class="life-line" d="${path}"></path>
       </svg>
@@ -107,18 +114,16 @@ function renderBasisTable(result) {
   return `
     <div class="life-basis-table-wrap">
       <table class="life-basis-table">
-        <thead>
-          <tr>
-            <th scope="col">ฐาน</th>
-            ${columns}
-          </tr>
-        </thead>
         <tbody>
           ${renderBasisRow("ฐานวัน", result.rows.day)}
           ${renderBasisRow("ฐานเดือน", result.rows.month)}
           ${renderBasisRow("ฐานปี", result.rows.year)}
           ${renderBasisRow("ผลรวม", result.rows.total)}
           ${renderBasisRow("เลขดวง", result.rows.graph, "is-graph-row")}
+          <tr class="life-path-row">
+            <th scope="row">วิถีชีวิต</th>
+            ${result.houses.map((house) => `<td><span>${house.shortLabel}</span></td>`).join("")}
+          </tr>
         </tbody>
       </table>
     </div>

@@ -1,4 +1,4 @@
-import { getCardArtClass, getTarotCardById } from "./tarot-data.js?v=20260605-19";
+import { getCardArtClass, getTarotCardById } from "./tarot-data.js?v=20260605-20";
 
 const fallbackMessage = {
   title: "ยังไม่มีไพ่สำหรับคำทำนาย",

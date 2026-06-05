@@ -1,4 +1,4 @@
-import { houses, planetMeanings, zodiacSigns } from "./thai-astrology-data.js?v=20260605-19";
+import { houses, planetMeanings, zodiacSigns } from "./thai-astrology-data.js?v=20260605-20";
 
 const selectors = {
   form: "[data-thai-astrology-form]",
