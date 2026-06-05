@@ -1,4 +1,4 @@
-import { getCardArtClass, getTarotCardById } from "./tarot-data.js?v=20260605-5";
+import { getCardArtClass, getTarotCardById } from "./tarot-data.js?v=20260605-6";
 
 const fallbackMessage = {
   title: "ยังไม่มีไพ่สำหรับคำทำนาย",
@@ -81,16 +81,9 @@ function renderFallback(resultRoot) {
 }
 
 function renderLargeCard(card) {
-  const rankText = card.rank ? card.rank.replace(/S$/, "") : "MAJOR";
-
   return `
     <div class="tarot-card-face result ${getCardArtClass(card)}">
-      <span class="tarot-face-kicker">${card.suit ? card.suit : "MAJOR ARCANA"}</span>
-      <span class="tarot-face-symbol">${card.symbol}</span>
-      <span class="tarot-face-orbit" aria-hidden="true"></span>
-      <span class="tarot-face-rank">${rankText}</span>
-      <span class="tarot-face-name">${card.thName}</span>
-      <span class="tarot-face-english">${card.name}</span>
+      <img class="tarot-card-image" src="${card.image}" alt="${card.thName} (${card.name})" loading="eager" decoding="async" fetchpriority="high">
     </div>
   `;
 }

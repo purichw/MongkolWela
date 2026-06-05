@@ -345,38 +345,10 @@
 }
 
 .tarot-card-face {
-  grid-template-rows: auto 1fr auto auto;
-  gap: 4px;
-  place-items: center;
-  padding: 8px 6px;
+  display: block;
+  padding: 0;
   color: #fff7e6;
-  background:
-    radial-gradient(circle at 50% 38%, rgba(255, 250, 240, 0.16), transparent 34%),
-    linear-gradient(150deg, var(--jade-dark), var(--lacquer-dark));
-}
-
-.tarot-card-face.major {
-  background:
-    radial-gradient(circle at 50% 32%, rgba(234, 211, 160, 0.22), transparent 34%),
-    linear-gradient(150deg, #1e2728, #713126);
-}
-
-.tarot-card-face.cups {
-  background:
-    radial-gradient(circle at 50% 34%, rgba(214, 235, 245, 0.18), transparent 35%),
-    linear-gradient(150deg, #123d4b, #275d61);
-}
-
-.tarot-card-face.swords {
-  background:
-    radial-gradient(circle at 50% 34%, rgba(244, 247, 255, 0.18), transparent 35%),
-    linear-gradient(150deg, #233042, #6b6d79);
-}
-
-.tarot-card-face.pentacles {
-  background:
-    radial-gradient(circle at 50% 34%, rgba(234, 211, 160, 0.22), transparent 35%),
-    linear-gradient(150deg, #123d34, #5d5b2f);
+  background: #ead7aa;
 }
 
 .tarot-card-face.result {
@@ -384,73 +356,20 @@
   width: min(330px, 100%);
   aspect-ratio: 68 / 112;
   margin: 0 auto;
-  padding: 22px 18px;
   border-radius: 16px;
   box-shadow: 0 30px 60px rgba(39, 29, 20, 0.26);
 }
 
-.tarot-face-kicker,
-.tarot-face-rank,
-.tarot-face-name,
-.tarot-face-english {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-}
-
-.tarot-face-kicker {
-  color: var(--gold-soft);
-  font-size: 0.54rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-}
-
-.tarot-face-symbol {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 54%;
-  aspect-ratio: 1;
-  color: var(--gold-soft);
-  border: 1px solid rgba(234, 211, 160, 0.42);
-  border-radius: 50%;
-  font-size: clamp(1.65rem, 5vw, 4.4rem);
-  font-weight: 800;
-}
-
-.tarot-card-face.result .tarot-face-symbol {
-  width: 62%;
-}
-
-.tarot-face-orbit {
+.tarot-card-image {
   position: absolute;
-  inset: 24%;
-  border: 1px solid rgba(255, 250, 240, 0.16);
-  border-radius: 50%;
-  transform: rotate(28deg);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.tarot-face-rank {
-  color: #fff7e6;
-  font-size: 0.72rem;
-  font-weight: 800;
-}
-
-.tarot-face-name {
-  font-size: 0.72rem;
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.tarot-card-face.result .tarot-face-name {
-  font-size: 1.3rem;
-}
-
-.tarot-face-english {
-  color: rgba(255, 247, 230, 0.74);
-  font-size: 0.76rem;
-  font-weight: 800;
+.tarot-card-face.result .tarot-card-image {
+  border-radius: 16px;
 }
 
 .tarot-deck-grid.is-shuffling .tarot-card-pick {

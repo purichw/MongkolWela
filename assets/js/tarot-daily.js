@@ -1,4 +1,4 @@
-import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260605-5";
+import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260605-6";
 
 const selectors = {
   deck: "[data-tarot-deck]",
@@ -113,15 +113,9 @@ function renderCardBack(index) {
 }
 
 function renderCardFace(card, size = "large") {
-  const rankText = card.rank ? card.rank.replace(/S$/, "") : "MAJOR";
-
   return `
     <span class="tarot-card-face ${size} ${getCardArtClass(card)}">
-      <span class="tarot-face-kicker">${card.suit ? card.suit : "MAJOR ARCANA"}</span>
-      <span class="tarot-face-symbol">${card.symbol}</span>
-      <span class="tarot-face-orbit" aria-hidden="true"></span>
-      <span class="tarot-face-rank">${rankText}</span>
-      <span class="tarot-face-name">${card.thName}</span>
+      <img class="tarot-card-image" src="${card.image}" alt="${card.thName} (${card.name})" loading="eager" decoding="async">
     </span>
   `;
 }

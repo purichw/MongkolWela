@@ -376,7 +376,23 @@ function createMinorCards() {
   });
 }
 
-export const tarotCards = [...majorCards, ...createMinorCards()];
+export const tarotImageSource = {
+  deck: "Rider-Waite-Smith tarot deck",
+  artist: "Pamela Colman Smith",
+  credit: "Wikimedia Commons",
+  license: "Public domain",
+  manifest: "../../assets/images/tarot/rws-jpg/SOURCE-MANIFEST.json",
+};
+
+function withCardImage(card) {
+  return {
+    ...card,
+    image: `../../assets/images/tarot/rws-jpg/${card.id}.jpg`,
+    imageCredit: tarotImageSource,
+  };
+}
+
+export const tarotCards = [...majorCards, ...createMinorCards()].map(withCardImage);
 
 export function getTarotCardById(id) {
   return tarotCards.find((card) => card.id === id);
