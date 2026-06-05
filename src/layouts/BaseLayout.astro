@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import LoadingScreen from "../components/LoadingScreen.astro";
 
 interface Props {
   title: string;
@@ -22,7 +23,7 @@ const {
   extraScripts = [],
 } = Astro.props as Props;
 
-const assetVersion = "20260605-2";
+const assetVersion = "20260606-1";
 const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
 ---
 
@@ -33,6 +34,9 @@ const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    <script is:inline>
+      document.documentElement.classList.add("is-loading");
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -42,6 +46,7 @@ const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v
     <link rel="stylesheet" href={versionedAsset("/styles.css")} />
   </head>
   <body class={bodyClass}>
+    <LoadingScreen />
     <Header locale={locale} page={page} />
     <slot />
     <Footer locale={locale} page={page} />
