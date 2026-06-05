@@ -21,6 +21,9 @@ const {
   bodyClass = "",
   extraScripts = [],
 } = Astro.props as Props;
+
+const assetVersion = "20260605-2";
+const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
 ---
 
 <!doctype html>
@@ -36,14 +39,14 @@ const {
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href={versionedAsset("/styles.css")} />
   </head>
   <body class={bodyClass}>
     <Header locale={locale} page={page} />
     <slot />
     <Footer locale={locale} page={page} />
 
-    <script is:inline type="module" src="/script.js"></script>
-    {extraScripts.map((src: string) => <script is:inline type="module" src={src}></script>)}
+    <script is:inline type="module" src={versionedAsset("/script.js")}></script>
+    {extraScripts.map((src: string) => <script is:inline type="module" src={versionedAsset(src)}></script>)}
   </body>
 </html>
