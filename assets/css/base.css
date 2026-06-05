@@ -21,6 +21,10 @@ body {
   font-family: var(--font-english);
 }
 
+:lang(th) {
+  font-family: var(--font-thai);
+}
+
 a {
   color: inherit;
   text-decoration: none;
