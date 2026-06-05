@@ -195,7 +195,9 @@
 }
 
 .tarot-deck-grid {
+  isolation: isolate;
   position: relative;
+  z-index: 0;
   display: block;
   height: clamp(540px, 52vw, 690px);
   min-height: 0;
@@ -205,6 +207,7 @@
     radial-gradient(circle at 50% 12%, rgba(234, 211, 160, 0.34), transparent 32%),
     linear-gradient(135deg, rgba(18, 61, 52, 0.96), rgba(62, 35, 31, 0.96));
   border-radius: var(--radius);
+  contain: paint;
   overflow: hidden;
 }
 
