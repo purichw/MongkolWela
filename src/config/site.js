@@ -22,6 +22,8 @@ export const siteConfig = {
         items: [
           { label: "กราฟชีวิต", href: "horoscope/life-graph/" },
           { label: "ไพ่ยิปซีรายวัน", href: "tarot/daily/" },
+          { label: "ไพ่ยิปซีรายเดือน", href: "tarot/monthly/" },
+          { label: "ไพ่ยิปซีโชคลาภ เสี่ยงโชค", href: "tarot/luck/" },
           { label: "เลข ๗ ตัว", href: "#horoscope" },
           { label: "โหราศาสตร์ไทย", href: "horoscope/thai-astrology/" },
           { label: "เสี่ยงเซียมซี", href: "horoscope/seamsi/" },
@@ -121,6 +123,20 @@ export const siteConfig = {
         topbar: [
           { label: "วันนี้เหมาะกับการตั้งจิตและถามไพ่", href: "tarot/daily/#daily-tarot" },
           { label: "เลือกไพ่ได้วันละครั้งเพื่อรักษาความหมายของคำทำนาย" },
+          { label: "ปรึกษาครูโหร", href: "#consult" },
+        ],
+      },
+      tarotMonthly: {
+        topbar: [
+          { label: "ไพ่ยิปซีรายเดือน", href: "tarot/monthly/" },
+          { label: "เลือกไพ่ 10 ใบเพื่ออ่านภาพรวมเดือนแบบ Celtic Cross" },
+          { label: "ปรึกษาครูโหร", href: "#consult" },
+        ],
+      },
+      tarotLuck: {
+        topbar: [
+          { label: "ไพ่ยิปซีโชคลาภ เสี่ยงโชค", href: "tarot/luck/" },
+          { label: "เลือกไพ่ 1 ใบเพื่ออ่านจังหวะโชคและการเสี่ยงอย่างมีสติ" },
           { label: "ปรึกษาครูโหร", href: "#consult" },
         ],
       },

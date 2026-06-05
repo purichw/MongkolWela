@@ -1,0 +1,90 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const extraScripts = ["/assets/js/tarot-spread.js"];
+---
+
+<BaseLayout
+  title="ดูดวงไพ่ยิปซีรายเดือน | มงคลเวลา"
+  description="ดูดวงไพ่ยิปซีรายเดือนแบบ Celtic Cross เลือกไพ่ 10 ใบเพื่ออ่านภาพรวมเดือน ความท้าทาย โอกาส และบทสรุปของเดือน"
+  lang="th"
+  locale="th"
+  page="tarotMonthly"
+  bodyClass="tarot-page"
+  extraScripts={extraScripts}
+>
+  <main id="monthly-tarot">
+    <section class="tarot-hero">
+      <div>
+        <nav class="tarot-breadcrumb" aria-label="breadcrumb">
+          <a href="../../">หน้าแรก</a>
+          <span>/</span>
+          <span>ไพ่ยิปซีรายเดือน</span>
+        </nav>
+        <p class="section-kicker">Monthly Tarot</p>
+        <h1>ดูดวงไพ่ยิปซีรายเดือน</h1>
+        <p class="tarot-hero-copy">
+          ตั้งคำถามถึงภาพรวมของเดือนนี้ แล้วเลือกไพ่ 10 ใบเพื่ออ่านลำดับเรื่องราวแบบ Celtic Cross
+          ทั้งสิ่งท้าทาย โอกาส คนรอบข้าง และบทสรุปที่ควรใช้เป็นแนวทาง
+        </p>
+      </div>
+
+      <aside class="tarot-ritual-panel" aria-label="ขั้นตอนการดูไพ่รายเดือน">
+        <ol>
+          <li><span>1</span>ตั้งใจถามภาพรวมเดือนนี้อย่างสงบ</li>
+          <li><span>2</span>สับไพ่หรือตัดไพ่เพื่อเปลี่ยนจังหวะพลังงาน</li>
+          <li><span>3</span>เลือกไพ่ 10 ใบตามความรู้สึกทีละใบ</li>
+          <li><span>4</span>กดเปิดคำทำนายเพื่ออ่าน spread รายเดือน</li>
+        </ol>
+      </aside>
+    </section>
+
+    <section class="tarot-oracle">
+      <aside class="tarot-intention">
+        <p class="section-kicker">ตั้งจิต</p>
+        <h2>ก่อนเลือกไพ่</h2>
+        <p>
+          การอ่านรายเดือนเหมาะกับการมองภาพรวม ไม่ควรใช้ตัดสินเรื่องเร่งด่วนเพียงอย่างเดียว
+          ให้รับคำทำนายเป็นแผนที่สำหรับทบทวนและจัดลำดับชีวิตในเดือนนี้
+        </p>
+        <div class="tarot-warning">เลือกให้ครบ 10 ใบตามลำดับที่ใจสะดุด</div>
+      </aside>
+
+      <form
+        class="tarot-deck-stage"
+        data-tarot-spread-form
+        data-spread-type="monthly"
+        data-required-count="10"
+        data-storage-key="monkolMonthlyTarot"
+      >
+        <div class="tarot-deck-head">
+          <div>
+            <p class="section-kicker">สำรับ 78 ใบ</p>
+            <h2>เลือกไพ่ 10 ใบ แล้วกดเปิดคำทำนาย</h2>
+            <p class="tarot-status" data-tarot-status aria-live="polite"></p>
+          </div>
+          <div class="tarot-deck-actions">
+            <button class="tarot-control" type="button" data-tarot-shuffle>สับไพ่</button>
+            <button class="tarot-control" type="button" data-tarot-cut>ตัดไพ่</button>
+            <button class="tarot-read-button btn-disable" type="submit" data-tarot-read disabled>
+              เปิดคำทำนาย
+            </button>
+          </div>
+        </div>
+
+        <input type="hidden" data-tarot-selected name="tarot_cards_selected" />
+        <input type="hidden" data-tarot-count name="tarot_card_count" value="0" />
+        <div class="tarot-deck-grid" data-tarot-deck aria-label="สำรับไพ่ยิปซี 78 ใบ"></div>
+      </form>
+    </section>
+
+    <section class="tarot-note">
+      <p class="section-kicker">แนวคิดของเรา</p>
+      <h2>อ่านเดือนทั้งเดือนด้วยสติ ไม่ใช่เร่งคำตอบให้ชีวิต</h2>
+      <p>
+        ไพ่รายเดือนช่วยชี้ประเด็นที่ควรสังเกตและเตรียมใจ
+        ผลลัพธ์ที่ดีเกิดจากการนำคำแนะนำไปใช้ร่วมกับข้อมูลจริงและการตัดสินใจของตัวเราเอง
+      </p>
+    </section>
+  </main>
+</BaseLayout>

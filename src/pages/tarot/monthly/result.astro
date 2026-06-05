@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const extraScripts = ["/assets/js/tarot-spread-result.js"];
+---
+
+<BaseLayout
+  title="ผลคำทำนายไพ่ยิปซีรายเดือน | มงคลเวลา"
+  description="ผลคำทำนายไพ่ยิปซีรายเดือนแบบ 10 ใบ พร้อมตำแหน่ง ความหมาย คำแนะนำ และบทสรุปของเดือน"
+  lang="th"
+  locale="th"
+  page="tarotMonthly"
+  bodyClass="tarot-page tarot-result-page"
+  extraScripts={extraScripts}
+>
+  <main>
+    <section
+      class="tarot-result-shell tarot-spread-result"
+      data-tarot-spread-result
+      data-spread-type="monthly"
+      data-storage-key="monkolMonthlyTarot"
+    >
+      <div class="tarot-result-copy">
+        <p class="section-kicker">Monthly Tarot</p>
+        <h1>กำลังเปิดคำทำนาย</h1>
+        <p>โปรดรอสักครู่...</p>
+      </div>
+    </section>
+
+    <section class="tarot-related">
+      <p class="section-kicker">หลังอ่านคำทำนาย</p>
+      <h2>เลือกหนึ่งเรื่องที่ทำได้จริงในเดือนนี้</h2>
+      <p>
+        คำทำนายรายเดือนจะมีพลังที่สุดเมื่อใช้วางแผนทีละก้าว
+        หยิบคำเตือนที่สำคัญที่สุดหนึ่งข้อ แล้วเปลี่ยนเป็นการลงมือที่ชัดเจน
+      </p>
+    </section>
+  </main>
+</BaseLayout>
