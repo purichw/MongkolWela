@@ -36,7 +36,10 @@ img {
 }
 
 button,
-input {
+input,
+select,
+textarea,
+option {
   font: inherit;
 }
 
