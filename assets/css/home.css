@@ -26,19 +26,38 @@
 .hero-carousel {
   z-index: 0;
   background: var(--jade-dark);
+  overflow: hidden;
 }
 
 .hero-slide {
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
-  transition: opacity 420ms ease, visibility 0s linear 420ms;
+  transform: translateX(-100%);
+  transition:
+    transform 860ms cubic-bezier(.65, 0, .25, 1),
+    visibility 0s linear 860ms;
   visibility: hidden;
   z-index: 0;
+  will-change: transform;
 }
 
 .hero-slide.is-active {
-  opacity: 1;
+  transform: translateX(0);
   transition-delay: 0s;
+  visibility: visible;
+  z-index: 2;
+}
+
+.hero-slide.is-entering-forward,
+.hero-slide.is-exiting-backward {
+  transform: translateX(-100%);
+  visibility: visible;
+  z-index: 1;
+}
+
+.hero-slide.is-exiting-forward,
+.hero-slide.is-entering-backward {
+  transform: translateX(100%);
   visibility: visible;
   z-index: 1;
 }

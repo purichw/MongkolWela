@@ -10,7 +10,7 @@ import {
   thaiMonthNames,
   toThaiNumeral,
   weekdayNames,
-} from "./thai-calendar-core.js?v=20260605-15";
+} from "./thai-calendar-core.js?v=20260605-16";
 
 const yearForm = document.querySelector("[data-calendar-form]");
 const yearSelect = document.querySelector("[data-calendar-year]");

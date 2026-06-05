@@ -6,7 +6,8 @@ const selectors = {
   next: "[data-carousel-next]",
 };
 
-const intervalMs = 6500;
+const intervalMs = 8000;
+const transitionMs = 860;
 
 export function initHeroCarousel() {
   const carousel = document.querySelector(selectors.carousel);
@@ -22,34 +23,64 @@ export function initHeroCarousel() {
   let activeIndex = Math.max(0, slides.findIndex((slide) => slide.classList.contains("is-active")));
   let timerId;
   let pointerStartX;
+  let transitionTimerId;
 
-  function setActiveSlide(index) {
-    activeIndex = (index + slides.length) % slides.length;
+  slides.forEach((slide, slideIndex) => {
+    slide.style.setProperty("--slide-index", String(slideIndex));
+  });
+
+  function setActiveSlide(index, direction = "forward") {
+    const nextIndex = (index + slides.length) % slides.length;
+    const previousIndex = activeIndex;
+
+    if (nextIndex === previousIndex) return;
 
     slides.forEach((slide, slideIndex) => {
-      const isActive = slideIndex === activeIndex;
-      slide.classList.toggle("is-active", isActive);
-      slide.setAttribute("aria-hidden", String(!isActive));
+      slide.classList.remove(
+        "is-entering-forward",
+        "is-entering-backward",
+        "is-exiting-forward",
+        "is-exiting-backward",
+      );
+
+      if (slideIndex !== previousIndex && slideIndex !== nextIndex) {
+        slide.classList.remove("is-active");
+      }
     });
 
-    dots.forEach((dot, dotIndex) => {
-      const isActive = dotIndex === activeIndex;
-      dot.classList.toggle("is-active", isActive);
-      dot.setAttribute("aria-pressed", String(isActive));
+    const previousSlide = slides[previousIndex];
+    const nextSlide = slides[nextIndex];
+    const enteringClass = direction === "backward" ? "is-entering-backward" : "is-entering-forward";
+    const exitingClass = direction === "backward" ? "is-exiting-backward" : "is-exiting-forward";
+
+    nextSlide.classList.add(enteringClass);
+    nextSlide.setAttribute("aria-hidden", "false");
+
+    window.requestAnimationFrame(() => {
+      previousSlide.classList.add(exitingClass);
+      previousSlide.classList.remove("is-active");
+      nextSlide.classList.add("is-active");
+      nextSlide.classList.remove(enteringClass);
+      activeIndex = nextIndex;
+      syncControls();
     });
 
-    hero?.style.setProperty("--active-slide", String(activeIndex + 1));
+    if (transitionTimerId) window.clearTimeout(transitionTimerId);
+    transitionTimerId = window.setTimeout(() => {
+      previousSlide.classList.remove(exitingClass);
+      previousSlide.setAttribute("aria-hidden", "true");
+    }, transitionMs);
   }
 
   function moveBy(offset) {
-    setActiveSlide(activeIndex + offset);
+    setActiveSlide(activeIndex + offset, offset < 0 ? "backward" : "forward");
     restart();
   }
 
   function start() {
     if (prefersReducedMotion) return;
     stop();
-    timerId = window.setInterval(() => setActiveSlide(activeIndex + 1), intervalMs);
+    timerId = window.setInterval(() => setActiveSlide(activeIndex + 1, "forward"), intervalMs);
   }
 
   function stop() {
@@ -85,7 +116,7 @@ export function initHeroCarousel() {
     if (dotTrigger) {
       const dotIndex = dots.indexOf(dotTrigger);
       if (dotIndex >= 0) {
-        setActiveSlide(dotIndex);
+        setActiveSlide(dotIndex, dotIndex < activeIndex ? "backward" : "forward");
         restart();
       }
     }
@@ -122,11 +153,6 @@ export function initHeroCarousel() {
     pointerStartX = undefined;
   });
 
-  hero?.addEventListener("mouseenter", stop);
-  hero?.addEventListener("mouseleave", start);
-  hero?.addEventListener("focusin", stop);
-  hero?.addEventListener("focusout", start);
-
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       stop();
@@ -135,6 +161,20 @@ export function initHeroCarousel() {
     }
   });
 
-  setActiveSlide(activeIndex);
+  function syncControls() {
+    dots.forEach((dot, dotIndex) => {
+      const isActive = dotIndex === activeIndex;
+      dot.classList.toggle("is-active", isActive);
+      dot.setAttribute("aria-pressed", String(isActive));
+    });
+
+    slides.forEach((slide, slideIndex) => {
+      slide.setAttribute("aria-hidden", String(slideIndex !== activeIndex));
+    });
+
+    hero?.style.setProperty("--active-slide", String(activeIndex + 1));
+  }
+
+  syncControls();
   start();
 }
