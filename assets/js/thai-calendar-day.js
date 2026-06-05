@@ -8,7 +8,7 @@ import {
   thaiMonthNames,
   toThaiNumeral,
   weekdayPlanetNames,
-} from "./thai-calendar-core.js?v=20260605-22";
+} from "./thai-calendar-core.js";
 
 const detailRoot = document.querySelector("[data-calendar-day-detail]");
 

@@ -1,4 +1,4 @@
-import { formatThaiDate } from "./life-graph-engine.js?v=20260605-22";
+import { formatThaiDate } from "./life-graph-engine.js";
 
 const chart = {
   width: 1040,

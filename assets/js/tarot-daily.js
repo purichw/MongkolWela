@@ -1,4 +1,4 @@
-import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260605-22";
+import { getCardArtClass, tarotCards } from "./tarot-data.js";
 
 const selectors = {
   deck: "[data-tarot-deck]",
