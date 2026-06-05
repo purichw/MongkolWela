@@ -12,6 +12,7 @@ type NavItem = {
 type TopbarItem = {
   label: string;
   href?: string;
+  realtime?: "lunarToday" | "solarToday";
 };
 
 const { locale = "th", page = "home" } = Astro.props as {
@@ -35,9 +36,9 @@ function resolveHref(href = "") {
   <div class="topbar">
     {(pageConfig.topbar || pages.home.topbar || []).map((item: TopbarItem) =>
       item.href ? (
-        <a href={resolveHref(item.href)}>{item.label}</a>
+        <a href={resolveHref(item.href)} data-topbar-realtime={item.realtime}>{item.label}</a>
       ) : (
-        <span>{item.label}</span>
+        <span data-topbar-realtime={item.realtime}>{item.label}</span>
       )
     )}
   </div>

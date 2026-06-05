@@ -76,8 +76,8 @@ export const siteConfig = {
     pages: {
       home: {
         topbar: [
-          { label: "วันนี้ ขึ้น ๕ ค่ำ เดือน ๗", href: "#today" },
-          { label: "วันศุกร์ที่ 5 มิถุนายน 2569" },
+          { label: "วันนี้", href: "#today", realtime: "lunarToday" },
+          { label: "วันที่วันนี้", realtime: "solarToday" },
           { label: "ปรึกษาครูโหร", href: "#consult" },
         ],
         footerVariant: "home",
