@@ -1,6 +1,6 @@
-import { renderLifeGraph } from "./life-graph-chart.js?v=20260605-12";
-import { calculateLifeGraph } from "./life-graph-engine.js?v=20260605-12";
-import { ThaiCalendarProvider } from "./thai-calendar-provider.js?v=20260605-12";
+import { renderLifeGraph } from "./life-graph-chart.js?v=20260605-13";
+import { calculateLifeGraph } from "./life-graph-engine.js?v=20260605-13";
+import { ThaiCalendarProvider } from "./thai-calendar-provider.js?v=20260605-13";
 
 const selectors = {
   form: "[data-life-graph-form]",
