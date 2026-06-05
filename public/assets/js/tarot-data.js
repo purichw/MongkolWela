@@ -381,13 +381,13 @@ export const tarotImageSource = {
   artist: "Pamela Colman Smith",
   credit: "Wikimedia Commons",
   license: "Public domain",
-  manifest: "../../assets/images/tarot/rws-jpg/SOURCE-MANIFEST.json",
+  manifest: "/assets/images/tarot/rws-jpg/SOURCE-MANIFEST.json",
 };
 
 function withCardImage(card) {
   return {
     ...card,
-    image: `../../assets/images/tarot/rws-jpg/${card.id}.jpg`,
+    image: `/assets/images/tarot/rws-jpg/${card.id}.jpg`,
     imageCredit: tarotImageSource,
   };
 }
