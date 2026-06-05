@@ -1,0 +1,544 @@
+.life-graph-page {
+  padding-bottom: 84px;
+}
+
+.life-graph-hero,
+.life-graph-tool,
+.life-graph-principles {
+  width: min(var(--container), calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.life-graph-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 36px;
+  padding: 70px 0 34px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 20px;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.breadcrumb a {
+  color: var(--lacquer);
+  font-weight: 800;
+}
+
+.life-graph-hero h1 {
+  margin: 0;
+  font-size: clamp(4rem, 9vw, 7.5rem);
+  font-weight: 800;
+  line-height: 0.98;
+}
+
+.life-graph-hero p {
+  max-width: 790px;
+  margin: 22px 0 0;
+  color: var(--ink-soft);
+  font-size: 1.08rem;
+}
+
+.life-graph-note {
+  align-self: end;
+  padding: 24px;
+  color: #fdf5e6;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(234, 211, 160, 0.22), transparent 36%),
+    linear-gradient(145deg, var(--jade-dark), var(--lacquer-dark));
+  border: 1px solid rgba(234, 211, 160, 0.32);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.life-graph-note strong {
+  display: block;
+  color: var(--gold-soft);
+  font-size: 1.08rem;
+}
+
+.life-graph-note p {
+  margin: 8px 0 0;
+  color: #f8edda;
+  font-size: 0.95rem;
+}
+
+.life-graph-tool {
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  gap: 26px;
+  align-items: start;
+}
+
+.life-graph-form,
+.life-graph-output,
+.life-graph-principles,
+.life-chart-card,
+.life-table-card,
+.life-house-card {
+  background: rgba(255, 250, 240, 0.76);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.life-graph-form {
+  position: sticky;
+  top: 112px;
+  display: grid;
+  gap: 16px;
+  padding: 22px;
+}
+
+.form-heading h2,
+.life-reading-head h2,
+.life-graph-principles h2 {
+  margin: 0;
+  font-size: clamp(1.55rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.life-graph-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.life-graph-form input,
+.life-graph-form select {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 11px;
+  color: var(--ink);
+  background: #fffdf6;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  outline: 0;
+}
+
+.life-graph-form input:focus,
+.life-graph-form select:focus {
+  border-color: rgba(194, 141, 53, 0.72);
+  box-shadow: 0 0 0 3px rgba(194, 141, 53, 0.16);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.form-footnote {
+  margin: -4px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.life-graph-output {
+  min-height: 520px;
+  padding: 24px;
+}
+
+.output-empty {
+  display: grid;
+  place-items: center;
+  min-height: 460px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.output-empty span {
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  margin-bottom: 16px;
+  color: var(--gold-soft);
+  background: var(--jade-dark);
+  border-radius: 50%;
+  font-size: 2.2rem;
+  font-weight: 800;
+}
+
+.output-empty strong {
+  color: var(--ink);
+  font-size: 1.35rem;
+}
+
+.life-reading-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px;
+  gap: 18px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+
+.life-reading-head p {
+  margin: 10px 0 0;
+  color: var(--ink-soft);
+}
+
+.life-score {
+  display: grid;
+  justify-items: center;
+  padding: 16px;
+  background: #fff6e5;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.life-score span,
+.life-score small {
+  color: var(--ink-soft);
+  font-weight: 800;
+}
+
+.life-score strong {
+  color: var(--lacquer);
+  font-size: 2.3rem;
+  line-height: 1;
+}
+
+.life-chart-card,
+.life-table-card {
+  margin-bottom: 18px;
+  padding: 18px;
+}
+
+.life-chart-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.life-chart-toolbar strong {
+  display: block;
+  font-size: 1.1rem;
+}
+
+.life-chart-toolbar span {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.life-chart-wrap {
+  position: relative;
+  overflow-x: auto;
+  border: 1px solid rgba(77, 56, 41, 0.14);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(234, 211, 160, 0.3), transparent 38%),
+    #fffdf6;
+}
+
+.life-chart {
+  display: block;
+  width: max(100%, 760px);
+  max-width: none;
+  height: auto;
+}
+
+.life-grid line {
+  stroke: rgba(77, 56, 41, 0.13);
+  stroke-width: 1;
+}
+
+.life-grid line.major {
+  stroke: rgba(194, 141, 53, 0.42);
+}
+
+.life-grid text {
+  fill: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.life-grid .x-label {
+  fill: var(--ink);
+  font-size: 13px;
+}
+
+.life-grid .x-period {
+  fill: var(--ink-soft);
+  font-size: 11px;
+}
+
+.life-area {
+  fill: rgba(39, 106, 82, 0.12);
+}
+
+.life-line-shadow,
+.life-line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.life-line-shadow {
+  stroke: rgba(37, 29, 26, 0.18);
+  stroke-width: 9;
+}
+
+.life-line {
+  stroke: var(--jade);
+  stroke-width: 4;
+}
+
+.life-point-layer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: max(100%, 760px);
+  pointer-events: none;
+}
+
+.life-point {
+  position: absolute;
+  left: calc(var(--x) / 920 * 100%);
+  top: calc(var(--y) / 470 * 100%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: #fffaf0;
+  background: var(--jade);
+  border: 2px solid #fffdf6;
+  border-radius: 50%;
+  box-shadow: 0 8px 16px rgba(39, 29, 20, 0.18);
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+}
+
+.life-point.high {
+  background: var(--lacquer);
+}
+
+.life-point.low {
+  background: #5d514a;
+}
+
+.life-point span {
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.life-point:hover,
+.life-point:focus-visible {
+  outline: 0;
+  transform: translate(-50%, -50%) scale(1.12);
+}
+
+.life-table-card h3,
+.life-house-list h3 {
+  margin: 0 0 12px;
+  font-size: 1.18rem;
+}
+
+.life-seed-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.life-seed-grid article {
+  padding: 13px;
+  background: #fffdf6;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.life-seed-grid span {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.life-seed-grid strong {
+  color: var(--lacquer);
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+
+.life-house-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.life-house-card {
+  display: grid;
+  gap: 10px;
+  padding: 17px;
+  box-shadow: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.life-house-card.is-focused {
+  border-color: rgba(194, 141, 53, 0.72);
+  box-shadow: 0 14px 32px rgba(39, 29, 20, 0.14);
+  transform: translateY(-2px);
+}
+
+.life-house-card > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.life-house-card > div:first-child span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: var(--gold-soft);
+  background: var(--jade-dark);
+  border-radius: 50%;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.life-house-card strong {
+  font-size: 1.08rem;
+}
+
+.life-house-card p,
+.life-house-card small {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.house-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  padding: 7px 10px;
+  color: #fffaf0;
+  background: var(--jade);
+  border-radius: 999px;
+}
+
+.house-score.high {
+  background: var(--lacquer);
+}
+
+.house-score.low {
+  background: #5d514a;
+}
+
+.house-score b {
+  font-size: 1.1rem;
+}
+
+.house-score span {
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.life-graph-principles {
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  gap: 30px;
+  margin-top: 28px;
+  padding: 28px;
+  box-shadow: none;
+}
+
+.principle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.principle-grid article {
+  padding: 18px;
+  background: #fffdf6;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.principle-grid strong {
+  display: block;
+  margin-bottom: 7px;
+}
+
+.principle-grid p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+@media (min-width: 721px) and (max-width: 1080px) {
+  .life-graph-hero {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 28px;
+  }
+
+  .life-graph-tool {
+    grid-template-columns: 290px minmax(0, 1fr);
+  }
+
+  .life-house-grid,
+  .principle-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .life-graph-principles {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .life-graph-hero,
+  .life-graph-tool,
+  .life-graph-principles {
+    width: min(100% - 28px, var(--container));
+  }
+
+  .life-graph-hero,
+  .life-graph-tool,
+  .life-graph-principles,
+  .life-reading-head {
+    grid-template-columns: 1fr;
+  }
+
+  .life-graph-hero {
+    padding: 38px 0 24px;
+  }
+
+  .life-graph-hero h1 {
+    font-size: 3.6rem;
+  }
+
+  .life-graph-form {
+    position: static;
+  }
+
+  .life-graph-output {
+    padding: 16px;
+  }
+
+  .life-chart-card,
+  .life-table-card {
+    padding: 14px;
+  }
+
+  .life-seed-grid,
+  .life-house-grid,
+  .principle-grid {
+    grid-template-columns: 1fr;
+  }
+}
