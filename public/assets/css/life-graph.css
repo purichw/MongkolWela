@@ -73,6 +73,7 @@
   grid-template-columns: 330px minmax(0, 1fr);
   gap: 26px;
   align-items: start;
+  scroll-margin-top: 172px;
 }
 
 .life-graph-form,
@@ -88,11 +89,16 @@
 }
 
 .life-graph-form {
-  position: sticky;
-  top: 112px;
+  position: relative;
   display: grid;
   gap: 16px;
+  align-self: start;
+  scroll-margin-top: 172px;
   padding: 22px;
+}
+
+.life-graph-form .form-heading {
+  order: -2;
 }
 
 .form-heading h2,
@@ -141,6 +147,12 @@
   color: var(--ink-soft);
   font-size: 0.84rem;
   line-height: 1.45;
+}
+
+.life-graph-form .primary-action {
+  order: -1;
+  min-height: 48px;
+  box-shadow: 0 12px 24px rgba(142, 45, 36, 0.18);
 }
 
 .life-graph-output {
@@ -645,6 +657,10 @@
 
   .life-graph-form {
     position: static;
+  }
+
+  .life-graph-form .primary-action {
+    box-shadow: none;
   }
 
   .life-graph-output {

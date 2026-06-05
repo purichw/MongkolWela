@@ -128,6 +128,7 @@
   grid-template-columns: 340px minmax(0, 1fr);
   gap: 26px;
   align-items: start;
+  scroll-margin-top: 172px;
 }
 
 .thai-astro-form,
@@ -142,11 +143,16 @@
 }
 
 .thai-astro-form {
-  position: sticky;
-  top: 112px;
+  position: relative;
   display: grid;
   gap: 15px;
+  align-self: start;
+  scroll-margin-top: 172px;
   padding: 22px;
+}
+
+.thai-astro-form > div:first-child {
+  order: -2;
 }
 
 .thai-astro-form h2,
@@ -196,6 +202,12 @@
   color: var(--ink-soft);
   font-size: 0.84rem;
   line-height: 1.45;
+}
+
+.thai-astro-form .primary-action {
+  order: -1;
+  min-height: 48px;
+  box-shadow: 0 12px 24px rgba(142, 45, 36, 0.18);
 }
 
 .thai-astro-output {
@@ -572,6 +584,10 @@
 
   .thai-astro-form {
     position: static;
+  }
+
+  .thai-astro-form .primary-action {
+    box-shadow: none;
   }
 
   .thai-astro-output {

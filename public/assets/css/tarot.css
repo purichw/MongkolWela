@@ -90,12 +90,13 @@
   grid-template-columns: 300px minmax(0, 1fr);
   gap: 28px;
   padding: 0 0 80px;
+  scroll-margin-top: 172px;
 }
 
 .tarot-intention {
-  position: sticky;
-  top: 132px;
+  position: relative;
   align-self: start;
+  scroll-margin-top: 172px;
   padding: 24px;
   background: rgba(255, 250, 240, 0.78);
   border: 1px solid var(--line);
