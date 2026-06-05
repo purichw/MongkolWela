@@ -1,4 +1,4 @@
-import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260605-4";
+import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260605-5";
 
 const selectors = {
   deck: "[data-tarot-deck]",
@@ -83,12 +83,23 @@ function renderCardButton(card, index) {
   const isSelected = selectedCard?.id === card.id;
   const isDisabled = Boolean(selectedCard) && !isSelected;
   const label = isSelected ? `${card.thName} ${card.name}` : `เลือกไพ่ใบที่ ${index + 1}`;
+  const position = getCardPosition(index, deck.length);
 
   return `
-    <button class="tarot-card-pick${isSelected ? " is-selected" : ""}" type="button" data-card-id="${card.id}" aria-label="${label}"${isDisabled ? " disabled" : ""}>
+    <button class="tarot-card-pick${isSelected ? " is-selected" : ""}" type="button" data-card-id="${card.id}" aria-label="${label}" style="${position}"${isDisabled ? " disabled" : ""}>
       ${isSelected ? renderCardFace(card, "small") : renderCardBack(index)}
     </button>
   `;
+}
+
+function getCardPosition(index, total) {
+  const angle = (index / total) * Math.PI * 2 - Math.PI / 2;
+  const x = 50 + Math.cos(angle) * 42;
+  const y = 50 + Math.sin(angle) * 37;
+  const rotation = (angle * 180) / Math.PI + 90;
+  const layer = Math.round(1000 + y * 10);
+
+  return `--x:${x.toFixed(3)};--y:${y.toFixed(3)};--r:${rotation.toFixed(3)}deg;--z:${layer};`;
 }
 
 function renderCardBack(index) {
