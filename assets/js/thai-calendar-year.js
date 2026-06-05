@@ -10,7 +10,7 @@ import {
   thaiMonthNames,
   toThaiNumeral,
   weekdayNames,
-} from "./thai-calendar-core.js?v=20260605-17";
+} from "./thai-calendar-core.js?v=20260605-18";
 
 const yearForm = document.querySelector("[data-calendar-form]");
 const yearSelect = document.querySelector("[data-calendar-year]");
@@ -53,16 +53,19 @@ function renderYear(beYear) {
   const songkranDay = createThaiDayInfo(new Date(ceYear, 3, 13));
 
   yearSummary.innerHTML = `
-    <p class="section-kicker">ปฏิทินไทย ${beYear}</p>
-    <h1>ปฏิทินจันทรคติไทย พ.ศ.${beYear}</h1>
-    <p>
-      ${beYear} / ${ceYear} เริ่มด้วยปี${firstDay.zodiac.name} และเปลี่ยนรอบนักษัตรหลังสงกรานต์เป็นปี${songkranDay.zodiac.name}
-      แสดงวันพระ ดิถี หมายเหตุ และข้อมูลแรมค่ำเดือนปีสำหรับทุกวัน
-    </p>
+    <div class="calendar-summary-copy">
+      <p class="section-kicker">ปฏิทินไทย ${beYear}</p>
+      <h1>ปฏิทินไทย พ.ศ.${beYear}</h1>
+      <p>
+        ${beYear} / ${ceYear} เริ่มด้วยปี${firstDay.zodiac.name}
+        และเปลี่ยนรอบนักษัตรหลังสงกรานต์เป็นปี${songkranDay.zodiac.name}
+        พร้อมวันพระ ดิถี หมายเหตุ และแรมค่ำเดือนปีสำหรับทุกวัน
+      </p>
+    </div>
     <dl>
       <div><dt>จ.ศ.</dt><dd>${firstDay.chulaSakarat} - ${songkranDay.chulaSakarat}</dd></div>
       <div><dt>ระบบปี</dt><dd>${firstDay.yearType}</dd></div>
-      <div><dt>แหล่งคำนวณ</dt><dd>${getCalendarSourceNote()}</dd></div>
+      <div><dt>หมายเหตุ</dt><dd>${getCalendarSourceNote()}</dd></div>
     </dl>
   `;
 

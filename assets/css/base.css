@@ -70,7 +70,7 @@ option {
   margin: 0 0 10px;
   color: var(--gold-soft);
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0;
   text-transform: uppercase;
 }
@@ -112,7 +112,7 @@ h3,
   padding: 0 18px;
   border: 1px solid transparent;
   border-radius: var(--radius);
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
 }
 

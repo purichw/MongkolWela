@@ -1,5 +1,5 @@
-import { levelBands, lifeHouses } from "./life-graph-data.js?v=20260605-17";
-import { ThaiCalendarProvider, createProgression, reduceToTwelve } from "./thai-calendar-provider.js?v=20260605-17";
+import { levelBands, lifeHouses } from "./life-graph-data.js?v=20260605-18";
+import { ThaiCalendarProvider, createProgression, reduceToTwelve } from "./thai-calendar-provider.js?v=20260605-18";
 
 const thaiMonths = [
   "ม.ค.",

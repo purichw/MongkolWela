@@ -246,7 +246,7 @@ html[lang="en"] .hero h1 {
 .tool-card span {
   color: var(--jade);
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .today-grid strong {
@@ -359,13 +359,13 @@ html[lang="en"] .hero h1 {
 
 .calendar-title span,
 .calendar-preview dd {
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .calendar-title strong {
   color: var(--lacquer);
   font-size: 1.6rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .calendar-days {

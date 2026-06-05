@@ -8,7 +8,7 @@ import {
   thaiMonthNames,
   toThaiNumeral,
   weekdayPlanetNames,
-} from "./thai-calendar-core.js?v=20260605-17";
+} from "./thai-calendar-core.js?v=20260605-18";
 
 const detailRoot = document.querySelector("[data-calendar-day-detail]");
 
@@ -90,11 +90,10 @@ function initDayDetail() {
         ดิถีเรียงหมอน วันทรธึก และวันลอยวันจมวันฟู ส่วนสมผุสดาวละเอียดควรต่อฐาน ephemeris
         หรือปฏิทินโหรที่มีสิทธิ์ใช้งานก่อนใช้ตัดสินฤกษ์จริง
       </p>
-      <ul class="reference-links">
-        <li><a href="https://myhora.com/calendar/" target="_blank" rel="noreferrer">MyHora ปฏิทินไทย</a></li>
-        <li><a href="https://calenos.com/docs/" target="_blank" rel="noreferrer">CalenOS Thai calendar docs</a></li>
-        <li><a href="https://digitalbangkokrecorder.com/articles/thai-lunar-calendar-101/" target="_blank" rel="noreferrer">Thai Lunar Calendar 101</a></li>
-      </ul>
+      <p class="calendar-reference-note">
+        ระยะนี้ใช้สำหรับการอ่านวันและวาง UX ก่อน เมื่อเชื่อมฐานข้อมูลโหรฉบับตรวจสอบได้
+        ระบบจะระบุระดับความแม่นของข้อมูลและที่มาภายในฐานข้อมูลของมงคลเวลา
+      </p>
     </section>
   `;
 }

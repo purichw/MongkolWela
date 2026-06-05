@@ -1,6 +1,6 @@
 # Hora Astro
 
-Static MVP homepage for a Thai-first auspicious, horoscope, calendar, and spiritual knowledge website.
+Static homepage for a Thai-first auspicious, horoscope, calendar, and spiritual knowledge website.
 
 ## Preview
 

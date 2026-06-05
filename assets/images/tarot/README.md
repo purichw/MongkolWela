@@ -1,6 +1,6 @@
 # Tarot Card Art
 
-The MVP tarot cards use the Rider-Waite-Smith tarot deck images from Wikimedia Commons.
+The tarot cards use the Rider-Waite-Smith tarot deck images from Wikimedia Commons.
 
 - Source category: https://commons.wikimedia.org/wiki/Category:Rider-Waite-Smith_tarot_deck_(Geldard)
 - Artist: Pamela Colman Smith

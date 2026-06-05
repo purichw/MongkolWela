@@ -172,7 +172,7 @@ export function getTodayBeYear() {
 }
 
 export function getCalendarSourceNote() {
-  return "คำนวณ MVP ด้วยรอบจันทรคติเฉลี่ยและกฎอธิกมาส 19 ปีแบบไทย พร้อมช่องรองรับฐานข้อมูลปฏิทินโหร/ephemeris จริงในอนาคต";
+  return "คำนวณด้วยรอบจันทรคติเฉลี่ยและกฎอธิกมาส 19 ปีแบบไทย พร้อมโครงสร้างรองรับฐานข้อมูลปฏิทินโหรและ ephemeris ฉบับตรวจสอบได้ในอนาคต";
 }
 
 function getLunarInfo(date) {
