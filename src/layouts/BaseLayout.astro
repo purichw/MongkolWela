@@ -23,7 +23,7 @@ const {
   extraScripts = [],
 } = Astro.props as Props;
 
-const assetVersion = "20260606-4";
+const assetVersion = "20260606-5";
 const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
 ---
 

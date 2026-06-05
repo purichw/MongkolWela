@@ -1,32 +1,21 @@
 const selectors = {
   loader: "[data-page-loader]",
   progress: "[data-loader-progress]",
-  message: "[data-loader-message]",
 };
-
-const messages = [
-  "กำลังเปิดดวง",
-  "จัดวางดาว",
-  "สับสำรับไพ่",
-  "นับเลขมงคล",
-  "ปรับทิศพลังงาน",
-];
 
 let progress = 8;
 let target = 86;
 let frame = 0;
-let messageTimer = 0;
 let hideTimer = 0;
 
 export function initPageLoader() {
   const loader = document.querySelector(selectors.loader);
   const progressBar = document.querySelector(selectors.progress);
-  const progressRoot = loader?.querySelector("[role='progressbar']");
-  const message = document.querySelector(selectors.message);
+  const progressRoot = loader?.matches("[role='progressbar']") ? loader : null;
 
-  if (!loader || !progressBar || !progressRoot || !message) return;
+  if (!loader || !progressBar || !progressRoot) return;
 
-  const state = { loader, progressBar, progressRoot, message };
+  const state = { loader, progressBar, progressRoot };
   startLoader(state, "is-loading");
 
   if (document.readyState === "complete") {
@@ -67,7 +56,6 @@ function startLoader(state, className) {
   target = className === "is-navigating" ? 92 : 86;
   progress = Math.max(progress, className === "is-navigating" ? 18 : 8);
   setProgress(state, progress);
-  cycleMessages(state);
   tickProgress(state);
 }
 
@@ -75,7 +63,6 @@ function finishLoader(state) {
   target = 100;
   setProgress(state, 100);
   window.cancelAnimationFrame(frame);
-  window.clearInterval(messageTimer);
 
   hideTimer = window.setTimeout(() => {
     document.documentElement.classList.remove("is-loading", "is-navigating");
@@ -107,17 +94,6 @@ function setProgress(state, value) {
   const nextValue = Math.max(0, Math.min(100, value));
   state.progressBar.style.width = `${nextValue}%`;
   state.progressRoot.setAttribute("aria-valuenow", String(Math.round(nextValue)));
-}
-
-function cycleMessages(state) {
-  window.clearInterval(messageTimer);
-  let index = 0;
-  state.message.textContent = messages[index];
-
-  messageTimer = window.setInterval(() => {
-    index = (index + 1) % messages.length;
-    state.message.textContent = messages[index];
-  }, 1250);
 }
 
 function shouldShowNavigationLoader(event, link) {
