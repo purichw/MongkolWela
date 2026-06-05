@@ -1,21 +1,49 @@
 @media (max-width: 1280px) {
-  .nav-menu {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
+  .navbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "brand actions"
+      "menu menu";
+    gap: 8px 16px;
+    min-height: auto;
+    padding-top: 10px;
+    padding-bottom: 12px;
   }
 
-  .nav-menu::-webkit-scrollbar {
-    display: none;
+  .brand {
+    grid-area: brand;
+  }
+
+  .nav-menu {
+    grid-area: menu;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .mega-panel {
+    left: 0;
+    transform: translateY(8px);
+  }
+
+  .nav-item:hover .mega-panel,
+  .nav-item:focus-within .mega-panel {
+    transform: translateY(0);
+  }
+
+  .nav-actions {
+    grid-area: actions;
   }
 }
 
 @media (min-width: 721px) and (max-width: 1080px) {
   .navbar {
-    gap: 14px;
-    min-height: 74px;
+    gap: 8px 14px;
+    min-height: auto;
     padding: 0 20px;
+    padding-top: 10px;
+    padding-bottom: 12px;
   }
 
   .brand {
@@ -25,12 +53,7 @@
 
   .nav-menu {
     justify-content: flex-start;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .nav-menu::-webkit-scrollbar {
-    display: none;
+    overflow: visible;
   }
 
   .nav-item > a,
@@ -148,6 +171,7 @@
     right: 14px;
     display: none;
     flex-direction: column;
+    flex-wrap: nowrap;
     align-items: stretch;
     padding: 12px;
     background: #fffaf0;
@@ -162,6 +186,11 @@
     display: flex;
   }
 
+  .nav-item,
+  .plain-link {
+    width: 100%;
+  }
+
   .nav-item > a,
   .plain-link {
     justify-content: space-between;
@@ -169,7 +198,9 @@
   }
 
   .mega-panel {
+    left: auto;
     position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
     margin: 0 0 8px;
     opacity: 1;
@@ -204,7 +235,7 @@
   }
 
   .hero-controls {
-    top: 18px;
+    top: 12px;
     right: 20px;
     bottom: auto;
     padding: 7px;
