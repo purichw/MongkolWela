@@ -179,6 +179,8 @@
   border-bottom: 1px solid rgba(77, 56, 41, 0.14);
   text-align: left;
   vertical-align: top;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .temple-table th:last-child,
@@ -207,48 +209,51 @@
 }
 
 .temple-col-order {
-  width: 72px;
+  width: 74px;
 }
 
 .temple-col-code {
-  width: 156px;
+  width: 148px;
 }
 
 .temple-col-name {
-  width: 190px;
+  width: 280px;
 }
 
 .temple-col-type {
-  width: 132px;
+  width: 128px;
 }
 
 .temple-col-sect {
-  width: 108px;
+  width: 126px;
 }
 
 .temple-col-register {
-  width: 230px;
-}
-
-.temple-col-found-date {
-  width: 150px;
-}
-
-.temple-col-wisung-date {
   width: 210px;
 }
 
-.temple-col-subdistrict,
+.temple-col-found-date {
+  width: 134px;
+}
+
+.temple-col-wisung-date {
+  width: 214px;
+}
+
+.temple-col-subdistrict {
+  width: 170px;
+}
+
 .temple-col-district {
-  width: 174px;
+  width: 190px;
 }
 
 .temple-col-province {
-  width: 194px;
+  width: 188px;
 }
 
 .temple-col-postal {
-  width: 128px;
+  width: 122px;
 }
 
 .temple-empty {
