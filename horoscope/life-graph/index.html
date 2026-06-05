@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     >
-    <link rel="stylesheet" href="../../styles.css?v=20260605-7">
+    <link rel="stylesheet" href="../../styles.css?v=20260605-8">
   </head>
   <body>
     <header class="site-header">
@@ -92,10 +92,10 @@
           </p>
         </div>
         <aside class="life-graph-note">
-          <strong>สถานะสูตร</strong>
+          <strong>สูตรฐาน 12</strong>
           <p>
-            หน้านี้เป็น MVP สำหรับออกแบบประสบการณ์และโครงสร้างข้อมูล
-            สูตรคำนวณถูกแยกไว้เพื่อปรับเป็นตำราที่ตรวจสอบแล้วในรอบถัดไป
+            คำนวณจากฐานวัน ฐานเดือนจันทรคติ และฐานปีนักษัตร
+            โดยใช้ ThaiCalendarProvider ตรวจข้อมูลปฏิทินไทยก่อนวางกราฟ
           </p>
         </aside>
       </section>
@@ -135,7 +135,7 @@
 
           <button class="primary-action" type="submit">คำนวณกราฟชีวิต</button>
           <p class="form-footnote">
-            หากไม่ทราบเวลาเกิด ให้ใช้เวลา 12:00 เป็นค่าเริ่มต้น แล้วอ่านผลเป็นภาพรวม
+            สูตรฐาน 12 ใช้วัน เดือนจันทรคติ และปีนักษัตรเป็นแกนหลัก เวลาเกิดเก็บไว้สำหรับการต่อยอดร่วมกับศาสตร์อื่น
           </p>
         </form>
 
@@ -156,7 +156,7 @@
         <div class="principle-grid">
           <article>
             <strong>แยกสูตรออกจากคำทำนาย</strong>
-            <p>สูตรคำนวณอยู่ใน engine เฉพาะ ส่วนคำอ่านเป็น content layer ที่ปรับภาษาได้ทั้งไทยและอังกฤษ</p>
+            <p>สูตรฐาน 12 อยู่ใน engine เฉพาะ ส่วนคำอ่านเป็น content layer ที่ปรับภาษาได้ทั้งไทยและอังกฤษ</p>
           </article>
           <article>
             <strong>กราฟต้องโต้ตอบได้</strong>
@@ -183,7 +183,7 @@
       </div>
     </footer>
 
-    <script type="module" src="../../script.js?v=20260605-7"></script>
-    <script type="module" src="../../assets/js/life-graph.js?v=20260605-7"></script>
+    <script type="module" src="../../script.js?v=20260605-8"></script>
+    <script type="module" src="../../assets/js/life-graph.js?v=20260605-8"></script>
   </body>
 </html>

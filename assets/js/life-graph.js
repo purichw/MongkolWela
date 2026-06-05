@@ -1,5 +1,6 @@
-import { renderLifeGraph } from "./life-graph-chart.js?v=20260605-7";
-import { calculateLifeGraph } from "./life-graph-engine.js?v=20260605-7";
+import { renderLifeGraph } from "./life-graph-chart.js?v=20260605-8";
+import { calculateLifeGraph } from "./life-graph-engine.js?v=20260605-8";
+import { ThaiCalendarProvider } from "./thai-calendar-provider.js?v=20260605-8";
 
 const selectors = {
   form: "[data-life-graph-form]",
@@ -13,16 +14,17 @@ initLifeGraph();
 function initLifeGraph() {
   const form = document.querySelector(selectors.form);
   const output = document.querySelector(selectors.output);
+  const calendarProvider = new ThaiCalendarProvider();
 
   if (!form || !output) return;
 
   fillTimeOptions(form);
   setDefaultDates(form);
-  renderFromForm(form, output);
+  renderFromForm(form, output, calendarProvider);
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    renderFromForm(form, output);
+    await renderFromForm(form, output, calendarProvider);
     output.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
@@ -63,18 +65,47 @@ function setDefaultDates(form) {
   if (transitInput && !transitInput.value) transitInput.value = toInputDate(today);
 }
 
-function renderFromForm(form, output) {
+async function renderFromForm(form, output, calendarProvider) {
   if (!form.checkValidity()) return;
 
-  const result = calculateLifeGraph({
-    name: form.elements.name.value,
-    birthDate: form.elements.birthDate.value,
-    birthHour: form.elements.birthHour.value,
-    birthMinute: form.elements.birthMinute.value,
-    transitDate: form.elements.transitDate.value,
-  });
+  output.innerHTML = renderLoadingState();
 
-  output.innerHTML = renderLifeGraph(result);
+  try {
+    const result = await calculateLifeGraph(
+      {
+        name: form.elements.name.value,
+        birthDate: form.elements.birthDate.value,
+        birthHour: form.elements.birthHour.value,
+        birthMinute: form.elements.birthMinute.value,
+        transitDate: form.elements.transitDate.value,
+      },
+      calendarProvider,
+    );
+
+    output.innerHTML = renderLifeGraph(result);
+  } catch {
+    output.innerHTML = renderErrorState();
+  }
+}
+
+function renderLoadingState() {
+  return `
+    <div class="output-empty">
+      <span>๑๒</span>
+      <strong>กำลังอ่านปฏิทินไทย</strong>
+      <p>ระบบกำลังตรวจเดือนจันทรคติและปีนักษัตรก่อนวางเลขฐาน 12</p>
+    </div>
+  `;
+}
+
+function renderErrorState() {
+  return `
+    <div class="output-empty">
+      <span>!</span>
+      <strong>ยังคำนวณไม่ได้</strong>
+      <p>กรุณาตรวจวันเกิดและลองใหม่อีกครั้ง</p>
+    </div>
+  `;
 }
 
 function focusHouseCard(output, houseId) {

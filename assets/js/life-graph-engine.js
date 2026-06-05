@@ -1,4 +1,5 @@
-import { levelBands, lifeHouses } from "./life-graph-data.js?v=20260605-7";
+import { levelBands, lifeHouses } from "./life-graph-data.js?v=20260605-8";
+import { ThaiCalendarProvider, createProgression, reduceToTwelve } from "./thai-calendar-provider.js?v=20260605-8";
 
 const thaiMonths = [
   "ม.ค.",
@@ -15,16 +16,16 @@ const thaiMonths = [
   "ธ.ค.",
 ];
 
-export function calculateLifeGraph(input) {
+export async function calculateLifeGraph(input, calendarProvider = new ThaiCalendarProvider()) {
   const birthDate = parseDate(input.birthDate);
   const transitDate = parseDate(input.transitDate);
   const birthHour = Number(input.birthHour);
   const birthMinute = Number(input.birthMinute);
+  const calendar = await calendarProvider.getDateInfo(birthDate);
+  const rows = createLifeGraphRows(calendar);
 
-  const seeds = createSeeds(birthDate, transitDate, birthHour, birthMinute);
   const houses = lifeHouses.map((house, index) => {
-    const raw = seeds.day + seeds.month * (index + 1) + seeds.year * (index + 2) + seeds.time + index * index;
-    const value = wrap12(raw + seeds.transit);
+    const value = rows.graph[index];
     const band = getLevelBand(value);
     const period = getPeriod(transitDate, index);
 
@@ -44,7 +45,8 @@ export function calculateLifeGraph(input) {
     birthDate,
     transitDate,
     birthTime: `${pad2(birthHour)}:${pad2(birthMinute)}`,
-    seeds,
+    calendar,
+    rows,
     houses,
     summary: createSummary(houses),
   };
@@ -59,28 +61,18 @@ function parseDate(value) {
   return new Date(year, month - 1, day);
 }
 
-function createSeeds(birthDate, transitDate, birthHour, birthMinute) {
-  const buddhistYear = birthDate.getFullYear() + 543;
-  const transitYear = transitDate.getFullYear() + 543;
-  const day = birthDate.getDay() + 1;
-  const month = birthDate.getMonth() + 1;
-  const year = wrap12(sumDigits(buddhistYear));
-  const time = wrap12(Math.floor(birthHour / 2) + Math.floor(birthMinute / 10) + 1);
-  const transit = wrap12(transitDate.getDate() + transitDate.getMonth() + 1 + sumDigits(transitYear));
-
-  return {
-    day,
-    month,
-    year,
-    time,
-    transit,
-    buddhistYear,
-    transitYear,
-  };
-}
-
 function getLevelBand(value) {
   return levelBands.find((band) => value >= band.min) ?? levelBands[levelBands.length - 1];
+}
+
+function createLifeGraphRows(calendar) {
+  const day = createProgression(calendar.weekdayNumber, 7);
+  const month = createProgression(calendar.lunarMonth, 12);
+  const year = createProgression(calendar.zodiacNumber, 12);
+  const total = day.map((value, index) => value + month[index] + year[index]);
+  const graph = total.map(reduceToTwelve);
+
+  return { day, month, year, total, graph };
 }
 
 function createSummary(houses) {
@@ -113,16 +105,6 @@ function getAgeAt(birthDate, date) {
 
   if (!hasBirthdayPassed) age -= 1;
   return Math.max(age, 0);
-}
-
-function sumDigits(value) {
-  return String(value)
-    .split("")
-    .reduce((sum, digit) => sum + Number(digit), 0);
-}
-
-function wrap12(value) {
-  return ((value - 1) % 12) + 1;
 }
 
 function pad2(value) {

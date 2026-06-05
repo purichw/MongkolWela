@@ -144,6 +144,7 @@
 }
 
 .life-graph-output {
+  min-width: 0;
   min-height: 520px;
   padding: 24px;
 }
@@ -187,6 +188,13 @@
   color: var(--ink-soft);
 }
 
+.life-reading-head .calendar-source {
+  margin-top: 6px;
+  color: var(--jade);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
 .life-score {
   display: grid;
   justify-items: center;
@@ -210,6 +218,7 @@
 
 .life-chart-card,
 .life-table-card {
+  min-width: 0;
   margin-bottom: 18px;
   padding: 18px;
 }
@@ -233,6 +242,8 @@
 
 .life-chart-wrap {
   position: relative;
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
   border: 1px solid rgba(77, 56, 41, 0.14);
   border-radius: var(--radius);
@@ -347,30 +358,51 @@
   font-size: 1.18rem;
 }
 
-.life-seed-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.life-seed-grid article {
-  padding: 13px;
-  background: #fffdf6;
-  border: 1px solid var(--line);
+.life-basis-table-wrap {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  border: 1px solid rgba(77, 56, 41, 0.14);
   border-radius: var(--radius);
 }
 
-.life-seed-grid span {
-  display: block;
+.life-basis-table {
+  width: max(100%, 860px);
+  border-collapse: collapse;
+  background: #fffdf6;
+  font-size: 0.88rem;
+}
+
+.life-basis-table th,
+.life-basis-table td {
+  min-width: 62px;
+  padding: 9px 8px;
+  border: 1px solid rgba(77, 56, 41, 0.12);
+  text-align: center;
+}
+
+.life-basis-table th {
   color: var(--ink-soft);
-  font-size: 0.78rem;
+  background: #fbf2df;
   font-weight: 800;
 }
 
-.life-seed-grid strong {
+.life-basis-table tbody th {
+  color: var(--ink);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.life-basis-table td {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.life-basis-table .is-graph-row th,
+.life-basis-table .is-graph-row td {
   color: var(--lacquer);
-  font-size: 1.6rem;
-  line-height: 1.1;
+  background: rgba(194, 141, 53, 0.12);
+  font-weight: 800;
 }
 
 .life-house-grid {
@@ -536,7 +568,10 @@
     padding: 14px;
   }
 
-  .life-seed-grid,
+  .life-basis-table {
+    width: 860px;
+  }
+
   .life-house-grid,
   .principle-grid {
     grid-template-columns: 1fr;

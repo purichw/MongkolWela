@@ -1,4 +1,4 @@
-import { formatThaiDate } from "./life-graph-engine.js?v=20260605-7";
+import { formatThaiDate } from "./life-graph-engine.js?v=20260605-8";
 
 const chart = {
   width: 920,
@@ -23,6 +23,10 @@ export function renderLifeGraph(result) {
           เกิด ${formatThaiDate(result.birthDate)} เวลา ${result.birthTime}
           • อ่านจรตั้งแต่ ${formatThaiDate(result.transitDate)}
         </p>
+        <p class="calendar-source">
+          ${result.calendar.lunarLabel} • ปี${result.calendar.zodiacName}
+          • แหล่งปฏิทิน: ${result.calendar.source}
+        </p>
       </div>
       <div class="life-score">
         <span>${result.summary.tone}</span>
@@ -42,14 +46,8 @@ export function renderLifeGraph(result) {
     </section>
 
     <section class="life-table-card">
-      <h3>ตารางเลขตั้งต้น</h3>
-      <div class="life-seed-grid">
-        ${renderSeed("วันเกิด", result.seeds.day)}
-        ${renderSeed("เดือนเกิด", result.seeds.month)}
-        ${renderSeed("ปีเกิด", result.seeds.year)}
-        ${renderSeed("เวลาเกิด", result.seeds.time)}
-        ${renderSeed("วันจร", result.seeds.transit)}
-      </div>
+      <h3>ตารางฐาน 12</h3>
+      ${renderBasisTable(result)}
     </section>
 
     <section class="life-house-list">
@@ -103,12 +101,36 @@ function renderSvg(points, path, areaPath) {
   `;
 }
 
-function renderSeed(label, value) {
+function renderBasisTable(result) {
+  const columns = result.houses.map((house) => `<th scope="col">${house.shortLabel}</th>`).join("");
+
   return `
-    <article>
-      <span>${label}</span>
-      <strong>${value}</strong>
-    </article>
+    <div class="life-basis-table-wrap">
+      <table class="life-basis-table">
+        <thead>
+          <tr>
+            <th scope="col">ฐาน</th>
+            ${columns}
+          </tr>
+        </thead>
+        <tbody>
+          ${renderBasisRow("ฐานวัน", result.rows.day)}
+          ${renderBasisRow("ฐานเดือน", result.rows.month)}
+          ${renderBasisRow("ฐานปี", result.rows.year)}
+          ${renderBasisRow("ผลรวม", result.rows.total)}
+          ${renderBasisRow("เลขดวง", result.rows.graph, "is-graph-row")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderBasisRow(label, values, className = "") {
+  return `
+    <tr class="${className}">
+      <th scope="row">${label}</th>
+      ${values.map((value) => `<td>${value}</td>`).join("")}
+    </tr>
   `;
 }
 
