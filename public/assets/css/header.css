@@ -25,10 +25,11 @@
 
 .navbar {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(190px, auto) minmax(0, 1fr) auto;
   align-items: center;
-  gap: 22px;
-  max-width: var(--container);
+  gap: 18px;
+  width: 100%;
+  max-width: none;
   min-height: 76px;
   margin: 0 auto;
   padding: 0 26px;
@@ -39,6 +40,12 @@
   align-items: center;
   gap: 12px;
   min-width: 178px;
+  max-width: 260px;
+  min-inline-size: 0;
+}
+
+.brand > span {
+  min-width: 0;
 }
 
 .brand-mark {
@@ -57,28 +64,42 @@
 
 .brand strong {
   display: block;
+  overflow: hidden;
   font-size: 1.12rem;
   font-weight: 800;
+  line-height: 1.18;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .brand small {
   display: block;
   margin-top: -2px;
+  overflow: hidden;
   color: var(--ink-soft);
   font-size: 0.72rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .nav-menu {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 6px;
   min-width: 0;
+  padding: 0 6px;
+}
+
+.nav-menu::-webkit-scrollbar {
+  display: none;
 }
 
 .nav-item,
 .plain-link {
+  flex: 0 0 auto;
   position: relative;
 }
 
@@ -141,6 +162,7 @@
 .nav-actions {
   display: flex;
   align-items: center;
+  flex: 0 0 auto;
   gap: 10px;
 }
 
