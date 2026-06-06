@@ -1,4 +1,5 @@
 const root = document.querySelector("[data-temple-directory]");
+const quickSearchRoot = document.querySelector("[data-temple-quick-search]");
 
 const columnIndexes = [0, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12];
 const numericColumns = new Set([0, 6, 8, 12]);
@@ -129,6 +130,10 @@ if (root) {
   initializeTempleDirectory(root);
 }
 
+if (quickSearchRoot) {
+  initializeTempleQuickSearch(quickSearchRoot);
+}
+
 async function initializeTempleDirectory(rootElement) {
   const t = labels;
   const form = rootElement.querySelector("[data-temple-form]");
@@ -150,10 +155,10 @@ async function initializeTempleDirectory(rootElement) {
     const data = await response.json();
     rows = data.rows || [];
     headers = data.meta?.columns || [];
-    filteredRows = rows;
     renderHead(tableHead, headers);
     populateStaticOptions(form, rows, t);
     updateAreaOptions(form, rows, t);
+    filteredRows = applySearchParams(form, rows, t) ? filterRows(form, rows) : rows;
     updateView();
     if (sourceNode) sourceNode.textContent = t.source;
   } catch (error) {
@@ -167,32 +172,18 @@ async function initializeTempleDirectory(rootElement) {
     event.preventDefault();
     currentPage = 1;
     filteredRows = filterRows(form, rows);
+    syncUrlFromForm(form);
     updateView();
   });
 
-  form.querySelector("[data-temple-region]").addEventListener("change", () => {
-    form.querySelector("[data-temple-province]").value = "";
-    form.querySelector("[data-temple-district]").value = "";
-    form.querySelector("[data-temple-subdistrict]").value = "";
-    updateAreaOptions(form, rows, t);
-  });
-
-  form.querySelector("[data-temple-province]").addEventListener("change", () => {
-    form.querySelector("[data-temple-district]").value = "";
-    form.querySelector("[data-temple-subdistrict]").value = "";
-    updateAreaOptions(form, rows, t);
-  });
-
-  form.querySelector("[data-temple-district]").addEventListener("change", () => {
-    form.querySelector("[data-temple-subdistrict]").value = "";
-    updateAreaOptions(form, rows, t);
-  });
+  bindAreaEvents(form, rows, t);
 
   clearButton.addEventListener("click", () => {
     form.reset();
     currentPage = 1;
     filteredRows = rows;
     updateAreaOptions(form, rows, t);
+    clearSearchUrl();
     updateView();
   });
 
@@ -213,6 +204,58 @@ async function initializeTempleDirectory(rootElement) {
     renderRows(tableBody, filteredRows, currentPage, headers, t);
     renderPagination(pagination, currentPage, totalPages, t);
   }
+}
+
+async function initializeTempleQuickSearch(rootElement) {
+  const t = labels;
+  const form = rootElement.querySelector("[data-temple-form]");
+  const clearButton = rootElement.querySelector("[data-temple-clear]");
+
+  try {
+    const response = await fetch("/assets/data/temples-thailand.json");
+    if (!response.ok) throw new Error(`Temple data failed: ${response.status}`);
+    const data = await response.json();
+    const rows = data.rows || [];
+    populateStaticOptions(form, rows, t);
+    updateAreaOptions(form, rows, t);
+    applySearchParams(form, rows, t);
+    bindAreaEvents(form, rows, t);
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      redirectToDirectory(form);
+    });
+
+    clearButton.addEventListener("click", () => {
+      form.reset();
+      updateAreaOptions(form, rows, t);
+    });
+  } catch (error) {
+    console.error(error);
+    form.querySelectorAll("input, select, button").forEach((element) => {
+      element.disabled = true;
+    });
+  }
+}
+
+function bindAreaEvents(form, rows, t) {
+  form.querySelector("[data-temple-region]").addEventListener("change", () => {
+    form.querySelector("[data-temple-province]").value = "";
+    form.querySelector("[data-temple-district]").value = "";
+    form.querySelector("[data-temple-subdistrict]").value = "";
+    updateAreaOptions(form, rows, t);
+  });
+
+  form.querySelector("[data-temple-province]").addEventListener("change", () => {
+    form.querySelector("[data-temple-district]").value = "";
+    form.querySelector("[data-temple-subdistrict]").value = "";
+    updateAreaOptions(form, rows, t);
+  });
+
+  form.querySelector("[data-temple-district]").addEventListener("change", () => {
+    form.querySelector("[data-temple-subdistrict]").value = "";
+    updateAreaOptions(form, rows, t);
+  });
 }
 
 function renderHead(tableHead, headers) {
@@ -349,6 +392,62 @@ function filterRows(form, rows) {
     if (wisung && row[7] !== wisung) return false;
     return true;
   });
+}
+
+function applySearchParams(form, rows, t) {
+  const params = new URLSearchParams(window.location.search);
+  if (!params.size) return false;
+
+  setInputValue(form.elements.name, params.get("name"));
+  setSelectValue(form.querySelector("[data-temple-type]"), params.get("type"));
+  setSelectValue(form.querySelector("[data-temple-sect]"), params.get("sect"));
+  setSelectValue(form.querySelector("[data-temple-region]"), params.get("region"));
+  updateAreaOptions(form, rows, t);
+
+  setSelectValue(form.querySelector("[data-temple-province]"), params.get("province"));
+  updateAreaOptions(form, rows, t);
+
+  setSelectValue(form.querySelector("[data-temple-district]"), params.get("district"));
+  updateAreaOptions(form, rows, t);
+
+  setSelectValue(form.querySelector("[data-temple-subdistrict]"), params.get("subdistrict"));
+  setInputValue(form.elements.postalCode, params.get("postalCode"));
+  setSelectValue(form.querySelector("[data-temple-wisung]"), params.get("wisung"));
+  return true;
+}
+
+function redirectToDirectory(form) {
+  const query = getSearchParams(form).toString();
+  window.location.href = `/temples/thailand/${query ? `?${query}` : ""}`;
+}
+
+function syncUrlFromForm(form) {
+  const query = getSearchParams(form).toString();
+  const url = `${window.location.pathname}${query ? `?${query}` : ""}`;
+  window.history.replaceState({}, "", url);
+}
+
+function clearSearchUrl() {
+  window.history.replaceState({}, "", window.location.pathname);
+}
+
+function getSearchParams(form) {
+  const params = new URLSearchParams();
+  new FormData(form).forEach((value, key) => {
+    const text = String(value || "").trim();
+    if (text) params.set(key, text);
+  });
+  return params;
+}
+
+function setInputValue(input, value) {
+  if (input && value) input.value = value;
+}
+
+function setSelectValue(select, value) {
+  if (!select || !value) return;
+  const hasOption = [...select.options].some((option) => option.value === value);
+  if (hasOption) select.value = value;
 }
 
 function unique(rows, index) {

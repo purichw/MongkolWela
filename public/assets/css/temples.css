@@ -136,6 +136,10 @@
   padding: 24px;
 }
 
+.temple-quick-search {
+  margin-bottom: 28px;
+}
+
 .temple-search-form {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

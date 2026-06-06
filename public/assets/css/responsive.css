@@ -295,6 +295,20 @@
   .footer-links {
     justify-content: flex-start;
   }
+
+  .temple-search-form {
+    grid-template-columns: 1fr;
+  }
+
+  .temple-field-wide,
+  .temple-actions {
+    grid-column: auto;
+  }
+
+  .temple-search-button,
+  .temple-clear-button {
+    width: 100%;
+  }
 }
 
 @media (max-width: 380px) {
