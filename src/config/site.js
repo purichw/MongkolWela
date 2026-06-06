@@ -68,7 +68,7 @@ export const siteConfig = {
         href: "temples/",
         items: [
           { label: "ไหว้พระ 9 วัด", section: true },
-          { label: "พิกัดยอดนิยม", href: "temples/" },
+          { label: "พิกัดยอดนิยม", href: "temples/popular/" },
           { label: "วัดทั่วประเทศไทย", href: "temples/thailand/" },
         ],
       },
@@ -155,7 +155,14 @@ export const siteConfig = {
       },
       temples: {
         topbar: [
-          { label: "พิกัดยอดนิยม", href: "temples/" },
+          { label: "วัดดังเสริมมงคล", href: "temples/" },
+          { label: "รวมเส้นทางไหว้พระและวัดเด่นสำหรับเสริมมงคล" },
+          { label: "ปรึกษาครูโหร", href: "#consult" },
+        ],
+      },
+      templesPopular: {
+        topbar: [
+          { label: "พิกัดยอดนิยม", href: "temples/popular/" },
           { label: "รวมเส้นทางไหว้พระและวัดเด่นสำหรับเสริมมงคล" },
           { label: "ปรึกษาครูโหร", href: "#consult" },
         ],
