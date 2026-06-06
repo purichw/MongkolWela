@@ -6,6 +6,8 @@ const pageSize = 20;
 
 const labels = {
   all: "-- ทั้งหมด --",
+  chooseRegion: "-- เลือกภาค --",
+  chooseRegionFirst: "-- เลือกภาคก่อน --",
   chooseProvinceFirst: "-- เลือกจังหวัดก่อน --",
   chooseDistrictFirst: "-- เลือกอำเภอก่อน --",
   loading: "กำลังโหลดข้อมูลวัด",
@@ -17,6 +19,111 @@ const labels = {
   next: "ถัดไป",
   pageStatus: (page, pages) => `หน้า ${page.toLocaleString("th-TH")} / ${pages.toLocaleString("th-TH")}`,
 };
+
+const regionOrder = [
+  "ภาคเหนือ",
+  "ภาคกลาง",
+  "ภาคตะวันออกเฉียงเหนือ",
+  "ภาคตะวันออก",
+  "ภาคตะวันตก",
+  "ภาคใต้",
+];
+
+const regionProvinces = {
+  "ภาคเหนือ": [
+    "เชียงราย",
+    "เชียงใหม่",
+    "น่าน",
+    "พะเยา",
+    "แพร่",
+    "แม่ฮ่องสอน",
+    "ลำปาง",
+    "ลำพูน",
+    "อุตรดิตถ์",
+  ],
+  "ภาคกลาง": [
+    "กรุงเทพมหานคร",
+    "กำแพงเพชร",
+    "ชัยนาท",
+    "นครนายก",
+    "นครปฐม",
+    "นครสวรรค์",
+    "นนทบุรี",
+    "ปทุมธานี",
+    "พระนครศรีอยุธยา",
+    "พิจิตร",
+    "พิษณุโลก",
+    "เพชรบูรณ์",
+    "ลพบุรี",
+    "สมุทรปราการ",
+    "สมุทรสงคราม",
+    "สมุทรสาคร",
+    "สระบุรี",
+    "สิงห์บุรี",
+    "สุโขทัย",
+    "สุพรรณบุรี",
+    "อ่างทอง",
+    "อุทัยธานี",
+  ],
+  "ภาคตะวันออกเฉียงเหนือ": [
+    "กาฬสินธุ์",
+    "ขอนแก่น",
+    "ชัยภูมิ",
+    "นครพนม",
+    "นครราชสีมา",
+    "บึงกาฬ",
+    "บุรีรัมย์",
+    "มหาสารคาม",
+    "มุกดาหาร",
+    "ยโสธร",
+    "ร้อยเอ็ด",
+    "เลย",
+    "ศรีสะเกษ",
+    "สกลนคร",
+    "สุรินทร์",
+    "หนองคาย",
+    "หนองบัวลำภู",
+    "อำนาจเจริญ",
+    "อุดรธานี",
+    "อุบลราชธานี",
+  ],
+  "ภาคตะวันออก": [
+    "จันทบุรี",
+    "ฉะเชิงเทรา",
+    "ชลบุรี",
+    "ตราด",
+    "ปราจีนบุรี",
+    "ระยอง",
+    "สระแก้ว",
+  ],
+  "ภาคตะวันตก": [
+    "กาญจนบุรี",
+    "ตาก",
+    "ประจวบคีรีขันธ์",
+    "เพชรบุรี",
+    "ราชบุรี",
+  ],
+  "ภาคใต้": [
+    "กระบี่",
+    "ชุมพร",
+    "ตรัง",
+    "นครศรีธรรมราช",
+    "นราธิวาส",
+    "ปัตตานี",
+    "พังงา",
+    "พัทลุง",
+    "ภูเก็ต",
+    "ยะลา",
+    "ระนอง",
+    "สงขลา",
+    "สตูล",
+    "สุราษฎร์ธานี",
+  ],
+};
+
+const provinceRegionMap = Object.fromEntries(
+  Object.entries(regionProvinces).flatMap(([region, provinces]) => provinces.map((province) => [province, region])),
+);
 
 if (root) {
   initializeTempleDirectory(root);
@@ -61,6 +168,13 @@ async function initializeTempleDirectory(rootElement) {
     currentPage = 1;
     filteredRows = filterRows(form, rows);
     updateView();
+  });
+
+  form.querySelector("[data-temple-region]").addEventListener("change", () => {
+    form.querySelector("[data-temple-province]").value = "";
+    form.querySelector("[data-temple-district]").value = "";
+    form.querySelector("[data-temple-subdistrict]").value = "";
+    updateAreaOptions(form, rows, t);
   });
 
   form.querySelector("[data-temple-province]").addEventListener("change", () => {
@@ -158,14 +272,32 @@ function renderPagination(pagination, page, totalPages, t) {
 function populateStaticOptions(form, rows, t) {
   fillOptions(form.querySelector("[data-temple-type]"), unique(rows, 3), t.all);
   fillOptions(form.querySelector("[data-temple-sect]"), unique(rows, 4), t.all);
-  fillOptions(form.querySelector("[data-temple-province]"), unique(rows, 11), t.all);
+  fillOptions(form.querySelector("[data-temple-region]"), getAvailableRegions(rows), t.chooseRegion);
 }
 
 function updateAreaOptions(form, rows, t) {
+  const region = form.querySelector("[data-temple-region]").value;
+  const provinceSelect = form.querySelector("[data-temple-province]");
   const province = form.querySelector("[data-temple-province]").value;
   const districtSelect = form.querySelector("[data-temple-district]");
   const subdistrictSelect = form.querySelector("[data-temple-subdistrict]");
   const district = districtSelect.value;
+
+  if (!region) {
+    fillOptions(provinceSelect, [], t.chooseRegionFirst, "");
+    fillOptions(districtSelect, [], t.chooseProvinceFirst, "");
+    fillOptions(subdistrictSelect, [], t.chooseDistrictFirst, "");
+    provinceSelect.disabled = true;
+    districtSelect.disabled = true;
+    subdistrictSelect.disabled = true;
+    return;
+  }
+
+  provinceSelect.disabled = false;
+  const regionRows = rows.filter((row) => provinceRegionMap[row[11]] === region);
+  const provinceOptions = unique(regionRows, 11);
+  fillOptions(provinceSelect, provinceOptions, t.all, provinceOptions.includes(province) ? province : "");
+
   if (!province) {
     fillOptions(districtSelect, [], t.chooseProvinceFirst, "");
     fillOptions(subdistrictSelect, [], t.chooseDistrictFirst, "");
@@ -175,7 +307,7 @@ function updateAreaOptions(form, rows, t) {
   }
 
   districtSelect.disabled = false;
-  const scopedRows = rows.filter((row) => row[11] === province);
+  const scopedRows = regionRows.filter((row) => row[11] === province);
   const districtOptions = unique(scopedRows, 10);
   fillOptions(districtSelect, districtOptions, t.all, districtOptions.includes(district) ? district : "");
 
@@ -198,6 +330,7 @@ function filterRows(form, rows) {
   const name = normalize(formData.get("name"));
   const type = formData.get("type");
   const sect = formData.get("sect");
+  const region = formData.get("region");
   const province = formData.get("province");
   const district = formData.get("district");
   const subdistrict = formData.get("subdistrict");
@@ -208,6 +341,7 @@ function filterRows(form, rows) {
     if (name && !normalize(row[2]).includes(name)) return false;
     if (type && row[3] !== type) return false;
     if (sect && row[4] !== sect) return false;
+    if (region && provinceRegionMap[row[11]] !== region) return false;
     if (province && row[11] !== province) return false;
     if (district && row[10] !== district) return false;
     if (subdistrict && row[9] !== subdistrict) return false;
@@ -219,6 +353,11 @@ function filterRows(form, rows) {
 
 function unique(rows, index) {
   return [...new Set(rows.map((row) => row[index]).filter(Boolean))].sort((a, b) => a.localeCompare(b, "th"));
+}
+
+function getAvailableRegions(rows) {
+  const rowRegions = new Set(rows.map((row) => provinceRegionMap[row[11]]).filter(Boolean));
+  return regionOrder.filter((region) => rowRegions.has(region));
 }
 
 function fillOptions(select, options, allLabel, selected = select.value) {

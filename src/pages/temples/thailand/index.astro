@@ -6,7 +6,7 @@ const extraScripts = ["/assets/js/temple-directory.js"];
 
 <BaseLayout
   title="วัดทั่วประเทศไทย | มงคลเวลา"
-  description="ค้นหารายการวัดทั่วประเทศไทยจากระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ พร้อมตัวกรองชื่อวัด ประเภทวัด นิกาย จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา"
+  description="ค้นหารายการวัดทั่วประเทศไทยจากระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ พร้อมตัวกรองชื่อวัด ประเภทวัด นิกาย ภาค จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา"
   lang="th"
   locale="th"
   page="templesThailand"
@@ -39,6 +39,11 @@ const extraScripts = ["/assets/js/temple-directory.js"];
         <label class="temple-field">
           <span>นิกาย</span>
           <select name="sect" data-temple-sect></select>
+        </label>
+
+        <label class="temple-field">
+          <span>ภาค</span>
+          <select name="region" data-temple-region></select>
         </label>
 
         <label class="temple-field">
