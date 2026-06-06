@@ -67,6 +67,7 @@ export const siteConfig = {
         label: "วัดดังเสริมมงคล",
         href: "temples/",
         items: [
+          { label: "ไหว้พระ 9 วัด", section: true },
           { label: "พิกัดยอดนิยม", href: "temples/" },
           { label: "วัดทั่วประเทศไทย", href: "temples/thailand/" },
         ],

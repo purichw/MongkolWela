@@ -6,7 +6,8 @@ import SearchIcon from "./icons/SearchIcon.astro";
 
 type NavItem = {
   label: string;
-  href: string;
+  href?: string;
+  section?: boolean;
   items?: NavItem[];
 };
 type TopbarItem = {
@@ -63,7 +64,11 @@ function resolveHref(href = "") {
           <a href={resolveHref(item.href)}>{item.label}</a>
           <div class="mega-panel">
             {(item.items || []).map((panelItem: NavItem) => (
-              <a href={resolveHref(panelItem.href)}>{panelItem.label}</a>
+              panelItem.section ? (
+                <span class="mega-panel-section">{panelItem.label}</span>
+              ) : (
+                <a href={resolveHref(panelItem.href)}>{panelItem.label}</a>
+              )
             ))}
           </div>
         </div>

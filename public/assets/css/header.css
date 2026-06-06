@@ -154,6 +154,16 @@
   font-size: 0.9rem;
 }
 
+.mega-panel-section {
+  grid-column: 1 / -1;
+  padding: 2px 12px 8px;
+  color: var(--ink);
+  font-size: 1.02rem;
+  font-weight: 900;
+  line-height: 1.25;
+  border-bottom: 1px dashed rgba(77, 56, 41, 0.28);
+}
+
 .mega-panel a:hover {
   color: var(--ink);
   background: #f4ead8;
