@@ -65,8 +65,9 @@ export const siteConfig = {
       },
       {
         label: "วัดดังเสริมมงคล",
-        href: "temples/thailand/",
+        href: "temples/",
         items: [
+          { label: "วัดดังทั่วไทย", href: "temples/" },
           { label: "วัดทั่วประเทศไทย", href: "temples/thailand/" },
         ],
       },
@@ -151,10 +152,17 @@ export const siteConfig = {
           { label: "ติดต่อครูโหร", href: "#consult" },
         ],
       },
+      temples: {
+        topbar: [
+          { label: "วัดดังทั่วไทย", href: "temples/" },
+          { label: "รวมเส้นทางไหว้พระและวัดเด่นสำหรับเสริมมงคล" },
+          { label: "ปรึกษาครูโหร", href: "#consult" },
+        ],
+      },
       templesThailand: {
         topbar: [
           { label: "วัดทั่วประเทศไทย", href: "temples/thailand/" },
-          { label: "ค้นหาจากทะเบียนวัดตามไฟล์ข้อมูลที่แนบมา" },
+          { label: "ค้นหาจากทะเบียนวัดทั่วประเทศ" },
           { label: "ปรึกษาครูโหร", href: "#consult" },
         ],
       },

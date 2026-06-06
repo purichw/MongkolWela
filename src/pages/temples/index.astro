@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="วัดดังทั่วไทย | มงคลเวลา"
+  description="รวมวัดดังทั่วไทยและเส้นทางไหว้พระเสริมมงคล พร้อมทางลัดไปยังทะเบียนวัดทั่วประเทศไทย"
+  lang="th"
+  locale="th"
+  page="temples"
+  bodyClass="temples-hub-page"
+>
+  <main class="temples-hub">
+    <section class="temples-hub-hero">
+      <nav class="temple-breadcrumb" aria-label="breadcrumb">
+        <a href="../">หน้าแรก</a>
+        <span>/</span>
+        <span>วัดดังเสริมมงคล</span>
+      </nav>
+      <p class="section-kicker">วัดดังเสริมมงคล</p>
+      <h1>วัดดังทั่วไทย</h1>
+      <p>
+        รวมทางลัดสำหรับค้นหาวัดเด่น เส้นทางไหว้พระ และฐานข้อมูลวัดทั่วประเทศไทย
+        เพื่อช่วยวางแผนทำบุญ ไหว้พระ และเลือกสถานที่เสริมมงคลให้เหมาะกับจังหวะชีวิต
+      </p>
+    </section>
+
+    <section class="temples-feature-grid" aria-label="หมวดวัดดังเสริมมงคล">
+      <a class="temples-feature-card is-primary" href="./thailand/">
+        <span>ทะเบียนวัด</span>
+        <strong>วัดทั่วประเทศไทย</strong>
+        <p>ค้นหาจากชื่อวัด ประเภท นิกาย จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา</p>
+      </a>
+      <a class="temples-feature-card" href="./thailand/">
+        <span>ค้นหาด่วน</span>
+        <strong>เลือกวัดตามพื้นที่</strong>
+        <p>เริ่มจากจังหวัด แล้วค่อยเจาะอำเภอและตำบล เพื่อดูรายชื่อวัดในพื้นที่ที่ต้องการ</p>
+      </a>
+      <a class="temples-feature-card" href="/">
+        <span>มงคลเวลา</span>
+        <strong>ดูฤกษ์ก่อนเดินทาง</strong>
+        <p>กลับหน้าแรกเพื่อดูจังหวะประจำวัน ปฏิทินไทย และเครื่องมือมงคลอื่น ๆ</p>
+      </a>
+    </section>
+  </main>
+</BaseLayout>

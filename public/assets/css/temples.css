@@ -2,12 +2,23 @@
   padding-bottom: 84px;
 }
 
+.temples-hub-page {
+  padding-bottom: 84px;
+}
+
+.temples-hub,
+.temples-hub-hero,
+.temples-feature-grid,
 .temple-directory,
 .temple-directory-head,
 .temple-search-panel,
 .temple-results {
   width: min(var(--container), calc(100% - 40px));
   margin: 0 auto;
+}
+
+.temples-hub-hero {
+  padding: 46px 0 28px;
 }
 
 .temple-directory-head {
@@ -34,6 +45,70 @@
   font-size: clamp(2.9rem, 6vw, 5.4rem);
   font-weight: 900;
   line-height: 1;
+}
+
+.temples-hub-hero h1 {
+  max-width: 900px;
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.temples-hub-hero > p:last-child {
+  max-width: 760px;
+  margin: 18px 0 0;
+  color: var(--ink-soft);
+  font-size: clamp(1.05rem, 2vw, 1.24rem);
+  line-height: 1.75;
+}
+
+.temples-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.temples-feature-card {
+  display: grid;
+  align-content: start;
+  min-height: 230px;
+  padding: 24px;
+  color: var(--ink);
+  text-decoration: none;
+  background: rgba(255, 250, 240, 0.78);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.temples-feature-card span {
+  color: var(--lacquer);
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.temples-feature-card strong {
+  margin-top: 14px;
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  line-height: 1.2;
+}
+
+.temples-feature-card p {
+  margin: 12px 0 0;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+
+.temples-feature-card.is-primary {
+  color: #fffaf0;
+  background: var(--lacquer);
+  border-color: transparent;
+}
+
+.temples-feature-card.is-primary span,
+.temples-feature-card.is-primary p {
+  color: rgba(255, 250, 240, 0.86);
 }
 
 .temple-search-panel,
@@ -295,12 +370,19 @@
 }
 
 @media (max-width: 900px) {
+  .temples-feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .temple-search-form {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 720px) {
+  .temples-hub,
+  .temples-hub-hero,
+  .temples-feature-grid,
   .temple-directory,
   .temple-directory-head,
   .temple-search-panel,
@@ -308,12 +390,18 @@
     width: min(100% - 28px, var(--container));
   }
 
+  .temples-hub-hero,
   .temple-directory-head {
     padding: 38px 0 24px;
   }
 
+  .temples-hub-hero h1,
   .temple-directory-head h1 {
     font-size: clamp(2.25rem, 11vw, 2.8rem);
+  }
+
+  .temples-feature-grid {
+    grid-template-columns: 1fr;
   }
 
   .temple-search-panel,
