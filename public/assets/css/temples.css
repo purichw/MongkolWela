@@ -202,6 +202,23 @@
   transform: scale(1.045);
 }
 
+.popular-temple-card.is-placeholder figure {
+  background:
+    linear-gradient(135deg, rgba(255, 250, 240, 0.38), rgba(32, 75, 63, 0.18)),
+    #d9c9aa;
+}
+
+.popular-temple-card.is-placeholder img {
+  opacity: 0.68;
+  filter: saturate(0.68) contrast(0.86) brightness(1.04);
+}
+
+.popular-temple-card.is-placeholder:hover img,
+.popular-temple-card.is-placeholder:focus-visible img {
+  opacity: 0.74;
+  filter: saturate(0.76) contrast(0.9) brightness(1.05);
+}
+
 .popular-temple-card figcaption {
   position: absolute;
   top: 12px;

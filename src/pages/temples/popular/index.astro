@@ -4,6 +4,7 @@ import popularTemples from "../../../data/popular-temples.json";
 
 const extraScripts = ["/assets/js/temple-directory.js"];
 const rankedTemples = [...popularTemples].sort((a, b) => a.rank - b.rank);
+const templePlaceholderImage = "/assets/images/temple-placeholder-auspicious.png";
 const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearchParams({ name }).toString()}`;
 ---
 
@@ -92,24 +93,31 @@ const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearc
         data-initial-count="9"
         data-batch-size="9"
       >
-        {rankedTemples.map((temple) => (
-          <a
-            class="popular-temple-card"
-            href={getTempleSearchHref(temple.name)}
-            data-rank={temple.rank}
-            data-popular-temple-card
-          >
-            <figure>
-              <img src={temple.imageUrl} alt={temple.imageAlt} loading="lazy" decoding="async" />
-              <figcaption>#{temple.rank.toString().padStart(2, "0")}</figcaption>
-            </figure>
-            <div class="popular-temple-card-body">
-              <span>{temple.region}</span>
-              <h3>{temple.name}</h3>
-              <p>{temple.province}{temple.district ? ` / ${temple.district}` : ""}</p>
-            </div>
-          </a>
-        ))}
+        {rankedTemples.map((temple) => {
+          const hasTempleImage = Boolean(temple.imageUrl);
+          const imageUrl = hasTempleImage ? temple.imageUrl : templePlaceholderImage;
+          const imageAlt = temple.imageAlt || `${temple.name} ${temple.province}`;
+
+          return (
+            <a
+              class={`popular-temple-card${hasTempleImage ? "" : " is-placeholder"}`}
+              href={getTempleSearchHref(temple.name)}
+              data-rank={temple.rank}
+              data-popular-temple-card
+              data-image-placeholder={hasTempleImage ? undefined : "true"}
+            >
+              <figure>
+                <img src={imageUrl} alt={imageAlt} loading="lazy" decoding="async" />
+                <figcaption>#{temple.rank.toString().padStart(2, "0")}</figcaption>
+              </figure>
+              <div class="popular-temple-card-body">
+                <span>{temple.region}</span>
+                <h3>{temple.name}</h3>
+                <p>{temple.province}{temple.district ? ` / ${temple.district}` : ""}</p>
+              </div>
+            </a>
+          );
+        })}
       </div>
       <button class="popular-temple-load-more" type="button" data-popular-temple-more hidden>
         ดูเพิ่ม
