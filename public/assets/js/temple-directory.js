@@ -370,7 +370,7 @@ function updateAreaOptions(form, rows, t) {
 
 function filterRows(form, rows) {
   const formData = new FormData(form);
-  const name = normalize(formData.get("name"));
+  const name = normalizeTempleName(formData.get("name"));
   const type = formData.get("type");
   const sect = formData.get("sect");
   const region = formData.get("region");
@@ -381,7 +381,7 @@ function filterRows(form, rows) {
   const wisung = formData.get("wisung");
 
   return rows.filter((row) => {
-    if (name && !normalize(row[2]).includes(name)) return false;
+    if (name && !normalizeTempleName(row[2]).includes(name)) return false;
     if (type && row[3] !== type) return false;
     if (sect && row[4] !== sect) return false;
     if (region && provinceRegionMap[row[11]] !== region) return false;
@@ -474,6 +474,10 @@ function getColumnClass(index) {
 
 function normalize(value) {
   return String(value || "").trim().toLocaleLowerCase("th-TH");
+}
+
+function normalizeTempleName(value) {
+  return normalize(value).replace(/^วัด\s*/, "");
 }
 
 function escapeHtml(value) {

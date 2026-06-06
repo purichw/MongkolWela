@@ -1,7 +1,10 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import popularTemples from "../../../data/popular-temples.json";
 
 const extraScripts = ["/assets/js/temple-directory.js"];
+const rankedTemples = [...popularTemples].sort((a, b) => a.rank - b.rank);
+const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearchParams({ name }).toString()}`;
 ---
 
 <BaseLayout
@@ -74,24 +77,28 @@ const extraScripts = ["/assets/js/temple-directory.js"];
       </form>
     </section>
 
-    <section class="temples-section">
-      <h2>วัดดังทั่วไทย</h2>
-      <div class="temples-feature-grid" aria-label="พิกัดไหว้พระยอดนิยม">
-        <a class="temples-feature-card is-primary" href="../thailand/">
-          <span>ค้นหาข้อมูลวัด</span>
-          <strong>วัดทั่วประเทศไทย</strong>
-          <p>ค้นหาจากชื่อวัด ประเภท นิกาย ภาค จังหวัด อำเภอ และตำบล</p>
-        </a>
-        <a class="temples-feature-card" href="../">
-          <span>หมวดหลัก</span>
-          <strong>วัดดังเสริมมงคล</strong>
-          <p>กลับไปดูทางลัดทั้งหมดในหมวดวัดดังเสริมมงคล</p>
-        </a>
-        <a class="temples-feature-card" href="/">
-          <span>มงคลเวลา</span>
-          <strong>ดูฤกษ์ก่อนเดินทาง</strong>
-          <p>กลับหน้าแรกเพื่อดูจังหวะประจำวัน ปฏิทินไทย และเครื่องมือมงคลอื่น ๆ</p>
-        </a>
+    <section class="temples-section temples-popular-section">
+      <div class="temples-section-head">
+        <div>
+          <p class="section-kicker">อันดับยอดนิยม</p>
+          <h2>วัดดังทั่วไทย</h2>
+        </div>
+      </div>
+
+      <div class="popular-temple-grid" aria-label="พิกัดไหว้พระยอดนิยม">
+        {rankedTemples.map((temple) => (
+          <a class="popular-temple-card" href={getTempleSearchHref(temple.name)} data-rank={temple.rank}>
+            <figure>
+              <img src={temple.imageUrl} alt={temple.imageAlt} loading="lazy" decoding="async" />
+              <figcaption>#{temple.rank.toString().padStart(2, "0")}</figcaption>
+            </figure>
+            <div class="popular-temple-card-body">
+              <span>{temple.region}</span>
+              <h3>{temple.name}</h3>
+              <p>{temple.province}{temple.district ? ` / ${temple.district}` : ""}</p>
+            </div>
+          </a>
+        ))}
       </div>
     </section>
   </main>
