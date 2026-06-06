@@ -1,10 +1,24 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import popularTemples from "../../../data/popular-temples.json";
+import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data/temple-images.js";
 
 const extraScripts = ["/assets/js/temple-directory.js"];
-const rankedTemples = [...popularTemples].sort((a, b) => a.rank - b.rank);
-const templePlaceholderImage = "/assets/images/temple-placeholder-auspicious.png";
+type TempleCard = {
+  rank: number;
+  name: string;
+  region: string;
+  province: string;
+  district?: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  placeType?: string;
+  blessings?: string;
+  objectHero?: string;
+};
+const rankedTemples = (applyTempleImageOverrides("popular", [...popularTemples]) as TempleCard[]).sort(
+  (a: TempleCard, b: TempleCard) => a.rank - b.rank,
+);
 const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearchParams({ name }).toString()}`;
 const regionOrder = [
   "ภาคเหนือ",
@@ -14,8 +28,8 @@ const regionOrder = [
   "ภาคตะวันตก",
   "ภาคใต้",
 ];
-const popularRegions = Array.from(new Set(rankedTemples.map((temple) => temple.region))).sort(
-  (a, b) => regionOrder.indexOf(a) - regionOrder.indexOf(b),
+const popularRegions = Array.from(new Set(rankedTemples.map((temple: TempleCard) => temple.region))).sort(
+  (a: string, b: string) => regionOrder.indexOf(a) - regionOrder.indexOf(b),
 );
 ---
 
