@@ -1,7 +1,9 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import TempleSearchHero from "../../../components/TempleSearchHero.astro";
 import muTemples from "../../../data/mu-temples.json";
 import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data/temple-images.js";
+import templePageBanners from "../../../data/temple-page-banners.json";
 
 const extraScripts = ["/assets/js/temple-directory.js"];
 type TempleCard = {
@@ -43,55 +45,52 @@ const popularRegions = Array.from(new Set(rankedTemples.map((temple: TempleCard)
   extraScripts={extraScripts}
 >
   <main class="temples-hub">
-    <section class="temples-hub-hero">
-      <nav class="temple-breadcrumb" aria-label="breadcrumb">
-        <a href="../../">หน้าแรก</a>
-        <span>/</span>
-        <a href="../">วัดดังเสริมมงคล</a>
-        <span>/</span>
-        <span>สายมู</span>
-      </nav>
-      <p class="section-kicker">สายมู</p>
-      <h1>สายมู</h1>
-      <p>
-        รวมพิกัดขอพรและสถานที่ศักดิ์สิทธิ์สำหรับเรื่องการงาน การเงิน ความรัก สุขภาพ
-        โชคลาภ และการเสริมสิริมงคล พร้อมค้นหาและกรองตามพื้นที่ได้ทันที
-      </p>
-    </section>
-
-    <section
-      class="temple-search-panel temple-quick-search popular-temple-filter"
-      aria-label="ค้นหาพิกัดสายมู"
-      data-popular-temple-filter
+    <TempleSearchHero
+      banner={templePageBanners.mu}
+      breadcrumbs={[
+        { label: "หน้าแรก", href: "../../" },
+        { label: "วัดดังเสริมมงคล", href: "../" },
+        { label: "สายมู" },
+      ]}
+      kicker="สายมู"
+      title="สายมู"
+      description="รวมพิกัดขอพรและสถานที่ศักดิ์สิทธิ์สำหรับเรื่องการงาน การเงิน ความรัก สุขภาพ โชคลาภ และการเสริมสิริมงคล พร้อมค้นหาและกรองตามพื้นที่ได้ทันที"
     >
-      <form class="popular-temple-filter-form" data-popular-temple-filter-form>
-        <label class="temple-field popular-temple-filter-name">
-          <span>ชื่อวัด / สถานที่</span>
-          <input
-            type="search"
-            name="name"
-            placeholder="ค้นหาในสายมู"
-            autocomplete="off"
-            data-popular-temple-filter-name
-          />
-        </label>
+      <section
+        slot="panel"
+        class="temple-search-panel temple-quick-search popular-temple-filter"
+        aria-label="ค้นหาพิกัดสายมู"
+        data-popular-temple-filter
+      >
+        <form class="popular-temple-filter-form" data-popular-temple-filter-form>
+          <label class="temple-field popular-temple-filter-name">
+            <span>ชื่อวัด / สถานที่</span>
+            <input
+              type="search"
+              name="name"
+              placeholder="ค้นหาในสายมู"
+              autocomplete="off"
+              data-popular-temple-filter-name
+            />
+          </label>
 
-        <div class="popular-temple-filter-actions">
-          <button class="temple-search-button" type="submit">ค้นหา</button>
-          <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>เคลียร์ข้อมูล</button>
+          <div class="popular-temple-filter-actions">
+            <button class="temple-search-button" type="submit">ค้นหา</button>
+            <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>เคลียร์ข้อมูล</button>
+          </div>
+        </form>
+        <div class="popular-temple-region-tags" aria-label="กรองตามภาค">
+          <button type="button" class="is-active" data-popular-region-tag value="">ทั้งหมด</button>
+          {popularRegions.map((region) => (
+            <button type="button" data-popular-region-tag value={region}>{region}</button>
+          ))}
         </div>
-      </form>
-      <div class="popular-temple-region-tags" aria-label="กรองตามภาค">
-        <button type="button" class="is-active" data-popular-region-tag value="">ทั้งหมด</button>
-        {popularRegions.map((region) => (
-          <button type="button" data-popular-region-tag value={region}>{region}</button>
-        ))}
-      </div>
-      <div class="popular-temple-province-filter" data-popular-province-filter hidden>
-        <span>จังหวัด</span>
-        <div class="popular-temple-province-tags" aria-label="กรองตามจังหวัด" data-popular-province-tags></div>
-      </div>
-    </section>
+        <div class="popular-temple-province-filter" data-popular-province-filter hidden>
+          <span>จังหวัด</span>
+          <div class="popular-temple-province-tags" aria-label="กรองตามจังหวัด" data-popular-province-tags></div>
+        </div>
+      </section>
+    </TempleSearchHero>
 
     <section class="temples-section temples-popular-section">
       <div class="temples-section-head">

@@ -1,0 +1,57 @@
+---
+type BreadcrumbItem = {
+  label: string;
+  href?: string;
+};
+
+type BannerConfig = {
+  adminKey: string;
+  imageUrl: string;
+  imageAlt: string;
+  imageSourceLabel?: string;
+  imageSourceUrl?: string;
+  focalPoint?: string;
+};
+
+interface Props {
+  banner: BannerConfig;
+  breadcrumbs: BreadcrumbItem[];
+  kicker: string;
+  title: string;
+  description?: string;
+}
+
+const { banner, breadcrumbs, kicker, title, description } = Astro.props as Props;
+const hasPanel = Astro.slots.has("panel");
+const heroStyle = `--temple-hero-focus: ${banner.focalPoint || "center"}`;
+---
+
+<section
+  class={`temple-page-hero${hasPanel ? " has-panel" : ""}`}
+  aria-labelledby="temple-page-title"
+  data-admin-banner-key={banner.adminKey}
+  style={heroStyle}
+>
+  <img class="temple-page-hero-image" src={banner.imageUrl} alt="" loading="eager" decoding="async" />
+  <div class="temple-page-hero-shade"></div>
+  <div class="temple-page-hero-content">
+    <nav class="temple-breadcrumb" aria-label="breadcrumb">
+      {breadcrumbs.map((item, index) => (
+        <>
+          {index > 0 && <span>/</span>}
+          {item.href ? <a href={item.href}>{item.label}</a> : <span>{item.label}</span>}
+        </>
+      ))}
+    </nav>
+    <div class="temple-page-hero-copy">
+      <p class="section-kicker">{kicker}</p>
+      <h1 id="temple-page-title">{title}</h1>
+      {description && <p>{description}</p>}
+    </div>
+    {hasPanel && (
+      <div class="temple-page-hero-panel">
+        <slot name="panel" />
+      </div>
+    )}
+  </div>
+</section>

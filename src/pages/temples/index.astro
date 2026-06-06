@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import TempleSearchHero from "../../components/TempleSearchHero.astro";
+import templePageBanners from "../../data/temple-page-banners.json";
 ---
 
 <BaseLayout
@@ -11,19 +13,16 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   bodyClass="temples-hub-page"
 >
   <main class="temples-hub">
-    <section class="temples-hub-hero">
-      <nav class="temple-breadcrumb" aria-label="breadcrumb">
-        <a href="../">หน้าแรก</a>
-        <span>/</span>
-        <span>วัดดังเสริมมงคล</span>
-      </nav>
-      <p class="section-kicker">วัดดังเสริมมงคล</p>
-      <h1>วัดดังเสริมมงคล</h1>
-      <p>
-        รวมทางลัดสำหรับค้นหาเส้นทางไหว้พระ วัดเด่น และฐานข้อมูลวัดทั่วประเทศไทย
-        เพื่อช่วยวางแผนทำบุญ ไหว้พระ และเลือกสถานที่เสริมมงคลให้เหมาะกับจังหวะชีวิต
-      </p>
-    </section>
+    <TempleSearchHero
+      banner={templePageBanners.hub}
+      breadcrumbs={[
+        { label: "หน้าแรก", href: "../" },
+        { label: "วัดดังเสริมมงคล" },
+      ]}
+      kicker="วัดดังเสริมมงคล"
+      title="วัดดังเสริมมงคล"
+      description="รวมทางลัดสำหรับค้นหาเส้นทางไหว้พระ วัดเด่น และฐานข้อมูลวัดทั่วประเทศไทย เพื่อช่วยวางแผนทำบุญ ไหว้พระ และเลือกสถานที่เสริมมงคลให้เหมาะกับจังหวะชีวิต"
+    />
 
     <section class="temples-section">
       <h2>วัดดังทั่วไทย</h2>

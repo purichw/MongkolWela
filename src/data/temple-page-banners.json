@@ -1,0 +1,34 @@
+{
+  "hub": {
+    "adminKey": "temples.hub.banner",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Wat_Phra_That_Doi_Suthep_%28I%29.jpg/960px-Wat_Phra_That_Doi_Suthep_%28I%29.jpg",
+    "imageAlt": "วัดพระธาตุดอยสุเทพ เชียงใหม่",
+    "imageSourceLabel": "Wikimedia Commons",
+    "imageSourceUrl": "https://commons.wikimedia.org/wiki/File:Wat_Phra_That_Doi_Suthep_(I).jpg",
+    "focalPoint": "center 42%"
+  },
+  "popular": {
+    "adminKey": "temples.popular.banner",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B8%B8%E0%B8%932.jpg/960px-%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B8%B8%E0%B8%932.jpg",
+    "imageAlt": "วัดอรุณราชวราราม กรุงเทพมหานคร",
+    "imageSourceLabel": "Wikimedia Commons",
+    "imageSourceUrl": "https://commons.wikimedia.org/wiki/File:%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B8%B8%E0%B8%932.jpg",
+    "focalPoint": "center 48%"
+  },
+  "mu": {
+    "adminKey": "temples.mu.banner",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Sri_Maha_Mariamman_Koyil_Bangkok_%28Wat_Khaek_Silom%29_2019_03.jpg/960px-Sri_Maha_Mariamman_Koyil_Bangkok_%28Wat_Khaek_Silom%29_2019_03.jpg",
+    "imageAlt": "วัดพระศรีมหาอุมาเทวี กรุงเทพมหานคร",
+    "imageSourceLabel": "Wikimedia Commons",
+    "imageSourceUrl": "https://commons.wikimedia.org/wiki/File:Sri_Maha_Mariamman_Koyil_Bangkok_(Wat_Khaek_Silom)_2019_03.jpg",
+    "focalPoint": "center 44%"
+  },
+  "thailand": {
+    "adminKey": "temples.thailand.banner",
+    "imageUrl": "https://cbtthailand.dasta.or.th/upload-file-api/Resources/RelateAttraction/Images/RAT520064/1.jpeg",
+    "imageAlt": "วัดพระธาตุลำปางหลวง ลำปาง",
+    "imageSourceLabel": "CBT Thailand",
+    "imageSourceUrl": "https://cbtthailand.dasta.or.th/webapp/relattraction/content/1030/",
+    "focalPoint": "center 52%"
+  }
+}

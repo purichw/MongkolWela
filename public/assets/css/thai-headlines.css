@@ -9,6 +9,7 @@
 }
 
 .hero h1,
+.temple-page-hero h1,
 .tarot-hero h1,
 .tarot-result-copy h1,
 .seamsi-hero h1,
@@ -17,7 +18,6 @@
 .thai-calendar-hero h1,
 .calendar-day-hero h1,
 .calendar-summary h1,
-.temple-directory-head h1,
 .not-found-panel h1 {
   line-height: 1.14;
   text-wrap: balance;
