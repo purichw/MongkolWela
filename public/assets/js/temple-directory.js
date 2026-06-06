@@ -146,6 +146,8 @@ function initializePopularTempleGrid(grid) {
   const filterName = filterRoot?.querySelector("[data-popular-temple-filter-name]");
   const filterClear = filterRoot?.querySelector("[data-popular-temple-filter-clear]");
   const regionTags = Array.from(filterRoot?.querySelectorAll("[data-popular-region-tag]") || []);
+  const provinceFilter = filterRoot?.querySelector("[data-popular-province-filter]");
+  const provinceTagsRoot = filterRoot?.querySelector("[data-popular-province-tags]");
   const countNode = document.querySelector("[data-popular-temple-count]");
   const emptyNode = document.querySelector("[data-popular-temple-empty]");
   const sentinel = document.querySelector("[data-popular-temple-sentinel]");
@@ -156,6 +158,7 @@ function initializePopularTempleGrid(grid) {
   let filteredCards = cards;
   let visibleCount = 0;
   let activeRegion = "";
+  let activeProvince = "";
 
   if (!cards.length) return;
 
@@ -192,14 +195,18 @@ function initializePopularTempleGrid(grid) {
   filterClear?.addEventListener("click", () => {
     if (filterName) filterName.value = "";
     activeRegion = "";
+    activeProvince = "";
     updateRegionTags();
+    updateProvinceTags();
     applyPopularFilters();
   });
 
   regionTags.forEach((tag) => {
     tag.addEventListener("click", () => {
       activeRegion = tag.value || "";
+      activeProvince = "";
       updateRegionTags();
+      updateProvinceTags();
       applyPopularFilters();
     });
   });
@@ -228,7 +235,8 @@ function initializePopularTempleGrid(grid) {
     filteredCards = cards.filter((card) => {
       const matchesQuery = !query || normalize(card.dataset.searchText).includes(query);
       const matchesRegion = !activeRegion || card.dataset.region === activeRegion;
-      return matchesQuery && matchesRegion;
+      const matchesProvince = !activeProvince || card.dataset.province === activeProvince;
+      return matchesQuery && matchesRegion && matchesProvince;
     });
     visibleCount = Math.min(initialCount, filteredCards.length);
     renderVisibleCards();
@@ -263,6 +271,40 @@ function initializePopularTempleGrid(grid) {
     regionTags.forEach((tag) => {
       tag.classList.toggle("is-active", (tag.value || "") === activeRegion);
     });
+  }
+
+  function updateProvinceTags() {
+    if (!provinceFilter || !provinceTagsRoot) return;
+
+    if (!activeRegion) {
+      provinceFilter.hidden = true;
+      provinceTagsRoot.innerHTML = "";
+      return;
+    }
+
+    const provinces = uniqueSorted(
+      cards.filter((card) => card.dataset.region === activeRegion).map((card) => card.dataset.province),
+    );
+
+    provinceFilter.hidden = provinces.length === 0;
+    provinceTagsRoot.innerHTML = "";
+
+    const allButton = createFilterTag("ทั้งหมด", "", !activeProvince);
+    provinceTagsRoot.append(allButton, ...provinces.map((province) => createFilterTag(province, province, activeProvince === province)));
+  }
+
+  function createFilterTag(label, value, isActive) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.value = value;
+    button.textContent = label;
+    button.classList.toggle("is-active", isActive);
+    button.addEventListener("click", () => {
+      activeProvince = value;
+      updateProvinceTags();
+      applyPopularFilters();
+    });
+    return button;
   }
 
   function updateLoadMoreButton() {

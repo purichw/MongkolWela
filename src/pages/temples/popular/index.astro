@@ -73,6 +73,10 @@ const popularRegions = Array.from(new Set(rankedTemples.map((temple) => temple.r
           <button type="button" data-popular-region-tag value={region}>{region}</button>
         ))}
       </div>
+      <div class="popular-temple-province-filter" data-popular-province-filter hidden>
+        <span>จังหวัด</span>
+        <div class="popular-temple-province-tags" aria-label="กรองตามจังหวัด" data-popular-province-tags></div>
+      </div>
     </section>
 
     <section class="temples-section temples-popular-section">
