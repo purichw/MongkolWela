@@ -92,9 +92,10 @@ const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearc
         data-popular-temple-grid
         data-initial-count="9"
         data-batch-size="9"
+        data-placeholder-src={templePlaceholderImage}
       >
         {rankedTemples.map((temple) => {
-          const hasTempleImage = Boolean(temple.imageUrl);
+          const hasTempleImage = Boolean(temple.imageUrl) && temple.imageUrl !== templePlaceholderImage;
           const imageUrl = hasTempleImage ? temple.imageUrl : templePlaceholderImage;
           const imageAlt = temple.imageAlt || `${temple.name} ${temple.province}`;
 
@@ -107,7 +108,13 @@ const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearc
               data-image-placeholder={hasTempleImage ? undefined : "true"}
             >
               <figure>
-                <img src={imageUrl} alt={imageAlt} loading="lazy" decoding="async" />
+                <img
+                  src={imageUrl}
+                  alt={imageAlt}
+                  loading="lazy"
+                  decoding="async"
+                  data-fallback-src={templePlaceholderImage}
+                />
                 <figcaption>#{temple.rank.toString().padStart(2, "0")}</figcaption>
               </figure>
               <div class="popular-temple-card-body">

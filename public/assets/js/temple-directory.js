@@ -143,11 +143,27 @@ function initializePopularTempleGrid(grid) {
   const cards = Array.from(grid.querySelectorAll("[data-popular-temple-card]"));
   const sentinel = document.querySelector("[data-popular-temple-sentinel]");
   const loadMoreButton = document.querySelector("[data-popular-temple-more]");
+  const placeholderSrc = grid.dataset.placeholderSrc;
   const initialCount = readPositiveInteger(grid.dataset.initialCount, 9);
   const batchSize = readPositiveInteger(grid.dataset.batchSize, initialCount);
   let visibleCount = 0;
 
   if (!cards.length) return;
+
+  grid.addEventListener(
+    "error",
+    (event) => {
+      const image = event.target;
+      if (!(image instanceof HTMLImageElement)) return;
+      const fallbackSrc = image.dataset.fallbackSrc || placeholderSrc;
+      if (!fallbackSrc || image.dataset.fallbackApplied === "true") return;
+
+      image.dataset.fallbackApplied = "true";
+      image.src = fallbackSrc;
+      image.closest("[data-popular-temple-card]")?.classList.add("is-placeholder");
+    },
+    true,
+  );
 
   cards.forEach((card) => {
     card.hidden = true;
