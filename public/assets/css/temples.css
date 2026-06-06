@@ -318,6 +318,82 @@
   margin-bottom: 28px;
 }
 
+.popular-temple-filter {
+  display: grid;
+  gap: 18px;
+}
+
+.popular-temple-filter-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.popular-temple-filter-name {
+  min-width: 0;
+}
+
+.popular-temple-filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.popular-temple-filter-actions .temple-search-button,
+.popular-temple-filter-actions .temple-clear-button {
+  min-width: 132px;
+}
+
+.popular-temple-region-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.popular-temple-region-tags button {
+  min-height: 38px;
+  padding: 7px 14px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  background: rgba(255, 253, 246, 0.78);
+  border: 1px solid rgba(194, 141, 53, 0.24);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.popular-temple-region-tags button:hover,
+.popular-temple-region-tags button:focus-visible {
+  color: #7b271f;
+  border-color: rgba(159, 48, 40, 0.36);
+}
+
+.popular-temple-region-tags button.is-active {
+  color: #fffaf0;
+  background: #7b271f;
+  border-color: rgba(245, 217, 155, 0.48);
+}
+
+.popular-temple-count {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.popular-temple-empty {
+  margin: 24px 0 0;
+  padding: 22px;
+  color: var(--ink-soft);
+  text-align: center;
+  background: rgba(255, 250, 240, 0.66);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-weight: 800;
+}
+
 .temple-search-form {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -569,6 +645,10 @@
   .temple-search-form {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .popular-temple-filter-form {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -620,6 +700,21 @@
 
   .temple-actions {
     justify-content: stretch;
+  }
+
+  .popular-temple-filter-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .popular-temple-region-tags {
+    gap: 8px;
+  }
+
+  .popular-temple-region-tags button {
+    min-height: 36px;
+    padding: 7px 12px;
+    font-size: 0.86rem;
   }
 
   .temple-search-button,

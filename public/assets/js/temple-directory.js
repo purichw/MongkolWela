@@ -141,12 +141,21 @@ if (popularTempleGrid) {
 
 function initializePopularTempleGrid(grid) {
   const cards = Array.from(grid.querySelectorAll("[data-popular-temple-card]"));
+  const filterRoot = document.querySelector("[data-popular-temple-filter]");
+  const filterForm = filterRoot?.querySelector("[data-popular-temple-filter-form]");
+  const filterName = filterRoot?.querySelector("[data-popular-temple-filter-name]");
+  const filterClear = filterRoot?.querySelector("[data-popular-temple-filter-clear]");
+  const regionTags = Array.from(filterRoot?.querySelectorAll("[data-popular-region-tag]") || []);
+  const countNode = document.querySelector("[data-popular-temple-count]");
+  const emptyNode = document.querySelector("[data-popular-temple-empty]");
   const sentinel = document.querySelector("[data-popular-temple-sentinel]");
   const loadMoreButton = document.querySelector("[data-popular-temple-more]");
   const placeholderSrc = grid.dataset.placeholderSrc;
   const initialCount = readPositiveInteger(grid.dataset.initialCount, 9);
   const batchSize = readPositiveInteger(grid.dataset.batchSize, initialCount);
+  let filteredCards = cards;
   let visibleCount = 0;
+  let activeRegion = "";
 
   if (!cards.length) return;
 
@@ -169,7 +178,31 @@ function initializePopularTempleGrid(grid) {
     card.hidden = true;
   });
 
-  revealNext(initialCount);
+  applyPopularFilters();
+
+  filterForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    applyPopularFilters();
+  });
+
+  filterName?.addEventListener("input", () => {
+    applyPopularFilters();
+  });
+
+  filterClear?.addEventListener("click", () => {
+    if (filterName) filterName.value = "";
+    activeRegion = "";
+    updateRegionTags();
+    applyPopularFilters();
+  });
+
+  regionTags.forEach((tag) => {
+    tag.addEventListener("click", () => {
+      activeRegion = tag.value || "";
+      updateRegionTags();
+      applyPopularFilters();
+    });
+  });
 
   loadMoreButton?.addEventListener("click", () => {
     revealNext(batchSize);
@@ -184,25 +217,57 @@ function initializePopularTempleGrid(grid) {
     (entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       revealNext(batchSize);
-      if (visibleCount >= cards.length) observer.disconnect();
     },
     { rootMargin: "480px 0px" },
   );
 
   observer.observe(sentinel);
 
+  function applyPopularFilters() {
+    const query = normalize(filterName?.value || "");
+    filteredCards = cards.filter((card) => {
+      const matchesQuery = !query || normalize(card.dataset.searchText).includes(query);
+      const matchesRegion = !activeRegion || card.dataset.region === activeRegion;
+      return matchesQuery && matchesRegion;
+    });
+    visibleCount = Math.min(initialCount, filteredCards.length);
+    renderVisibleCards();
+  }
+
   function revealNext(count) {
-    const nextCount = Math.min(cards.length, visibleCount + count);
-    for (let index = visibleCount; index < nextCount; index += 1) {
-      cards[index].hidden = false;
+    visibleCount = Math.min(filteredCards.length, visibleCount + count);
+    renderVisibleCards();
+  }
+
+  function renderVisibleCards() {
+    cards.forEach((card) => {
+      card.hidden = true;
+    });
+
+    filteredCards.slice(0, visibleCount).forEach((card) => {
+      card.hidden = false;
+    });
+
+    if (countNode) {
+      countNode.textContent = `แสดง ${filteredCards.length.toLocaleString("th-TH")} จาก ${cards.length.toLocaleString("th-TH")} พิกัด`;
     }
-    visibleCount = nextCount;
+
+    if (emptyNode) {
+      emptyNode.hidden = filteredCards.length > 0;
+    }
+
     updateLoadMoreButton();
+  }
+
+  function updateRegionTags() {
+    regionTags.forEach((tag) => {
+      tag.classList.toggle("is-active", (tag.value || "") === activeRegion);
+    });
   }
 
   function updateLoadMoreButton() {
     if (!loadMoreButton) return;
-    loadMoreButton.hidden = visibleCount >= cards.length;
+    loadMoreButton.hidden = visibleCount >= filteredCards.length;
   }
 }
 

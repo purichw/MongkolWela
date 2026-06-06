@@ -6,6 +6,17 @@ const extraScripts = ["/assets/js/temple-directory.js"];
 const rankedTemples = [...popularTemples].sort((a, b) => a.rank - b.rank);
 const templePlaceholderImage = "/assets/images/temple-placeholder-auspicious.png";
 const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearchParams({ name }).toString()}`;
+const regionOrder = [
+  "ภาคเหนือ",
+  "ภาคกลาง",
+  "ภาคตะวันออกเฉียงเหนือ",
+  "ภาคตะวันออก",
+  "ภาคตะวันตก",
+  "ภาคใต้",
+];
+const popularRegions = Array.from(new Set(rankedTemples.map((temple) => temple.region))).sort(
+  (a, b) => regionOrder.indexOf(a) - regionOrder.indexOf(b),
+);
 ---
 
 <BaseLayout
@@ -34,48 +45,34 @@ const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearc
       </p>
     </section>
 
-    <section class="temple-search-panel temple-quick-search" aria-label="ค้นหาพิกัดวัดยอดนิยม" data-temple-quick-search>
-      <form class="temple-search-form" data-temple-form>
-        <label class="temple-field temple-field-wide">
+    <section
+      class="temple-search-panel temple-quick-search popular-temple-filter"
+      aria-label="ค้นหาพิกัดวัดยอดนิยม"
+      data-popular-temple-filter
+    >
+      <form class="popular-temple-filter-form" data-popular-temple-filter-form>
+        <label class="temple-field popular-temple-filter-name">
           <span>ชื่อวัด</span>
-          <input type="search" name="name" placeholder="ค้นหาจากชื่อวัด" autocomplete="off" data-temple-name />
+          <input
+            type="search"
+            name="name"
+            placeholder="ค้นหาในพิกัดยอดนิยม"
+            autocomplete="off"
+            data-popular-temple-filter-name
+          />
         </label>
 
-        <label class="temple-field">
-          <span>ประเภทวัด</span>
-          <select name="type" data-temple-type></select>
-        </label>
-
-        <label class="temple-field">
-          <span>นิกาย</span>
-          <select name="sect" data-temple-sect></select>
-        </label>
-
-        <label class="temple-field">
-          <span>ภาค</span>
-          <select name="region" data-temple-region></select>
-        </label>
-
-        <label class="temple-field">
-          <span>จังหวัด</span>
-          <select name="province" data-temple-province></select>
-        </label>
-
-        <label class="temple-field">
-          <span>อำเภอ / เขต</span>
-          <select name="district" data-temple-district></select>
-        </label>
-
-        <label class="temple-field">
-          <span>ตำบล / แขวง</span>
-          <select name="subdistrict" data-temple-subdistrict></select>
-        </label>
-
-        <div class="temple-actions">
+        <div class="popular-temple-filter-actions">
           <button class="temple-search-button" type="submit">ค้นหา</button>
-          <button class="temple-clear-button" type="button" data-temple-clear>เคลียร์ข้อมูล</button>
+          <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>เคลียร์ข้อมูล</button>
         </div>
       </form>
+      <div class="popular-temple-region-tags" aria-label="กรองตามภาค">
+        <button type="button" class="is-active" data-popular-region-tag value="">ทั้งหมด</button>
+        {popularRegions.map((region) => (
+          <button type="button" data-popular-region-tag value={region}>{region}</button>
+        ))}
+      </div>
     </section>
 
     <section class="temples-section temples-popular-section">
@@ -84,6 +81,7 @@ const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearc
           <p class="section-kicker">อันดับยอดนิยม</p>
           <h2>วัดดังทั่วไทย</h2>
         </div>
+        <p class="popular-temple-count" data-popular-temple-count></p>
       </div>
 
       <div
@@ -104,6 +102,11 @@ const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearc
               class={`popular-temple-card${hasTempleImage ? "" : " is-placeholder"}`}
               href={getTempleSearchHref(temple.name)}
               data-rank={temple.rank}
+              data-name={temple.name}
+              data-region={temple.region}
+              data-province={temple.province}
+              data-district={temple.district}
+              data-search-text={`${temple.name} ${temple.region} ${temple.province} ${temple.district ?? ""}`}
               data-popular-temple-card
               data-image-placeholder={hasTempleImage ? undefined : "true"}
             >
@@ -126,6 +129,7 @@ const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearc
           );
         })}
       </div>
+      <p class="popular-temple-empty" data-popular-temple-empty hidden>ไม่พบพิกัดยอดนิยมที่ตรงกับคำค้นหา</p>
       <button class="popular-temple-load-more" type="button" data-popular-temple-more hidden>
         ดูเพิ่ม
       </button>
