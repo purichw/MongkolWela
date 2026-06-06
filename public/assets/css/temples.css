@@ -8,6 +8,7 @@
 
 .temples-hub,
 .temples-hub-hero,
+.temples-section,
 .temples-feature-grid,
 .temple-directory,
 .temple-directory-head,
@@ -61,6 +62,18 @@
   color: var(--ink-soft);
   font-size: clamp(1.05rem, 2vw, 1.24rem);
   line-height: 1.75;
+}
+
+.temples-section {
+  padding-top: 28px;
+  border-top: 2px dashed rgba(77, 56, 41, 0.28);
+}
+
+.temples-section h2 {
+  margin: 0 0 28px;
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-weight: 900;
+  line-height: 1.15;
 }
 
 .temples-feature-grid {
@@ -382,6 +395,7 @@
 @media (max-width: 720px) {
   .temples-hub,
   .temples-hub-hero,
+  .temples-section,
   .temples-feature-grid,
   .temple-directory,
   .temple-directory-head,

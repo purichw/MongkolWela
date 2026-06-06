@@ -67,7 +67,7 @@ export const siteConfig = {
         label: "วัดดังเสริมมงคล",
         href: "temples/",
         items: [
-          { label: "วัดดังทั่วไทย", href: "temples/" },
+          { label: "พิกัดยอดนิยม", href: "temples/" },
           { label: "วัดทั่วประเทศไทย", href: "temples/thailand/" },
         ],
       },
@@ -154,7 +154,7 @@ export const siteConfig = {
       },
       temples: {
         topbar: [
-          { label: "วัดดังทั่วไทย", href: "temples/" },
+          { label: "พิกัดยอดนิยม", href: "temples/" },
           { label: "รวมเส้นทางไหว้พระและวัดเด่นสำหรับเสริมมงคล" },
           { label: "ปรึกษาครูโหร", href: "#consult" },
         ],
