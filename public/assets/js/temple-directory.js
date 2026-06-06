@@ -186,7 +186,7 @@ function initializePopularTempleGrid(grid) {
 
   function updateLoadMoreButton() {
     if (!loadMoreButton) return;
-    loadMoreButton.hidden = visibleCount >= cards.length || "IntersectionObserver" in window;
+    loadMoreButton.hidden = visibleCount >= cards.length;
   }
 }
 
