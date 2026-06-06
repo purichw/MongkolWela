@@ -85,9 +85,20 @@ const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearc
         </div>
       </div>
 
-      <div class="popular-temple-grid" aria-label="พิกัดไหว้พระยอดนิยม">
+      <div
+        class="popular-temple-grid"
+        aria-label="พิกัดไหว้พระยอดนิยม"
+        data-popular-temple-grid
+        data-initial-count="9"
+        data-batch-size="9"
+      >
         {rankedTemples.map((temple) => (
-          <a class="popular-temple-card" href={getTempleSearchHref(temple.name)} data-rank={temple.rank}>
+          <a
+            class="popular-temple-card"
+            href={getTempleSearchHref(temple.name)}
+            data-rank={temple.rank}
+            data-popular-temple-card
+          >
             <figure>
               <img src={temple.imageUrl} alt={temple.imageAlt} loading="lazy" decoding="async" />
               <figcaption>#{temple.rank.toString().padStart(2, "0")}</figcaption>
@@ -100,6 +111,10 @@ const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearc
           </a>
         ))}
       </div>
+      <button class="popular-temple-load-more" type="button" data-popular-temple-more hidden>
+        โหลดเพิ่ม
+      </button>
+      <div class="popular-temple-sentinel" data-popular-temple-sentinel aria-hidden="true"></div>
     </section>
   </main>
 </BaseLayout>

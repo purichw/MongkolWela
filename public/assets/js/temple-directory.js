@@ -1,5 +1,6 @@
 const root = document.querySelector("[data-temple-directory]");
 const quickSearchRoot = document.querySelector("[data-temple-quick-search]");
+const popularTempleGrid = document.querySelector("[data-popular-temple-grid]");
 
 const columnIndexes = [0, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12];
 const numericColumns = new Set([0, 6, 8, 12]);
@@ -132,6 +133,61 @@ if (root) {
 
 if (quickSearchRoot) {
   initializeTempleQuickSearch(quickSearchRoot);
+}
+
+if (popularTempleGrid) {
+  initializePopularTempleGrid(popularTempleGrid);
+}
+
+function initializePopularTempleGrid(grid) {
+  const cards = Array.from(grid.querySelectorAll("[data-popular-temple-card]"));
+  const sentinel = document.querySelector("[data-popular-temple-sentinel]");
+  const loadMoreButton = document.querySelector("[data-popular-temple-more]");
+  const initialCount = readPositiveInteger(grid.dataset.initialCount, 9);
+  const batchSize = readPositiveInteger(grid.dataset.batchSize, initialCount);
+  let visibleCount = 0;
+
+  if (!cards.length) return;
+
+  cards.forEach((card) => {
+    card.hidden = true;
+  });
+
+  revealNext(initialCount);
+
+  loadMoreButton?.addEventListener("click", () => {
+    revealNext(batchSize);
+  });
+
+  if (!sentinel || !("IntersectionObserver" in window)) {
+    updateLoadMoreButton();
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      revealNext(batchSize);
+      if (visibleCount >= cards.length) observer.disconnect();
+    },
+    { rootMargin: "480px 0px" },
+  );
+
+  observer.observe(sentinel);
+
+  function revealNext(count) {
+    const nextCount = Math.min(cards.length, visibleCount + count);
+    for (let index = visibleCount; index < nextCount; index += 1) {
+      cards[index].hidden = false;
+    }
+    visibleCount = nextCount;
+    updateLoadMoreButton();
+  }
+
+  function updateLoadMoreButton() {
+    if (!loadMoreButton) return;
+    loadMoreButton.hidden = visibleCount >= cards.length || "IntersectionObserver" in window;
+  }
 }
 
 async function initializeTempleDirectory(rootElement) {
@@ -478,6 +534,11 @@ function normalize(value) {
 
 function normalizeTempleName(value) {
   return normalize(value).replace(/^วัด\s*/, "");
+}
+
+function readPositiveInteger(value, fallback) {
+  const number = Number(value);
+  return Number.isInteger(number) && number > 0 ? number : fallback;
 }
 
 function escapeHtml(value) {
