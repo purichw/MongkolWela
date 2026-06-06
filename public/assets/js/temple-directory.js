@@ -1,7 +1,7 @@
 const root = document.querySelector("[data-temple-directory]");
 
-const columnIndexes = [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12];
-const numericColumns = new Set([0, 1, 6, 8, 12]);
+const columnIndexes = [0, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12];
+const numericColumns = new Set([0, 6, 8, 12]);
 const pageSize = 20;
 
 const labels = {
