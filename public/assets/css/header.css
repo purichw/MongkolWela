@@ -164,6 +164,10 @@
   border-bottom: 1px dashed rgba(77, 56, 41, 0.28);
 }
 
+.mega-panel-section:not(:first-child) {
+  margin-top: 4px;
+}
+
 .mega-panel a:hover {
   color: var(--ink);
   background: #f4ead8;

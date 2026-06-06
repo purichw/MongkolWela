@@ -69,7 +69,8 @@ export const siteConfig = {
         items: [
           { label: "ไหว้พระ 9 วัด", section: true },
           { label: "พิกัดยอดนิยม", href: "temples/popular/" },
-          { label: "วัดทั่วประเทศไทย", href: "temples/thailand/" },
+          { label: "วัดทั่วประเทศไทย", section: true },
+          { label: "ค้นหาวัดทั่วประเทศไทย", href: "temples/thailand/" },
         ],
       },
     ],
