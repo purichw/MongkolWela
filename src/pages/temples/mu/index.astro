@@ -1,0 +1,143 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import muTemples from "../../../data/mu-temples.json";
+
+const extraScripts = ["/assets/js/temple-directory.js"];
+const rankedTemples = [...muTemples].sort((a, b) => a.rank - b.rank);
+const templePlaceholderImage = "/assets/images/temple-placeholder-auspicious.png";
+const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearchParams({ name }).toString()}`;
+const regionOrder = [
+  "ภาคเหนือ",
+  "ภาคกลาง",
+  "ภาคตะวันออกเฉียงเหนือ",
+  "ภาคตะวันออก",
+  "ภาคตะวันตก",
+  "ภาคใต้",
+];
+const popularRegions = Array.from(new Set(rankedTemples.map((temple) => temple.region))).sort(
+  (a, b) => regionOrder.indexOf(a) - regionOrder.indexOf(b),
+);
+---
+
+<BaseLayout
+  title="สายมู | มงคลเวลา"
+  description="รวมพิกัดสายมูสำหรับขอพรเรื่องการงาน การเงิน ความรัก สุขภาพ โชคลาภ และเสริมสิริมงคลทั่วไทย"
+  lang="th"
+  locale="th"
+  page="templesMu"
+  bodyClass="temples-hub-page"
+  extraScripts={extraScripts}
+>
+  <main class="temples-hub">
+    <section class="temples-hub-hero">
+      <nav class="temple-breadcrumb" aria-label="breadcrumb">
+        <a href="../../">หน้าแรก</a>
+        <span>/</span>
+        <a href="../">วัดดังเสริมมงคล</a>
+        <span>/</span>
+        <span>สายมู</span>
+      </nav>
+      <p class="section-kicker">สายมู</p>
+      <h1>สายมู</h1>
+      <p>
+        รวมพิกัดขอพรและสถานที่ศักดิ์สิทธิ์สำหรับเรื่องการงาน การเงิน ความรัก สุขภาพ
+        โชคลาภ และการเสริมสิริมงคล พร้อมค้นหาและกรองตามพื้นที่ได้ทันที
+      </p>
+    </section>
+
+    <section
+      class="temple-search-panel temple-quick-search popular-temple-filter"
+      aria-label="ค้นหาพิกัดสายมู"
+      data-popular-temple-filter
+    >
+      <form class="popular-temple-filter-form" data-popular-temple-filter-form>
+        <label class="temple-field popular-temple-filter-name">
+          <span>ชื่อวัด / สถานที่</span>
+          <input
+            type="search"
+            name="name"
+            placeholder="ค้นหาในสายมู"
+            autocomplete="off"
+            data-popular-temple-filter-name
+          />
+        </label>
+
+        <div class="popular-temple-filter-actions">
+          <button class="temple-search-button" type="submit">ค้นหา</button>
+          <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>เคลียร์ข้อมูล</button>
+        </div>
+      </form>
+      <div class="popular-temple-region-tags" aria-label="กรองตามภาค">
+        <button type="button" class="is-active" data-popular-region-tag value="">ทั้งหมด</button>
+        {popularRegions.map((region) => (
+          <button type="button" data-popular-region-tag value={region}>{region}</button>
+        ))}
+      </div>
+      <div class="popular-temple-province-filter" data-popular-province-filter hidden>
+        <span>จังหวัด</span>
+        <div class="popular-temple-province-tags" aria-label="กรองตามจังหวัด" data-popular-province-tags></div>
+      </div>
+    </section>
+
+    <section class="temples-section temples-popular-section">
+      <div class="temples-section-head">
+        <div>
+          <p class="section-kicker">อันดับสายมู</p>
+          <h2>พิกัดสายมูทั่วไทย</h2>
+        </div>
+        <p class="popular-temple-count" data-popular-temple-count></p>
+      </div>
+
+      <div
+        class="popular-temple-grid"
+        aria-label="พิกัดสายมูยอดนิยม"
+        data-popular-temple-grid
+        data-initial-count="9"
+        data-batch-size="9"
+        data-placeholder-src={templePlaceholderImage}
+      >
+        {rankedTemples.map((temple) => {
+          const hasTempleImage = Boolean(temple.imageUrl) && temple.imageUrl !== templePlaceholderImage;
+          const imageUrl = hasTempleImage ? temple.imageUrl : templePlaceholderImage;
+          const imageAlt = temple.imageAlt || `${temple.name} ${temple.province}`;
+
+          return (
+            <a
+              class={`popular-temple-card${hasTempleImage ? "" : " is-placeholder"}`}
+              href={getTempleSearchHref(temple.name)}
+              data-rank={temple.rank}
+              data-name={temple.name}
+              data-region={temple.region}
+              data-province={temple.province}
+              data-district={temple.district}
+              data-search-text={`${temple.name} ${temple.placeType ?? ""} ${temple.region} ${temple.province} ${temple.district ?? ""} ${temple.blessings ?? ""} ${temple.objectHero ?? ""}`}
+              data-popular-temple-card
+              data-image-placeholder={hasTempleImage ? undefined : "true"}
+            >
+              <figure>
+                <img
+                  src={imageUrl}
+                  alt={imageAlt}
+                  loading="lazy"
+                  decoding="async"
+                  data-fallback-src={templePlaceholderImage}
+                />
+                <figcaption>#{temple.rank.toString().padStart(2, "0")}</figcaption>
+              </figure>
+              <div class="popular-temple-card-body">
+                <span>{temple.region}</span>
+                <h3>{temple.name}</h3>
+                <p>{temple.province}{temple.district ? ` / ${temple.district}` : ""}</p>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+      <p class="popular-temple-empty" data-popular-temple-empty hidden>ไม่พบพิกัดสายมูที่ตรงกับคำค้นหา</p>
+      <button class="popular-temple-load-more" type="button" data-popular-temple-more hidden>
+        ดูเพิ่ม
+      </button>
+      <div class="popular-temple-sentinel" data-popular-temple-sentinel aria-hidden="true"></div>
+    </section>
+  </main>
+</BaseLayout>

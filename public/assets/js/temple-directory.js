@@ -633,6 +633,10 @@ function unique(rows, index) {
   return [...new Set(rows.map((row) => row[index]).filter(Boolean))].sort((a, b) => a.localeCompare(b, "th"));
 }
 
+function uniqueSorted(values) {
+  return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, "th"));
+}
+
 function getAvailableRegions(rows) {
   const rowRegions = new Set(rows.map((row) => provinceRegionMap[row[11]]).filter(Boolean));
   return regionOrder.filter((region) => rowRegions.has(region));
