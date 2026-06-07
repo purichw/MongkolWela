@@ -63,5 +63,22 @@ const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v
 
     <script is:inline type="module" src={versionedAsset("/script.js")}></script>
     {extraScripts.map((src: string) => <script is:inline type="module" src={versionedAsset(src)}></script>)}
+    <script is:inline>
+      (() => {
+        const host = window.location.hostname;
+        const isVercelHost = host === "mongkolwela.vercel.app" || host.endsWith(".vercel.app");
+        if (!isVercelHost) return;
+
+        const injectScript = (src) => {
+          const script = document.createElement("script");
+          script.defer = true;
+          script.src = src;
+          document.head.appendChild(script);
+        };
+
+        injectScript("/_vercel/insights/script.js");
+        injectScript("/_vercel/speed-insights/script.js");
+      })();
+    </script>
   </body>
 </html>
