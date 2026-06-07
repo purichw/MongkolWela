@@ -57,7 +57,8 @@ Build an Admin Portal or content management path so these can be edited without 
 - Detail hero images.
 - Detail annotation pins.
 - Banner images per page.
-- Coordinates.
+- Plus Codes and coordinates, with Plus Code as the Google Maps default and coordinates as fallback.
+- Travel modes.
 - Blessings/object hero/type fields.
 - Detail content sections.
 
@@ -137,7 +138,7 @@ The JSON files are currently static outputs. Future pipeline could:
 - Regenerate JSON from Excel reliably.
 - Validate required fields.
 - Validate image URLs.
-- Validate coordinates.
+- Validate Plus Codes, coordinates, and travel modes.
 - Produce a QA report for missing images/coordinates.
 
 Keep workbook writing through artifact-tool, not Python/openpyxl.
@@ -201,4 +202,3 @@ Then smoke-test the live URL.
 - `สายไหว้พระ 9 วัด` and `สายมู` collection pages should be similar in search/filter/card/lazy-load/map/detail behavior.
 - Data and images should remain editable in a future Admin Portal.
 - Use source-backed data for temple facts; do not invent unsupported content.
-

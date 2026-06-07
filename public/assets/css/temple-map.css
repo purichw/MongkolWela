@@ -819,6 +819,25 @@
   text-decoration: none;
 }
 
+.temple-detail-travel-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.temple-detail-travel-list span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 5px 10px;
+  color: var(--ink);
+  background: rgba(214, 173, 85, 0.12);
+  border: 1px solid rgba(143, 45, 37, 0.12);
+  border-radius: 999px;
+  font-size: 0.86rem;
+  line-height: 1.25;
+}
+
 .temple-detail-related {
   margin-top: 56px;
   padding-top: 36px;

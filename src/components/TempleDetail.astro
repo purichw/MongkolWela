@@ -19,10 +19,12 @@ interface Props {
     objectHero?: string;
     latitude?: number | null;
     longitude?: number | null;
+    plusCode?: string;
     coordinateSource?: string;
     coordinateAddress?: string;
     imageSourceLabel?: string;
     imageSourceUrl?: string;
+    travelModes?: string;
   };
   placeholderImage: string;
   relatedTemples?: Props["temple"][];
@@ -34,10 +36,9 @@ const title = `${temple.name} | ${collectionLabel} | มงคลเวลา`;
 const hasCoordinates = Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude));
 const latitude = Number(temple.latitude);
 const longitude = Number(temple.longitude);
+const plusCode = String(temple.plusCode || "").trim();
+const hasPlusCode = Boolean(plusCode);
 const locationText = [temple.region, temple.province, temple.district].filter(Boolean).join(" · ");
-const mapHref = hasCoordinates
-  ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
-  : "";
 const splitList = (value?: string) =>
   String(value || "")
     .split(";")
@@ -45,6 +46,10 @@ const splitList = (value?: string) =>
     .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
 const blessingItems = splitList(temple.blessings);
 const objectItems = splitList(temple.objectHero);
+const travelModeItems = splitList(temple.travelModes);
+const mapQuery = hasPlusCode ? plusCode : hasCoordinates ? `${latitude},${longitude}` : "";
+const mapHref = mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : "";
+const mapLabel = hasPlusCode ? plusCode : hasCoordinates ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : "";
 const annotationItems = [
   {
     label: temple.placeType || "สถานที่ศักดิ์สิทธิ์",
@@ -126,7 +131,7 @@ const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Plac
           <span>{temple.province}</span>
         </div>
         <div class="temple-detail-actions" aria-label="การทำงานของหน้า">
-          {hasCoordinates && <a class="temple-detail-action temple-detail-action--primary" href={mapHref} target="_blank" rel="noopener">เปิดแผนที่</a>}
+          {mapHref && <a class="temple-detail-action temple-detail-action--primary" href={mapHref} target="_blank" rel="noopener">เปิดแผนที่</a>}
           <button class="temple-detail-action" type="button" data-temple-detail-share data-share-title={title}>แชร์</button>
           <button class="temple-detail-action" type="button" data-temple-detail-copy>คัดลอกลิงก์</button>
         </div>
@@ -171,6 +176,7 @@ const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Plac
                 data-lng={longitude}
                 data-title={temple.name}
                 data-map-url={mapHref}
+                data-map-label={mapLabel}
                 aria-label={`ดูแผนที่ ${temple.name}`}
               >
                 <span>ดูแผนที่</span>
@@ -184,7 +190,8 @@ const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Plac
           ) : (
             <div class="temple-detail-map-card__body">
               <h2>พิกัดและการเดินทาง</h2>
-              <p>ยังไม่มีพิกัดยืนยันสำหรับสถานที่นี้</p>
+              <p>{mapLabel || "ยังไม่มีพิกัดยืนยันสำหรับสถานที่นี้"}</p>
+              {mapHref && <a href={mapHref} target="_blank" rel="noopener">เปิดใน Google Maps</a>}
             </div>
           )}
         </section>
@@ -202,22 +209,12 @@ const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Plac
             <dt>ภาค</dt>
             <dd>{temple.region}</dd>
           </div>
-          {hasCoordinates && (
+          {travelModeItems.length > 0 && (
             <div>
-              <dt>พิกัด</dt>
-              <dd>{latitude.toFixed(6)}, {longitude.toFixed(6)}</dd>
-            </div>
-          )}
-          {temple.coordinateSource && (
-            <div>
-              <dt>แหล่งพิกัด</dt>
-              <dd>{temple.coordinateSource}</dd>
-            </div>
-          )}
-          {temple.imageSourceUrl && temple.imageSourceLabel && temple.imageSourceLabel !== "Placeholder" && (
-            <div>
-              <dt>ภาพประกอบ</dt>
-              <dd><a href={temple.imageSourceUrl} target="_blank" rel="noopener">{temple.imageSourceLabel}</a></dd>
+              <dt>การเดินทาง</dt>
+              <dd class="temple-detail-travel-list">
+                {travelModeItems.slice(0, 8).map((item) => <span>{item}</span>)}
+              </dd>
             </div>
           )}
         </dl>

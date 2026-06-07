@@ -51,6 +51,7 @@ async function initializeDetailMap(element) {
     lng,
     title: element.dataset.title || "พิกัด",
     mapUrl: element.dataset.mapUrl || "",
+    locationLabel: element.dataset.mapLabel || `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
     miniMap: null,
     modal: null,
     modalMap: null,
@@ -155,7 +156,7 @@ function createDetailMapModal(element, state) {
       </header>
       <div class="temple-detail-map-modal__canvas"></div>
       <footer class="temple-detail-map-modal__foot">
-        <span>พิกัด ${state.lat.toFixed(6)}, ${state.lng.toFixed(6)}</span>
+        <span>${escapeHtml(state.locationLabel)}</span>
         ${state.mapUrl ? `<a href="${escapeHtml(state.mapUrl)}" target="_blank" rel="noopener">เปิดใน Google Maps</a>` : ""}
       </footer>
     </section>`;

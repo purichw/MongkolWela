@@ -187,11 +187,19 @@ Each temple/place image entry is intended to be Admin-editable later. Keep image
 
 ### Coordinates
 
-Coordinates are currently embedded in:
+Location data is currently embedded in:
 
 - `src/data/popular-temples.json`
 - `src/data/mu-temples.json`
 - Both source Excel files.
+
+Location fields:
+
+- `plusCode`: Google Maps/Open Location Code label for exact lookup.
+- `latitude` / `longitude`: numeric coordinates for Leaflet rendering and fallback lookup.
+- `travelModes`: semicolon-separated normalized travel modes from `Temple_Master`.
+
+When both `plusCode` and coordinates are present, outbound Google Maps links should prefer `plusCode`; Leaflet minimaps still use coordinates.
 
 Coordinate source history:
 
@@ -275,8 +283,8 @@ Behavior:
 - Hero image with watermark and annotation pins.
 - Thai title, summary, tags, share/copy actions.
 - Mini Leaflet map with a single marker.
-- Google Maps external link.
-- Metadata block.
+- Google Maps external link, preferring Plus Code with coordinate fallback.
+- Metadata block with area and travel mode fields.
 - Related cards from same province/region where possible.
 
 Detail URL helper:
@@ -390,4 +398,3 @@ Wat Portal visual reference:
 - `https://www.watportal.com/th/wat/type/index/id/2`
 
 Use these as inspiration only; Mongkol Wela should keep its own Thai tone and CI.
-
