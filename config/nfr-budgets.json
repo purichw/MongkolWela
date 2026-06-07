@@ -1,0 +1,40 @@
+{
+  "coreWebVitals": {
+    "lcpMs": 2500,
+    "cls": 0.1,
+    "inpMs": 200
+  },
+  "assets": {
+    "javascript": {
+      "totalKb": 900,
+      "maxFileKb": 240
+    },
+    "css": {
+      "totalKb": 650,
+      "maxFileKb": 220
+    },
+    "html": {
+      "maxFileKb": 430
+    },
+    "keyRouteImages": {
+      "totalKb": 1850,
+      "maxFileKb": 820
+    }
+  },
+  "keyRoutes": [
+    "/",
+    "/temples/popular/",
+    "/temples/mu/",
+    "/temples/popular/002-\u0e27-\u0e14\u0e2d\u0e23-\u0e13-\u0e01\u0e23-\u0e07\u0e40\u0e17\u0e1e\u0e21\u0e2b\u0e32\u0e19\u0e04\u0e23/",
+    "/temples/thailand/",
+    "/404.html"
+  ],
+  "browserMatrix": [
+    "Chrome desktop",
+    "Firefox desktop",
+    "Safari desktop",
+    "Edge desktop",
+    "Chrome mobile",
+    "Safari mobile"
+  ]
+}

@@ -149,7 +149,14 @@ const getWalkLabel = (route: TravelRoute) =>
 
     <section class="temple-detail-hero" aria-labelledby="temple-detail-title">
       <figure class="temple-detail-hero__media">
-        <img src={imageUrl} alt={temple.imageAlt || `${temple.name} ${temple.province}`} loading="eager" decoding="async" />
+        <img
+          src={imageUrl}
+          alt={temple.imageAlt || `${temple.name} ${temple.province}`}
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          data-fallback-src={placeholderImage}
+        />
         <figcaption>{sourceLabel}</figcaption>
       </figure>
       <div class="temple-detail-hero__copy">
@@ -380,7 +387,13 @@ const getWalkLabel = (route: TravelRoute) =>
         <div class="temple-detail-related__grid">
           {relatedTemples.slice(0, 3).map((item) => (
             <a href={getTempleDetailUrl(collection, item)} class="temple-detail-related-card">
-              <img src={item.imageUrl || placeholderImage} alt={item.imageAlt || `${item.name} ${item.province}`} loading="lazy" decoding="async" />
+              <img
+                src={item.imageUrl || placeholderImage}
+                alt={item.imageAlt || `${item.name} ${item.province}`}
+                loading="lazy"
+                decoding="async"
+                data-fallback-src={placeholderImage}
+              />
               <span>#{item.rank.toString().padStart(2, "0")}</span>
               <strong>{item.name}</strong>
               <small>{[item.province, item.district].filter(Boolean).join(" / ")}</small>

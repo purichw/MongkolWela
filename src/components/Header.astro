@@ -58,7 +58,7 @@ function resolveHref(href = "") {
       <span class="sr-only">{config.openMenuLabel}</span>
     </button>
 
-    <div class="nav-menu" id="primary-menu">
+    <div class="nav-menu" id="primary-menu" aria-label={config.navLabel}>
       {(config.nav as NavItem[]).map((item: NavItem) => (
         <div class="nav-item">
           <a href={resolveHref(item.href)}>{item.label}</a>

@@ -67,18 +67,36 @@ const payload = JSON.stringify({
   </button>
 
   <div class="temple-map-modal" id={modalId} aria-hidden="true" data-temple-map-modal-element>
-    <div class="temple-map-modal__overlay" data-temple-map-close></div>
-    <div class="temple-map-modal__panel" role="dialog" aria-modal="true" aria-label={`แผนที่${title}`}>
+    <button class="temple-map-modal__overlay" type="button" data-temple-map-close aria-label="ปิดแผนที่"></button>
+    <div class="temple-map-modal__panel" role="dialog" aria-modal="true" aria-labelledby={`${modalId}-title`}>
+      <h2 class="sr-only" id={`${modalId}-title`}>แผนที่{title}</h2>
       <div class="temple-map-search">
+        <label class="sr-only" for={`${mapId}-search`}>ค้นหาพิกัดในแผนที่</label>
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
         </svg>
-        <input type="search" placeholder={searchPlaceholder} autocomplete="off" data-temple-map-search />
-        <div class="temple-map-search__dropdown" data-temple-map-search-results></div>
+        <input
+          id={`${mapId}-search`}
+          type="search"
+          placeholder={searchPlaceholder}
+          autocomplete="off"
+          aria-expanded="false"
+          aria-controls={`${mapId}-results`}
+          data-temple-map-search
+        />
+        <div
+          class="temple-map-search__dropdown"
+          id={`${mapId}-results`}
+          role="listbox"
+          aria-label="ผลการค้นหาในแผนที่"
+          data-temple-map-search-results
+        ></div>
       </div>
       <button class="temple-map-modal__close" type="button" data-temple-map-close aria-label="ปิดแผนที่">×</button>
-      <div class="temple-map-canvas" id={mapId}></div>
-      <div class="temple-map-status" data-temple-map-status>
+      <div class="temple-map-canvas" id={mapId} role="application" aria-label={`แผนที่${title}`} tabindex="0">
+        <p class="sr-only">แผนที่จะแสดงเมื่อโหลดข้อมูลสำเร็จ หากแผนที่โหลดไม่ได้ยังสามารถใช้ปุ่มเปิดใน Google Maps ในหน้ารายละเอียดได้</p>
+      </div>
+      <div class="temple-map-status" role="status" aria-live="polite" data-temple-map-status>
         แสดง {mapItems.length.toLocaleString("th-TH")} จาก {temples.length.toLocaleString("th-TH")} พิกัด
       </div>
     </div>

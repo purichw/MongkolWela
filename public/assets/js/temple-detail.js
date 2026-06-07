@@ -51,13 +51,22 @@ async function initializeDetailMap(element) {
     openDetailMapModal(element);
   });
 
-  await ensureLeaflet();
+  try {
+    await ensureLeaflet();
+  } catch (error) {
+    element.classList.add("has-map-error");
+    element.querySelector("span").textContent = "ดูแผนที่";
+    document.dispatchEvent(new CustomEvent("mw:map-load-error", {
+      detail: { scope: "detail_minimap", title: state.title, reason: error?.message || "leaflet_load_failed" },
+    }));
+    return;
+  }
   if (!window.L) return;
 
   const bounds = window.L.latLngBounds(DETAIL_MAP_CONFIG.thailandBounds[0], DETAIL_MAP_CONFIG.thailandBounds[1]);
   const map = window.L.map(element, {
     zoomControl: false,
-    attributionControl: true,
+    attributionControl: false,
     dragging: false,
     tap: false,
     scrollWheelZoom: false,
@@ -74,7 +83,7 @@ async function initializeDetailMap(element) {
     maxZoom: DETAIL_MAP_CONFIG.maxZoom,
   }).addTo(map);
 
-  window.L.marker([lat, lng], { icon: createMiniTempleIcon() })
+  window.L.marker([lat, lng], { icon: createMiniTempleIcon(), interactive: false, keyboard: false })
     .bindTooltip(state.title, {
       direction: "top",
       offset: [0, -12],
@@ -105,7 +114,19 @@ async function openDetailMapModal(element) {
   state.modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
 
-  await ensureLeaflet();
+  document.dispatchEvent(new CustomEvent("mw:map-open", { detail: { scope: "detail", title: state.title } }));
+
+  try {
+    await ensureLeaflet();
+  } catch (error) {
+    state.modal.classList.add("has-map-error");
+    state.modal.querySelector(".temple-detail-map-modal__canvas").textContent = "โหลดแผนที่ไม่สำเร็จ ลองเชื่อมต่ออินเทอร์เน็ตอีกครั้ง";
+    document.dispatchEvent(new CustomEvent("mw:map-load-error", {
+      detail: { scope: "detail_modal", title: state.title, reason: error?.message || "leaflet_load_failed" },
+    }));
+    state.modal.querySelector("[data-temple-detail-map-close]")?.focus({ preventScroll: true });
+    return;
+  }
   if (!window.L) return;
   if (!state.modalMap) initializeDetailModalMap(state);
 
@@ -133,13 +154,13 @@ function createDetailMapModal(element, state) {
   modal.setAttribute("data-temple-detail-map-modal", "");
   element.dataset.modalId = modal.id;
   modal.innerHTML = `
-    <div class="temple-detail-map-modal__overlay" data-temple-detail-map-close></div>
-    <section class="temple-detail-map-modal__panel" role="dialog" aria-modal="true" aria-label="แผนที่ ${escapeHtml(state.title)}">
+    <button class="temple-detail-map-modal__overlay" type="button" data-temple-detail-map-close aria-label="ปิดแผนที่"></button>
+    <section class="temple-detail-map-modal__panel" role="dialog" aria-modal="true" aria-labelledby="${modal.id}-title">
       <header class="temple-detail-map-modal__head">
-        <h2>${escapeHtml(state.title)}</h2>
+        <h2 id="${modal.id}-title">${escapeHtml(state.title)}</h2>
         <button type="button" data-temple-detail-map-close aria-label="ปิดแผนที่">×</button>
       </header>
-      <div class="temple-detail-map-modal__canvas"></div>
+      <div class="temple-detail-map-modal__canvas" role="application" aria-label="แผนที่ ${escapeHtml(state.title)}" tabindex="0"></div>
       <footer class="temple-detail-map-modal__foot">
         <span>${escapeHtml(state.locationLabel)}</span>
         ${state.mapUrl ? `<a href="${escapeHtml(state.mapUrl)}" target="_blank" rel="noopener">เปิดใน Google Maps</a>` : ""}
@@ -170,7 +191,7 @@ function initializeDetailModalMap(state) {
     maxZoom: DETAIL_MAP_CONFIG.maxZoom,
   }).addTo(map);
 
-  window.L.marker([state.lat, state.lng], { icon: createMiniTempleIcon() })
+  window.L.marker([state.lat, state.lng], { icon: createMiniTempleIcon(), keyboard: false, title: state.title })
     .bindPopup(`<strong>${escapeHtml(state.title)}</strong>`, {
       closeButton: false,
       className: "temple-detail-map-modal__popup",
@@ -179,6 +200,29 @@ function initializeDetailModalMap(state) {
     .openPopup();
 
   state.modalMap = map;
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Tab") return;
+  const modal = document.querySelector("[data-temple-detail-map-modal].is-open");
+  if (!modal) return;
+  trapFocus(event, modal);
+});
+
+function trapFocus(event, modal) {
+  const focusable = [...modal.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+    .filter((element) => element.offsetParent !== null);
+  if (!focusable.length) return;
+
+  const first = focusable[0];
+  const last = focusable.at(-1);
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
 }
 
 async function shareCurrentPage(event) {

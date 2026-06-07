@@ -53,6 +53,9 @@ function initializeTempleMapWidget(root) {
     activeMarker: null,
     searchInput,
     searchResults,
+    status: root.querySelector("[data-temple-map-status]"),
+    openButton,
+    previousFocus: null,
   });
 
   openButton.disabled = !payload.items.length;
@@ -70,10 +73,27 @@ function initializeTempleMapWidget(root) {
 async function openTempleMap(modal) {
   const state = mapStates.get(modal);
   if (!state) return;
+  state.previousFocus = document.activeElement;
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
-  await ensureLeaflet();
+  document.dispatchEvent(new CustomEvent("mw:map-open", {
+    detail: { collection: state.payload.collection, mappedCount: state.payload.mappedCount },
+  }));
+
+  try {
+    await ensureLeaflet();
+  } catch (error) {
+    setMapStatus(state, "โหลดแผนที่ไม่สำเร็จ ลองเชื่อมต่ออินเทอร์เน็ตอีกครั้ง");
+    modal.querySelector(".temple-map-modal__panel")?.classList.add("has-map-error");
+    document.dispatchEvent(new CustomEvent("mw:map-load-error", {
+      detail: { collection: state.payload.collection, reason: error?.message || "leaflet_load_failed" },
+    }));
+    state.searchInput?.focus({ preventScroll: true });
+    return;
+  }
+
+  modal.querySelector(".temple-map-modal__panel")?.classList.remove("has-map-error");
   if (!state.map) initTempleMap(modal, state);
   setTimeout(() => {
     state.map?.invalidateSize();
@@ -83,9 +103,13 @@ async function openTempleMap(modal) {
 }
 
 function closeTempleMap(modal) {
+  const state = mapStates.get(modal);
   modal.classList.remove("is-open");
   modal.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
+  state?.searchInput?.setAttribute("aria-expanded", "false");
+  state?.searchResults?.classList.remove("is-open");
+  state?.previousFocus?.focus?.({ preventScroll: true });
 }
 
 function initTempleMap(modal, state) {
@@ -121,7 +145,9 @@ function initTempleMap(modal, state) {
         },
       }).addTo(map);
     })
-    .catch(() => {});
+    .catch(() => {
+      setMapStatus(state, "แสดงแผนที่ได้ แต่โหลดเส้นขอบประเทศไม่สำเร็จ");
+    });
 
   const icons = createTempleMarkerIcons();
   const clusterGroup = window.L.markerClusterGroup({
@@ -158,6 +184,7 @@ function initTempleMap(modal, state) {
   state.map = map;
   state.clusterGroup = clusterGroup;
   fitThailand(map);
+  setMapStatus(state, `แสดง ${state.payload.mappedCount.toLocaleString("th-TH")} จาก ${state.payload.totalCount.toLocaleString("th-TH")} พิกัด`);
 }
 
 function fitThailand(map) {
@@ -221,6 +248,7 @@ function updateTempleMapSearch(modal) {
   if (!query) {
     state.searchResults.classList.remove("is-open");
     state.searchResults.innerHTML = "";
+    state.searchInput.setAttribute("aria-expanded", "false");
     return;
   }
   const matches = state.payload.items
@@ -228,22 +256,29 @@ function updateTempleMapSearch(modal) {
     .slice(0, 8);
   state.searchResults.innerHTML = matches.length
     ? matches.map((item) => `
-      <button type="button" data-temple-map-result data-rank="${item.rank}">
+      <button type="button" role="option" data-temple-map-result data-rank="${item.rank}">
         <strong>${escapeHtml(item.name)}</strong>
         <span>${escapeHtml(item.province)}</span>
       </button>`).join("")
     : `<p>ไม่พบพิกัดที่ตรงกับคำค้นหา</p>`;
   state.searchResults.classList.add("is-open");
+  state.searchInput.setAttribute("aria-expanded", "true");
   state.searchResults.querySelectorAll("[data-temple-map-result]").forEach((button) => {
     button.addEventListener("click", () => focusTempleMarker(state, Number(button.dataset.rank)));
   });
+
+  document.dispatchEvent(new CustomEvent("mw:filter-change", {
+    detail: { scope: "map_search", queryLength: query.length, resultCount: matches.length },
+  }));
 }
 
 function focusTempleMarker(state, rank) {
   const marker = state.markers.find((candidate) => candidate._templeItem.rank === rank);
   if (!marker || !state.map) return;
   state.searchResults?.classList.remove("is-open");
-  state.map.flyTo(marker.getLatLng(), TEMPLE_MAP_CONFIG.focusedZoom, { duration: 0.65 });
+  state.searchInput?.setAttribute("aria-expanded", "false");
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  state.map.flyTo(marker.getLatLng(), TEMPLE_MAP_CONFIG.focusedZoom, { duration: prefersReducedMotion ? 0 : 0.65 });
   setTimeout(() => {
     if (state.clusterGroup?.zoomToShowLayer) {
       state.clusterGroup.zoomToShowLayer(marker, () => marker.fire("click"));
@@ -251,6 +286,33 @@ function focusTempleMarker(state, rank) {
       marker.fire("click");
     }
   }, 500);
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Tab") return;
+  const modal = document.querySelector("[data-temple-map-modal-element].is-open");
+  if (!modal) return;
+  trapFocus(event, modal);
+});
+
+function trapFocus(event, modal) {
+  const focusable = [...modal.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+    .filter((element) => element.offsetParent !== null);
+  if (!focusable.length) return;
+
+  const first = focusable[0];
+  const last = focusable.at(-1);
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+function setMapStatus(state, text) {
+  if (state?.status) state.status.textContent = text;
 }
 
 function readPayload(node) {

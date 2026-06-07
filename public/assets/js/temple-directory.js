@@ -169,7 +169,12 @@ function initializePopularTempleGrid(grid) {
 
   if (!cards.length) return;
 
+  countNode?.setAttribute("role", "status");
+  countNode?.setAttribute("aria-live", "polite");
+  emptyNode?.setAttribute("role", "status");
   nearbyButton?.setAttribute("aria-pressed", "false");
+  updateRegionTags();
+  updatePurposeTags();
 
   grid.addEventListener(
     "error",
@@ -296,6 +301,16 @@ function initializePopularTempleGrid(grid) {
     sortFilteredCards();
     visibleCount = Math.min(initialCount, filteredCards.length);
     renderVisibleCards();
+    document.dispatchEvent(new CustomEvent("mw:filter-change", {
+      detail: {
+        scope: "temple_cards",
+        region: activeRegion || "all",
+        province: activeProvince || "all",
+        purposes: [...activePurposes],
+        nearby: activeNearby,
+        resultCount: filteredCards.length,
+      },
+    }));
   }
 
   function revealNext(count) {
@@ -329,7 +344,9 @@ function initializePopularTempleGrid(grid) {
 
   function updateRegionTags() {
     regionTags.forEach((tag) => {
-      tag.classList.toggle("is-active", (tag.value || "") === activeRegion);
+      const isActive = (tag.value || "") === activeRegion;
+      tag.classList.toggle("is-active", isActive);
+      tag.setAttribute("aria-pressed", String(isActive));
     });
   }
 
@@ -356,7 +373,9 @@ function initializePopularTempleGrid(grid) {
   function updatePurposeTags() {
     purposeTags.forEach((tag) => {
       const value = tag.value || "";
-      tag.classList.toggle("is-active", value ? activePurposes.has(value) : activePurposes.size === 0);
+      const isActive = value ? activePurposes.has(value) : activePurposes.size === 0;
+      tag.classList.toggle("is-active", isActive);
+      tag.setAttribute("aria-pressed", String(isActive));
     });
   }
 
@@ -367,6 +386,7 @@ function initializePopularTempleGrid(grid) {
     button.setAttribute("data-popular-province-tag", "");
     button.textContent = label;
     button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
     button.addEventListener("click", () => {
       activeProvince = value;
       updateProvinceTags();
@@ -454,6 +474,13 @@ function initializePopularTempleGrid(grid) {
   }
 }
 
+function splitDataTags(value) {
+  return String(value || "")
+    .split(";")
+    .map((item) => item.trim())
+    .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
+}
+
 function getCardDistance(userLocation, card) {
   const latitude = Number(card.dataset.latitude);
   const longitude = Number(card.dataset.longitude);
@@ -486,13 +513,6 @@ function formatDistance(distanceKm) {
   if (distanceKm < 1) return `${Math.round(distanceKm * 1000).toLocaleString("th-TH")} ม.`;
   if (distanceKm < 10) return `${distanceKm.toLocaleString("th-TH", { maximumFractionDigits: 1 })} กม.`;
   return `${Math.round(distanceKm).toLocaleString("th-TH")} กม.`;
-}
-
-function splitDataTags(value) {
-  return String(value || "")
-    .split(";")
-    .map((item) => item.trim())
-    .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
 }
 
 async function initializeTempleDirectory(rootElement) {

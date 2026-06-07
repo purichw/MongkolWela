@@ -57,6 +57,7 @@
   inset: 0;
   cursor: pointer;
   background: rgba(29, 24, 20, 0.7);
+  border: 0;
   backdrop-filter: blur(7px);
 }
 
@@ -71,6 +72,24 @@
   border: 1px solid rgba(245, 217, 155, 0.36);
   border-radius: 18px;
   box-shadow: 0 32px 100px rgba(0, 0, 0, 0.56);
+}
+
+.temple-map-modal__panel.has-map-error .temple-map-canvas {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: #f8e7b8;
+  background:
+    linear-gradient(135deg, rgba(42, 31, 24, 0.92), rgba(123, 39, 31, 0.74)),
+    #241b16;
+  text-align: center;
+}
+
+.temple-map-modal__panel.has-map-error .temple-map-canvas::before {
+  max-width: 380px;
+  content: "โหลดแผนที่ไม่สำเร็จ ลองเชื่อมต่ออินเทอร์เน็ตอีกครั้ง หรือเปิด Google Maps จากหน้ารายละเอียดสถานที่";
+  font-weight: 900;
+  line-height: 1.7;
 }
 
 .temple-map-canvas {
@@ -141,6 +160,10 @@
   border: 1px solid rgba(77, 56, 41, 0.12);
   border-radius: 12px;
   box-shadow: 0 18px 46px rgba(37, 25, 17, 0.22);
+}
+
+.temple-map-search input[aria-expanded="true"] {
+  border-color: rgba(159, 47, 40, 0.42);
 }
 
 .temple-map-search__dropdown.is-open {
@@ -1144,6 +1167,8 @@
   position: absolute;
   inset: 0;
   background: rgba(18, 13, 9, 0.68);
+  border: 0;
+  cursor: pointer;
   backdrop-filter: blur(2px);
 }
 
@@ -1215,6 +1240,16 @@
 
 .temple-detail-map-modal__canvas {
   background: #d9c9aa;
+}
+
+.temple-detail-map-modal.has-map-error .temple-detail-map-modal__canvas {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: #7b271f;
+  background: #fff6e5;
+  text-align: center;
+  font-weight: 900;
 }
 
 .temple-detail-map-modal__foot {

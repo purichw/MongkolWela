@@ -7,7 +7,13 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "nfr:data": "node scripts/validate-runtime-data.mjs",
+    "nfr:performance": "node scripts/check-performance-budget.mjs",
+    "nfr": "npm run nfr:data && npm run nfr:performance",
+    "test:e2e": "playwright test",
+    "test:visual": "playwright test tests/e2e/visual.spec.ts --project=chromium-desktop",
+    "test:regression": "npm run check && npm run build && npm run nfr && npm run test:e2e"
   },
   "repository": {
     "type": "git",
@@ -22,6 +28,8 @@
   "homepage": "https://github.com/purichw/hora-astro#readme",
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@axe-core/playwright": "^4.11.3",
+    "@playwright/test": "^1.60.0",
     "astro": "^6.4.4",
     "typescript": "^6.0.3"
   },

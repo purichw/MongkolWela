@@ -43,6 +43,15 @@ option {
   font: inherit;
 }
 
+:focus-visible {
+  outline: 3px solid rgba(194, 141, 53, 0.72);
+  outline-offset: 3px;
+}
+
+.leaflet-container :focus-visible {
+  outline-color: rgba(159, 47, 40, 0.72);
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
