@@ -1,0 +1,204 @@
+# Roadmap
+
+Last updated: 2026-06-07
+
+## Current Status
+
+Production is live at:
+
+- `https://mongkolwela.vercel.app`
+
+Latest known code state:
+
+- Branch: `main`
+- Synced with `origin/main`
+- Last code commit at time of this document: `8c913e1 Color temple region tags`
+- Only known untracked item: `outputs/` from local/generated artifacts.
+
+## Recently Completed
+
+- Built Thai-first temple hub and subroutes.
+- Added `สายไหว้พระ 9 วัด` page at `/temples/popular/`.
+- Added `สายมู` page at `/temples/mu/`.
+- Added detail pages for both collections.
+- Added lazy loading and `ดูเพิ่ม` fallback for temple cards.
+- Added search/filter within each collection page.
+- Added region and province filtering for collection pages.
+- Added region color badges in temple cards.
+- Added placeholder image behavior for missing or broken card images.
+- Added floating map overlay for popular and mu collections.
+- Added Thailand-bounded Leaflet maps with clustered markers.
+- Added coordinates to JSON data and both Excel workbooks.
+- Added mini map, annotation pins, share/copy buttons, metadata, and related cards to detail pages.
+- Added separate banner configuration for temple pages through `src/data/temple-page-banners.json`.
+- Deployed latest changes to production.
+
+## Current Working Set
+
+No active unfinished implementation is known.
+
+Before starting new work:
+
+```sh
+git status --short --branch
+```
+
+If only `?? outputs/` appears, that is expected from previous local artifact work.
+
+## High-Priority Backlog
+
+### Admin Portal
+
+Build an Admin Portal or content management path so these can be edited without code changes:
+
+- Temple/place names.
+- Rankings.
+- Card images and fallback images.
+- Detail hero images.
+- Detail annotation pins.
+- Banner images per page.
+- Coordinates.
+- Blessings/object hero/type fields.
+- Detail content sections.
+
+Keep current JSON fields data-driven so Admin data can replace static JSON later.
+
+### Temple Detail Content Expansion
+
+Detail pages currently use available dataset fields. Future content can add:
+
+- Full description.
+- Visit notes.
+- Worship flow.
+- Opening hours if available.
+- Official/source links.
+- Gallery images.
+- Related route packages.
+
+Avoid inventing religious or travel details without a source.
+
+### Image Quality Review
+
+Many images have been improved, but future QA should continue checking:
+
+- Broken images.
+- Placeholder usage.
+- Non-location images.
+- Images that show unrelated statues/groups instead of the actual place.
+- Duplicate or low-confidence images.
+
+Current fallback:
+
+- `/assets/images/temple-placeholder-auspicious.png`
+
+### All-Thailand Temple Directory
+
+Continue refining `/temples/thailand/`:
+
+- Use only `Report_Temple 2.numbers` as the source unless the user changes direction.
+- Keep region -> province -> district -> subdistrict dependency.
+- Keep ZIP code filter.
+- Keep `ได้รับวิสุงคามสีมา` filter.
+- Do not show temple code column.
+- Keep source text short: `ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ`
+- Avoid long source/process explanations in the UI.
+
+## Medium-Priority Backlog
+
+### Navigation Cleanup
+
+Project direction is Thai-first. Check for stale English navigation/routes/copy if the user asks for cleanup.
+
+Current README may still mention `/en/` from earlier project state; verify actual route/code before changing.
+
+### Detail Page Interaction Polish
+
+Potential polish items:
+
+- Make annotation pane richer when Admin data exists.
+- Add native share fallback states for older browsers.
+- Add smooth scroll from hero annotation to relevant content section.
+- Add "nearby in map" preview if related coordinates are nearby.
+
+### Map Enhancements
+
+Possible future map features:
+
+- Filter markers by region/province inside the map overlay.
+- Add route grouping.
+- Open detail preview cards from map search results.
+- Add "fit current filtered results" when page filters are active.
+- Add map state sync to current page search/filter.
+
+### Data Refresh Pipeline
+
+The JSON files are currently static outputs. Future pipeline could:
+
+- Regenerate JSON from Excel reliably.
+- Validate required fields.
+- Validate image URLs.
+- Validate coordinates.
+- Produce a QA report for missing images/coordinates.
+
+Keep workbook writing through artifact-tool, not Python/openpyxl.
+
+## Low-Priority Backlog
+
+- Update `README.md` to match the current Thai-first site and temple architecture.
+- Add screenshots for key routes.
+- Add a lightweight smoke-test script using Playwright if the project starts running frequent UI edits.
+- Add source attribution docs for image and coordinate providers.
+
+## Known Data Files
+
+Excel workbooks:
+
+- `/Users/point/Library/CloudStorage/GoogleDrive-purich.wc@gmail.com/My Drive/make-merit-9-temples-dataset.xlsx`
+- `/Users/point/Library/CloudStorage/GoogleDrive-purich.wc@gmail.com/My Drive/mu-temples-dataset.xlsx`
+
+Runtime JSON:
+
+- `src/data/popular-temples.json`
+- `src/data/mu-temples.json`
+- `src/data/temple-image-overrides.json`
+- `src/data/temple-page-banners.json`
+
+Scratch generator:
+
+- `/tmp/9temples_work/build_9temples_research.mjs`
+
+## Verification Checklist
+
+For normal code/CSS/JS work:
+
+```sh
+npm run check
+npm run build
+```
+
+For visual work:
+
+- Start local dev server.
+- Verify desktop and mobile viewports.
+- Check console errors.
+- Check no text overlap.
+- Check card/tag/image state.
+
+For production deploy:
+
+```sh
+git push origin main
+vercel --prod --yes
+```
+
+Then smoke-test the live URL.
+
+## Product Decisions To Preserve
+
+- Audience is Thai.
+- Do not continue English version work unless explicitly requested.
+- The `วัดดังเสริมมงคล` section includes temple collection pages and the all-Thailand directory as distinct sections.
+- `สายไหว้พระ 9 วัด` and `สายมู` collection pages should be similar in search/filter/card/lazy-load/map/detail behavior.
+- Data and images should remain editable in a future Admin Portal.
+- Use source-backed data for temple facts; do not invent unsupported content.
+
