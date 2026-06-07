@@ -12,7 +12,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A3%E0%B8%B0%E0%B8%86%E0%B8%B1%E0%B8%87%E0%B9%82%E0%B8%86%E0%B8%AA%E0%B8%B4%E0%B8%95%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.752312,
+    "longitude": 100.485606,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดระฆังโฆสิตารามวรมหาวิหาร, 250, ซอยอรุณอมรินทร์ 18, ชุมชนวัดระฆัง, แขวงศิริราช, เขตบางกอกน้อย, กรุงเทพมหานคร, 10700, ประเทศไทย",
+    "coordinateQuery": "วัดระฆังโฆสิตาราม บางกอกน้อย กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 2,
@@ -27,7 +34,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B8%B8%E0%B8%93%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.743898,
+    "longitude": 100.488514,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดอรุณ, 158, ถนนวังเดิม, แขวงวัดอรุณ, เขตบางกอกใหญ่, กรุงเทพมหานคร, 10600, ประเทศไทย",
+    "coordinateQuery": "วัดอรุณ บางกอกใหญ่ กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 3,
@@ -42,7 +56,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%97%E0%B9%88%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%89%E0%B8%AD%E0%B8%87",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.357839,
+    "longitude": 100.542989,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดท่าการ้อง, 52/2, หมู่ที่ 6, ตำบลบ้านป้อม, องค์การบริหารส่วนตำบลบ้านป้อม, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดท่าการ้อง พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 4,
@@ -57,7 +78,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%99%E0%B8%B1%E0%B8%8D%E0%B9%80%E0%B8%8A%E0%B8%B4%E0%B8%87%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.343562,
+    "longitude": 100.578688,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพนัญเชิงวรวิหาร, 2, หมู่ที่ 12, ตำบลกะมัง, เทศบาลนครพระนครศรีอยุธยา, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดพนัญเชิง พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 5,
@@ -72,7 +100,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%AB%E0%B8%8D%E0%B9%88%E0%B8%8A%E0%B8%B1%E0%B8%A2%E0%B8%A1%E0%B8%87%E0%B8%84%E0%B8%A5%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.344269,
+    "longitude": 100.593986,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดใหญ่ชัยมงคลวรวิหาร, 40/3, หมู่ที่ 3, บ้านคลองถนนตาล, เทศบาลเมืองอโยธยา, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดใหญ่ชัยมงคล พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 6,
@@ -87,7 +122,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A1%E0%B8%87%E0%B8%84%E0%B8%A5%E0%B8%9A%E0%B8%9E%E0%B8%B4%E0%B8%95%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.354847,
+    "longitude": 100.557712,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วิหารพระมงคลบพิตร, ถนนศรีสรรเพชญ์, หมู่ที่ 2, ตำบลประตูชัย, เทศบาลนครพระนครศรีอยุธยา, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วิหารพระมงคลบพิตร พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 7,
@@ -102,7 +144,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%81%E0%B8%B1%E0%B8%A5%E0%B8%A2%E0%B8%B2%E0%B8%93%E0%B8%A1%E0%B8%B4%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.740088,
+    "longitude": 100.491238,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดกัลยาณมิตรวรมหาวิหาร, ซอยวัดกัลยาณ์, กุฎีจีน, แขวงวัดกัลยาณ์, เขตธนบุรี, กรุงเทพมหานคร, 10600, ประเทศไทย",
+    "coordinateQuery": "วัดกัลยาณมิตร ธนบุรี กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 8,
@@ -117,7 +166,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%A3%E0%B8%B1%E0%B8%95%E0%B8%99%E0%B8%A8%E0%B8%B2%E0%B8%AA%E0%B8%94%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.751497,
+    "longitude": 100.492659,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระศรีรัตนศาสดาราม, ถนนหน้าพระลาน, ท่าช้าง, แขวงพระบรมมหาราชวัง, เขตพระนคร, กรุงเทพมหานคร, 10200, ประเทศไทย",
+    "coordinateQuery": "วัดพระศรีรัตนศาสดาราม กรุงเทพมหานคร"
   },
   {
     "rank": 9,
@@ -132,7 +188,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%8A%E0%B8%95%E0%B8%B8%E0%B8%9E%E0%B8%99%E0%B8%A7%E0%B8%B4%E0%B8%A1%E0%B8%A5%E0%B8%A1%E0%B8%B1%E0%B8%87%E0%B8%84%E0%B8%A5%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.746506,
+    "longitude": 100.491682,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "พระพุทธไสยาสน์;วัดโพธิ์, ถนนท้ายวัง, ท่าเตียน, แขวงพระบรมมหาราชวัง, เขตพระนคร, กรุงเทพมหานคร, 10200, ประเทศไทย",
+    "coordinateQuery": "วัดโพธิ์ พระนคร กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 10,
@@ -147,7 +210,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%B8%E0%B8%97%E0%B8%B1%E0%B8%A8%E0%B8%99%E0%B9%80%E0%B8%97%E0%B8%9E%E0%B8%A7%E0%B8%A3%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.750279,
+    "longitude": 100.500947,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดสุทัศนเทพวรารามราชวรมหาวิหาร, ถนนบำรุงเมือง, ชุมชนตรอกวิสูตร, แขวงวัดราชบพิธ, เขตพระนคร, กรุงเทพมหานคร, 10200, ประเทศไทย",
+    "coordinateQuery": "วัดสุทัศนเทพวราราม พระนคร กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 11,
@@ -162,7 +232,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%AB%E0%B8%A5%E0%B8%A7%E0%B8%87%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.787143,
+    "longitude": 98.986784,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดเจดีย์หลวงวรวิหาร, ถนนพระปกเกล้า ซอย 9, เทศบาลนครเชียงใหม่, ฟ้าฮ่าม, อำเภอเมืองเชียงใหม่, จังหวัดเชียงใหม่, 50200, ประเทศไทย",
+    "coordinateQuery": "วัดเจดีย์หลวงวรวิหาร เชียงใหม่"
   },
   {
     "rank": 12,
@@ -177,7 +254,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%94%E0%B8%AD%E0%B8%A2%E0%B8%AA%E0%B8%B8%E0%B9%80%E0%B8%97%E0%B8%9E%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.805009,
+    "longitude": 98.922194,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระธาตุดอยสุเทพราชวรวิหาร, ถนนห้วยแก้ว, สุเทพ, เทศบาลเมืองสุเทพ, อำเภอเมืองเชียงใหม่, จังหวัดเชียงใหม่, 50200, ประเทศไทย",
+    "coordinateQuery": "วัดพระธาตุดอยสุเทพ เมืองเชียงใหม่ เชียงใหม่ ประเทศไทย"
   },
   {
     "rank": 13,
@@ -192,7 +276,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%AA%E0%B8%B4%E0%B8%87%E0%B8%AB%E0%B9%8C%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.788207,
+    "longitude": 98.981377,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระสิงห์, ถนนสามล้าน, เทศบาลนครเชียงใหม่, ฟ้าฮ่าม, อำเภอเมืองเชียงใหม่, จังหวัดเชียงใหม่, 50200, ประเทศไทย",
+    "coordinateQuery": "วัดพระสิงห์ เมืองเชียงใหม่ เชียงใหม่ ประเทศไทย"
   },
   {
     "rank": 14,
@@ -207,7 +298,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%9E%E0%B8%99%E0%B8%A1%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 16.942652,
+    "longitude": 104.722896,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระธาตุพนม, 183 13, ถนนชยางกูร, บ้านธาตุพนม, ธาตุพนม, ธาตุพนมใต้, อำเภอธาตุพนม, จังหวัดนครพนม, 48110, ประเทศไทย",
+    "coordinateQuery": "วัดพระธาตุพนม ธาตุพนม นครพนม ประเทศไทย"
   },
   {
     "rank": 15,
@@ -222,7 +320,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AA%E0%B8%A3%E0%B8%A3%E0%B9%80%E0%B8%9E%E0%B8%8A%E0%B8%8D%E0%B9%8C",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.355913,
+    "longitude": 100.558508,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระศรีสรรเพชญ์, ถนนศรีสรรเพชญ์, หมู่ที่ 2, ตำบลประตูชัย, เทศบาลนครพระนครศรีอยุธยา, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดพระศรีสรรเพชญ์ พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 16,
@@ -237,7 +342,14 @@
     "imageSourceUrl": "https://commons.wikimedia.org/wiki/File:(2023)_%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AB%E0%B8%99%E0%B9%89%E0%B8%B2%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%A1%E0%B8%A3%E0%B8%B8%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%B4%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1_%E0%B8%AD.%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AD%E0%B8%A2%E0%B8%B8%E0%B8%98%E0%B8%A2%E0%B8%B2_%E0%B8%88.%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AD%E0%B8%A2%E0%B8%B8%E0%B8%98%E0%B8%A2%E0%B8%B2_(1).jpg",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.362833,
+    "longitude": 100.558811,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดหน้าพระเมรุราชิการาม, หมู่ที่ 5, ตำบลท่าวาสุกรี, เทศบาลนครพระนครศรีอยุธยา, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดหน้าพระเมรุ พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 17,
@@ -252,7 +364,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%8A%E0%B8%99%E0%B8%B0%E0%B8%AA%E0%B8%87%E0%B8%84%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.760806,
+    "longitude": 100.495079,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดชนะสงคราม, ซอยชนะสงคราม, พระอาทิตย์, แขวงชนะสงคราม, เขตพระนคร, กรุงเทพมหานคร, 10200, ประเทศไทย",
+    "coordinateQuery": "วัดชนะสงคราม พระนคร กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 18,
@@ -267,7 +386,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9A%E0%B8%A7%E0%B8%A3%E0%B8%99%E0%B8%B4%E0%B9%80%E0%B8%A7%E0%B8%A8%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.759753,
+    "longitude": 100.500642,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดบวรนิเวศราชวรวิหาร, 248, ซอยเกษมศรี, วิสุทธิกษัตริย์, แขวงบ้านพานถม, เขตพระนคร, กรุงเทพมหานคร, 10200, ประเทศไทย",
+    "coordinateQuery": "วัดบวรนิเวศวิหาร พระนคร กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 19,
@@ -282,7 +408,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99%E0%B8%99%E0%B8%84%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 16.408749,
+    "longitude": 102.834175,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดหนองแวง, ถนนกลางเมือง, เทศบาลนครขอนแก่น, เมืองเก่า, อำเภอเมืองขอนแก่น, จังหวัดขอนแก่น, 40000, ประเทศไทย",
+    "coordinateQuery": "วัดหนองแวง เมืองขอนแก่น ขอนแก่น ประเทศไทย"
   },
   {
     "rank": 20,
@@ -297,7 +430,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%88%E0%B9%87%E0%B8%94%E0%B8%A2%E0%B8%AD%E0%B8%94",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.809062,
+    "longitude": 98.972168,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดเจ็ดยอด, ถนนเจ็ดยอด, ช้างเผือก, ฟ้าฮ่าม, อำเภอเมืองเชียงใหม่, จังหวัดเชียงใหม่, 50300, ประเทศไทย",
+    "coordinateQuery": "วัดเจ็ดยอด เมืองเชียงใหม่ เชียงใหม่ ประเทศไทย"
   },
   {
     "rank": 21,
@@ -312,7 +452,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%82%E0%B8%A5%E0%B8%81%E0%B9%82%E0%B8%A1%E0%B8%AC%E0%B8%B5",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.79618,
+    "longitude": 98.982545,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดโลกโมฬี, ถนนมณีนพรัตน์ ซอย 2, เทศบาลนครเชียงใหม่, ฟ้าฮ่าม, อำเภอเมืองเชียงใหม่, จังหวัดเชียงใหม่, 55520, ประเทศไทย",
+    "coordinateQuery": "วัดโลกโมฬี เมืองเชียงใหม่ เชียงใหม่ ประเทศไทย"
   },
   {
     "rank": 22,
@@ -327,7 +474,14 @@
     "imageSourceUrl": "https://commons.wikimedia.org/wiki/File:Wat_Si_Suphan,_Chiang_Mai.jpg",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.778538,
+    "longitude": 98.98332,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดศรีสุพรรณ, ถนนวัฒนธรรมวัดศรีสุพรรณ, เทศบาลนครเชียงใหม่, ป่าแดด, อำเภอเมืองเชียงใหม่, จังหวัดเชียงใหม่, 50100, ประเทศไทย",
+    "coordinateQuery": "วัดศรีสุพรรณ เมืองเชียงใหม่ เชียงใหม่ ประเทศไทย"
   },
   {
     "rank": 23,
@@ -342,7 +496,14 @@
     "imageSourceUrl": "https://commons.wikimedia.org/wiki/File:%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%A7%E0%B8%99%E0%B8%94%E0%B8%AD%E0%B8%81_%E0%B9%80%E0%B8%8A%E0%B8%B5%E0%B8%A2%E0%B8%87%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88.JPG",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.788156,
+    "longitude": 98.967783,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดสวนดอก, ถนนศรีวิชัย ซอย 4, เทศบาลนครเชียงใหม่, ป่าแดด, อำเภอเมืองเชียงใหม่, จังหวัดเชียงใหม่, 50200, ประเทศไทย",
+    "coordinateQuery": "วัดสวนดอก เมืองเชียงใหม่ เชียงใหม่ ประเทศไทย"
   },
   {
     "rank": 24,
@@ -357,7 +518,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%B8%E0%B9%82%E0%B8%A1%E0%B8%87%E0%B8%84%E0%B9%8C_(%E0%B8%AA%E0%B8%A7%E0%B8%99%E0%B8%9E%E0%B8%B8%E0%B8%97%E0%B8%98%E0%B8%98%E0%B8%A3%E0%B8%A3%E0%B8%A1)",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.783103,
+    "longitude": 98.952579,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดอุโมงค์(สวนพุทธรรม), สุเทพ ซอย 4 วัดอุโมงค์, บ้านใหม่หลังมอ, สุเทพ, เทศบาลเมืองสุเทพ, อำเภอเมืองเชียงใหม่, จังหวัดเชียงใหม่, 50200, ประเทศไทย",
+    "coordinateQuery": "วัดอุโมงค์ เมืองเชียงใหม่ เชียงใหม่ ประเทศไทย"
   },
   {
     "rank": 25,
@@ -372,7 +540,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C_(%E0%B9%84%E0%B8%AD%E0%B9%89%E0%B9%84%E0%B8%82%E0%B9%88)",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 8.911252,
+    "longitude": 99.84631,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดเจดีย์ (ไอ้ไข่), นศ.4048, ทุ่งใส, อำเภอสิชล, จังหวัดนครศรีธรรมราช, 80120, ประเทศไทย",
+    "coordinateQuery": "วัดเจดีย์ ไอ้ไข่ สิชล นครศรีธรรมราช ประเทศไทย"
   },
   {
     "rank": 26,
@@ -387,7 +562,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%84%E0%B8%8A%E0%B8%A2%E0%B8%A7%E0%B8%B1%E0%B8%92%E0%B8%99%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.342976,
+    "longitude": 100.541834,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดไชยวัฒนาราม, หมู่ที่ 5, ตำบลบ้านป้อม, องค์การบริหารส่วนตำบลบ้านป้อม, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดไชยวัฒนาราม พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 27,
@@ -402,7 +584,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%98%E0%B8%A3%E0%B8%A3%E0%B8%A1%E0%B8%B4%E0%B8%81%E0%B8%A3%E0%B8%B2%E0%B8%8A",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.358836,
+    "longitude": 100.561639,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดธรรมิกราช, หมู่ที่ 3, ตำบลท่าวาสุกรี, เทศบาลนครพระนครศรีอยุธยา, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดธรรมิกราช พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 28,
@@ -417,7 +606,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%B8%E0%B8%97%E0%B9%84%E0%B8%98%E0%B8%A8%E0%B8%A7%E0%B8%A3%E0%B8%A3%E0%B8%A2%E0%B9%8C",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.339035,
+    "longitude": 100.558454,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพุทไธศวรรย์, 15, หมู่ที่ 8, ตำบลสำเภาล่ม, องค์การบริหารส่วนตำบลสำเภาล่ม, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดพุทไธศวรรย์ พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 29,
@@ -432,7 +628,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%82%E0%B8%A5%E0%B8%81%E0%B8%A2%E0%B8%AA%E0%B8%B8%E0%B8%98%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.355527,
+    "longitude": 100.552932,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "ワット・ローカヤスターラーム วัดโลกยสุธาราม, ซอยอู่ทอง 30, ชุมชนวัดตึก, หมู่ที่ 8, ตำบลประตูชัย, เทศบาลนครพระนครศรีอยุธยา, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดโลกยสุธาราม พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 30,
@@ -447,7 +650,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%AB%E0%B8%99%E0%B8%AD%E0%B8%87%E0%B8%9A%E0%B8%B1%E0%B8%A7",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 15.26344,
+    "longitude": 104.839664,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระธาตุหนองบัว, ซอยธรรมวิถี, ตำบลในเมือง, เทศบาลนครอุบลราชธานี, แจระแม, อำเภอเมืองอุบลราชธานี, จังหวัดอุบลราชธานี, 34000, ประเทศไทย",
+    "coordinateQuery": "วัดพระธาตุหนองบัว เมืองอุบลราชธานี อุบลราชธานี ประเทศไทย"
   },
   {
     "rank": 31,
@@ -462,7 +672,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%B4%E0%B8%A3%E0%B8%B4%E0%B8%99%E0%B8%98%E0%B8%A3%E0%B8%A7%E0%B8%A3%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%A0%E0%B8%B9%E0%B8%9E%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%A7",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 15.149236,
+    "longitude": 105.467989,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดสิรินธรวรารามภูพร้าว, ถนนสถิตนิมานการ, บ้านช่องเม็ก, ช่องเม็ก, อำเภอสิรินธร, จังหวัดอุบลราชธานี, 34350, ประเทศไทย",
+    "coordinateQuery": "วัดสิรินธรวรารามภูพร้าว สิรินธร อุบลราชธานี ประเทศไทย"
   },
   {
     "rank": 32,
@@ -477,7 +694,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%96%E0%B9%89%E0%B8%B3%E0%B9%80%E0%B8%AA%E0%B8%B7%E0%B8%AD_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B5%E0%B9%88)",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 8.125146,
+    "longitude": 98.925909,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดถ้ำเสือ, กบ.6017, บ้านเขาตั้ง, กระบี่น้อย, อำเภอเมืองกระบี่, จังหวัดกระบี่, ประเทศไทย",
+    "coordinateQuery": "วัดถ้ำเสือ Thailand"
   },
   {
     "rank": 33,
@@ -492,7 +716,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%99%E0%B8%B1%E0%B8%94%E0%B8%94%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.754827,
+    "longitude": 100.504268,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดราชนัดดารามวรวิหาร, 2, ถนนมหาไชย, ชุมชนหลังวัดราชนัดดา, แขวงบวรนิเวศ, เขตพระนคร, กรุงเทพมหานคร, 10200, ประเทศไทย",
+    "coordinateQuery": "วัดราชนัดดารามวรวิหาร กรุงเทพมหานคร"
   },
   {
     "rank": 34,
@@ -507,7 +738,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%84%E0%B8%95%E0%B8%A3%E0%B8%A1%E0%B8%B4%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.737999,
+    "longitude": 100.513653,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดไตรมิตรวิทยารามวรวิหาร, ถนนเยาวราช, โอเดียน, แขวงสัมพันธวงศ์, เขตสัมพันธวงศ์, กรุงเทพมหานคร, 10100, ประเทศไทย",
+    "coordinateQuery": "วัดไตรมิตรวิทยาราม สัมพันธวงศ์ กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 35,
@@ -522,7 +760,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%97%E0%B8%A7%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%81%E0%B8%B8%E0%B8%8D%E0%B8%8A%E0%B8%A3%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.77218,
+    "longitude": 100.501741,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดเทวราชกุญชรวรวิหาร, ซอยศรีอยุธยา 21, ชุมชนวัดราชา, แขวงวชิรพยาบาล, เขตดุสิต, กรุงเทพมหานคร, 10300, ประเทศไทย",
+    "coordinateQuery": "วัดเทวราชกุญชร กรุงเทพมหานคร Thailand"
   },
   {
     "rank": 36,
@@ -537,7 +782,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9A%E0%B8%B8%E0%B8%84%E0%B8%84%E0%B9%82%E0%B8%A5",
     "imageSearchQuery": "",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.699873,
+    "longitude": 100.488976,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดบุคคโล, ซอยเจริญนคร 63, แขวงดาวคะนอง, เขตธนบุรี, กรุงเทพมหานคร, 10600, ประเทศไทย",
+    "coordinateQuery": "วัดบุคคโล ธนบุรี กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 37,
@@ -552,7 +804,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%AA%E0%B8%96%E0%B8%B2%E0%B8%99%E0%B8%B5%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A1%E0%B8%B1%E0%B8%87%E0%B8%81%E0%B8%A3",
     "imageSearchQuery": "วัดมังกรกมลาวาส กรุงเทพมหานคร",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.743538,
+    "longitude": 100.509542,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดมังกรกมลาวาส, ซอยเจริญกรุง 19, แขวงป้อมปราบ, เขตป้อมปราบศัตรูพ่าย, กรุงเทพมหานคร, 10100, ประเทศไทย",
+    "coordinateQuery": "วัดมังกรกมลาวาส ป้อมปราบศัตรูพ่าย กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 38,
@@ -567,7 +826,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B9%80%E0%B8%82%E0%B8%95%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B8%99%E0%B8%B2%E0%B8%A7%E0%B8%B2",
     "imageSearchQuery": "วัดยานนาวา กรุงเทพมหานคร",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.717352,
+    "longitude": 100.513522,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดยานนาวา, ถนนเจริญกรุง, แขวงยานนาวา, เขตสาทร, กรุงเทพมหานคร, 10120, ประเทศไทย",
+    "coordinateQuery": "วัดยานนาวา สาทร กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 39,
@@ -582,7 +848,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "วัดราชาธิวาสราช กรุงเทพมหานคร",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.775516,
+    "longitude": 100.50363,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดราชาธิวาสราชวรวิหาร, 3, ซอยสามเสน 9, ชุมชนวัดราชา, แขวงวชิรพยาบาล, เขตดุสิต, กรุงเทพมหานคร, 10300, ประเทศไทย",
+    "coordinateQuery": "วัดราชาธิวาสราชวรวิหาร กรุงเทพมหานคร"
   },
   {
     "rank": 40,
@@ -597,7 +870,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%81%E0%B8%A8%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "วัดสระเกศ กรุงเทพมหานคร",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.753348,
+    "longitude": 100.507484,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดสระเกศราชวรมหาวิหาร, ซอยบรมบรรพต, บรมบรรพต, แขวงบ้านบาตร, เขตป้อมปราบศัตรูพ่าย, กรุงเทพมหานคร, 10100, ประเทศไทย",
+    "coordinateQuery": "วัดสระเกศ ป้อมปราบศัตรูพ่าย กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 41,
@@ -612,7 +892,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%AA%E0%B8%96%E0%B8%B2%E0%B8%99%E0%B8%B5%E0%B8%AB%E0%B8%B1%E0%B8%A7%E0%B8%A5%E0%B8%B3%E0%B9%82%E0%B8%9E%E0%B8%87",
     "imageSearchQuery": "วัดหัวลำโพง กรุงเทพมหานคร",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.73094,
+    "longitude": 100.530626,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "สวนวัดหัวลำโพงรุกขนิเวศน์, แขวงสี่พระยา, เขตบางรัก, กรุงเทพมหานคร, 10500, ประเทศไทย",
+    "coordinateQuery": "วัดหัวลำโพง บางรัก กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 42,
@@ -627,7 +914,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%B1%E0%B8%A1%E0%B8%9E%E0%B8%A7%E0%B8%B1%E0%B8%99_(%E0%B8%81%E0%B8%A3%E0%B8%B8%E0%B8%87%E0%B9%80%E0%B8%97%E0%B8%9E%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%99%E0%B8%84%E0%B8%A3)",
     "imageSearchQuery": "วัดอัมพวัน กรุงเทพมหานคร",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.77948,
+    "longitude": 100.519687,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดอัมพวัน, ซอยวัดอัมพวัน, ชุมชนซอยสันติสุข, แขวงถนนนครไชยศรี, เขตดุสิต, กรุงเทพมหานคร, 10300, ประเทศไทย",
+    "coordinateQuery": "วัดอัมพวัน ดุสิต กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 43,
@@ -642,7 +936,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%B4%E0%B8%99%E0%B8%97%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "วัดอินทาราม กรุงเทพมหานคร",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.723329,
+    "longitude": 100.482763,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดอินทารามวรวิหาร, ซอยเทอดไท 8, ชุมชนตากสินสัมพันธ์, แขวงบางยี่เรือ, เขตธนบุรี, กรุงเทพมหานคร, 10600, ประเทศไทย",
+    "coordinateQuery": "วัดอินทาราม ธนบุรี กรุงเทพมหานคร ประเทศไทย"
   },
   {
     "rank": 44,
@@ -657,7 +958,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%B8%E0%B8%97%E0%B8%98%E0%B8%99%E0%B8%B4%E0%B8%A1%E0%B8%B4%E0%B8%95_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%81%E0%B8%B2%E0%B8%AC%E0%B8%AA%E0%B8%B4%E0%B8%99%E0%B8%98%E0%B8%B8%E0%B9%8C)",
     "imageSearchQuery": "วัดพุทธนิมิต ภูค่าว กาฬสินธุ์",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 16.726414,
+    "longitude": 103.569223,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพุทธนิมิต(ภูค่าว)พระไสยาสน์, 2419, บ้านโนนศรีสวัสดิ์ หมู่ 2, โนนศิลา, อำเภอสหัสขันธ์, จังหวัดกาฬสินธุ์, 46140, ประเทศไทย",
+    "coordinateQuery": "วัดพุทธนิมิต ภูค่าว สหัสขันธ์ กาฬสินธุ์ ประเทศไทย"
   },
   {
     "rank": 45,
@@ -672,7 +980,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B9%80%E0%B8%97%E0%B8%A8%E0%B8%9A%E0%B8%B2%E0%B8%A5%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99",
     "imageSearchQuery": "วัดทุ่งเศรษฐี ขอนแก่น",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 16.411596,
+    "longitude": 102.884005,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดทุ่งเศรษฐี, ถนนวงแหวนรอบเมืองขอนแก่น, บ้านโพธิบัลลังก์ทอง, บ้านหนองแสง, พระลับ, อำเภอเมืองขอนแก่น, จังหวัดขอนแก่น, 40000, ประเทศไทย",
+    "coordinateQuery": "วัดทุ่งเศรษฐี เมืองขอนแก่น ขอนแก่น ประเทศไทย"
   },
   {
     "rank": 46,
@@ -687,7 +1002,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%8D%E0%B8%B2%E0%B8%93%E0%B8%AA%E0%B8%B1%E0%B8%87%E0%B8%A7%E0%B8%A3%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "วัดญาณสังวราราม ชลบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.788906,
+    "longitude": 100.957948,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดญาณสังวรารามวรมหาวิหาร, ชบ.5001, มาบฟักทอง, ห้วยใหญ่, อำเภอบางละมุง, จังหวัดชลบุรี, 20250, ประเทศไทย",
+    "coordinateQuery": "Wat Yansangwararam Chonburi"
   },
   {
     "rank": 47,
@@ -702,7 +1024,14 @@
     "imageSourceUrl": "https://www.lemon8-app.com/@iam.nastiiz/7420311957699379713?region=th",
     "imageSearchQuery": "วัดบุญญาวาส ชลบุรี รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.113528,
+    "longitude": 101.5405,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดบุญญาวาส, 44 ซอยบุญญาวาส 2 ซอยบุญญาวาส 2 หมู่ 8 ตำบลบ่อทอง อำเภอบ่อทอง จังหวัดชลบุรี 20270",
+    "coordinateQuery": "วัดบุญญาวาส บ่อทอง ชลบุรี"
   },
   {
     "rank": 48,
@@ -717,7 +1046,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%8A%E0%B8%A5%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5",
     "imageSearchQuery": "วัดพระใหญ่ พัทยา ชลบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.914185,
+    "longitude": 100.868655,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "Big Buddha Hill Temple, ถนนพระตำหนัก, เมืองพัทยา, ห้วยใหญ่, อำเภอบางละมุง, จังหวัดชลบุรี, 20260, ประเทศไทย",
+    "coordinateQuery": "Big Buddha Temple Pattaya"
   },
   {
     "rank": 49,
@@ -732,7 +1068,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%81%E0%B8%AA%E0%B8%99%E0%B8%AA%E0%B8%B8%E0%B8%82%E0%B8%AA%E0%B8%B8%E0%B8%97%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%A3%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
     "imageSearchQuery": "วัดแสนสุขสุทธิวราราม ชลบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.299734,
+    "longitude": 100.916038,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดแสนสุข, บางแสนสาย 2 ซอย 19, บางแสน, ห้วยกะปิ, อำเภอเมืองชลบุรี, จังหวัดชลบุรี, 20130, ประเทศไทย",
+    "coordinateQuery": "Wat Saen Suk Chonburi"
   },
   {
     "rank": 50,
@@ -747,7 +1090,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B3%E0%B9%80%E0%B8%A0%E0%B8%AD%E0%B8%AA%E0%B8%B1%E0%B8%95%E0%B8%AB%E0%B8%B5%E0%B8%9A",
     "imageSearchQuery": "วัดหนองจับเต่า ชลบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.79029,
+    "longitude": 100.929477,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดหนองจับเต่า, ถนนหนองจับเต่า, เขาชีจรรย์, อำเภอสัตหีบ, จังหวัดชลบุรี, 20250, ประเทศไทย",
+    "coordinateQuery": "วัดหนองจับเต่า Thailand"
   },
   {
     "rank": 51,
@@ -762,7 +1112,14 @@
     "imageSourceUrl": "https://th.trip.com/guide/attraction/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AB%E0%B8%A5%E0%B8%A7%E0%B8%87%E0%B8%9E%E0%B8%B5%E0%B9%88%E0%B9%81%E0%B8%8B%E0%B8%A1.html",
     "imageSearchQuery": "วัดหลวงพี่แซม ชลบุรี รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.501175,
+    "longitude": 101.270678,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดหลวงพี่แซม, ถนนสายยุทธศาสตร์, บ้านหนองเซ่ง, หัวถนน, อำเภอพนัสนิคม, จังหวัดชลบุรี, ประเทศไทย",
+    "coordinateQuery": "วัดหลวงพี่แซม Thailand"
   },
   {
     "rank": 52,
@@ -777,7 +1134,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B3%E0%B9%80%E0%B8%A0%E0%B8%AD%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%8A%E0%B8%A5%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5",
     "imageSearchQuery": "วัดห้วยใหญ่ ชลบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.861193,
+    "longitude": 100.949757,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดห้วยใหญ่, ถนนห้วยใหญ่, ห้วยใหญ่, อำเภอบางละมุง, จังหวัดชลบุรี, ประเทศไทย",
+    "coordinateQuery": "วัดห้วยใหญ่ Thailand"
   },
   {
     "rank": 53,
@@ -792,7 +1156,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%AB%E0%B8%B2%E0%B8%94%E0%B8%9A%E0%B8%B2%E0%B8%87%E0%B9%81%E0%B8%AA%E0%B8%99",
     "imageSearchQuery": "วิหารเทพสถิตพระกิติเฉลิม ชลบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.328985,
+    "longitude": 100.923389,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วิหารเทพสถิตพระกิติเฉลิม, ถนนบางแสน-อ่างศิลา ตำบลอ่างศิลา อำเภอเมืองชลบุรี จังหวัดชลบุรี 20000",
+    "coordinateQuery": "วิหารเทพสถิตพระกิติเฉลิม เมืองชลบุรี ชลบุรี"
   },
   {
     "rank": 54,
@@ -807,7 +1178,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%A3%E0%B8%A3%E0%B8%A1%E0%B8%A7%E0%B8%B4%E0%B8%AA%E0%B8%B8%E0%B8%97%E0%B8%98%E0%B8%B4%E0%B8%A1%E0%B8%87%E0%B8%84%E0%B8%A5_(%E0%B8%9A%E0%B8%B1%E0%B8%A7_%E0%B8%8D%E0%B8%B2%E0%B8%93%E0%B8%AA%E0%B8%A1%E0%B8%BA%E0%B8%9B%E0%B8%99%E0%B8%BA%E0%B9%82%E0%B8%99)",
     "imageSearchQuery": "สำนักสงฆ์เขาพระครู ชลบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.157958,
+    "longitude": 100.926293,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "สำนักสงฆ์เขาพระครู, สุขุมวิท 31, ตำบลศรีราชา, เจ้าพระยาสุรศักดิ์, อำเภอศรีราชา, จังหวัดชลบุรี, 20110, ประเทศไทย",
+    "coordinateQuery": "สำนักสงฆ์เขาพระครู Thailand"
   },
   {
     "rank": 55,
@@ -822,7 +1200,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%8A%E0%B8%B5%E0%B8%A2%E0%B8%87%E0%B8%A1%E0%B8%B1%E0%B9%88%E0%B8%99",
     "imageSearchQuery": "วัดเชียงมั่น เชียงใหม่",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.793558,
+    "longitude": 98.989379,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดเชียงมั่น, ถนนพระปกเกล้า ซอย 13, เทศบาลนครเชียงใหม่, ฟ้าฮ่าม, อำเภอเมืองเชียงใหม่, จังหวัดเชียงใหม่, 55520, ประเทศไทย",
+    "coordinateQuery": "วัดเชียงมั่น เชียงใหม่ Thailand"
   },
   {
     "rank": 56,
@@ -837,7 +1222,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%95%E0%B9%89%E0%B8%99%E0%B9%80%E0%B8%81%E0%B8%A7%E0%B9%8B%E0%B8%99",
     "imageSearchQuery": "วัดต้นเกว๋น เชียงใหม่",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.722847,
+    "longitude": 98.92534,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดต้นเกว๋น, บ้านต้นเกว๋น ซอย2, บ้านต้นเกว๋น, หนองควาย, อำเภอหางดง, จังหวัดเชียงใหม่, 50230, ประเทศไทย",
+    "coordinateQuery": "วัดต้นเกว๋น หางดง เชียงใหม่ ประเทศไทย"
   },
   {
     "rank": 57,
@@ -852,7 +1244,14 @@
     "imageSourceUrl": "https://roijang.com/chiang-mai/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%94%E0%B8%AD%E0%B8%A2%E0%B8%84%E0%B9%8D%E0%B8%B2%E0%B8%AB%E0%B8%A5%E0%B8%A7%E0%B8%87%E0%B8%9E%E0%B9%88%E0%B8%AD%E0%B8%97%E0%B8%B1%E0%B8%99%E0%B9%83%E0%B8%88/",
     "imageSearchQuery": "วัดพระธาตุดอยคำ เชียงใหม่ รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.759438,
+    "longitude": 98.919088,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระธาตุดอยคำ, หมู่ 3 แม่เหียะ, บ้านป่าจี้, แม่เหียะ, ป่าแดด, อำเภอเมืองเชียงใหม่, จังหวัดเชียงใหม่, 50200, ประเทศไทย",
+    "coordinateQuery": "วัดพระธาตุดอยคำ เมืองเชียงใหม่ เชียงใหม่ ประเทศไทย"
   },
   {
     "rank": 58,
@@ -867,7 +1266,14 @@
     "imageSourceUrl": "https://pantip.com/topic/40237183",
     "imageSearchQuery": "วัดกลางบางแก้ว นครปฐม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.794807,
+    "longitude": 100.193531,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดกลางบางแก้ว, ถนนเลียบแม่น้ำนครชัยศรี, นครชัยศรี, ขุนแก้ว, อำเภอนครชัยศรี, จังหวัดนครปฐม, 73120, ประเทศไทย",
+    "coordinateQuery": "วัดกลางบางแก้ว นครชัยศรี นครปฐม ประเทศไทย"
   },
   {
     "rank": 59,
@@ -882,7 +1288,14 @@
     "imageSourceUrl": "https://palanla.com/th/domesticLocation/detail/2226",
     "imageSearchQuery": "วัดธรรมปัญญารามบางม่วง นครปฐม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.695238,
+    "longitude": 100.213113,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดธรรมปัญญารามบางม่วง, ถนนคลองใหม่, บ้านบางประแดง, อำเภอสามพราน, ไร่ขิง, ท่าข้าม, จังหวัดนครปฐม, ประเทศไทย",
+    "coordinateQuery": "วัดธรรมปัญญารามบางม่วง สามพราน นครปฐม ประเทศไทย"
   },
   {
     "rank": 60,
@@ -897,7 +1310,14 @@
     "imageSourceUrl": "https://cbtthailand.dasta.or.th/webapp/relattraction/content/1513/",
     "imageSearchQuery": "วัดพระปฐมเจดีย์ นครปฐม รูปภาพ",
     "imageMatchScore": 126,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.820588,
+    "longitude": 100.059861,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระปฐมเจดีย์ราชวรมหาวิหาร, ถนนราชดำเนิน, นครปฐม, เทศบาลนครปฐม, อำเภอเมืองนครปฐม, จังหวัดนครปฐม, 73000, ประเทศไทย",
+    "coordinateQuery": "วัดพระปฐมเจดีย์ เมืองนครปฐม นครปฐม ประเทศไทย"
   },
   {
     "rank": 61,
@@ -912,7 +1332,14 @@
     "imageSourceUrl": "https://www.gplace.com/5352",
     "imageSearchQuery": "วัดพระประโทณเจดีย์ นครปฐม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.814826,
+    "longitude": 100.096473,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระประโทณเจดีย์วรวิหาร, ถนนเพชรเกษม, นครปฐม, เทศบาลนครปฐม, อำเภอเมืองนครปฐม, จังหวัดนครปฐม, 73000, ประเทศไทย",
+    "coordinateQuery": "วัดพระประโทณเจดีย์วรวิหาร นครปฐม"
   },
   {
     "rank": 62,
@@ -927,7 +1354,14 @@
     "imageSourceUrl": "https://uauction3.uamulet.com/AuctionDetail.aspx?bid=382&qid=98902",
     "imageSearchQuery": "วัดรางหมัน นครปฐม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.992339,
+    "longitude": 99.909356,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดรางหมัน, รางพิกุล อ.กำแพงแสน จ.นครปฐม 73140",
+    "coordinateQuery": "วัดรางหมัน นครปฐม"
   },
   {
     "rank": 63,
@@ -942,7 +1376,14 @@
     "imageSourceUrl": "https://mgronline.com/travel/photo-gallery/9680000045433",
     "imageSearchQuery": "วัดไร่ขิง นครปฐม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.742474,
+    "longitude": 100.257873,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดไร่ขิง, สะพานมงคลรัฐประชานุกูล, อ้อมใหญ่, อำเภอสามพราน, ไร่ขิง, ท่าตลาด, จังหวัดนครปฐม, 73110, ประเทศไทย",
+    "coordinateQuery": "วัดไร่ขิง สามพราน นครปฐม ประเทศไทย"
   },
   {
     "rank": 64,
@@ -957,7 +1398,14 @@
     "imageSourceUrl": "https://palanla.com/index.php?op=domesticLocation-detail&id=209",
     "imageSearchQuery": "วัดไร่แตงทอง นครปฐม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.984426,
+    "longitude": 99.849325,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดไร่แตงทอง (หลวงปู่หลิว), ทางหลวงชนบทนฐ. 3028 ตำบลทุ่งลูกนก อำเภอกำแพงแสน จังหวัดนครปฐม 73140",
+    "coordinateQuery": "วัดไร่แตงทอง กำแพงแสน นครปฐม"
   },
   {
     "rank": 65,
@@ -972,7 +1420,14 @@
     "imageSourceUrl": "https://roijang.com/nakhon-pathom/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A8%E0%B8%B5%E0%B8%A3%E0%B8%A9%E0%B8%B0%E0%B8%97%E0%B8%AD%E0%B8%87/",
     "imageSearchQuery": "วัดศีรษะทอง นครปฐม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.809195,
+    "longitude": 100.160498,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดศีรษะทอง, นฐ.1012, นครชัยศรี, ศีรษะทอง, อำเภอนครชัยศรี, จังหวัดนครปฐม, 73120, ประเทศไทย",
+    "coordinateQuery": "วัดศีรษะทอง นครปฐม ประเทศไทย"
   },
   {
     "rank": 66,
@@ -987,7 +1442,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/16815",
     "imageSearchQuery": "วัดสามพราน นครปฐม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.734972,
+    "longitude": 100.21498,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดสามพราน, ซอยสามพราน 15, บ้านบางช้างเหนือ, อำเภอสามพราน, ขุนแก้ว, ท่าตลาด, จังหวัดนครปฐม, 73110, ประเทศไทย",
+    "coordinateQuery": "วัดสามพราน สามพราน นครปฐม ประเทศไทย"
   },
   {
     "rank": 67,
@@ -1002,7 +1464,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/25550",
     "imageSearchQuery": "วัดไตรภูมิ นครพนม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.574124,
+    "longitude": 104.605037,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดไตรภูมิ, 2027, ท่าอุเทน, เวินพระบาท, อำเภอท่าอุเทน, จังหวัดนครพนม, 48120, ประเทศไทย",
+    "coordinateQuery": "วัดไตรภูมิ ท่าอุเทน นครพนม ประเทศไทย"
   },
   {
     "rank": 68,
@@ -1017,7 +1486,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/16449",
     "imageSearchQuery": "วัดธาตุมหาชัย นครพนม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.278282,
+    "longitude": 104.458758,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดธาตุมหาชัย หลวงปู่คำพันธ์, นพ.2009, บ้านมหาชัย, อำเภอปลาปาก, จังหวัดนครพนม, 48160, ประเทศไทย",
+    "coordinateQuery": "วัดธาตุมหาชัย ปลาปาก นครพนม ประเทศไทย"
   },
   {
     "rank": 69,
@@ -1032,7 +1508,14 @@
     "imageSourceUrl": "https://www.wongnai.com/reviews/8a8fa2488aa143e699cf3c58cd312cd5",
     "imageSearchQuery": "วัดธาตุศรีคุณ นครพนม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 16.945016,
+    "longitude": 104.497136,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดธาตุศรีคุณ, ถนนสวัสดิภาพพิสุทธิ์ ตำบลนาแก อำเภอนาแก จังหวัดนครพนม 48130",
+    "coordinateQuery": "วัดธาตุศรีคุณ นาแก นครพนม"
   },
   {
     "rank": 70,
@@ -1047,7 +1530,14 @@
     "imageSourceUrl": "https://watpamahachai.net/Five_Precept73.htm",
     "imageSearchQuery": "วัดป่ากิตติพรพุทธาราม นครพนม รูปภาพ",
     "imageMatchScore": 147,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.051744,
+    "longitude": 104.404666,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดกิตติพรพุทธาราม, ทางหลวงชนบทนพ. 4026 ตำบลยอดชาด อำเภอวังยาง จังหวัดนครพนม 48130",
+    "coordinateQuery": "วัดป่ากิตติพรพุทธาราม วังยาง นครพนม"
   },
   {
     "rank": 71,
@@ -1062,7 +1552,14 @@
     "imageSourceUrl": "https://www.gplace.com/1451",
     "imageSearchQuery": "วัดพระธาตุประสิทธิ์ นครพนม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.522739,
+    "longitude": 104.624513,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดพระธาตุ, ทางหลวงชนบทนพ. 3014 ตำบลโนนตาล อำเภอท่าอุเทน จังหวัดนครพนม 48120",
+    "coordinateQuery": "วัดพระธาตุประสิทธิ์ ท่าอุเทน นครพนม"
   },
   {
     "rank": 72,
@@ -1077,7 +1574,14 @@
     "imageSourceUrl": "https://www.gothaitogether.com/pink-buddha-relics-temple-nakornpanom/",
     "imageSearchQuery": "วัดพระธาตุเรณู นครพนม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.047298,
+    "longitude": 104.676323,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "พระธาตุเรณู, 2031, บ้านนาโดนใหม่, อำเภอเรณูนคร, จังหวัดนครพนม, 48170, ประเทศไทย",
+    "coordinateQuery": "Phra That Renu Nakhon Phanom"
   },
   {
     "rank": 73,
@@ -1092,7 +1596,14 @@
     "imageSourceUrl": "https://www.paiduaykan.com/watphutthanimit/",
     "imageSearchQuery": "วัดพุทธนิมิต นครพนม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.750817,
+    "longitude": 104.388278,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดพุทธนิมิต, ทางหลวงชนบทนพ. 3023 ตำบลหนองเทา อำเภอท่าอุเทน จังหวัดนครพนม 48120",
+    "coordinateQuery": "วัดพุทธนิมิต ท่าอุเทน นครพนม"
   },
   {
     "rank": 74,
@@ -1107,7 +1618,14 @@
     "imageSourceUrl": "https://iok2u.com/variety/travel-thailand/travel-nakhonphanom-thatphanom-watmarukkhanakhon",
     "imageSearchQuery": "วัดมรุกขนคร นครพนม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.097033,
+    "longitude": 104.761782,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดมรุกขนคร, 73 ทางหลวงแผ่นดิน 212 ตำบลดอนนางหงส์ อำเภอธาตุพนม จังหวัดนครพนม 48110",
+    "coordinateQuery": "วัดมรุกขนคร ธาตุพนม นครพนม"
   },
   {
     "rank": 75,
@@ -1122,7 +1640,14 @@
     "imageSourceUrl": "https://www.tripniceday.com/place/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8-%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%9E%E0%B8%99%E0%B8%A1",
     "imageSearchQuery": "วัดมหาธาตุ นครพนม รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.391098,
+    "longitude": 104.792227,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดมหาธาตุ, ซอยวัดมหาธาตุ, นครพนม, เทศบาลเมืองนครพนม, อำเภอเมืองนครพนม, จังหวัดนครพนม, 48000, ประเทศไทย",
+    "coordinateQuery": "วัดมหาธาตุ เมืองนครพนม นครพนม ประเทศไทย"
   },
   {
     "rank": 76,
@@ -1137,7 +1662,14 @@
     "imageSourceUrl": "https://www.sanook.com/travel/1405833/gallery/",
     "imageSearchQuery": "วัดป่าภูหายหลง นครราชสีมา รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.53223,
+    "longitude": 101.578357,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดป่าภูหายหลง, นม.3516, อำเภอปากช่อง, จังหวัดนครราชสีมา, 30130, ประเทศไทย",
+    "coordinateQuery": "วัดป่าภูหายหลง ปากช่อง นครราชสีมา ประเทศไทย"
   },
   {
     "rank": 77,
@@ -1152,7 +1684,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/26070",
     "imageSearchQuery": "วัดขนาน นครศรีธรรมราช รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 8.37333,
+    "longitude": 99.407281,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดขนาน, ทุ่งใหญ่ อ.ทุ่งใหญ่ จ.นครศรีธรรมราช 80240",
+    "coordinateQuery": "วัดขนาน ทุ่งใหญ่ นครศรีธรรมราช"
   },
   {
     "rank": 78,
@@ -1167,7 +1706,14 @@
     "imageSourceUrl": "https://iok2u.com/variety/travel-thailand/travel-nakhonsithammarat-phromkhiri-watkhaokhunphanom",
     "imageSearchQuery": "วัดเขาขุนพนม นครศรีธรรมราช รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 8.543629,
+    "longitude": 99.84335,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดเขาขุนพนม, 61 ซอยหน้าเขาขุนพนม 2 ตำบลบ้านเกาะ อำเภอพรหมคีรี จังหวัดนครศรีธรรมราช 80320",
+    "coordinateQuery": "วัดเขาขุนพนม พรหมคีรี นครศรีธรรมราช"
   },
   {
     "rank": 79,
@@ -1182,7 +1728,14 @@
     "imageSourceUrl": "https://picpost.postjung.com/300025.html",
     "imageSearchQuery": "วัดธาตุน้อย นครศรีธรรมราช รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 8.373126,
+    "longitude": 99.542406,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดธาตุน้อย, 4195, หลักช้าง, อำเภอช้างกลาง, จังหวัดนครศรีธรรมราช, 80250, ประเทศไทย",
+    "coordinateQuery": "วัดธาตุน้อย ช้างกลาง นครศรีธรรมราช ประเทศไทย"
   },
   {
     "rank": 80,
@@ -1197,7 +1750,14 @@
     "imageSourceUrl": "https://www.istockphoto.com/th/%E0%B8%A3%E0%B8%B9%E0%B8%9B%E0%B8%96%E0%B9%88%E0%B8%B2%E0%B8%A2/%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3-%E0%B8%A2%E0%B8%B2%E0%B8%A1%E0%B9%80%E0%B8%A2%E0%B9%87%E0%B8%99-%E0%B8%97%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%9F%E0%B9%89%E0%B8%B2%E0%B8%AA%E0%B8%A7%E0%B8%A2%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%98%E0%B8%A3%E0%B8%A3%E0%B8%A1%E0%B8%A3%E0%B8%B2%E0%B8%8A-%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%97%E0%B8%A8%E0%B9%84%E0%B8%97%E0%B8%A2-%E0%B8%A1%E0%B8%B8%E0%B8%A1%E0%B8%AA%E0%B8%B9%E0%B8%87-gm1393249940-449213825",
     "imageSearchQuery": "วัดพระมหาธาตุ นครศรีธรรมราช รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 8.411091,
+    "longitude": 99.966434,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระมหาธาตุ วรมหาวิหาร, ถนนราขดำเนิน, เทศบาลนครนครศรีธรรมราช, โพธิ์เสด็จ, อำเภอเมืองนครศรีธรรมราช, จังหวัดนครศรีธรรมราช, ประเทศไทย",
+    "coordinateQuery": "วัดพระมหาธาตุ เมืองนครศรีธรรมราช นครศรีธรรมราช ประเทศไทย"
   },
   {
     "rank": 81,
@@ -1212,7 +1772,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/25953",
     "imageSearchQuery": "วัดแม่เจ้าอยู่หัว นครศรีธรรมราช รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 8.094605,
+    "longitude": 100.103331,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดแม่เจ้าอยู่หัว, ถนนอบจ. นศ. สายนครศรีฯ-หัวไทร-วัดแม่เจ้าอยู่หัว ตำบลแม่เจ้าอยู่หัว อำเภอเชียรใหญ่ จังหวัดนครศรีธรรมราช 80190",
+    "coordinateQuery": "วัดแม่เจ้าอยู่หัว เชียรใหญ่ นครศรีธรรมราช"
   },
   {
     "rank": 82,
@@ -1227,7 +1794,14 @@
     "imageSourceUrl": "https://travel.trueid.net/detail/GwdezKvrZ5eL",
     "imageSearchQuery": "ศาลหลักเมืองขนอม นครศรีธรรมราช รูปภาพ",
     "imageMatchScore": 119,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 9.182595,
+    "longitude": 99.851785,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "ศาลหลักเมืองขนอม, ขนอม อ.ขนอม จ.นครศรีธรรมราช 80210",
+    "coordinateQuery": "ศาลหลักเมืองขนอม ขนอม นครศรีธรรมราช"
   },
   {
     "rank": 83,
@@ -1242,7 +1816,14 @@
     "imageSourceUrl": "https://www.wongnai.com/attractions/384925hr-%E0%B8%A8%E0%B8%B2%E0%B8%A5%E0%B8%AB%E0%B8%A5%E0%B8%B1%E0%B8%81%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%98%E0%B8%A3%E0%B8%A3%E0%B8%A1%E0%B8%A3%E0%B8%B2%E0%B8%8A/photos/9f29b4f095134ec7beaa94303f375714",
     "imageSearchQuery": "ศาลหลักเมืองนครศรีธรรมราช นครศรีธรรมราช รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 8.430382,
+    "longitude": 99.962178,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "ศาลหลักเมือง, ถนนยมราช, เทศบาลนครนครศรีธรรมราช, โพธิ์เสด็จ, อำเภอเมืองนครศรีธรรมราช, จังหวัดนครศรีธรรมราช, ประเทศไทย",
+    "coordinateQuery": "ศาลหลักเมืองนครศรีธรรมราช เมืองนครศรีธรรมราช นครศรีธรรมราช ประเทศไทย"
   },
   {
     "rank": 84,
@@ -1257,7 +1838,14 @@
     "imageSourceUrl": "https://travel.trueid.net/detail/LMJXBxjzY9Ap",
     "imageSearchQuery": "อุทยานพระพุทธศาสนา นครศรีธรรมราช รูปภาพ",
     "imageMatchScore": 147,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 8.48078,
+    "longitude": 99.966812,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "อำเภอเมืองนครศรีธรรมราช จังหวัดนครศรีธรรมราช, อำเภอเมืองนครศรีธรรมราช จังหวัดนครศรีธรรมราช",
+    "coordinateQuery": "อุทยานพระพุทธศาสนา เมืองนครศรีธรรมราช นครศรีธรรมราช"
   },
   {
     "rank": 85,
@@ -1272,7 +1860,14 @@
     "imageSourceUrl": "https://thesunsight.com/watphatratch/",
     "imageSearchQuery": "วัดพระธาตุแช่แห้ง น่าน รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.75855,
+    "longitude": 100.791563,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระธาตุแช่แห้ง, 89, หมู่ที่ 3, อำเภอภูเพียง, จังหวัดน่าน, 55000, ประเทศไทย",
+    "coordinateQuery": "วัดพระธาตุแช่แห้ง ภูเพียง น่าน ประเทศไทย"
   },
   {
     "rank": 86,
@@ -1287,7 +1882,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/2375",
     "imageSearchQuery": "วัดสะพานขี้เหล็ก ประจวบคีรีขันธ์ รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.548586,
+    "longitude": 99.948698,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดสะพานขี้เหล็ก, ซอยแม่เก็บ 5, สะพานขี้เหล็ก, เทศบาลนครหัวหิน, อำเภอหัวหิน, จังหวัดประจวบคีรีขันธ์, 77110, ประเทศไทย",
+    "coordinateQuery": "วัดสะพานขี้เหล็ก หัวหิน ประจวบคีรีขันธ์ ประเทศไทย"
   },
   {
     "rank": 87,
@@ -1306,7 +1908,14 @@
     "originalImageUrl": "http://www.dhammathai.org/watthai/data/imagedb/R109-3.jpg",
     "originalImageSourceLabel": "dhammathai.org",
     "originalImageSourceUrl": "http://www.dhammathai.org/watthai/dbview.php?No=109",
-    "imageFallbackReason": "mixed-content-or-broken-image"
+    "imageFallbackReason": "mixed-content-or-broken-image",
+    "latitude": 14.352009,
+    "longitude": 100.544578,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดกษัตราธิราชวรวิหาร, 15, หมู่ที่ 7, ตำบลบ้านป้อม, องค์การบริหารส่วนตำบลบ้านป้อม, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดกษัตราธิราช พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 88,
@@ -1321,7 +1930,14 @@
     "imageSourceUrl": "https://th.tripadvisor.com/Attraction_Review-g303897-d13742930-Reviews-Wat_Choeng_Tha-Ayutthaya_Ayutthaya_Province.html",
     "imageSearchQuery": "วัดเชิงท่า พระนครศรีอยุธยา รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.362058,
+    "longitude": 100.555658,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดเชิงท่า, หมู่ที่ 4, ตำบลท่าวาสุกรี, เทศบาลนครพระนครศรีอยุธยา, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดเชิงท่า พระนครศรีอยุธยา Thailand"
   },
   {
     "rank": 89,
@@ -1336,7 +1952,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/15724",
     "imageSearchQuery": "วัดธรรมาราม พระนครศรีอยุธยา รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.354149,
+    "longitude": 100.545688,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดธรรมาราม, หมู่ที่ 6, ตำบลบ้านป้อม, องค์การบริหารส่วนตำบลบ้านป้อม, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดธรรมาราม พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 90,
@@ -1351,7 +1974,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AD%E0%B8%A2%E0%B8%B8%E0%B8%98%E0%B8%A2%E0%B8%B2)",
     "imageSearchQuery": "วัดมหาธาตุ พระนครศรีอยุธยา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.356997,
+    "longitude": 100.567516,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดมหาธาตุ, ถนนนเรศวร, หมู่ที่ 2, ตำบลประตูชัย, เทศบาลนครพระนครศรีอยุธยา, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดมหาธาตุ พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 91,
@@ -1366,7 +1996,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%81%E0%B8%A1%E0%B9%88%E0%B8%99%E0%B8%B2%E0%B8%87%E0%B8%9B%E0%B8%A5%E0%B8%B7%E0%B9%89%E0%B8%A1",
     "imageSearchQuery": "วัดแม่นางปลื้ม พระนครศรีอยุธยา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.368056,
+    "longitude": 100.570935,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดแม่นางปลื้ม, หมู่ที่ 5, ตำบลหัวรอ, เทศบาลนครพระนครศรีอยุธยา, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดแม่นางปลื้ม พระนครศรีอยุธยา พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 92,
@@ -1381,7 +2018,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%9A%E0%B8%B9%E0%B8%A3%E0%B8%93%E0%B8%B0_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AD%E0%B8%A2%E0%B8%B8%E0%B8%98%E0%B8%A2%E0%B8%B2)",
     "imageSearchQuery": "วัดราชบูรณะ พระนครศรีอยุธยา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.358741,
+    "longitude": 100.567292,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดราชบูรณะ, ถนนนเรศวร, หมู่ที่ 3, ตำบลท่าวาสุกรี, เทศบาลนครพระนครศรีอยุธยา, อำเภอพระนครศรีอยุธยา, จังหวัดพระนครศรีอยุธยา, 13000, ประเทศไทย",
+    "coordinateQuery": "วัดราชบูรณะ พระนครศรีอยุธยา ประเทศไทย"
   },
   {
     "rank": 93,
@@ -1396,7 +2040,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B9%82%E0%B8%84%E0%B8%A1%E0%B8%84%E0%B8%B3",
     "imageSearchQuery": "วัดศรีโคมคำ พะเยา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 19.176503,
+    "longitude": 99.889309,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดศรีโคมคำ, ถนนพหลโยธิน, พะเยา, ตำบลเวียง, เทศบาลเมืองพะเยา, อำเภอเมืองพะเยา, จังหวัดพะเยา, 56000, ประเทศไทย",
+    "coordinateQuery": "วัดศรีโคมคำ เมืองพะเยา พะเยา ประเทศไทย"
   },
   {
     "rank": 94,
@@ -1411,7 +2062,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%82%E0%B9%88%E0%B8%AD%E0%B8%A2_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%9E%E0%B8%8A%E0%B8%A3%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5)",
     "imageSearchQuery": "วัดข่อย เพชรบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.108951,
+    "longitude": 99.941105,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดข่อย, ถนนคีรีรัถยา, เพชรบุรี, หัวสะพาน, อำเภอเมืองเพชรบุรี, จังหวัดเพชรบุรี, 76000, ประเทศไทย",
+    "coordinateQuery": "วัดข่อย เมืองเพชรบุรี เพชรบุรี ประเทศไทย"
   },
   {
     "rank": 95,
@@ -1426,7 +2084,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%9E%E0%B8%8A%E0%B8%A3%E0%B8%AA%E0%B8%A1%E0%B8%B8%E0%B8%97%E0%B8%A3%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
     "imageSearchQuery": "วัดเขาตะเครา เพชรบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.216399,
+    "longitude": 99.935378,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดเขาตะเครา, พบ.4011, บางตะบูน, อำเภอบ้านแหลม, จังหวัดเพชรบุรี, 76110, ประเทศไทย",
+    "coordinateQuery": "วัดเขาตะเครา บ้านแหลม เพชรบุรี ประเทศไทย"
   },
   {
     "rank": 96,
@@ -1441,7 +2106,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%8A%E0%B9%88%E0%B8%AD%E0%B9%81%E0%B8%AE",
     "imageSearchQuery": "วัดพระธาตุช่อแฮ แพร่",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.086382,
+    "longitude": 100.204547,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระธาตุช่อแฮ, ถนนช่อแฮ, ช่อแฮ, สวนเขื่อน, อำเภอเมืองแพร่, จังหวัดแพร่, ประเทศไทย",
+    "coordinateQuery": "วัดพระธาตุช่อแฮ เมืองแพร่ แพร่ ประเทศไทย"
   },
   {
     "rank": 97,
@@ -1456,7 +2128,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%84%E0%B8%8A%E0%B8%A2%E0%B8%98%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
     "imageSearchQuery": "วัดฉลอง ภูเก็ต",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 7.846263,
+    "longitude": 98.337469,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "Wat Chalong, ถนนบ้านนาใหญ่-บ้านฉลอง, บ้านฉลอง, ฉลอง, ตำบลฉลอง, อำเภอเมืองภูเก็ต, จังหวัดภูเก็ต, 83230, ประเทศไทย",
+    "coordinateQuery": "วัดฉลอง Thailand"
   },
   {
     "rank": 98,
@@ -1471,7 +2150,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B8%AD%E0%B8%87",
     "imageSearchQuery": "วัดพระทอง ภูเก็ต",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 8.034413,
+    "longitude": 98.337315,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระทอง, เทศบาลเทพกระษัตรี ซอย 14 (นาใน), ถลาง, ตำบลเทพกระษัตรี, ศรีสุนทร, อำเภอถลาง, จังหวัดภูเก็ต, 83110, ประเทศไทย",
+    "coordinateQuery": "วัดพระทอง Thailand"
   },
   {
     "rank": 99,
@@ -1486,7 +2172,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%81%E0%B8%A5%E0%B8%B2%E0%B8%87%E0%B8%99%E0%B9%89%E0%B8%B3_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A3%E0%B8%B0%E0%B8%A2%E0%B8%AD%E0%B8%87)",
     "imageSearchQuery": "พระเจดีย์กลางน้ำ ระยอง",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.66609,
+    "longitude": 101.241825,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "พระเจดีย์กลางน้ำ, ถนนเลียบชายฝั่ง, ชุมชนปากน้ำ2, ระยอง, เทศบาลนครระยอง, อำเภอเมืองระยอง, จังหวัดระยอง, 21000, ประเทศไทย",
+    "coordinateQuery": "พระเจดีย์กลางน้ำ เมืองระยอง ระยอง ประเทศไทย"
   },
   {
     "rank": 100,
@@ -1505,7 +2198,14 @@
     "originalImageUrl": "http://hobbscleaning.com/wp-content/uploads/2025/04/Untitled-2-15-1.jpg",
     "originalImageSourceLabel": "hobbscleaning.com",
     "originalImageSourceUrl": "http://hobbscleaning.com/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%96%E0%B9%89%E0%B8%B3%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%97%E0%B8%B8%E0%B8%99-%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B8%87%E0%B8%94%E0%B8%87/",
-    "imageFallbackReason": "mixed-content-or-broken-image"
+    "imageFallbackReason": "mixed-content-or-broken-image",
+    "latitude": 13.123715,
+    "longitude": 101.596975,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดถ้ำเขาประทุน, ซอยคลองยาง-ถ้ำประทุน, อำเภอบ่อทอง, อำเภอเขาชะเมา, จังหวัดระยอง, ประเทศไทย",
+    "coordinateQuery": "วัดถ้ำเขาประทุน เขาชะเมา ระยอง ประเทศไทย"
   },
   {
     "rank": 101,
@@ -1520,7 +2220,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/3967",
     "imageSearchQuery": "วัดท่ามะกอก ระยอง รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.710513,
+    "longitude": 101.779115,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดท่ามะกอก, 24 ซอยบ้านท่ามะกอก ซอยเฉลิมบูรพาชลทิต 65 ตำบลพังราด อำเภอแกลง จังหวัดระยอง 21170",
+    "coordinateQuery": "วัดท่ามะกอก แกลง ระยอง"
   },
   {
     "rank": 102,
@@ -1535,7 +2242,14 @@
     "imageSourceUrl": "https://www.lemon8-app.com/tiewlikesara/7319367305245409794?region=th",
     "imageSearchQuery": "วัดน้ำตกธรรมรส ระยอง รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 13.003789,
+    "longitude": 101.431356,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "Wat Namtok Thammarot วัดน้ำตกธรรมรส, ถนนบ้านบึง-แกลง, หนองใหญ่, อำเภอวังจันทร์, จังหวัดระยอง, ประเทศไทย",
+    "coordinateQuery": "Wat Namtok Thammarot Rayong"
   },
   {
     "rank": 103,
@@ -1550,7 +2264,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/22781",
     "imageSearchQuery": "วัดบ้านแลง ระยอง รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.69797,
+    "longitude": 101.336261,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดบ้านแลง, ทางหลวงแผ่นดิน 3142 ตำบลบ้านแลง อำเภอเมืองระยอง จังหวัดระยอง 21000",
+    "coordinateQuery": "วัดบ้านแลง เมืองระยอง ระยอง"
   },
   {
     "rank": 104,
@@ -1565,7 +2286,14 @@
     "imageSourceUrl": "https://www.lemon8-app.com/thetravelthailand/7394044316970369537?region=th",
     "imageSearchQuery": "วัดป่าประดู่ ระยอง รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.682839,
+    "longitude": 101.279408,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดป่าประดู่, ถนนสุขุมวิท (นครระยอง 47), ระยอง, เทศบาลนครระยอง, อำเภอเมืองระยอง, จังหวัดระยอง, 21000, ประเทศไทย",
+    "coordinateQuery": "วัดป่าประดู่ เมืองระยอง ระยอง ประเทศไทย"
   },
   {
     "rank": 105,
@@ -1580,7 +2308,14 @@
     "imageSourceUrl": "https://thaipick.com/product/lazada/405413",
     "imageSearchQuery": "วัดละหารไร่ ระยอง รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.853908,
+    "longitude": 101.300363,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดละหารไร่, รย.4011, บ้านค่ายพัฒนา, อำเภอบ้านค่าย, จังหวัดระยอง, 21120, ประเทศไทย",
+    "coordinateQuery": "วัดละหารไร่ บ้านค่าย ระยอง ประเทศไทย"
   },
   {
     "rank": 106,
@@ -1595,7 +2330,14 @@
     "imageSourceUrl": "https://www.108prageji.com/%E0%B8%AB%E0%B8%A5%E0%B8%A7%E0%B8%87%E0%B8%9B%E0%B8%B9%E0%B9%88%E0%B8%84%E0%B8%A3%E0%B9%88%E0%B8%B3-%E0%B8%A2%E0%B9%82%E0%B8%AA%E0%B8%98%E0%B9%82%E0%B8%A3/",
     "imageSearchQuery": "วัดวังหว้า ระยอง รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.745891,
+    "longitude": 101.640028,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดวังหว้า, 4 ถนนสุนทรภู่-ท่ายายพลัด ตำบลวังหว้า อำเภอแกลง จังหวัดระยอง 21110",
+    "coordinateQuery": "วัดวังหว้า แกลง ระยอง"
   },
   {
     "rank": 107,
@@ -1610,7 +2352,14 @@
     "imageSourceUrl": "https://www.dd-pra.com/auction_view.php?id=2176",
     "imageSearchQuery": "วัดสารนาถธรรมาราม ระยอง รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 12.785043,
+    "longitude": 101.647364,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดสารนาถธรรมาราม, 38 ถนนสารนาถ (มหารัชมังคลาจารย์) ตำบลทางเกวียน อำเภอแกลง จังหวัดระยอง 21110",
+    "coordinateQuery": "วัดสารนาถธรรมาราม แกลง ระยอง"
   },
   {
     "rank": 108,
@@ -1625,7 +2374,14 @@
     "imageSourceUrl": "https://cbtthailand.dasta.or.th/webapp/relattraction/content/1030/",
     "imageSearchQuery": "วัดพระธาตุลำปางหลวง ลำปาง รูปภาพ",
     "imageMatchScore": 126,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.216832,
+    "longitude": 99.38868,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระธาตุลำปางหลวง, 1034, เกาะคา, บ้านลําปางหลวง, ลำปางหลวง, อำเภอเกาะคา, จังหวัดลำปาง, 52130, ประเทศไทย",
+    "coordinateQuery": "วัดพระธาตุลำปางหลวง เกาะคา ลำปาง ประเทศไทย"
   },
   {
     "rank": 109,
@@ -1640,7 +2396,14 @@
     "imageSourceUrl": "https://www.bloggang.com/m/viewdiary.php?id=abird&month=06-2014&date=02&group=38&gblog=34",
     "imageSearchQuery": "วัดพระธาตุหริภุญชัย ลำพูน รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 18.577376,
+    "longitude": 99.007824,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระธาตุหริภุญชัย วรมหาวิหาร, ถนนอินทยงยศ, ลำพูน, เทศบาลเมืองลำพูน, อำเภอเมืองลำพูน, จังหวัดลำพูน, 51000, ประเทศไทย",
+    "coordinateQuery": "วัดพระธาตุหริภุญชัยวรมหาวิหาร ลำพูน"
   },
   {
     "rank": 110,
@@ -1655,7 +2418,14 @@
     "imageSourceUrl": "https://palanla.com/th/domesticLocation/detail/1932",
     "imageSearchQuery": "วัดเนรมิตวิปัสสนา เลย รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.263894,
+    "longitude": 101.142044,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดเนรมิตวิปัสสนา, 2013, ด่านซ้าย, ศรีสองรัก, อำเภอด่านซ้าย, จังหวัดเลย, 42120, ประเทศไทย",
+    "coordinateQuery": "วัดเนรมิตวิปัสสนา ด่านซ้าย เลย ประเทศไทย"
   },
   {
     "rank": 111,
@@ -1670,7 +2440,14 @@
     "imageSourceUrl": "https://roijang.com/sakon-nakhon/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%96%E0%B9%89%E0%B8%B3%E0%B8%9C%E0%B8%B2%E0%B9%81%E0%B8%94%E0%B9%88%E0%B8%99/",
     "imageSearchQuery": "วัดถ้ำผาแด่น สกลนคร รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.030799,
+    "longitude": 104.071231,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดถ้ำผาแด่น, 2339, ธาตุนาเวง, อำเภอเมืองสกลนคร, จังหวัดสกลนคร, 47000, ประเทศไทย",
+    "coordinateQuery": "วัดถ้ำผาแด่น เมืองสกลนคร สกลนคร ประเทศไทย"
   },
   {
     "rank": 112,
@@ -1689,7 +2466,14 @@
     "originalImageUrl": "http://www.dhammathai.org/watthai/data/imagedb/64-1.jpg",
     "originalImageSourceLabel": "dhammathai.org",
     "originalImageSourceUrl": "http://www.dhammathai.org/watthai/dbview.php?No=64",
-    "imageFallbackReason": "mixed-content-or-broken-image"
+    "imageFallbackReason": "mixed-content-or-broken-image",
+    "latitude": 17.164678,
+    "longitude": 104.153459,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดพระธาตุเชิงชุมวรวิหาร, 1255, เรืองสวัสดิ์, ตำบลธาตุเชิงชุม, เทศบาลนครสกลนคร, งิ้วด่อน, อำเภอเมืองสกลนคร, จังหวัดสกลนคร, 47000, ประเทศไทย",
+    "coordinateQuery": "วัดพระธาตุเชิงชุมวรวิหาร สกลนคร"
   },
   {
     "rank": 113,
@@ -1704,7 +2488,14 @@
     "imageSourceUrl": "https://manphoppra.com/product/4104/",
     "imageSearchQuery": "พระพุทธมงคลมหาราช เขาคอหงส์ สงขลา รูปภาพ",
     "imageMatchScore": 148,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 7.04084,
+    "longitude": 100.510949,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "พระพุทธมงคลมหาราช, ถนนกาญจนวนิช ตำบลคอหงส์ อำเภอหาดใหญ่ จังหวัดสงขลา 90110",
+    "coordinateQuery": "พระพุทธมงคลมหาราช เขาคอหงส์ หาดใหญ่ สงขลา"
   },
   {
     "rank": 114,
@@ -1719,7 +2510,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B8%A3%E0%B8%B9%E0%B8%9B%E0%B8%8A%E0%B9%89%E0%B8%B2%E0%B8%87_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%87%E0%B8%82%E0%B8%A5%E0%B8%B2)",
     "imageSearchQuery": "วัดเขารูปช้าง สงขลา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 6.712312,
+    "longitude": 100.276809,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "ถนนวัดเขารูปช้าง-บ้านตะโล๊ะ, บ้านหน้าถ้ำ, ปาดัง, อำเภอสะเดา, จังหวัดสงขลา, ประเทศไทย",
+    "coordinateQuery": "วัดเขารูปช้าง สะเดา สงขลา ประเทศไทย"
   },
   {
     "rank": 115,
@@ -1734,7 +2532,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%87%E0%B8%82%E0%B8%A5%E0%B8%B2",
     "imageSearchQuery": "วัดโคกสมานคุณ สงขลา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 7.008775,
+    "longitude": 100.464322,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดโคกสมานคุณ, 1 ซอยปานอนุสรณ์ ตำบลหาดใหญ่ อำเภอหาดใหญ่ จังหวัดสงขลา 90110",
+    "coordinateQuery": "วัดโคกสมานคุณ หาดใหญ่ สงขลา"
   },
   {
     "rank": 116,
@@ -1749,7 +2554,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%87%E0%B8%B2%E0%B8%A1",
     "imageSearchQuery": "วัดเจดีย์งาม สงขลา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 7.64751,
+    "longitude": 100.390993,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดเจดีย์งาม, 408, บ่อตรุ, อำเภอระโนด, จังหวัดสงขลา, ประเทศไทย",
+    "coordinateQuery": "วัดเจดีย์งาม ระโนด สงขลา ประเทศไทย"
   },
   {
     "rank": 117,
@@ -1764,7 +2576,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%97%E0%B8%A7%E0%B8%97%E0%B8%B1%E0%B8%95",
     "imageSearchQuery": "วัดพระมหาเจดีย์ไตรภพไตรมงคล สงขลา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 7.002059,
+    "longitude": 100.457236,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "อำเภอหาดใหญ่ จังหวัดสงขลา, อำเภอหาดใหญ่ จังหวัดสงขลา",
+    "coordinateQuery": "วัดพระมหาเจดีย์ไตรภพไตรมงคล หาดใหญ่ สงขลา"
   },
   {
     "rank": 118,
@@ -1779,7 +2598,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A1%E0%B8%AB%E0%B8%B1%E0%B8%95%E0%B8%95%E0%B8%A1%E0%B8%B1%E0%B8%87%E0%B8%84%E0%B8%A5%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
     "imageSearchQuery": "วัดมหัตตมังคลาราม สงขลา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 7.003642,
+    "longitude": 100.453595,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดหาดใหญ่ใน, Thanon Phetkasem 26, หาดใหญ่, เทศบาลนครหาดใหญ่, อำเภอหาดใหญ่, จังหวัดสงขลา, ประเทศไทย",
+    "coordinateQuery": "วัดหาดใหญ่ใน สงขลา"
   },
   {
     "rank": 119,
@@ -1794,7 +2620,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%B8%E0%B8%A7%E0%B8%A3%E0%B8%A3%E0%B8%93%E0%B8%84%E0%B8%B5%E0%B8%A3%E0%B8%B5_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%87%E0%B8%82%E0%B8%A5%E0%B8%B2)",
     "imageSearchQuery": "วัดราชประดิษฐาน สงขลา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 7.601672,
+    "longitude": 100.39215,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดราชประดิษฐาน, ชุมพล อ.สทิงพระ จ.สงขลา 90190",
+    "coordinateQuery": "วัดราชประดิษฐาน สงขลา"
   },
   {
     "rank": 120,
@@ -1809,7 +2642,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%81%E0%B8%AB%E0%B8%A5%E0%B8%A1%E0%B8%9E%E0%B9%89%E0%B8%AD",
     "imageSearchQuery": "วัดแหลมพ้อ สงขลา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 7.157907,
+    "longitude": 100.555854,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดแหลมพ้อ, 408, พะวง, อำเภอเมืองสงขลา, จังหวัดสงขลา, 90000, ประเทศไทย",
+    "coordinateQuery": "วัดแหลมพ้อ เมืองสงขลา สงขลา ประเทศไทย"
   },
   {
     "rank": 121,
@@ -1824,7 +2664,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%87%E0%B8%82%E0%B8%A5%E0%B8%B2",
     "imageSearchQuery": "ศาลเจ้าพ่อหลักเมืองสงขลา สงขลา",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 7.196575,
+    "longitude": 100.590997,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "ศาลเจ้าพ่อหลักเมืองสงขลา, Nang Ngam Soi, เทศบาลนครสงขลา, พะวง, อำเภอเมืองสงขลา, จังหวัดสงขลา, 90000, ประเทศไทย",
+    "coordinateQuery": "ศาลเจ้าพ่อหลักเมืองสงขลา เมืองสงขลา สงขลา ประเทศไทย"
   },
   {
     "rank": 122,
@@ -1839,7 +2686,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B8%94%E0%B8%B5%E0%B8%AA%E0%B8%A5%E0%B8%B1%E0%B8%81",
     "imageSearchQuery": "วัดเขาดีสลัก สุพรรณบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.472373,
+    "longitude": 99.863809,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดเขาดีสลัก, สพ.3019, บ้านเขาดีสลัก, อู่ทอง, ท้าวอู่ทอง, อำเภออู่ทอง, จังหวัดสุพรรณบุรี, ประเทศไทย",
+    "coordinateQuery": "วัดเขาดีสลัก อู่ทอง สุพรรณบุรี ประเทศไทย"
   },
   {
     "rank": 123,
@@ -1854,7 +2708,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A3%E0%B8%B9%E0%B8%9B_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%B8%E0%B8%9E%E0%B8%A3%E0%B8%A3%E0%B8%93%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5)",
     "imageSearchQuery": "วัดเขาทำเทียม สุพรรณบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.371637,
+    "longitude": 99.867954,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "พระพุทธปุษยคีรีศรีสุวรรณภูมิ (หลวงพ่ออู่ทอง), 3547, อู่ทอง, ท้าวอู่ทอง, อำเภออู่ทอง, จังหวัดสุพรรณบุรี, ประเทศไทย",
+    "coordinateQuery": "พระพุทธปุษยคีรีศรีสุวรรณภูมิ สุพรรณบุรี"
   },
   {
     "rank": 124,
@@ -1869,7 +2730,14 @@
     "imageSourceUrl": "https://th.trip.com/guide/attraction/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%97%E0%B8%B1%E0%B8%9A%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%94%E0%B8%B2%E0%B8%99.html",
     "imageSearchQuery": "วัดทับกระดาน สุพรรณบุรี รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.141594,
+    "longitude": 99.91346,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดทับกระดาน, 3356, บ้านหัวกลับ, ทุ่งคอก, อำเภอสองพี่น้อง, จังหวัดสุพรรณบุรี, 73180, ประเทศไทย",
+    "coordinateQuery": "วัดทับกระดาน สองพี่น้อง สุพรรณบุรี ประเทศไทย"
   },
   {
     "rank": 125,
@@ -1888,7 +2756,14 @@
     "originalImageUrl": "http://dupra.mirakar.com/shop/images_large/31663.jpg",
     "originalImageSourceLabel": "dupra.mirakar.com",
     "originalImageSourceUrl": "http://dupra.mirakar.com/shop.php?id_pro=9269&id_member=225",
-    "imageFallbackReason": "mixed-content-or-broken-image"
+    "imageFallbackReason": "mixed-content-or-broken-image",
+    "latitude": 14.404726,
+    "longitude": 100.13294,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "ตำบลบางปลาม้า อำเภอบางปลาม้า จังหวัดสุพรรณบุรี, ตำบลบางปลาม้า อำเภอบางปลาม้า จังหวัดสุพรรณบุรี",
+    "coordinateQuery": "วัดน้อย บางปลาม้า บางปลาม้า สุพรรณบุรี"
   },
   {
     "rank": 126,
@@ -1903,7 +2778,14 @@
     "imageSourceUrl": "https://www.wongnai.com/reviews/340df94e2f4846bab4ba2e6f83d763f5",
     "imageSearchQuery": "วัดป่าเลไลยก์ สุพรรณบุรี รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.454239,
+    "longitude": 100.083582,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "ถนนหนองวัลย์เปรียง – วัดป่าเลไลยก์, สุพรรณบุรี, รั้วใหญ่, อำเภอเมืองสุพรรณบุรี, จังหวัดสุพรรณบุรี, 72000, ประเทศไทย",
+    "coordinateQuery": "วัดป่าเลไลยก์ เมืองสุพรรณบุรี สุพรรณบุรี ประเทศไทย"
   },
   {
     "rank": 127,
@@ -1918,7 +2800,14 @@
     "imageSourceUrl": "https://roijang.com/suphan-buri/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%84%E0%B8%9C%E0%B9%88%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B8%A7%E0%B8%B1%E0%B8%A7/",
     "imageSearchQuery": "วัดไผ่โรงวัว สุพรรณบุรี รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.161669,
+    "longitude": 100.160331,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดไผ่โรงวัว, ถนนลาดบัวหลวง - สองพี่น้อง, อำเภอสองพี่น้อง, จังหวัดสุพรรณบุรี, 73190, ประเทศไทย",
+    "coordinateQuery": "วัดไผ่โรงวัว สองพี่น้อง สุพรรณบุรี ประเทศไทย"
   },
   {
     "rank": 128,
@@ -1933,7 +2822,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A5%E0%B8%AD%E0%B8%A2",
     "imageSearchQuery": "วัดพระลอย สุพรรณบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.498262,
+    "longitude": 100.12426,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "Wat Phra Loi, ถนนสมภารคง, โพธิ์พระยา, ห้วยวังทอง, อำเภอเมืองสุพรรณบุรี, จังหวัดสุพรรณบุรี, 72000, ประเทศไทย",
+    "coordinateQuery": "วัดพระลอย เมืองสุพรรณบุรี สุพรรณบุรี ประเทศไทย"
   },
   {
     "rank": 129,
@@ -1948,7 +2844,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%A3%E0%B8%B1%E0%B8%95%E0%B8%99%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%B8%E0%B8%9E%E0%B8%A3%E0%B8%A3%E0%B8%93%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5)",
     "imageSearchQuery": "วัดพระศรีรัตนมหาธาตุ สุพรรณบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.479791,
+    "longitude": 100.113133,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "Wat Phra Si Rattana Mahathat, ถนนสมภารคง, โพธิ์พระยา, ห้วยวังทอง, อำเภอเมืองสุพรรณบุรี, จังหวัดสุพรรณบุรี, 72000, ประเทศไทย",
+    "coordinateQuery": "วัดพระศรีรัตนมหาธาตุ สุพรรณบุรี"
   },
   {
     "rank": 130,
@@ -1963,7 +2866,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%B3%E0%B8%9B%E0%B8%B0%E0%B8%8B%E0%B8%B4%E0%B8%A7",
     "imageSearchQuery": "วัดสำปะซิว สุพรรณบุรี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 14.502562,
+    "longitude": 100.122399,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดสำปะซิว, 3558, โพธิ์พระยา, ห้วยวังทอง, อำเภอเมืองสุพรรณบุรี, จังหวัดสุพรรณบุรี, 72000, ประเทศไทย",
+    "coordinateQuery": "วัดสำปะซิว เมืองสุพรรณบุรี สุพรรณบุรี ประเทศไทย"
   },
   {
     "rank": 131,
@@ -1978,7 +2888,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%B8%E0%B8%A3%E0%B8%B2%E0%B8%A9%E0%B8%8E%E0%B8%A3%E0%B9%8C%E0%B8%98%E0%B8%B2%E0%B8%99%E0%B8%B5",
     "imageSearchQuery": "วัดปลายแหลม สุราษฎร์ธานี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 9.57083,
+    "longitude": 100.059802,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "พระใหญ่ หรือ พระพุทธสันติทีปนาถ วัดพระใหญ่, ถนนสายบ่อผุด-ปลายแหลม, บ้านปลายแหลม, เทศบาลนครเกาะสมุย, อำเภอเกาะสมุย, จังหวัดสุราษฎร์ธานี, 84320, ประเทศไทย",
+    "coordinateQuery": "วัดปลายแหลม เกาะสมุย สุราษฎร์ธานี ประเทศไทย"
   },
   {
     "rank": 132,
@@ -1993,7 +2910,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B9%80%E0%B8%81%E0%B8%B2%E0%B8%B0%E0%B8%AA%E0%B8%A1%E0%B8%B8%E0%B8%A2",
     "imageSearchQuery": "วัดพระใหญ่ เกาะสมุย สุราษฎร์ธานี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 9.57083,
+    "longitude": 100.059802,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "พระใหญ่ หรือ พระพุทธสันติทีปนาถ วัดพระใหญ่, ถนนสายบ่อผุด-ปลายแหลม, บ้านปลายแหลม, เทศบาลนครเกาะสมุย, อำเภอเกาะสมุย, จังหวัดสุราษฎร์ธานี, 84320, ประเทศไทย",
+    "coordinateQuery": "วัดพระใหญ่ เกาะสมุย สุราษฎร์ธานี"
   },
   {
     "rank": 133,
@@ -2008,7 +2932,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%96%E0%B9%89%E0%B8%B3%E0%B8%81%E0%B8%A5%E0%B8%AD%E0%B8%87%E0%B9%80%E0%B8%9E%E0%B8%A5",
     "imageSearchQuery": "วัดถ้ำกลองเพล หนองบัวลำภู",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.23075,
+    "longitude": 102.531235,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดถ้ำกองเพล, ถนนบุญยาหาร, บ้านห้วยเดื่อ, อำเภอเมืองหนองบัวลำภู, จังหวัดหนองบัวลำภู, 39000, ประเทศไทย",
+    "coordinateQuery": "วัดถ้ำกลองเพล เมืองหนองบัวลำภู หนองบัวลำภู ประเทศไทย"
   },
   {
     "rank": 134,
@@ -2023,7 +2954,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%A3%E0%B8%B5%E0%B8%A2%E0%B8%99%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A2%E0%B8%B1%E0%B8%95%E0%B8%B4%E0%B8%98%E0%B8%A3%E0%B8%A3%E0%B8%A1%E0%B9%81%E0%B8%9C%E0%B8%99%E0%B8%81%E0%B8%AA%E0%B8%B2%E0%B8%A1%E0%B8%B1%E0%B8%8D%E0%B8%A8%E0%B8%B6%E0%B8%81%E0%B8%A9%E0%B8%B2",
     "imageSearchQuery": "พระบรมธาตุธรรมเจดีย์ อุดรธานี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.413207,
+    "longitude": 102.778943,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "accepted_province_match",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดโพธิสมภรณ์, ถนนโพศรี, เทศบาลนครอุดรธานี, หนองสำโรง, อำเภอเมืองอุดรธานี, จังหวัดอุดรธานี, 41000, ประเทศไทย",
+    "coordinateQuery": "วัดโพธิสมภรณ์ อุดรธานี"
   },
   {
     "rank": 135,
@@ -2038,7 +2976,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9B%E0%B9%88%E0%B8%B2%E0%B8%A0%E0%B8%B9%E0%B8%81%E0%B9%89%E0%B8%AD%E0%B8%99",
     "imageSearchQuery": "วัดป่าภูก้อน อุดรธานี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 17.922627,
+    "longitude": 102.118317,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดป่าภูก้อน, อด.5044, นายูง, อำเภอนายูง, จังหวัดอุดรธานี, 41380, ประเทศไทย",
+    "coordinateQuery": "วัดป่าภูก้อน นายูง อุดรธานี ประเทศไทย"
   },
   {
     "rank": 136,
@@ -2053,7 +2998,14 @@
     "imageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%95%E0%B9%89%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B9%83%E0%B8%AB%E0%B8%8D%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%95%E0%B8%B7%E0%B9%89%E0%B8%AD",
     "imageSearchQuery": "วัดใต้ อุบลราชธานี",
     "imageMatchScore": 100,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 15.434347,
+    "longitude": 104.528762,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดใต้ยางขี้นก, อบ.2037, บ้านยางขี้นก, ห้วยเรือ, อำเภอเขื่องใน, จังหวัดอุบลราชธานี, 34150, ประเทศไทย",
+    "coordinateQuery": "วัดใต้ อุบลราชธานี Thailand"
   },
   {
     "rank": 137,
@@ -2068,7 +3020,14 @@
     "imageSourceUrl": "https://creator.kapook.com/gallery/278817",
     "imageSearchQuery": "วัดถ้ำคูหาสวรรค์ อุบลราชธานี รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 15.322812,
+    "longitude": 105.487925,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดถ้ำคูหาสวรรค์, 2222, โขงเจียม, อำเภอโขงเจียม, จังหวัดอุบลราชธานี, 34220, ประเทศไทย",
+    "coordinateQuery": "วัดถ้ำคูหาสวรรค์ โขงเจียม อุบลราชธานี ประเทศไทย"
   },
   {
     "rank": 138,
@@ -2083,7 +3042,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/23085",
     "imageSearchQuery": "วัดทุ่งศรีเมือง อุบลราชธานี รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 15.230128,
+    "longitude": 104.86087,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดทุ่งศรีเมือง, 95, ถนนหลวง, ตำบลในเมือง, เทศบาลนครอุบลราชธานี, ปทุม, อำเภอเมืองอุบลราชธานี, จังหวัดอุบลราชธานี, 34000, ประเทศไทย",
+    "coordinateQuery": "วัดทุ่งศรีเมือง เมืองอุบลราชธานี อุบลราชธานี ประเทศไทย"
   },
   {
     "rank": 139,
@@ -2098,7 +3064,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/17021",
     "imageSearchQuery": "วัดมณีวนาราม อุบลราชธานี รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 15.231639,
+    "longitude": 104.861638,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดมณีวนาราม, ถนนพโลรังฤทธิ์ ตำบลในเมือง อำเภอเมืองอุบลราชธานี จังหวัดอุบลราชธานี 34000",
+    "coordinateQuery": "วัดมณีวนาราม เมืองอุบลราชธานี อุบลราชธานี"
   },
   {
     "rank": 140,
@@ -2113,7 +3086,14 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/18759",
     "imageSearchQuery": "วัดมหาวนาราม อุบลราชธานี รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 15.234766,
+    "longitude": 104.863377,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดมหาวนาราม, Luang Road, ตำบลในเมือง, เทศบาลนครอุบลราชธานี, ปทุม, อำเภอเมืองอุบลราชธานี, จังหวัดอุบลราชธานี, 34000, ประเทศไทย",
+    "coordinateQuery": "วัดมหาวนาราม เมืองอุบลราชธานี อุบลราชธานี ประเทศไทย"
   },
   {
     "rank": 141,
@@ -2128,7 +3108,14 @@
     "imageSourceUrl": "https://mthai.com/travel/ubon-ratchathani/400952.html",
     "imageSearchQuery": "วัดเลียบ อุบลราชธานี รูปภาพ",
     "imageMatchScore": 119,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 15.473189,
+    "longitude": 104.700524,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดเลียบ, ทางหลวงแผ่นดิน 2409 ตำบลหนองเหล่า อำเภอม่วงสามสิบ จังหวัดอุบลราชธานี 34140",
+    "coordinateQuery": "วัดเลียบ ม่วงสามสิบ อุบลราชธานี"
   },
   {
     "rank": 142,
@@ -2143,7 +3130,14 @@
     "imageSourceUrl": "https://wheel-we-go.com/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AD%E0%B8%B8%E0%B8%9A%E0%B8%A5%E0%B8%A3%E0%B8%B1%E0%B8%95%E0%B8%99%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1-%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A8/",
     "imageSearchQuery": "วัดศรีอุบลรัตนาราม อุบลราชธานี รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 15.227479,
+    "longitude": 104.856141,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "ArcGIS World Geocoding Service",
+    "coordinateAddress": "วัดศรีอุบลรัตนาราม, 129 ถนนอุปราช ตำบลในเมือง อำเภอเมืองอุบลราชธานี จังหวัดอุบลราชธานี 34000",
+    "coordinateQuery": "วัดศรีอุบลรัตนาราม เมืองอุบลราชธานี อุบลราชธานี"
   },
   {
     "rank": 143,
@@ -2162,7 +3156,14 @@
     "originalImageUrl": "http://www.dhammathai.org/watthai/data/imagedb/76-1.jpeg",
     "originalImageSourceLabel": "dhammathai.org",
     "originalImageSourceUrl": "http://www.dhammathai.org/watthai/dbview.php?No=76",
-    "imageFallbackReason": "mixed-content-or-broken-image"
+    "imageFallbackReason": "mixed-content-or-broken-image",
+    "latitude": 15.225567,
+    "longitude": 104.853503,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดสุปัฏนารามวรวิหาร, สุปัฎน, ตำบลในเมือง, เทศบาลนครอุบลราชธานี, ปทุม, อำเภอเมืองอุบลราชธานี, จังหวัดอุบลราชธานี, 34000, ประเทศไทย",
+    "coordinateQuery": "วัดสุปัฏนาราม เมืองอุบลราชธานี อุบลราชธานี ประเทศไทย"
   },
   {
     "rank": 144,
@@ -2177,6 +3178,13 @@
     "imageSourceUrl": "https://www.dmc.tv/temple/18763",
     "imageSearchQuery": "วัดหลวง อุบลราชธานี รูปภาพ",
     "imageMatchScore": 154,
-    "adminEditable": true
+    "adminEditable": true,
+    "latitude": 15.22479,
+    "longitude": 104.860174,
+    "coordinateStatus": "verified",
+    "coordinateConfidence": "high",
+    "coordinateSource": "Nominatim/OpenStreetMap",
+    "coordinateAddress": "วัดหลวง, ถนนพรมเทพ, ตำบลในเมือง, เทศบาลนครอุบลราชธานี, ปทุม, อำเภอเมืองอุบลราชธานี, จังหวัดอุบลราชธานี, 34000, ประเทศไทย",
+    "coordinateQuery": "วัดหลวง อุบลราชธานี Thailand"
   }
 ]

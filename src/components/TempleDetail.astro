@@ -1,0 +1,84 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+interface Props {
+  collectionLabel: string;
+  collectionHref: string;
+  temple: {
+    rank: number;
+    name: string;
+    region: string;
+    province: string;
+    district?: string;
+    imageUrl?: string;
+    imageAlt?: string;
+    placeType?: string;
+    blessings?: string;
+    objectHero?: string;
+    latitude?: number | null;
+    longitude?: number | null;
+  };
+  placeholderImage: string;
+}
+
+const { collectionLabel, collectionHref, temple, placeholderImage } = Astro.props as Props;
+const imageUrl = temple.imageUrl || placeholderImage;
+const title = `${temple.name} | ${collectionLabel} | มงคลเวลา`;
+const hasCoordinates = Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude));
+---
+
+<BaseLayout
+  title={title}
+  description={`รายละเอียด${temple.name} ${temple.province}${temple.district ? ` ${temple.district}` : ""}`}
+  lang="th"
+  locale="th"
+  page="temples"
+  bodyClass="temples-hub-page"
+>
+  <main class="temple-detail">
+    <nav class="temple-breadcrumb" aria-label="breadcrumb">
+      <a href="/">หน้าแรก</a>
+      <span>/</span>
+      <a href="/temples/">วัดดังเสริมมงคล</a>
+      <span>/</span>
+      <a href={collectionHref}>{collectionLabel}</a>
+      <span>/</span>
+      <span>{temple.name}</span>
+    </nav>
+
+    <section class="temple-detail-hero">
+      <figure>
+        <img src={imageUrl} alt={temple.imageAlt || `${temple.name} ${temple.province}`} loading="eager" decoding="async" />
+      </figure>
+      <div>
+        <p class="section-kicker">อันดับ #{temple.rank.toString().padStart(2, "0")}</p>
+        <h1>{temple.name}</h1>
+        <p>{temple.region} · {temple.province}{temple.district ? ` · ${temple.district}` : ""}</p>
+        <dl>
+          <div>
+            <dt>ประเภท</dt>
+            <dd>{temple.placeType || "วัดและสถานที่ศักดิ์สิทธิ์"}</dd>
+          </div>
+          {temple.blessings && (
+            <div>
+              <dt>ขอพรเด่น</dt>
+              <dd>{temple.blessings}</dd>
+            </div>
+          )}
+          {temple.objectHero && (
+            <div>
+              <dt>สิ่งสำคัญ</dt>
+              <dd>{temple.objectHero}</dd>
+            </div>
+          )}
+          {hasCoordinates && (
+            <div>
+              <dt>พิกัด</dt>
+              <dd>{Number(temple.latitude).toFixed(6)}, {Number(temple.longitude).toFixed(6)}</dd>
+            </div>
+          )}
+        </dl>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

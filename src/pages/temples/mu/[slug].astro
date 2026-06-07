@@ -1,0 +1,26 @@
+---
+import TempleDetail from "../../../components/TempleDetail.astro";
+import muTemples from "../../../data/mu-temples.json";
+import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data/temple-images.js";
+import { createTempleSlug } from "../../../data/temple-slugs.js";
+
+const temples = applyTempleImageOverrides("mu", [...muTemples]);
+type Temple = (typeof temples)[number];
+
+export function getStaticPaths() {
+  const staticTemples = applyTempleImageOverrides("mu", [...muTemples]) as Temple[];
+  return staticTemples.map((temple: Temple) => ({
+    params: { slug: createTempleSlug(temple) },
+    props: { temple },
+  }));
+}
+
+const { temple } = Astro.props;
+---
+
+<TempleDetail
+  collectionLabel="สายมู"
+  collectionHref="/temples/mu/"
+  temple={temple}
+  placeholderImage={templePlaceholderImage}
+/>

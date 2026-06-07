@@ -1,0 +1,88 @@
+---
+import { getTempleDetailUrl } from "../data/temple-slugs.js";
+
+interface TempleMapItem {
+  rank: number;
+  name: string;
+  region: string;
+  province: string;
+  district?: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  placeType?: string;
+}
+
+interface Props {
+  collection: "popular" | "mu";
+  title: string;
+  searchPlaceholder: string;
+  temples: TempleMapItem[];
+  placeholderImage: string;
+}
+
+const { collection, title, searchPlaceholder, temples, placeholderImage } = Astro.props as Props;
+const mapId = `templeMap-${collection}`;
+const modalId = `templeMapModal-${collection}`;
+const payloadId = `templeMapData-${collection}`;
+const mapItems = temples
+  .filter((temple) => Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude)))
+  .map((temple) => ({
+    rank: temple.rank,
+    name: temple.name,
+    region: temple.region,
+    province: temple.province,
+    district: temple.district || "",
+    placeType: temple.placeType || "วัดและสถานที่ศักดิ์สิทธิ์",
+    latitude: Number(temple.latitude),
+    longitude: Number(temple.longitude),
+    imageUrl: temple.imageUrl || placeholderImage,
+    imageAlt: temple.imageAlt || `${temple.name} ${temple.province}`,
+    detailUrl: getTempleDetailUrl(collection, temple),
+  }));
+const payload = JSON.stringify({
+  collection,
+  title,
+  placeholderImage,
+  totalCount: temples.length,
+  mappedCount: mapItems.length,
+  items: mapItems,
+}).replace(/</g, "\\u003c");
+---
+
+<div
+  class="temple-map-widget"
+  data-temple-map-root
+  data-temple-map-modal={modalId}
+  data-temple-map-id={mapId}
+  data-temple-map-payload={payloadId}
+>
+  <button class="temple-map-float-button" type="button" data-temple-map-open aria-label={`เปิดแผนที่${title}`}>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11Z"></path>
+      <circle cx="12" cy="10" r="2.4"></circle>
+    </svg>
+    <span>แผนที่</span>
+  </button>
+
+  <div class="temple-map-modal" id={modalId} aria-hidden="true" data-temple-map-modal-element>
+    <div class="temple-map-modal__overlay" data-temple-map-close></div>
+    <div class="temple-map-modal__panel" role="dialog" aria-modal="true" aria-label={`แผนที่${title}`}>
+      <div class="temple-map-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
+        </svg>
+        <input type="search" placeholder={searchPlaceholder} autocomplete="off" data-temple-map-search />
+        <div class="temple-map-search__dropdown" data-temple-map-search-results></div>
+      </div>
+      <button class="temple-map-modal__close" type="button" data-temple-map-close aria-label="ปิดแผนที่">×</button>
+      <div class="temple-map-canvas" id={mapId}></div>
+      <div class="temple-map-status" data-temple-map-status>
+        แสดง {mapItems.length.toLocaleString("th-TH")} จาก {temples.length.toLocaleString("th-TH")} พิกัด
+      </div>
+    </div>
+  </div>
+
+  <script is:inline type="application/json" id={payloadId} set:html={payload}></script>
+</div>

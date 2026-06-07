@@ -1,11 +1,13 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import TempleSearchHero from "../../../components/TempleSearchHero.astro";
+import TempleMapOverlay from "../../../components/TempleMapOverlay.astro";
 import muTemples from "../../../data/mu-temples.json";
 import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data/temple-images.js";
+import { getTempleDetailUrl } from "../../../data/temple-slugs.js";
 import templePageBanners from "../../../data/temple-page-banners.json";
 
-const extraScripts = ["/assets/js/temple-directory.js"];
+const extraScripts = ["/assets/js/temple-directory.js", "/assets/js/temple-map.js"];
 type TempleCard = {
   rank: number;
   name: string;
@@ -21,7 +23,6 @@ type TempleCard = {
 const rankedTemples = (applyTempleImageOverrides("mu", [...muTemples]) as TempleCard[]).sort(
   (a: TempleCard, b: TempleCard) => a.rank - b.rank,
 );
-const getTempleSearchHref = (name: string) => `/temples/thailand/?${new URLSearchParams({ name }).toString()}`;
 const regionOrder = [
   "ภาคเหนือ",
   "ภาคกลาง",
@@ -45,6 +46,14 @@ const popularRegions = Array.from(new Set(rankedTemples.map((temple: TempleCard)
   extraScripts={extraScripts}
 >
   <main class="temples-hub">
+    <TempleMapOverlay
+      collection="mu"
+      title="สายมู"
+      searchPlaceholder="ค้นหาสถานที่ในแผนที่"
+      temples={rankedTemples}
+      placeholderImage={templePlaceholderImage}
+    />
+
     <TempleSearchHero
       banner={templePageBanners.mu}
       breadcrumbs={[
@@ -117,7 +126,7 @@ const popularRegions = Array.from(new Set(rankedTemples.map((temple: TempleCard)
           return (
             <a
               class={`popular-temple-card${hasTempleImage ? "" : " is-placeholder"}`}
-              href={getTempleSearchHref(temple.name)}
+              href={getTempleDetailUrl("mu", temple)}
               data-rank={temple.rank}
               data-name={temple.name}
               data-region={temple.region}
