@@ -112,6 +112,15 @@ const summaryText = blessingItems.length
   ? `${temple.name} เหมาะสำหรับ${blessingItems.slice(0, 3).join(" · ")}`
   : `${temple.name} หนึ่งในพิกัดแนะนำของ${collectionLabel} ใน${temple.province}`;
 const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Placeholder" ? temple.imageSourceLabel : "มงคลเวลา";
+const splitTravelTokens = (value?: string) =>
+  String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+const getRouteIntro = (route: TravelRoute) =>
+  [route.typeText, route.operatorText].filter(Boolean).join(" · ") || route.shortLabel;
+const getWalkLabel = (route: TravelRoute) =>
+  route.distanceText ? `เดิน ${route.distanceText.replace(/^~/u, "").trim()}` : "เดินต่อไปยังจุดหมาย";
 ---
 
 <BaseLayout
@@ -210,36 +219,82 @@ const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Plac
             {travelView.sections.length > 0 ? (
               <div class="temple-detail-transit__list">
                 {travelView.sections.map((item, index) => (
-                  <details open={index < 2}>
+                  <details open={index === 0}>
                     <summary>{item.label}</summary>
                     <div class="temple-detail-route-list">
-                      {item.routes.map((route) => (
-                        <article class="temple-detail-route">
-                          <div class="temple-detail-route__top">
-                            <span>{route.shortLabel}</span>
-                            <strong>{route.stop}</strong>
-                            {route.distanceText && <small>{route.distanceText}</small>}
-                          </div>
-                          {(route.typeText || route.isTransfer) && (
-                            <div class="temple-detail-route__chips">
-                              {route.typeText && <span>{route.typeText}</span>}
-                              {route.isTransfer && <span>เรือข้ามฟาก</span>}
+                      {item.routes.map((route, routeIndex) => {
+                        const routeTokens = splitTravelTokens(route.routeText);
+                        const visibleRouteTokens = routeTokens.slice(0, 5);
+                        const hiddenRouteTokens = routeTokens.slice(5);
+
+                        return (
+                          <article class={`temple-detail-route temple-detail-route--${route.mode}`}>
+                            <div class="temple-detail-route__summary">
+                              <span>{route.shortLabel}</span>
+                              <div>
+                                <strong>{route.stop}</strong>
+                                <small>
+                                  {route.distanceText ? `${route.distanceText}` : "จุดจอดแนะนำ"}
+                                  {route.isTransfer ? " · มีเรือข้ามฟาก" : ""}
+                                </small>
+                              </div>
                             </div>
-                          )}
-                          {route.routeText && (
-                            <p>
-                              <span>สาย/เส้นทาง</span>
-                              <b>{route.routeText}</b>
-                            </p>
-                          )}
-                          {route.operatorText && (
-                            <p>
-                              <span>ผู้ให้บริการ</span>
-                              <b>{route.operatorText}</b>
-                            </p>
-                          )}
-                        </article>
-                      ))}
+
+                            <ol class="temple-detail-route-timeline" aria-label={`เส้นทาง ${route.stop} ไป ${temple.name}`}>
+                              <li>
+                                <span class="temple-route-time">{routeIndex === 0 ? "เริ่ม" : `ทางเลือก ${routeIndex + 1}`}</span>
+                                <span class="temple-route-node" aria-hidden="true"></span>
+                                <div>
+                                  <strong>{route.stop}</strong>
+                                  <small>{getRouteIntro(route)}</small>
+                                </div>
+                              </li>
+                              {route.routeText && (
+                                <li>
+                                  <span class="temple-route-time">{route.shortLabel}</span>
+                                  <span class="temple-route-node" aria-hidden="true"></span>
+                                  <div>
+                                    <strong>เลือกสาย/เส้นทางที่ผ่านจุดจอดนี้</strong>
+                                    <div class="temple-detail-route-lines" aria-label="สายหรือเส้นทางที่ผ่าน">
+                                      {visibleRouteTokens.length > 0 ? (
+                                        visibleRouteTokens.map((token) => <span>{token}</span>)
+                                      ) : (
+                                        <span>{route.routeText}</span>
+                                      )}
+                                    </div>
+                                    {hiddenRouteTokens.length > 0 && (
+                                      <details class="temple-detail-route-more">
+                                        <summary>ดูสายทั้งหมด +{hiddenRouteTokens.length}</summary>
+                                        <div class="temple-detail-route-lines">
+                                          {hiddenRouteTokens.map((token) => <span>{token}</span>)}
+                                        </div>
+                                      </details>
+                                    )}
+                                  </div>
+                                </li>
+                              )}
+                              {route.operatorText && (
+                                <li>
+                                  <span class="temple-route-time">ผู้ให้บริการ</span>
+                                  <span class="temple-route-node" aria-hidden="true"></span>
+                                  <div>
+                                    <strong>{route.operatorText}</strong>
+                                    <small>{route.typeText || route.shortLabel}</small>
+                                  </div>
+                                </li>
+                              )}
+                              <li>
+                                <span class="temple-route-time">{route.distanceText ? getWalkLabel(route) : "ถึงจุดหมาย"}</span>
+                                <span class="temple-route-node" aria-hidden="true"></span>
+                                <div>
+                                  <strong>{temple.name}</strong>
+                                  <small>{[temple.province, temple.district].filter(Boolean).join(" / ")}</small>
+                                </div>
+                              </li>
+                            </ol>
+                          </article>
+                        );
+                      })}
                     </div>
                   </details>
                 ))}
