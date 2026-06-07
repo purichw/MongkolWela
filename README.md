@@ -1,41 +1,64 @@
-# Hora Astro
+# Mongkol Wela Astro
 
-Thai-first auspicious, horoscope, calendar, and spiritual knowledge website built with Astro.
+Thai-first auspicious, horoscope, calendar, tarot, and temple guide website built with Astro.
 
-## Preview
+Production: https://mongkolwela.vercel.app
 
-Install dependencies and start the Astro dev server:
+## Local Development
 
 ```sh
 npm install
-npm run dev
+npm run dev -- --host 127.0.0.1 --port 4324
 ```
 
-Then visit the local URL shown by Astro.
+Then visit `http://127.0.0.1:4324/`.
 
 Useful routes:
 
 - `/` - Thai homepage
-- `/en/` - English homepage
 - `/tarot/daily/` - interactive daily tarot
 - `/calendar/` - Thai calendar
+- `/calendar/day/` - Thai day view
+- `/horoscope/life-graph/` - life graph horoscope
+- `/horoscope/seamsi/` - seamsi fortune
+- `/horoscope/thai-astrology/` - Thai astrology
+- `/temples/` - temple hub
+- `/temples/popular/` - สายไหว้พระ 9 วัด
+- `/temples/mu/` - สายมู
+- `/temples/thailand/` - all-Thailand temple directory
 
 ## Checks
 
 ```sh
 npm run check
 npm run build
-npm run preview
 ```
 
 ## Structure
 
 - `src/pages/` - Astro routes
-- `src/layouts/` - page layout shells
-- `src/components/` - shared header, footer, and SVG icons
-- `src/config/` - shared site/navigation/page config
+- `src/layouts/BaseLayout.astro` - shared document shell and cache-busted assets
+- `src/components/` - shared header, footer, loading screen, and temple components
+- `src/config/` - shared site config
+- `src/data/` - runtime temple data, image overrides, banners, and slug helpers
 - `public/styles.css` - CSS entrypoint
-- `public/assets/css/` - design tokens, base rules, sections, and responsive behavior
+- `public/assets/css/` - design tokens, base rules, feature styles, and responsive behavior
 - `public/script.js` - browser interaction entrypoint
 - `public/assets/js/` - feature modules
 - `public/assets/images/` - local visual assets
+- `outputs/` - local generated artifacts; intentionally untracked
+
+## Temple Data
+
+Temple pages are data-driven from JSON files under `src/data/`:
+
+- `popular-temples.json` for `/temples/popular/`
+- `mu-temples.json` for `/temples/mu/`
+- `temple-image-overrides.json` for card/detail image overrides
+- `temple-page-banners.json` for page banner images
+
+The all-Thailand temple directory source attribution is:
+
+ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ
+
+Do not add, delete, or modify `outputs/` unless a task explicitly asks for it.
