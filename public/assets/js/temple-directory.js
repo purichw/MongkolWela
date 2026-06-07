@@ -148,6 +148,7 @@ function initializePopularTempleGrid(grid) {
   const regionTags = Array.from(filterRoot?.querySelectorAll("[data-popular-region-tag]") || []);
   const provinceFilter = filterRoot?.querySelector("[data-popular-province-filter]");
   const provinceTagsRoot = filterRoot?.querySelector("[data-popular-province-tags]");
+  const purposeTags = Array.from(filterRoot?.querySelectorAll("[data-popular-purpose-tag]") || []);
   const countNode = document.querySelector("[data-popular-temple-count]");
   const emptyNode = document.querySelector("[data-popular-temple-empty]");
   const sentinel = document.querySelector("[data-popular-temple-sentinel]");
@@ -159,6 +160,7 @@ function initializePopularTempleGrid(grid) {
   let visibleCount = 0;
   let activeRegion = "";
   let activeProvince = "";
+  const activePurposes = new Set();
 
   if (!cards.length) return;
 
@@ -196,8 +198,10 @@ function initializePopularTempleGrid(grid) {
     if (filterName) filterName.value = "";
     activeRegion = "";
     activeProvince = "";
+    activePurposes.clear();
     updateRegionTags();
     updateProvinceTags();
+    updatePurposeTags();
     applyPopularFilters();
   });
 
@@ -207,6 +211,21 @@ function initializePopularTempleGrid(grid) {
       activeProvince = "";
       updateRegionTags();
       updateProvinceTags();
+      applyPopularFilters();
+    });
+  });
+
+  purposeTags.forEach((tag) => {
+    tag.addEventListener("click", () => {
+      const value = tag.value || "";
+      if (!value) {
+        activePurposes.clear();
+      } else if (activePurposes.has(value)) {
+        activePurposes.delete(value);
+      } else {
+        activePurposes.add(value);
+      }
+      updatePurposeTags();
       applyPopularFilters();
     });
   });
@@ -236,7 +255,8 @@ function initializePopularTempleGrid(grid) {
       const matchesQuery = !query || normalize(card.dataset.searchText).includes(query);
       const matchesRegion = !activeRegion || card.dataset.region === activeRegion;
       const matchesProvince = !activeProvince || card.dataset.province === activeProvince;
-      return matchesQuery && matchesRegion && matchesProvince;
+      const matchesPurpose = !activePurposes.size || splitDataTags(card.dataset.blessings).some((tag) => activePurposes.has(tag));
+      return matchesQuery && matchesRegion && matchesProvince && matchesPurpose;
     });
     visibleCount = Math.min(initialCount, filteredCards.length);
     renderVisibleCards();
@@ -293,10 +313,18 @@ function initializePopularTempleGrid(grid) {
     provinceTagsRoot.append(allButton, ...provinces.map((province) => createFilterTag(province, province, activeProvince === province)));
   }
 
+  function updatePurposeTags() {
+    purposeTags.forEach((tag) => {
+      const value = tag.value || "";
+      tag.classList.toggle("is-active", value ? activePurposes.has(value) : activePurposes.size === 0);
+    });
+  }
+
   function createFilterTag(label, value, isActive) {
     const button = document.createElement("button");
     button.type = "button";
     button.value = value;
+    button.setAttribute("data-popular-province-tag", "");
     button.textContent = label;
     button.classList.toggle("is-active", isActive);
     button.addEventListener("click", () => {
@@ -311,6 +339,13 @@ function initializePopularTempleGrid(grid) {
     if (!loadMoreButton) return;
     loadMoreButton.hidden = visibleCount >= filteredCards.length;
   }
+}
+
+function splitDataTags(value) {
+  return String(value || "")
+    .split(";")
+    .map((item) => item.trim())
+    .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
 }
 
 async function initializeTempleDirectory(rootElement) {

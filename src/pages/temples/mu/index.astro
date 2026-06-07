@@ -34,6 +34,35 @@ const regionOrder = [
 const popularRegions = Array.from(new Set(rankedTemples.map((temple: TempleCard) => temple.region))).sort(
   (a: string, b: string) => regionOrder.indexOf(a) - regionOrder.indexOf(b),
 );
+const purposeOrder = [
+  "โชคลาภ",
+  "การเงิน/ค้าขาย",
+  "ความรัก/คู่ครอง",
+  "สุขภาพ/อายุยืน",
+  "ความสำเร็จ/ก้าวหน้า",
+  "การงาน",
+  "สิริมงคลทั่วไป",
+  "แคล้วคลาด/คุ้มครอง",
+  "สงบใจ/ปฏิบัติธรรม",
+  "สติปัญญา/การเรียน",
+  "ชื่อเสียง/เมตตามหานิยม",
+  "ครอบครัว",
+  "สะเดาะเคราะห์/แก้ชง",
+  "ปีเกิด/พระธาตุประจำปี",
+];
+const splitTags = (value?: string) =>
+  String(value || "")
+    .split(";")
+    .map((item) => item.trim())
+    .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
+const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTags(temple.blessings)))).sort(
+  (a, b) => {
+    const aIndex = purposeOrder.indexOf(a);
+    const bIndex = purposeOrder.indexOf(b);
+    if (aIndex !== -1 || bIndex !== -1) return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+    return a.localeCompare(b, "th");
+  },
+);
 ---
 
 <BaseLayout
@@ -88,15 +117,27 @@ const popularRegions = Array.from(new Set(rankedTemples.map((temple: TempleCard)
             <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>เคลียร์ข้อมูล</button>
           </div>
         </form>
-        <div class="popular-temple-region-tags" aria-label="กรองตามภาค">
-          <button type="button" class="is-active" data-popular-region-tag value="">ทั้งหมด</button>
-          {popularRegions.map((region) => (
-            <button type="button" data-popular-region-tag value={region}>{region}</button>
-          ))}
+        <div class="popular-temple-region-filter">
+          <span>ภาค</span>
+          <div class="popular-temple-region-tags" aria-label="กรองตามภาค">
+            <button type="button" class="is-active" data-popular-region-tag value="">ทั้งหมด</button>
+            {popularRegions.map((region) => (
+              <button type="button" data-popular-region-tag value={region}>{region}</button>
+            ))}
+          </div>
         </div>
         <div class="popular-temple-province-filter" data-popular-province-filter hidden>
           <span>จังหวัด</span>
           <div class="popular-temple-province-tags" aria-label="กรองตามจังหวัด" data-popular-province-tags></div>
+        </div>
+        <div class="popular-temple-purpose-filter">
+          <span>จุดประสงค์</span>
+          <div class="popular-temple-purpose-tags" aria-label="กรองตามจุดประสงค์" data-popular-purpose-tags>
+            <button type="button" class="is-active" data-popular-purpose-tag value="">ทั้งหมด</button>
+            {purposeTags.map((purpose) => (
+              <button type="button" data-popular-purpose-tag value={purpose}>{purpose}</button>
+            ))}
+          </div>
         </div>
       </section>
     </TempleSearchHero>
@@ -132,6 +173,7 @@ const popularRegions = Array.from(new Set(rankedTemples.map((temple: TempleCard)
               data-region={temple.region}
               data-province={temple.province}
               data-district={temple.district}
+              data-blessings={temple.blessings ?? ""}
               data-search-text={`${temple.name} ${temple.placeType ?? ""} ${temple.region} ${temple.province} ${temple.district ?? ""} ${temple.blessings ?? ""} ${temple.objectHero ?? ""}`}
               data-popular-temple-card
               data-image-placeholder={hasTempleImage ? undefined : "true"}
