@@ -4,6 +4,7 @@ import { execFileSync } from "node:child_process";
 const repoRoot = new URL("../", import.meta.url);
 const dataDir = new URL("src/data/", repoRoot);
 const outputDir = new URL("outputs/9-temples-research/", repoRoot);
+const globalRankingWorkbook = new URL("temple-global-ranking-dataset.xlsx", outputDir);
 
 const INPUTS = {
   popular: {
@@ -32,6 +33,7 @@ const PLACEHOLDER_IMAGE = "/assets/images/temple-placeholder-auspicious.png";
 const GENERATED_AT = new Date().toISOString().slice(0, 10);
 const IMAGE_OVERRIDES = await readJson(new URL("temple-image-overrides.json", dataDir), {});
 const IMAGE_OVERRIDES_BY_KEY = buildImageOverrideMap(IMAGE_OVERRIDES);
+const globalRankingByKey = readGlobalRankingMap(globalRankingWorkbook);
 
 const REGION_MAP = new Map([
   ["กรุงเทพฯ", "ภาคกลาง"],
@@ -135,6 +137,8 @@ const COORDINATE_HINTS = new Map([
   ["ศาลพระนารายณ์ทรงสุบรรณ ราชประสงค์|กรุงเทพมหานคร", [13.744676168, 100.541478875]],
   ["ศาลพระแม่อุมาเทวี ราชประสงค์|กรุงเทพมหานคร", [13.74655, 100.5411]],
   ["อุทยานธรรมเขานาในหลวง|สุราษฎร์ธานี", [8.778146, 98.955121]],
+  ["พระแม่ลักษมี ข้างเซ็นทรัลลาดพร้าว|กรุงเทพมหานคร", [13.8168385, 100.5613613]],
+  ["ถ้ำนาคา|บึงกาฬ", [17.95212, 104.10445]],
 ]);
 
 const previousPopular = await readJson(INPUTS.popular.previous, []);
@@ -149,7 +153,14 @@ for (const [collection, config] of Object.entries(INPUTS)) {
   const masterRows = readWorkbookSheet(config.workbook, "Temple_Master");
   let runtimeRows = masterRows.map((row) => buildRuntimeRow(collection, row, enrichmentByKey));
   runtimeRows = await enrichMissingRuntimeRows(runtimeRows);
-  runtimeRows = runtimeRows.map((row, index) => ({ ...row, rank: index + 1 }));
+  runtimeRows = runtimeRows
+    .sort((a, b) =>
+      (Number(a.rank) || 999999) - (Number(b.rank) || 999999) ||
+      Number(b.categoryMentions || 0) - Number(a.categoryMentions || 0) ||
+      a.province.localeCompare(b.province, "th") ||
+      a.name.localeCompare(b.name, "th")
+    )
+    .map((row, index) => ({ ...row, categoryRank: index + 1 }));
   results[collection] = summarizeRuntimeRows(runtimeRows);
 
   if (shouldWrite) {
@@ -174,11 +185,36 @@ function readWorkbookSheet(workbookUrl, sheetName) {
     .map((row) => Object.fromEntries(headers.map((header, index) => [String(header || "").trim(), row[index] ?? ""])));
 }
 
+function readGlobalRankingMap(workbookUrl) {
+  try {
+    return new Map(
+      readWorkbookSheet(workbookUrl, "Global_Ranking")
+        .map((row) => [
+          cleanText(row.templeMasterKey),
+          {
+            globalRank: Number(row.globalRank) || 0,
+            totalMentions: Number(row.totalMentions) || 0,
+            popularMentions: Number(row.popularMentions) || 0,
+            muMentions: Number(row.muMentions) || 0,
+            sacredMentions: Number(row.sacredMentions) || 0,
+            uniqueSourceCount: Number(row.uniqueSourceCount) || 0,
+            categoryMembership: cleanText(row.categoryMembership),
+          },
+        ])
+        .filter(([key]) => key),
+    );
+  } catch (error) {
+    console.warn(`Global ranking workbook unavailable; falling back to category ranks. ${error.message}`);
+    return new Map();
+  }
+}
+
 function buildRuntimeRow(collection, row, enrichmentByKey) {
   const name = cleanText(row.templeName);
   const province = cleanText(row.province);
   const key = `${name}|${province}`;
   const enrichment = enrichmentByKey.get(key) || {};
+  const globalRanking = globalRankingByKey.get(key) || {};
   const imageHint = IMAGE_HINTS.get(key);
   const imageOverride = IMAGE_OVERRIDES?.[collection]?.[key] || IMAGE_OVERRIDES_BY_KEY.get(key);
   const coordinateHint = COORDINATE_HINTS.get(key);
@@ -189,12 +225,20 @@ function buildRuntimeRow(collection, row, enrichmentByKey) {
   const hasCoordinates = Number.isFinite(Number(coordinateFields.latitude)) && Number.isFinite(Number(coordinateFields.longitude));
 
   return stripEmpty({
-    rank: Number(row.no) || 0,
+    rank: Number(globalRanking.globalRank) || Number(row.no) || 0,
+    globalRank: Number(globalRanking.globalRank) || undefined,
     name,
     region: normalizeRegion(row.region),
     province,
     district: normalizeDistrict(row.districtArea),
-    mentions: Number(row.occurrenceCount) || 0,
+    mentions: Number(globalRanking.totalMentions) || Number(row.occurrenceCount) || 0,
+    globalMentions: Number(globalRanking.totalMentions) || undefined,
+    categoryMentions: Number(row.occurrenceCount) || 0,
+    popularMentions: Number(globalRanking.popularMentions) || undefined,
+    muMentions: Number(globalRanking.muMentions) || undefined,
+    sacredMentions: Number(globalRanking.sacredMentions) || undefined,
+    globalSourceCount: Number(globalRanking.uniqueSourceCount) || undefined,
+    categoryMembership: globalRanking.categoryMembership || undefined,
     placeType: cleanText(row.placeType) || enrichment.placeType || undefined,
     blessings: normalizeList(row.blessingCategories, /;/u).join("; "),
     objectHero: normalizeList(row.objectHero, /[;/]/u).join("; "),
