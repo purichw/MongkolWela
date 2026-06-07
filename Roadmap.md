@@ -33,6 +33,7 @@ Latest known code state:
 - Added separate banner configuration for temple pages through `src/data/temple-page-banners.json`.
 - Added normalized travel route objects and readable grouped travel details on temple detail pages.
 - Added a global scroll progress indicator.
+- Replaced the old top loading bar with a session-aware transparent overlay loader, vector outline icon animation, skeleton state, and timeout messaging.
 - Deployed latest changes to production.
 
 ## Current Working Set

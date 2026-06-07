@@ -36,6 +36,9 @@ Important behavior:
 - `public/styles.css` also imports CSS files with explicit version query strings. Bump those when cache correctness matters.
 - `extraScripts` is passed by pages that need route-specific JS.
 - A fixed scroll progress indicator is rendered by `BaseLayout.astro`, styled in `base.css`, and updated by `scroll-progress.js`.
+- A global page loader is rendered by `LoadingScreen.astro`, styled in `base.css`, and controlled by `page-loader.js`.
+  It shows a 3-second simulated intro once per browser session, then only reappears for slow loads or pending internal navigation.
+  The loader uses transparent vector outline icons, a subtle skeleton state, simulated progress, and timeout messaging for unusually long loads.
 
 Shared shell components:
 

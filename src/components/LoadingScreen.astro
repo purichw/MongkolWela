@@ -7,44 +7,108 @@
   aria-valuemin="0"
   aria-valuemax="100"
   aria-valuenow="0"
-  style="position:fixed;top:0;left:0;width:100%;height:0;overflow:hidden;opacity:0;pointer-events:none;"
+  style="position:fixed;inset:0;width:100%;height:0;overflow:hidden;opacity:0;pointer-events:none;"
 >
-  <div class="loader-icon-strip" aria-hidden="true">
-    <svg class="loader-mark loader-mark-astro" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M8.5 20.5 13 12l4.2 4.4 3.6-7 4 11.1"></path>
-      <path d="M7.5 23.5h17"></path>
-      <circle cx="13" cy="12" r="1.2"></circle>
-      <circle cx="17.2" cy="16.4" r="1.2"></circle>
-      <circle cx="20.8" cy="9.4" r="1.2"></circle>
-      <path d="M25 6v4M23 8h4"></path>
-    </svg>
+  <svg class="loader-symbols" aria-hidden="true">
+    <symbol id="loader-icon-cards" viewBox="0 0 120 120">
+      <rect x="24" y="26" width="44" height="66" rx="8" transform="rotate(-10 46 59)"></rect>
+      <rect x="48" y="20" width="44" height="72" rx="8" transform="rotate(9 70 56)"></rect>
+      <path d="M72 38l5 11 12 2-9 8 2 12-10-6-11 6 3-12-9-8 12-2z"></path>
+      <path d="M42 62c11-24 25-26 40-4"></path>
+    </symbol>
+    <symbol id="loader-icon-palm" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="43"></circle>
+      <path d="M37 79c8-20 6-43 9-50 2-5 8-4 8 2v31"></path>
+      <path d="M55 62V25c0-6 10-6 10 0v37"></path>
+      <path d="M66 62V31c0-6 10-6 10 0v37"></path>
+      <path d="M77 67V43c0-6 10-6 10 0v25c0 25-15 34-33 34-13 0-22-6-30-18"></path>
+      <path d="M42 82c9-9 16-13 30-13"></path>
+      <path d="M52 79l12-16M64 82l10-18"></path>
+    </symbol>
+    <symbol id="loader-icon-crystal" viewBox="0 0 120 120">
+      <circle cx="60" cy="50" r="34"></circle>
+      <path d="M34 91h52M43 80c8 8 34 8 42 0"></path>
+      <path d="M44 47c3-13 12-21 26-23"></path>
+      <path d="M78 38l4 8 8 3-8 3-4 8-3-8-8-3 8-3z"></path>
+    </symbol>
+    <symbol id="loader-icon-eye" viewBox="0 0 120 120">
+      <path d="M18 60c18-24 66-24 84 0-18 24-66 24-84 0z"></path>
+      <circle cx="60" cy="60" r="16"></circle>
+      <circle cx="60" cy="60" r="5"></circle>
+      <path d="M60 23v14M60 83v14M28 36l10 10M92 36l-10 10M28 84l10-10M92 84l-10-10"></path>
+    </symbol>
+    <symbol id="loader-icon-pendulum" viewBox="0 0 120 120">
+      <path d="M40 18v22M82 18v58"></path>
+      <path d="M40 40l18 26-18 26-18-26z"></path>
+      <path d="M69 76c8 8 20 8 28 0"></path>
+      <path d="M28 70c-9-8-9-20 0-28"></path>
+    </symbol>
+    <symbol id="loader-icon-runes" viewBox="0 0 120 120">
+      <rect x="20" y="31" width="28" height="36" rx="8" transform="rotate(-14 34 49)"></rect>
+      <rect x="48" y="22" width="28" height="40" rx="8" transform="rotate(8 62 42)"></rect>
+      <rect x="75" y="40" width="28" height="34" rx="8" transform="rotate(17 89 57)"></rect>
+      <rect x="45" y="70" width="32" height="34" rx="8" transform="rotate(-7 61 87)"></rect>
+      <path d="M32 40v18l10-10M59 32v23M59 43l12-11M59 43l12 12M86 49h12M92 43v22M56 78l14 18M70 78L56 96"></path>
+    </symbol>
+    <symbol id="loader-icon-compass" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="42"></circle>
+      <path d="M60 18l9 29 31 13-31 13-9 29-9-29-31-13 31-13z"></path>
+      <circle cx="60" cy="60" r="8"></circle>
+    </symbol>
+    <symbol id="loader-icon-shrine" viewBox="0 0 120 120">
+      <path d="M28 46h64M36 46v46M84 46v46M22 92h96M32 32h56l10 14H22z"></path>
+      <path d="M48 92V64h24v28M42 76h36"></path>
+      <path d="M60 17v13M52 25h16"></path>
+    </symbol>
+    <symbol id="loader-icon-cup" viewBox="0 0 120 120">
+      <path d="M26 44h58v23c0 16-13 29-29 29S26 83 26 67z"></path>
+      <path d="M84 50h9c9 0 12 16 1 22l-10 5"></path>
+      <path d="M36 32c8-8 18-8 26 0 7 7 15 7 23 0"></path>
+      <path d="M39 60h38"></path>
+      <path d="M35 98h56"></path>
+    </symbol>
+    <symbol id="loader-icon-zodiac" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="43"></circle>
+      <circle cx="60" cy="60" r="17"></circle>
+      <path d="M60 17v26M60 77v26M17 60h26M77 60h26M30 30l18 18M72 72l18 18M90 30L72 48M48 72L30 90"></path>
+      <path d="M56 43c14 1 24 12 23 26"></path>
+    </symbol>
+  </svg>
 
-    <svg class="loader-mark loader-mark-tarot" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="10.5" y="6.5" width="12" height="19" rx="2.2" transform="rotate(-7 16.5 16)"></rect>
-      <circle cx="16.5" cy="16" r="3.5"></circle>
-      <path d="M16.5 9.2v3M16.5 19.8v3M13.5 16h6"></path>
-      <path d="M12.7 8.8 20 23.4"></path>
-    </svg>
+  <div class="loader-veil" aria-hidden="true"></div>
 
-    <svg class="loader-mark loader-mark-number" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M10.5 9.5h12L14.5 24"></path>
-      <path d="M9.5 24h13"></path>
-      <circle cx="9.5" cy="8.5" r="1"></circle>
-      <circle cx="23" cy="24.5" r="1"></circle>
-    </svg>
+  <div class="loader-panel">
+    <div class="loader-skeleton" aria-hidden="true">
+      <span class="loader-skeleton-line loader-skeleton-line-short"></span>
+      <span class="loader-skeleton-line loader-skeleton-line-wide"></span>
+      <span class="loader-skeleton-card"></span>
+      <span class="loader-skeleton-line"></span>
+    </div>
 
-    <svg class="loader-mark loader-mark-feng" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M8 15.5 16 8l8 7.5"></path>
-      <path d="M10.5 14.8v11h11v-11"></path>
-      <path d="M14.2 25.8v-6h3.6v6"></path>
-      <path d="M10 7h12M13 4.8h6"></path>
-    </svg>
+    <div class="loader-core">
+      <div class="loader-icon-stage" aria-hidden="true">
+        <svg class="loader-vector-icon loader-vector-icon-1" viewBox="0 0 120 120"><use href="#loader-icon-cards"></use></svg>
+        <svg class="loader-vector-icon loader-vector-icon-2" viewBox="0 0 120 120"><use href="#loader-icon-palm"></use></svg>
+        <svg class="loader-vector-icon loader-vector-icon-3" viewBox="0 0 120 120"><use href="#loader-icon-crystal"></use></svg>
+        <svg class="loader-vector-icon loader-vector-icon-4" viewBox="0 0 120 120"><use href="#loader-icon-eye"></use></svg>
+        <svg class="loader-vector-icon loader-vector-icon-5" viewBox="0 0 120 120"><use href="#loader-icon-pendulum"></use></svg>
+        <svg class="loader-vector-icon loader-vector-icon-6" viewBox="0 0 120 120"><use href="#loader-icon-runes"></use></svg>
+        <svg class="loader-vector-icon loader-vector-icon-7" viewBox="0 0 120 120"><use href="#loader-icon-compass"></use></svg>
+        <svg class="loader-vector-icon loader-vector-icon-8" viewBox="0 0 120 120"><use href="#loader-icon-shrine"></use></svg>
+        <svg class="loader-vector-icon loader-vector-icon-9" viewBox="0 0 120 120"><use href="#loader-icon-cup"></use></svg>
+        <svg class="loader-vector-icon loader-vector-icon-10" viewBox="0 0 120 120"><use href="#loader-icon-zodiac"></use></svg>
+      </div>
 
-    <svg class="loader-mark loader-mark-spirit" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M6.5 16s3.8-6 9.5-6 9.5 6 9.5 6-3.8 6-9.5 6-9.5-6-9.5-6Z"></path>
-      <circle cx="16" cy="16" r="3.2"></circle>
-      <path d="M16 5v3M16 24v3M7.5 8.2l2.2 2.2M22.3 10.4l2.2-2.2"></path>
-    </svg>
+      <p class="loader-kicker">กำลังโหลด</p>
+      <p class="loader-title">มงคลเวลา</p>
+      <p class="loader-status" data-loader-status>กำลังเรียงจังหวะมงคลให้คุณ</p>
+      <p class="loader-timeout" data-loader-timeout aria-live="polite">
+        โหลดนานกว่าปกติเล็กน้อย กำลังรอสัญญาณให้พร้อม
+      </p>
+
+      <span class="loader-progress-track">
+        <span data-loader-progress></span>
+      </span>
+    </div>
   </div>
-  <span data-loader-progress></span>
 </div>

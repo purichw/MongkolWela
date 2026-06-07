@@ -23,7 +23,7 @@ const {
   extraScripts = [],
 } = Astro.props as Props;
 
-const assetVersion = "20260607-10";
+const assetVersion = "20260607-11";
 const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
 ---
 
@@ -35,7 +35,13 @@ const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     <script is:inline>
-      document.documentElement.classList.add("is-loading");
+      try {
+        if (window.sessionStorage.getItem("mongkolwela.loader.v2.seen") !== "1") {
+          document.documentElement.classList.add("is-loading");
+        }
+      } catch {
+        document.documentElement.classList.add("is-loading");
+      }
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

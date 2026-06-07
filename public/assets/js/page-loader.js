@@ -1,25 +1,70 @@
 const selectors = {
   loader: "[data-page-loader]",
   progress: "[data-loader-progress]",
+  status: "[data-loader-status]",
+  timeout: "[data-loader-timeout]",
 };
 
-let progress = 8;
-let target = 86;
-let frame = 0;
-let hideTimer = 0;
+const SESSION_KEY = "mongkolwela.loader.v2.seen";
+const FIRST_SESSION_DURATION = 3000;
+const SLOW_LOAD_DELAY = 850;
+const NAVIGATION_DELAY = 260;
+const TIMEOUT_DELAY = 4200;
+const LONG_TIMEOUT_DELAY = 9000;
+
+const messages = {
+  intro: "กำลังเรียงจังหวะมงคลให้คุณ",
+  slow: "กำลังเตรียมข้อมูลให้พร้อม",
+  navigation: "กำลังเปิดหน้าถัดไป",
+  timeout: "โหลดนานกว่าปกติเล็กน้อย กำลังรอสัญญาณให้พร้อม",
+  longTimeout: "อินเทอร์เน็ตอาจช้า ระบบยังพยายามโหลดหน้าเว็บให้อยู่",
+};
 
 export function initPageLoader() {
   const loader = document.querySelector(selectors.loader);
   const progressBar = document.querySelector(selectors.progress);
+  const status = document.querySelector(selectors.status);
+  const timeout = document.querySelector(selectors.timeout);
   const progressRoot = loader?.matches("[role='progressbar']") ? loader : null;
 
   if (!loader || !progressBar || !progressRoot) return;
 
-  const state = { loader, progressBar, progressRoot };
-  startLoader(state, "is-loading");
+  const state = {
+    loader,
+    progressBar,
+    progressRoot,
+    status,
+    timeout,
+    frame: 0,
+    hideTimer: 0,
+    slowTimer: 0,
+    navigationTimer: 0,
+    timeoutTimer: 0,
+    longTimeoutTimer: 0,
+    progress: 8,
+    target: 86,
+    visible: false,
+    minVisibleUntil: 0,
+    finishRequested: false,
+  };
+
+  const firstSession = shouldShowFirstSessionLoader();
+
+  if (firstSession) {
+    markSessionSeen();
+    startLoader(state, {
+      className: "is-loading",
+      minDuration: FIRST_SESSION_DURATION,
+      statusText: messages.intro,
+      target: 92,
+    });
+  } else {
+    document.documentElement.classList.remove("is-loading");
+    scheduleSlowLoad(state);
+  }
 
   if (document.readyState === "complete") {
-    window.setTimeout(() => finishLoader(state), 220);
+    finishLoader(state);
   } else {
     window.addEventListener("load", () => finishLoader(state), { once: true });
   }
@@ -35,59 +80,177 @@ export function initPageLoader() {
     const link = targetElement?.closest("a");
     if (!shouldShowNavigationLoader(event, link)) return;
 
-    startLoader(state, "is-navigating");
+    scheduleNavigationLoader(state);
   }, true);
 
   window.addEventListener("beforeunload", () => {
-    startLoader(state, "is-navigating");
+    startLoader(state, {
+      className: "is-navigating",
+      minDuration: 0,
+      statusText: messages.navigation,
+      target: 94,
+    });
   });
 
   window.monkolWelaLoader = {
-    show: () => startLoader(state, "is-navigating"),
+    show: () => startLoader(state, {
+      className: "is-navigating",
+      minDuration: 0,
+      statusText: messages.navigation,
+      target: 94,
+    }),
     hide: () => finishLoader(state),
   };
 }
 
-function startLoader(state, className) {
-  window.clearTimeout(hideTimer);
-  document.documentElement.classList.add(className);
+function startLoader(state, options) {
+  window.clearTimeout(state.hideTimer);
+  window.clearTimeout(state.slowTimer);
+  window.clearTimeout(state.navigationTimer);
+  window.clearTimeout(state.timeoutTimer);
+  window.clearTimeout(state.longTimeoutTimer);
+  document.documentElement.classList.add(options.className);
+  state.loader.classList.remove("has-timeout", "has-long-timeout");
   state.loader.setAttribute("aria-hidden", "false");
-  state.progressRoot.setAttribute("aria-valuenow", String(Math.round(progress)));
-  target = className === "is-navigating" ? 92 : 86;
-  progress = Math.max(progress, className === "is-navigating" ? 18 : 8);
-  setProgress(state, progress);
+  state.progressRoot.setAttribute("aria-busy", "true");
+  state.progressRoot.setAttribute("aria-valuenow", String(Math.round(state.progress)));
+  state.visible = true;
+  state.finishRequested = false;
+  state.minVisibleUntil = performance.now() + (options.minDuration || 0);
+  state.target = options.target || 86;
+  state.progress = Math.max(state.progress, options.className === "is-navigating" ? 18 : 8);
+  setText(state.status, options.statusText || messages.slow);
+  setText(state.timeout, messages.timeout);
+  setProgress(state, state.progress);
   tickProgress(state);
+  scheduleTimeoutMessages(state);
 }
 
 function finishLoader(state) {
-  target = 100;
-  setProgress(state, 100);
-  window.cancelAnimationFrame(frame);
+  window.clearTimeout(state.slowTimer);
+  window.clearTimeout(state.navigationTimer);
+  state.finishRequested = true;
 
-  hideTimer = window.setTimeout(() => {
+  if (!state.visible) {
+    resetLoader(state);
+    return;
+  }
+
+  const wait = Math.max(0, state.minVisibleUntil - performance.now());
+  if (wait > 0) {
+    window.clearTimeout(state.hideTimer);
+    state.hideTimer = window.setTimeout(() => finishLoader(state), wait);
+    return;
+  }
+
+  state.target = 100;
+  setProgress(state, 100);
+  window.cancelAnimationFrame(state.frame);
+
+  state.hideTimer = window.setTimeout(() => {
     document.documentElement.classList.remove("is-loading", "is-navigating");
-    state.loader.setAttribute("aria-hidden", "true");
-    progress = 8;
-    target = 86;
-    setProgress(state, progress);
+    resetLoader(state);
   }, 360);
 }
 
+function resetLoader(state) {
+  window.clearTimeout(state.timeoutTimer);
+  window.clearTimeout(state.longTimeoutTimer);
+  window.cancelAnimationFrame(state.frame);
+  state.visible = false;
+  state.finishRequested = false;
+  state.minVisibleUntil = 0;
+  state.loader.classList.remove("has-timeout", "has-long-timeout");
+  state.progressRoot.removeAttribute("aria-busy");
+  state.progressRoot.setAttribute("aria-valuenow", "8");
+  state.loader.setAttribute("aria-hidden", "true");
+  state.progress = 8;
+  state.target = 86;
+  setProgress(state, state.progress);
+  setText(state.status, messages.intro);
+  setText(state.timeout, messages.timeout);
+}
+
+function scheduleSlowLoad(state) {
+  if (document.readyState === "complete") return;
+
+  window.clearTimeout(state.slowTimer);
+  state.slowTimer = window.setTimeout(() => {
+    if (document.readyState === "complete" || state.visible) return;
+
+    startLoader(state, {
+      className: "is-loading",
+      minDuration: 650,
+      statusText: messages.slow,
+      target: 88,
+    });
+  }, SLOW_LOAD_DELAY);
+}
+
+function scheduleNavigationLoader(state) {
+  window.clearTimeout(state.navigationTimer);
+  state.navigationTimer = window.setTimeout(() => {
+    startLoader(state, {
+      className: "is-navigating",
+      minDuration: 0,
+      statusText: messages.navigation,
+      target: 94,
+    });
+  }, NAVIGATION_DELAY);
+}
+
+function scheduleTimeoutMessages(state) {
+  state.timeoutTimer = window.setTimeout(() => {
+    if (!state.visible) return;
+    state.loader.classList.add("has-timeout");
+    setText(state.status, messages.slow);
+    setText(state.timeout, messages.timeout);
+  }, TIMEOUT_DELAY);
+
+  state.longTimeoutTimer = window.setTimeout(() => {
+    if (!state.visible) return;
+    state.loader.classList.add("has-long-timeout");
+    setText(state.timeout, messages.longTimeout);
+  }, LONG_TIMEOUT_DELAY);
+}
+
+function shouldShowFirstSessionLoader() {
+  try {
+    return window.sessionStorage.getItem(SESSION_KEY) !== "1";
+  } catch {
+    return true;
+  }
+}
+
+function markSessionSeen() {
+  try {
+    window.sessionStorage.setItem(SESSION_KEY, "1");
+  } catch {
+    // If sessionStorage is blocked, the intro loader remains per page.
+  }
+}
+
+function setText(element, text) {
+  if (element) {
+    element.textContent = text;
+  }
+}
+
 function tickProgress(state) {
-  window.cancelAnimationFrame(frame);
+  window.cancelAnimationFrame(state.frame);
 
   const update = () => {
-    const distance = target - progress;
+    const distance = state.target - state.progress;
     const step = Math.max(0.08, distance * 0.022);
-    progress = Math.min(target, progress + step);
-    setProgress(state, progress);
+    state.progress = Math.min(state.target, state.progress + step);
+    setProgress(state, state.progress);
 
-    if (progress < target) {
-      frame = window.requestAnimationFrame(update);
+    if (state.progress < state.target) {
+      state.frame = window.requestAnimationFrame(update);
     }
   };
 
-  frame = window.requestAnimationFrame(update);
+  state.frame = window.requestAnimationFrame(update);
 }
 
 function setProgress(state, value) {
