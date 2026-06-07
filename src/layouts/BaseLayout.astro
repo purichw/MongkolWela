@@ -76,7 +76,7 @@ const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v
           document.head.appendChild(script);
         };
 
-        injectScript("/_vercel/insights/script.js");
+        injectScript("https://va.vercel-scripts.com/v1/script.js");
         injectScript("/_vercel/speed-insights/script.js");
       })();
     </script>
