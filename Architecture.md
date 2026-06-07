@@ -198,7 +198,8 @@ Location fields:
 - `plusCode`: Google Maps/Open Location Code label for exact lookup.
 - `latitude` / `longitude`: numeric coordinates for Leaflet rendering and fallback lookup.
 - `travelModes`: semicolon-separated normalized travel modes from `Temple_Master`.
-- `travelDetail`: structured transit access data for detail pages. Known keys include `summary`, `railAccess`, `boatAccess`, `busAccess`, `vanAccess`, `walkAccess`, `sources`, `confidence`, and `updatedAt`.
+- `travelDetail`: structured transit access data for detail pages. Known keys include `summary`, `railAccess`, `boatAccess`, `busAccess`, `vanAccess`, `walkAccess`, `routes`, `sources`, `confidence`, and `updatedAt`.
+- `travelDetail.routes`: normalized route objects for readable detail-page rendering. Known fields include `mode`, `stop`, `distanceText`, `routeText`, `operatorText`, `typeText`, and `isTransfer`.
 
 When both `plusCode` and coordinates are present, outbound Google Maps links should prefer `plusCode`; Leaflet minimaps still use coordinates.
 
@@ -287,7 +288,7 @@ Behavior:
 - Mini Leaflet map with a single marker.
 - Google Maps external link, preferring Plus Code with coordinate fallback.
 - Metadata block with area and travel mode fields.
-- Source-backed travel detail section, shown only when structured `travelDetail` data exists.
+- Source-backed travel detail section, shown only when structured `travelDetail` data exists. It uses compact recommendation cards plus grouped route rows from `travelDetail.routes`, with legacy access strings kept as fallback.
 - Related cards from same province/region where possible.
 
 Detail URL helper:

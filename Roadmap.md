@@ -31,6 +31,7 @@ Latest known code state:
 - Added coordinates to JSON data and both Excel workbooks.
 - Added mini map, annotation pins, share/copy buttons, metadata, and related cards to detail pages.
 - Added separate banner configuration for temple pages through `src/data/temple-page-banners.json`.
+- Added normalized travel route objects and readable grouped travel details on temple detail pages.
 - Deployed latest changes to production.
 
 ## Current Working Set
@@ -140,6 +141,7 @@ The JSON files are currently static outputs. Future pipeline could:
 - Validate image URLs.
 - Validate Plus Codes, coordinates, and travel modes.
 - Validate structured travel detail coverage and avoid invented route/vendor defaults when no source supports them.
+- Regenerate `travelDetail.routes` from the source workbook/generator when the travel source pipeline changes.
 - Produce a QA report for missing images/coordinates.
 
 Keep workbook writing through artifact-tool, not Python/openpyxl.

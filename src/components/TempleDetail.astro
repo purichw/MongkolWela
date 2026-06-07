@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getTempleTravel } from "../data/temple-travel.js";
 import { getTempleDetailUrl } from "../data/temple-slugs.js";
 
 interface Props {
@@ -35,11 +36,54 @@ interface Props {
       sources?: string;
       confidence?: string;
       updatedAt?: string;
+      routes?: {
+        mode?: string;
+        sourceKey?: string;
+        stop?: string;
+        name?: string;
+        title?: string;
+        distance?: string;
+        distanceText?: string;
+        route?: string;
+        routeText?: string;
+        line?: string;
+        operator?: string;
+        operatorText?: string;
+        type?: string;
+        typeText?: string;
+        isTransfer?: boolean;
+      }[];
     };
   };
   placeholderImage: string;
   relatedTemples?: Props["temple"][];
 }
+
+type TravelRoute = {
+  mode: string;
+  sectionLabel: string;
+  shortLabel: string;
+  stop: string;
+  distanceText?: string;
+  routeText?: string;
+  operatorText?: string;
+  typeText?: string;
+  isTransfer?: boolean;
+};
+
+type TravelView = {
+  routes: TravelRoute[];
+  sections: {
+    key: string;
+    mode: string;
+    label: string;
+    shortLabel: string;
+    highlightLabel: string;
+    routes: TravelRoute[];
+  }[];
+  recommendations: { label: string; route: TravelRoute }[];
+  hasTravelDetail: boolean;
+};
 
 const { collection, collectionLabel, collectionHref, temple, placeholderImage, relatedTemples = [] } = Astro.props as Props;
 const imageUrl = temple.imageUrl || placeholderImage;
@@ -59,14 +103,8 @@ const blessingItems = splitList(temple.blessings);
 const objectItems = splitList(temple.objectHero);
 const travelModeItems = splitList(temple.travelModes);
 const travelDetail = temple.travelDetail || {};
-const travelDetailSections = [
-  { label: "รถไฟ / รถไฟฟ้า", text: travelDetail.railAccess },
-  { label: "เรือ / ท่าเรือ", text: travelDetail.boatAccess },
-  { label: "รถประจำทาง", text: travelDetail.busAccess },
-  { label: "รถตู้ / รถรับส่ง", text: travelDetail.vanAccess },
-  { label: "จุดจอดใกล้สุด", text: travelDetail.walkAccess },
-].filter((item) => String(item.text || "").trim());
-const hasTravelDetail = Boolean(travelDetail.summary || travelDetailSections.length);
+const travelView = getTempleTravel(travelDetail) as TravelView;
+const hasTravelDetail = travelView.hasTravelDetail;
 const mapQuery = hasPlusCode ? plusCode : hasCoordinates ? `${latitude},${longitude}` : "";
 const mapHref = mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : "";
 const mapLabel = hasPlusCode ? plusCode : hasCoordinates ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : "";
@@ -148,17 +186,66 @@ const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Plac
 
         {hasTravelDetail && (
           <section class="temple-detail-transit" aria-labelledby="temple-detail-transit-title">
-            <h3 id="temple-detail-transit-title">วิธีเดินทาง</h3>
-            {travelDetail.summary && <p>{travelDetail.summary}</p>}
-            {travelDetailSections.length > 0 && (
+            <div class="temple-detail-transit__head">
+              <h3 id="temple-detail-transit-title">วิธีเดินทาง</h3>
+              {travelView.routes.length > 0 && <p>เลือกจากจุดจอดใกล้สุดและเส้นทางหลักที่มีข้อมูลยืนยัน</p>}
+            </div>
+
+            {travelView.recommendations.length > 0 && (
+              <div class="temple-detail-transit-highlights" aria-label="ทางเลือกแนะนำ">
+                {travelView.recommendations.map((item) => (
+                  <article>
+                    <span>{item.label}</span>
+                    <strong>{item.route.stop}</strong>
+                    <small>
+                      {item.route.shortLabel}
+                      {item.route.distanceText ? ` · ${item.route.distanceText}` : ""}
+                      {item.route.isTransfer ? " · ข้ามฟาก" : ""}
+                    </small>
+                  </article>
+                ))}
+              </div>
+            )}
+
+            {travelView.sections.length > 0 ? (
               <div class="temple-detail-transit__list">
-                {travelDetailSections.map((item, index) => (
+                {travelView.sections.map((item, index) => (
                   <details open={index < 2}>
                     <summary>{item.label}</summary>
-                    <p>{item.text}</p>
+                    <div class="temple-detail-route-list">
+                      {item.routes.map((route) => (
+                        <article class="temple-detail-route">
+                          <div class="temple-detail-route__top">
+                            <span>{route.shortLabel}</span>
+                            <strong>{route.stop}</strong>
+                            {route.distanceText && <small>{route.distanceText}</small>}
+                          </div>
+                          {(route.typeText || route.isTransfer) && (
+                            <div class="temple-detail-route__chips">
+                              {route.typeText && <span>{route.typeText}</span>}
+                              {route.isTransfer && <span>เรือข้ามฟาก</span>}
+                            </div>
+                          )}
+                          {route.routeText && (
+                            <p>
+                              <span>สาย/เส้นทาง</span>
+                              <b>{route.routeText}</b>
+                            </p>
+                          )}
+                          {route.operatorText && (
+                            <p>
+                              <span>ผู้ให้บริการ</span>
+                              <b>{route.operatorText}</b>
+                            </p>
+                          )}
+                        </article>
+                      ))}
+                    </div>
                   </details>
                 ))}
               </div>
+            ) : (
+              travelDetail.summary && <p class="temple-detail-transit__fallback">{travelDetail.summary}</p>
             )}
             {(travelDetail.confidence || travelDetail.updatedAt) && (
               <small>
