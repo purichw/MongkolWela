@@ -1,7 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getTempleDetailUrl } from "../data/temple-slugs.js";
 
 interface Props {
+  collection: "popular" | "mu";
   collectionLabel: string;
   collectionHref: string;
   temple: {
@@ -17,14 +19,56 @@ interface Props {
     objectHero?: string;
     latitude?: number | null;
     longitude?: number | null;
+    coordinateSource?: string;
+    coordinateAddress?: string;
+    imageSourceLabel?: string;
+    imageSourceUrl?: string;
   };
   placeholderImage: string;
+  relatedTemples?: Props["temple"][];
 }
 
-const { collectionLabel, collectionHref, temple, placeholderImage } = Astro.props as Props;
+const { collection, collectionLabel, collectionHref, temple, placeholderImage, relatedTemples = [] } = Astro.props as Props;
 const imageUrl = temple.imageUrl || placeholderImage;
 const title = `${temple.name} | ${collectionLabel} | มงคลเวลา`;
 const hasCoordinates = Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude));
+const latitude = Number(temple.latitude);
+const longitude = Number(temple.longitude);
+const locationText = [temple.region, temple.province, temple.district].filter(Boolean).join(" · ");
+const mapHref = hasCoordinates
+  ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
+  : "";
+const splitList = (value?: string) =>
+  String(value || "")
+    .split(";")
+    .map((item) => item.trim())
+    .filter(Boolean);
+const blessingItems = splitList(temple.blessings);
+const objectItems = splitList(temple.objectHero);
+const annotationItems = [
+  {
+    label: temple.placeType || "สถานที่ศักดิ์สิทธิ์",
+    text: locationText,
+    x: 66,
+    y: 38,
+  },
+  {
+    label: "ขอพรเด่น",
+    text: blessingItems[0],
+    x: 34,
+    y: 58,
+  },
+  {
+    label: "สิ่งสำคัญ",
+    text: objectItems[0],
+    x: 78,
+    y: 72,
+  },
+].filter((item) => item.label && item.text);
+const summaryText = blessingItems.length
+  ? `${temple.name} เหมาะสำหรับ${blessingItems.slice(0, 3).join(" · ")}`
+  : `${temple.name} หนึ่งในพิกัดแนะนำของ${collectionLabel} ใน${temple.province}`;
+const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Placeholder" ? temple.imageSourceLabel : "มงคลเวลา";
 ---
 
 <BaseLayout
@@ -34,51 +78,167 @@ const hasCoordinates = Number.isFinite(Number(temple.latitude)) && Number.isFini
   locale="th"
   page="temples"
   bodyClass="temples-hub-page"
+  extraScripts={["/assets/js/temple-detail.js"]}
 >
   <main class="temple-detail">
-    <nav class="temple-breadcrumb" aria-label="breadcrumb">
-      <a href="/">หน้าแรก</a>
-      <span>/</span>
-      <a href="/temples/">วัดดังเสริมมงคล</a>
-      <span>/</span>
-      <a href={collectionHref}>{collectionLabel}</a>
-      <span>/</span>
-      <span>{temple.name}</span>
+    <nav class="temple-detail__back" aria-label="breadcrumb">
+      <a href={collectionHref} aria-label={`กลับไป${collectionLabel}`}>
+        <span aria-hidden="true">‹</span>
+        กลับไป{collectionLabel}
+      </a>
+      <div>
+        <a href="/">หน้าแรก</a>
+        <span>/</span>
+        <a href="/temples/">วัดดังเสริมมงคล</a>
+        <span>/</span>
+        <a href={collectionHref}>{collectionLabel}</a>
+      </div>
     </nav>
 
-    <section class="temple-detail-hero">
-      <figure>
+    <section class="temple-detail-hero" aria-labelledby="temple-detail-title">
+      <figure class="temple-detail-hero__media">
         <img src={imageUrl} alt={temple.imageAlt || `${temple.name} ${temple.province}`} loading="eager" decoding="async" />
+        <figcaption>{sourceLabel}</figcaption>
+        {annotationItems.map((item, index) => (
+          <button
+            type="button"
+            class="temple-detail-pin"
+            style={`--pin-x:${item.x}%;--pin-y:${item.y}%`}
+            data-temple-detail-pin
+            aria-label={`${item.label}: ${item.text}`}
+          >
+            <span></span>
+            <em>
+              <strong>{item.label}</strong>
+              <small>{item.text}</small>
+              <b>{index === 0 ? "ดูข้อมูล" : "อ่านต่อ"}</b>
+            </em>
+          </button>
+        ))}
       </figure>
-      <div>
-        <p class="section-kicker">อันดับ #{temple.rank.toString().padStart(2, "0")}</p>
-        <h1>{temple.name}</h1>
-        <p>{temple.region} · {temple.province}{temple.district ? ` · ${temple.district}` : ""}</p>
-        <dl>
-          <div>
-            <dt>ประเภท</dt>
-            <dd>{temple.placeType || "วัดและสถานที่ศักดิ์สิทธิ์"}</dd>
+      <div class="temple-detail-hero__copy">
+        <p class="section-kicker">{collectionLabel} · อันดับ #{temple.rank.toString().padStart(2, "0")}</p>
+        <h1 id="temple-detail-title">{temple.name}</h1>
+        <p>{summaryText}</p>
+        <div class="temple-detail-tags" aria-label="ข้อมูลย่อ">
+          <span>{temple.placeType || "วัดและสถานที่ศักดิ์สิทธิ์"}</span>
+          <span>{temple.region}</span>
+          <span>{temple.province}</span>
+        </div>
+        <div class="temple-detail-actions" aria-label="การทำงานของหน้า">
+          {hasCoordinates && <a class="temple-detail-action temple-detail-action--primary" href={mapHref} target="_blank" rel="noopener">เปิดแผนที่</a>}
+          <button class="temple-detail-action" type="button" data-temple-detail-share data-share-title={title}>แชร์</button>
+          <button class="temple-detail-action" type="button" data-temple-detail-copy>คัดลอกลิงก์</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="temple-detail-layout" aria-label="รายละเอียดสถานที่">
+      <article class="temple-detail-story">
+        <p class="section-kicker">ข้อมูลสำคัญ</p>
+        <h2>จุดเด่นของพิกัดนี้</h2>
+        <p>
+          {temple.name} อยู่ใน{temple.province}{temple.district ? ` เขต/อำเภอ ${temple.district}` : ""} เป็นหนึ่งในสถานที่ที่ถูกจัดไว้ใน{collectionLabel}
+          เพื่อช่วยเลือกเส้นทางไหว้พระและวางแผนการเดินทางให้เหมาะกับจังหวะชีวิต
+        </p>
+
+        <div class="temple-detail-chip-group">
+          {blessingItems.length ? blessingItems.slice(0, 8).map((item) => <span>{item}</span>) : <span>ไหว้พระทำบุญ</span>}
+        </div>
+
+        {objectItems.length && (
+          <div class="temple-detail-notes">
+            <h3>สิ่งที่นิยมสักการะ</h3>
+            <ul>
+              {objectItems.slice(0, 6).map((item) => <li>{item}</li>)}
+            </ul>
           </div>
-          {temple.blessings && (
-            <div>
-              <dt>ขอพรเด่น</dt>
-              <dd>{temple.blessings}</dd>
+        )}
+      </article>
+
+      <aside class="temple-detail-side" aria-label="พิกัดและข้อมูลประกอบ">
+        <section class="temple-detail-map-card">
+          {hasCoordinates ? (
+            <>
+              <div
+                role="button"
+                tabindex="0"
+                class="temple-detail-map-card__map"
+                data-temple-detail-map
+                data-lat={latitude}
+                data-lng={longitude}
+                data-title={temple.name}
+                data-map-url={mapHref}
+                aria-label={`ดูแผนที่ ${temple.name}`}
+              >
+                <span>ดูแผนที่</span>
+              </div>
+              <div class="temple-detail-map-card__body">
+                <h2>พิกัดและการเดินทาง</h2>
+                <p>{locationText}</p>
+                <a href={mapHref} target="_blank" rel="noopener">เปิดใน Google Maps</a>
+              </div>
+            </>
+          ) : (
+            <div class="temple-detail-map-card__body">
+              <h2>พิกัดและการเดินทาง</h2>
+              <p>ยังไม่มีพิกัดยืนยันสำหรับสถานที่นี้</p>
             </div>
           )}
-          {temple.objectHero && (
-            <div>
-              <dt>สิ่งสำคัญ</dt>
-              <dd>{temple.objectHero}</dd>
-            </div>
-          )}
+        </section>
+
+        <dl class="temple-detail-meta">
+          <div>
+            <dt>จังหวัด</dt>
+            <dd>{temple.province}</dd>
+          </div>
+          <div>
+            <dt>อำเภอ / เขต</dt>
+            <dd>{temple.district || "-"}</dd>
+          </div>
+          <div>
+            <dt>ภาค</dt>
+            <dd>{temple.region}</dd>
+          </div>
           {hasCoordinates && (
             <div>
               <dt>พิกัด</dt>
-              <dd>{Number(temple.latitude).toFixed(6)}, {Number(temple.longitude).toFixed(6)}</dd>
+              <dd>{latitude.toFixed(6)}, {longitude.toFixed(6)}</dd>
+            </div>
+          )}
+          {temple.coordinateSource && (
+            <div>
+              <dt>แหล่งพิกัด</dt>
+              <dd>{temple.coordinateSource}</dd>
+            </div>
+          )}
+          {temple.imageSourceUrl && temple.imageSourceLabel && temple.imageSourceLabel !== "Placeholder" && (
+            <div>
+              <dt>ภาพประกอบ</dt>
+              <dd><a href={temple.imageSourceUrl} target="_blank" rel="noopener">{temple.imageSourceLabel}</a></dd>
             </div>
           )}
         </dl>
-      </div>
+      </aside>
     </section>
+
+    {relatedTemples.length > 0 && (
+      <section class="temple-detail-related" aria-labelledby="temple-detail-related-title">
+        <div>
+          <p class="section-kicker">พิกัดใกล้เคียง</p>
+          <h2 id="temple-detail-related-title">แนะนำในชุดเดียวกัน</h2>
+        </div>
+        <div class="temple-detail-related__grid">
+          {relatedTemples.slice(0, 3).map((item) => (
+            <a href={getTempleDetailUrl(collection, item)} class="temple-detail-related-card">
+              <img src={item.imageUrl || placeholderImage} alt={item.imageAlt || `${item.name} ${item.province}`} loading="lazy" decoding="async" />
+              <span>#{item.rank.toString().padStart(2, "0")}</span>
+              <strong>{item.name}</strong>
+              <small>{[item.province, item.district].filter(Boolean).join(" / ")}</small>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
   </main>
 </BaseLayout>

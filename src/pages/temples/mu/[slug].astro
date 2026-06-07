@@ -9,18 +9,25 @@ type Temple = (typeof temples)[number];
 
 export function getStaticPaths() {
   const staticTemples = applyTempleImageOverrides("mu", [...muTemples]) as Temple[];
-  return staticTemples.map((temple: Temple) => ({
-    params: { slug: createTempleSlug(temple) },
-    props: { temple },
-  }));
+  return staticTemples.map((temple: Temple) => {
+    const byProvince = staticTemples.filter((item) => item.name !== temple.name && item.province === temple.province);
+    const byRegion = staticTemples.filter((item) => item.name !== temple.name && item.province !== temple.province && item.region === temple.region);
+    const rest = staticTemples.filter((item) => item.name !== temple.name && item.province !== temple.province && item.region !== temple.region);
+    return {
+      params: { slug: createTempleSlug(temple) },
+      props: { temple, relatedTemples: [...byProvince, ...byRegion, ...rest].slice(0, 3) },
+    };
+  });
 }
 
-const { temple } = Astro.props;
+const { temple, relatedTemples } = Astro.props;
 ---
 
 <TempleDetail
+  collection="mu"
   collectionLabel="สายมู"
   collectionHref="/temples/mu/"
   temple={temple}
   placeholderImage={templePlaceholderImage}
+  relatedTemples={relatedTemples}
 />

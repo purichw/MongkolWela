@@ -359,72 +359,556 @@
 .temple-detail {
   width: min(var(--container), calc(100% - 40px));
   margin: 0 auto;
-  padding: 46px 0 84px;
+  padding: 32px 0 92px;
+}
+
+.temple-detail__back {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+  color: var(--ink-soft);
+  font-weight: 800;
+}
+
+.temple-detail__back a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.temple-detail__back > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--lacquer);
+}
+
+.temple-detail__back > a span {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.temple-detail__back div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.temple-detail__back div span:last-child {
+  color: var(--ink);
 }
 
 .temple-detail-hero {
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
-  gap: 28px;
+  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.78fr);
+  gap: 30px;
   align-items: stretch;
-  padding: 22px;
-  background: rgba(255, 250, 240, 0.78);
+  padding: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 252, 243, 0.94), rgba(245, 236, 216, 0.82)),
+    radial-gradient(circle at 82% 18%, rgba(194, 141, 53, 0.16), transparent 34%);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: 0 24px 70px rgba(57, 37, 22, 0.12);
 }
 
-.temple-detail-hero figure {
+.temple-detail-hero__media {
   margin: 0;
+  position: relative;
   overflow: hidden;
   background: #d9c9aa;
   border-radius: calc(var(--radius) - 4px);
+  min-height: 440px;
 }
 
-.temple-detail-hero img {
+.temple-detail-hero__media::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 42%;
+  background: linear-gradient(0deg, rgba(36, 23, 17, 0.44), rgba(36, 23, 17, 0));
+  pointer-events: none;
+}
+
+.temple-detail-hero__media img {
   width: 100%;
   height: 100%;
-  min-height: 360px;
+  min-height: inherit;
   object-fit: cover;
+  display: block;
+}
+
+.temple-detail-hero__media figcaption {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 2;
+  padding: 4px 9px;
+  color: #fff9e8;
+  background: rgba(34, 22, 15, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.temple-detail-pin {
+  position: absolute;
+  left: var(--pin-x);
+  top: var(--pin-y);
+  z-index: 4;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 2px solid rgba(255, 252, 237, 0.9);
+  border-radius: 999px;
+  background: #d6ad55;
+  box-shadow: 0 0 0 6px rgba(40, 23, 14, 0.22), 0 12px 28px rgba(29, 19, 12, 0.28);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.temple-detail-pin > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: radial-gradient(circle at 34% 30%, #fff5bd, #c8892f 64%, #8f2d25);
+}
+
+.temple-detail-pin em {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 14px);
+  display: grid;
+  gap: 6px;
+  width: min(280px, 72vw);
+  padding: 16px;
+  color: #fff8ea;
+  text-align: left;
+  font-style: normal;
+  background: rgba(34, 22, 15, 0.95);
+  border: 1px solid rgba(214, 173, 85, 0.42);
+  border-radius: 12px;
+  box-shadow: 0 18px 42px rgba(20, 12, 8, 0.32);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+}
+
+.temple-detail-pin em::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid rgba(34, 22, 15, 0.95);
+  transform: translateX(-50%);
+}
+
+.temple-detail-pin strong,
+.temple-detail-pin small,
+.temple-detail-pin b {
+  display: block;
+}
+
+.temple-detail-pin strong {
+  font-size: 0.98rem;
+  line-height: 1.25;
+}
+
+.temple-detail-pin small {
+  color: rgba(255, 248, 234, 0.82);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.temple-detail-pin b {
+  color: #f4d586;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.temple-detail-pin:hover em,
+.temple-detail-pin:focus-visible em,
+.temple-detail-pin.is-active em {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+.temple-detail-hero__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
 }
 
 .temple-detail-hero h1 {
-  margin: 0;
-  font-size: clamp(2.4rem, 5vw, 4.5rem);
+  margin: 2px 0 0;
+  font-size: clamp(2.4rem, 5vw, 5rem);
   font-weight: 900;
-  line-height: 1.12;
+  line-height: 1.05;
+  letter-spacing: 0;
 }
 
-.temple-detail-hero p {
+.temple-detail-hero__copy > p:not(.section-kicker) {
   margin: 14px 0 0;
   color: var(--ink-soft);
   font-size: 1.08rem;
   font-weight: 800;
+  line-height: 1.75;
 }
 
-.temple-detail-hero dl {
-  display: grid;
+.temple-detail-tags,
+.temple-detail-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.temple-detail-tags {
+  margin-top: 22px;
+}
+
+.temple-detail-tags span,
+.temple-detail-chip-group span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 7px 14px;
+  border: 1px solid rgba(143, 45, 37, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 253, 246, 0.74);
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.temple-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
   gap: 12px;
-  margin: 28px 0 0;
+  margin-top: 28px;
 }
 
-.temple-detail-hero dl div {
-  padding: 14px;
-  background: rgba(255, 253, 246, 0.76);
-  border: 1px solid rgba(77, 56, 41, 0.1);
+.temple-detail-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 1px solid rgba(77, 56, 41, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 253, 246, 0.74);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.temple-detail-action--primary {
+  border-color: var(--lacquer);
+  background: var(--lacquer);
+  color: #fff9ea;
+}
+
+.temple-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  gap: 34px;
+  align-items: start;
+  margin-top: 42px;
+}
+
+.temple-detail-story,
+.temple-detail-side,
+.temple-detail-related {
+  min-width: 0;
+}
+
+.temple-detail-story {
+  padding-top: 6px;
+}
+
+.temple-detail-story h2,
+.temple-detail-related h2,
+.temple-detail-map-card h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.7rem, 3vw, 2.8rem);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.temple-detail-story > p:not(.section-kicker) {
+  max-width: 760px;
+  margin: 16px 0 0;
+  color: var(--ink-soft);
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1.85;
+}
+
+.temple-detail-chip-group {
+  margin-top: 22px;
+}
+
+.temple-detail-notes {
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px dashed rgba(77, 56, 41, 0.24);
+}
+
+.temple-detail-notes h3 {
+  margin: 0 0 14px;
+  color: var(--lacquer);
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.temple-detail-notes ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.temple-detail-notes li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--ink);
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.temple-detail-notes li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d6ad55;
+}
+
+.temple-detail-side {
+  position: sticky;
+  top: 92px;
+  display: grid;
+  gap: 18px;
+}
+
+.temple-detail-map-card {
+  overflow: hidden;
+  background: rgba(255, 253, 246, 0.82);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 48px rgba(57, 37, 22, 0.1);
+}
+
+.temple-detail-map-card__map {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 224px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: #d9c9aa;
+  cursor: pointer;
+}
+
+.temple-detail-map-card__map .leaflet-container {
+  width: 100%;
+  min-height: 224px;
+}
+
+.temple-detail-map-card__map > span {
+  position: absolute;
+  inset: auto 14px 14px auto;
+  z-index: 402;
+  padding: 7px 14px;
+  color: #fff8ea;
+  background: rgba(34, 22, 15, 0.74);
+  border-radius: 999px;
+  font-weight: 900;
+  pointer-events: none;
+}
+
+.temple-detail-map-card__body {
+  padding: 20px;
+}
+
+.temple-detail-map-card h2 {
+  font-size: 1.25rem;
+}
+
+.temple-detail-map-card p {
+  margin: 8px 0 0;
+  color: var(--ink-soft);
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.temple-detail-map-card a {
+  display: inline-flex;
+  margin-top: 16px;
+  color: var(--lacquer);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.temple-detail-meta {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 2px 20px;
+  background: rgba(255, 253, 246, 0.72);
+  border: 1px solid rgba(77, 56, 41, 0.12);
   border-radius: var(--radius);
 }
 
-.temple-detail-hero dt {
-  color: var(--lacquer);
+.temple-detail-meta div {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: 14px;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(77, 56, 41, 0.08);
+}
+
+.temple-detail-meta div:last-child {
+  border-bottom: 0;
+}
+
+.temple-detail-meta dt {
+  color: var(--ink-soft);
   font-size: 0.82rem;
   font-weight: 900;
 }
 
-.temple-detail-hero dd {
-  margin: 5px 0 0;
+.temple-detail-meta dd {
+  margin: 0;
   color: var(--ink);
+  font-weight: 900;
+  line-height: 1.45;
+}
+
+.temple-detail-meta a {
+  color: var(--lacquer);
+  text-decoration: none;
+}
+
+.temple-detail-related {
+  margin-top: 56px;
+  padding-top: 36px;
+  border-top: 1px dashed rgba(77, 56, 41, 0.26);
+}
+
+.temple-detail-related__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 20px;
+}
+
+.temple-detail-related-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto auto;
+  gap: 8px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.temple-detail-related-card img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) - 8px);
+  box-shadow: 0 12px 28px rgba(57, 37, 22, 0.1);
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
+}
+
+.temple-detail-related-card:hover img {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 38px rgba(57, 37, 22, 0.16);
+}
+
+.temple-detail-related-card span {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  padding: 5px 10px;
+  color: #fff9ea;
+  background: var(--lacquer);
+  border: 1px solid rgba(244, 213, 134, 0.5);
+  border-radius: 999px;
+  font-weight: 900;
+}
+
+.temple-detail-related-card strong {
+  margin-top: 4px;
+  color: var(--ink);
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.temple-detail-related-card small {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
   font-weight: 800;
+}
+
+.temple-detail-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 1200;
+  padding: 10px 16px;
+  color: #fff9ea;
+  background: rgba(34, 22, 15, 0.92);
+  border: 1px solid rgba(214, 173, 85, 0.42);
+  border-radius: 999px;
+  box-shadow: 0 12px 34px rgba(20, 12, 8, 0.24);
+  font-weight: 900;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 12px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.temple-detail-toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.temple-detail-mini-marker {
+  width: 34px;
+  height: 34px;
+  border: 3px solid #f7d978;
+  border-radius: 999px;
+  background: var(--lacquer);
+  box-shadow: 0 0 0 5px rgba(143, 45, 37, 0.18), 0 8px 18px rgba(34, 22, 15, 0.28);
+}
+
+.temple-detail-mini-marker svg {
+  width: 18px;
+  height: 18px;
+  margin: 5px;
+  fill: #fff9ea;
 }
 
 @media (max-width: 760px) {
@@ -459,12 +943,44 @@
     padding-top: 34px;
   }
 
+  .temple-detail__back {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .temple-detail__back div {
+    justify-content: flex-start;
+  }
+
   .temple-detail-hero {
     grid-template-columns: 1fr;
     padding: 16px;
   }
 
-  .temple-detail-hero img {
-    min-height: 250px;
+  .temple-detail-hero__media {
+    min-height: 310px;
+  }
+
+  .temple-detail-pin {
+    width: 32px;
+    height: 32px;
+  }
+
+  .temple-detail-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .temple-detail-side {
+    position: static;
+  }
+
+  .temple-detail-related__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .temple-detail-meta div {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 }
