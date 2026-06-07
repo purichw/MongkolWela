@@ -2,11 +2,12 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import TempleSearchHero from "../../components/TempleSearchHero.astro";
 import templePageBanners from "../../data/temple-page-banners.json";
+import { templeHubContent } from "../../data/temple-directory-content.js";
 ---
 
 <BaseLayout
-  title="วัดดังเสริมมงคล | มงคลเวลา"
-  description="รวมทางลัดวัดดังเสริมมงคล พิกัดไหว้พระยอดนิยม และทะเบียนวัดทั่วประเทศไทย"
+  title={templeHubContent.title}
+  description={templeHubContent.description}
   lang="th"
   locale="th"
   page="temples"
@@ -15,38 +16,22 @@ import templePageBanners from "../../data/temple-page-banners.json";
   <main class="temples-hub">
     <TempleSearchHero
       banner={templePageBanners.hub}
-      breadcrumbs={[
-        { label: "หน้าแรก", href: "../" },
-        { label: "วัดดังเสริมมงคล" },
-      ]}
-      kicker="วัดดังเสริมมงคล"
-      title="วัดดังเสริมมงคล"
-      description="รวมทางลัดสำหรับค้นหาเส้นทางไหว้พระ วัดเด่น และฐานข้อมูลวัดทั่วประเทศไทย เพื่อช่วยวางแผนทำบุญ ไหว้พระ และเลือกสถานที่เสริมมงคลให้เหมาะกับจังหวะชีวิต"
+      breadcrumbs={templeHubContent.breadcrumbs}
+      kicker={templeHubContent.kicker}
+      title={templeHubContent.heading}
+      description={templeHubContent.intro}
     />
 
     <section class="temples-section">
-      <h2>วัดดังทั่วไทย</h2>
-      <div class="temples-feature-grid" aria-label="หมวดวัดดังเสริมมงคล">
-        <a class="temples-feature-card is-primary" href="./popular/">
-          <span>สายไหว้พระ 9 วัด</span>
-          <strong>วัดเด่นวัดดัง</strong>
-          <p>เตรียมพื้นที่สำหรับเส้นทางไหว้พระยอดนิยม พร้อมต่อยอดข้อมูลวัดเด่นจากแต่ละจังหวัด</p>
-        </a>
-        <a class="temples-feature-card" href="./mu/">
-          <span>พิกัดขอพร</span>
-          <strong>สายมู</strong>
-          <p>รวมสถานที่ศักดิ์สิทธิ์สำหรับขอพรเรื่องงาน เงิน ความรัก สุขภาพ โชคลาภ และสิริมงคล</p>
-        </a>
-        <a class="temples-feature-card" href="./thailand/">
-          <span>ทะเบียนวัด</span>
-          <strong>วัดทั่วประเทศไทย</strong>
-          <p>ค้นหาจากชื่อวัด ประเภท นิกาย จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา</p>
-        </a>
-        <a class="temples-feature-card" href="/">
-          <span>มงคลเวลา</span>
-          <strong>ดูฤกษ์ก่อนเดินทาง</strong>
-          <p>กลับหน้าแรกเพื่อดูจังหวะประจำวัน ปฏิทินไทย และเครื่องมือมงคลอื่น ๆ</p>
-        </a>
+      <h2>{templeHubContent.sectionTitle}</h2>
+      <div class="temples-feature-grid" aria-label={templeHubContent.cardsLabel}>
+        {templeHubContent.cards.map((card) => (
+          <a class={`temples-feature-card${card.tone === "primary" ? " is-primary" : ""}`} href={card.href}>
+            <span>{card.kicker}</span>
+            <strong>{card.title}</strong>
+            <p>{card.description}</p>
+          </a>
+        ))}
       </div>
     </section>
   </main>

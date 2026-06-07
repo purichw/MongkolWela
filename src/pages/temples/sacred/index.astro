@@ -1,0 +1,184 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import TempleSearchHero from "../../../components/TempleSearchHero.astro";
+import TempleMapOverlay from "../../../components/TempleMapOverlay.astro";
+import sacredTemples from "../../../data/sacred-temples.json";
+import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data/temple-images.js";
+import { getTempleDetailUrl } from "../../../data/temple-slugs.js";
+import templePageBanners from "../../../data/temple-page-banners.json";
+import { templeDirectoryCommon, templeDirectoryPages } from "../../../data/temple-directory-content.js";
+
+const extraScripts = ["/assets/js/temple-directory.js", "/assets/js/temple-map.js"];
+const pageContent = templeDirectoryPages.sacred;
+const filterContent = templeDirectoryCommon.filters;
+const regionOrder = templeDirectoryCommon.regionOrder;
+const purposeOrder = templeDirectoryCommon.purposeOrder;
+type TempleCard = {
+  rank: number;
+  name: string;
+  region: string;
+  province: string;
+  district?: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  placeType?: string;
+  blessings?: string;
+  objectHero?: string;
+};
+const rankedTemples = (applyTempleImageOverrides("sacred", [...sacredTemples]) as TempleCard[]).sort(
+  (a: TempleCard, b: TempleCard) => a.rank - b.rank,
+);
+const popularRegions = Array.from(new Set(rankedTemples.map((temple: TempleCard) => temple.region))).sort(
+  (a: string, b: string) => regionOrder.indexOf(a) - regionOrder.indexOf(b),
+);
+const splitTags = (value?: string) =>
+  String(value || "")
+    .split(";")
+    .map((item) => item.trim())
+    .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
+const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTags(temple.blessings)))).sort(
+  (a, b) => {
+    const aIndex = purposeOrder.indexOf(a);
+    const bIndex = purposeOrder.indexOf(b);
+    if (aIndex !== -1 || bIndex !== -1) return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+    return a.localeCompare(b, "th");
+  },
+);
+---
+
+<BaseLayout
+  title={pageContent.title}
+  description={pageContent.description}
+  lang="th"
+  locale="th"
+  page={pageContent.pageKey}
+  bodyClass="temples-hub-page"
+  extraScripts={extraScripts}
+>
+  <main class="temples-hub">
+    <TempleMapOverlay
+      collection="sacred"
+      title={pageContent.mapTitle}
+      searchPlaceholder={pageContent.mapSearchPlaceholder}
+      temples={rankedTemples}
+      placeholderImage={templePlaceholderImage}
+    />
+
+    <TempleSearchHero
+      banner={templePageBanners.sacred}
+      breadcrumbs={pageContent.breadcrumbs}
+      kicker={pageContent.kicker}
+      title={pageContent.heading}
+      description={pageContent.intro}
+    >
+      <section
+        slot="panel"
+        class="temple-search-panel temple-quick-search popular-temple-filter"
+        aria-label={pageContent.filterLabel}
+        data-popular-temple-filter
+      >
+        <form class="popular-temple-filter-form" data-popular-temple-filter-form>
+          <label class="temple-field popular-temple-filter-name">
+            <span>{filterContent.nameLabel}</span>
+            <input
+              type="search"
+              name="name"
+              placeholder={pageContent.searchPlaceholder}
+              autocomplete="off"
+              data-popular-temple-filter-name
+            />
+          </label>
+
+          <div class="popular-temple-filter-actions">
+            <button class="temple-search-button" type="submit">{filterContent.searchButton}</button>
+            <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>{filterContent.clearButton}</button>
+          </div>
+        </form>
+        <div class="popular-temple-region-filter">
+          <span>{filterContent.regionLabel}</span>
+          <div class="popular-temple-region-tags" aria-label={filterContent.regionAriaLabel}>
+            <button type="button" class="is-active" data-popular-region-tag value="">{filterContent.allLabel}</button>
+            {popularRegions.map((region) => (
+              <button type="button" data-popular-region-tag value={region}>{region}</button>
+            ))}
+          </div>
+        </div>
+        <div class="popular-temple-province-filter" data-popular-province-filter hidden>
+          <span>{filterContent.provinceLabel}</span>
+          <div class="popular-temple-province-tags" aria-label={filterContent.provinceAriaLabel} data-popular-province-tags></div>
+        </div>
+        <div class="popular-temple-purpose-filter">
+          <span>{filterContent.purposeLabel}</span>
+          <div class="popular-temple-purpose-tags" aria-label={filterContent.purposeAriaLabel} data-popular-purpose-tags>
+            <button type="button" class="is-active" data-popular-purpose-tag value="">{filterContent.allLabel}</button>
+            {purposeTags.map((purpose) => (
+              <button type="button" data-popular-purpose-tag value={purpose}>{purpose}</button>
+            ))}
+          </div>
+        </div>
+      </section>
+    </TempleSearchHero>
+
+    <section class="temples-section temples-popular-section">
+      <div class="temples-section-head">
+        <div>
+          <p class="section-kicker">{pageContent.sectionKicker}</p>
+          <h2>{pageContent.sectionHeading}</h2>
+        </div>
+        <p class="popular-temple-count" data-popular-temple-count></p>
+      </div>
+
+      <div
+        class="popular-temple-grid"
+        aria-label={pageContent.gridLabel}
+        data-popular-temple-grid
+        data-initial-count="9"
+        data-batch-size="9"
+        data-placeholder-src={templePlaceholderImage}
+      >
+        {rankedTemples.map((temple) => {
+          const hasTempleImage = Boolean(temple.imageUrl) && temple.imageUrl !== templePlaceholderImage;
+          const imageUrl = hasTempleImage ? temple.imageUrl : templePlaceholderImage;
+          const imageAlt = temple.imageAlt || `${temple.name} ${temple.province}`;
+
+          return (
+            <a
+              class={`popular-temple-card${hasTempleImage ? "" : " is-placeholder"}`}
+              href={getTempleDetailUrl("sacred", temple)}
+              data-rank={temple.rank}
+              data-name={temple.name}
+              data-region={temple.region}
+              data-province={temple.province}
+              data-district={temple.district}
+              data-blessings={temple.blessings ?? ""}
+              data-search-text={`${temple.name} ${temple.placeType ?? ""} ${temple.region} ${temple.province} ${temple.district ?? ""} ${temple.blessings ?? ""} ${temple.objectHero ?? ""}`}
+              data-popular-temple-card
+              data-image-placeholder={hasTempleImage ? undefined : "true"}
+            >
+              <figure>
+                <img
+                  src={imageUrl}
+                  alt={imageAlt}
+                  loading="lazy"
+                  decoding="async"
+                  data-fallback-src={templePlaceholderImage}
+                />
+                <figcaption>#{temple.rank.toString().padStart(2, "0")}</figcaption>
+              </figure>
+              <div class="popular-temple-card-body">
+                <span>{temple.region}</span>
+                <h3>{temple.name}</h3>
+                <p>{temple.province}{temple.district ? ` / ${temple.district}` : ""}</p>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+      <p class="popular-temple-empty" data-popular-temple-empty hidden>{pageContent.emptyText}</p>
+      <button class="popular-temple-load-more" type="button" data-popular-temple-more hidden>
+        {filterContent.loadMoreLabel}
+      </button>
+      <div class="popular-temple-sentinel" data-popular-temple-sentinel aria-hidden="true"></div>
+    </section>
+  </main>
+</BaseLayout>

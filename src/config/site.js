@@ -70,6 +70,7 @@ export const siteConfig = {
           { label: "วัดเด่นวัดดัง", section: true },
           { label: "สายไหว้พระ 9 วัด", href: "temples/popular/" },
           { label: "สายมู", href: "temples/mu/" },
+          { label: "วัดศักดิ์สิทธิ์", href: "temples/sacred/" },
           { label: "วัดทั่วประเทศไทย", section: true },
           { label: "ค้นหาวัดทั่วประเทศไทย", href: "temples/thailand/" },
         ],
@@ -173,6 +174,13 @@ export const siteConfig = {
         topbar: [
           { label: "สายมู", href: "temples/mu/" },
           { label: "รวมพิกัดขอพร การงาน การเงิน ความรัก สุขภาพ และโชคลาภ" },
+          { label: "ปรึกษาครูโหร", href: "#consult" },
+        ],
+      },
+      templesSacred: {
+        topbar: [
+          { label: "วัดศักดิ์สิทธิ์", href: "temples/sacred/" },
+          { label: "รวมวัดและสถานที่ศักดิ์สิทธิ์สำหรับไหว้พระ ทำบุญ และขอพร" },
           { label: "ปรึกษาครูโหร", href: "#consult" },
         ],
       },

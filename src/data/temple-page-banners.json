@@ -23,6 +23,14 @@
     "imageSourceUrl": "https://commons.wikimedia.org/wiki/File:Sri_Maha_Mariamman_Koyil_Bangkok_(Wat_Khaek_Silom)_2019_03.jpg",
     "focalPoint": "center 44%"
   },
+  "sacred": {
+    "adminKey": "temples.sacred.banner",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Wat_Sothon_Wararam_Worawihan.jpg/960px-Wat_Sothon_Wararam_Worawihan.jpg",
+    "imageAlt": "วัดโสธรวรารามวรวิหาร ฉะเชิงเทรา",
+    "imageSourceLabel": "Wikimedia Commons",
+    "imageSourceUrl": "https://commons.wikimedia.org/wiki/File:Wat_Sothon_Wararam_Worawihan.jpg",
+    "focalPoint": "center 48%"
+  },
   "thailand": {
     "adminKey": "temples.thailand.banner",
     "imageUrl": "https://cbtthailand.dasta.or.th/upload-file-api/Resources/RelateAttraction/Images/RAT520064/1.jpeg",
