@@ -32,6 +32,7 @@ Latest known code state:
 - Added mini map, annotation pins, share/copy buttons, metadata, and related cards to detail pages.
 - Added separate banner configuration for temple pages through `src/data/temple-page-banners.json`.
 - Added normalized travel route objects and readable grouped travel details on temple detail pages.
+- Added a global scroll progress indicator.
 - Deployed latest changes to production.
 
 ## Current Working Set

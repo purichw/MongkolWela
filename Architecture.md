@@ -35,6 +35,7 @@ Important behavior:
 - When changing CSS or public JS, bump `assetVersion`.
 - `public/styles.css` also imports CSS files with explicit version query strings. Bump those when cache correctness matters.
 - `extraScripts` is passed by pages that need route-specific JS.
+- A fixed scroll progress indicator is rendered by `BaseLayout.astro`, styled in `base.css`, and updated by `scroll-progress.js`.
 
 Shared shell components:
 

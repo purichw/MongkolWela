@@ -23,7 +23,7 @@ const {
   extraScripts = [],
 } = Astro.props as Props;
 
-const assetVersion = "20260607-09";
+const assetVersion = "20260607-10";
 const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
 ---
 
@@ -47,6 +47,9 @@ const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v
   </head>
   <body class={bodyClass}>
     <LoadingScreen />
+    <div class="scroll-progress" data-scroll-progress aria-hidden="true">
+      <span data-scroll-progress-bar></span>
+    </div>
     <Header locale={locale} page={page} />
     <slot />
     <Footer locale={locale} page={page} />
