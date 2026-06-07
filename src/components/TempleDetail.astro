@@ -42,7 +42,7 @@ const splitList = (value?: string) =>
   String(value || "")
     .split(";")
     .map((item) => item.trim())
-    .filter(Boolean);
+    .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
 const blessingItems = splitList(temple.blessings);
 const objectItems = splitList(temple.objectHero);
 const annotationItems = [
@@ -142,11 +142,13 @@ const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Plac
           เพื่อช่วยเลือกเส้นทางไหว้พระและวางแผนการเดินทางให้เหมาะกับจังหวะชีวิต
         </p>
 
-        <div class="temple-detail-chip-group">
-          {blessingItems.length ? blessingItems.slice(0, 8).map((item) => <span>{item}</span>) : <span>ไหว้พระทำบุญ</span>}
-        </div>
+        {blessingItems.length > 0 && (
+          <div class="temple-detail-chip-group">
+            {blessingItems.slice(0, 8).map((item) => <span>{item}</span>)}
+          </div>
+        )}
 
-        {objectItems.length && (
+        {objectItems.length > 0 && (
           <div class="temple-detail-notes">
             <h3>สิ่งที่นิยมสักการะ</h3>
             <ul>
