@@ -13,6 +13,7 @@ const leafletAssets = {
   js: ["https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"],
 };
 
+const detailMapStates = new WeakMap();
 let leafletPromise;
 let toastTimer;
 
@@ -20,6 +21,11 @@ document.querySelectorAll("[data-temple-detail-pin]").forEach(bindHeroPin);
 document.querySelectorAll("[data-temple-detail-map]").forEach(initializeDetailMap);
 document.querySelector("[data-temple-detail-copy]")?.addEventListener("click", copyCurrentUrl);
 document.querySelector("[data-temple-detail-share]")?.addEventListener("click", shareCurrentPage);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  document.querySelectorAll("[data-temple-detail-map-modal].is-open").forEach((modal) => closeDetailMapModal(modal));
+});
 
 document.addEventListener("click", (event) => {
   if (event.target.closest("[data-temple-detail-pin]")) return;
@@ -40,11 +46,23 @@ async function initializeDetailMap(element) {
   const lng = Number(element.dataset.lng);
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
-  element.addEventListener("click", () => openMapUrl(element));
+  const state = {
+    lat,
+    lng,
+    title: element.dataset.title || "พิกัด",
+    mapUrl: element.dataset.mapUrl || "",
+    miniMap: null,
+    modal: null,
+    modalMap: null,
+    lastFocusedElement: null,
+  };
+  detailMapStates.set(element, state);
+
+  element.addEventListener("click", () => openDetailMapModal(element));
   element.addEventListener("keydown", (event) => {
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
-    openMapUrl(element);
+    openDetailMapModal(element);
   });
 
   await ensureLeaflet();
@@ -71,13 +89,14 @@ async function initializeDetailMap(element) {
   }).addTo(map);
 
   window.L.marker([lat, lng], { icon: createMiniTempleIcon() })
-    .bindTooltip(element.dataset.title || "พิกัด", {
+    .bindTooltip(state.title, {
       direction: "top",
       offset: [0, -12],
       opacity: 0.94,
     })
     .addTo(map);
 
+  state.miniMap = map;
   setTimeout(() => map.invalidateSize(), 120);
 }
 
@@ -90,9 +109,90 @@ function createMiniTempleIcon() {
   });
 }
 
-function openMapUrl(element) {
-  const url = element.dataset.mapUrl;
-  if (url) window.open(url, "_blank", "noopener");
+async function openDetailMapModal(element) {
+  const state = detailMapStates.get(element);
+  if (!state) return;
+
+  state.modal = state.modal || createDetailMapModal(element, state);
+  state.lastFocusedElement = document.activeElement;
+  state.modal.classList.add("is-open");
+  state.modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+
+  await ensureLeaflet();
+  if (!window.L) return;
+  if (!state.modalMap) initializeDetailModalMap(state);
+
+  setTimeout(() => {
+    state.modalMap?.invalidateSize();
+    state.modalMap?.setView([state.lat, state.lng], DETAIL_MAP_CONFIG.focusedZoom);
+    state.modal.querySelector("[data-temple-detail-map-close]")?.focus({ preventScroll: true });
+  }, 120);
+}
+
+function closeDetailMapModal(modal) {
+  const mapElement = document.querySelector(`[data-temple-detail-map][data-modal-id="${modal.id}"]`);
+  const state = mapElement ? detailMapStates.get(mapElement) : null;
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+  state?.lastFocusedElement?.focus?.({ preventScroll: true });
+}
+
+function createDetailMapModal(element, state) {
+  const modal = document.createElement("div");
+  modal.className = "temple-detail-map-modal";
+  modal.id = `temple-detail-map-modal-${Math.random().toString(36).slice(2)}`;
+  modal.setAttribute("aria-hidden", "true");
+  modal.setAttribute("data-temple-detail-map-modal", "");
+  element.dataset.modalId = modal.id;
+  modal.innerHTML = `
+    <div class="temple-detail-map-modal__overlay" data-temple-detail-map-close></div>
+    <section class="temple-detail-map-modal__panel" role="dialog" aria-modal="true" aria-label="แผนที่ ${escapeHtml(state.title)}">
+      <header class="temple-detail-map-modal__head">
+        <h2>${escapeHtml(state.title)}</h2>
+        <button type="button" data-temple-detail-map-close aria-label="ปิดแผนที่">×</button>
+      </header>
+      <div class="temple-detail-map-modal__canvas"></div>
+      <footer class="temple-detail-map-modal__foot">
+        <span>พิกัด ${state.lat.toFixed(6)}, ${state.lng.toFixed(6)}</span>
+        ${state.mapUrl ? `<a href="${escapeHtml(state.mapUrl)}" target="_blank" rel="noopener">เปิดใน Google Maps</a>` : ""}
+      </footer>
+    </section>`;
+  modal.querySelectorAll("[data-temple-detail-map-close]").forEach((button) => {
+    button.addEventListener("click", () => closeDetailMapModal(modal));
+  });
+  document.body.appendChild(modal);
+  return modal;
+}
+
+function initializeDetailModalMap(state) {
+  const canvas = state.modal?.querySelector(".temple-detail-map-modal__canvas");
+  if (!canvas || !window.L) return;
+
+  const bounds = window.L.latLngBounds(DETAIL_MAP_CONFIG.thailandBounds[0], DETAIL_MAP_CONFIG.thailandBounds[1]);
+  const map = window.L.map(canvas, {
+    zoomControl: true,
+    scrollWheelZoom: true,
+    minZoom: DETAIL_MAP_CONFIG.minZoom,
+    maxBounds: bounds.pad(DETAIL_MAP_CONFIG.maxBoundsPad),
+    maxBoundsViscosity: 1,
+  }).setView([state.lat, state.lng], DETAIL_MAP_CONFIG.focusedZoom);
+
+  window.L.tileLayer(DETAIL_MAP_CONFIG.tileUrl, {
+    attribution: DETAIL_MAP_CONFIG.tileAttribution,
+    maxZoom: DETAIL_MAP_CONFIG.maxZoom,
+  }).addTo(map);
+
+  window.L.marker([state.lat, state.lng], { icon: createMiniTempleIcon() })
+    .bindPopup(`<strong>${escapeHtml(state.title)}</strong>`, {
+      closeButton: false,
+      className: "temple-detail-map-modal__popup",
+    })
+    .addTo(map)
+    .openPopup();
+
+  state.modalMap = map;
 }
 
 async function shareCurrentPage(event) {
@@ -165,4 +265,13 @@ function loadScript(src) {
     script.onerror = reject;
     document.head.appendChild(script);
   });
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

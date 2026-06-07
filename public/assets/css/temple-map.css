@@ -729,6 +729,16 @@
   cursor: pointer;
 }
 
+.temple-detail-map-card__map:hover > span,
+.temple-detail-map-card__map:focus-visible > span {
+  background: rgba(143, 45, 37, 0.9);
+}
+
+.temple-detail-map-card__map:focus-visible {
+  outline: 3px solid rgba(214, 173, 85, 0.74);
+  outline-offset: 3px;
+}
+
 .temple-detail-map-card__map .leaflet-container {
   width: 100%;
   min-height: 224px;
@@ -911,6 +921,123 @@
   fill: #fff9ea;
 }
 
+.temple-detail-map-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 34px;
+}
+
+.temple-detail-map-modal.is-open {
+  display: flex;
+}
+
+.temple-detail-map-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 13, 9, 0.68);
+  backdrop-filter: blur(2px);
+}
+
+.temple-detail-map-modal__panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(360px, 1fr) auto;
+  width: min(1180px, 100%);
+  height: min(760px, calc(100vh - 68px));
+  overflow: hidden;
+  background: #fffdf6;
+  border: 1px solid rgba(244, 213, 134, 0.44);
+  border-radius: 18px;
+  box-shadow: 0 34px 90px rgba(20, 12, 8, 0.36);
+}
+
+.temple-detail-map-modal__head,
+.temple-detail-map-modal__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: rgba(255, 253, 246, 0.96);
+}
+
+.temple-detail-map-modal__head {
+  min-height: 72px;
+  padding: 16px 22px 15px 26px;
+  border-bottom: 1px solid rgba(77, 56, 41, 0.12);
+}
+
+.temple-detail-map-modal__head h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.temple-detail-map-modal__head button {
+  display: grid;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  color: rgba(77, 56, 41, 0.62);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 2.2rem;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.temple-detail-map-modal__head button:hover,
+.temple-detail-map-modal__head button:focus-visible {
+  color: var(--lacquer);
+  background: rgba(143, 45, 37, 0.08);
+  outline: none;
+}
+
+.temple-detail-map-modal__canvas,
+.temple-detail-map-modal__canvas .leaflet-container {
+  width: 100%;
+  min-height: 360px;
+}
+
+.temple-detail-map-modal__canvas {
+  background: #d9c9aa;
+}
+
+.temple-detail-map-modal__foot {
+  min-height: 58px;
+  padding: 12px 26px;
+  border-top: 1px solid rgba(77, 56, 41, 0.12);
+  color: var(--ink-soft);
+  font-weight: 800;
+}
+
+.temple-detail-map-modal__foot a {
+  color: var(--lacquer);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.temple-detail-map-modal__popup .leaflet-popup-content-wrapper {
+  border-radius: 12px;
+}
+
+.temple-detail-map-modal__popup .leaflet-popup-content {
+  margin: 10px 14px;
+  color: var(--ink);
+  font-family: "Noto Sans Thai", sans-serif;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
 @media (max-width: 760px) {
   .temple-map-modal {
     padding: 0;
@@ -969,6 +1096,33 @@
   .temple-detail-layout {
     grid-template-columns: 1fr;
     gap: 28px;
+  }
+
+  .temple-detail-map-modal {
+    padding: 12px;
+  }
+
+  .temple-detail-map-modal__panel {
+    grid-template-rows: auto minmax(380px, 1fr) auto;
+    height: min(760px, calc(100dvh - 24px));
+    border-radius: 14px;
+  }
+
+  .temple-detail-map-modal__head {
+    min-height: 64px;
+    padding: 12px 12px 12px 16px;
+  }
+
+  .temple-detail-map-modal__head h2 {
+    font-size: 1.12rem;
+  }
+
+  .temple-detail-map-modal__foot {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 16px;
+    font-size: 0.92rem;
   }
 
   .temple-detail-side {
