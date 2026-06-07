@@ -456,94 +456,6 @@
   line-height: 1;
 }
 
-.temple-detail-pin {
-  position: absolute;
-  left: var(--pin-x);
-  top: var(--pin-y);
-  z-index: 4;
-  width: 38px;
-  height: 38px;
-  padding: 0;
-  border: 2px solid rgba(255, 252, 237, 0.9);
-  border-radius: 999px;
-  background: #d6ad55;
-  box-shadow: 0 0 0 6px rgba(40, 23, 14, 0.22), 0 12px 28px rgba(29, 19, 12, 0.28);
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-}
-
-.temple-detail-pin > span {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  background: radial-gradient(circle at 34% 30%, #fff5bd, #c8892f 64%, #8f2d25);
-}
-
-.temple-detail-pin em {
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 14px);
-  display: grid;
-  gap: 6px;
-  width: min(280px, 72vw);
-  padding: 16px;
-  color: #fff8ea;
-  text-align: left;
-  font-style: normal;
-  background: rgba(34, 22, 15, 0.95);
-  border: 1px solid rgba(214, 173, 85, 0.42);
-  border-radius: 12px;
-  box-shadow: 0 18px 42px rgba(20, 12, 8, 0.32);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translate(-50%, 8px);
-  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
-}
-
-.temple-detail-pin em::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -8px;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 8px solid rgba(34, 22, 15, 0.95);
-  transform: translateX(-50%);
-}
-
-.temple-detail-pin strong,
-.temple-detail-pin small,
-.temple-detail-pin b {
-  display: block;
-}
-
-.temple-detail-pin strong {
-  font-size: 0.98rem;
-  line-height: 1.25;
-}
-
-.temple-detail-pin small {
-  color: rgba(255, 248, 234, 0.82);
-  font-size: 0.86rem;
-  line-height: 1.45;
-}
-
-.temple-detail-pin b {
-  color: #f4d586;
-  font-size: 0.78rem;
-  font-weight: 900;
-}
-
-.temple-detail-pin:hover em,
-.temple-detail-pin:focus-visible em,
-.temple-detail-pin.is-active em {
-  opacity: 1;
-  visibility: visible;
-  transform: translate(-50%, 0);
-}
-
 .temple-detail-hero__copy {
   display: flex;
   flex-direction: column;
@@ -1166,11 +1078,6 @@
 
   .temple-detail-hero__media {
     min-height: 310px;
-  }
-
-  .temple-detail-pin {
-    width: 32px;
-    height: 32px;
   }
 
   .temple-detail-layout {

@@ -70,26 +70,6 @@ const hasTravelDetail = Boolean(travelDetail.summary || travelDetailSections.len
 const mapQuery = hasPlusCode ? plusCode : hasCoordinates ? `${latitude},${longitude}` : "";
 const mapHref = mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : "";
 const mapLabel = hasPlusCode ? plusCode : hasCoordinates ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : "";
-const annotationItems = [
-  {
-    label: temple.placeType || "สถานที่ศักดิ์สิทธิ์",
-    text: locationText,
-    x: 66,
-    y: 38,
-  },
-  {
-    label: "ขอพรเด่น",
-    text: blessingItems[0],
-    x: 34,
-    y: 58,
-  },
-  {
-    label: "สิ่งสำคัญ",
-    text: objectItems[0],
-    x: 78,
-    y: 72,
-  },
-].filter((item) => item.label && item.text);
 const summaryText = blessingItems.length
   ? `${temple.name} เหมาะสำหรับ${blessingItems.slice(0, 3).join(" · ")}`
   : `${temple.name} หนึ่งในพิกัดแนะนำของ${collectionLabel} ใน${temple.province}`;
@@ -124,22 +104,6 @@ const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Plac
       <figure class="temple-detail-hero__media">
         <img src={imageUrl} alt={temple.imageAlt || `${temple.name} ${temple.province}`} loading="eager" decoding="async" />
         <figcaption>{sourceLabel}</figcaption>
-        {annotationItems.map((item, index) => (
-          <button
-            type="button"
-            class="temple-detail-pin"
-            style={`--pin-x:${item.x}%;--pin-y:${item.y}%`}
-            data-temple-detail-pin
-            aria-label={`${item.label}: ${item.text}`}
-          >
-            <span></span>
-            <em>
-              <strong>{item.label}</strong>
-              <small>{item.text}</small>
-              <b>{index === 0 ? "ดูข้อมูล" : "อ่านต่อ"}</b>
-            </em>
-          </button>
-        ))}
       </figure>
       <div class="temple-detail-hero__copy">
         <p class="section-kicker">{collectionLabel} · อันดับ #{temple.rank.toString().padStart(2, "0")}</p>

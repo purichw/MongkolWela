@@ -282,7 +282,7 @@ CSS:
 Behavior:
 
 - Back link and breadcrumb.
-- Hero image with watermark and annotation pins.
+- Hero image with watermark. Detail annotation pins are intentionally hidden for now; keep future data shape Admin-editable.
 - Thai title, summary, tags, share/copy actions.
 - Mini Leaflet map with a single marker.
 - Google Maps external link, preferring Plus Code with coordinate fallback.

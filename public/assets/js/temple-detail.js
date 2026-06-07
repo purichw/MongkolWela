@@ -17,7 +17,6 @@ const detailMapStates = new WeakMap();
 let leafletPromise;
 let toastTimer;
 
-document.querySelectorAll("[data-temple-detail-pin]").forEach(bindHeroPin);
 document.querySelectorAll("[data-temple-detail-map]").forEach(initializeDetailMap);
 document.querySelector("[data-temple-detail-copy]")?.addEventListener("click", copyCurrentUrl);
 document.querySelector("[data-temple-detail-share]")?.addEventListener("click", shareCurrentPage);
@@ -26,20 +25,6 @@ document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
   document.querySelectorAll("[data-temple-detail-map-modal].is-open").forEach((modal) => closeDetailMapModal(modal));
 });
-
-document.addEventListener("click", (event) => {
-  if (event.target.closest("[data-temple-detail-pin]")) return;
-  document.querySelectorAll("[data-temple-detail-pin].is-active").forEach((pin) => pin.classList.remove("is-active"));
-});
-
-function bindHeroPin(pin) {
-  pin.addEventListener("click", (event) => {
-    event.stopPropagation();
-    const isActive = pin.classList.contains("is-active");
-    document.querySelectorAll("[data-temple-detail-pin].is-active").forEach((item) => item.classList.remove("is-active"));
-    if (!isActive) pin.classList.add("is-active");
-  });
-}
 
 async function initializeDetailMap(element) {
   const lat = Number(element.dataset.lat);

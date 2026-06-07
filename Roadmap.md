@@ -55,7 +55,7 @@ Build an Admin Portal or content management path so these can be edited without 
 - Rankings.
 - Card images and fallback images.
 - Detail hero images.
-- Detail annotation pins.
+- Detail annotation pin placement/editing, including x/y position and label fields. Pins are currently hidden on the public detail hero.
 - Banner images per page.
 - Plus Codes and coordinates, with Plus Code as the Google Maps default and coordinates as fallback.
 - Travel modes.
@@ -116,9 +116,9 @@ Current README may still mention `/en/` from earlier project state; verify actua
 
 Potential polish items:
 
+- Re-enable hero annotation pins after Admin-owned pin data exists.
 - Make annotation pane richer when Admin data exists.
 - Add native share fallback states for older browsers.
-- Add smooth scroll from hero annotation to relevant content section.
 - Add "nearby in map" preview if related coordinates are nearby.
 
 ### Map Enhancements
