@@ -156,7 +156,7 @@ for (const [collection, config] of Object.entries(INPUTS)) {
   runtimeRows = runtimeRows
     .sort((a, b) =>
       (Number(a.rank) || 999999) - (Number(b.rank) || 999999) ||
-      Number(b.categoryMentions || 0) - Number(a.categoryMentions || 0) ||
+      Number(b.mentions || 0) - Number(a.mentions || 0) ||
       a.province.localeCompare(b.province, "th") ||
       a.name.localeCompare(b.name, "th")
     )
@@ -225,13 +225,13 @@ function buildRuntimeRow(collection, row, enrichmentByKey) {
   const hasCoordinates = Number.isFinite(Number(coordinateFields.latitude)) && Number.isFinite(Number(coordinateFields.longitude));
 
   return stripEmpty({
-    rank: Number(globalRanking.globalRank) || Number(row.no) || 0,
+    rank: Number(row.no) || 0,
     globalRank: Number(globalRanking.globalRank) || undefined,
     name,
     region: normalizeRegion(row.region),
     province,
     district: normalizeDistrict(row.districtArea),
-    mentions: Number(globalRanking.totalMentions) || Number(row.occurrenceCount) || 0,
+    mentions: Number(row.occurrenceCount) || 0,
     globalMentions: Number(globalRanking.totalMentions) || undefined,
     categoryMentions: Number(row.occurrenceCount) || 0,
     popularMentions: Number(globalRanking.popularMentions) || undefined,
