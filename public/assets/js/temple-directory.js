@@ -145,6 +145,7 @@ function initializePopularTempleGrid(grid) {
   const filterForm = filterRoot?.querySelector("[data-popular-temple-filter-form]");
   const filterName = filterRoot?.querySelector("[data-popular-temple-filter-name]");
   const filterClear = filterRoot?.querySelector("[data-popular-temple-filter-clear]");
+  const nearbyButton = filterRoot?.querySelector("[data-popular-temple-nearby]");
   const regionTags = Array.from(filterRoot?.querySelectorAll("[data-popular-region-tag]") || []);
   const provinceFilter = filterRoot?.querySelector("[data-popular-province-filter]");
   const provinceTagsRoot = filterRoot?.querySelector("[data-popular-province-tags]");
@@ -156,13 +157,19 @@ function initializePopularTempleGrid(grid) {
   const placeholderSrc = grid.dataset.placeholderSrc;
   const initialCount = readPositiveInteger(grid.dataset.initialCount, 9);
   const batchSize = readPositiveInteger(grid.dataset.batchSize, initialCount);
+  const originalCardOrder = new Map(cards.map((card, index) => [card, index]));
   let filteredCards = cards;
   let visibleCount = 0;
   let activeRegion = "";
   let activeProvince = "";
+  let activeNearby = false;
+  let userLocation = null;
+  let isRequestingLocation = false;
   const activePurposes = new Set();
 
   if (!cards.length) return;
+
+  nearbyButton?.setAttribute("aria-pressed", "false");
 
   grid.addEventListener(
     "error",
@@ -198,7 +205,10 @@ function initializePopularTempleGrid(grid) {
     if (filterName) filterName.value = "";
     activeRegion = "";
     activeProvince = "";
+    activeNearby = false;
     activePurposes.clear();
+    clearCardDistances();
+    updateNearbyButton();
     updateRegionTags();
     updateProvinceTags();
     updatePurposeTags();
@@ -234,6 +244,31 @@ function initializePopularTempleGrid(grid) {
     revealNext(batchSize);
   });
 
+  nearbyButton?.addEventListener("click", async () => {
+    if (activeNearby) {
+      activeNearby = false;
+      clearCardDistances();
+      updateNearbyButton();
+      applyPopularFilters();
+      return;
+    }
+
+    if (!userLocation) {
+      userLocation = await requestUserLocation();
+      if (!userLocation) {
+        activeNearby = false;
+        clearCardDistances();
+        updateNearbyButton();
+        return;
+      }
+    }
+
+    activeNearby = true;
+    updateCardDistances();
+    updateNearbyButton();
+    applyPopularFilters();
+  });
+
   if (!sentinel || !("IntersectionObserver" in window)) {
     updateLoadMoreButton();
     return;
@@ -258,6 +293,7 @@ function initializePopularTempleGrid(grid) {
       const matchesPurpose = !activePurposes.size || splitDataTags(card.dataset.blessings).some((tag) => activePurposes.has(tag));
       return matchesQuery && matchesRegion && matchesProvince && matchesPurpose;
     });
+    sortFilteredCards();
     visibleCount = Math.min(initialCount, filteredCards.length);
     renderVisibleCards();
   }
@@ -268,6 +304,10 @@ function initializePopularTempleGrid(grid) {
   }
 
   function renderVisibleCards() {
+    filteredCards.forEach((card) => {
+      grid.appendChild(card);
+    });
+
     cards.forEach((card) => {
       card.hidden = true;
     });
@@ -277,7 +317,7 @@ function initializePopularTempleGrid(grid) {
     });
 
     if (countNode) {
-      countNode.textContent = `แสดง ${filteredCards.length.toLocaleString("th-TH")} จาก ${cards.length.toLocaleString("th-TH")} พิกัด`;
+      countNode.textContent = `แสดง ${filteredCards.length.toLocaleString("th-TH")} จาก ${cards.length.toLocaleString("th-TH")} พิกัด${activeNearby ? " · เรียงตามใกล้ฉัน" : ""}`;
     }
 
     if (emptyNode) {
@@ -339,6 +379,113 @@ function initializePopularTempleGrid(grid) {
     if (!loadMoreButton) return;
     loadMoreButton.hidden = visibleCount >= filteredCards.length;
   }
+
+  function sortFilteredCards() {
+    filteredCards.sort((a, b) => {
+      if (activeNearby) {
+        const aDistance = readCardDistance(a);
+        const bDistance = readCardDistance(b);
+        if (Number.isFinite(aDistance) || Number.isFinite(bDistance)) {
+          if (!Number.isFinite(aDistance)) return 1;
+          if (!Number.isFinite(bDistance)) return -1;
+          if (aDistance !== bDistance) return aDistance - bDistance;
+        }
+      }
+      return (originalCardOrder.get(a) ?? 0) - (originalCardOrder.get(b) ?? 0);
+    });
+  }
+
+  function updateNearbyButton() {
+    if (!nearbyButton) return;
+    nearbyButton.classList.toggle("is-active", activeNearby);
+    nearbyButton.setAttribute("aria-pressed", String(activeNearby));
+    nearbyButton.disabled = isRequestingLocation;
+    nearbyButton.textContent = isRequestingLocation ? "กำลังหาตำแหน่ง" : activeNearby ? "เรียงตามใกล้ฉัน" : "พิกัดใกล้ฉัน";
+  }
+
+  function updateCardDistances() {
+    if (!userLocation) return;
+
+    cards.forEach((card) => {
+      const distance = getCardDistance(userLocation, card);
+      const distanceNode = card.querySelector("[data-popular-temple-distance]");
+      if (!Number.isFinite(distance) || !distanceNode) return;
+
+      card.dataset.distanceKm = String(distance);
+      distanceNode.textContent = formatDistance(distance);
+      distanceNode.hidden = false;
+    });
+  }
+
+  function clearCardDistances() {
+    cards.forEach((card) => {
+      delete card.dataset.distanceKm;
+      const distanceNode = card.querySelector("[data-popular-temple-distance]");
+      if (!distanceNode) return;
+      distanceNode.textContent = "";
+      distanceNode.hidden = true;
+    });
+  }
+
+  async function requestUserLocation() {
+    if (!("geolocation" in navigator)) return null;
+
+    isRequestingLocation = true;
+    updateNearbyButton();
+
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: false,
+          maximumAge: 5 * 60 * 1000,
+          timeout: 10000,
+        });
+      });
+      return {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      };
+    } catch {
+      return null;
+    } finally {
+      isRequestingLocation = false;
+      updateNearbyButton();
+    }
+  }
+}
+
+function getCardDistance(userLocation, card) {
+  const latitude = Number(card.dataset.latitude);
+  const longitude = Number(card.dataset.longitude);
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return Number.POSITIVE_INFINITY;
+  return haversineDistance(userLocation.latitude, userLocation.longitude, latitude, longitude);
+}
+
+function readCardDistance(card) {
+  const distance = Number(card.dataset.distanceKm);
+  return Number.isFinite(distance) ? distance : Number.POSITIVE_INFINITY;
+}
+
+function haversineDistance(fromLatitude, fromLongitude, toLatitude, toLongitude) {
+  const earthRadiusKm = 6371;
+  const dLat = toRadians(toLatitude - fromLatitude);
+  const dLon = toRadians(toLongitude - fromLongitude);
+  const lat1 = toRadians(fromLatitude);
+  const lat2 = toRadians(toLatitude);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return earthRadiusKm * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function toRadians(value) {
+  return (value * Math.PI) / 180;
+}
+
+function formatDistance(distanceKm) {
+  if (distanceKm < 1) return `${Math.round(distanceKm * 1000).toLocaleString("th-TH")} ม.`;
+  if (distanceKm < 10) return `${distanceKm.toLocaleString("th-TH", { maximumFractionDigits: 1 })} กม.`;
+  return `${Math.round(distanceKm).toLocaleString("th-TH")} กม.`;
 }
 
 function splitDataTags(value) {

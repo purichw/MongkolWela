@@ -19,6 +19,8 @@ type TempleCard = {
   placeType?: string;
   blessings?: string;
   objectHero?: string;
+  latitude?: number;
+  longitude?: number;
 };
 const rankedTemples = (applyTempleImageOverrides("mu", [...muTemples]) as TempleCard[]).sort(
   (a: TempleCard, b: TempleCard) => a.rank - b.rank,
@@ -114,6 +116,7 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
 
           <div class="popular-temple-filter-actions">
             <button class="temple-search-button" type="submit">ค้นหา</button>
+            <button class="temple-nearby-button" type="button" data-popular-temple-nearby>พิกัดใกล้ฉัน</button>
             <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>เคลียร์ข้อมูล</button>
           </div>
         </form>
@@ -174,6 +177,8 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
               data-province={temple.province}
               data-district={temple.district}
               data-blessings={temple.blessings ?? ""}
+              data-latitude={temple.latitude}
+              data-longitude={temple.longitude}
               data-search-text={`${temple.name} ${temple.placeType ?? ""} ${temple.region} ${temple.province} ${temple.district ?? ""} ${temple.blessings ?? ""} ${temple.objectHero ?? ""}`}
               data-popular-temple-card
               data-image-placeholder={hasTempleImage ? undefined : "true"}
@@ -187,6 +192,7 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
                   data-fallback-src={templePlaceholderImage}
                 />
                 <figcaption>#{temple.rank.toString().padStart(2, "0")}</figcaption>
+                <span class="popular-temple-distance" data-popular-temple-distance hidden></span>
               </figure>
               <div class="popular-temple-card-body">
                 <span>{temple.region}</span>

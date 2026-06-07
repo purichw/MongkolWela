@@ -288,6 +288,27 @@
   line-height: 1;
 }
 
+.popular-temple-distance {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  max-width: calc(100% - 90px);
+  padding: 6px 10px;
+  color: #fffaf0;
+  background: rgba(18, 61, 52, 0.9);
+  border: 1px solid rgba(245, 217, 155, 0.38);
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(38, 25, 18, 0.22);
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.popular-temple-distance[hidden] {
+  display: none;
+}
+
 .popular-temple-card-body {
   display: grid;
   gap: 8px;
@@ -446,7 +467,8 @@
 }
 
 .popular-temple-filter-actions .temple-search-button,
-.popular-temple-filter-actions .temple-clear-button {
+.popular-temple-filter-actions .temple-clear-button,
+.popular-temple-filter-actions .temple-nearby-button {
   min-width: 132px;
 }
 
@@ -596,6 +618,7 @@
 
 .temple-search-button,
 .temple-clear-button,
+.temple-nearby-button,
 .temple-page-button {
   display: inline-flex;
   align-items: center;
@@ -608,7 +631,8 @@
 }
 
 .temple-search-button,
-.temple-clear-button {
+.temple-clear-button,
+.temple-nearby-button {
   min-width: 220px;
   padding: 0 22px;
 }
@@ -622,6 +646,25 @@
   color: var(--ink);
   background: #e4ded4;
   border-color: rgba(77, 56, 41, 0.14);
+}
+
+.temple-nearby-button {
+  color: #7b271f;
+  background: rgba(255, 253, 246, 0.84);
+  border-color: rgba(159, 48, 40, 0.26);
+}
+
+.temple-nearby-button:hover,
+.temple-nearby-button:focus-visible,
+.temple-nearby-button.is-active {
+  color: #fffaf0;
+  background: var(--jade);
+  border-color: rgba(245, 217, 155, 0.48);
+}
+
+.temple-nearby-button:disabled {
+  cursor: progress;
+  opacity: 0.72;
 }
 
 .temple-results {
@@ -884,7 +927,8 @@
   }
 
   .temple-search-button,
-  .temple-clear-button {
+  .temple-clear-button,
+  .temple-nearby-button {
     width: 100%;
   }
 
