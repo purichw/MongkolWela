@@ -139,6 +139,7 @@ The JSON files are currently static outputs. Future pipeline could:
 - Validate required fields.
 - Validate image URLs.
 - Validate Plus Codes, coordinates, and travel modes.
+- Validate structured travel detail coverage and avoid invented route/vendor defaults when no source supports them.
 - Produce a QA report for missing images/coordinates.
 
 Keep workbook writing through artifact-tool, not Python/openpyxl.

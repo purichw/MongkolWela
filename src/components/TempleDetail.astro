@@ -25,6 +25,17 @@ interface Props {
     imageSourceLabel?: string;
     imageSourceUrl?: string;
     travelModes?: string;
+    travelDetail?: {
+      summary?: string;
+      railAccess?: string;
+      boatAccess?: string;
+      busAccess?: string;
+      vanAccess?: string;
+      walkAccess?: string;
+      sources?: string;
+      confidence?: string;
+      updatedAt?: string;
+    };
   };
   placeholderImage: string;
   relatedTemples?: Props["temple"][];
@@ -47,6 +58,15 @@ const splitList = (value?: string) =>
 const blessingItems = splitList(temple.blessings);
 const objectItems = splitList(temple.objectHero);
 const travelModeItems = splitList(temple.travelModes);
+const travelDetail = temple.travelDetail || {};
+const travelDetailSections = [
+  { label: "รถไฟ / รถไฟฟ้า", text: travelDetail.railAccess },
+  { label: "เรือ / ท่าเรือ", text: travelDetail.boatAccess },
+  { label: "รถประจำทาง", text: travelDetail.busAccess },
+  { label: "รถตู้ / รถรับส่ง", text: travelDetail.vanAccess },
+  { label: "จุดจอดใกล้สุด", text: travelDetail.walkAccess },
+].filter((item) => String(item.text || "").trim());
+const hasTravelDetail = Boolean(travelDetail.summary || travelDetailSections.length);
 const mapQuery = hasPlusCode ? plusCode : hasCoordinates ? `${latitude},${longitude}` : "";
 const mapHref = mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : "";
 const mapLabel = hasPlusCode ? plusCode : hasCoordinates ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : "";
@@ -160,6 +180,30 @@ const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Plac
               {objectItems.slice(0, 6).map((item) => <li>{item}</li>)}
             </ul>
           </div>
+        )}
+
+        {hasTravelDetail && (
+          <section class="temple-detail-transit" aria-labelledby="temple-detail-transit-title">
+            <h3 id="temple-detail-transit-title">วิธีเดินทาง</h3>
+            {travelDetail.summary && <p>{travelDetail.summary}</p>}
+            {travelDetailSections.length > 0 && (
+              <div class="temple-detail-transit__list">
+                {travelDetailSections.map((item, index) => (
+                  <details open={index < 2}>
+                    <summary>{item.label}</summary>
+                    <p>{item.text}</p>
+                  </details>
+                ))}
+              </div>
+            )}
+            {(travelDetail.confidence || travelDetail.updatedAt) && (
+              <small>
+                {travelDetail.confidence && `ความมั่นใจข้อมูล: ${travelDetail.confidence}`}
+                {travelDetail.confidence && travelDetail.updatedAt ? " · " : ""}
+                {travelDetail.updatedAt && `อัปเดต ${travelDetail.updatedAt}`}
+              </small>
+            )}
+          </section>
         )}
       </article>
 

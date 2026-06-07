@@ -702,6 +702,67 @@
   background: #d6ad55;
 }
 
+.temple-detail-transit {
+  display: grid;
+  gap: 14px;
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px dashed rgba(77, 56, 41, 0.24);
+}
+
+.temple-detail-transit h3,
+.temple-detail-transit p {
+  margin: 0;
+}
+
+.temple-detail-transit h3 {
+  color: var(--lacquer);
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.temple-detail-transit > p {
+  color: var(--ink-soft);
+  font-size: 0.98rem;
+  font-weight: 800;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.temple-detail-transit__list {
+  display: grid;
+  gap: 10px;
+}
+
+.temple-detail-transit details {
+  background: rgba(255, 253, 246, 0.74);
+  border: 1px solid rgba(77, 56, 41, 0.11);
+  border-radius: 12px;
+}
+
+.temple-detail-transit summary {
+  padding: 12px 14px;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.temple-detail-transit details p {
+  padding: 0 14px 14px;
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+  font-weight: 750;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.temple-detail-transit small {
+  color: rgba(77, 56, 41, 0.62);
+  font-weight: 800;
+  line-height: 1.5;
+}
+
 .temple-detail-side {
   position: sticky;
   top: 92px;
