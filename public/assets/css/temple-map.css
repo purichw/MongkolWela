@@ -556,11 +556,14 @@
 }
 
 .temple-detail-layout {
+  position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
   gap: 34px;
   align-items: start;
   margin-top: 42px;
+  scroll-margin-top: 112px;
 }
 
 .temple-detail-story,
@@ -1062,9 +1065,13 @@
 }
 
 .temple-detail-side {
+  position: static;
+  top: auto;
   display: grid;
   align-self: start;
   gap: 18px;
+  margin-top: 0;
+  transform: none;
 }
 
 .temple-detail-map-card {

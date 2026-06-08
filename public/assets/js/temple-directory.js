@@ -165,6 +165,7 @@ function initializePopularTempleGrid(grid) {
   let activeNearby = false;
   let userLocation = null;
   let isRequestingLocation = false;
+  let nearbyStatus = "";
   const activePurposes = new Set();
 
   if (!cards.length) return;
@@ -255,22 +256,33 @@ function initializePopularTempleGrid(grid) {
   });
 
   nearbyButton?.addEventListener("click", async () => {
+    if (isRequestingLocation) return;
+
     if (activeNearby) {
       activeNearby = false;
+      nearbyStatus = "";
       clearCardDistances();
       updateNearbyButton();
       applyPopularFilters();
       return;
     }
 
+    nearbyStatus = "";
     if (!userLocation) {
-      userLocation = await requestUserLocation();
-      if (!userLocation) {
+      isRequestingLocation = true;
+      updateNearbyButton();
+      const location = await requestUserLocation();
+      isRequestingLocation = false;
+
+      if (!location) {
         activeNearby = false;
         clearCardDistances();
         updateNearbyButton();
+        renderVisibleCards();
         return;
       }
+
+      userLocation = location;
     }
 
     activeNearby = true;
@@ -337,7 +349,7 @@ function initializePopularTempleGrid(grid) {
     });
 
     if (countNode) {
-      countNode.textContent = `แสดง ${filteredCards.length.toLocaleString("th-TH")} จาก ${cards.length.toLocaleString("th-TH")} พิกัด${activeNearby ? " · เรียงตามใกล้ฉัน" : ""}`;
+      countNode.textContent = `แสดง ${filteredCards.length.toLocaleString("th-TH")} จาก ${cards.length.toLocaleString("th-TH")} พิกัด${activeNearby ? " · เรียงตามใกล้ฉัน" : ""}${nearbyStatus ? ` · ${nearbyStatus}` : ""}`;
     }
 
     if (emptyNode) {
@@ -422,10 +434,12 @@ function initializePopularTempleGrid(grid) {
 
   function updateNearbyButton() {
     if (!nearbyButton) return;
-    nearbyButton.classList.toggle("is-active", activeNearby);
+    nearbyButton.classList.toggle("is-active", activeNearby && !isRequestingLocation);
+    nearbyButton.classList.toggle("is-locating", isRequestingLocation);
     nearbyButton.setAttribute("aria-pressed", String(activeNearby));
+    nearbyButton.setAttribute("aria-busy", String(isRequestingLocation));
     nearbyButton.disabled = isRequestingLocation;
-    nearbyButton.textContent = isRequestingLocation ? "กำลังหาตำแหน่ง" : activeNearby ? "เรียงตามใกล้ฉัน" : "พิกัดใกล้ฉัน";
+    nearbyButton.textContent = isRequestingLocation ? "กำลังหาตำแหน่ง..." : activeNearby ? "เรียงตามใกล้ฉัน" : "พิกัดใกล้ฉัน";
   }
 
   function updateCardDistances() {
@@ -453,10 +467,10 @@ function initializePopularTempleGrid(grid) {
   }
 
   async function requestUserLocation() {
-    if (!("geolocation" in navigator)) return null;
-
-    isRequestingLocation = true;
-    updateNearbyButton();
+    if (!("geolocation" in navigator)) {
+      nearbyStatus = "เบราว์เซอร์นี้ยังไม่รองรับการใช้ตำแหน่ง";
+      return null;
+    }
 
     try {
       const position = await new Promise((resolve, reject) => {
@@ -470,11 +484,14 @@ function initializePopularTempleGrid(grid) {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       };
-    } catch {
+    } catch (error) {
+      nearbyStatus =
+        error?.code === 1
+          ? "ต้องอนุญาตการใช้ตำแหน่งก่อน"
+          : error?.code === 3
+            ? "หาตำแหน่งไม่ทันเวลา ลองกดอีกครั้ง"
+            : "หาตำแหน่งไม่ได้ในขณะนี้";
       return null;
-    } finally {
-      isRequestingLocation = false;
-      updateNearbyButton();
     }
   }
 }

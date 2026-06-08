@@ -662,9 +662,15 @@
   border-color: rgba(245, 217, 155, 0.48);
 }
 
+.temple-nearby-button.is-locating {
+  color: #725416;
+  background: rgba(214, 173, 85, 0.16);
+  border-color: rgba(194, 141, 53, 0.44);
+}
+
 .temple-nearby-button:disabled {
   cursor: progress;
-  opacity: 0.72;
+  opacity: 1;
 }
 
 .temple-results {
