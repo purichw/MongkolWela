@@ -1,17 +1,25 @@
 import visitInfoData from "./temple-visit-info.json";
+import watportalData from "./watportal-temple-details.json";
 
 const fallbackNotice = visitInfoData.fallbackNotice;
 const entries = visitInfoData.entries || {};
+const watportalEntries = watportalData.entries || {};
 
 export function getTempleVisitInfo(temple) {
   const key = createVisitInfoKey(temple);
   const entry = entries[key];
+  const watportalEntry = watportalEntries[key];
 
-  if (!entry) {
-    return createFallbackVisitInfo(key);
-  }
+  const visitInfo = entry ? createVisitInfoFromEntry(key, entry) : createFallbackVisitInfo(key);
+  return withCoverage(applyWatPortalVisitInfo(visitInfo, watportalEntry));
+}
 
-  return withCoverage({
+export function createVisitInfoKey(temple) {
+  return `${cleanText(temple?.name)}|${cleanText(temple?.province)}`;
+}
+
+function createVisitInfoFromEntry(key, entry) {
+  return {
     key,
     status: entry.status || "partial",
     reviewedAt: entry.reviewedAt || "",
@@ -20,11 +28,74 @@ export function getTempleVisitInfo(temple) {
     admission: normalizeSection(entry.admission, "ค่าเข้าชม"),
     hours: normalizeSection(entry.hours, "เวลาเปิด-ปิดและวันหยุด"),
     contact: normalizeSection(entry.contact, "ช่องทางติดต่อ"),
-  });
+  };
 }
 
-export function createVisitInfoKey(temple) {
-  return `${cleanText(temple?.name)}|${cleanText(temple?.province)}`;
+function applyWatPortalVisitInfo(visitInfo, watportalEntry) {
+  if (!watportalEntry) return visitInfo;
+
+  const source = {
+    id: watportalEntry.sourceId,
+    label: watportalEntry.sourceLabel,
+    url: watportalEntry.url,
+    type: "official",
+  };
+  const sources = appendSource(visitInfo.sources, source);
+  const shouldUseWatPortalHours = Boolean(watportalEntry.hoursSummary) && shouldPreferWatPortalHours(visitInfo.hours, visitInfo.sources);
+
+  return {
+    ...visitInfo,
+    status: visitInfo.status === "needs-direct-check" ? "partial" : visitInfo.status,
+    reviewedAt: maxDate(visitInfo.reviewedAt, watportalEntry.reviewedAt),
+    sources,
+    hours: shouldUseWatPortalHours ? createWatPortalHoursSection(watportalEntry) : visitInfo.hours,
+    officialRegistry: createWatPortalRegistry(watportalEntry),
+  };
+}
+
+function shouldPreferWatPortalHours(hours, sources) {
+  if (!["verified", "listed"].includes(hours.status)) return true;
+  const sectionSources = new Set(hours.sourceIds || []);
+  const directOfficial = sources.some((source) => sectionSources.has(source.id) && source.type === "official" && !source.id.startsWith("watportal-"));
+  return !directOfficial;
+}
+
+function createWatPortalHoursSection(entry) {
+  return normalizeSection(
+    {
+      status: "verified",
+      summary: entry.hoursSummary,
+      regular: entry.hoursRegular || entry.hoursSummary,
+      closed: "ไม่ได้ระบุวันหยุดประจำใน Wat Portal",
+      holidayNotes: "Wat Portal เป็นแหล่งข้อมูลทะเบียน/คลังข้อมูลวัดที่มงคลเวลาจัดเป็น official source; หากมีประกาศเฉพาะกิจควรตรวจสอบกับสถานที่ก่อนเดินทาง",
+      sourceIds: [entry.sourceId],
+    },
+    "เวลาเปิด-ปิดและวันหยุด"
+  );
+}
+
+function createWatPortalRegistry(entry) {
+  const details = [
+    ["ชื่อใน Wat Portal", entry.officialName],
+    ["ที่ตั้ง", entry.address],
+    ["รหัสไปรษณีย์", entry.postalCode],
+    ["นิกาย", entry.sect],
+    ["ชนิด", entry.legalStatus],
+    ["ประเภทวัด", entry.templeTypes],
+  ]
+    .map(([term, value]) => ({ term, value: cleanText(value) }))
+    .filter((item) => item.value);
+
+  if (details.length === 0) return null;
+
+  return {
+    sourceId: entry.sourceId,
+    sourceLabel: entry.sourceLabel,
+    url: entry.url,
+    details,
+    latitude: entry.latitude,
+    longitude: entry.longitude,
+  };
 }
 
 function normalizeSection(section, label) {
@@ -67,7 +138,7 @@ function sectionDetails(section) {
 }
 
 function createFallbackVisitInfo(key) {
-  return withCoverage({
+  return {
     key,
     status: "needs-direct-check",
     reviewedAt: "",
@@ -76,7 +147,7 @@ function createFallbackVisitInfo(key) {
     admission: normalizeSection(null, "ค่าเข้าชม"),
     hours: normalizeSection(null, "เวลาเปิด-ปิดและวันหยุด"),
     contact: normalizeSection(null, "ช่องทางติดต่อ"),
-  });
+  };
 }
 
 function withCoverage(visitInfo) {
@@ -102,4 +173,16 @@ function withCoverage(visitInfo) {
 
 function cleanText(value) {
   return String(value ?? "").trim();
+}
+
+function appendSource(sources, source) {
+  const nextSources = Array.isArray(sources) ? [...sources] : [];
+  if (!source?.id || nextSources.some((item) => item.id === source.id)) return nextSources;
+  return [source, ...nextSources];
+}
+
+function maxDate(a, b) {
+  if (!a) return b || "";
+  if (!b) return a || "";
+  return a > b ? a : b;
 }

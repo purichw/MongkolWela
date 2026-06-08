@@ -9,10 +9,13 @@ const collectionFiles = {
   sacred: "src/data/sacred-temples.json",
 };
 const visitInfoPath = path.join(rootDir, "src/data/temple-visit-info.json");
+const watportalPath = path.join(rootDir, "src/data/watportal-temple-details.json");
 const outputPath = path.join(rootDir, "outputs/temple-visit-info-coverage.json");
 
 const visitInfo = readJson(visitInfoPath, { entries: {} });
+const watportalData = readJson(watportalPath, { entries: {} });
 const entries = visitInfo.entries || {};
+const watportalEntries = watportalData.entries || {};
 const collections = Object.entries(collectionFiles).map(([name, file]) => ({
   name,
   rows: readJson(path.join(rootDir, file), []),
@@ -21,7 +24,7 @@ const uniquePlaces = buildUniquePlaces(collections);
 const collectionCoverage = collections.map((collection) => summarizeCollection(collection, entries));
 const uniqueCoverage = summarizeRows(uniquePlaces, entries);
 const missing = uniquePlaces
-  .filter((place) => !entries[place.key])
+  .filter((place) => verifiedSectionCount(entries[place.key], place.key) === 0 && listedSectionCount(entries[place.key], place.key) === 0)
   .sort((a, b) => a.minRank - b.minRank || a.name.localeCompare(b.name, "th"))
   .map((place) => ({
     key: place.key,
@@ -31,7 +34,7 @@ const missing = uniquePlaces
     minRank: place.minRank,
   }));
 const partial = uniquePlaces
-  .filter((place) => entries[place.key] && verifiedSectionCount(entries[place.key]) < 3)
+  .filter((place) => (entries[place.key] || watportalEntries[place.key]) && verifiedSectionCount(entries[place.key], place.key) < 3)
   .sort((a, b) => a.minRank - b.minRank || a.name.localeCompare(b.name, "th"))
   .map((place) => ({
     key: place.key,
@@ -39,7 +42,7 @@ const partial = uniquePlaces
     province: place.province,
     collections: place.collections,
     minRank: place.minRank,
-    verifiedSections: verifiedSectionCount(entries[place.key]),
+    verifiedSections: verifiedSectionCount(entries[place.key], place.key),
   }));
 
 const report = {
@@ -47,6 +50,7 @@ const report = {
   totals: {
     uniquePlaces: uniqueCoverage.total,
     entries: Object.keys(entries).length,
+    watportalEntries: Object.keys(watportalEntries).length,
     fullyVerified: uniqueCoverage.full,
     partiallyVerified: uniqueCoverage.partial,
     listedOnly: uniqueCoverage.listedOnly,
@@ -119,24 +123,27 @@ function summarizeCollection(collection, entries) {
 
 function summarizeRows(rows, entries) {
   const total = rows.length;
-  const full = rows.filter((row) => verifiedSectionCount(entries[row.key]) === 3).length;
+  const full = rows.filter((row) => verifiedSectionCount(entries[row.key], row.key) === 3).length;
   const partial = rows.filter((row) => {
-    const count = verifiedSectionCount(entries[row.key]);
+    const count = verifiedSectionCount(entries[row.key], row.key);
     return count > 0 && count < 3;
   }).length;
-  const listedOnly = rows.filter((row) => verifiedSectionCount(entries[row.key]) === 0 && listedSectionCount(entries[row.key]) > 0).length;
-  const missing = rows.filter((row) => verifiedSectionCount(entries[row.key]) === 0 && listedSectionCount(entries[row.key]) === 0).length;
+  const listedOnly = rows.filter((row) => verifiedSectionCount(entries[row.key], row.key) === 0 && listedSectionCount(entries[row.key], row.key) > 0).length;
+  const missing = rows.filter((row) => verifiedSectionCount(entries[row.key], row.key) === 0 && listedSectionCount(entries[row.key], row.key) === 0).length;
   return { total, full, partial, listedOnly, missing };
 }
 
-function verifiedSectionCount(entry) {
-  if (!entry) return 0;
-  return ["admission", "hours", "contact"].filter((field) => entry[field]?.status === "verified").length;
+function verifiedSectionCount(entry, key = "") {
+  return ["admission", "hours", "contact"].filter((field) => sectionStatus(entry, key, field) === "verified").length;
 }
 
-function listedSectionCount(entry) {
-  if (!entry) return 0;
-  return ["admission", "hours", "contact"].filter((field) => entry[field]?.status === "listed").length;
+function listedSectionCount(entry, key = "") {
+  return ["admission", "hours", "contact"].filter((field) => sectionStatus(entry, key, field) === "listed").length;
+}
+
+function sectionStatus(entry, key, field) {
+  if (field === "hours" && watportalEntries[key]?.hoursSummary) return "verified";
+  return entry?.[field]?.status || "";
 }
 
 function readJson(filePath, fallback) {

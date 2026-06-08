@@ -11,6 +11,7 @@
     "nfr:data": "node scripts/validate-runtime-data.mjs",
     "nfr:visit-info": "node scripts/validate-temple-visit-info.mjs",
     "audit:visit-info": "node scripts/audit-temple-visit-info.mjs",
+    "sync:watportal": "node scripts/sync-watportal-visit-info.mjs",
     "nfr:performance": "node scripts/check-performance-budget.mjs",
     "nfr:seo": "node scripts/validate-seo.mjs",
     "nfr:vercel": "node scripts/validate-vercel-config.mjs",

@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const visitInfoPath = path.join(rootDir, "src/data/temple-visit-info.json");
+const watportalPath = path.join(rootDir, "src/data/watportal-temple-details.json");
 const collectionFiles = [
   "src/data/popular-temples.json",
   "src/data/mu-temples.json",
@@ -14,8 +15,10 @@ const errors = [];
 const warnings = [];
 
 const visitInfo = readJson(visitInfoPath, {});
+const watportalData = readJson(watportalPath, { entries: {} });
 const validKeys = buildValidTempleKeys();
 const entries = visitInfo.entries || {};
+const watportalEntries = watportalData.entries || {};
 
 if (!text(visitInfo.fallbackNotice)) errors.push("fallbackNotice ต้องมีข้อความ fallback");
 if (!entries || typeof entries !== "object" || Array.isArray(entries)) {
@@ -23,6 +26,7 @@ if (!entries || typeof entries !== "object" || Array.isArray(entries)) {
 } else {
   Object.entries(entries).forEach(([key, entry]) => validateEntry(key, entry));
 }
+validateWatPortalData();
 
 report();
 
@@ -77,6 +81,39 @@ function validateFactSection(key, field, section, sourceMap) {
   if (!hasOfficialSource && section.sourceIds.length < 2) {
     errors.push(`${ref}: แหล่งไม่เป็นทางการต้องมีอย่างน้อย 2 sources`);
   }
+}
+
+function validateWatPortalData() {
+  if (!watportalData || typeof watportalData !== "object" || Array.isArray(watportalData)) {
+    errors.push("watportal-temple-details.json: root ต้องเป็น object");
+    return;
+  }
+
+  if (!watportalEntries || typeof watportalEntries !== "object" || Array.isArray(watportalEntries)) {
+    errors.push("watportal-temple-details.json: entries ต้องเป็น object");
+    return;
+  }
+
+  Object.entries(watportalEntries).forEach(([key, entry]) => {
+    const ref = `watportal.${key}`;
+    if (!validKeys.has(key)) warnings.push(`${ref}: ไม่พบ key นี้ใน temple runtime data ปัจจุบัน`);
+    requireText(ref, "sourceId", entry?.sourceId);
+    requireText(ref, "sourceLabel", entry?.sourceLabel);
+    requireText(ref, "url", entry?.url);
+    requireText(ref, "officialName", entry?.officialName);
+    if (entry?.url && !/^https:\/\/www\.watportal\.com\/th\/wat\/region\/detail\/iid\/\d+/.test(entry.url)) {
+      errors.push(`${ref}: url ต้องเป็น Wat Portal detail URL`);
+    }
+    if (!Number.isFinite(Number(entry?.matchScore)) || Number(entry.matchScore) < 80) {
+      errors.push(`${ref}: matchScore ต้องมากกว่าหรือเท่ากับ 80`);
+    }
+    if (!text(entry?.address) && !text(entry?.hoursSummary)) {
+      errors.push(`${ref}: ต้องมี address หรือ hoursSummary อย่างน้อยหนึ่งอย่าง`);
+    }
+    if (entry?.hoursRows && !Array.isArray(entry.hoursRows)) {
+      errors.push(`${ref}: hoursRows ต้องเป็น array`);
+    }
+  });
 }
 
 function buildValidTempleKeys() {

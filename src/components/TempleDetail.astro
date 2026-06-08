@@ -126,6 +126,7 @@ const visitSections = visitInfo.visibleSections as VisitInfoSection[];
 const missingVisitSections = visitInfo.missingSections as VisitInfoSection[];
 const hasVisibleVisitInfo = Boolean(visitInfo.hasVisibleSections);
 const visitSources = visitInfo.sources as VisitInfoSource[];
+const officialRegistry = visitInfo.officialRegistry as { sourceLabel: string; url: string; details: Array<{ term: string; value: string }> } | null;
 const mapQuery = hasPlusCode ? plusCode : hasCoordinates ? `${latitude},${longitude}` : "";
 const mapHref = mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : "";
 const mapLabel = hasPlusCode ? plusCode : hasCoordinates ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : "";
@@ -282,6 +283,23 @@ const templeJsonLd = createTempleJsonLd({
               <strong>รอข้อมูลยืนยันจากแหล่งทางการหรือแหล่งที่ตรวจสอบไขว้ได้</strong>
               <p>{visitInfo.notice}</p>
             </article>
+          )}
+
+          {officialRegistry && (
+            <aside class="temple-detail-official-registry" aria-label="ข้อมูลทะเบียนจาก Wat Portal">
+              <div>
+                <span>ข้อมูลทะเบียนจาก Wat Portal</span>
+                <a href={officialRegistry.url} target="_blank" rel="noopener">{officialRegistry.sourceLabel}</a>
+              </div>
+              <dl>
+                {officialRegistry.details.map((item) => (
+                  <div>
+                    <dt>{item.term}</dt>
+                    <dd>{item.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </aside>
           )}
 
           {visitSources.length > 0 ? (

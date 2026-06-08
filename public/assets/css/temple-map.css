@@ -724,6 +724,65 @@
   line-height: 1.6;
 }
 
+.temple-detail-official-registry {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 253, 246, 0.74);
+  border: 1px solid rgba(32, 75, 63, 0.16);
+  border-radius: calc(var(--radius) - 2px);
+}
+
+.temple-detail-official-registry > div:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.temple-detail-official-registry span {
+  color: var(--lacquer);
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.temple-detail-official-registry a {
+  color: var(--green);
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.temple-detail-official-registry dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px 16px;
+  margin: 0;
+}
+
+.temple-detail-official-registry dl div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.temple-detail-official-registry dt {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.temple-detail-official-registry dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .temple-detail-visit__grid span {
   color: var(--lacquer);
   font-size: 0.84rem;
@@ -1499,6 +1558,10 @@
 
   .temple-detail-visit__grid dl div {
     grid-template-columns: 74px minmax(0, 1fr);
+  }
+
+  .temple-detail-official-registry dl {
+    grid-template-columns: 1fr;
   }
 
   .temple-detail-route__summary {
