@@ -925,7 +925,7 @@
   position: absolute;
   top: 21px;
   bottom: -1px;
-  left: calc(82px + 11px + 12px);
+  left: calc(82px + 10px + 12px);
   width: 2px;
   background: rgba(77, 56, 41, 0.16);
 }
@@ -944,6 +944,7 @@
   position: relative;
   z-index: 1;
   display: block;
+  justify-self: center;
   width: 16px;
   height: 16px;
   margin-top: 2px;
@@ -1477,7 +1478,7 @@
   }
 
   .temple-detail-route-timeline li:not(:last-child)::before {
-    left: calc(64px + 10px + 9px);
+    left: calc(64px + 9px + 9px);
   }
 
   .temple-route-time {
