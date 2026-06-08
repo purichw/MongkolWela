@@ -306,41 +306,100 @@ function applyTempleCardOverrides(content) {
 }
 
 function normalizeVisitSection(section = {}, label) {
-  const details = [
-    ["คนไทย", section.thai],
-    ["ชาวต่างชาติ", section.foreign],
-    ["ผู้ใหญ่", section.adult],
-    ["เด็ก", section.child],
-    ["เวลาปกติ", section.regular],
-    ["จำหน่ายบัตร", section.ticketOffice],
-    ["วันหยุด", section.closed],
-    ["หมายเหตุ", section.holidayNotes || section.notes],
-    ["โทรศัพท์", section.phone],
-    ["LINE", section.line],
-    ["Facebook", section.facebook],
-    ["อีเมล", section.email],
-  ]
-    .map(([term, value]) => ({ term, value: String(value || "").trim() }))
-    .filter((item) => item.value);
+  const kind = label === "ค่าเข้าชม" ? "admission" : label === "ช่องทางติดต่อ" ? "contact" : "hours";
+  const details = visitSectionDetails(section, kind);
   return {
+    kind,
     label,
     status: section.status || (section.summary || details.length ? "verified" : "needs-direct-check"),
     summary: section.summary || "กรุณาตรวจสอบกับสถานที่ดังกล่าว",
+    timetable: normalizeVisitTimetable(section.timetable || section.hoursRows),
     details,
   };
 }
 
 function renderVisitSection(section) {
   const className = section.status === "verified" ? "is-verified" : section.status === "listed" ? "is-listed" : "needs-check";
-  return `<article class="${className}">
-    <span>${escapeHtml(section.label)}</span>
+  const timetable = Array.isArray(section.timetable) ? section.timetable : [];
+  return `<article class="temple-detail-visit-card temple-detail-visit-card--${escapeHtml(section.kind || "info")} ${className}">
+    <span class="temple-detail-visit-card__label">${escapeHtml(section.label)}</span>
     <p>${escapeHtml(section.summary)}</p>
+    ${
+      timetable.length
+        ? `<table class="temple-detail-visit-timetable"><tbody>${timetable
+            .map((row) => `<tr><th scope="row">${escapeHtml(row.day)}</th><td>${escapeHtml(row.time)}</td></tr>`)
+            .join("")}</tbody></table>`
+        : ""
+    }
     ${
       section.details.length
         ? `<dl>${section.details.map((item) => `<div><dt>${escapeHtml(item.term)}</dt><dd>${escapeHtml(item.value)}</dd></div>`).join("")}</dl>`
         : ""
     }
   </article>`;
+}
+
+function visitSectionDetails(section, kind) {
+  if (kind === "admission") {
+    const details = [];
+    pushVisitDetail(details, "คนไทย", section.thai);
+    pushVisitDetail(details, "ชาวต่างชาติ", section.foreign);
+    const adult = cleanVisitDetailText(section.adult);
+    const child = cleanVisitDetailText(section.child);
+    const hasAudiencePrice = cleanVisitDetailText(section.thai) || cleanVisitDetailText(section.foreign);
+    if (adult && child && comparableVisitText(adult) !== comparableVisitText(child)) {
+      details.push({ term: "ผู้ใหญ่", value: adult }, { term: "เด็ก", value: child });
+    } else if (!hasAudiencePrice) {
+      pushVisitDetail(details, "ผู้ใหญ่", adult);
+      pushVisitDetail(details, "เด็ก", child);
+    }
+    pushVisitDetail(details, "หมายเหตุ", section.notes);
+    return details;
+  }
+  if (kind === "contact") {
+    const details = [];
+    pushVisitDetail(details, "โทรศัพท์", section.phone);
+    pushVisitDetail(details, "LINE", section.line);
+    pushVisitDetail(details, "Facebook", section.facebook);
+    pushVisitDetail(details, "อีเมล", section.email);
+    return details;
+  }
+  const details = [];
+  if (!normalizeVisitTimetable(section.timetable || section.hoursRows).length) pushVisitDetail(details, "เวลาปกติ", section.regular);
+  pushVisitDetail(details, "จำหน่ายบัตร", section.ticketOffice);
+  pushVisitDetail(details, "วันหยุด", section.closed, { allowUnspecified: true });
+  pushVisitDetail(details, "หมายเหตุ", section.holidayNotes || section.notes);
+  return details;
+}
+
+function pushVisitDetail(details, term, value, options = {}) {
+  const displayValue = cleanVisitDetailText(value, options);
+  if (displayValue) details.push({ term, value: displayValue });
+}
+
+function cleanVisitDetailText(value, options = {}) {
+  const text = String(value || "")
+    .trim()
+    .replace(/\s*ใน Wat Portal\s*/giu, "")
+    .replace(/\s*ในแหล่งข้อมูล\s*/giu, "ในแหล่งข้อมูล")
+    .trim();
+  if (!text || (!options.allowUnspecified && /^ไม่ได้ระบุ/u.test(text)) || /^อ้างอิงลิงก์/u.test(text) || /Wat Portal เป็นแหล่งข้อมูล/u.test(text)) return "";
+  return text;
+}
+
+function comparableVisitText(value) {
+  return String(value || "")
+    .trim()
+    .replace(/\s+/gu, "")
+    .replace(/สำหรับชาวต่างชาติ/gu, "")
+    .replace(/เมื่อแสดงบัตรประชาชน/gu, "");
+}
+
+function normalizeVisitTimetable(rows) {
+  if (!Array.isArray(rows)) return [];
+  return rows
+    .map((row) => ({ day: String(row?.day || "").trim(), time: String(row?.time || "").trim() }))
+    .filter((row) => row.day && row.time);
 }
 
 function applyTempleDetailOverride(content) {

@@ -183,15 +183,12 @@ function initializePopularTempleGrid(grid) {
     (event) => {
       const image = event.target;
       if (!(image instanceof HTMLImageElement)) return;
-      const fallbackSrc = image.dataset.fallbackSrc || placeholderSrc;
-      if (!fallbackSrc || image.dataset.fallbackApplied === "true") return;
-
-      image.dataset.fallbackApplied = "true";
-      image.src = fallbackSrc;
-      image.closest("[data-popular-temple-card]")?.classList.add("is-placeholder");
+      applyImageFallback(image);
     },
     true,
   );
+  repairBrokenCardImages();
+  window.addEventListener("load", repairBrokenCardImages, { once: true });
 
   cards.forEach((card) => {
     card.hidden = true;
@@ -541,6 +538,23 @@ function initializePopularTempleGrid(grid) {
     const error = new Error("Location request timed out.");
     error.code = 3;
     return error;
+  }
+
+  function repairBrokenCardImages() {
+    cards.forEach((card) => {
+      const image = card.querySelector("img");
+      if (!(image instanceof HTMLImageElement)) return;
+      if (image.complete && image.naturalWidth === 0) applyImageFallback(image);
+    });
+  }
+
+  function applyImageFallback(image) {
+    const fallbackSrc = image.dataset.fallbackSrc || placeholderSrc;
+    if (!fallbackSrc || image.dataset.fallbackApplied === "true") return;
+
+    image.dataset.fallbackApplied = "true";
+    image.src = fallbackSrc;
+    image.closest("[data-popular-temple-card]")?.classList.add("is-placeholder");
   }
 }
 

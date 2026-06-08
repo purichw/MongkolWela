@@ -98,10 +98,12 @@ type VisitInfoDetail = {
 };
 
 type VisitInfoSection = {
+  kind: string;
   status: string;
   label: string;
   summary: string;
   details: VisitInfoDetail[];
+  timetable?: { day: string; time: string }[];
 };
 
 const { collection, collectionLabel, collectionHref, temple, placeholderImage, relatedTemples = [] } = Astro.props as Props;
@@ -126,7 +128,6 @@ const visitSections = visitInfo.visibleSections as VisitInfoSection[];
 const missingVisitSections = visitInfo.missingSections as VisitInfoSection[];
 const hasVisibleVisitInfo = Boolean(visitInfo.hasVisibleSections);
 const visitSources = visitInfo.sources as VisitInfoSource[];
-const officialRegistry = visitInfo.officialRegistry as { sourceLabel: string; url: string; details: Array<{ term: string; value: string }> } | null;
 const mapQuery = hasPlusCode ? plusCode : hasCoordinates ? `${latitude},${longitude}` : "";
 const mapHref = mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : "";
 const mapLabel = hasPlusCode ? plusCode : hasCoordinates ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : "";
@@ -255,9 +256,21 @@ const templeJsonLd = createTempleJsonLd({
             <>
               <div class="temple-detail-visit__grid">
                 {visitSections.map((section) => (
-                  <article class={section.status === "verified" ? "is-verified" : "is-listed"}>
-                    <span>{section.label}</span>
+                  <article class={`temple-detail-visit-card temple-detail-visit-card--${section.kind} ${section.status === "verified" ? "is-verified" : "is-listed"}`}>
+                    <span class="temple-detail-visit-card__label">{section.label}</span>
                     <p>{section.summary}</p>
+                    {(section.timetable || []).length > 0 && (
+                      <table class="temple-detail-visit-timetable">
+                        <tbody>
+                          {(section.timetable || []).map((row) => (
+                            <tr>
+                              <th scope="row">{row.day}</th>
+                              <td>{row.time}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
                     {section.details.length > 0 && (
                       <dl>
                         {section.details.map((item) => (
@@ -283,23 +296,6 @@ const templeJsonLd = createTempleJsonLd({
               <strong>รอข้อมูลยืนยันจากแหล่งทางการหรือแหล่งที่ตรวจสอบไขว้ได้</strong>
               <p>{visitInfo.notice}</p>
             </article>
-          )}
-
-          {officialRegistry && (
-            <aside class="temple-detail-official-registry" aria-label="ข้อมูลทะเบียนจาก Wat Portal">
-              <div>
-                <span>ข้อมูลทะเบียนจาก Wat Portal</span>
-                <a href={officialRegistry.url} target="_blank" rel="noopener">{officialRegistry.sourceLabel}</a>
-              </div>
-              <dl>
-                {officialRegistry.details.map((item) => (
-                  <div>
-                    <dt>{item.term}</dt>
-                    <dd>{item.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </aside>
           )}
 
           {visitSources.length > 0 ? (
