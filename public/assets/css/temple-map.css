@@ -637,6 +637,127 @@
   background: #d6ad55;
 }
 
+.temple-detail-visit {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+  padding: 22px;
+  background: rgba(255, 250, 240, 0.62);
+  border: 1px solid rgba(194, 141, 53, 0.22);
+  border-radius: var(--radius);
+}
+
+.temple-detail-visit__head {
+  display: grid;
+  gap: 6px;
+}
+
+.temple-detail-visit h3 {
+  margin: 0;
+  color: var(--lacquer);
+  font-size: 1.22rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.temple-detail-visit__head p,
+.temple-detail-visit__notice {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+  font-weight: 800;
+  line-height: 1.65;
+}
+
+.temple-detail-visit__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.temple-detail-visit__grid article {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 16px;
+  background: rgba(255, 253, 246, 0.78);
+  border: 1px solid rgba(77, 56, 41, 0.12);
+  border-radius: calc(var(--radius) - 2px);
+}
+
+.temple-detail-visit__grid article.is-verified {
+  border-color: rgba(32, 75, 63, 0.22);
+}
+
+.temple-detail-visit__grid article.needs-check {
+  background: rgba(247, 240, 226, 0.66);
+}
+
+.temple-detail-visit__grid span {
+  color: var(--lacquer);
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.temple-detail-visit__grid p {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 900;
+  line-height: 1.55;
+}
+
+.temple-detail-visit__grid dl {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+.temple-detail-visit__grid dl div {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.temple-detail-visit__grid dt {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.temple-detail-visit__grid dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.temple-detail-visit-sources {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.temple-detail-visit-sources summary {
+  width: fit-content;
+  color: var(--jade);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.temple-detail-visit-sources ul {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.temple-detail-visit-sources a {
+  color: var(--lacquer);
+}
+
 .temple-detail-transit {
   display: grid;
   gap: 18px;
@@ -1335,6 +1456,14 @@
 
   .temple-detail-transit-highlights {
     grid-template-columns: 1fr;
+  }
+
+  .temple-detail-visit__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .temple-detail-visit__grid dl div {
+    grid-template-columns: 74px minmax(0, 1fr);
   }
 
   .temple-detail-route__summary {

@@ -9,6 +9,7 @@ export const keyRoutes = nfrKeyRoutes.map((route) => ({
 export async function skipIntroLoader(page: Page) {
   await page.addInitScript(() => {
     window.sessionStorage.setItem("mongkolwela.loader.v2.seen", "1");
+    window.localStorage.setItem("mongkolwela.pdpa.analytics", "declined");
   });
 }
 

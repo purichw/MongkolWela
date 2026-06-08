@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getTempleTravel } from "../data/temple-travel.js";
+import { getTempleVisitInfo } from "../data/temple-visit-info.js";
 import { getTempleDetailUrl } from "../data/temple-slugs.js";
 import { absoluteUrl, createTempleJsonLd, splitSeoList } from "../lib/seo.js";
 
@@ -86,6 +87,23 @@ type TravelView = {
   hasTravelDetail: boolean;
 };
 
+type VisitInfoSource = {
+  label: string;
+  url: string;
+};
+
+type VisitInfoDetail = {
+  term: string;
+  value: string;
+};
+
+type VisitInfoSection = {
+  status: string;
+  label: string;
+  summary: string;
+  details: VisitInfoDetail[];
+};
+
 const { collection, collectionLabel, collectionHref, temple, placeholderImage, relatedTemples = [] } = Astro.props as Props;
 const imageUrl = temple.imageUrl || placeholderImage;
 const title = `${temple.name} | ${collectionLabel} | มงคลเวลา`;
@@ -103,6 +121,9 @@ const travelModeItems = splitList(temple.travelModes);
 const travelDetail = temple.travelDetail || {};
 const travelView = getTempleTravel(travelDetail) as TravelView;
 const hasTravelDetail = travelView.hasTravelDetail;
+const visitInfo = getTempleVisitInfo(temple);
+const visitSections = [visitInfo.admission, visitInfo.hours, visitInfo.contact] as VisitInfoSection[];
+const visitSources = visitInfo.sources as VisitInfoSource[];
 const mapQuery = hasPlusCode ? plusCode : hasCoordinates ? `${latitude},${longitude}` : "";
 const mapHref = mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : "";
 const mapLabel = hasPlusCode ? plusCode : hasCoordinates ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : "";
@@ -216,6 +237,47 @@ const templeJsonLd = createTempleJsonLd({
             </ul>
           </div>
         )}
+
+        <section class="temple-detail-visit" aria-labelledby="temple-detail-visit-title">
+          <div class="temple-detail-visit__head">
+            <h3 id="temple-detail-visit-title">ข้อมูลเข้าชมและติดต่อ</h3>
+            <p>แสดงเฉพาะข้อมูลที่มีแหล่งยืนยันตามเกณฑ์ของมงคลเวลา</p>
+          </div>
+
+          <div class="temple-detail-visit__grid">
+            {visitSections.map((section) => (
+              <article class={section.status === "verified" ? "is-verified" : "needs-check"}>
+                <span>{section.label}</span>
+                <p>{section.summary}</p>
+                {section.details.length > 0 && (
+                  <dl>
+                    {section.details.map((item) => (
+                      <div>
+                        <dt>{item.term}</dt>
+                        <dd>{item.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+              </article>
+            ))}
+          </div>
+
+          {visitSources.length > 0 ? (
+            <details class="temple-detail-visit-sources">
+              <summary>แหล่งข้อมูลที่ใช้ยืนยัน</summary>
+              <ul>
+                {visitSources.map((source) => (
+                  <li>
+                    <a href={source.url} target="_blank" rel="noopener">{source.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ) : (
+            <p class="temple-detail-visit__notice">{visitInfo.notice}</p>
+          )}
+        </section>
 
         {hasTravelDetail && (
           <section class="temple-detail-transit" aria-labelledby="temple-detail-transit-title">

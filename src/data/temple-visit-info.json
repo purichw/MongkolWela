@@ -1,0 +1,169 @@
+{
+  "fallbackNotice": "กรุณาตรวจสอบค่าเข้าชม เวลาเปิด-ปิด วันหยุด และช่องทางติดต่อกับสถานที่โดยตรงก่อนเดินทาง",
+  "entries": {
+    "วัดพระแก้ว|กรุงเทพมหานคร": {
+      "status": "verified",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "royal-grand-palace-ticket",
+          "label": "พระบรมมหาราชวัง: การจำหน่ายบัตรเข้าชม",
+          "url": "https://www.royalgrandpalace.th/th/buy-ticket",
+          "type": "official"
+        },
+        {
+          "id": "royal-grand-palace-contact",
+          "label": "พระบรมมหาราชวัง: ติดต่อเรา",
+          "url": "https://www.royalgrandpalace.th/th/contact",
+          "type": "official"
+        }
+      ],
+      "admission": {
+        "status": "verified",
+        "summary": "คนไทยเข้าชมฟรีเมื่อแสดงบัตรประชาชน บัตรเข้าชมสำหรับนักท่องเที่ยวชาวต่างชาติ 500 บาท",
+        "thai": "ไม่เสียค่าใช้จ่ายเมื่อแสดงบัตรประชาชน",
+        "foreign": "500 บาท",
+        "adult": "ไม่ได้ระบุแยกผู้ใหญ่ในแหล่งข้อมูล",
+        "child": "ไม่ได้ระบุแยกเด็กในแหล่งข้อมูล",
+        "notes": "บัตรใช้เข้าชมพระบรมมหาราชวัง วัดพระศรีรัตนศาสดาราม และพิพิธภัณฑ์ผ้าในบริเวณพระบรมมหาราชวัง",
+        "sourceIds": ["royal-grand-palace-ticket"]
+      },
+      "hours": {
+        "status": "verified",
+        "summary": "เปิดเข้าชมทุกวัน 08.30-16.30 น.; จำหน่ายบัตร 08.30-15.30 น.",
+        "regular": "ทุกวัน 08.30-16.30 น.",
+        "ticketOffice": "08.30-15.30 น.",
+        "closed": "ไม่ได้ระบุวันหยุดประจำในแหล่งข้อมูล",
+        "holidayNotes": "เวลาอาจเปลี่ยนแปลงเมื่อมีพระราชพิธีหรือประกาศพิเศษ ควรตรวจสอบปฏิทิน/ประกาศก่อนเดินทาง",
+        "sourceIds": ["royal-grand-palace-ticket", "royal-grand-palace-contact"]
+      },
+      "contact": {
+        "status": "verified",
+        "summary": "โทรศัพท์ +66-2-623-5500; อีเมล ticket@palaces.mail.go.th",
+        "phone": "+66-2-623-5500",
+        "email": "ticket@palaces.mail.go.th",
+        "line": "ไม่ได้ระบุในแหล่งข้อมูล",
+        "facebook": "ไม่ได้ระบุในแหล่งข้อมูล",
+        "sourceIds": ["royal-grand-palace-contact"]
+      }
+    },
+    "วัดอรุณ|กรุงเทพมหานคร": {
+      "status": "verified",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "thailand-go-wat-arun",
+          "label": "Thailand.go.th: วัดอรุณฯ ตามรอยซีรีส์ King The Land",
+          "url": "https://thailand.go.th/issue-focus-detail/-----king-the-land?hl=th",
+          "type": "government"
+        }
+      ],
+      "admission": {
+        "status": "verified",
+        "summary": "คนไทยไม่เสียค่าเข้าชม ชาวต่างชาติ 200 บาท",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "200 บาท",
+        "adult": "ไม่ได้ระบุแยกผู้ใหญ่ในแหล่งข้อมูล",
+        "child": "ไม่ได้ระบุแยกเด็กในแหล่งข้อมูล",
+        "sourceIds": ["thailand-go-wat-arun"]
+      },
+      "hours": {
+        "status": "verified",
+        "summary": "เปิดให้เข้าชมทุกวัน 08.00-18.00 น.",
+        "regular": "ทุกวัน 08.00-18.00 น.",
+        "closed": "ไม่ได้ระบุวันหยุดประจำในแหล่งข้อมูล",
+        "holidayNotes": "กรุณาตรวจสอบประกาศของสถานที่อีกครั้งหากเดินทางในวันพิธีหรือวันหยุดพิเศษ",
+        "sourceIds": ["thailand-go-wat-arun"]
+      },
+      "contact": {
+        "status": "verified",
+        "summary": "โทรศัพท์ 0 2891 2185",
+        "phone": "0 2891 2185",
+        "line": "ไม่ได้ระบุในแหล่งข้อมูล",
+        "facebook": "ไม่ได้ระบุในแหล่งข้อมูล",
+        "sourceIds": ["thailand-go-wat-arun"]
+      }
+    },
+    "วัดโพธิ์|กรุงเทพมหานคร": {
+      "status": "verified",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "watpho-visitor-info",
+          "label": "วัดโพธิ์: ข้อมูลสำหรับนักท่องเที่ยว",
+          "url": "https://watpho.org/en",
+          "type": "official"
+        },
+        {
+          "id": "watpho-visit-plan",
+          "label": "วัดโพธิ์: Visit plan",
+          "url": "https://watpho.org/en/contact/plan",
+          "type": "official"
+        }
+      ],
+      "admission": {
+        "status": "verified",
+        "summary": "คนไทยเข้าชมฟรีเมื่อแสดงบัตรประชาชน ชาวต่างชาติ 300 บาท เด็กสูงต่ำกว่า 120 ซม. เข้าฟรี",
+        "thai": "ไม่เสียค่าใช้จ่ายเมื่อแสดงบัตรประชาชน",
+        "foreign": "300 บาท",
+        "adult": "300 บาทสำหรับชาวต่างชาติ",
+        "child": "เด็กสูงต่ำกว่า 120 ซม. เข้าฟรี",
+        "sourceIds": ["watpho-visitor-info", "watpho-visit-plan"]
+      },
+      "hours": {
+        "status": "verified",
+        "summary": "เปิดเข้าชม 08.00-19.30 น.",
+        "regular": "08.00-19.30 น.",
+        "closed": "ไม่ได้ระบุวันหยุดประจำในแหล่งข้อมูล",
+        "holidayNotes": "กรุณาตรวจสอบประกาศของวัดอีกครั้งก่อนเดินทางในวันพิธีหรือช่วงเทศกาล",
+        "sourceIds": ["watpho-visit-plan"]
+      },
+      "contact": {
+        "status": "verified",
+        "summary": "โทรศัพท์ 083-057-7100; อีเมล watpho.th@gmail.com; Facebook: วัดโพธิ์ ท่าเตียน Wat Pho",
+        "phone": "083-057-7100",
+        "email": "watpho.th@gmail.com",
+        "line": "ไม่ได้ระบุในแหล่งข้อมูล",
+        "facebook": "วัดโพธิ์ ท่าเตียน Wat Pho",
+        "sourceIds": ["watpho-visitor-info"]
+      }
+    },
+    "วัดเบญจมบพิตรดุสิตวนาราม|กรุงเทพมหานคร": {
+      "status": "verified",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "watben-tourism",
+          "label": "วัดเบญจมบพิตรฯ: ข้อมูลการท่องเที่ยว",
+          "url": "https://watben5.com/tourism.php",
+          "type": "official"
+        }
+      ],
+      "admission": {
+        "status": "verified",
+        "summary": "ค่าเข้าชมสำหรับชาวต่างชาติ 100 บาท",
+        "thai": "ไม่ได้ระบุในแหล่งข้อมูล",
+        "foreign": "100 บาท",
+        "adult": "ไม่ได้ระบุแยกผู้ใหญ่ในแหล่งข้อมูล",
+        "child": "ไม่ได้ระบุแยกเด็กในแหล่งข้อมูล",
+        "sourceIds": ["watben-tourism"]
+      },
+      "hours": {
+        "status": "verified",
+        "summary": "เวลาทำการของวัด 08.00-18.00 น. ทุกวัน",
+        "regular": "ทุกวัน 08.00-18.00 น.",
+        "closed": "ไม่ได้ระบุวันหยุดประจำในแหล่งข้อมูล",
+        "holidayNotes": "กรุณาตรวจสอบประกาศของวัดอีกครั้งก่อนเดินทางในวันพิธีหรือช่วงเทศกาล",
+        "sourceIds": ["watben-tourism"]
+      },
+      "contact": {
+        "status": "verified",
+        "summary": "สำนักงานฝ่ายเผยแผ่ 0983954289; สำนักงานกลาง 095 818 9314; สำนักงานเจ้าอาวาส 092 939 5646; Facebook: watbencham",
+        "phone": "0983954289; 095 818 9314; 092 939 5646",
+        "line": "ไม่ได้ระบุในแหล่งข้อมูล",
+        "facebook": "https://www.facebook.com/watbencham",
+        "sourceIds": ["watben-tourism"]
+      }
+    }
+  }
+}

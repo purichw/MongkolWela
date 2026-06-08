@@ -7,6 +7,8 @@ test.describe("Accessibility regression", () => {
     test(`axe serious/critical checks ${route.path}`, async ({ page }) => {
       await skipIntroLoader(page);
       await page.goto(route.path, { waitUntil: "domcontentloaded" });
+      await expect(page.locator("main")).toBeVisible();
+      await page.waitForLoadState("networkidle");
 
       const result = await new AxeBuilder({ page }).analyze();
       const blockingViolations = result.violations.filter((violation) =>
