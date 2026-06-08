@@ -1034,9 +1034,8 @@
 }
 
 .temple-detail-side {
-  position: sticky;
-  top: 92px;
   display: grid;
+  align-self: start;
   gap: 18px;
 }
 
