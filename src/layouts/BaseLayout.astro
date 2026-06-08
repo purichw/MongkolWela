@@ -128,7 +128,7 @@ const jsonLd = toJsonLdGraph([
     <link rel="stylesheet" href={versionedAsset("/styles.css")} />
     <script is:inline type="application/ld+json" set:html={jsonLd}></script>
   </head>
-  <body class={bodyClass}>
+  <body class={bodyClass} data-cms-page={page}>
     <LoadingScreen />
     <div class="scroll-progress" data-scroll-progress aria-hidden="true">
       <span data-scroll-progress-bar></span>
@@ -139,6 +139,7 @@ const jsonLd = toJsonLdGraph([
 
     <script is:inline type="module" src={versionedAsset("/script.js")}></script>
     {extraScripts.map((src: string) => <script is:inline type="module" src={versionedAsset(src)}></script>)}
+    <script is:inline type="module" src={versionedAsset("/assets/js/cms-runtime.js")}></script>
     <script is:inline>
       (() => {
         const host = window.location.hostname;
