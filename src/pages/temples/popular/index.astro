@@ -6,6 +6,7 @@ import popularTemples from "../../../data/popular-temples.json";
 import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data/temple-images.js";
 import { getTempleDetailUrl } from "../../../data/temple-slugs.js";
 import templePageBanners from "../../../data/temple-page-banners.json";
+import { createItemListJsonLd } from "../../../lib/seo.js";
 
 const extraScripts = ["/assets/js/temple-directory.js", "/assets/js/temple-map.js"];
 type TempleCard = {
@@ -65,16 +66,36 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
     return a.localeCompare(b, "th");
   },
 );
+const pageTitle = "สายไหว้พระ 9 วัด | มงคลเวลา";
+const pageDescription = "รวมเส้นทางไหว้พระ 9 วัด วัดดังทั่วไทย และพิกัดทำบุญพร้อมตัวกรองภาค จังหวัด จุดประสงค์ แผนที่ และรายละเอียดการเดินทาง";
+const itemListJsonLd = createItemListJsonLd({
+  name: "สายไหว้พระ 9 วัดยอดนิยม",
+  description: pageDescription,
+  url: "/temples/popular/",
+  items: rankedTemples.slice(0, 8).map((temple) => ({
+    name: `${temple.name} ${temple.province}`,
+    url: getTempleDetailUrl("popular", temple),
+  })),
+});
 ---
 
 <BaseLayout
-  title="สายไหว้พระ 9 วัด | มงคลเวลา"
-  description="รวมเส้นทางไหว้พระ 9 วัดและวัดเด่นทั่วไทย พร้อมทางลัดไปยังทะเบียนวัดทั่วประเทศไทย"
+  title={pageTitle}
+  description={pageDescription}
   lang="th"
   locale="th"
   page="templesPopular"
   bodyClass="temples-hub-page"
   extraScripts={extraScripts}
+  canonicalPath="/temples/popular/"
+  image="/assets/images/hero-temple-red.jpg"
+  imageAlt="สายไหว้พระ 9 วัดและวัดดังทั่วไทย"
+  breadcrumbs={[
+    { label: "หน้าแรก", href: "/" },
+    { label: "วัดดังเสริมมงคล", href: "/temples/" },
+    { label: "สายไหว้พระ 9 วัด", href: "/temples/popular/" },
+  ]}
+  structuredData={itemListJsonLd}
 >
   <main class="temples-hub">
     <TempleMapOverlay

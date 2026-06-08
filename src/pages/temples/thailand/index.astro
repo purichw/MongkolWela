@@ -2,18 +2,55 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import TempleSearchHero from "../../../components/TempleSearchHero.astro";
 import templePageBanners from "../../../data/temple-page-banners.json";
+import { absoluteUrl } from "../../../lib/seo.js";
 
 const extraScripts = ["/assets/js/temple-directory.js"];
+const pageDescription =
+  "ค้นหารายการวัดทั่วประเทศไทยจากระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ พร้อมตัวกรองชื่อวัด ประเภทวัด นิกาย ภาค จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา";
+const datasetJsonLd = {
+  "@type": "Dataset",
+  "@id": `${absoluteUrl("/temples/thailand/")}#dataset`,
+  name: "ฐานข้อมูลวัดทั่วประเทศไทย",
+  description: pageDescription,
+  inLanguage: "th-TH",
+  url: absoluteUrl("/temples/thailand/"),
+  isAccessibleForFree: true,
+  license: absoluteUrl("/temples/thailand/"),
+  keywords: ["วัดทั่วประเทศไทย", "ทะเบียนวัด", "สำนักงานพระพุทธศาสนาแห่งชาติ", "ค้นหาวัด", "วัดไทย"],
+  creator: {
+    "@type": "Organization",
+    name: "สำนักงานพระพุทธศาสนาแห่งชาติ",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "มงคลเวลา",
+    url: absoluteUrl("/"),
+  },
+  distribution: {
+    "@type": "DataDownload",
+    contentUrl: absoluteUrl("/assets/data/temples-thailand.json"),
+    encodingFormat: "application/json",
+  },
+};
 ---
 
 <BaseLayout
   title="วัดทั่วประเทศไทย | มงคลเวลา"
-  description="ค้นหารายการวัดทั่วประเทศไทยจากระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ พร้อมตัวกรองชื่อวัด ประเภทวัด นิกาย ภาค จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา"
+  description={pageDescription}
   lang="th"
   locale="th"
   page="templesThailand"
   bodyClass="temple-directory-page"
   extraScripts={extraScripts}
+  canonicalPath="/temples/thailand/"
+  image="/assets/images/hero-temple-red.jpg"
+  imageAlt="ค้นหาวัดทั่วประเทศไทยจากทะเบียนวัด"
+  breadcrumbs={[
+    { label: "หน้าแรก", href: "/" },
+    { label: "วัดดังเสริมมงคล", href: "/temples/" },
+    { label: "วัดทั่วประเทศไทย", href: "/temples/thailand/" },
+  ]}
+  structuredData={datasetJsonLd}
 >
   <main class="temple-directory" data-temple-directory data-locale="th">
     <TempleSearchHero

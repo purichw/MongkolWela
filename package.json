@@ -10,7 +10,8 @@
     "check": "astro check",
     "nfr:data": "node scripts/validate-runtime-data.mjs",
     "nfr:performance": "node scripts/check-performance-budget.mjs",
-    "nfr": "npm run nfr:data && npm run nfr:performance",
+    "nfr:seo": "node scripts/validate-seo.mjs",
+    "nfr": "npm run nfr:data && npm run nfr:performance && npm run nfr:seo",
     "test:e2e": "playwright test",
     "test:visual": "playwright test tests/e2e/visual.spec.ts --project=chromium-desktop",
     "test:regression": "npm run check && npm run build && npm run nfr && npm run test:e2e"

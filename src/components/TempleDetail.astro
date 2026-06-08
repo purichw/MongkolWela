@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getTempleTravel } from "../data/temple-travel.js";
 import { getTempleDetailUrl } from "../data/temple-slugs.js";
+import { absoluteUrl, createTempleJsonLd, splitSeoList } from "../lib/seo.js";
 
 interface Props {
   collection: "popular" | "mu" | "sacred";
@@ -88,17 +89,14 @@ type TravelView = {
 const { collection, collectionLabel, collectionHref, temple, placeholderImage, relatedTemples = [] } = Astro.props as Props;
 const imageUrl = temple.imageUrl || placeholderImage;
 const title = `${temple.name} | ${collectionLabel} | มงคลเวลา`;
+const detailUrl = getTempleDetailUrl(collection, temple);
 const hasCoordinates = Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude));
 const latitude = Number(temple.latitude);
 const longitude = Number(temple.longitude);
 const plusCode = String(temple.plusCode || "").trim();
 const hasPlusCode = Boolean(plusCode);
 const locationText = [temple.region, temple.province, temple.district].filter(Boolean).join(" · ");
-const splitList = (value?: string) =>
-  String(value || "")
-    .split(";")
-    .map((item) => item.trim())
-    .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
+const splitList = splitSeoList;
 const blessingItems = splitList(temple.blessings);
 const objectItems = splitList(temple.objectHero);
 const travelModeItems = splitList(temple.travelModes);
@@ -121,16 +119,35 @@ const getRouteIntro = (route: TravelRoute) =>
   [route.typeText, route.operatorText].filter(Boolean).join(" · ") || route.shortLabel;
 const getWalkLabel = (route: TravelRoute) =>
   route.distanceText ? `เดิน ${route.distanceText.replace(/^~/u, "").trim()}` : "เดินต่อไปยังจุดหมาย";
+const detailDescription = `${temple.name} ${temple.province}${temple.district ? ` ${temple.district}` : ""} ใน${collectionLabel}${blessingItems.length ? ` เหมาะสำหรับ${blessingItems.slice(0, 4).join(" · ")}` : ""} พร้อมพิกัด แผนที่ วิธีเดินทาง และสถานที่ใกล้เคียง`;
+const detailBreadcrumbs = [
+  { label: "หน้าแรก", href: "/" },
+  { label: "วัดดังเสริมมงคล", href: "/temples/" },
+  { label: collectionLabel, href: collectionHref },
+  { label: temple.name, href: detailUrl },
+];
+const templeJsonLd = createTempleJsonLd({
+  temple,
+  collectionLabel,
+  collectionHref,
+  pageUrl: absoluteUrl(detailUrl),
+  imageUrl: absoluteUrl(imageUrl),
+});
 ---
 
 <BaseLayout
   title={title}
-  description={`รายละเอียด${temple.name} ${temple.province}${temple.district ? ` ${temple.district}` : ""}`}
+  description={detailDescription}
   lang="th"
   locale="th"
   page="temples"
   bodyClass="temples-hub-page"
   extraScripts={["/assets/js/temple-detail.js"]}
+  canonicalPath={detailUrl}
+  image={imageUrl}
+  imageAlt={temple.imageAlt || `${temple.name} ${temple.province}`}
+  breadcrumbs={detailBreadcrumbs}
+  structuredData={templeJsonLd}
 >
   <main class="temple-detail">
     <nav class="temple-detail__back" aria-label="breadcrumb">

@@ -1,0 +1,19 @@
+{
+  "name": "มงคลเวลา",
+  "short_name": "มงคลเวลา",
+  "description": "ดูดวง ปฏิทินไทย ฤกษ์มงคล ไพ่ยิปซี และพิกัดวัดดังสายมูสายไหว้พระ",
+  "lang": "th-TH",
+  "start_url": "/",
+  "scope": "/",
+  "display": "minimal-ui",
+  "background_color": "#fff8ea",
+  "theme_color": "#9e2b24",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

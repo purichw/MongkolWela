@@ -2,6 +2,21 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import LoadingScreen from "../components/LoadingScreen.astro";
+import {
+  SEO_DEFAULT_IMAGE,
+  SEO_DEFAULT_IMAGE_HEIGHT,
+  SEO_DEFAULT_IMAGE_WIDTH,
+  SEO_SITE_NAME,
+  absoluteUrl,
+  canonicalUrl,
+  cleanDescription,
+  createBreadcrumbJsonLd,
+  createOrganizationJsonLd,
+  createWebPageJsonLd,
+  createWebSiteJsonLd,
+  normalizeBreadcrumbs,
+  toJsonLdGraph,
+} from "../lib/seo.js";
 
 interface Props {
   title: string;
@@ -11,7 +26,18 @@ interface Props {
   page?: string;
   bodyClass?: string;
   extraScripts?: string[];
+  canonicalPath?: string;
+  image?: string;
+  imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  robots?: string;
+  pageType?: string;
+  breadcrumbs?: { label: string; href?: string }[];
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
 }
+
+type BreadcrumbItem = { label: string; href?: string };
 
 const {
   title,
@@ -21,10 +47,39 @@ const {
   page = "home",
   bodyClass = "",
   extraScripts = [],
+  canonicalPath,
+  image = SEO_DEFAULT_IMAGE,
+  imageAlt = SEO_SITE_NAME,
+  imageWidth = SEO_DEFAULT_IMAGE_WIDTH,
+  imageHeight = SEO_DEFAULT_IMAGE_HEIGHT,
+  robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+  pageType = "website",
+  breadcrumbs = [],
+  structuredData = [],
 } = Astro.props as Props;
 
 const assetVersion = "20260608-02";
 const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
+const pagePath = canonicalPath || Astro.url.pathname;
+const pageUrl = canonicalUrl(pagePath);
+const seoDescription = cleanDescription(description);
+const seoImage = absoluteUrl(image);
+const normalizedBreadcrumbs = normalizeBreadcrumbs(breadcrumbs) as BreadcrumbItem[];
+const breadcrumbJsonLd = createBreadcrumbJsonLd(normalizedBreadcrumbs, pageUrl);
+const pageJsonLd = createWebPageJsonLd({
+  title,
+  description: seoDescription,
+  url: pageUrl,
+  image: seoImage,
+  breadcrumbs: normalizedBreadcrumbs,
+});
+const jsonLd = toJsonLdGraph([
+  createOrganizationJsonLd(),
+  createWebSiteJsonLd(),
+  pageJsonLd,
+  breadcrumbJsonLd,
+  structuredData,
+]);
 ---
 
 <!doctype html>
@@ -33,7 +88,26 @@ const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    {description && <meta name="description" content={description} />}
+    <meta name="description" content={seoDescription} />
+    <meta name="robots" content={robots} />
+    <link rel="canonical" href={pageUrl} />
+    <meta property="og:site_name" content={SEO_SITE_NAME} />
+    <meta property="og:locale" content="th_TH" />
+    <meta property="og:type" content={pageType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={seoDescription} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={seoImage} />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta property="og:image:width" content={String(imageWidth)} />
+    <meta property="og:image:height" content={String(imageHeight)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={seoDescription} />
+    <meta name="twitter:image" content={seoImage} />
+    <meta name="theme-color" content="#9e2b24" />
+    <meta name="application-name" content={SEO_SITE_NAME} />
+    <meta name="apple-mobile-web-app-title" content={SEO_SITE_NAME} />
     <script is:inline>
       try {
         if (window.sessionStorage.getItem("mongkolwela.loader.v2.seen") !== "1") {
@@ -46,11 +120,13 @@ const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href={versionedAsset("/styles.css")} />
+    <script is:inline type="application/ld+json" set:html={jsonLd}></script>
   </head>
   <body class={bodyClass}>
     <LoadingScreen />

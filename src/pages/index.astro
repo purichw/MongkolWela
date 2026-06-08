@@ -6,13 +6,17 @@ const extraScripts = [] as string[];
 ---
 
 <BaseLayout
-  title="มงคลเวลา | ดูดวง ฤกษ์ ปฏิทินไทย และนามมงคล"
-  description="ต้นแบบหน้าแรกสำหรับแพลตฟอร์มดูดวง ฤกษ์ ปฏิทินไทย ไพ่ยิปซี นามศาสตร์ เลขศาสตร์ และบทสวดมนต์สำหรับผู้ใช้ไทย"
+  title="มงคลเวลา | ดูดวง ปฏิทินไทย ฤกษ์มงคล ไพ่ยิปซี และวัดดัง"
+  description="มงคลเวลา รวมดูดวง ปฏิทินไทย ฤกษ์มงคล ไพ่ยิปซี กราฟชีวิต เซียมซี และพิกัดวัดดังสายมูสายไหว้พระ สำหรับผู้ใช้ไทย"
   lang="th"
   locale="th"
   page="home"
   bodyClass=""
   extraScripts={extraScripts}
+  canonicalPath="/"
+  image="/assets/images/hero-temple-red.jpg"
+  imageAlt="มงคลเวลา ดูดวง ปฏิทินไทย ฤกษ์มงคล และวัดดัง"
+  breadcrumbs={[{ label: "หน้าแรก", href: "/" }]}
 >
   <Fragment set:html={mainContent} />
 </BaseLayout>

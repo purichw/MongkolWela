@@ -6,6 +6,7 @@ import muTemples from "../../../data/mu-temples.json";
 import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data/temple-images.js";
 import { getTempleDetailUrl } from "../../../data/temple-slugs.js";
 import templePageBanners from "../../../data/temple-page-banners.json";
+import { createItemListJsonLd } from "../../../lib/seo.js";
 
 const extraScripts = ["/assets/js/temple-directory.js", "/assets/js/temple-map.js"];
 type TempleCard = {
@@ -65,16 +66,36 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
     return a.localeCompare(b, "th");
   },
 );
+const pageTitle = "สายมู | มงคลเวลา";
+const pageDescription = "รวมพิกัดสายมูและสถานที่ศักดิ์สิทธิ์ทั่วไทยสำหรับขอพรเรื่องงาน เงิน ความรัก สุขภาพ โชคลาภ พร้อมแผนที่และตัวกรองจุดประสงค์";
+const itemListJsonLd = createItemListJsonLd({
+  name: "พิกัดสายมูยอดนิยมทั่วไทย",
+  description: pageDescription,
+  url: "/temples/mu/",
+  items: rankedTemples.slice(0, 8).map((temple) => ({
+    name: `${temple.name} ${temple.province}`,
+    url: getTempleDetailUrl("mu", temple),
+  })),
+});
 ---
 
 <BaseLayout
-  title="สายมู | มงคลเวลา"
-  description="รวมพิกัดสายมูสำหรับขอพรเรื่องการงาน การเงิน ความรัก สุขภาพ โชคลาภ และเสริมสิริมงคลทั่วไทย"
+  title={pageTitle}
+  description={pageDescription}
   lang="th"
   locale="th"
   page="templesMu"
   bodyClass="temples-hub-page"
   extraScripts={extraScripts}
+  canonicalPath="/temples/mu/"
+  image="/assets/images/hero-temple-red.jpg"
+  imageAlt="พิกัดสายมูและสถานที่ศักดิ์สิทธิ์ทั่วไทย"
+  breadcrumbs={[
+    { label: "หน้าแรก", href: "/" },
+    { label: "วัดดังเสริมมงคล", href: "/temples/" },
+    { label: "สายมู", href: "/temples/mu/" },
+  ]}
+  structuredData={itemListJsonLd}
 >
   <main class="temples-hub">
     <TempleMapOverlay

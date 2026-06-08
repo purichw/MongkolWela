@@ -7,6 +7,7 @@ import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data
 import { getTempleDetailUrl } from "../../../data/temple-slugs.js";
 import templePageBanners from "../../../data/temple-page-banners.json";
 import { templeDirectoryCommon, templeDirectoryPages } from "../../../data/temple-directory-content.js";
+import { createItemListJsonLd } from "../../../lib/seo.js";
 
 const extraScripts = ["/assets/js/temple-directory.js", "/assets/js/temple-map.js"];
 const pageContent = templeDirectoryPages.sacred;
@@ -46,6 +47,15 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
     return a.localeCompare(b, "th");
   },
 );
+const itemListJsonLd = createItemListJsonLd({
+  name: pageContent.heading,
+  description: pageContent.description,
+  url: pageContent.collectionHref,
+  items: rankedTemples.slice(0, 8).map((temple) => ({
+    name: `${temple.name} ${temple.province}`,
+    url: getTempleDetailUrl("sacred", temple),
+  })),
+});
 ---
 
 <BaseLayout
@@ -56,6 +66,15 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
   page={pageContent.pageKey}
   bodyClass="temples-hub-page"
   extraScripts={extraScripts}
+  canonicalPath={pageContent.collectionHref}
+  image="/assets/images/hero-temple-red.jpg"
+  imageAlt="วัดศักดิ์สิทธิ์และสถานที่สำคัญทั่วไทย"
+  breadcrumbs={[
+    { label: "หน้าแรก", href: "/" },
+    { label: "วัดดังเสริมมงคล", href: "/temples/" },
+    { label: pageContent.heading, href: pageContent.collectionHref },
+  ]}
+  structuredData={itemListJsonLd}
 >
   <main class="temples-hub">
     <TempleMapOverlay
