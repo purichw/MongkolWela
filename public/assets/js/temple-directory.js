@@ -146,6 +146,7 @@ function initializePopularTempleGrid(grid) {
   const filterName = filterRoot?.querySelector("[data-popular-temple-filter-name]");
   const filterClear = filterRoot?.querySelector("[data-popular-temple-filter-clear]");
   const nearbyButton = filterRoot?.querySelector("[data-popular-temple-nearby]");
+  const nearbyStatusNode = createNearbyStatusNode(nearbyButton);
   const regionTags = Array.from(filterRoot?.querySelectorAll("[data-popular-region-tag]") || []);
   const provinceFilter = filterRoot?.querySelector("[data-popular-province-filter]");
   const provinceTagsRoot = filterRoot?.querySelector("[data-popular-province-tags]");
@@ -439,7 +440,12 @@ function initializePopularTempleGrid(grid) {
     nearbyButton.setAttribute("aria-pressed", String(activeNearby));
     nearbyButton.setAttribute("aria-busy", String(isRequestingLocation));
     nearbyButton.disabled = isRequestingLocation;
-    nearbyButton.textContent = isRequestingLocation ? "กำลังหาตำแหน่ง..." : activeNearby ? "เรียงตามใกล้ฉัน" : "พิกัดใกล้ฉัน";
+    nearbyButton.textContent = isRequestingLocation ? "กำลังหาตำแหน่ง..." : activeNearby ? "เรียงตามใกล้ฉัน" : nearbyStatus ? "ลองอีกครั้ง" : "พิกัดใกล้ฉัน";
+    nearbyButton.title = nearbyStatus || "";
+    if (nearbyStatusNode) {
+      nearbyStatusNode.textContent = nearbyStatus;
+      nearbyStatusNode.hidden = !nearbyStatus;
+    }
   }
 
   function updateCardDistances() {
@@ -473,12 +479,25 @@ function initializePopularTempleGrid(grid) {
     }
 
     try {
+      const permissionState = await readGeolocationPermissionState();
+      if (permissionState === "denied") {
+        nearbyStatus = "ต้องอนุญาตตำแหน่งในเบราว์เซอร์ก่อน";
+        return null;
+      }
+
+      let timeoutId = 0;
       const position = await new Promise((resolve, reject) => {
+        timeoutId = window.setTimeout(() => {
+          reject(createLocationTimeoutError());
+        }, 12000);
+
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: false,
           maximumAge: 5 * 60 * 1000,
           timeout: 10000,
         });
+      }).finally(() => {
+        window.clearTimeout(timeoutId);
       });
       return {
         latitude: position.coords.latitude,
@@ -493,6 +512,35 @@ function initializePopularTempleGrid(grid) {
             : "หาตำแหน่งไม่ได้ในขณะนี้";
       return null;
     }
+  }
+
+  function createNearbyStatusNode(button) {
+    if (!button) return null;
+
+    const statusNode = document.createElement("p");
+    statusNode.className = "temple-nearby-status";
+    statusNode.hidden = true;
+    statusNode.setAttribute("role", "status");
+    statusNode.setAttribute("aria-live", "polite");
+    button.insertAdjacentElement("afterend", statusNode);
+    return statusNode;
+  }
+
+  async function readGeolocationPermissionState() {
+    if (!navigator.permissions?.query) return "";
+
+    try {
+      const permission = await navigator.permissions.query({ name: "geolocation" });
+      return permission.state;
+    } catch {
+      return "";
+    }
+  }
+
+  function createLocationTimeoutError() {
+    const error = new Error("Location request timed out.");
+    error.code = 3;
+    return error;
   }
 }
 
