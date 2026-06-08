@@ -689,8 +689,36 @@
   border-color: rgba(32, 75, 63, 0.22);
 }
 
+.temple-detail-visit__grid article.is-listed {
+  border-color: rgba(194, 141, 53, 0.28);
+}
+
 .temple-detail-visit__grid article.needs-check {
   background: rgba(247, 240, 226, 0.66);
+}
+
+.temple-detail-visit-empty {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(247, 240, 226, 0.66);
+  border: 1px dashed rgba(77, 56, 41, 0.2);
+  border-radius: calc(var(--radius) - 2px);
+}
+
+.temple-detail-visit-empty strong {
+  color: var(--ink);
+  font-size: 0.98rem;
+  font-weight: 900;
+  line-height: 1.5;
+}
+
+.temple-detail-visit-empty p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.6;
 }
 
 .temple-detail-visit__grid span {

@@ -38,7 +38,10 @@
         "adult": "ไม่เสียค่าเข้าชม",
         "child": "ไม่เสียค่าเข้าชม",
         "notes": "อาจมีตู้รับบริจาคหรือกิจกรรมทำบุญตามศรัทธาในพื้นที่วัด",
-        "sourceIds": ["tat-wat-rakhang", "gplace-wat-rakhang"]
+        "sourceIds": [
+          "tat-wat-rakhang",
+          "gplace-wat-rakhang"
+        ]
       },
       "hours": {
         "status": "verified",
@@ -46,7 +49,11 @@
         "regular": "ทุกวัน 08.00-17.00 น.",
         "closed": "ไม่ได้ระบุวันหยุดประจำในแหล่งข้อมูล",
         "holidayNotes": "บางบทความท่องเที่ยวระบุช่วง 07.00-18.00 น.; หากเดินทางวันพิธีหรือช่วงเทศกาลควรตรวจสอบประกาศของวัดอีกครั้ง",
-        "sourceIds": ["tat-wat-rakhang", "watportal-wat-rakhang", "gplace-wat-rakhang"]
+        "sourceIds": [
+          "tat-wat-rakhang",
+          "watportal-wat-rakhang",
+          "gplace-wat-rakhang"
+        ]
       },
       "contact": {
         "status": "verified",
@@ -55,7 +62,9 @@
         "email": "library@watrakang.com",
         "line": "ไม่ได้ระบุในแหล่งข้อมูล",
         "facebook": "https://www.facebook.com/watrakhang.official",
-        "sourceIds": ["watrakang-official"]
+        "sourceIds": [
+          "watrakang-official"
+        ]
       }
     },
     "วัดพระแก้ว|กรุงเทพมหานคร": {
@@ -83,7 +92,9 @@
         "adult": "ไม่ได้ระบุแยกผู้ใหญ่ในแหล่งข้อมูล",
         "child": "ไม่ได้ระบุแยกเด็กในแหล่งข้อมูล",
         "notes": "บัตรใช้เข้าชมพระบรมมหาราชวัง วัดพระศรีรัตนศาสดาราม และพิพิธภัณฑ์ผ้าในบริเวณพระบรมมหาราชวัง",
-        "sourceIds": ["royal-grand-palace-ticket"]
+        "sourceIds": [
+          "royal-grand-palace-ticket"
+        ]
       },
       "hours": {
         "status": "verified",
@@ -92,7 +103,10 @@
         "ticketOffice": "08.30-15.30 น.",
         "closed": "ไม่ได้ระบุวันหยุดประจำในแหล่งข้อมูล",
         "holidayNotes": "เวลาอาจเปลี่ยนแปลงเมื่อมีพระราชพิธีหรือประกาศพิเศษ ควรตรวจสอบปฏิทิน/ประกาศก่อนเดินทาง",
-        "sourceIds": ["royal-grand-palace-ticket", "royal-grand-palace-contact"]
+        "sourceIds": [
+          "royal-grand-palace-ticket",
+          "royal-grand-palace-contact"
+        ]
       },
       "contact": {
         "status": "verified",
@@ -101,7 +115,9 @@
         "email": "ticket@palaces.mail.go.th",
         "line": "ไม่ได้ระบุในแหล่งข้อมูล",
         "facebook": "ไม่ได้ระบุในแหล่งข้อมูล",
-        "sourceIds": ["royal-grand-palace-contact"]
+        "sourceIds": [
+          "royal-grand-palace-contact"
+        ]
       }
     },
     "วัดอรุณ|กรุงเทพมหานคร": {
@@ -122,7 +138,9 @@
         "foreign": "200 บาท",
         "adult": "ไม่ได้ระบุแยกผู้ใหญ่ในแหล่งข้อมูล",
         "child": "ไม่ได้ระบุแยกเด็กในแหล่งข้อมูล",
-        "sourceIds": ["thailand-go-wat-arun"]
+        "sourceIds": [
+          "thailand-go-wat-arun"
+        ]
       },
       "hours": {
         "status": "verified",
@@ -130,7 +148,9 @@
         "regular": "ทุกวัน 08.00-18.00 น.",
         "closed": "ไม่ได้ระบุวันหยุดประจำในแหล่งข้อมูล",
         "holidayNotes": "กรุณาตรวจสอบประกาศของสถานที่อีกครั้งหากเดินทางในวันพิธีหรือวันหยุดพิเศษ",
-        "sourceIds": ["thailand-go-wat-arun"]
+        "sourceIds": [
+          "thailand-go-wat-arun"
+        ]
       },
       "contact": {
         "status": "verified",
@@ -138,7 +158,9 @@
         "phone": "0 2891 2185",
         "line": "ไม่ได้ระบุในแหล่งข้อมูล",
         "facebook": "ไม่ได้ระบุในแหล่งข้อมูล",
-        "sourceIds": ["thailand-go-wat-arun"]
+        "sourceIds": [
+          "thailand-go-wat-arun"
+        ]
       }
     },
     "วัดโพธิ์|กรุงเทพมหานคร": {
@@ -165,7 +187,10 @@
         "foreign": "300 บาท",
         "adult": "300 บาทสำหรับชาวต่างชาติ",
         "child": "เด็กสูงต่ำกว่า 120 ซม. เข้าฟรี",
-        "sourceIds": ["watpho-visitor-info", "watpho-visit-plan"]
+        "sourceIds": [
+          "watpho-visitor-info",
+          "watpho-visit-plan"
+        ]
       },
       "hours": {
         "status": "verified",
@@ -173,7 +198,9 @@
         "regular": "08.00-19.30 น.",
         "closed": "ไม่ได้ระบุวันหยุดประจำในแหล่งข้อมูล",
         "holidayNotes": "กรุณาตรวจสอบประกาศของวัดอีกครั้งก่อนเดินทางในวันพิธีหรือช่วงเทศกาล",
-        "sourceIds": ["watpho-visit-plan"]
+        "sourceIds": [
+          "watpho-visit-plan"
+        ]
       },
       "contact": {
         "status": "verified",
@@ -182,7 +209,9 @@
         "email": "watpho.th@gmail.com",
         "line": "ไม่ได้ระบุในแหล่งข้อมูล",
         "facebook": "วัดโพธิ์ ท่าเตียน Wat Pho",
-        "sourceIds": ["watpho-visitor-info"]
+        "sourceIds": [
+          "watpho-visitor-info"
+        ]
       }
     },
     "วัดเบญจมบพิตรดุสิตวนาราม|กรุงเทพมหานคร": {
@@ -203,7 +232,9 @@
         "foreign": "100 บาท",
         "adult": "ไม่ได้ระบุแยกผู้ใหญ่ในแหล่งข้อมูล",
         "child": "ไม่ได้ระบุแยกเด็กในแหล่งข้อมูล",
-        "sourceIds": ["watben-tourism"]
+        "sourceIds": [
+          "watben-tourism"
+        ]
       },
       "hours": {
         "status": "verified",
@@ -211,7 +242,9 @@
         "regular": "ทุกวัน 08.00-18.00 น.",
         "closed": "ไม่ได้ระบุวันหยุดประจำในแหล่งข้อมูล",
         "holidayNotes": "กรุณาตรวจสอบประกาศของวัดอีกครั้งก่อนเดินทางในวันพิธีหรือช่วงเทศกาล",
-        "sourceIds": ["watben-tourism"]
+        "sourceIds": [
+          "watben-tourism"
+        ]
       },
       "contact": {
         "status": "verified",
@@ -219,7 +252,633 @@
         "phone": "0983954289; 095 818 9314; 092 939 5646",
         "line": "ไม่ได้ระบุในแหล่งข้อมูล",
         "facebook": "https://www.facebook.com/watbencham",
-        "sourceIds": ["watben-tourism"]
+        "sourceIds": [
+          "watben-tourism"
+        ]
+      }
+    },
+    "วัดมังกรกมลาวาส|กรุงเทพมหานคร": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "notice": "ข้อมูลจากแหล่งท่องเที่ยวและ directory ควรตรวจสอบกับวัดอีกครั้งก่อนเดินทาง โดยเฉพาะช่วงเทศกาลตรุษจีนและช่วงแก้ปีชง",
+      "sources": [
+        {
+          "id": "fund-wat-mangkon",
+          "label": "Fun-D: วัดมังกรกมลาวาส",
+          "url": "https://www.fun-d.net/locations/wat-mangkon-kamalawat/",
+          "type": "travel-directory"
+        },
+        {
+          "id": "watportal-wat-mangkon",
+          "label": "Wat Portal: วัดมังกรกมลาวาส",
+          "url": "https://www.watportal.com/th/wat/region/detail/id/3/iid/25468",
+          "type": "official-tourism"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "เข้าชมฟรี",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "ไม่เสียค่าเข้าชม",
+        "adult": "ไม่เสียค่าเข้าชม",
+        "child": "ไม่เสียค่าเข้าชม",
+        "notes": "ค่าเครื่องสักการะหรือพิธีกรรมขึ้นกับการซื้อ/ทำบุญในพื้นที่",
+        "sourceIds": [
+          "fund-wat-mangkon"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 07.00-18.00 น.",
+        "regular": "ทุกวัน 07.00-18.00 น.",
+        "holidayNotes": "ช่วงเทศกาลจีนและพิธีแก้ปีชงคนหนาแน่นมาก ควรตรวจสอบประกาศของวัดหรือเพจก่อนเดินทาง",
+        "sourceIds": [
+          "fund-wat-mangkon"
+        ]
+      },
+      "contact": {
+        "status": "listed",
+        "summary": "โทรศัพท์ 02-222-3975",
+        "phone": "02-222-3975",
+        "facebook": "อ้างอิงลิงก์ Facebook จาก Fun-D",
+        "sourceIds": [
+          "fund-wat-mangkon"
+        ]
+      }
+    },
+    "วัดใหญ่ชัยมงคล|พระนครศรีอยุธยา": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "notice": "ข้อมูลราคาและเวลาเป็นข้อมูลจากแหล่งท่องเที่ยว ควรตรวจสอบกับวัดหรือหน่วยงานพื้นที่ก่อนเดินทาง",
+      "sources": [
+        {
+          "id": "gplace-wat-yai-chai",
+          "label": "Gplace: วัดใหญ่ชัยมงคล",
+          "url": "https://www.gplace.com/3684",
+          "type": "travel-directory"
+        },
+        {
+          "id": "fund-wat-yai-chai",
+          "label": "Fun-D: วัดใหญ่ชัยมงคล",
+          "url": "https://www.fun-d.net/locations/wat-yai-chaimongkol/",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "คนไทยเข้าชมฟรี ชาวต่างชาติ 20 บาท",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "20 บาท",
+        "adult": "ไม่ได้ระบุแยกผู้ใหญ่ในแหล่งข้อมูล",
+        "child": "ไม่ได้ระบุแยกเด็กในแหล่งข้อมูล",
+        "sourceIds": [
+          "gplace-wat-yai-chai",
+          "fund-wat-yai-chai"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิดทุกวัน 08.00-17.00 น.",
+        "regular": "ทุกวัน 08.00-17.00 น.",
+        "sourceIds": [
+          "gplace-wat-yai-chai",
+          "fund-wat-yai-chai"
+        ]
+      },
+      "contact": {
+        "status": "listed",
+        "summary": "โทรศัพท์ 035-242-640",
+        "phone": "035-242-640",
+        "sourceIds": [
+          "fund-wat-yai-chai"
+        ]
+      }
+    },
+    "วัดท่าการ้อง|พระนครศรีอยุธยา": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "gplace-wat-tha-ka-rong",
+          "label": "Gplace: วัดท่าการ้อง",
+          "url": "https://www.gplace.com/3732",
+          "type": "travel-directory"
+        }
+      ],
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 08.30-16.00 น.",
+        "regular": "ทุกวัน 08.30-16.00 น.",
+        "sourceIds": [
+          "gplace-wat-tha-ka-rong"
+        ]
+      }
+    },
+    "วิหารพระมงคลบพิตร|พระนครศรีอยุธยา": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "fund-wihan-mongkhon-bophit",
+          "label": "Fun-D: วิหารพระมงคลบพิตร",
+          "url": "https://www.fun-d.net/locations/wihan-phra-mongkhon-bophit/",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "เข้าชมฟรี",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "ไม่เสียค่าเข้าชม",
+        "notes": "Fun-D ระบุค่าผ่านประตูฟรี",
+        "sourceIds": [
+          "fund-wihan-mongkhon-bophit"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 08.00-16.30 น.",
+        "regular": "ทุกวัน 08.00-16.30 น.",
+        "sourceIds": [
+          "fund-wihan-mongkhon-bophit"
+        ]
+      }
+    },
+    "วัดหน้าพระเมรุ|พระนครศรีอยุธยา": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "fund-wat-na-phra-meru",
+          "label": "Fun-D: วัดหน้าพระเมรุราชิการาม",
+          "url": "https://www.fun-d.net/locations/wat-na-phra-meru-rachikaram/",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "คนไทยเข้าชมฟรี ชาวต่างชาติ 20 บาท",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "20 บาท",
+        "sourceIds": [
+          "fund-wat-na-phra-meru"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 08.00-17.00 น.",
+        "regular": "ทุกวัน 08.00-17.00 น.",
+        "sourceIds": [
+          "fund-wat-na-phra-meru"
+        ]
+      },
+      "contact": {
+        "status": "listed",
+        "summary": "โทรศัพท์ 080-668-1070",
+        "phone": "080-668-1070",
+        "sourceIds": [
+          "fund-wat-na-phra-meru"
+        ]
+      }
+    },
+    "วัดบวรนิเวศวิหาร|กรุงเทพมหานคร": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "fund-wat-bowonniwet",
+          "label": "Fun-D: วัดบวรนิเวศวิหารราชวรวิหาร",
+          "url": "https://www.fun-d.net/locations/wat-bowonniwet/",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "เข้าชมฟรี",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "ไม่เสียค่าเข้าชม",
+        "sourceIds": [
+          "fund-wat-bowonniwet"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 08.00-17.00 น.",
+        "regular": "ทุกวัน 08.00-17.00 น.",
+        "sourceIds": [
+          "fund-wat-bowonniwet"
+        ]
+      },
+      "contact": {
+        "status": "listed",
+        "summary": "โทรศัพท์ 02-281-5052",
+        "phone": "02-281-5052",
+        "sourceIds": [
+          "fund-wat-bowonniwet"
+        ]
+      }
+    },
+    "วัดสุทัศนเทพวราราม|กรุงเทพมหานคร": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "gplace-wat-suthat",
+          "label": "Gplace: วัดสุทัศนเทพวรารามราชวรมหาวิหาร",
+          "url": "https://www.gplace.com/3969",
+          "type": "travel-directory"
+        }
+      ],
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 08.30-20.00 น.",
+        "regular": "ทุกวัน 08.30-20.00 น.",
+        "sourceIds": [
+          "gplace-wat-suthat"
+        ]
+      }
+    },
+    "วัดพระธาตุดอยสุเทพ|เชียงใหม่": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "gplace-doi-suthep",
+          "label": "Gplace: วัดพระธาตุดอยสุเทพราชวรวิหาร",
+          "url": "https://www.gplace.com/6130",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "คนไทยเข้าชมฟรี ชาวต่างชาติมีค่าเข้าชม โปรดตรวจสอบอัตราหน้างาน",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "มีค่าเข้าชม โปรดตรวจสอบอัตราค่าบริการ ณ วันที่เข้าชม",
+        "sourceIds": [
+          "gplace-doi-suthep"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 05.00-21.00 น.",
+        "regular": "ทุกวัน 05.00-21.00 น.",
+        "sourceIds": [
+          "gplace-doi-suthep"
+        ]
+      }
+    },
+    "วัดเจดีย์หลวง|เชียงใหม่": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "gplace-wat-chedi-luang-cm",
+          "label": "Gplace: หออินทขิล/วัดเจดีย์หลวงวรวิหาร",
+          "url": "https://www.gplace.com/917",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "หออินทขิลไม่มีค่าเข้าชม แต่อาจมีค่าธรรมเนียมเข้าชมพื้นที่โบราณสถานของวัดสำหรับชาวต่างชาติ",
+        "thai": "ไม่ได้ระบุค่าเข้าชมพื้นที่วัดโดยรวม",
+        "foreign": "อาจมีค่าธรรมเนียมเข้าชมพื้นที่โบราณสถานของวัด",
+        "notes": "ข้อมูลจากหน้า หออินทขิลซึ่งตั้งอยู่ในวัดเจดีย์หลวง",
+        "sourceIds": [
+          "gplace-wat-chedi-luang-cm"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "โดยทั่วไปเปิด 08.00-17.00 น.",
+        "regular": "ทุกวันโดยทั่วไป 08.00-17.00 น.",
+        "holidayNotes": "ช่วงงานประเพณีเข้าอินทขิล วิหารอินทขิลอาจเปิดถึง 24.00 น.",
+        "sourceIds": [
+          "gplace-wat-chedi-luang-cm"
+        ]
+      }
+    },
+    "วัดพระสิงห์|เชียงใหม่": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "gplace-wat-phra-singh",
+          "label": "Gplace: วัดพระสิงห์วรมหาวิหาร",
+          "url": "https://www.gplace.com/918",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "คนไทยเข้าชมฟรี ชาวต่างชาติมีค่าเข้าชม โปรดตรวจสอบอัตราหน้างาน",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "มีค่าเข้าชม โปรดตรวจสอบอัตราค่าบริการ ณ วันที่เข้าชม",
+        "sourceIds": [
+          "gplace-wat-phra-singh"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 07.00-18.00 น.",
+        "regular": "ทุกวัน 07.00-18.00 น.",
+        "sourceIds": [
+          "gplace-wat-phra-singh"
+        ]
+      }
+    },
+    "ศาลพระแม่ลักษมี เกษรวิลเลจ|กรุงเทพมหานคร": {
+      "status": "verified",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "gaysorn-lakshmi",
+          "label": "GAYSORN VILLAGE: พระแม่ลักษมี",
+          "url": "https://www.gaysornvillage.com/en/in-the-know/detail01/",
+          "type": "official"
+        }
+      ],
+      "hours": {
+        "status": "verified",
+        "summary": "เปิดให้สักการะ 10.00-18.00 น.",
+        "regular": "ทุกวัน 10.00-18.00 น.",
+        "sourceIds": [
+          "gaysorn-lakshmi"
+        ]
+      }
+    },
+    "ศาลพระตรีมูรติ เซ็นทรัลเวิลด์|กรุงเทพมหานคร": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "notice": "ศาลอยู่ในพื้นที่เซ็นทรัลเวิลด์ จึงอ้างอิงเวลาและช่องทางติดต่อของศูนย์การค้าเป็นหลัก ควรตรวจสอบประกาศพื้นที่ก่อนเดินทาง",
+      "sources": [
+        {
+          "id": "centralworld-official",
+          "label": "centralwOrld: ข้อมูลศูนย์การค้า",
+          "url": "https://www.centralworld.co.th/",
+          "type": "official"
+        }
+      ],
+      "hours": {
+        "status": "listed",
+        "summary": "อ้างอิงเวลาเปิดศูนย์การค้า 10.00-22.00 น.",
+        "regular": "ทุกวัน 10.00-22.00 น.",
+        "sourceIds": [
+          "centralworld-official"
+        ]
+      },
+      "contact": {
+        "status": "listed",
+        "summary": "Call center 02-640-7000; อีเมล prom.ctw01@centralpattana.co.th",
+        "phone": "02-640-7000",
+        "email": "prom.ctw01@centralpattana.co.th",
+        "sourceIds": [
+          "centralworld-official"
+        ]
+      }
+    },
+    "ศาลพระพรหมเอราวัณ|กรุงเทพมหานคร": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "muuulab-erawan-shrine",
+          "label": "MUUULAB: ศาลท้าวมหาพรหมเอราวัณ",
+          "url": "https://www.muuulab.com/th/wat/temple-directory/erawan-shrine",
+          "type": "travel-directory"
+        }
+      ],
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 06.00-22.00 น.",
+        "regular": "ทุกวัน 06.00-22.00 น.",
+        "sourceIds": [
+          "muuulab-erawan-shrine"
+        ]
+      }
+    },
+    "วัดท่าซุง|อุทัยธานี": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "fund-wat-tha-sung",
+          "label": "Fun-D: วัดท่าซุง (จันทาราม)",
+          "url": "https://www.fun-d.net/locations/wat-tha-sung-jantaram/",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "เข้าชมฟรี",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "ไม่เสียค่าเข้าชม",
+        "sourceIds": [
+          "fund-wat-tha-sung"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 08.00-16.00 น.",
+        "regular": "ทุกวัน 08.00-16.00 น.",
+        "sourceIds": [
+          "fund-wat-tha-sung"
+        ]
+      },
+      "contact": {
+        "status": "listed",
+        "summary": "โทรศัพท์ 056-502-655",
+        "phone": "056-502-655",
+        "sourceIds": [
+          "fund-wat-tha-sung"
+        ]
+      }
+    },
+    "วัดไตรมิตรวิทยาราม|กรุงเทพมหานคร": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "fund-wat-traimit",
+          "label": "Fun-D: วัดไตรมิตรวิทยารามวรวิหาร",
+          "url": "https://www.fun-d.net/locations/wat-traimit-withayaram-worawihan/",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "ค่าผ่านประตูฟรี",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "ไม่เสียค่าเข้าชม",
+        "notes": "Fun-D ระบุค่าผ่านประตูฟรี; หากเข้าชมพิพิธภัณฑ์หรือพื้นที่เฉพาะควรตรวจสอบหน้างาน",
+        "sourceIds": [
+          "fund-wat-traimit"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 08.00-17.00 น.",
+        "regular": "ทุกวัน 08.00-17.00 น.",
+        "sourceIds": [
+          "fund-wat-traimit"
+        ]
+      },
+      "contact": {
+        "status": "listed",
+        "summary": "โทรศัพท์ 089-002-2700",
+        "phone": "089-002-2700",
+        "sourceIds": [
+          "fund-wat-traimit"
+        ]
+      }
+    },
+    "วัดหัวลำโพง|กรุงเทพมหานคร": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "fund-wat-hua-lamphong",
+          "label": "Fun-D: วัดหัวลำโพง",
+          "url": "https://www.fun-d.net/locations/wat-hua-lamphong/",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "ค่าผ่านประตูฟรี",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "ไม่เสียค่าเข้าชม",
+        "sourceIds": [
+          "fund-wat-hua-lamphong"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 08.00-18.00 น.",
+        "regular": "ทุกวัน 08.00-18.00 น.",
+        "sourceIds": [
+          "fund-wat-hua-lamphong"
+        ]
+      },
+      "contact": {
+        "status": "listed",
+        "summary": "โทรศัพท์ 02-233-8109",
+        "phone": "02-233-8109",
+        "sourceIds": [
+          "fund-wat-hua-lamphong"
+        ]
+      }
+    },
+    "วัดพระธาตุพนม|นครพนม": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "fund-wat-phra-that-phanom",
+          "label": "Fun-D: วัดพระธาตุพนมวรมหาวิหาร",
+          "url": "https://www.fun-d.net/locations/wat-phra-that-phanom/",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "ค่าผ่านประตูฟรี",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "ไม่เสียค่าเข้าชม",
+        "sourceIds": [
+          "fund-wat-phra-that-phanom"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิด 06.00-20.00 น.",
+        "regular": "ทุกวัน 06.00-20.00 น.",
+        "sourceIds": [
+          "fund-wat-phra-that-phanom"
+        ]
+      },
+      "contact": {
+        "status": "listed",
+        "summary": "โทรศัพท์ 042-540-150",
+        "phone": "042-540-150",
+        "sourceIds": [
+          "fund-wat-phra-that-phanom"
+        ]
+      }
+    },
+    "วัดพระธาตุช่อแฮ|แพร่": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "gplace-wat-phra-that-cho-hae",
+          "label": "Gplace: วัดพระธาตุช่อแฮ พระอารามหลวง",
+          "url": "https://www.gplace.com/2380",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "คนไทยเข้าชมฟรี ชาวต่างชาติ 30 บาท",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "30 บาท",
+        "sourceIds": [
+          "gplace-wat-phra-that-cho-hae"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิดทุกวัน 06.00-19.00 น.",
+        "regular": "ทุกวัน 06.00-19.00 น.",
+        "holidayNotes": "ช่วงงานเทศกาลอาจเปิดถึงช่วงค่ำ",
+        "sourceIds": [
+          "gplace-wat-phra-that-cho-hae"
+        ]
+      },
+      "contact": {
+        "status": "listed",
+        "summary": "โทรศัพท์ 054-646-205",
+        "phone": "054-646-205",
+        "sourceIds": [
+          "gplace-wat-phra-that-cho-hae"
+        ]
+      }
+    },
+    "วัดพระธาตุดอยจอมทอง|เชียงราย": {
+      "status": "listed",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "gplace-doi-chom-thong",
+          "label": "Gplace: วัดพระธาตุดอยจอมทอง",
+          "url": "https://www.gplace.com/809",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "listed",
+        "summary": "ไม่มีค่าเข้าชม",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "ไม่เสียค่าเข้าชม",
+        "sourceIds": [
+          "gplace-doi-chom-thong"
+        ]
+      },
+      "hours": {
+        "status": "listed",
+        "summary": "เปิดทุกวัน 06.00-17.00 น.",
+        "regular": "ทุกวัน 06.00-17.00 น.",
+        "sourceIds": [
+          "gplace-doi-chom-thong"
+        ]
+      },
+      "contact": {
+        "status": "listed",
+        "summary": "โทรศัพท์ 053-716-605",
+        "phone": "053-716-605",
+        "sourceIds": [
+          "gplace-doi-chom-thong"
+        ]
       }
     }
   }

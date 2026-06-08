@@ -11,7 +11,7 @@ export function getTempleVisitInfo(temple) {
     return createFallbackVisitInfo(key);
   }
 
-  return {
+  return withCoverage({
     key,
     status: entry.status || "partial",
     reviewedAt: entry.reviewedAt || "",
@@ -20,7 +20,7 @@ export function getTempleVisitInfo(temple) {
     admission: normalizeSection(entry.admission, "ค่าเข้าชม"),
     hours: normalizeSection(entry.hours, "เวลาเปิด-ปิดและวันหยุด"),
     contact: normalizeSection(entry.contact, "ช่องทางติดต่อ"),
-  };
+  });
 }
 
 export function createVisitInfoKey(temple) {
@@ -28,7 +28,7 @@ export function createVisitInfoKey(temple) {
 }
 
 function normalizeSection(section, label) {
-  if (!section || section.status !== "verified") {
+  if (!section || !["verified", "listed"].includes(section.status)) {
     return {
       status: "needs-direct-check",
       label,
@@ -67,7 +67,7 @@ function sectionDetails(section) {
 }
 
 function createFallbackVisitInfo(key) {
-  return {
+  return withCoverage({
     key,
     status: "needs-direct-check",
     reviewedAt: "",
@@ -76,6 +76,27 @@ function createFallbackVisitInfo(key) {
     admission: normalizeSection(null, "ค่าเข้าชม"),
     hours: normalizeSection(null, "เวลาเปิด-ปิดและวันหยุด"),
     contact: normalizeSection(null, "ช่องทางติดต่อ"),
+  });
+}
+
+function withCoverage(visitInfo) {
+  const sections = [visitInfo.admission, visitInfo.hours, visitInfo.contact];
+  const visibleSections = sections.filter((section) => ["verified", "listed"].includes(section.status));
+  const verifiedSections = sections.filter((section) => section.status === "verified");
+  const listedSections = sections.filter((section) => section.status === "listed");
+  const missingSections = sections.filter((section) => !["verified", "listed"].includes(section.status));
+
+  return {
+    ...visitInfo,
+    sections,
+    visibleSections,
+    verifiedSections,
+    listedSections,
+    missingSections,
+    hasVisibleSections: visibleSections.length > 0,
+    hasVerifiedSections: verifiedSections.length > 0,
+    listedSectionCount: listedSections.length,
+    verifiedSectionCount: verifiedSections.length,
   };
 }
 

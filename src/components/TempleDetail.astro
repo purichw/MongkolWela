@@ -122,7 +122,9 @@ const travelDetail = temple.travelDetail || {};
 const travelView = getTempleTravel(travelDetail) as TravelView;
 const hasTravelDetail = travelView.hasTravelDetail;
 const visitInfo = getTempleVisitInfo(temple);
-const visitSections = [visitInfo.admission, visitInfo.hours, visitInfo.contact] as VisitInfoSection[];
+const visitSections = visitInfo.visibleSections as VisitInfoSection[];
+const missingVisitSections = visitInfo.missingSections as VisitInfoSection[];
+const hasVisibleVisitInfo = Boolean(visitInfo.hasVisibleSections);
 const visitSources = visitInfo.sources as VisitInfoSource[];
 const mapQuery = hasPlusCode ? plusCode : hasCoordinates ? `${latitude},${longitude}` : "";
 const mapHref = mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : "";
@@ -241,27 +243,46 @@ const templeJsonLd = createTempleJsonLd({
         <section class="temple-detail-visit" aria-labelledby="temple-detail-visit-title">
           <div class="temple-detail-visit__head">
             <h3 id="temple-detail-visit-title">ข้อมูลเข้าชมและติดต่อ</h3>
-            <p>แสดงเฉพาะข้อมูลที่มีแหล่งยืนยันตามเกณฑ์ของมงคลเวลา</p>
+            <p>
+              {hasVisibleVisitInfo
+                ? `มีข้อมูล ${visitSections.length}/3 ส่วน: ยืนยันแล้ว ${visitInfo.verifiedSectionCount} · อ้างอิง ${visitSources.length} แหล่ง`
+                : "ยังไม่มีข้อมูลค่าเข้าชม เวลาเปิด-ปิด หรือช่องทางติดต่อที่ยืนยันได้ตามเกณฑ์ของมงคลเวลา"}
+            </p>
           </div>
 
-          <div class="temple-detail-visit__grid">
-            {visitSections.map((section) => (
-              <article class={section.status === "verified" ? "is-verified" : "needs-check"}>
-                <span>{section.label}</span>
-                <p>{section.summary}</p>
-                {section.details.length > 0 && (
-                  <dl>
-                    {section.details.map((item) => (
-                      <div>
-                        <dt>{item.term}</dt>
-                        <dd>{item.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
-              </article>
-            ))}
-          </div>
+          {hasVisibleVisitInfo ? (
+            <>
+              <div class="temple-detail-visit__grid">
+                {visitSections.map((section) => (
+                  <article class={section.status === "verified" ? "is-verified" : "is-listed"}>
+                    <span>{section.label}</span>
+                    <p>{section.summary}</p>
+                    {section.details.length > 0 && (
+                      <dl>
+                        {section.details.map((item) => (
+                          <div>
+                            <dt>{item.term}</dt>
+                            <dd>{item.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
+                  </article>
+                ))}
+              </div>
+
+              {missingVisitSections.length > 0 && (
+                <p class="temple-detail-visit__notice">
+                  ส่วนที่ยังต้องตรวจสอบกับสถานที่โดยตรง: {missingVisitSections.map((section) => section.label).join(" · ")}
+                </p>
+              )}
+            </>
+          ) : (
+            <article class="temple-detail-visit-empty">
+              <strong>รอข้อมูลยืนยันจากแหล่งทางการหรือแหล่งที่ตรวจสอบไขว้ได้</strong>
+              <p>{visitInfo.notice}</p>
+            </article>
+          )}
 
           {visitSources.length > 0 ? (
             <details class="temple-detail-visit-sources">
@@ -274,9 +295,9 @@ const templeJsonLd = createTempleJsonLd({
                 ))}
               </ul>
             </details>
-          ) : (
+          ) : hasVisibleVisitInfo ? (
             <p class="temple-detail-visit__notice">{visitInfo.notice}</p>
-          )}
+          ) : null}
         </section>
 
         {hasTravelDetail && (

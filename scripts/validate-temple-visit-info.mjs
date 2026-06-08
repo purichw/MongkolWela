@@ -58,11 +58,11 @@ function validateEntry(key, entry) {
 function validateFactSection(key, field, section, sourceMap) {
   if (!section) return;
   const ref = `${key}.${field}`;
-  if (section.status !== "verified") return;
+  if (!["verified", "listed"].includes(section.status)) return;
 
   requireText(ref, "summary", section.summary);
   if (!Array.isArray(section.sourceIds) || section.sourceIds.length === 0) {
-    errors.push(`${ref}: verified section ต้องมี sourceIds`);
+    errors.push(`${ref}: ${section.status} section ต้องมี sourceIds`);
     return;
   }
 
@@ -70,6 +70,8 @@ function validateFactSection(key, field, section, sourceMap) {
   section.sourceIds.forEach((id) => {
     if (!sourceMap.has(id)) errors.push(`${ref}: sourceIds อ้างถึง source ที่ไม่มี (${id})`);
   });
+
+  if (section.status === "listed") return;
 
   const hasOfficialSource = sources.some((source) => officialSourceTypes.has(source?.type));
   if (!hasOfficialSource && section.sourceIds.length < 2) {
