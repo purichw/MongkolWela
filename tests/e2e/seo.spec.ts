@@ -1,18 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { getTempleDetailUrl } from "../../src/data/temple-slugs.js";
+import { watArunPopularRoute } from "../../src/data/nfr-key-routes.js";
 import { skipIntroLoader } from "./helpers";
 
 const siteUrl = "https://mongkolwela.vercel.app";
-const watArunRoute = getTempleDetailUrl("popular", {
-  rank: 2,
-  name: "วัดอรุณ",
-  province: "กรุงเทพมหานคร",
-});
 const indexedRoutes = [
   "/",
   "/temples/popular/",
   "/temples/mu/",
-  watArunRoute,
+  watArunPopularRoute,
   "/temples/thailand/",
 ];
 

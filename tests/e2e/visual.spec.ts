@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
+import { watArunPopularRoute } from "../../src/data/nfr-key-routes.js";
 import { stabilizeVisuals } from "./helpers";
 
 const routes = [
   { name: "home", path: "/" },
   { name: "popular", path: "/temples/popular/" },
   { name: "mu", path: "/temples/mu/" },
-  { name: "detail", path: "/temples/popular/002-ว-ดอร-ณ-กร-งเทพมหานคร/" },
+  { name: "detail", path: watArunPopularRoute },
   { name: "not-found", path: "/404.html" }
 ];
 

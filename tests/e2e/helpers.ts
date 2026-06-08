@@ -1,13 +1,10 @@
 import type { Page } from "@playwright/test";
+import { nfrKeyRoutes } from "../../src/data/nfr-key-routes.js";
 
-export const keyRoutes = [
-  { path: "/", heading: /มงคลเวลา|วันนี้/ },
-  { path: "/temples/popular/", heading: /สายไหว้พระ 9 วัด/ },
-  { path: "/temples/mu/", heading: /สายมู/ },
-  { path: "/temples/popular/002-ว-ดอร-ณ-กร-งเทพมหานคร/", heading: /วัดอรุณ/ },
-  { path: "/temples/thailand/", heading: /วัดทั่วประเทศไทย/ },
-  { path: "/404.html", heading: /เส้นทางนี้ไม่มีอยู่ในมงคลเวลาแล้ว/ }
-];
+export const keyRoutes = nfrKeyRoutes.map((route) => ({
+  path: route.path,
+  heading: new RegExp(route.headingPattern),
+}));
 
 export async function skipIntroLoader(page: Page) {
   await page.addInitScript(() => {

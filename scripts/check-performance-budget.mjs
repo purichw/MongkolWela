@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { nfrKeyRoutePaths } from "../src/data/nfr-key-routes.js";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = path.join(rootDir, "dist");
@@ -79,7 +80,7 @@ function checkKeyRouteImages() {
 }
 
 function getKeyRouteHtmlFiles() {
-  return budget.keyRoutes.map((route) => {
+  return nfrKeyRoutePaths.map((route) => {
     if (route === "/404.html") return path.join(distDir, "404.html");
     const cleanRoute = route.replace(/^\/+|\/+$/g, "");
     return cleanRoute ? path.join(distDir, cleanRoute, "index.html") : path.join(distDir, "index.html");
