@@ -1,478 +1,478 @@
 {
-  "schemaVersion": 1,
   "site": {
     "name": "มงคลเวลา",
-    "locale": "th",
     "pdpa": {
-      "analyticsConsentRequired": true,
       "bannerText": "มงคลเวลาใช้คุกกี้/ข้อมูลการใช้งานแบบไม่ระบุตัวตนเพื่อปรับปรุงเว็บไซต์ตาม PDPA",
       "acceptLabel": "ยอมรับ",
-      "declineLabel": "ไม่ใช้งาน Analytics"
-    }
-  },
-  "navigation": {
-    "tabs": [
-      {
-        "id": "horoscope",
-        "label": "ดูดวง",
-        "href": "#horoscope",
-        "enabled": true,
-        "items": [
-          {
-            "id": "life-graph",
-            "label": "กราฟชีวิต",
-            "href": "horoscope/life-graph/",
-            "enabled": true
-          },
-          {
-            "id": "tarot-daily",
-            "label": "ไพ่ยิปซีรายวัน",
-            "href": "tarot/daily/",
-            "enabled": true
-          },
-          {
-            "id": "tarot-monthly",
-            "label": "ไพ่ยิปซีรายเดือน",
-            "href": "tarot/monthly/",
-            "enabled": true
-          },
-          {
-            "id": "tarot-luck",
-            "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค",
-            "href": "tarot/luck/",
-            "enabled": true
-          },
-          {
-            "id": "thai-astrology",
-            "label": "โหราศาสตร์ไทย",
-            "href": "horoscope/thai-astrology/",
-            "enabled": true
-          },
-          {
-            "id": "seamsi",
-            "label": "เสี่ยงเซียมซี",
-            "href": "horoscope/seamsi/",
-            "enabled": true
-          }
-        ]
-      },
-      {
-        "id": "calendar",
-        "label": "ฤกษ์และปฏิทิน",
-        "href": "calendar/",
-        "enabled": true,
-        "items": [
-          {
-            "id": "calendar-main",
-            "label": "ปฏิทินจันทรคติ",
-            "href": "calendar/",
-            "enabled": true
-          },
-          {
-            "id": "calendar-car",
-            "label": "ฤกษ์ออกรถ",
-            "href": "calendar/",
-            "enabled": true
-          },
-          {
-            "id": "calendar-wedding",
-            "label": "ฤกษ์แต่งงาน",
-            "href": "calendar/",
-            "enabled": true
-          },
-          {
-            "id": "calendar-buddhist",
-            "label": "วันพระ",
-            "href": "calendar/",
-            "enabled": true
-          }
-        ]
-      },
-      {
-        "id": "names",
-        "label": "ชื่อและตัวเลข",
-        "href": "#names",
-        "enabled": true,
-        "items": [
-          {
-            "id": "baby-name",
-            "label": "ตั้งชื่อลูก",
-            "href": "#names",
-            "enabled": true
-          },
-          {
-            "id": "name-reading",
-            "label": "วิเคราะห์ชื่อ",
-            "href": "#names",
-            "enabled": true
-          },
-          {
-            "id": "phone-number",
-            "label": "เบอร์โทรศัพท์",
-            "href": "#names",
-            "enabled": true
-          },
-          {
-            "id": "car-plate",
-            "label": "ทะเบียนรถ",
-            "href": "#names",
-            "enabled": true
-          }
-        ]
-      },
-      {
-        "id": "rituals",
-        "label": "บทสวดและพิธี",
-        "href": "#rituals",
-        "enabled": true,
-        "items": [
-          {
-            "id": "chants",
-            "label": "บทสวดมนต์",
-            "href": "#rituals",
-            "enabled": true
-          },
-          {
-            "id": "metta",
-            "label": "คาถาเมตตา",
-            "href": "#rituals",
-            "enabled": true
-          },
-          {
-            "id": "ritual-cleansing",
-            "label": "สะเดาะเคราะห์",
-            "href": "#rituals",
-            "enabled": true
-          },
-          {
-            "id": "lucky-colors",
-            "label": "สีมงคล",
-            "href": "#rituals",
-            "enabled": true
-          }
-        ]
-      },
-      {
-        "id": "temples",
-        "label": "วัดดังเสริมมงคล",
-        "href": "temples/",
-        "enabled": true,
-        "items": [
-          {
-            "id": "temple-featured-section",
-            "label": "วัดเด่นวัดดัง",
-            "section": true,
-            "enabled": true
-          },
-          {
-            "id": "popular-temples",
-            "label": "สายไหว้พระ 9 วัด",
-            "href": "temples/popular/",
-            "enabled": true
-          },
-          {
-            "id": "mu-temples",
-            "label": "สายมู",
-            "href": "temples/mu/",
-            "enabled": true
-          },
-          {
-            "id": "sacred-temples",
-            "label": "วัดศักดิ์สิทธิ์",
-            "href": "temples/sacred/",
-            "enabled": true
-          },
-          {
-            "id": "temple-all-section",
-            "label": "วัดทั่วประเทศไทย",
-            "section": true,
-            "enabled": true
-          },
-          {
-            "id": "all-temples",
-            "label": "ค้นหาวัดทั่วประเทศไทย",
-            "href": "temples/thailand/",
-            "enabled": true
-          }
-        ]
-      }
-    ],
-    "utility": [
-      {
-        "id": "learn",
-        "label": "ความรู้",
-        "href": "#learn",
-        "enabled": true
-      },
-      {
-        "id": "consult",
-        "label": "ปรึกษาหมอดู",
-        "href": "#consult",
-        "enabled": true
-      }
-    ]
+      "declineLabel": "ไม่ใช้งาน Analytics",
+      "analyticsConsentRequired": true
+    },
+    "locale": "th"
   },
   "pages": [
     {
       "id": "home",
+      "kind": "existing",
       "label": "หน้าแรก",
       "route": "/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [
         {
           "id": "home-hero-title",
-          "label": "Hero title",
-          "selector": "#hero-title",
           "kind": "text",
-          "value": "มงคลเวลา"
+          "label": "Hero title",
+          "value": "มงคลเวลา",
+          "selector": "#hero-title"
         },
         {
           "id": "home-hero-copy",
-          "label": "Hero copy",
-          "selector": ".hero-copy",
           "kind": "html",
-          "value": "ศูนย์รวมดูดวง ปฏิทินไทย นามมงคล เลขศาสตร์ ไพ่ยิปซี และบทสวด<br>สำหรับการตัดสินใจที่ต้องการทั้งเหตุผล จังหวะเวลา และความเป็นสิริมงคล"
+          "label": "Hero copy",
+          "value": "ศูนย์รวมดูดวง ปฏิทินไทย นามมงคล เลขศาสตร์ ไพ่ยิปซี และบทสวด<br>สำหรับการตัดสินใจที่ต้องการทั้งเหตุผล จังหวะเวลา และความเป็นสิริมงคล",
+          "selector": ".hero-copy"
         },
         {
           "id": "home-hero-search-placeholder",
-          "label": "Search placeholder",
-          "selector": "#site-search",
-          "kind": "attr",
           "attr": "placeholder",
-          "value": "ค้นหา: ฤกษ์แต่งงาน, ตั้งชื่อ, ไพ่ยิปซี, ปฏิทินจีน"
+          "kind": "attr",
+          "label": "Search placeholder",
+          "value": "ค้นหา: ฤกษ์แต่งงาน, ตั้งชื่อ, ไพ่ยิปซี, ปฏิทินจีน",
+          "selector": "#site-search"
         },
         {
           "id": "home-hero-image-1",
-          "label": "Hero image 1",
-          "selector": ".hero-slide:nth-child(1) img",
-          "kind": "image",
+          "alt": "",
           "src": "/assets/images/hero-jtha-98.jpg",
-          "alt": ""
+          "kind": "image",
+          "label": "Hero image 1",
+          "selector": ".hero-slide:nth-child(1) img"
         }
       ],
       "sections": [
         {
           "id": "hero",
           "label": "Hero",
-          "selector": ".hero",
+          "order": 10,
           "enabled": true,
-          "order": 10
+          "selector": ".hero"
         },
         {
           "id": "today",
           "label": "วันนี้",
-          "selector": "#today",
+          "order": 20,
           "enabled": true,
-          "order": 20
+          "selector": "#today"
         },
         {
           "id": "horoscope",
           "label": "หมวดหลัก",
-          "selector": "#horoscope",
+          "order": 30,
           "enabled": true,
-          "order": 30
+          "selector": "#horoscope"
         },
         {
           "id": "calendar",
           "label": "ปฏิทินมงคล",
-          "selector": "#calendar",
+          "order": 40,
           "enabled": true,
-          "order": 40
+          "selector": "#calendar"
         },
         {
           "id": "names",
           "label": "เครื่องมือยอดนิยม",
-          "selector": "#names",
+          "order": 50,
           "enabled": true,
-          "order": 50
+          "selector": "#names"
         },
         {
           "id": "rituals",
           "label": "ประเพณีและพิธี",
-          "selector": "#rituals",
+          "order": 60,
           "enabled": true,
-          "order": 60
+          "selector": "#rituals"
         },
         {
           "id": "learn",
           "label": "คลังความรู้",
-          "selector": "#learn",
+          "order": 70,
           "enabled": true,
-          "order": 70
+          "selector": "#learn"
         }
-      ],
-      "blocks": []
+      ]
     },
     {
       "id": "calendar",
+      "kind": "existing",
       "label": "ปฏิทินไทย",
       "route": "/calendar/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "lifeGraph",
+      "kind": "existing",
       "label": "กราฟชีวิต",
       "route": "/horoscope/life-graph/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "thaiAstrology",
+      "kind": "existing",
       "label": "โหราศาสตร์ไทย",
       "route": "/horoscope/thai-astrology/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "seamsi",
+      "kind": "existing",
       "label": "เสี่ยงเซียมซี",
       "route": "/horoscope/seamsi/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "tarotDaily",
+      "kind": "existing",
       "label": "ไพ่ยิปซีรายวัน",
       "route": "/tarot/daily/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "tarotMonthly",
+      "kind": "existing",
       "label": "ไพ่ยิปซีรายเดือน",
       "route": "/tarot/monthly/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "tarotLuck",
+      "kind": "existing",
       "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค",
       "route": "/tarot/luck/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "temples",
+      "kind": "existing",
       "label": "วัดดังเสริมมงคล",
       "route": "/temples/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "templesPopular",
+      "kind": "existing",
       "label": "สายไหว้พระ 9 วัด",
       "route": "/temples/popular/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "templesMu",
+      "kind": "existing",
       "label": "สายมู",
       "route": "/temples/mu/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "templesSacred",
+      "kind": "existing",
       "label": "วัดศักดิ์สิทธิ์",
       "route": "/temples/sacred/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "templesThailand",
+      "kind": "existing",
       "label": "วัดทั่วประเทศไทย",
       "route": "/temples/thailand/",
+      "blocks": [],
       "enabled": true,
-      "kind": "existing",
       "patches": [],
-      "sections": [],
-      "blocks": []
+      "sections": []
     },
     {
       "id": "sampleCustomPage",
+      "kind": "custom",
       "label": "หน้าตัวอย่างจาก Admin",
       "route": "/p/admin-sample/",
-      "enabled": false,
-      "kind": "custom",
-      "patches": [],
-      "sections": [],
       "blocks": [
         {
           "id": "sample-hero",
           "type": "hero",
-          "enabled": true,
           "props": {
-            "eyebrow": "Admin Page",
-            "title": "หน้าที่สร้างจาก Admin Portal",
             "body": "ใช้สำหรับทดสอบการเพิ่มหน้าใหม่, toggle on/off และเพิ่ม block โดยไม่ต้องแก้ component code",
             "image": "/assets/images/hero-temple-red.jpg",
-            "buttonLabel": "กลับหน้าแรก",
-            "buttonHref": "/"
-          }
+            "title": "หน้าที่สร้างจาก Admin Portal",
+            "eyebrow": "Admin Page",
+            "buttonHref": "/",
+            "buttonLabel": "กลับหน้าแรก"
+          },
+          "enabled": true
         },
         {
           "id": "sample-richtext",
           "type": "richText",
-          "enabled": true,
           "props": {
             "html": "<h2>Rich Text</h2><p>แก้หัวข้อ ย่อหน้า รายการ และลิงก์ได้จาก editor</p>"
-          }
+          },
+          "enabled": true
         }
-      ]
+      ],
+      "enabled": false,
+      "patches": [],
+      "sections": []
     }
   ],
-  "components": {
-    "cards": [
-      {
-        "id": "starter-card",
-        "title": "การ์ดตัวอย่าง",
-        "body": "ใช้เป็นต้นแบบสำหรับ Phase 4",
-        "image": "/assets/images/temple-placeholder-auspicious.png",
-        "href": "/"
-      }
-    ]
-  },
   "analytics": {
     "enabled": true,
     "sampleRate": 1
   },
-  "updatedAt": "2026-06-08T05:12:09.850Z",
-  "publishedAt": "2026-06-08T05:12:09.850Z",
-  "publishedBy": "Codex Prod Smoke"
+  "updatedAt": "2026-06-08T12:46:09.052Z",
+  "components": {
+    "cards": [
+      {
+        "id": "starter-card",
+        "body": "ใช้เป็นต้นแบบสำหรับ Phase 4",
+        "href": "/",
+        "image": "/assets/images/temple-placeholder-auspicious.png",
+        "title": "การ์ดตัวอย่าง"
+      }
+    ]
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "id": "horoscope",
+        "href": "#horoscope",
+        "items": [
+          {
+            "id": "life-graph",
+            "href": "horoscope/life-graph/",
+            "label": "กราฟชีวิต",
+            "enabled": true
+          },
+          {
+            "id": "tarot-daily",
+            "href": "tarot/daily/",
+            "label": "ไพ่ยิปซีรายวัน",
+            "enabled": true
+          },
+          {
+            "id": "tarot-monthly",
+            "href": "tarot/monthly/",
+            "label": "ไพ่ยิปซีรายเดือน",
+            "enabled": true
+          },
+          {
+            "id": "tarot-luck",
+            "href": "tarot/luck/",
+            "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค",
+            "enabled": true
+          },
+          {
+            "id": "thai-astrology",
+            "href": "horoscope/thai-astrology/",
+            "label": "โหราศาสตร์ไทย",
+            "enabled": true
+          },
+          {
+            "id": "seamsi",
+            "href": "horoscope/seamsi/",
+            "label": "เสี่ยงเซียมซี",
+            "enabled": true
+          }
+        ],
+        "label": "ดูดวง",
+        "enabled": true
+      },
+      {
+        "id": "calendar",
+        "href": "calendar/",
+        "items": [
+          {
+            "id": "calendar-main",
+            "href": "calendar/",
+            "label": "ปฏิทินจันทรคติ",
+            "enabled": true
+          },
+          {
+            "id": "calendar-car",
+            "href": "calendar/",
+            "label": "ฤกษ์ออกรถ",
+            "enabled": true
+          },
+          {
+            "id": "calendar-wedding",
+            "href": "calendar/",
+            "label": "ฤกษ์แต่งงาน",
+            "enabled": true
+          },
+          {
+            "id": "calendar-buddhist",
+            "href": "calendar/",
+            "label": "วันพระ",
+            "enabled": true
+          }
+        ],
+        "label": "ฤกษ์และปฏิทิน",
+        "enabled": true
+      },
+      {
+        "id": "names",
+        "href": "#names",
+        "items": [
+          {
+            "id": "baby-name",
+            "href": "#names",
+            "label": "ตั้งชื่อลูก",
+            "enabled": true
+          },
+          {
+            "id": "name-reading",
+            "href": "#names",
+            "label": "วิเคราะห์ชื่อ",
+            "enabled": true
+          },
+          {
+            "id": "phone-number",
+            "href": "#names",
+            "label": "เบอร์โทรศัพท์",
+            "enabled": true
+          },
+          {
+            "id": "car-plate",
+            "href": "#names",
+            "label": "ทะเบียนรถ",
+            "enabled": true
+          }
+        ],
+        "label": "ชื่อและตัวเลข",
+        "enabled": true
+      },
+      {
+        "id": "rituals",
+        "href": "#rituals",
+        "items": [
+          {
+            "id": "chants",
+            "href": "#rituals",
+            "label": "บทสวดมนต์",
+            "enabled": true
+          },
+          {
+            "id": "metta",
+            "href": "#rituals",
+            "label": "คาถาเมตตา",
+            "enabled": true
+          },
+          {
+            "id": "ritual-cleansing",
+            "href": "#rituals",
+            "label": "สะเดาะเคราะห์",
+            "enabled": true
+          },
+          {
+            "id": "lucky-colors",
+            "href": "#rituals",
+            "label": "สีมงคล",
+            "enabled": true
+          }
+        ],
+        "label": "บทสวดและพิธี",
+        "enabled": true
+      },
+      {
+        "id": "temples",
+        "href": "temples/",
+        "items": [
+          {
+            "id": "temple-featured-section",
+            "label": "วัดเด่นวัดดัง",
+            "enabled": true,
+            "section": true
+          },
+          {
+            "id": "popular-temples",
+            "href": "temples/popular/",
+            "label": "สายไหว้พระ 9 วัด",
+            "enabled": true
+          },
+          {
+            "id": "mu-temples",
+            "href": "temples/mu/",
+            "label": "สายมู",
+            "enabled": true
+          },
+          {
+            "id": "sacred-temples",
+            "href": "temples/sacred/",
+            "label": "วัดศักดิ์สิทธิ์",
+            "enabled": true
+          },
+          {
+            "id": "temple-all-section",
+            "label": "วัดทั่วประเทศไทย",
+            "enabled": true,
+            "section": true
+          },
+          {
+            "id": "all-temples",
+            "href": "temples/thailand/",
+            "label": "ค้นหาวัดทั่วประเทศไทย",
+            "enabled": true
+          }
+        ],
+        "label": "วัดดังเสริมมงคล",
+        "enabled": true
+      }
+    ],
+    "utility": [
+      {
+        "id": "learn",
+        "href": "#learn",
+        "label": "ความรู้",
+        "enabled": true
+      },
+      {
+        "id": "consult",
+        "href": "#consult",
+        "label": "ปรึกษาหมอดู",
+        "enabled": true
+      }
+    ]
+  },
+  "publishedAt": "2026-06-08T12:46:09.052Z",
+  "publishedBy": "Codex Supabase Publish Retest",
+  "schemaVersion": 1
 }
