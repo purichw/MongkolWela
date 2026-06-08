@@ -1,10 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { getTempleDetailUrl } from "../src/data/temple-slugs.js";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = path.join(rootDir, "dist");
 const siteUrl = "https://mongkolwela.vercel.app";
+const popularTemples = JSON.parse(fs.readFileSync(path.join(rootDir, "src/data/popular-temples.json"), "utf8"));
+const watArunRoute = getTempleDetailUrl("popular", popularTemples.find((temple) => temple.name === "วัดอรุณ"));
 
 const indexedRoutes = [
   "/",
@@ -16,8 +19,8 @@ const indexedRoutes = [
   "/temples/mu/",
   "/temples/sacred/",
   "/temples/thailand/",
-  "/temples/popular/002-ว-ดอร-ณ-กร-งเทพมหานคร/",
-];
+  watArunRoute,
+].filter(Boolean);
 
 const noindexRoutes = [
   "/404.html",
