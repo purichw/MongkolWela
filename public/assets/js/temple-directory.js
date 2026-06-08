@@ -202,6 +202,11 @@ function initializePopularTempleGrid(grid) {
     applyPopularFilters();
   });
 
+  document.addEventListener("mw:temple-overrides-applied", () => {
+    updateProvinceTags();
+    applyPopularFilters();
+  });
+
   filterName?.addEventListener("input", () => {
     applyPopularFilters();
   });

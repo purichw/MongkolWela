@@ -58,7 +58,7 @@ const {
   structuredData = [],
 } = Astro.props as Props;
 
-const assetVersion = "20260608-07";
+const assetVersion = "20260608-08";
 const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
 const pagePath = canonicalPath || Astro.url.pathname;
 const pageUrl = canonicalUrl(pagePath);

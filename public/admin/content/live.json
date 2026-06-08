@@ -270,6 +270,9 @@
       }
     ]
   },
+  "temples": {
+    "overrides": {}
+  },
   "navigation": {
     "tabs": [
       {

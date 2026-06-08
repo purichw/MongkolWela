@@ -223,6 +223,234 @@ function renderCustomPage(content) {
   return true;
 }
 
+function templeKeyFromPath(pathname = window.location.pathname) {
+  const decodedPathname = decodeURIComponent(normalizeRoute(pathname));
+  const match = decodedPathname.match(/^\/temples\/([^/]+)\/([^/]+)\/$/);
+  if (!match) return "";
+  return `${match[1]}:${match[2]}`;
+}
+
+function templeKeyFromHref(href = "") {
+  try {
+    return templeKeyFromPath(new URL(href, window.location.origin).pathname);
+  } catch {
+    return "";
+  }
+}
+
+function getTempleOverride(content, key) {
+  const override = content?.temples?.overrides?.[key];
+  if (!override || override.enabled === false) return null;
+  return override;
+}
+
+function fieldValue(override, field, fallback = "") {
+  return Object.prototype.hasOwnProperty.call(override?.fields || {}, field) ? override.fields[field] : fallback;
+}
+
+function splitTempleList(value = "") {
+  return String(value || "")
+    .split(";")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function setText(selector, value, root = document) {
+  const node = root.querySelector(selector);
+  if (node && value !== undefined && value !== null) node.textContent = String(value);
+}
+
+function textFrom(selector, root = document) {
+  return root.querySelector(selector)?.textContent?.trim() || "";
+}
+
+function metaValue(index, root = document) {
+  return root.querySelectorAll(".temple-detail-meta div")[index]?.querySelector("dd")?.textContent?.trim() || "";
+}
+
+function applyTempleCardOverrides(content) {
+  document.querySelectorAll("[data-popular-temple-card]").forEach((card) => {
+    const override = getTempleOverride(content, templeKeyFromHref(card.getAttribute("href")));
+    if (!override) return;
+    const fields = override.fields || {};
+    const name = fieldValue(override, "name", card.dataset.name || "");
+    const region = fieldValue(override, "region", card.dataset.region || "");
+    const province = fieldValue(override, "province", card.dataset.province || "");
+    const district = fieldValue(override, "district", card.dataset.district || "");
+    const blessings = fieldValue(override, "blessings", card.dataset.blessings || "");
+    const latitude = fieldValue(override, "latitude", card.dataset.latitude || "");
+    const longitude = fieldValue(override, "longitude", card.dataset.longitude || "");
+
+    card.dataset.name = String(name);
+    card.dataset.region = String(region);
+    card.dataset.province = String(province);
+    card.dataset.district = String(district);
+    card.dataset.blessings = String(blessings);
+    card.dataset.latitude = String(latitude);
+    card.dataset.longitude = String(longitude);
+    card.dataset.searchText = `${name} ${region} ${province} ${district} ${blessings}`;
+    setText(".popular-temple-card-body span", region, card);
+    setText(".popular-temple-card-body h3", name, card);
+    setText(".popular-temple-card-body p", `${province}${district ? ` / ${district}` : ""}`, card);
+
+    const image = card.querySelector("img");
+    if (image && fields.imageUrl) {
+      image.src = fields.imageUrl;
+      image.dataset.fallbackApplied = "";
+      card.classList.remove("is-placeholder");
+      card.removeAttribute("data-image-placeholder");
+    }
+    if (image && fields.imageAlt !== undefined) image.alt = fields.imageAlt;
+  });
+  document.dispatchEvent(new CustomEvent("mw:temple-overrides-applied"));
+}
+
+function normalizeVisitSection(section = {}, label) {
+  const details = [
+    ["คนไทย", section.thai],
+    ["ชาวต่างชาติ", section.foreign],
+    ["ผู้ใหญ่", section.adult],
+    ["เด็ก", section.child],
+    ["เวลาปกติ", section.regular],
+    ["จำหน่ายบัตร", section.ticketOffice],
+    ["วันหยุด", section.closed],
+    ["หมายเหตุ", section.holidayNotes || section.notes],
+    ["โทรศัพท์", section.phone],
+    ["LINE", section.line],
+    ["Facebook", section.facebook],
+    ["อีเมล", section.email],
+  ]
+    .map(([term, value]) => ({ term, value: String(value || "").trim() }))
+    .filter((item) => item.value);
+  return {
+    label,
+    status: section.status || (section.summary || details.length ? "verified" : "needs-direct-check"),
+    summary: section.summary || "กรุณาตรวจสอบกับสถานที่ดังกล่าว",
+    details,
+  };
+}
+
+function renderVisitSection(section) {
+  const className = section.status === "verified" ? "is-verified" : section.status === "listed" ? "is-listed" : "needs-check";
+  return `<article class="${className}">
+    <span>${escapeHtml(section.label)}</span>
+    <p>${escapeHtml(section.summary)}</p>
+    ${
+      section.details.length
+        ? `<dl>${section.details.map((item) => `<div><dt>${escapeHtml(item.term)}</dt><dd>${escapeHtml(item.value)}</dd></div>`).join("")}</dl>`
+        : ""
+    }
+  </article>`;
+}
+
+function applyTempleDetailOverride(content) {
+  const key = templeKeyFromPath();
+  const override = getTempleOverride(content, key);
+  const root = document.querySelector(".temple-detail");
+  if (!override || !root) return;
+  const fields = override.fields || {};
+  const name = fieldValue(override, "name", document.querySelector("#temple-detail-title")?.textContent || "");
+  const mapElement = root.querySelector("[data-temple-detail-map]");
+  const currentTags = [...root.querySelectorAll(".temple-detail-tags span")].map((item) => item.textContent.trim()).filter(Boolean);
+  const currentBlessings = [...root.querySelectorAll(".temple-detail-chip-group span")].map((item) => item.textContent.trim()).join("; ");
+  const currentObjects = [...root.querySelectorAll(".temple-detail-notes li")].map((item) => item.textContent.trim()).join("; ");
+  const currentSourceLabel = textFrom(".temple-detail-hero__media figcaption", root) || "มงคลเวลา";
+  const region = fieldValue(override, "region", metaValue(2, root) || currentTags[1] || "");
+  const province = fieldValue(override, "province", metaValue(0, root) || currentTags[2] || "");
+  const district = fieldValue(override, "district", metaValue(1, root).replace(/^-$|^–$/u, ""));
+  const placeType = fieldValue(override, "placeType", currentTags[0] || "วัดและสถานที่ศักดิ์สิทธิ์");
+  const blessings = fieldValue(override, "blessings", currentBlessings);
+  const objectHero = fieldValue(override, "objectHero", currentObjects);
+  const latitude = fieldValue(override, "latitude", mapElement?.dataset.lat || "");
+  const longitude = fieldValue(override, "longitude", mapElement?.dataset.lng || "");
+  const plusCode = String(fieldValue(override, "plusCode", mapElement?.dataset.mapLabel || "") || "").trim();
+  const mapQuery = plusCode || (latitude !== "" && longitude !== "" ? `${latitude},${longitude}` : "");
+  const mapHref = mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : "";
+  const locationText = [region, province, district].filter(Boolean).join(" · ");
+
+  setText("#temple-detail-title", name, root);
+  document.title = document.title.replace(/^.*?\s\|/, `${name} |`);
+  const image = root.querySelector(".temple-detail-hero__media img");
+  if (image && fields.imageUrl) image.src = fields.imageUrl;
+  if (image && fields.imageAlt !== undefined) image.alt = fields.imageAlt;
+  setText(".temple-detail-hero__media figcaption", fieldValue(override, "imageSourceLabel", currentSourceLabel), root);
+
+  const summary = splitTempleList(blessings).length
+    ? `${name} เหมาะสำหรับ${splitTempleList(blessings).slice(0, 3).join(" · ")}`
+    : `${name} หนึ่งในพิกัดแนะนำใน${province}`;
+  setText(".temple-detail-hero__copy > p:not(.section-kicker)", summary, root);
+  const tags = root.querySelector(".temple-detail-tags");
+  if (tags) tags.innerHTML = [placeType, region, province].filter(Boolean).map((item) => `<span>${escapeHtml(item)}</span>`).join("");
+  const story = root.querySelector(".temple-detail-story > p:nth-of-type(2)");
+  if (story) story.textContent = `${name} อยู่ใน${province}${district ? ` เขต/อำเภอ ${district}` : ""} เป็นหนึ่งในสถานที่ที่ถูกจัดไว้ในมงคลเวลา เพื่อช่วยเลือกเส้นทางไหว้พระและวางแผนการเดินทาง`;
+
+  const chips = root.querySelector(".temple-detail-chip-group");
+  const blessingItems = splitTempleList(blessings);
+  if (chips) {
+    chips.innerHTML = blessingItems.slice(0, 8).map((item) => `<span>${escapeHtml(item)}</span>`).join("");
+  } else if (blessingItems.length) {
+    const storyIntro = root.querySelector(".temple-detail-story > p:nth-of-type(2)");
+    storyIntro?.insertAdjacentHTML("afterend", `<div class="temple-detail-chip-group">${blessingItems.slice(0, 8).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>`);
+  }
+  const objectItems = splitTempleList(objectHero);
+  const notes = root.querySelector(".temple-detail-notes ul");
+  if (notes) {
+    notes.innerHTML = objectItems.slice(0, 6).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+  } else if (objectItems.length) {
+    root.querySelector(".temple-detail-chip-group, .temple-detail-story > p:nth-of-type(2)")?.insertAdjacentHTML(
+      "afterend",
+      `<div class="temple-detail-notes"><h3>สิ่งที่นิยมสักการะ</h3><ul>${objectItems.slice(0, 6).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>`,
+    );
+  }
+
+  const visit = override.visitInfo || {};
+  const visitGrid = root.querySelector(".temple-detail-visit__grid");
+  if (visitGrid && Object.keys(visit).length) {
+    visitGrid.innerHTML = [
+      renderVisitSection(normalizeVisitSection(visit.admission, "ค่าเข้าชม")),
+      renderVisitSection(normalizeVisitSection(visit.hours, "เวลาเปิด-ปิดและวันหยุด")),
+      renderVisitSection(normalizeVisitSection(visit.contact, "ช่องทางติดต่อ")),
+    ].join("");
+  }
+  const sourceList = root.querySelector(".temple-detail-visit-sources ul");
+  if (sourceList && Array.isArray(visit.sources)) {
+    sourceList.innerHTML = visit.sources
+      .map((source) => `<li><a href="${escapeHtml(source.url || "#")}" target="_blank" rel="noopener">${escapeHtml(source.label || source.url || "แหล่งข้อมูล")}</a></li>`)
+      .join("");
+  } else if (Array.isArray(visit.sources) && visit.sources.length) {
+    root.querySelector(".temple-detail-visit__notice")?.remove();
+    root.querySelector(".temple-detail-visit__grid")?.insertAdjacentHTML(
+      "afterend",
+      `<details class="temple-detail-visit-sources"><summary>แหล่งข้อมูลที่ใช้ยืนยัน</summary><ul>${visit.sources
+        .map((source) => `<li><a href="${escapeHtml(source.url || "#")}" target="_blank" rel="noopener">${escapeHtml(source.label || source.url || "แหล่งข้อมูล")}</a></li>`)
+        .join("")}</ul></details>`,
+    );
+  }
+
+  if (mapElement) {
+    mapElement.dataset.lat = String(latitude);
+    mapElement.dataset.lng = String(longitude);
+    mapElement.dataset.title = String(name);
+    mapElement.dataset.mapUrl = mapHref;
+    mapElement.dataset.mapLabel = plusCode || (latitude !== "" && longitude !== "" ? `${Number(latitude).toFixed(6)}, ${Number(longitude).toFixed(6)}` : "");
+    mapElement.setAttribute("aria-label", `ดูแผนที่ ${name}`);
+  }
+  root.querySelectorAll(".temple-detail-map-card__body a, .temple-detail-action--primary").forEach((link) => {
+    if (mapHref) link.href = mapHref;
+  });
+  setText(".temple-detail-map-card__body p", locationText, root);
+  const metaRows = root.querySelectorAll(".temple-detail-meta div");
+  if (metaRows[0]) setText("dd", province, metaRows[0]);
+  if (metaRows[1]) setText("dd", district || "-", metaRows[1]);
+  if (metaRows[2]) setText("dd", region, metaRows[2]);
+}
+
+function applyTempleOverrides(content) {
+  if (!content?.temples?.overrides) return;
+  applyTempleCardOverrides(content);
+  applyTempleDetailOverride(content);
+}
+
 function shouldTrackAnalytics(content) {
   if (!content?.analytics?.enabled) return false;
   if (!content.site?.pdpa?.analyticsConsentRequired) return true;
@@ -272,6 +500,7 @@ async function bootCmsRuntime() {
   activeContent = content;
   document.documentElement.dataset.cmsReady = "true";
   applyNavigation(content);
+  applyTempleOverrides(content);
   if (!renderCustomPage(content)) {
     const page = pageForRoute(content);
     if (!disablePage(page) && page) {
