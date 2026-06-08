@@ -64,6 +64,12 @@ Deploy production:
 vercel --prod --yes
 ```
 
+Smoke-test production after deploy:
+
+```sh
+npm run smoke:production
+```
+
 ## Editing Rules
 
 - Use `apply_patch` for manual file edits.
@@ -203,4 +209,3 @@ Wat Portal references:
 - `https://www.watportal.com/th/wat/type/index/id/2`
 
 Use references for behavior/layout inspiration only. Keep Mongkol Wela visually and linguistically distinct.
-

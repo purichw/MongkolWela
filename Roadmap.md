@@ -195,9 +195,10 @@ For production deploy:
 ```sh
 git push origin main
 vercel --prod --yes
+npm run smoke:production
 ```
 
-Then smoke-test the live URL.
+Then review the smoke output before sharing the deployment.
 
 ## Product Decisions To Preserve
 

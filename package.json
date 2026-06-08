@@ -13,6 +13,7 @@
     "nfr:seo": "node scripts/validate-seo.mjs",
     "nfr:vercel": "node scripts/validate-vercel-config.mjs",
     "nfr": "npm run nfr:data && npm run nfr:performance && npm run nfr:seo && npm run nfr:vercel",
+    "smoke:production": "node scripts/smoke-production.mjs",
     "db:seed": "node scripts/seed-supabase.mjs",
     "test:e2e": "playwright test",
     "test:visual": "playwright test tests/e2e/visual.spec.ts --project=chromium-desktop",
