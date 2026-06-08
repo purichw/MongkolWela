@@ -44,7 +44,7 @@ function main() {
 
   indexedRoutes.forEach((route) => {
     validateHtml(route, { shouldIndex: true });
-    assert(sitemap.includes(`<loc>${siteUrl}${route}</loc>`), `sitemap.xml ไม่มี ${route}`);
+    assert(sitemap.includes(`<loc>${absoluteRouteUrl(route)}</loc>`), `sitemap.xml ไม่มี ${route}`);
   });
 
   noindexRoutes.forEach((route) => {
@@ -71,7 +71,7 @@ function main() {
 function validateHtml(route, { shouldIndex }) {
   const html = readRoute(route);
   const routeLabel = route;
-  const canonical = `${siteUrl}${route}`;
+  const canonical = absoluteRouteUrl(route);
   const robots = getMeta(html, "robots");
   const description = getMeta(html, "description");
 
@@ -154,6 +154,10 @@ function unescapeHtml(value) {
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function absoluteRouteUrl(route) {
+  return new URL(route, siteUrl).href;
 }
 
 function assert(condition, message) {

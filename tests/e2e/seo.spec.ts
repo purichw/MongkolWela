@@ -21,7 +21,7 @@ test.describe("SEO regression", () => {
       await page.goto(route, { waitUntil: "domcontentloaded" });
 
       const canonical = page.locator('link[rel="canonical"]');
-      await expect(canonical).toHaveAttribute("href", `${siteUrl}${route}`);
+      await expect(canonical).toHaveAttribute("href", new URL(route, siteUrl).href);
       await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /.+/);
       await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /^https:\/\//);
       await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
