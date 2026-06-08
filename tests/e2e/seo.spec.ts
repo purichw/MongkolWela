@@ -1,15 +1,18 @@
 import { expect, test } from "@playwright/test";
-import popularTemples from "../../src/data/popular-temples.json";
 import { getTempleDetailUrl } from "../../src/data/temple-slugs.js";
 import { skipIntroLoader } from "./helpers";
 
 const siteUrl = "https://mongkolwela.vercel.app";
-const watArun = popularTemples.find((temple) => temple.name === "วัดอรุณ");
+const watArunRoute = getTempleDetailUrl("popular", {
+  rank: 2,
+  name: "วัดอรุณ",
+  province: "กรุงเทพมหานคร",
+});
 const indexedRoutes = [
   "/",
   "/temples/popular/",
   "/temples/mu/",
-  watArun ? getTempleDetailUrl("popular", watArun) : "/temples/popular/002-ว-ดอร-ณ-กร-งเทพมหานคร/",
+  watArunRoute,
   "/temples/thailand/",
 ];
 
