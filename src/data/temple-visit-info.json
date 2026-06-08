@@ -1,6 +1,63 @@
 {
   "fallbackNotice": "กรุณาตรวจสอบค่าเข้าชม เวลาเปิด-ปิด วันหยุด และช่องทางติดต่อกับสถานที่โดยตรงก่อนเดินทาง",
   "entries": {
+    "วัดระฆังโฆสิตาราม|กรุงเทพมหานคร": {
+      "status": "verified",
+      "reviewedAt": "2026-06-08",
+      "sources": [
+        {
+          "id": "tat-wat-rakhang",
+          "label": "ททท.: วัดระฆังโฆสิตารามวรมหาวิหาร",
+          "url": "https://thai.tourismthailand.org/Attraction/วัดระฆังโฆสิตารามวรมหาวิหาร",
+          "type": "official-tourism"
+        },
+        {
+          "id": "watportal-wat-rakhang",
+          "label": "Wat Portal: วัดระฆังโฆสิตาราม",
+          "url": "https://www.watportal.com/th/wat/region/detail/id/3/iid/25479",
+          "type": "official-tourism"
+        },
+        {
+          "id": "watrakang-official",
+          "label": "วัดระฆังโฆสิตาราม: เว็บไซต์วัด",
+          "url": "https://www.watrakang.com/",
+          "type": "official"
+        },
+        {
+          "id": "gplace-wat-rakhang",
+          "label": "Gplace: วัดระฆังโฆสิตารามวรมหาวิหาร",
+          "url": "https://www.gplace.com/967204",
+          "type": "travel-directory"
+        }
+      ],
+      "admission": {
+        "status": "verified",
+        "summary": "เข้าชมฟรีทั้งคนไทยและชาวต่างชาติ",
+        "thai": "ไม่เสียค่าเข้าชม",
+        "foreign": "ไม่เสียค่าเข้าชม",
+        "adult": "ไม่เสียค่าเข้าชม",
+        "child": "ไม่เสียค่าเข้าชม",
+        "notes": "อาจมีตู้รับบริจาคหรือกิจกรรมทำบุญตามศรัทธาในพื้นที่วัด",
+        "sourceIds": ["tat-wat-rakhang", "gplace-wat-rakhang"]
+      },
+      "hours": {
+        "status": "verified",
+        "summary": "เปิดให้เข้าชมทุกวัน 08.00-17.00 น.",
+        "regular": "ทุกวัน 08.00-17.00 น.",
+        "closed": "ไม่ได้ระบุวันหยุดประจำในแหล่งข้อมูล",
+        "holidayNotes": "บางบทความท่องเที่ยวระบุช่วง 07.00-18.00 น.; หากเดินทางวันพิธีหรือช่วงเทศกาลควรตรวจสอบประกาศของวัดอีกครั้ง",
+        "sourceIds": ["tat-wat-rakhang", "watportal-wat-rakhang", "gplace-wat-rakhang"]
+      },
+      "contact": {
+        "status": "verified",
+        "summary": "โทรศัพท์ 02-418-1079; อีเมล library@watrakang.com",
+        "phone": "02-418-1079",
+        "email": "library@watrakang.com",
+        "line": "ไม่ได้ระบุในแหล่งข้อมูล",
+        "facebook": "https://www.facebook.com/watrakhang.official",
+        "sourceIds": ["watrakang-official"]
+      }
+    },
     "วัดพระแก้ว|กรุงเทพมหานคร": {
       "status": "verified",
       "reviewedAt": "2026-06-08",
