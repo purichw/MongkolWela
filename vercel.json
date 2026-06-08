@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/p/:path*/",
+      "destination": "/admin/page-shell/"
+    },
+    {
       "source": "/p/:path*",
       "destination": "/admin/page-shell/"
     }
