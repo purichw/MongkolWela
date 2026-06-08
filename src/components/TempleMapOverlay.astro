@@ -37,8 +37,6 @@ const mapItems = temples
     placeType: temple.placeType || "วัดและสถานที่ศักดิ์สิทธิ์",
     latitude: Number(temple.latitude),
     longitude: Number(temple.longitude),
-    imageUrl: temple.imageUrl || placeholderImage,
-    imageAlt: temple.imageAlt || `${temple.name} ${temple.province}`,
     detailUrl: getTempleDetailUrl(collection, temple),
   }));
 const payload = JSON.stringify({

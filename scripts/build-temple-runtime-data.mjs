@@ -132,6 +132,15 @@ const COORDINATE_HINTS = new Map([
   ["วัดเบญจมบพิตรดุสิตวนาราม|กรุงเทพมหานคร", [13.766465, 100.514748]],
   ["วัดไตรมิตรวิทยาราม|กรุงเทพมหานคร", [13.737807, 100.51389]],
   ["วัดร่องเสือเต้น|เชียงราย", [19.922729, 99.840576]],
+  ["วัดพระพุทธบาทภูพานคำ|ขอนแก่น", [16.76355586, 102.624912899]],
+  ["วัดพระบาทภูพานคำ|ขอนแก่น", [16.76355586, 102.624912899]],
+  ["วัดใหญ่อินทาราม|ชลบุรี", [13.36306, 100.98797]],
+  ["วัดพระธาตุช้างค้ำ|น่าน", [18.77676, 100.77217]],
+  ["วัดพระธาตุช้างค้ำวรวิหาร|น่าน", [18.77676, 100.77217]],
+  ["วัดปิปผลิวนาราม|ระยอง", [12.894853452, 101.376143575]],
+  ["วัดปิบผลิวนาราม|ระยอง", [12.894853452, 101.376143575]],
+  ["วัดพระนารายณ์มหาราช|นครราชสีมา", [14.97553, 102.10811]],
+  ["วัดพระนารายณ์มหา|นครราชสีมา", [14.97553, 102.10811]],
   ["วัดอุดมมงคล|ฉะเชิงเทรา", [13.7496802, 101.040931392]],
   ["ศาลท้าวอัมรินทราธิราช อัมรินทร์พลาซ่า|กรุงเทพมหานคร", [13.744154323, 100.541827824]],
   ["ศาลพระนารายณ์ทรงสุบรรณ ราชประสงค์|กรุงเทพมหานคร", [13.744676168, 100.541478875]],
@@ -210,9 +219,11 @@ function readGlobalRankingMap(workbookUrl) {
 }
 
 function buildRuntimeRow(collection, row, enrichmentByKey) {
-  const name = cleanText(row.templeName);
+  const masterKey = cleanText(row.templeMasterKey);
+  const [canonicalName] = masterKey.split("|");
+  const name = cleanText(canonicalName) || cleanText(row.templeName);
   const province = cleanText(row.province);
-  const key = `${name}|${province}`;
+  const key = masterKey || `${name}|${province}`;
   const enrichment = enrichmentByKey.get(key) || {};
   const globalRanking = globalRankingByKey.get(key) || {};
   const imageHint = IMAGE_HINTS.get(key);
@@ -642,6 +653,8 @@ function columnIndex(cellRef = "") {
 
 function decodeXml(value) {
   return String(value || "")
+    .replace(/&#x([0-9a-f]+);/giu, (_, hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);/gu, (_, decimal) => String.fromCodePoint(Number.parseInt(decimal, 10)))
     .replace(/&lt;/gu, "<")
     .replace(/&gt;/gu, ">")
     .replace(/&quot;/gu, "\"")

@@ -61,81 +61,67 @@
       "previousImageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%B8%E0%B8%97%E0%B8%98%E0%B8%99%E0%B8%B4%E0%B8%A1%E0%B8%B4%E0%B8%95_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%81%E0%B8%B2%E0%B8%AC%E0%B8%AA%E0%B8%B4%E0%B8%99%E0%B8%98%E0%B8%B8%E0%B9%8C)"
     },
     "วัดทุ่งเศรษฐี|ขอนแก่น": {
-      "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSourceLabel": "Placeholder after image audit",
-      "imageSourceUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSearchQuery": "",
-      "imageMatchScore": 0,
-      "imageAuditStatus": "placeholder_required",
-      "imageAuditReason": "generic source page",
-      "previousImageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Ubosot_Wat_Klang_Khon_Kaen.jpg/960px-Ubosot_Wat_Klang_Khon_Kaen.jpg",
-      "previousImageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B9%80%E0%B8%97%E0%B8%A8%E0%B8%9A%E0%B8%B2%E0%B8%A5%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99"
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M72612000s0v4za9398B.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดทุ่งเศรษฐี ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "วัดบุญญาวาส|ชลบุรี": {
-      "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSourceLabel": "Placeholder after image audit",
-      "imageSourceUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSearchQuery": "",
-      "imageMatchScore": 0,
-      "imageAuditStatus": "placeholder_required",
-      "imageAuditReason": "bad/generic host",
-      "previousImageUrl": "https://p16-va.lemon8cdn.com/tos-alisg-v-a3e477-sg/oMRmC62Ai1uikDPE4g0EfdoAt9aEBBA49fuIhQ~tplv-tej9nj120t-origin.webp",
-      "previousImageSourceUrl": "https://www.lemon8-app.com/@iam.nastiiz/7420311957699379713?region=th"
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n912224x9814m3fx84D0.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดบุญญาวาส ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "วัดพระใหญ่ พัทยา|ชลบุรี": {
-      "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSourceLabel": "Placeholder after image audit",
-      "imageSourceUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSearchQuery": "",
-      "imageMatchScore": 0,
-      "imageAuditStatus": "placeholder_required",
-      "imageAuditReason": "generic source page",
-      "previousImageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/The_Sancturay_of_Truth%2C_Pattaya%2C_Thailand.JPG/960px-The_Sancturay_of_Truth%2C_Pattaya%2C_Thailand.JPG",
-      "previousImageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%8A%E0%B8%A5%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5"
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n92z224x9815desr5ECE_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดพระใหญ่ พัทยา ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "วัดหนองจับเต่า|ชลบุรี": {
-      "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSourceLabel": "Placeholder after image audit",
-      "imageSourceUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSearchQuery": "",
-      "imageMatchScore": 0,
-      "imageAuditStatus": "placeholder_required",
-      "imageAuditReason": "generic source page",
-      "previousImageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/US_Navy_070618-N-7783B-004_A_crew_member_of_the_Royal_Thai_Navy_Ship_HTMS_Similan_%28187%29_renders_a_bugle_salute_to_the_guided_missile_frigate_USS_Jarrett_%28FFG_33%29.jpg/960px-thumbnail.jpg",
-      "previousImageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B3%E0%B9%80%E0%B8%A0%E0%B8%AD%E0%B8%AA%E0%B8%B1%E0%B8%95%E0%B8%AB%E0%B8%B5%E0%B8%9A"
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90s224x98168vnzDCFE.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดหนองจับเต่า ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "วัดห้วยใหญ่|ชลบุรี": {
-      "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSourceLabel": "Placeholder after image audit",
-      "imageSourceUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSearchQuery": "",
-      "imageMatchScore": 0,
-      "imageAuditStatus": "placeholder_required",
-      "imageAuditReason": "generic source page",
-      "previousImageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ee/%E0%B8%AB%E0%B8%AD%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%9E%E0%B8%B8%E0%B8%97%E0%B8%98%E0%B8%AA%E0%B8%B4%E0%B8%AB%E0%B8%B4%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%A1%E0%B8%B4%E0%B9%88%E0%B8%87%E0%B8%A1%E0%B8%87%E0%B8%84%E0%B8%A5%E0%B8%AA%E0%B8%B4%E0%B8%A3%E0%B8%B4%E0%B8%99%E0%B8%B2%E0%B8%96.jpg",
-      "previousImageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B3%E0%B9%80%E0%B8%A0%E0%B8%AD%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%8A%E0%B8%A5%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5"
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94s224x9815087rEBA5_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดห้วยใหญ่ ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "วิหารเทพสถิตพระกิติเฉลิม|ชลบุรี": {
-      "imageUrl": "https://www.remawadee.com/chonburee/images/remawadee-Naja1.jpg",
-      "imageSourceLabel": "RemaWadee place page",
-      "imageSourceUrl": "https://www.remawadee.com/chonburee/wihan-NaJa.html",
-      "imageSearchQuery": "",
-      "imageMatchScore": 100,
-      "imageAuditStatus": "verified_manual",
-      "imageAuditReason": "replaced beach photo with exact shrine exterior",
-      "previousImageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Bang_saen_lang_beach.jpg/960px-Bang_saen_lang_beach.jpg",
-      "previousImageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%AB%E0%B8%B2%E0%B8%94%E0%B8%9A%E0%B8%B2%E0%B8%87%E0%B9%81%E0%B8%AA%E0%B8%99"
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n93i224x9815pz602FEA_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วิหารเทพสถิตพระกิติเฉลิม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "สำนักสงฆ์เขาพระครู|ชลบุรี": {
-      "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSourceLabel": "Placeholder after image audit",
-      "imageSourceUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSearchQuery": "",
-      "imageMatchScore": 0,
-      "imageAuditStatus": "placeholder_required",
-      "imageAuditReason": "source not exact place",
-      "previousImageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/%E0%B8%93_%E0%B8%AA%E0%B8%B1%E0%B8%97%E0%B8%98%E0%B8%B2_%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%84%E0%B8%97%E0%B8%A2_Nasatta_%2886%29.jpg/960px-%E0%B8%93_%E0%B8%AA%E0%B8%B1%E0%B8%97%E0%B8%98%E0%B8%B2_%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%84%E0%B8%97%E0%B8%A2_Nasatta_%2886%29.jpg",
-      "previousImageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%A3%E0%B8%A3%E0%B8%A1%E0%B8%A7%E0%B8%B4%E0%B8%AA%E0%B8%B8%E0%B8%97%E0%B8%98%E0%B8%B4%E0%B8%A1%E0%B8%87%E0%B8%84%E0%B8%A5_(%E0%B8%9A%E0%B8%B1%E0%B8%A7_%E0%B8%8D%E0%B8%B2%E0%B8%93%E0%B8%AA%E0%B8%A1%E0%B8%BA%E0%B8%9B%E0%B8%99%E0%B8%BA%E0%B9%82%E0%B8%99)"
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n965224x9816i3hy52B5_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "สำนักสงฆ์เขาพระครู ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "วัดพระธาตุดอยคำ|เชียงใหม่": {
       "imageUrl": "https://roijang.com/wp-content/uploads/2022/10/shutterstock_2143098185.jpg",
@@ -468,59 +454,49 @@
       "previousImageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%9E%E0%B8%8A%E0%B8%A3%E0%B8%AA%E0%B8%A1%E0%B8%B8%E0%B8%97%E0%B8%A3%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3"
     },
     "วัดท่ามะกอก|ระยอง": {
-      "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSourceLabel": "Placeholder after image audit",
-      "imageSourceUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSearchQuery": "",
-      "imageMatchScore": 0,
-      "imageAuditStatus": "placeholder_required",
-      "imageAuditReason": "DMC image focuses on monks/ceremony/text overlay rather than a clean place photo",
-      "previousImageUrl": "https://images.dmc.tv/ebook/page/original_1763027551526.jpg",
-      "previousImageSourceUrl": "https://www.dmc.tv/temple/3967"
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M74u12000g0jj02k7900_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดท่ามะกอก ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "วัดน้ำตกธรรมรส|ระยอง": {
-      "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSourceLabel": "Placeholder after image audit",
-      "imageSourceUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSearchQuery": "",
-      "imageMatchScore": 0,
-      "imageAuditStatus": "placeholder_required",
-      "imageAuditReason": "bad/generic host",
-      "previousImageUrl": "https://p16-va.lemon8cdn.com/tos-alisg-v-a3e477-sg/o8E9TFlA5CADB9DLIfisAQAgE0nF6kfCTC3Etc~tplv-tej9nj120t-origin.webp",
-      "previousImageSourceUrl": "https://www.lemon8-app.com/tiewlikesara/7319367305245409794?region=th"
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75k12000gzfjlg15D3F_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดน้ำตกธรรมรส ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "วัดบ้านแลง|ระยอง": {
-      "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSourceLabel": "Placeholder after image audit",
-      "imageSourceUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSearchQuery": "",
-      "imageMatchScore": 0,
-      "imageAuditStatus": "placeholder_required",
-      "imageAuditReason": "source not exact place",
-      "previousImageUrl": "https://images.dmc.tv/ebook/page/original_1756067765781.jpg",
-      "previousImageSourceUrl": "https://www.dmc.tv/temple/22781"
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M73h12000gxt494f72E5_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดบ้านแลง ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "วัดป่าประดู่|ระยอง": {
-      "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSourceLabel": "Placeholder after image audit",
-      "imageSourceUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSearchQuery": "",
-      "imageMatchScore": 0,
-      "imageAuditStatus": "placeholder_required",
-      "imageAuditReason": "bad/generic host",
-      "previousImageUrl": "https://p16-va.lemon8cdn.com/tos-alisg-v-a3e477-sg/o0AaAfDeDBCmFAz9NcE5OKEwnCQIRvqgk0tkcE~tplv-tej9nj120t-origin.webp",
-      "previousImageSourceUrl": "https://www.lemon8-app.com/thetravelthailand/7394044316970369537?region=th"
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M72q12000gxquhcz19FD_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดป่าประดู่ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "วัดละหารไร่|ระยอง": {
-      "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSourceLabel": "Placeholder after image audit",
-      "imageSourceUrl": "/assets/images/temple-placeholder-auspicious.png",
-      "imageSearchQuery": "",
-      "imageMatchScore": 0,
-      "imageAuditStatus": "placeholder_required",
-      "imageAuditReason": "bad/generic host",
-      "previousImageUrl": "https://th-test-11.slatic.net/p/997921feba8a8d5ebdb033d95d072547.jpg",
-      "previousImageSourceUrl": "https://thaipick.com/product/lazada/405413"
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75b12000gzf3qj2E947_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดละหารไร่ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     },
     "วัดวังหว้า|ระยอง": {
       "imageUrl": "/assets/images/temple-placeholder-auspicious.png",
@@ -763,6 +739,339 @@
       "imageAuditReason": "DMC image focuses on monks/ceremony/text overlay rather than a clean place photo",
       "previousImageUrl": "https://images.dmc.tv/ebook/page/original_1756571364112.jpg",
       "previousImageSourceUrl": "https://www.dmc.tv/temple/18763"
+    },
+    "วัดหนองแวง|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M75r12000s0v0aulE9D9_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดหนองแวง ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดป่าแสงอรุณ|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M71c12000s0wgmxyD99A.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดป่าแสงอรุณ ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพระพุทธบาทภูพานคำ|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M70o12000s0w9w1dC1E5.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดพระพุทธบาทภูพานคำ ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดไชยศรี|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M73712000s0vgyzf0899.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดไชยศรี ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดถ้ำผาเกิ้ง|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M76d12000s0vkjijAF37_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดถ้ำผาเกิ้ง ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดเจติยภูมิ พระธาตุขามแก่น|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M74t12000s0vns720EED.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดเจติยภูมิ พระธาตุขามแก่น ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดป่าธรรมอุทยาน|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M75512000s0vrk638E4F_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดป่าธรรมอุทยาน ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดกู่ประภาชัย|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M70z12000s0vtpnf4E17.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดกู่ประภาชัย ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดธาตุ|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M70t12000s0vx5rtA675.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดธาตุ ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดแสนสุขวิสุทธิวราราม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90i224x9814roj18B16_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดแสนสุขวิสุทธิวราราม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดใหญ่อินทาราม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95l224x9815yp6y5182_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดใหญ่อินทาราม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดเขาตะแบก|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n933224x9814ioxlEE41_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดเขาตะแบก ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดเกาะลอย|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90m224x9816i3i6AF8E_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดเกาะลอย ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดญาณสังวราราม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n949224x9814oi88D5B6_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดญาณสังวราราม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดช่องแสมสาร|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95h224x9815pz838C96.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดช่องแสมสาร ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดหลวงพ่ออี๋|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n971224x9816adfk0A1B.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดหลวงพ่ออี๋ ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดหลวงพี่แซม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94v224x98163jb23B7E.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดหลวงพี่แซม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "เขาชีจรรย์|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n92m224x98163jbd9D95.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "เขาชีจรรย์ ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดดอนทอง|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n96e224x9815ypau7229_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดดอนทอง ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดถ้ำเขาประทุน|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M72912000gxto3h2A77E_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดถ้ำเขาประทุน ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "พระเจดีย์กลางน้ำ|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M74612000gzeys8i57C7_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "พระเจดีย์กลางน้ำ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดปลวกเกตุ|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75a12000gzf4opo51CF_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดปลวกเกตุ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพลงไสว|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M73u12000gzffyttA02E_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดพลงไสว ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดสารนารถธรรมาราม|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M73i12000gzg1qs80888_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดสารนารถธรรมาราม ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดราชบัลลังก์ประดิษฐาราม|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M71x12000gzg2n8hB366_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดราชบัลลังก์ประดิษฐาราม ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดบ้านนา|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M70112000gzg46iqE93A_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดบ้านนา ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดตะเคียนทอง|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75c12000gzhtz0z21A3_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดตะเคียนทอง ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดปิปผลิวนาราม|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75512000gzidceq5166_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดปิปผลิวนาราม ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดใหญ่ชัยมงคล|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n93t224x98u99hti2B85_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดใหญ่ชัยมงคล พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพนัญเชิง|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90j224x98u8pdztFC6B_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดพนัญเชิง พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพุทไธศวรรย์|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95d224x98u9eyfa0775_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดพุทไธศวรรย์ พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดไชยวัฒนาราม|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n96c224x98u9jypi909B_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดไชยวัฒนาราม พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดโลกยสุธาราม|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n91b224x98u9l9uvD809_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดโลกยสุธาราม พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพระศรีสรรเพชญ์|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95u224x98u9maza88DD_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดพระศรีสรรเพชญ์ พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วิหารพระมงคลบพิตร|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94y224x98u9unau5A8A_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วิหารพระมงคลบพิตร พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดธรรมิกราช|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94o224x98u9voueEEE0_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดธรรมิกราช พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดหน้าพระเมรุ|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n925224x98u9uugpA2BE_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดหน้าพระเมรุ พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     }
   },
   "mu": {
@@ -831,6 +1140,890 @@
       "imageAuditReason": "generic source/image",
       "previousImageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/ISS022-E-84930_-_View_of_Thailand.jpg/960px-ISS022-E-84930_-_View_of_Thailand.jpg",
       "previousImageSourceUrl": "https://th.wikipedia.org/wiki/%E0%B9%80%E0%B8%81%E0%B8%B2%E0%B8%B0%E0%B8%AA%E0%B8%A1%E0%B8%B8%E0%B8%A2"
+    },
+    "วัดหนองแวง|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M75r12000s0v0aulE9D9_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดหนองแวง ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดทุ่งเศรษฐี|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M72612000s0v4za9398B.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดทุ่งเศรษฐี ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดป่าแสงอรุณ|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M71c12000s0wgmxyD99A.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดป่าแสงอรุณ ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพระพุทธบาทภูพานคำ|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M70o12000s0w9w1dC1E5.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดพระพุทธบาทภูพานคำ ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดไชยศรี|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M73712000s0vgyzf0899.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดไชยศรี ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดถ้ำผาเกิ้ง|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M76d12000s0vkjijAF37_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดถ้ำผาเกิ้ง ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดเจติยภูมิ พระธาตุขามแก่น|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M74t12000s0vns720EED.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดเจติยภูมิ พระธาตุขามแก่น ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดป่าธรรมอุทยาน|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M75512000s0vrk638E4F_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดป่าธรรมอุทยาน ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดกู่ประภาชัย|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M70z12000s0vtpnf4E17.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดกู่ประภาชัย ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดธาตุ|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M70t12000s0vx5rtA675.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดธาตุ ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดแสนสุขวิสุทธิวราราม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90i224x9814roj18B16_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดแสนสุขวิสุทธิวราราม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดใหญ่อินทาราม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95l224x9815yp6y5182_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดใหญ่อินทาราม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วิหารเทพสถิตพระกิติเฉลิม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n93i224x9815pz602FEA_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วิหารเทพสถิตพระกิติเฉลิม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "สำนักสงฆ์เขาพระครู|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n965224x9816i3hy52B5_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "สำนักสงฆ์เขาพระครู ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดเขาตะแบก|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n933224x9814ioxlEE41_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดเขาตะแบก ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดเกาะลอย|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90m224x9816i3i6AF8E_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดเกาะลอย ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดญาณสังวราราม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n949224x9814oi88D5B6_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดญาณสังวราราม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพระใหญ่ พัทยา|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n92z224x9815desr5ECE_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดพระใหญ่ พัทยา ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดห้วยใหญ่|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94s224x9815087rEBA5_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดห้วยใหญ่ ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดหนองจับเต่า|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90s224x98168vnzDCFE.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดหนองจับเต่า ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดช่องแสมสาร|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95h224x9815pz838C96.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดช่องแสมสาร ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดหลวงพ่ออี๋|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n971224x9816adfk0A1B.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดหลวงพ่ออี๋ ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดหลวงพี่แซม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94v224x98163jb23B7E.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดหลวงพี่แซม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "เขาชีจรรย์|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n92m224x98163jbd9D95.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "เขาชีจรรย์ ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดบุญญาวาส|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n912224x9814m3fx84D0.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดบุญญาวาส ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดดอนทอง|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n96e224x9815ypau7229_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดดอนทอง ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดป่าประดู่|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M72q12000gxquhcz19FD_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดป่าประดู่ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดท่ามะกอก|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M74u12000g0jj02k7900_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดท่ามะกอก ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดบ้านแลง|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M73h12000gxt494f72E5_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดบ้านแลง ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดถ้ำเขาประทุน|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M72912000gxto3h2A77E_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดถ้ำเขาประทุน ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "พระเจดีย์กลางน้ำ|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M74612000gzeys8i57C7_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "พระเจดีย์กลางน้ำ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดปลวกเกตุ|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75a12000gzf4opo51CF_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดปลวกเกตุ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดละหารไร่|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75b12000gzf3qj2E947_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดละหารไร่ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพลงไสว|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M73u12000gzffyttA02E_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดพลงไสว ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดน้ำตกธรรมรส|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75k12000gzfjlg15D3F_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดน้ำตกธรรมรส ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดสารนารถธรรมาราม|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M73i12000gzg1qs80888_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดสารนารถธรรมาราม ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดราชบัลลังก์ประดิษฐาราม|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M71x12000gzg2n8hB366_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดราชบัลลังก์ประดิษฐาราม ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดบ้านนา|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M70112000gzg46iqE93A_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดบ้านนา ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดตะเคียนทอง|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75c12000gzhtz0z21A3_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดตะเคียนทอง ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดปิปผลิวนาราม|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75512000gzidceq5166_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดปิปผลิวนาราม ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดใหญ่ชัยมงคล|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n93t224x98u99hti2B85_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดใหญ่ชัยมงคล พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพนัญเชิง|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90j224x98u8pdztFC6B_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดพนัญเชิง พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพุทไธศวรรย์|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95d224x98u9eyfa0775_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดพุทไธศวรรย์ พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดไชยวัฒนาราม|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n96c224x98u9jypi909B_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดไชยวัฒนาราม พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดโลกยสุธาราม|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n91b224x98u9l9uvD809_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดโลกยสุธาราม พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพระศรีสรรเพชญ์|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95u224x98u9maza88DD_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดพระศรีสรรเพชญ์ พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วิหารพระมงคลบพิตร|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94y224x98u9unau5A8A_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วิหารพระมงคลบพิตร พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดธรรมิกราช|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94o224x98u9voueEEE0_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดธรรมิกราช พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดหน้าพระเมรุ|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n925224x98u9uugpA2BE_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดหน้าพระเมรุ พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    }
+  },
+  "sacred": {
+    "วัดหนองแวง|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M75r12000s0v0aulE9D9_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดหนองแวง ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดทุ่งเศรษฐี|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M72612000s0v4za9398B.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดทุ่งเศรษฐี ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดป่าแสงอรุณ|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M71c12000s0wgmxyD99A.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดป่าแสงอรุณ ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพระพุทธบาทภูพานคำ|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M70o12000s0w9w1dC1E5.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดพระพุทธบาทภูพานคำ ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดไชยศรี|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M73712000s0vgyzf0899.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดไชยศรี ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดถ้ำผาเกิ้ง|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M76d12000s0vkjijAF37_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดถ้ำผาเกิ้ง ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดเจติยภูมิ พระธาตุขามแก่น|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M74t12000s0vns720EED.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดเจติยภูมิ พระธาตุขามแก่น ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดป่าธรรมอุทยาน|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M75512000s0vrk638E4F_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดป่าธรรมอุทยาน ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดกู่ประภาชัย|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M70z12000s0vtpnf4E17.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดกู่ประภาชัย ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดธาตุ|ขอนแก่น": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/0M70t12000s0vx5rtA675.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%99%E0%B9%81%E0%B8%81%E0%B9%88%E0%B8%99.html",
+      "imageSearchQuery": "วัดธาตุ ขอนแก่น",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดแสนสุขวิสุทธิวราราม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90i224x9814roj18B16_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดแสนสุขวิสุทธิวราราม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดใหญ่อินทาราม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95l224x9815yp6y5182_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดใหญ่อินทาราม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วิหารเทพสถิตพระกิติเฉลิม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n93i224x9815pz602FEA_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วิหารเทพสถิตพระกิติเฉลิม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "สำนักสงฆ์เขาพระครู|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n965224x9816i3hy52B5_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "สำนักสงฆ์เขาพระครู ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดเขาตะแบก|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n933224x9814ioxlEE41_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดเขาตะแบก ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดเกาะลอย|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90m224x9816i3i6AF8E_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดเกาะลอย ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดญาณสังวราราม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n949224x9814oi88D5B6_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดญาณสังวราราม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพระใหญ่ พัทยา|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n92z224x9815desr5ECE_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดพระใหญ่ พัทยา ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดห้วยใหญ่|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94s224x9815087rEBA5_Q60.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดห้วยใหญ่ ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดหนองจับเต่า|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90s224x98168vnzDCFE.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดหนองจับเต่า ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดช่องแสมสาร|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95h224x9815pz838C96.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดช่องแสมสาร ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดหลวงพ่ออี๋|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n971224x9816adfk0A1B.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดหลวงพ่ออี๋ ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดหลวงพี่แซม|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94v224x98163jb23B7E.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดหลวงพี่แซม ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "เขาชีจรรย์|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n92m224x98163jbd9D95.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "เขาชีจรรย์ ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดบุญญาวาส|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n912224x9814m3fx84D0.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดบุญญาวาส ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดดอนทอง|ชลบุรี": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n96e224x9815ypau7229_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/destination/temples-in-chonburi.html",
+      "imageSearchQuery": "วัดดอนทอง ชลบุรี",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดป่าประดู่|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M72q12000gxquhcz19FD_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดป่าประดู่ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดท่ามะกอก|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M74u12000g0jj02k7900_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดท่ามะกอก ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดบ้านแลง|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M73h12000gxt494f72E5_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดบ้านแลง ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดถ้ำเขาประทุน|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M72912000gxto3h2A77E_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดถ้ำเขาประทุน ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "พระเจดีย์กลางน้ำ|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M74612000gzeys8i57C7_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "พระเจดีย์กลางน้ำ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดปลวกเกตุ|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75a12000gzf4opo51CF_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดปลวกเกตุ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดละหารไร่|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75b12000gzf3qj2E947_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดละหารไร่ ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพลงไสว|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M73u12000gzffyttA02E_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดพลงไสว ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดน้ำตกธรรมรส|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75k12000gzfjlg15D3F_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดน้ำตกธรรมรส ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดสารนารถธรรมาราม|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M73i12000gzg1qs80888_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดสารนารถธรรมาราม ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดราชบัลลังก์ประดิษฐาราม|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M71x12000gzg2n8hB366_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดราชบัลลังก์ประดิษฐาราม ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดบ้านนา|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M70112000gzg46iqE93A_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดบ้านนา ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดตะเคียนทอง|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75c12000gzhtz0z21A3_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดตะเคียนทอง ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดปิปผลิวนาราม|ระยอง": {
+      "imageUrl": "https://dimg04.c-ctrip.com/images/0M75512000gzidceq5166_R5.png_.webp",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/attraction/temples+in+rayong.html",
+      "imageSearchQuery": "วัดปิปผลิวนาราม ระยอง",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดใหญ่ชัยมงคล|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n93t224x98u99hti2B85_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดใหญ่ชัยมงคล พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพนัญเชิง|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n90j224x98u8pdztFC6B_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดพนัญเชิง พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพุทไธศวรรย์|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95d224x98u9eyfa0775_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดพุทไธศวรรย์ พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดไชยวัฒนาราม|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n96c224x98u9jypi909B_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดไชยวัฒนาราม พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดโลกยสุธาราม|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n91b224x98u9l9uvD809_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดโลกยสุธาราม พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดพระศรีสรรเพชญ์|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n95u224x98u9maza88DD_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดพระศรีสรรเพชญ์ พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วิหารพระมงคลบพิตร|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94y224x98u9unau5A8A_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วิหารพระมงคลบพิตร พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดธรรมิกราช|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n94o224x98u9voueEEE0_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดธรรมิกราช พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
+    },
+    "วัดหน้าพระเมรุ|พระนครศรีอยุธยา": {
+      "imageUrl": "https://dimg04.tripcdn.com/images/1n925224x98u9uugpA2BE_Q50.jpg",
+      "imageSourceLabel": "Trip.com guide page",
+      "imageSourceUrl": "https://th.trip.com/guide/activity/ayutthaya-temple-visit.html",
+      "imageSearchQuery": "วัดหน้าพระเมรุ พระนครศรีอยุธยา",
+      "imageMatchScore": 96,
+      "imageAuditStatus": "verified_source_article",
+      "imageAuditReason": "source article image alt matches this temple/place"
     }
   }
 }

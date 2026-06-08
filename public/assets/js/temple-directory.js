@@ -189,6 +189,10 @@ function initializePopularTempleGrid(grid) {
   );
   repairBrokenCardImages();
   window.addEventListener("load", repairBrokenCardImages, { once: true });
+  document.addEventListener("mw:temple-overrides-applied", () => {
+    repairBrokenCardImages();
+    window.setTimeout(repairBrokenCardImages, 250);
+  });
 
   cards.forEach((card) => {
     card.hidden = true;
@@ -307,7 +311,7 @@ function initializePopularTempleGrid(grid) {
   function applyPopularFilters() {
     const query = normalize(filterName?.value || "");
     filteredCards = cards.filter((card) => {
-      const matchesQuery = !query || normalize(card.dataset.searchText).includes(query);
+      const matchesQuery = !query || normalize(getCardSearchText(card)).includes(query);
       const matchesRegion = !activeRegion || card.dataset.region === activeRegion;
       const matchesProvince = !activeProvince || card.dataset.province === activeProvince;
       const matchesPurpose = !activePurposes.size || splitDataTags(card.dataset.blessings).some((tag) => activePurposes.has(tag));
@@ -544,6 +548,9 @@ function initializePopularTempleGrid(grid) {
     cards.forEach((card) => {
       const image = card.querySelector("img");
       if (!(image instanceof HTMLImageElement)) return;
+      if (image.dataset.fallbackApplied === "true" || isFallbackImage(image)) {
+        card.classList.add("is-placeholder");
+      }
       if (image.complete && image.naturalWidth === 0) applyImageFallback(image);
     });
   }
@@ -556,6 +563,13 @@ function initializePopularTempleGrid(grid) {
     image.src = fallbackSrc;
     image.closest("[data-popular-temple-card]")?.classList.add("is-placeholder");
   }
+
+  function isFallbackImage(image) {
+    const fallbackSrc = image.dataset.fallbackSrc || placeholderSrc;
+    if (!fallbackSrc) return false;
+    const currentSrc = image.currentSrc || image.src || "";
+    return currentSrc.endsWith(fallbackSrc) || currentSrc.includes(fallbackSrc);
+  }
 }
 
 function splitDataTags(value) {
@@ -563,6 +577,18 @@ function splitDataTags(value) {
     .split(";")
     .map((item) => item.trim())
     .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
+}
+
+function getCardSearchText(card) {
+  return [
+    card.dataset.searchText,
+    card.dataset.name,
+    card.dataset.region,
+    card.dataset.province,
+    card.dataset.district,
+    card.dataset.blessings,
+    card.dataset.placeType,
+  ].filter(Boolean).join(" ");
 }
 
 function getCardDistance(userLocation, card) {
