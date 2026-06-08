@@ -1,10 +1,4 @@
-import {
-  publishGithubContent,
-  readJsonBody,
-  readLiveContent,
-  requireAdmin,
-  sendJson,
-} from "./_shared.js";
+import { publishLiveContent, readJsonBody, readLiveContent, requireAdmin, sendJson } from "./_shared.js";
 
 function normalizeContent(content, actor) {
   const now = new Date().toISOString();
@@ -40,7 +34,7 @@ export default async function handler(req, res) {
     }
 
     const content = normalizeContent(body.content, session.actor);
-    const publish = await publishGithubContent(content, session.actor);
+    const publish = await publishLiveContent(content, session.actor);
     sendJson(res, 200, {
       ok: true,
       content,
@@ -48,6 +42,7 @@ export default async function handler(req, res) {
         mode: publish.mode,
         commitSha: publish.commitSha || "",
         contentSha: publish.contentSha || "",
+        warnings: publish.warnings || [],
         publishedAt: content.publishedAt,
         actor: session.actor,
       },

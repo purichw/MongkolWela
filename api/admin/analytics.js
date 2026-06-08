@@ -1,10 +1,12 @@
 import {
+  readLiveAnalytics,
   readAnalyticsStore,
   readJsonBody,
   requireAdmin,
   sendJson,
   writeAnalyticsStore,
 } from "./_shared.js";
+import { recordDatabaseAnalyticsEvent } from "./_database.js";
 
 function safeKey(value, fallback = "unknown") {
   return String(value || fallback)
@@ -17,7 +19,7 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       const session = requireAdmin(req, res);
       if (!session) return;
-      const data = await readAnalyticsStore();
+      const data = await readLiveAnalytics();
       sendJson(res, 200, { ok: true, analytics: data });
       return;
     }
@@ -53,6 +55,13 @@ export default async function handler(req, res) {
     }
 
     try {
+      await recordDatabaseAnalyticsEvent({
+        type,
+        path: pagePath,
+        title,
+        userAgent: req.headers["user-agent"] || "",
+        referrer: req.headers.referer || req.headers.referrer || "",
+      });
       await writeAnalyticsStore(data);
     } catch {
       // Serverless production filesystems are ephemeral/read-only in some modes.

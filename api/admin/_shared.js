@@ -1,6 +1,12 @@
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
+import {
+  hasWritableDatabase,
+  readDatabaseAnalyticsSummary,
+  readDatabaseContent,
+  writeDatabaseContent,
+} from "./_database.js";
 
 export const DEFAULT_CONTENT_PATH = path.join(process.cwd(), "public/admin/content/default.json");
 export const LOCAL_LIVE_CONTENT_PATH = path.join(process.cwd(), "public/admin/content/live.json");
@@ -121,15 +127,50 @@ export async function readGithubContent() {
 }
 
 export async function readLiveContent() {
-  const [primary, secondary, fallback] = await Promise.allSettled(
-    isProductionRuntime()
-      ? [readGithubContent(), readBundledLiveContent(), readDefaultContent()]
-      : [readBundledLiveContent(), readGithubContent(), readDefaultContent()],
-  );
-  if (primary.status === "fulfilled" && primary.value) return primary.value;
-  if (secondary.status === "fulfilled" && secondary.value) return secondary.value;
-  if (fallback.status === "fulfilled") return fallback.value;
+  const sources = isProductionRuntime()
+    ? [readDatabaseContent(), readGithubContent(), readBundledLiveContent(), readDefaultContent()]
+    : [readBundledLiveContent(), readDatabaseContent(), readGithubContent(), readDefaultContent()];
+  const results = await Promise.allSettled(sources);
+  const match = results.find((result) => result.status === "fulfilled" && result.value);
+  if (match?.status === "fulfilled") return match.value;
   throw new Error("Content source unavailable");
+}
+
+export async function publishLiveContent(content, actor = "admin") {
+  const publishResults = [];
+  const failures = [];
+
+  if (hasWritableDatabase()) {
+    try {
+      publishResults.push(await writeDatabaseContent(content, actor, { source: "admin" }));
+    } catch (error) {
+      failures.push(error);
+    }
+  }
+
+  try {
+    publishResults.push(await publishGithubContent(content, actor));
+  } catch (error) {
+    failures.push(error);
+  }
+
+  if (publishResults.length) {
+    return {
+      mode: publishResults.map((result) => result.mode).filter(Boolean).join("+"),
+      commitSha: publishResults.find((result) => result.commitSha)?.commitSha || "",
+      contentSha: publishResults.find((result) => result.contentSha)?.contentSha || "",
+      warnings: failures.map((error) => error.message).filter(Boolean),
+    };
+  }
+
+  throw failures[0] || new Error("No publish target configured");
+}
+
+export async function readLiveAnalytics() {
+  const databaseSummary = await readDatabaseAnalyticsSummary();
+  if (databaseSummary) return databaseSummary;
+
+  return readAnalyticsStore();
 }
 
 export async function writeLocalLiveContent(content) {
