@@ -25,6 +25,7 @@ interface Props {
   locale?: "th";
   page?: string;
   bodyClass?: string;
+  extraStyles?: string[];
   extraScripts?: string[];
   canonicalPath?: string;
   image?: string;
@@ -46,6 +47,7 @@ const {
   locale = lang,
   page = "home",
   bodyClass = "",
+  extraStyles = [],
   extraScripts = [],
   canonicalPath,
   image = SEO_DEFAULT_IMAGE,
@@ -58,7 +60,7 @@ const {
   structuredData = [],
 } = Astro.props as Props;
 
-const assetVersion = "20260609-07";
+const assetVersion = "20260609-08";
 const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
 const pagePath = canonicalPath || Astro.url.pathname;
 const pageUrl = canonicalUrl(pagePath);
@@ -126,6 +128,7 @@ const jsonLd = toJsonLdGraph([
       rel="stylesheet"
     />
     <link rel="stylesheet" href={versionedAsset("/styles.css")} />
+    {extraStyles.map((src: string) => <link rel="stylesheet" href={versionedAsset(src)} />)}
     <script is:inline type="application/ld+json" set:html={jsonLd}></script>
   </head>
   <body class={bodyClass} data-cms-page={page}>

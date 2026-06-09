@@ -2,6 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 
 const extraScripts = ["/assets/js/palmistry.js"];
+const extraStyles = ["/assets/css/palmistry.css"];
 
 const featureGroups = [
   {
@@ -60,6 +61,7 @@ const breadcrumbs = [
   locale="th"
   page="palmistry"
   bodyClass="palmistry-page"
+  extraStyles={extraStyles}
   extraScripts={extraScripts}
   canonicalPath="/horoscope/palmistry/"
   breadcrumbs={breadcrumbs}
