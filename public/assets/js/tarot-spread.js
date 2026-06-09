@@ -1,4 +1,4 @@
-import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260605-2";
+import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260609-1";
 
 const selectors = {
   form: "[data-tarot-spread-form]",
@@ -52,6 +52,7 @@ function initSpreadForm(form) {
     deck: shuffleCards([...baseDeck]),
     selectedCards: [],
     isAnimating: false,
+    spreadType,
   };
 
   if (!deckElement || !shuffleButton || !cutButton || !readButton) return;
@@ -67,9 +68,10 @@ function initSpreadForm(form) {
     const card = state.deck.find((item) => item.id === cardButton.dataset.cardId);
     if (!card || state.selectedCards.some((item) => item.id === card.id)) return;
 
+    const selectedIndex = state.selectedCards.length;
     state.selectedCards.push(card);
+    revealPickedCard(deckElement, cardButton, card, selectedIndex, requiredCount, spreadType);
     updateReadingState(form, state, spreadText, requiredCount);
-    renderDeck(deckElement, state, spreadText, requiredCount);
   });
 
   shuffleButton.addEventListener("click", () => {
@@ -114,36 +116,70 @@ function renderDeck(deckElement, state, spreadText, requiredCount) {
   const hasCompleteSelection = state.selectedCards.length >= requiredCount;
   deckElement.classList.toggle("has-selection", state.selectedCards.length > 0);
   deckElement.innerHTML = state.deck
-    .map((card, index) => renderCardButton(card, index, state.deck.length, state.selectedCards, spreadText, hasCompleteSelection))
+    .map((card, index) => renderCardButton(card, index, state.deck.length, state.selectedCards, spreadText, hasCompleteSelection, requiredCount, state.spreadType))
     .join("");
 }
 
-function renderCardButton(card, index, total, selectedCards, spreadText, hasCompleteSelection) {
+function renderCardButton(card, index, total, selectedCards, spreadText, hasCompleteSelection, requiredCount, spreadType) {
   const selectedIndex = selectedCards.findIndex((item) => item.id === card.id);
   const isPicked = selectedIndex >= 0;
   const isDisabled = isPicked || hasCompleteSelection;
   const label = isPicked
     ? `ไพ่ลำดับที่ ${selectedIndex + 1} ${card.thName} ${card.name}`
     : spreadText.chooseCard(index);
-  const position = getCardPosition(index, total, selectedCards.length, isPicked);
+  const slotTotal = spreadType === "monthly" ? 10 : requiredCount;
+  const position = `${getCardPosition(index, total)}${isPicked ? getSlotPosition(selectedIndex, slotTotal) : ""}`;
 
   return `
-    <button class="tarot-card-pick${isPicked ? " is-picked" : ""}" type="button" data-card-id="${card.id}" aria-label="${label}" style="${position}"${isDisabled ? " disabled" : ""}>
-      ${isPicked ? renderCardFace(card, "small") : renderCardBack(index)}
+    <button class="tarot-card-pick${isPicked ? " is-picked is-revealed" : ""}" type="button" data-card-id="${card.id}" aria-label="${label}" style="${position}"${isDisabled ? " disabled" : ""}>
+      <span class="tarot-card-inner">
+        ${renderCardBack(index)}
+        ${isPicked ? renderCardFace(card, "small") : ""}
+      </span>
       ${isPicked ? `<span class="tarot-picked-index">${selectedIndex + 1}</span>` : ""}
     </button>
   `;
 }
 
-function getCardPosition(index, total, pickedCount, isPicked) {
-  const angle = (index / total) * Math.PI * 2 - Math.PI / 2;
-  const x = 50 + Math.cos(angle) * 42;
-  const y = 50 + Math.sin(angle) * 37;
-  const rotation = (angle * 180) / Math.PI + 90;
-  const pickedLayer = isPicked ? pickedCount : 0;
-  const layer = Math.round(1000 + y * 10 + pickedLayer);
+function getCardPosition(index, total) {
+  const isMobile = window.matchMedia("(max-width: 720px)").matches;
+  const columns = Math.min(total, isMobile ? 8 : total <= 22 ? 11 : 13);
+  const rows = Math.ceil(total / columns);
+  const row = Math.floor(index / columns);
+  const column = index % columns;
+  const x = columns === 1 ? 50 : 9 + (column / (columns - 1)) * 82;
+  const y = rows === 1 ? 50 : 24 + (row / (rows - 1)) * 58;
+  const rotation = ((column % 5) - 2) * 2.4 + (row - (rows - 1) / 2) * 1.2;
+  const layer = 1000 + row * columns + column;
 
   return `--x:${x.toFixed(3)};--y:${y.toFixed(3)};--r:${rotation.toFixed(3)}deg;--z:${layer};`;
+}
+
+function getSlotPosition(index, total) {
+  if (total <= 1) return "--slot-x:50%;--slot-y:50%;--slot-r:0deg;--slot-z:6000;";
+
+  if (total >= 10) {
+    const slots = [
+      [50, 29, 0],
+      [42, 42, -10],
+      [58, 42, 10],
+      [34, 55, -8],
+      [66, 55, 8],
+      [50, 68, 0],
+      [24, 42, -18],
+      [76, 42, 18],
+      [24, 68, -12],
+      [76, 68, 12],
+    ];
+    const [x, y, r] = slots[index] || [50, 50, 0];
+    return `--slot-x:${x}%;--slot-y:${y}%;--slot-r:${r}deg;--slot-z:${6000 + index};`;
+  }
+
+  const progress = total === 1 ? 0.5 : index / (total - 1);
+  const x = 18 + progress * 64;
+  const y = 31 + Math.sin(progress * Math.PI) * 5;
+  const r = -6 + progress * 12;
+  return `--slot-x:${x.toFixed(2)}%;--slot-y:${y.toFixed(2)}%;--slot-r:${r.toFixed(2)}deg;--slot-z:${6000 + index};`;
 }
 
 function renderCardBack(index) {
@@ -165,8 +201,28 @@ function renderCardFace(card, size = "large") {
   return `
     <span class="tarot-card-face ${size} ${getCardArtClass(card)}">
       <img class="tarot-card-image" src="${card.image}" alt="${card.thName} (${card.name})" loading="eager" decoding="async">
+      <span class="tarot-card-label" aria-hidden="true">${card.name}</span>
     </span>
   `;
+}
+
+function revealPickedCard(deckElement, cardButton, card, selectedIndex, requiredCount, spreadType) {
+  const totalForSlots = spreadType === "monthly" ? 10 : requiredCount;
+  cardButton.setAttribute("style", `${cardButton.getAttribute("style") || ""}${getSlotPosition(selectedIndex, totalForSlots)}`);
+
+  const inner = cardButton.querySelector(".tarot-card-inner");
+  if (inner && !inner.querySelector(".tarot-card-face")) inner.insertAdjacentHTML("beforeend", renderCardFace(card, "small"));
+
+  cardButton.disabled = true;
+  cardButton.classList.add("is-picked");
+  cardButton.insertAdjacentHTML("beforeend", `<span class="tarot-picked-index">${selectedIndex + 1}</span>`);
+  window.setTimeout(() => cardButton.classList.add("is-revealed"), 420);
+
+  if (selectedIndex + 1 >= requiredCount) {
+    deckElement.querySelectorAll("[data-card-id]:not(.is-picked)").forEach((button) => {
+      button.disabled = true;
+    });
+  }
 }
 
 function updateReadingState(form, state, spreadText, requiredCount) {

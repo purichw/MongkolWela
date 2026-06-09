@@ -1,4 +1,4 @@
-import { getCardArtClass, getTarotCardById } from "./tarot-data.js?v=20260605-2";
+import { getCardArtClass, getTarotCardById } from "./tarot-data.js?v=20260609-1";
 
 const monthlyPositions = [
   {
@@ -250,6 +250,7 @@ function renderCardFace(card, size = "result") {
   return `
     <div class="tarot-card-face ${size} ${getCardArtClass(card)}">
       <img class="tarot-card-image" src="${card.image}" alt="${card.thName} (${card.name})" loading="eager" decoding="async" fetchpriority="high">
+      <span class="tarot-card-label" aria-hidden="true">${card.name}</span>
     </div>
   `;
 }

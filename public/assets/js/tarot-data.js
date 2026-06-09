@@ -345,11 +345,24 @@ function slugify(value) {
 
 function createMinorCards() {
   const suits = ["WANDS", "CUPS", "SWORDS", "PENTACLES"];
+  const displayRanks = {
+    FIVES: "FIVE",
+    SIXS: "SIX",
+    SEVENS: "SEVEN",
+    EIGHTS: "EIGHT",
+    NINES: "NINE",
+    TENS: "TEN",
+    PAGES: "PAGE",
+    KNIGHTS: "KNIGHT",
+    QUEENS: "QUEEN",
+    KINGS: "KING",
+  };
 
   return suits.flatMap((suit) => {
     const config = suitConfig[suit];
     return rankConfig.map(([rank, thRank, theme, interpretation, advice, caution], index) => {
-      const name = `THE ${rank} OF ${suit}`;
+      const assetName = `THE ${rank} OF ${suit}`;
+      const name = `THE ${displayRanks[rank] || rank} OF ${suit}`;
       const timeSeed = (index + 1) * 37 + suit.length * 11;
       const startHour = String(6 + (timeSeed % 15)).padStart(2, "0");
       const startMinute = String((timeSeed * 3) % 60).padStart(2, "0");
@@ -357,7 +370,7 @@ function createMinorCards() {
       const endMinute = String(((timeSeed * 3) + 19) % 60).padStart(2, "0");
 
       return {
-        id: slugify(name),
+        id: slugify(assetName),
         name,
         thName: `${config.thSuit} ${thRank}`,
         suit,

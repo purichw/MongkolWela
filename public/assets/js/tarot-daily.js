@@ -1,4 +1,4 @@
-import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260605-2";
+import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260609-1";
 
 const selectors = {
   deck: "[data-tarot-deck]",
@@ -44,8 +44,8 @@ export function initDailyTarot() {
     selectedCard = deck.find((card) => card.id === cardButton.dataset.cardId);
     if (!selectedCard) return;
 
+    revealPickedCard(deckElement, cardButton, selectedCard);
     updateReadingState();
-    renderDeck(deckElement);
   });
 
   shuffleButton.addEventListener("click", () => {
@@ -96,18 +96,25 @@ function renderCardButton(card, index) {
   const position = getCardPosition(index, deck.length);
 
   return `
-    <button class="tarot-card-pick${isSelected ? " is-selected" : ""}" type="button" data-card-id="${card.id}" aria-label="${label}" style="${position}"${isDisabled ? " disabled" : ""}>
-      ${isSelected ? renderCardFace(card, "small") : renderCardBack(index)}
+    <button class="tarot-card-pick${isSelected ? " is-selected is-revealed" : ""}" type="button" data-card-id="${card.id}" aria-label="${label}" style="${position}"${isDisabled || isSelected ? " disabled" : ""}>
+      <span class="tarot-card-inner">
+        ${renderCardBack(index)}
+        ${isSelected ? renderCardFace(card, "small") : ""}
+      </span>
     </button>
   `;
 }
 
 function getCardPosition(index, total) {
-  const angle = (index / total) * Math.PI * 2 - Math.PI / 2;
-  const x = 50 + Math.cos(angle) * 42;
-  const y = 50 + Math.sin(angle) * 37;
-  const rotation = (angle * 180) / Math.PI + 90;
-  const layer = Math.round(1000 + y * 10);
+  const isMobile = window.matchMedia("(max-width: 720px)").matches;
+  const columns = Math.min(total, isMobile ? 8 : total <= 22 ? 11 : 13);
+  const rows = Math.ceil(total / columns);
+  const row = Math.floor(index / columns);
+  const column = index % columns;
+  const x = columns === 1 ? 50 : 9 + (column / (columns - 1)) * 82;
+  const y = rows === 1 ? 50 : 24 + (row / (rows - 1)) * 58;
+  const rotation = ((column % 5) - 2) * 2.4 + (row - (rows - 1) / 2) * 1.2;
+  const layer = 1000 + row * columns + column;
 
   return `--x:${x.toFixed(3)};--y:${y.toFixed(3)};--r:${rotation.toFixed(3)}deg;--z:${layer};`;
 }
@@ -131,8 +138,22 @@ function renderCardFace(card, size = "large") {
   return `
     <span class="tarot-card-face ${size} ${getCardArtClass(card)}">
       <img class="tarot-card-image" src="${card.image}" alt="${card.thName} (${card.name})" loading="eager" decoding="async">
+      <span class="tarot-card-label" aria-hidden="true">${card.name}</span>
     </span>
   `;
+}
+
+function revealPickedCard(deckElement, cardButton, card) {
+  deckElement.querySelectorAll("[data-card-id]").forEach((button) => {
+    if (button !== cardButton) button.disabled = true;
+  });
+
+  const inner = cardButton.querySelector(".tarot-card-inner");
+  if (inner && !inner.querySelector(".tarot-card-face")) inner.insertAdjacentHTML("beforeend", renderCardFace(card, "small"));
+
+  cardButton.disabled = true;
+  cardButton.classList.add("is-selected");
+  window.setTimeout(() => cardButton.classList.add("is-revealed"), 420);
 }
 
 function updateReadingState() {
