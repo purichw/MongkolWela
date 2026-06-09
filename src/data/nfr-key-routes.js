@@ -10,6 +10,7 @@ export const nfrKeyRoutes = [
   { path: "/", headingPattern: "มงคลเวลา|วันนี้" },
   { path: "/temples/popular/", headingPattern: "สายไหว้พระ 9 วัด" },
   { path: "/temples/mu/", headingPattern: "สายมู" },
+  { path: "/horoscope/palmistry/", headingPattern: "อ่านลายมือ" },
   { path: "/tarot/meanings/", headingPattern: "ความหมายไพ่ยิปซี" },
   { path: watArunPopularRoute, headingPattern: "วัดอรุณ" },
   { path: "/temples/thailand/", headingPattern: "วัดทั่วประเทศไทย" },

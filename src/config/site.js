@@ -30,6 +30,7 @@ export const siteConfig = {
           { label: "ไพ่ยิปซีการงาน อาชีพ", href: "tarot/career/" },
           { label: "ไพ่ยิปซีโชคลาภ เสี่ยงโชค", href: "tarot/luck/" },
           { label: "เลข ๗ ตัว", href: "#horoscope" },
+          { label: "อ่านลายมือ", href: "horoscope/palmistry/" },
           { label: "โหราศาสตร์ไทย", href: "horoscope/thai-astrology/" },
           { label: "เสี่ยงเซียมซี", href: "horoscope/seamsi/" },
           { label: "สมพงษ์คู่รัก", href: "#horoscope" },
@@ -126,6 +127,13 @@ export const siteConfig = {
         topbar: [
           { label: "ผูกดวงโหราศาสตร์ไทย", href: "horoscope/thai-astrology/#thai-astrology-tool" },
           { label: "อ่านลัคนา ภพ ดาวกำเนิด และดวงจรแบบเข้าใจง่าย" },
+          { label: "ปรึกษาครูโหร", href: "#consult" },
+        ],
+      },
+      palmistry: {
+        topbar: [
+          { label: "อ่านลายมือ", href: "horoscope/palmistry/#palmistry-tool" },
+          { label: "เลือกเส้นที่เห็นชัด แล้วอ่านผลจาก rulebook ที่มีแหล่งอ้างอิง" },
           { label: "ปรึกษาครูโหร", href: "#consult" },
         ],
       },

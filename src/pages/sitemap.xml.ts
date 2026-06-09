@@ -26,6 +26,7 @@ const staticEntries: SitemapEntry[] = [
   { path: "/horoscope/life-graph/", priority: "0.72", changefreq: "weekly" },
   { path: "/horoscope/seamsi/", priority: "0.72", changefreq: "weekly" },
   { path: "/horoscope/thai-astrology/", priority: "0.76", changefreq: "weekly" },
+  { path: "/horoscope/palmistry/", priority: "0.74", changefreq: "weekly" },
   { path: "/tarot/daily/", priority: "0.72", changefreq: "daily" },
   { path: "/tarot/meanings/", priority: "0.74", changefreq: "monthly", image: imageEntry("/assets/images/tarot/rws-jpg/the-world.jpg", "ความหมายไพ่ยิปซี 78 ใบ") },
   { path: "/tarot/monthly/", priority: "0.68", changefreq: "weekly" },

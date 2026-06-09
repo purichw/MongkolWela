@@ -1,0 +1,258 @@
+export const palmistrySources = {
+  cheiro1916: {
+    label: "Cheiro - Palmistry for All",
+    href: "https://www.gutenberg.org/ebooks/20480",
+    note: "ตำราคลาสสิกสาธารณะ ใช้เทียบตำแหน่งเส้นหลักและความหมายตามหัตถศาสตร์ตะวันตก",
+  },
+  cheiroLines: {
+    label: "Cheiro - The Lines of the Hand",
+    href: "https://www.gutenberg.org/cache/epub/20480/pg20480-images.html",
+    note: "ฉบับภาพประกอบของ Project Gutenberg ใช้ยืนยันเส้น Head, Life, Fate, Sun และ Heart",
+  },
+  nltNoralak: {
+    label: "หอสมุดแห่งชาติ - ตำรานรลักษณ์",
+    href: "https://digital.nlt.go.th/dlib/items/show/2115",
+    note: "ใช้เป็นหมุดหมายฝั่งตำราไทย/นรลักษณ์ เพื่อแยกภาษาอ่านผลแบบไทยออกจาก palmistry ตะวันตก",
+  },
+  palmistryPathLines: {
+    label: "Palmistry Path - The Lines",
+    href: "https://palmistrypath.com/learn/lines/",
+    note: "ใช้ cross-check ว่าเส้นหลัก Heart, Head, Life และ Fate เป็นแกนอ่านร่วมในหลายตำรา",
+  },
+  palmSeerMajor: {
+    label: "PalmSeer - Five Major Lines",
+    href: "https://www.palmseer.com/insights/five-major-lines-in-palmistry",
+    note: "ใช้เทียบภาษาสมัยใหม่เรื่องตำแหน่งเส้นหลัก และข้อควรระวังว่าเส้นชีวิตไม่ใช่อายุขัย",
+  },
+  palmistryPathFate: {
+    label: "Palmistry Path - Fate Line",
+    href: "https://palmistrypath.com/learn/lines/05-fate-line",
+    note: "ใช้ cross-check เส้นวาสนา/เส้น Fate โดยเฉพาะ ทั้ง endpoint, break และการไม่มีเส้นชัด",
+  },
+};
+
+export const palmLines = [
+  {
+    id: "heart",
+    label: "เส้นหัวใจ",
+    shortLabel: "หัวใจ",
+    guide: "เส้นบนสุดใต้โคนนิ้ว เริ่มจากฝั่งนิ้วก้อยแล้วพาดเข้าไปทางนิ้วชี้หรือนิ้วกลาง",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmistryPathLines", "palmSeerMajor"],
+  },
+  {
+    id: "head",
+    label: "เส้นสมอง",
+    shortLabel: "สมอง",
+    guide: "เส้นกลางฝ่ามือ มักเริ่มใกล้ช่องระหว่างนิ้วโป้งกับนิ้วชี้ แล้วพาดออกไปทางขอบมือ",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmistryPathLines", "palmSeerMajor"],
+  },
+  {
+    id: "life",
+    label: "เส้นชีวิต",
+    shortLabel: "ชีวิต",
+    guide: "เส้นโค้งล้อมโคนนิ้วโป้ง ไม่ได้ใช้ฟันธงอายุขัย ใช้อ่านพลังชีวิตและฐานจังหวะตามตำราเท่านั้น",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmistryPathLines", "palmSeerMajor"],
+  },
+  {
+    id: "fate",
+    label: "เส้นวาสนา",
+    shortLabel: "วาสนา",
+    guide: "เส้นแนวตั้งจากช่วงข้อมือหรือกลางฝ่ามือขึ้นไปทางนิ้วกลาง บางคนไม่มีหรือเห็นไม่ชัดได้",
+    sourceIds: ["cheiro1916", "cheiroLines", "nltNoralak", "palmistryPathLines", "palmistryPathFate", "palmSeerMajor"],
+  },
+];
+
+export const palmistryRules = [
+  {
+    id: "heart-clear",
+    lineId: "heart",
+    featureLabel: "ยาว ชัด และไม่ขาดช่วง",
+    observation: "เส้นหัวใจเห็นต่อเนื่องใต้โคนนิ้ว",
+    reading:
+      "อ่านแบบไทย-first ได้ว่าเรื่องใจและความสัมพันธ์มีฐานค่อนข้างมั่นคง รู้ว่าตนให้คุณค่ากับความผูกพันแบบไหน แต่ยังควรดูร่วมกับเส้นสมองและเส้นชีวิตก่อนสรุปภาพรวม",
+    advice: "ใช้ความชัดของใจเป็นจุดตั้งต้นในการคุยเรื่องสำคัญ แต่อย่าตัดสินคนอื่นจากความรู้สึกช่วงเดียว",
+    tradition: "shared",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmSeerMajor"],
+  },
+  {
+    id: "heart-curved",
+    lineId: "heart",
+    featureLabel: "โค้งขึ้นไปทางนิ้วชี้/นิ้วกลาง",
+    observation: "เส้นหัวใจมีแรงโค้งขึ้นบริเวณปลายเส้น",
+    reading:
+      "มักอ่านว่าเจ้าชะตาให้พื้นที่กับความรู้สึก ความเมตตา และอุดมคติเรื่องความรักมากกว่าความสัมพันธ์แบบแห้งแล้ง",
+    advice: "ดีต่อการดูแลคนใกล้ตัว แต่ควรวางขอบเขตให้ชัดเมื่อเรื่องใจเริ่มดึงพลังมากเกินไป",
+    tradition: "western",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "palmSeerMajor"],
+  },
+  {
+    id: "heart-straight",
+    lineId: "heart",
+    featureLabel: "ค่อนข้างตรง",
+    observation: "เส้นหัวใจพาดค่อนข้างตรง ไม่โค้งขึ้นมาก",
+    reading:
+      "อ่านได้ว่าเรื่องใจมักผ่านการคิดก่อนแสดงออก เจ้าชะตาอาจแสดงความรักแบบรับผิดชอบและเป็นรูปธรรมมากกว่าคำหวาน",
+    advice: "อย่าปล่อยให้ความนิ่งถูกเข้าใจผิดว่าไม่ใส่ใจ ลองบอกความรู้สึกให้ตรงขึ้นในจังหวะสำคัญ",
+    tradition: "shared",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmSeerMajor"],
+  },
+  {
+    id: "heart-fragmented",
+    lineId: "heart",
+    featureLabel: "จาง แตก หรือขาดช่วง",
+    observation: "เส้นหัวใจไม่ต่อเนื่องหรือเห็นเป็นช่วง ๆ",
+    reading:
+      "ตำรามักถือว่าเรื่องอารมณ์และความสัมพันธ์ควรอ่านอย่างระวัง เพราะภาพเส้นยังไม่หนักแน่นพอให้ฟันธง",
+    advice: "ให้ผลเป็นเพียงข้อสังเกตเบา ๆ และควรตรวจรูปมือในแสงที่ชัดขึ้นก่อนอ่านซ้ำ",
+    tradition: "shared",
+    confidence: "low",
+    sourceIds: ["cheiro1916", "palmSeerMajor"],
+  },
+  {
+    id: "head-long-clear",
+    lineId: "head",
+    featureLabel: "ยาวและชัด",
+    observation: "เส้นสมองพาดยาวและเห็นแนวเส้นชัด",
+    reading:
+      "มักอ่านว่าเจ้าชะตามีแรงคิดต่อเนื่อง วางแผนและจับเหตุผลได้ดี เมื่อทำสิ่งใดจริงจังจะค่อย ๆ ต่อภาพให้เป็นระบบ",
+    advice: "เหมาะกับงานที่ต้องจัดโครงข้อมูลหรือวางแผนระยะกลาง แต่ควรระวังคิดนานจนพลาดจังหวะลงมือ",
+    tradition: "shared",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmSeerMajor"],
+  },
+  {
+    id: "head-sloping",
+    lineId: "head",
+    featureLabel: "ลาดลงไปทางขอบล่างของฝ่ามือ",
+    observation: "เส้นสมองลาดลงจากกลางฝ่ามือไปทางเนินจันทร์",
+    reading:
+      "ในตำราตะวันตกมักโยงกับจินตนาการและการคิดเชิงภาพ เมื่อนำมาอ่านแบบไทยควรใช้คำว่าเซนส์และความคิดสร้างสรรค์มากกว่าการฟันธงนิสัย",
+    advice: "ใช้จินตนาการให้เป็นประโยชน์กับงานสร้างสรรค์ แต่ควรมีข้อมูลจริงช่วยยืนยันก่อนตัดสินใจเรื่องใหญ่",
+    tradition: "western",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmSeerMajor"],
+  },
+  {
+    id: "head-joined-life",
+    lineId: "head",
+    featureLabel: "เริ่มติดกับเส้นชีวิต",
+    observation: "จุดเริ่มเส้นสมองแตะหรือเดินคู่กับเส้นชีวิตช่วงต้น",
+    reading:
+      "มักอ่านว่าเจ้าชะตามีความรอบคอบ คิดถึงผลกระทบและฐานความมั่นคงก่อนเริ่มเรื่องใหม่",
+    advice: "ความรอบคอบเป็นแรงหนุน แต่ถ้ารอให้ทุกอย่างพร้อมเกินไป อาจต้องตั้งเส้นตายให้ตัวเองลงมือ",
+    tradition: "shared",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmistryPathLines"],
+  },
+  {
+    id: "head-separated-life",
+    lineId: "head",
+    featureLabel: "เริ่มแยกจากเส้นชีวิต",
+    observation: "จุดเริ่มเส้นสมองแยกจากเส้นชีวิตอย่างเห็นได้ชัด",
+    reading:
+      "ตามตำรามักอ่านว่ามีความเป็นตัวของตัวเองสูง กล้าคิดหรือตัดสินใจโดยไม่รอแรงรับรองจากคนรอบข้าง",
+    advice: "ใช้ความกล้าให้เป็นจุดเปิดทาง แต่ควรมีคนช่วยทวนความเสี่ยงก่อนเดินเกมเร็ว",
+    tradition: "shared",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmistryPathLines"],
+  },
+  {
+    id: "life-clear",
+    lineId: "life",
+    featureLabel: "โค้งชัดและต่อเนื่อง",
+    observation: "เส้นชีวิตล้อมเนินโคนนิ้วโป้งอย่างต่อเนื่อง",
+    reading:
+      "อ่านเป็นฐานพลังและความต่อเนื่องของจังหวะชีวิต ไม่ใช่อายุขัย เส้นที่ชัดมักใช้บอกว่าฐานชีวิตมีแรงพยุงดี",
+    advice: "เหมาะกับการสร้างรูทีนระยะยาวและสะสมผลจากสิ่งเล็ก ๆ อย่างสม่ำเสมอ",
+    tradition: "shared",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmSeerMajor"],
+  },
+  {
+    id: "life-wide-arc",
+    lineId: "life",
+    featureLabel: "โค้งกว้างออกจากโคนนิ้วโป้ง",
+    observation: "เส้นชีวิตอ้าเป็นวงกว้าง ไม่แนบโคนนิ้วโป้งมาก",
+    reading:
+      "มักอ่านว่าพื้นพลังเปิด ชอบพื้นที่ขยับตัว และไม่เหมาะกับกรอบชีวิตที่บีบแน่นเกินไป",
+    advice: "เลือกงานหรือวิถีชีวิตที่ให้พื้นที่ทดลอง แต่ควรตั้งวินัยพื้นฐานเพื่อไม่ให้พลังกระจาย",
+    tradition: "western",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "palmSeerMajor"],
+  },
+  {
+    id: "life-close-thumb",
+    lineId: "life",
+    featureLabel: "แนบโคนนิ้วโป้ง",
+    observation: "เส้นชีวิตเดินใกล้เนินโคนนิ้วโป้งมาก",
+    reading:
+      "อ่านแบบระวังได้ว่าพลังชีวิตอาจถูกใช้กับเรื่องจำเป็นหรือกรอบเดิมมาก จึงควรถามตนเองว่าพื้นที่พักและพื้นที่เลือกยังพอไหม",
+    advice: "จัดเวลาพักและพื้นที่ส่วนตัวให้จริงจัง ผลอ่านนี้ไม่ใช่คำวินิจฉัยสุขภาพ",
+    tradition: "shared",
+    confidence: "low",
+    sourceIds: ["cheiro1916", "palmSeerMajor"],
+  },
+  {
+    id: "life-broken",
+    lineId: "life",
+    featureLabel: "ขาดช่วงหรือเปลี่ยนแนว",
+    observation: "เส้นชีวิตมีช่วงแตก ขาด หรือเปลี่ยนแนวชัด",
+    reading:
+      "ตำรามักอ่านว่าเป็นจังหวะเปลี่ยนผ่านของชีวิต แต่ไม่ควรโยงกับโรค อายุขัย หรือเหตุร้ายโดยตรง",
+    advice: "ใช้เป็นสัญญาณให้สำรวจช่วงเปลี่ยนแปลงและเตรียมแผนสำรอง ไม่ใช่คำทำนายเหตุการณ์ตายตัว",
+    tradition: "shared",
+    confidence: "low",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmSeerMajor"],
+  },
+  {
+    id: "fate-clear",
+    lineId: "fate",
+    featureLabel: "มีเส้นแนวตั้งขึ้นกลางฝ่ามือชัด",
+    observation: "เส้นวาสนาขึ้นจากช่วงล่างหรือกลางฝ่ามือไปทางนิ้วกลาง",
+    reading:
+      "อ่านแบบไทยได้ว่าเจ้าชะตามีแกนหน้าที่หรือเส้นทางชีวิตที่ค่อนข้างจับต้องได้ มีแรงของงาน ภาระ หรือเป้าหมายช่วยกำกับจังหวะ",
+    advice: "ให้ความสำคัญกับการเลือกเส้นทางระยะยาว เพราะเมื่อแกนชัด การสะสมชื่อเสียงและผลงานจะเด่นขึ้น",
+    tradition: "thai",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "cheiroLines", "nltNoralak", "palmistryPathFate", "palmSeerMajor"],
+  },
+  {
+    id: "fate-faint",
+    lineId: "fate",
+    featureLabel: "จางหรือเห็นเป็นช่วง",
+    observation: "เส้นวาสนาไม่ชัดหรือปรากฏเป็นบางช่วง",
+    reading:
+      "ไม่ควรอ่านว่าไม่มีวาสนา แต่ควรอ่านว่าเส้นทางชีวิตอาจเปลี่ยนตามการตัดสินใจและบริบทมากกว่าเดินตามแกนเดียวตลอด",
+    advice: "เหมาะกับการตั้งเป้าหมายเป็นช่วง ๆ และทบทวนทิศทางชีวิตเมื่อบริบทเปลี่ยน",
+    tradition: "shared",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmistryPathFate", "palmSeerMajor"],
+  },
+  {
+    id: "fate-absent",
+    lineId: "fate",
+    featureLabel: "ไม่เห็นเส้นวาสนาชัด",
+    observation: "ยังไม่พบเส้นแนวตั้งกลางฝ่ามือที่พออ่านเป็นเส้นวาสนา",
+    reading:
+      "ตำราหลายสายยอมรับว่าบางมือไม่มีเส้นวาสนาชัด จึงไม่ควรสรุปด้านงานหรือวาสนาจากเส้นนี้เพียงอย่างเดียว",
+    advice: "อ่านร่วมกับเส้นสมอง เส้นชีวิต และข้อมูลชีวิตจริงแทนการฟันธงจากเส้นวาสนาที่ไม่ชัด",
+    tradition: "shared",
+    confidence: "low",
+    sourceIds: ["cheiro1916", "palmistryPathFate", "palmSeerMajor"],
+  },
+  {
+    id: "fate-from-life",
+    lineId: "fate",
+    featureLabel: "เริ่มจากหรือแตะเส้นชีวิต",
+    observation: "เส้นวาสนาเริ่มใกล้หรือแตะเส้นชีวิตช่วงล่าง",
+    reading:
+      "มักอ่านว่าเส้นทางงานหรือภาระชีวิตเกี่ยวพันกับพื้นฐานครอบครัว ความรับผิดชอบเดิม หรือการสร้างตัวด้วยแรงของตนเอง",
+    advice: "แยกให้ชัดว่าอะไรคือภาระที่เลือกเอง และอะไรคือภาระที่รับมาเพราะความคุ้นเคย",
+    tradition: "shared",
+    confidence: "medium",
+    sourceIds: ["cheiro1916", "cheiroLines", "palmistryPathFate"],
+  },
+];

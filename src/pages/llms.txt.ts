@@ -16,6 +16,7 @@ export const GET: APIRoute = async () => {
 - ค้นหาวัดทั่วประเทศไทย: ${absoluteUrl("/temples/thailand/")}
 - ปฏิทินไทย: ${absoluteUrl("/calendar/")}
 - โหราศาสตร์ไทย: ${absoluteUrl("/horoscope/thai-astrology/")}
+- อ่านลายมือ: ${absoluteUrl("/horoscope/palmistry/")}
 - ไพ่ยิปซีรายวัน: ${absoluteUrl("/tarot/daily/")}
 - ความหมายไพ่ยิปซี 78 ใบ: ${absoluteUrl("/tarot/meanings/")}
 - ไพ่ยิปซีรายเดือน: ${absoluteUrl("/tarot/monthly/")}

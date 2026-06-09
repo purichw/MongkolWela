@@ -27,6 +27,7 @@
           { "id": "tarot-money", "label": "ไพ่ยิปซีการเงิน", "href": "tarot/money/", "enabled": true },
           { "id": "tarot-career", "label": "ไพ่ยิปซีการงาน อาชีพ", "href": "tarot/career/", "enabled": true },
           { "id": "tarot-luck", "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค", "href": "tarot/luck/", "enabled": true },
+          { "id": "palmistry", "label": "อ่านลายมือ", "href": "horoscope/palmistry/", "enabled": true },
           { "id": "thai-astrology", "label": "โหราศาสตร์ไทย", "href": "horoscope/thai-astrology/", "enabled": true },
           { "id": "seamsi", "label": "เสี่ยงเซียมซี", "href": "horoscope/seamsi/", "enabled": true }
         ]
@@ -114,6 +115,7 @@
     { "id": "calendar", "label": "ปฏิทินไทย", "route": "/calendar/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "lifeGraph", "label": "กราฟชีวิต", "route": "/horoscope/life-graph/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "thaiAstrology", "label": "โหราศาสตร์ไทย", "route": "/horoscope/thai-astrology/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
+    { "id": "palmistry", "label": "อ่านลายมือ", "route": "/horoscope/palmistry/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "seamsi", "label": "เสี่ยงเซียมซี", "route": "/horoscope/seamsi/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotMeanings", "label": "ความหมายไพ่ยิปซี 78 ใบ", "route": "/tarot/meanings/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotDaily", "label": "ไพ่ยิปซีรายวัน", "route": "/tarot/daily/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
@@ -178,6 +180,6 @@
     "enabled": true,
     "sampleRate": 1
   },
-  "updatedAt": "2026-06-08T00:00:00.000Z",
+  "updatedAt": "2026-06-09T00:00:00.000Z",
   "publishedAt": null
 }

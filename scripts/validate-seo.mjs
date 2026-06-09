@@ -13,6 +13,7 @@ const indexedRoutes = [
   "/",
   "/calendar/",
   "/horoscope/thai-astrology/",
+  "/horoscope/palmistry/",
   "/tarot/daily/",
   "/tarot/meanings/",
   "/tarot/meanings/the-emperor/",

@@ -132,6 +132,16 @@
       "sections": []
     },
     {
+      "id": "palmistry",
+      "kind": "existing",
+      "label": "อ่านลายมือ",
+      "route": "/horoscope/palmistry/",
+      "blocks": [],
+      "enabled": true,
+      "patches": [],
+      "sections": []
+    },
+    {
       "id": "seamsi",
       "kind": "existing",
       "label": "เสี่ยงเซียมซี",
@@ -258,7 +268,7 @@
     "enabled": true,
     "sampleRate": 1
   },
-  "updatedAt": "2026-06-08T12:46:09.052Z",
+  "updatedAt": "2026-06-09T00:00:00.000Z",
   "components": {
     "cards": [
       {
@@ -301,6 +311,12 @@
             "id": "tarot-luck",
             "href": "tarot/luck/",
             "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค",
+            "enabled": true
+          },
+          {
+            "id": "palmistry",
+            "href": "horoscope/palmistry/",
+            "label": "อ่านลายมือ",
             "enabled": true
           },
           {

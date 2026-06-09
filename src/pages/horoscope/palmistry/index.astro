@@ -1,0 +1,204 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const extraScripts = ["/assets/js/palmistry.js"];
+
+const featureGroups = [
+  {
+    title: "เส้นหัวใจ",
+    hint: "เลือกเฉพาะลักษณะที่เห็นชัดใต้โคนนิ้ว",
+    options: [
+      ["heart-clear", "ยาว ชัด และไม่ขาดช่วง"],
+      ["heart-curved", "โค้งขึ้นไปทางนิ้วชี้/นิ้วกลาง"],
+      ["heart-straight", "ค่อนข้างตรง"],
+      ["heart-fragmented", "จาง แตก หรือขาดช่วง"],
+    ],
+  },
+  {
+    title: "เส้นสมอง",
+    hint: "ดูเส้นกลางฝ่ามือที่พาดออกจากช่วงนิ้วโป้ง/นิ้วชี้",
+    options: [
+      ["head-long-clear", "ยาวและชัด"],
+      ["head-sloping", "ลาดลงไปทางขอบล่างของฝ่ามือ"],
+      ["head-joined-life", "เริ่มติดกับเส้นชีวิต"],
+      ["head-separated-life", "เริ่มแยกจากเส้นชีวิต"],
+    ],
+  },
+  {
+    title: "เส้นชีวิต",
+    hint: "อ่านเป็นฐานพลังและจังหวะชีวิต ไม่ใช่อายุขัย",
+    options: [
+      ["life-clear", "โค้งชัดและต่อเนื่อง"],
+      ["life-wide-arc", "โค้งกว้างออกจากโคนนิ้วโป้ง"],
+      ["life-close-thumb", "แนบโคนนิ้วโป้ง"],
+      ["life-broken", "ขาดช่วงหรือเปลี่ยนแนว"],
+    ],
+  },
+  {
+    title: "เส้นวาสนา",
+    hint: "บางคนไม่มีเส้นนี้ชัดได้ ถ้าไม่เห็นไม่ต้องเลือก",
+    options: [
+      ["fate-clear", "มีเส้นแนวตั้งขึ้นกลางฝ่ามือชัด"],
+      ["fate-faint", "จางหรือเห็นเป็นช่วง"],
+      ["fate-absent", "ไม่เห็นเส้นวาสนาชัด"],
+      ["fate-from-life", "เริ่มจากหรือแตะเส้นชีวิต"],
+    ],
+  },
+];
+
+const breadcrumbs = [
+  { label: "หน้าแรก", href: "/" },
+  { label: "ดูดวง", href: "/#horoscope" },
+  { label: "อ่านลายมือ" },
+];
+---
+
+<BaseLayout
+  title="อ่านลายมือแบบมีแหล่งอ้างอิง | มงคลเวลา"
+  description="อ่านลายมือไทย-first แบบเลือกเส้นด้วยตนเอง ระบบแปลผลจาก rulebook ที่มีแหล่งอ้างอิง พร้อมอธิบายว่าเส้นหัวใจ เส้นสมอง เส้นชีวิต และเส้นวาสนาอยู่ตรงไหน"
+  lang="th"
+  locale="th"
+  page="palmistry"
+  bodyClass="palmistry-page"
+  extraScripts={extraScripts}
+  canonicalPath="/horoscope/palmistry/"
+  breadcrumbs={breadcrumbs}
+>
+  <main>
+    <section class="palm-hero">
+      <div>
+        <nav class="palm-breadcrumb" aria-label="breadcrumb">
+          <a href="/">หน้าแรก</a>
+          <span>/</span>
+          <a href="/#horoscope">ดูดวง</a>
+          <span>/</span>
+          <span>อ่านลายมือ</span>
+        </nav>
+        <p class="section-kicker">หัตถศาสตร์ไทย-first</p>
+        <h1>อ่านลายมือ</h1>
+        <p>
+          เริ่มจากระบุเส้นให้ถูกก่อนอ่านผล เลือกเฉพาะลักษณะที่เห็นชัด
+          แล้วระบบจะแสดงคำอ่านจาก rulebook ที่มีแหล่งอ้างอิง ไม่ใช้ AI แต่งคำทำนายสด
+        </p>
+      </div>
+
+      <aside class="palm-diagram-card" aria-label="แผนภาพเส้นหลักบนฝ่ามือ">
+        <div class="palm-diagram">
+          <span class="palm-finger one"></span>
+          <span class="palm-finger two"></span>
+          <span class="palm-finger three"></span>
+          <span class="palm-finger four"></span>
+          <span class="palm-thumb"></span>
+          <span class="palm-line heart"></span>
+          <span class="palm-line head"></span>
+          <span class="palm-line life"></span>
+          <span class="palm-line fate"></span>
+          <span class="palm-diagram-label heart">เส้นหัวใจ</span>
+          <span class="palm-diagram-label head">เส้นสมอง</span>
+          <span class="palm-diagram-label life">เส้นชีวิต</span>
+          <span class="palm-diagram-label fate">เส้นวาสนา</span>
+        </div>
+        <p>
+          แผนภาพนี้เป็นตัวช่วยระบุตำแหน่ง ไม่ใช่การอ่านจากรูปจริง
+          ถ้าเส้นใดไม่ชัด ให้เว้นไว้เพื่อกันผลอ่านที่เกินหลักฐาน
+        </p>
+      </aside>
+    </section>
+
+    <section class="palm-tool" id="palmistry-tool">
+      <form class="palm-form" data-palmistry-form>
+        <div>
+          <p class="section-kicker">เลือกจากสิ่งที่เห็น</p>
+          <h2>ระบุเส้นและลักษณะ</h2>
+          <p class="palm-form-note">
+            ผลอ่านจะออกเฉพาะข้อที่เลือกไว้ และทุกข้อมีแหล่งอ้างอิงใน rulebook
+          </p>
+        </div>
+
+        <fieldset>
+          <legend>มือที่ใช้ดู</legend>
+          <div class="palm-choice-row">
+            <label class="palm-choice">
+              <input type="radio" name="handRole" value="dominant" checked>
+              <span>มือถนัด</span>
+            </label>
+            <label class="palm-choice">
+              <input type="radio" name="handRole" value="right">
+              <span>มือขวา</span>
+            </label>
+            <label class="palm-choice">
+              <input type="radio" name="handRole" value="left">
+              <span>มือซ้าย</span>
+            </label>
+          </div>
+        </fieldset>
+
+        {featureGroups.map((group) => (
+          <fieldset class="palm-line-fieldset">
+            <legend>{group.title}</legend>
+            <small>{group.hint}</small>
+            {group.options.map(([value, label]) => (
+              <label class="palm-feature">
+                <input type="checkbox" name="palmFeatures" value={value}>
+                <span>{label}</span>
+              </label>
+            ))}
+          </fieldset>
+        ))}
+
+        <div class="palm-form-actions">
+          <button class="primary-action" type="submit">อ่านลายมือ</button>
+          <button class="secondary-action" type="button" data-palmistry-reset>ล้างข้อมูล</button>
+        </div>
+      </form>
+
+      <section class="palm-result" aria-live="polite">
+        <div class="palm-result-summary" data-palmistry-summary></div>
+        <div data-palmistry-result></div>
+      </section>
+    </section>
+
+    <section class="palm-method">
+      <div class="palm-method-head">
+        <div>
+          <p class="section-kicker">วิธีกันผลมั่ว</p>
+          <h2>อ่านเฉพาะสิ่งที่ตรวจย้อนกลับได้</h2>
+        </div>
+        <p>
+          เครื่องมือนี้ไม่อัปโหลดรูปฝ่ามือและไม่เก็บ biometric data
+          ทุกคำอ่านต้องโยงกลับไปยังเส้น ลักษณะ แหล่งอ้างอิง และระดับความมั่นใจ
+        </p>
+      </div>
+      <div class="palm-guide-grid" data-palm-line-guide></div>
+    </section>
+
+    <section class="palm-sources">
+      <div>
+        <p class="section-kicker">ฐานความรู้</p>
+        <h2>ใช้ตำราเป็นขอบเขต ไม่ใช่คำฟันธง</h2>
+      </div>
+      <div class="palm-source-grid">
+        <a href="https://www.gutenberg.org/ebooks/20480" target="_blank" rel="noreferrer">
+          <strong>Cheiro - Palmistry for All</strong>
+          <span>ตำราคลาสสิก public-domain ใช้เป็นฐานตำแหน่งเส้นและคำอ่านแบบตะวันตก</span>
+        </a>
+        <a href="https://www.gutenberg.org/cache/epub/20480/pg20480-images.html" target="_blank" rel="noreferrer">
+          <strong>Project Gutenberg ฉบับภาพประกอบ</strong>
+          <span>ใช้เทียบชื่อบทและภาพประกอบของเส้น Head, Life, Fate, Sun และ Heart</span>
+        </a>
+        <a href="https://digital.nlt.go.th/dlib/items/show/2115" target="_blank" rel="noreferrer">
+          <strong>หอสมุดแห่งชาติ - ตำรานรลักษณ์</strong>
+          <span>ใช้วางกรอบคำอ่านไทย-first และแยก “วาสนา/บารมี” ออกจากศัพท์ palmistry ตะวันตก</span>
+        </a>
+        <a href="https://palmistrypath.com/learn/lines/" target="_blank" rel="noreferrer">
+          <strong>Palmistry Path - The Lines</strong>
+          <span>ใช้ cross-check โครงเส้นหลักและแนวทางอ่านแบบไม่แยกเส้นโดด ๆ</span>
+        </a>
+        <a href="https://www.palmseer.com/insights/five-major-lines-in-palmistry" target="_blank" rel="noreferrer">
+          <strong>PalmSeer - Five Major Lines</strong>
+          <span>ใช้เทียบภาษาสมัยใหม่ และย้ำว่าเส้นชีวิตไม่ใช่การทำนายอายุขัย</span>
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
