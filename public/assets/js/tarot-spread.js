@@ -30,7 +30,36 @@ const textBySpread = {
     shuffled: "ไพ่ถูกสับใหม่แล้ว ตั้งคำถามเรื่องโชคลาภ แล้วเลือกไพ่ 1 ใบ",
     cut: "ตัดไพ่เรียบร้อยแล้ว เลือกไพ่ที่เรียกสายตาหรือใจของคุณ",
   },
+  love: {
+    ready: "ตั้งคำถามเรื่องความรัก แล้วเลือกไพ่ 1 ใบ",
+    selected: (count, required) => `เลือกแล้ว ${count}/${required} ใบ`,
+    complete: "เลือกไพ่แล้ว กดเปิดคำทำนายเพื่ออ่านจังหวะความรัก",
+    pickFirst: "กรุณาเลือกไพ่ 1 ใบก่อนเปิดคำทำนาย",
+    chooseCard: (index) => `เลือกไพ่ใบที่ ${index + 1}`,
+    shuffled: "ไพ่ถูกสับใหม่แล้ว ตั้งคำถามเรื่องความรัก แล้วเลือกไพ่ 1 ใบ",
+    cut: "ตัดไพ่เรียบร้อยแล้ว เลือกไพ่ที่ใจสะดุด 1 ใบ",
+  },
+  money: {
+    ready: "ตั้งคำถามเรื่องการเงิน แล้วเลือกไพ่ 1 ใบ",
+    selected: (count, required) => `เลือกแล้ว ${count}/${required} ใบ`,
+    complete: "เลือกไพ่แล้ว กดเปิดคำทำนายเพื่ออ่านจังหวะการเงิน",
+    pickFirst: "กรุณาเลือกไพ่ 1 ใบก่อนเปิดคำทำนาย",
+    chooseCard: (index) => `เลือกไพ่ใบที่ ${index + 1}`,
+    shuffled: "ไพ่ถูกสับใหม่แล้ว ตั้งคำถามเรื่องการเงิน แล้วเลือกไพ่ 1 ใบ",
+    cut: "ตัดไพ่เรียบร้อยแล้ว เลือกไพ่ที่เรียกสายตาหรือใจของคุณ",
+  },
+  career: {
+    ready: "ตั้งคำถามเรื่องการงาน อาชีพ หรือธุรกิจ แล้วเลือกไพ่ 1 ใบ",
+    selected: (count, required) => `เลือกแล้ว ${count}/${required} ใบ`,
+    complete: "เลือกไพ่แล้ว กดเปิดคำทำนายเพื่ออ่านจังหวะการงาน",
+    pickFirst: "กรุณาเลือกไพ่ 1 ใบก่อนเปิดคำทำนาย",
+    chooseCard: (index) => `เลือกไพ่ใบที่ ${index + 1}`,
+    shuffled: "ไพ่ถูกสับใหม่แล้ว ตั้งคำถามเรื่องการงาน แล้วเลือกไพ่ 1 ใบ",
+    cut: "ตัดไพ่เรียบร้อยแล้ว เลือกไพ่ที่สะดุดใจ 1 ใบ",
+  },
 };
+
+const majorOnlySpreads = new Set(["luck", "love", "money", "career"]);
 
 initTarotSpreads();
 
@@ -47,7 +76,7 @@ function initSpreadForm(form) {
   const requiredCount = Number(form.dataset.requiredCount || "1");
   const storageKey = form.dataset.storageKey || "monkolTarotSpread";
   const spreadText = textBySpread[spreadType] || textBySpread.monthly;
-  const baseDeck = spreadType === "luck" ? tarotCards.filter((card) => !card.suit) : tarotCards;
+  const baseDeck = majorOnlySpreads.has(spreadType) ? tarotCards.filter((card) => !card.suit) : tarotCards;
   const state = {
     deck: shuffleCards([...baseDeck]),
     selectedCards: [],

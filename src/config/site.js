@@ -21,8 +21,12 @@ export const siteConfig = {
         href: "#horoscope",
         items: [
           { label: "กราฟชีวิต", href: "horoscope/life-graph/" },
+          { label: "ดูดวงไพ่ยิปซี", section: true },
           { label: "ไพ่ยิปซีรายวัน", href: "tarot/daily/" },
           { label: "ไพ่ยิปซีรายเดือน", href: "tarot/monthly/" },
+          { label: "ไพ่ยิปซีความรัก", href: "tarot/love/" },
+          { label: "ไพ่ยิปซีการเงิน", href: "tarot/money/" },
+          { label: "ไพ่ยิปซีการงาน อาชีพ", href: "tarot/career/" },
           { label: "ไพ่ยิปซีโชคลาภ เสี่ยงโชค", href: "tarot/luck/" },
           { label: "เลข ๗ ตัว", href: "#horoscope" },
           { label: "โหราศาสตร์ไทย", href: "horoscope/thai-astrology/" },
@@ -142,6 +146,27 @@ export const siteConfig = {
         topbar: [
           { label: "ไพ่ยิปซีโชคลาภ เสี่ยงโชค", href: "tarot/luck/" },
           { label: "เลือกไพ่ 1 ใบเพื่ออ่านจังหวะโชคและการเสี่ยงอย่างมีสติ" },
+          { label: "ปรึกษาครูโหร", href: "#consult" },
+        ],
+      },
+      tarotLove: {
+        topbar: [
+          { label: "ไพ่ยิปซีความรัก", href: "tarot/love/" },
+          { label: "เลือกไพ่ 1 ใบเพื่ออ่านจังหวะหัวใจ คนโสด คนคุย และคู่ครอง" },
+          { label: "ปรึกษาครูโหร", href: "#consult" },
+        ],
+      },
+      tarotMoney: {
+        topbar: [
+          { label: "ไพ่ยิปซีการเงิน", href: "tarot/money/" },
+          { label: "เลือกไพ่ 1 ใบเพื่ออ่านสภาพคล่อง รายจ่าย และข้อควรระวัง" },
+          { label: "ปรึกษาครูโหร", href: "#consult" },
+        ],
+      },
+      tarotCareer: {
+        topbar: [
+          { label: "ไพ่ยิปซีการงาน", href: "tarot/career/" },
+          { label: "เลือกไพ่ 1 ใบเพื่ออ่านจังหวะงาน อาชีพ ธุรกิจ และโอกาสใหม่" },
           { label: "ปรึกษาครูโหร", href: "#consult" },
         ],
       },

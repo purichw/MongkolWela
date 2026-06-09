@@ -1,0 +1,94 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { tarotIntentTopics } from "../../../data/tarot-topic-pages.js";
+
+export function getStaticPaths() {
+  return tarotIntentTopics.map((topic) => ({
+    params: { topic: topic.slug },
+    props: { topic },
+  }));
+}
+
+const { topic } = Astro.props;
+const extraScripts = ["/assets/js/tarot-spread.js"];
+---
+
+<BaseLayout
+  title={topic.title}
+  description={topic.description}
+  lang="th"
+  locale="th"
+  page={topic.pageId}
+  bodyClass="tarot-page"
+  extraScripts={extraScripts}
+  canonicalPath={`/tarot/${topic.slug}/`}
+  breadcrumbs={[
+    { label: "หน้าแรก", href: "/" },
+    { label: topic.breadcrumb, href: `/tarot/${topic.slug}/` },
+  ]}
+>
+  <main id={`${topic.slug}-tarot`}>
+    <section class="tarot-hero">
+      <div>
+        <nav class="tarot-breadcrumb" aria-label="breadcrumb">
+          <a href="../../">หน้าแรก</a>
+          <span>/</span>
+          <span>{topic.breadcrumb}</span>
+        </nav>
+        <p class="section-kicker">{topic.kicker}</p>
+        <h1>{topic.heading}</h1>
+        <p class="tarot-hero-copy">{topic.lead}</p>
+      </div>
+
+      <aside class="tarot-ritual-panel" aria-label={`ขั้นตอน${topic.breadcrumb}`}>
+        <ol>
+          {topic.steps.map((step, index) => (
+            <li><span>{index + 1}</span>{step}</li>
+          ))}
+        </ol>
+      </aside>
+    </section>
+
+    <section class="tarot-oracle">
+      <aside class="tarot-intention">
+        <p class="section-kicker">ตั้งจิต</p>
+        <h2>{topic.intentionTitle}</h2>
+        <p>{topic.intentionCopy}</p>
+        <div class="tarot-warning">{topic.warning}</div>
+      </aside>
+
+      <form
+        class="tarot-deck-stage"
+        data-tarot-spread-form
+        data-spread-type={topic.spreadType}
+        data-required-count="1"
+        data-storage-key={topic.storageKey}
+      >
+        <div class="tarot-deck-head">
+          <div>
+            <p class="section-kicker">Major Arcana 22 ใบ</p>
+            <h2>{topic.deckTitle}</h2>
+            <p class="tarot-status" data-tarot-status aria-live="polite"></p>
+          </div>
+          <div class="tarot-deck-actions">
+            <button class="tarot-control" type="button" data-tarot-shuffle>สับไพ่</button>
+            <button class="tarot-control" type="button" data-tarot-cut>ตัดไพ่</button>
+            <button class="tarot-read-button btn-disable" type="submit" data-tarot-read disabled>
+              เปิดคำทำนาย
+            </button>
+          </div>
+        </div>
+
+        <input type="hidden" data-tarot-selected name="tarot_cards_selected" />
+        <input type="hidden" data-tarot-count name="tarot_card_count" value="0" />
+        <div class="tarot-deck-grid tarot-deck-grid-compact" data-tarot-deck aria-label="สำรับไพ่ Major Arcana 22 ใบ"></div>
+      </form>
+    </section>
+
+    <section class="tarot-note">
+      <p class="section-kicker">แนวคิดของเรา</p>
+      <h2>{topic.noteTitle}</h2>
+      <p>{topic.noteCopy}</p>
+    </section>
+  </main>
+</BaseLayout>

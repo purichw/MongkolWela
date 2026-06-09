@@ -14,6 +14,9 @@ const indexedRoutes = [
   "/calendar/",
   "/horoscope/thai-astrology/",
   "/tarot/daily/",
+  "/tarot/love/",
+  "/tarot/money/",
+  "/tarot/career/",
   "/temples/",
   "/temples/popular/",
   "/temples/mu/",
@@ -26,6 +29,9 @@ const noindexRoutes = [
   "/404.html",
   "/tarot/daily/result/",
   "/tarot/monthly/result/",
+  "/tarot/love/result/",
+  "/tarot/money/result/",
+  "/tarot/career/result/",
   "/tarot/luck/result/",
 ];
 
@@ -52,7 +58,14 @@ function main() {
     assert(!sitemap.includes(`<loc>${siteUrl}${route}</loc>`), `sitemap.xml ไม่ควรมี noindex route ${route}`);
   });
 
-  ["/tarot/daily/result/", "/tarot/monthly/result/", "/tarot/luck/result/"].forEach((route) => {
+  [
+    "/tarot/daily/result/",
+    "/tarot/monthly/result/",
+    "/tarot/love/result/",
+    "/tarot/money/result/",
+    "/tarot/career/result/",
+    "/tarot/luck/result/",
+  ].forEach((route) => {
     assert(robots.includes(`Disallow: ${route}`), `robots.txt ไม่ได้ Disallow ${route}`);
   });
 
