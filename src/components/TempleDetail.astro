@@ -152,7 +152,63 @@ const displayTravelMode = (value: string) =>
     .replace(/\s*Hop-on\s+Hop-off\s*/giu, "")
     .replace(/\s{2,}/gu, " ")
     .trim();
-const displayedTravelModeItems = travelModeItems.map(displayTravelMode).filter(Boolean);
+const railTagPatterns = [
+  {
+    label: "BTS",
+    pattern: /\bBTS\b|รถไฟฟ้าบีทีเอส|สายสุขุมวิท|สายสีลม/iu,
+  },
+  {
+    label: "MRT",
+    pattern: /\bMRT\b|รถไฟฟ้ามหานคร|สายเฉลิมรัชมงคล|สายสีน้ำเงิน|สายสีม่วง|สายสีเหลือง|สายสีชมพู|บริษัท ทางด่วนและรถไฟฟ้ากรุงเทพ/iu,
+  },
+  {
+    label: "ARL",
+    pattern: /\bARL\b|Airport\s*Rail\s*Link|แอร์พอร์ต\s*เรล\s*ลิงก์/iu,
+  },
+  {
+    label: "SRT",
+    pattern: /\bSRT\b|รถไฟฟ้าชานเมือง|สายสีแดง/iu,
+  },
+];
+const detectRailTagsFromRoutes = (routes: TravelRoute[]) => {
+  const routeText = routes
+    .filter((route) => route.mode === "rail")
+    .map((route) => [route.stop, route.routeText, route.operatorText, route.typeText].filter(Boolean).join(" "))
+    .join(" ");
+  return railTagPatterns.filter((item) => item.pattern.test(routeText)).map((item) => item.label);
+};
+const splitCombinedRailTag = (item: string) => (/^BTS\s*\/\s*MRT$/iu.test(item) ? ["BTS", "MRT"] : [item]);
+const isRailModeTag = (item: string) => /^(?:BTS|MRT|ARL|SRT|BTS\s*\/\s*MRT)$/iu.test(item);
+const getDisplayedTravelModeItems = (items: string[], routes: TravelRoute[]) => {
+  const routeRailTags = detectRailTagsFromRoutes(routes);
+  const hasRouteRailTags = routeRailTags.length > 0;
+  const displayItems: string[] = [];
+  let insertedRailTags = false;
+
+  const addItem = (item: string) => {
+    const displayItem = displayTravelMode(item);
+    if (displayItem && !displayItems.includes(displayItem)) displayItems.push(displayItem);
+  };
+  const addRailTags = () => {
+    const railTags = hasRouteRailTags ? routeRailTags : items.flatMap((item) => splitCombinedRailTag(displayTravelMode(item))).filter(isRailModeTag);
+    railTags.forEach(addItem);
+    insertedRailTags = true;
+  };
+
+  for (const item of items) {
+    const displayItem = displayTravelMode(item);
+    if (!displayItem) continue;
+    if (isRailModeTag(displayItem)) {
+      if (!insertedRailTags) addRailTags();
+      continue;
+    }
+    addItem(displayItem);
+  }
+
+  if (!insertedRailTags && hasRouteRailTags) addRailTags();
+  return displayItems;
+};
+const displayedTravelModeItems = getDisplayedTravelModeItems(travelModeItems, travelView.routes);
 const getRouteIntro = (route: TravelRoute) =>
   [route.typeText, route.operatorText].filter(Boolean).join(" · ") || route.shortLabel;
 const getWalkLabel = (route: TravelRoute) =>
@@ -486,7 +542,7 @@ const templeJsonLd = createTempleJsonLd({
             <dt>ภาค</dt>
             <dd>{temple.region}</dd>
           </div>
-          {travelModeItems.length > 0 && (
+          {displayedTravelModeItems.length > 0 && (
             <div>
               <dt>การเดินทาง</dt>
               <dd class="temple-detail-travel-list">
