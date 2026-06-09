@@ -15,6 +15,10 @@ body {
   background-size: 42px 42px, auto;
   font-family: var(--font-thai);
   line-height: 1.65;
+  word-break: normal;
+  overflow-wrap: break-word;
+  line-break: auto;
+  hyphens: manual;
 }
 
 :lang(en) {
@@ -23,6 +27,14 @@ body {
 
 :lang(th) {
   font-family: var(--font-thai);
+  word-break: normal;
+  overflow-wrap: break-word;
+  line-break: auto;
+  hyphens: manual;
+}
+
+:where(a[href^="http"], a[href^="mailto:"], a[href^="tel:"]) {
+  overflow-wrap: anywhere;
 }
 
 a {
