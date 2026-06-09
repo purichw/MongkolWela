@@ -1,27 +1,19 @@
-const majorDefinitions = [
-  ["the-fool", "THE FOOL", "ไพ่คนพเนจร", "เริ่มต้นใหม่", "ก้าวแรกที่ยังไม่เห็นปลายทาง แต่ใจพร้อมเปิดประตูใหม่", "ลม / อิสระ", "0"],
-  ["the-magician", "THE MAGICIAN", "ไพ่นักมายากล", "ลงมือให้เกิดผล", "เครื่องมือพร้อมอยู่ในมือ เหลือเพียงความตั้งใจและการสื่อสารที่ชัด", "Mercury / การสื่อสาร", "1"],
-  ["the-high-priestess", "THE HIGH PRIESTESS", "ไพ่นักบวชหญิง", "ฟังเสียงลึกในใจ", "คำตอบยังไม่ต้องรีบพูดออกมา ให้สังเกตเงียบ ๆ และเชื่อสัญชาตญาณที่นิ่ง", "Moon / ญาณภายใน", "2"],
-  ["the-empress", "THE EMPRESS", "ไพ่จักรพรรดินี", "ความอุดมสมบูรณ์", "สิ่งที่ดูแลด้วยความรักจะค่อย ๆ งอกงาม ทั้งงาน ความสัมพันธ์ และร่างกายใจ", "Venus / ความงาม", "3"],
-  ["the-emperor", "THE EMPEROR", "ไพ่จักรพรรดิ", "ระเบียบและอำนาจ", "ตั้งหลักให้มั่น วางกฎให้ชัด และรับผิดชอบบทบาทของตัวเองอย่างสุขุม", "Aries / โครงสร้าง", "4"],
-  ["the-hierophant", "THE HIEROPHANT", "ไพ่ครูบาอาจารย์", "ครู ธรรมเนียม ศรัทธา", "คำแนะนำจากผู้รู้ ขั้นตอน หรือหลักยึดเดิมยังมีประโยชน์ ถ้าไม่ยึดจนปิดใจ", "Taurus / ธรรมเนียม", "5"],
-  ["the-lovers", "THE LOVERS", "ไพ่คู่ครอง", "ความรักและทางเลือก", "หัวใจต้องเลือกอย่างซื่อสัตย์ ความสัมพันธ์ที่ดีต้องยืนบนคุณค่าที่ตรงกัน", "Gemini / การเลือก", "6"],
-  ["the-chariot", "THE CHARIOT", "ไพ่ราชรถ", "เดินหน้าอย่างมีทิศทาง", "พลังขับเคลื่อนสูง แต่ต้องจับพวงมาลัยชีวิตเอง ไม่ปล่อยให้แรงภายนอกลากไป", "Cancer / ชัยชนะ", "7"],
-  ["the-strength", "THE STRENGTH", "ไพ่พลังใจ", "อ่อนโยนแต่แข็งแรง", "ชนะด้วยความอดทน เมตตา และการควบคุมอารมณ์ ไม่ใช่การปะทะตรง ๆ", "Leo / พลังใจ", "8"],
-  ["the-hermit", "THE HERMIT", "ไพ่ฤๅษี", "ถอยเพื่อเห็นทาง", "ความเงียบช่วยให้เห็นคำตอบ ลดเสียงรบกวน แล้วถามตัวเองอย่างตรงไปตรงมา", "Virgo / การค้นหา", "9"],
-  ["the-wheel-of-fortune", "THE WHEEL OF FORTUNE", "ไพ่กงล้อโชคชะตา", "จังหวะเปลี่ยนผัน", "วงล้อกำลังหมุน โอกาสหรือการเปลี่ยนแผนอาจมาเร็ว จึงต้องปรับตัวให้ไว", "Jupiter / วัฏจักร", "10"],
-  ["the-justice", "THE JUSTICE", "ไพ่ความยุติธรรม", "สมดุลและผลของการกระทำ", "ตรวจข้อมูลให้ครบ พูดตามจริง และยอมรับผลของการเลือกอย่างเป็นธรรม", "Libra / ดุลยภาพ", "11"],
-  ["the-hanged-man", "THE HANGED MAN", "ไพ่แขวนกลับ", "พักเพื่อเปลี่ยนมุมมอง", "บางเรื่องบังคับไม่ได้ การหยุดดิ้นอาจทำให้เห็นทางออกจากมุมที่ไม่เคยมอง", "Neptune / การปล่อยวาง", "12"],
-  ["the-death", "THE DEATH", "ไพ่สิ้นสุดเพื่อเริ่มใหม่", "ปิดวาระเก่า", "สิ่งที่หมดพลังควรถูกปล่อยอย่างเคารพ เพื่อให้พื้นที่ใหม่เกิดขึ้น", "Scorpio / แปรเปลี่ยน", "13"],
-  ["temperance", "TEMPERANCE", "ไพ่ความพอดี", "ประสานและเยียวยา", "ค่อย ๆ ผสมสิ่งที่ต่างกันให้ลงตัว ทางสายกลางจะพาเรื่องนี้ผ่านไปได้", "Sagittarius / สมดุล", "14"],
-  ["the-devil", "THE DEVIL", "ไพ่พันธนาการ", "เงื่อนไขที่ผูกใจ", "สังเกตความกลัว ความอยาก หรือข้อตกลงที่ทำให้เสียอิสระ แล้วค่อย ๆ คืนอำนาจให้ตนเอง", "Capricorn / พันธะ", "15"],
-  ["the-tower", "THE TOWER", "ไพ่หอคอย", "ความจริงที่สั่นสะเทือน", "สิ่งที่ไม่มั่นคงอาจพังลงเพื่อเปิดเผยโครงสร้างที่ควรสร้างใหม่", "Mars / การปลดล็อก", "16"],
-  ["the-star", "THE STAR", "ไพ่ดวงดาว", "ความหวังและการเยียวยา", "หลังพายุยังมีแสงอ่อน ๆ ให้กลับมาเชื่อในเส้นทางของตนเอง", "Aquarius / ความหวัง", "17"],
-  ["the-moon", "THE MOON", "ไพ่พระจันทร์", "เงา ความฝัน ความไม่ชัด", "อย่าตัดสินจากความกลัวหรือข้อมูลครึ่งเดียว ค่อย ๆ รอให้หมอกจาง", "Pisces / จิตใต้สำนึก", "18"],
-  ["the-sun", "THE SUN", "ไพ่พระอาทิตย์", "ความชัดเจนและความสำเร็จ", "แสงสว่างเปิดเผยคำตอบ เหมาะกับการออกหน้า แสดงตัว และแบ่งปันความสุข", "Sun / ความเบิกบาน", "19"],
-  ["the-judgment", "THE JUDGMENT", "ไพ่เสียงเรียก", "ตื่นรู้และเริ่มใหม่", "ถึงเวลาประเมินอดีต ให้อภัย และตอบรับเสียงเรียกที่รู้ว่าควรทำมานาน", "Pluto / การตื่นรู้", "20"],
-  ["the-world", "THE WORLD", "ไพ่โลกสมบูรณ์", "ครบวาระและสำเร็จ", "วงรอบหนึ่งเดินมาถึงจุดสมบูรณ์ สรุปบทเรียนแล้วเตรียมเปิดบทถัดไป", "Saturn / ความสมบูรณ์", "21"],
-];
+import { majorArcanaDetails } from "./tarot-major-arcana-details.js";
+
+const elementLabels = {
+  air: "ลม",
+  water: "น้ำ",
+  fire: "ไฟ",
+  earth: "ดิน",
+};
+
+const majorSlugAliases = {
+  strength: "the-strength",
+  "wheel-of-fortune": "the-wheel-of-fortune",
+  justice: "the-justice",
+  death: "the-death",
+  judgement: "the-judgment",
+};
 
 const suitDefinitions = {
   WANDS: {
@@ -101,25 +93,60 @@ function cardThumbImage(id) {
 }
 
 function createMajorCards() {
-  return majorDefinitions.map(([id, name, thName, theme, overview, western, number], index) => ({
-    id,
-    slug: id,
-    name,
-    thName,
-    group: "major",
-    groupLabel: "Major Arcana",
-    order: index,
-    image: cardImage(id),
-    thumbImage: cardThumbImage(id),
-    theme,
-    overview,
-    upright: `${overview} ในการตีความแบบไทย ไพ่ใบนี้มักเตือนให้ดูจังหวะใจและการกระทำปัจจุบัน เพราะสิ่งที่เลือกตอนนี้จะค่อย ๆ สร้างผลต่อไป`,
-    reversed: "เมื่อกลับหัว พลังของไพ่อาจติดขัดหรือแสดงด้านเงา ให้ชะลอการตัดสินใจ ทบทวนแรงจูงใจ และแก้จากต้นเหตุแทนการฝืนไปข้างหน้า",
-    love: "ด้านความรัก ให้ดูว่าความสัมพันธ์กำลังขอความจริงใจ ขอบเขต หรือความกล้าพูดเรื่องสำคัญอะไรจากเรา",
-    workMoney: "ด้านงานและเงิน ไพ่ชี้ให้จัดลำดับสิ่งที่ควบคุมได้ก่อน แล้วค่อยเลือกก้าวที่มั่นคง ไม่ใช่ก้าวที่ดูหวือหวาเพียงอย่างเดียว",
-    western: `ในสาย Western ไพ่ใบนี้สัมพันธ์กับ ${western} และเลข ${number} ใช้อ่านเป็น archetype หรือบทเรียนหลักของชีวิต`,
-    keywords: [theme, western, `เลข ${number}`],
-  }));
+  return majorArcanaDetails.map((detail) => {
+    const id = detail.slug || detail.id;
+    const element = elementLabels[detail.element] || detail.element;
+    const number = detail.number || detail.numerology;
+    const workMoney = [
+      detail.upright?.career ? `การงาน: ${detail.upright.career}` : "",
+      detail.upright?.finance ? `การเงิน: ${detail.upright.finance}` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    return {
+      id,
+      slug: id,
+      name: detail.name,
+      thName: detail.name_th,
+      group: "major",
+      groupLabel: "Major Arcana",
+      order: detail.index,
+      image: cardImage(id),
+      thumbImage: cardThumbImage(id),
+      theme: detail.keywords_upright?.[0] || detail.name_th,
+      overview: detail.overview,
+      upright: detail.upright?.general || detail.overview,
+      reversed: detail.reversed?.general || "",
+      love: detail.upright?.love || "",
+      workMoney,
+      health: detail.upright?.health || "",
+      western: `ในสาย Western ไพ่ใบนี้สัมพันธ์กับ ${detail.astrology || detail.ruling_planet || "archetype หลัก"}${
+        element ? ` ธาตุ${element}` : ""
+      } และเลข ${number} ใช้อ่านเป็น archetype หรือบทเรียนหลักของชีวิต`,
+      keywords: [
+        ...(detail.keywords_upright || []).slice(0, 5),
+        detail.astrology || "",
+        number ? `เลข ${number}` : "",
+      ].filter(Boolean),
+      keywordsUpright: detail.keywords_upright || [],
+      keywordsReversed: detail.keywords_reversed || [],
+      symbolism: detail.symbolism || [],
+      uprightDetails: detail.upright || {},
+      reversedDetails: detail.reversed || {},
+      relatedCards: (detail.related_cards || []).map((relatedCard) => ({
+        ...relatedCard,
+        card_id: majorSlugAliases[relatedCard.card_id] || relatedCard.card_id,
+      })),
+      reflectionQuestions: detail.reflection_questions || [],
+      closingSummary: detail.closing_summary || "",
+      element,
+      astrology: detail.astrology || "",
+      rulingPlanet: detail.ruling_planet || "",
+      numerology: detail.numerology,
+      number,
+    };
+  });
 }
 
 function createMinorCards() {
@@ -152,6 +179,12 @@ function createMinorCards() {
         workMoney: `ด้านงานและเงิน ให้ใช้ไพ่ใบนี้เป็นสัญญาณเรื่อง${suitInfo.field} ${uprightAdvice}`,
         western: `${suitInfo.western} ลำดับ ${thRank} สื่อถึง "${theme}" จึงอ่านร่วมกับตัวเลขและธาตุ ${suitInfo.element} ได้`,
         keywords: [theme, suitInfo.element, suitInfo.label],
+        health: "",
+        keywordsReversed: [],
+        symbolism: [],
+        relatedCards: [],
+        reflectionQuestions: [],
+        closingSummary: "",
         advice: uprightAdvice,
         caution,
       };

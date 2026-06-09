@@ -14,6 +14,14 @@ const currentIndex = tarotMeaningCards.findIndex((item) => item.slug === card.sl
 const previousCard = tarotMeaningCards[(currentIndex - 1 + tarotMeaningCards.length) % tarotMeaningCards.length];
 const nextCard = tarotMeaningCards[(currentIndex + 1) % tarotMeaningCards.length];
 const group = tarotMeaningGroups.find((item) => item.id === card.group);
+const relatedCards = (card.relatedCards || []).map((relatedCard) => {
+  const related = tarotMeaningCards.find((item) => item.slug === relatedCard.card_id);
+  return {
+    ...relatedCard,
+    label: related ? `${related.thName} (${related.name})` : relatedCard.card_id,
+    href: related ? `/tarot/meanings/${related.slug}/` : "",
+  };
+});
 ---
 
 <BaseLayout
@@ -74,11 +82,78 @@ const group = tarotMeaningGroups.find((item) => item.id === card.group);
             <dt>การงาน การเงิน และชีวิตประจำวัน</dt>
             <dd>{card.workMoney}</dd>
           </div>
+          {card.health && (
+            <div>
+              <dt>สุขภาพและพลังชีวิต</dt>
+              <dd>{card.health}</dd>
+            </div>
+          )}
           <div>
             <dt>มุม Western ที่เสริมการอ่าน</dt>
             <dd>{card.western}</dd>
           </div>
         </dl>
+
+        {(card.keywordsReversed?.length > 0 || card.symbolism?.length > 0 || card.closingSummary) && (
+          <dl class="tarot-reading-list compact">
+            {card.keywordsReversed?.length > 0 && (
+              <div>
+                <dt>คำสำคัญเมื่อกลับหัว</dt>
+                <dd>{card.keywordsReversed.join(" · ")}</dd>
+              </div>
+            )}
+            {card.symbolism?.length > 0 && (
+              <div>
+                <dt>สัญลักษณ์บนหน้าไพ่</dt>
+                <dd>
+                  <ul>
+                    {card.symbolism.map((item) => (
+                      <li>
+                        <strong>{item.symbol}</strong>: {item.meaning}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            )}
+            {card.closingSummary && (
+              <div>
+                <dt>สรุปใจความ</dt>
+                <dd>{card.closingSummary}</dd>
+              </div>
+            )}
+          </dl>
+        )}
+
+        {(relatedCards.length > 0 || card.reflectionQuestions?.length > 0) && (
+          <dl class="tarot-reading-list compact">
+            {relatedCards.length > 0 && (
+              <div>
+                <dt>ไพ่ที่สัมพันธ์กัน</dt>
+                <dd>
+                  <ul>
+                    {relatedCards.map((item) => (
+                      <li>
+                        {item.href ? <a href={item.href}>{item.label}</a> : <strong>{item.label}</strong>}:{" "}
+                        {item.relationship}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            )}
+            {card.reflectionQuestions?.length > 0 && (
+              <div>
+                <dt>คำถามทบทวนตัวเอง</dt>
+                <dd>
+                  <ul>
+                    {card.reflectionQuestions.map((question) => <li>{question}</li>)}
+                  </ul>
+                </dd>
+              </div>
+            )}
+          </dl>
+        )}
 
         <div class="tarot-result-actions">
           <a class="secondary-action" href={`/tarot/meanings/${previousCard.slug}/`}>ไพ่ก่อนหน้า</a>
