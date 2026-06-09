@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { applyTempleImageOverrides, templePlaceholderImage } from "../data/temple-images.js";
 import { getTempleDetailUrl } from "../data/temple-slugs.js";
+import { tarotMeaningCards } from "../data/tarot-meanings.js";
 import popularTemples from "../data/popular-temples.json";
 import muTemples from "../data/mu-temples.json";
 import sacredTemples from "../data/sacred-temples.json";
@@ -26,6 +27,7 @@ const staticEntries: SitemapEntry[] = [
   { path: "/horoscope/seamsi/", priority: "0.72", changefreq: "weekly" },
   { path: "/horoscope/thai-astrology/", priority: "0.76", changefreq: "weekly" },
   { path: "/tarot/daily/", priority: "0.72", changefreq: "daily" },
+  { path: "/tarot/meanings/", priority: "0.74", changefreq: "monthly", image: imageEntry("/assets/images/tarot/rws-jpg/the-world.jpg", "ความหมายไพ่ยิปซี 78 ใบ") },
   { path: "/tarot/monthly/", priority: "0.68", changefreq: "weekly" },
   { path: "/tarot/love/", priority: "0.7", changefreq: "weekly" },
   { path: "/tarot/money/", priority: "0.7", changefreq: "weekly" },
@@ -44,9 +46,17 @@ const templeEntries: SitemapEntry[] = [
   ...createTempleEntries("sacred", sacredTemples, "0.78"),
 ];
 
+const tarotMeaningEntries: SitemapEntry[] = tarotMeaningCards.map((card) => ({
+  path: `/tarot/meanings/${card.slug}/`,
+  priority: card.group === "major" ? "0.62" : "0.58",
+  changefreq: "monthly",
+  image: imageEntry(card.image, `${card.thName} ${card.name}`, `ความหมายไพ่ยิปซี ${card.thName}`),
+}));
+
 export const GET: APIRoute = async () => {
   const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${[
     ...staticEntries,
+    ...tarotMeaningEntries,
     ...templeEntries,
   ]
     .map(renderUrl)

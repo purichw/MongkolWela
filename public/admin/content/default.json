@@ -20,6 +20,7 @@
         "items": [
           { "id": "life-graph", "label": "กราฟชีวิต", "href": "horoscope/life-graph/", "enabled": true },
           { "id": "tarot-section", "label": "ดูดวงไพ่ยิปซี", "section": true, "enabled": true },
+          { "id": "tarot-meanings", "label": "ความหมายไพ่ยิปซี 78 ใบ", "href": "tarot/meanings/", "enabled": true },
           { "id": "tarot-daily", "label": "ไพ่ยิปซีรายวัน", "href": "tarot/daily/", "enabled": true },
           { "id": "tarot-monthly", "label": "ไพ่ยิปซีรายเดือน", "href": "tarot/monthly/", "enabled": true },
           { "id": "tarot-love", "label": "ไพ่ยิปซีความรัก", "href": "tarot/love/", "enabled": true },
@@ -114,6 +115,7 @@
     { "id": "lifeGraph", "label": "กราฟชีวิต", "route": "/horoscope/life-graph/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "thaiAstrology", "label": "โหราศาสตร์ไทย", "route": "/horoscope/thai-astrology/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "seamsi", "label": "เสี่ยงเซียมซี", "route": "/horoscope/seamsi/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
+    { "id": "tarotMeanings", "label": "ความหมายไพ่ยิปซี 78 ใบ", "route": "/tarot/meanings/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotDaily", "label": "ไพ่ยิปซีรายวัน", "route": "/tarot/daily/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotMonthly", "label": "ไพ่ยิปซีรายเดือน", "route": "/tarot/monthly/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotLove", "label": "ไพ่ยิปซีความรัก", "route": "/tarot/love/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },

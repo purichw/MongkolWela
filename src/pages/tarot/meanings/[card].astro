@@ -1,0 +1,91 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { tarotMeaningCards, tarotMeaningGroups } from "../../../data/tarot-meanings.js";
+
+export function getStaticPaths() {
+  return tarotMeaningCards.map((card) => ({
+    params: { card: card.slug },
+    props: { card },
+  }));
+}
+
+const { card } = Astro.props;
+const currentIndex = tarotMeaningCards.findIndex((item) => item.slug === card.slug);
+const previousCard = tarotMeaningCards[(currentIndex - 1 + tarotMeaningCards.length) % tarotMeaningCards.length];
+const nextCard = tarotMeaningCards[(currentIndex + 1) % tarotMeaningCards.length];
+const group = tarotMeaningGroups.find((item) => item.id === card.group);
+---
+
+<BaseLayout
+  title={`${card.thName} ${card.name} ความหมายไพ่ยิปซี | มงคลเวลา`}
+  description={`ความหมายไพ่ยิปซี ${card.thName} (${card.name}) แบบไทย พร้อมความหมายตรง กลับหัว ความรัก งานเงิน และมุม Western สำหรับอ่านไพ่ให้เข้าใจง่าย`}
+  lang="th"
+  locale="th"
+  page="tarotMeanings"
+  bodyClass="tarot-page"
+  canonicalPath={`/tarot/meanings/${card.slug}/`}
+  image={card.image}
+  imageAlt={`${card.thName} ${card.name}`}
+  breadcrumbs={[
+    { label: "หน้าแรก", href: "/" },
+    { label: "ความหมายไพ่ยิปซี 78 ใบ", href: "/tarot/meanings/" },
+    { label: card.thName, href: `/tarot/meanings/${card.slug}/` },
+  ]}
+>
+  <main>
+    <section class="tarot-meaning-detail">
+      <div class="tarot-meaning-card-large">
+        <img src={card.image} alt={`${card.thName} ${card.name}`} loading="eager" decoding="async" fetchpriority="high" />
+        <strong>{card.name}</strong>
+        <span>{card.thName}</span>
+      </div>
+
+      <article class="tarot-meaning-copy">
+        <nav class="tarot-breadcrumb" aria-label="breadcrumb">
+          <a href="../../../">หน้าแรก</a>
+          <span>/</span>
+          <a href="../">ความหมายไพ่ยิปซี</a>
+          <span>/</span>
+          <span>{card.thName}</span>
+        </nav>
+        <p class="section-kicker">{group?.title || "Tarot Meaning"}</p>
+        <h1>{card.thName}</h1>
+        <p class="tarot-result-name">{card.name}</p>
+        <p class="tarot-meaning-lead">{card.overview}</p>
+
+        <div class="tarot-meaning-tags">
+          {card.keywords.map((keyword) => <span>{keyword}</span>)}
+        </div>
+
+        <dl class="tarot-reading-list">
+          <div>
+            <dt>ความหมายโดยรวม</dt>
+            <dd>{card.upright}</dd>
+          </div>
+          <div>
+            <dt>เมื่อไพ่กลับหัว</dt>
+            <dd>{card.reversed}</dd>
+          </div>
+          <div>
+            <dt>ความรักและความสัมพันธ์</dt>
+            <dd>{card.love}</dd>
+          </div>
+          <div>
+            <dt>การงาน การเงิน และชีวิตประจำวัน</dt>
+            <dd>{card.workMoney}</dd>
+          </div>
+          <div>
+            <dt>มุม Western ที่เสริมการอ่าน</dt>
+            <dd>{card.western}</dd>
+          </div>
+        </dl>
+
+        <div class="tarot-result-actions">
+          <a class="secondary-action" href={`/tarot/meanings/${previousCard.slug}/`}>ไพ่ก่อนหน้า</a>
+          <a class="primary-action" href="/tarot/meanings/">กลับไปรายการ 78 ใบ</a>
+          <a class="secondary-action" href={`/tarot/meanings/${nextCard.slug}/`}>ไพ่ถัดไป</a>
+        </div>
+      </article>
+    </section>
+  </main>
+</BaseLayout>

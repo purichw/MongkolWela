@@ -5,6 +5,8 @@ import { skipIntroLoader } from "./helpers";
 const siteUrl = "https://mongkolwela.vercel.app";
 const indexedRoutes = [
   "/",
+  "/tarot/meanings/",
+  "/tarot/meanings/the-emperor/",
   "/temples/popular/",
   "/temples/mu/",
   watArunPopularRoute,

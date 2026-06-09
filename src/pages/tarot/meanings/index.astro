@@ -1,0 +1,93 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { tarotMeaningCards, tarotMeaningGroups, getTarotMeaningGroupCards } from "../../../data/tarot-meanings.js";
+import { createItemListJsonLd } from "../../../lib/seo.js";
+
+const structuredData = createItemListJsonLd({
+  name: "ความหมายไพ่ยิปซี 78 ใบ",
+  description: "รวมความหมายไพ่ยิปซี Rider-Waite-Smith ทั้ง 78 ใบ แบ่ง Major Arcana และ Minor Arcana",
+  url: "https://mongkolwela.vercel.app/tarot/meanings/",
+  items: tarotMeaningCards.map((card) => ({
+    name: `${card.thName} (${card.name})`,
+    url: `/tarot/meanings/${card.slug}/`,
+  })),
+});
+---
+
+<BaseLayout
+  title="ความหมายไพ่ยิปซี 78 ใบ | มงคลเวลา"
+  description="รวมความหมายไพ่ยิปซีทั้ง 78 ใบแบบไทย อ่านง่าย พร้อมภาพไพ่ Rider-Waite-Smith ต้นฉบับ ชื่อไพ่ Major Arcana และ Minor Arcana ครบทุกใบ"
+  lang="th"
+  locale="th"
+  page="tarotMeanings"
+  bodyClass="tarot-page"
+  canonicalPath="/tarot/meanings/"
+  image="/assets/images/tarot/rws-jpg/the-world.jpg"
+  imageAlt="ความหมายไพ่ยิปซี 78 ใบ"
+  breadcrumbs={[
+    { label: "หน้าแรก", href: "/" },
+    { label: "ความหมายไพ่ยิปซี 78 ใบ", href: "/tarot/meanings/" },
+  ]}
+  structuredData={structuredData}
+>
+  <main id="tarot-meanings">
+    <section class="tarot-hero tarot-meanings-hero">
+      <div>
+        <nav class="tarot-breadcrumb" aria-label="breadcrumb">
+          <a href="../../">หน้าแรก</a>
+          <span>/</span>
+          <span>ความหมายไพ่ยิปซี 78 ใบ</span>
+        </nav>
+        <p class="section-kicker">Tarot Card Meanings</p>
+        <h1>ความหมายไพ่ยิปซี 78 ใบ</h1>
+        <p class="tarot-hero-copy">
+          เปิดดูหน้าไพ่ Rider-Waite-Smith ทั้งชุด พร้อมความหมายแบบไทยที่ใช้ได้กับชีวิตจริง
+          และเสริมมุม Western เฉพาะธาตุ ดาว ตัวเลข และ archetype เท่าที่ช่วยให้อ่านไพ่คมขึ้น
+        </p>
+      </div>
+
+      <aside class="tarot-ritual-panel" aria-label="แนวทางอ่านความหมายไพ่">
+        <ol>
+          <li><span>1</span>เริ่มจากภาพหน้าไพ่ก่อนจำคำแปล</li>
+          <li><span>2</span>อ่านความหมายตรงและกลับหัวเป็นคู่กัน</li>
+          <li><span>3</span>ดูบริบทคำถามก่อนสรุปผล</li>
+          <li><span>4</span>ใช้คำทำนายเป็นแนวทาง ไม่ใช่คำสั่งตายตัว</li>
+        </ol>
+      </aside>
+    </section>
+
+    <section class="tarot-meanings-index" aria-label="หมวดไพ่ยิปซี">
+      {tarotMeaningGroups.map((group) => (
+        <article>
+          <a href={`#${group.id}`}>{group.thTitle}</a>
+          <span>{group.title}</span>
+        </article>
+      ))}
+    </section>
+
+    {tarotMeaningGroups.map((group) => {
+      const cards = getTarotMeaningGroupCards(group.id);
+      return (
+        <section class="tarot-meaning-section" id={group.id}>
+          <div class="section-heading">
+            <p class="section-kicker">{group.title}</p>
+            <h2>{group.thTitle}</h2>
+            <p>{group.copy}</p>
+          </div>
+
+          <div class="tarot-meaning-grid">
+            {cards.map((card) => (
+              <a class="tarot-meaning-card" href={`/tarot/meanings/${card.slug}/`}>
+                <span class="tarot-meaning-image">
+                  <img src={card.thumbImage} alt={`${card.thName} ${card.name}`} loading="lazy" decoding="async" />
+                </span>
+                <strong>{card.name}</strong>
+                <span>{card.thName}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      );
+    })}
+  </main>
+</BaseLayout>

@@ -14,6 +14,8 @@ const indexedRoutes = [
   "/calendar/",
   "/horoscope/thai-astrology/",
   "/tarot/daily/",
+  "/tarot/meanings/",
+  "/tarot/meanings/the-emperor/",
   "/tarot/love/",
   "/tarot/money/",
   "/tarot/career/",

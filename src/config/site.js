@@ -22,6 +22,7 @@ export const siteConfig = {
         items: [
           { label: "กราฟชีวิต", href: "horoscope/life-graph/" },
           { label: "ดูดวงไพ่ยิปซี", section: true },
+          { label: "ความหมายไพ่ยิปซี 78 ใบ", href: "tarot/meanings/" },
           { label: "ไพ่ยิปซีรายวัน", href: "tarot/daily/" },
           { label: "ไพ่ยิปซีรายเดือน", href: "tarot/monthly/" },
           { label: "ไพ่ยิปซีความรัก", href: "tarot/love/" },
@@ -125,6 +126,13 @@ export const siteConfig = {
         topbar: [
           { label: "ผูกดวงโหราศาสตร์ไทย", href: "horoscope/thai-astrology/#thai-astrology-tool" },
           { label: "อ่านลัคนา ภพ ดาวกำเนิด และดวงจรแบบเข้าใจง่าย" },
+          { label: "ปรึกษาครูโหร", href: "#consult" },
+        ],
+      },
+      tarotMeanings: {
+        topbar: [
+          { label: "ความหมายไพ่ยิปซี 78 ใบ", href: "tarot/meanings/" },
+          { label: "เปิดดูหน้าไพ่และอ่านความหมายแบบไทย พร้อมมุม Western พอดีโทน" },
           { label: "ปรึกษาครูโหร", href: "#consult" },
         ],
       },
