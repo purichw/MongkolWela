@@ -48,6 +48,20 @@ git status --short --branch
 
 If only `?? outputs/` appears, that is expected from previous local artifact work.
 
+## CMS Content Guardrail
+
+Admin Portal page registry and navigation are code-owned in `public/admin/content/live.json`.
+Keep `public/admin/content/default.json` in sync for the same page/nav entries.
+
+When adding a new feature page or menu item:
+
+1. Update both CMS JSON files.
+2. Run `npm run nfr:cms`.
+3. Run `npm run db:seed:cms` when Supabase env is available, so production database content is not stale.
+4. After deploy, run `npm run cms:verify:production` or `npm run smoke:production`.
+
+This prevents `/api/admin/content` from overwriting the rendered nav with an older Admin Portal copy.
+
 ## High-Priority Backlog
 
 ### Admin Portal

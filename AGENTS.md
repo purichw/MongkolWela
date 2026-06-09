@@ -31,6 +31,7 @@ Read these before substantial work:
 
 - `Architecture.md`
 - `Roadmap.md`
+- `CMS.md` when changing Admin Portal content, page registry, or navigation.
 
 ## Commands
 
@@ -101,6 +102,14 @@ npm run smoke:production
 - Region tags on temple cards are color-coded by region and should not all be green.
 
 ## Data Rules
+
+### Admin Portal CMS Content
+
+- `public/admin/content/live.json` is the code-owned source of truth for deployable Admin Portal content.
+- Keep `public/admin/content/default.json` in sync with `live.json` for pages and navigation.
+- After adding/removing/renaming pages or navigation items, run `npm run nfr:cms`.
+- If Supabase env is configured, run `npm run db:seed:cms` after page/nav changes so `cms_documents/live` does not serve stale content.
+- Production verification must include `npm run cms:verify:production` or `npm run smoke:production`; both catch stale `/api/admin/content` page/nav data.
 
 ### Excel Workbooks
 

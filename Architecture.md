@@ -25,6 +25,23 @@ The app is built as static Astro pages. Client-side behavior is small, route-spe
 - `public/assets/images/`: local images and generated placeholders.
 - `outputs/`: local generated artifacts. This directory is intentionally untracked unless a future task says otherwise.
 
+## Admin Portal CMS Content
+
+Admin Portal content has three deploy-time surfaces:
+
+- `public/admin/content/live.json`: code-owned source of truth for published page registry and navigation.
+- `public/admin/content/default.json`: bundled fallback that must match `live.json` for page registry and navigation.
+- `/api/admin/content`: production API used by `cms-runtime.js` and Admin Portal.
+
+Production may read `/api/admin/content` from Supabase first. To avoid stale database content hiding new features, `readLiveContent()` merges missing bundled page/navigation entries into older API content. The deploy contract is still that `live.json`, `default.json`, and production `/api/admin/content` expose the same page registry and navigation.
+
+Validation commands:
+
+- `npm run nfr:cms`: validates local `default.json` and `live.json`.
+- `npm run db:seed:cms`: writes `live.json` into Supabase `cms_documents/live` when server-only Supabase env is available.
+- `npm run cms:verify:production`: validates production `/api/admin/content` against `live.json`.
+- `npm run smoke:production`: includes the production CMS API check.
+
 ## Global Layout And Assets
 
 All normal pages use `src/layouts/BaseLayout.astro`.
