@@ -160,16 +160,36 @@ function hoursDetails(section) {
 
 function contactDetails(section) {
   const details = [];
-  pushDetail(details, "โทรศัพท์", section.phone);
+  pushPhoneDetail(details, section.phone);
   pushDetail(details, "LINE", section.line);
-  pushDetail(details, "Facebook", section.facebook);
-  pushDetail(details, "อีเมล", section.email);
+  pushFacebookDetail(details, section.facebook);
+  pushEmailDetail(details, section.email);
   return details;
 }
 
 function pushDetail(details, term, value, options = {}) {
   const displayValue = cleanDisplayText(value, options);
   if (displayValue) details.push({ term, value: displayValue });
+}
+
+function pushPhoneDetail(details, value) {
+  const displayValue = cleanDisplayText(value);
+  if (!displayValue) return;
+  const phoneHref = displayValue.replace(/[^\d+]/gu, "");
+  details.push({ term: "โทรศัพท์", value: displayValue, href: phoneHref ? `tel:${phoneHref}` : "" });
+}
+
+function pushEmailDetail(details, value) {
+  const displayValue = cleanDisplayText(value);
+  if (!displayValue) return;
+  details.push({ term: "อีเมล", value: displayValue, href: `mailto:${displayValue}` });
+}
+
+function pushFacebookDetail(details, value) {
+  const displayValue = cleanDisplayText(value);
+  if (!displayValue) return;
+  const facebook = formatFacebookContact(displayValue);
+  details.push({ term: "Facebook", value: facebook.label, href: facebook.href });
 }
 
 function cleanDisplayText(value, options = {}) {
@@ -194,6 +214,28 @@ function comparableText(value) {
     .replace(/\s+/gu, "")
     .replace(/สำหรับชาวต่างชาติ/gu, "")
     .replace(/เมื่อแสดงบัตรประชาชน/gu, "");
+}
+
+function formatFacebookContact(value) {
+  const text = cleanText(value);
+  const href = normalizeFacebookHref(text);
+  if (!href) return { label: text, href: "" };
+
+  try {
+    const url = new URL(href);
+    const pathParts = url.pathname.split("/").map(cleanText).filter(Boolean);
+    const handle = pathParts.find((part) => part !== "profile.php" && part !== "pages");
+    return { label: handle || "Facebook", href };
+  } catch {
+    return { label: text, href: "" };
+  }
+}
+
+function normalizeFacebookHref(value) {
+  const text = cleanText(value);
+  if (!/facebook\.com/iu.test(text)) return "";
+  if (/^https?:\/\//iu.test(text)) return text;
+  return `https://${text.replace(/^\/+/u, "")}`;
 }
 
 function normalizeTimetable(rows) {

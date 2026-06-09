@@ -772,6 +772,17 @@
   line-height: 1.45;
 }
 
+.temple-detail-visit__grid dd a {
+  color: inherit;
+  text-decoration-color: rgba(143, 45, 37, 0.38);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
+}
+
+.temple-detail-visit__grid dd a:hover {
+  color: var(--lacquer);
+}
+
 .temple-detail-visit-timetable {
   width: 100%;
   border-collapse: collapse;

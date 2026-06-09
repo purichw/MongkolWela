@@ -321,8 +321,10 @@ function normalizeVisitSection(section = {}, label) {
 function renderVisitSection(section) {
   const className = section.status === "verified" ? "is-verified" : section.status === "listed" ? "is-listed" : "needs-check";
   const timetable = Array.isArray(section.timetable) ? section.timetable : [];
+  const needsCheck = !["verified", "listed"].includes(section.status) || (!section.details.length && !timetable.length);
   return `<article class="temple-detail-visit-card temple-detail-visit-card--${escapeHtml(section.kind || "info")} ${className}">
     <span class="temple-detail-visit-card__label">${escapeHtml(section.label)}</span>
+    ${needsCheck ? "<p>โปรดตรวจสอบกับสถานที่โดยตรง</p>" : ""}
     ${
       timetable.length
         ? `<table class="temple-detail-visit-timetable"><tbody>${timetable
@@ -332,10 +334,17 @@ function renderVisitSection(section) {
     }
     ${
       section.details.length
-        ? `<dl>${section.details.map((item) => `<div><dt>${escapeHtml(item.term)}</dt><dd>${escapeHtml(item.value)}</dd></div>`).join("")}</dl>`
+        ? `<dl>${section.details.map((item) => `<div><dt>${escapeHtml(item.term)}</dt><dd>${renderVisitDetailValue(item)}</dd></div>`).join("")}</dl>`
         : ""
     }
   </article>`;
+}
+
+function renderVisitDetailValue(item) {
+  if (!item.href) return escapeHtml(item.value);
+  const href = escapeHtml(item.href);
+  const externalAttrs = /^https?:\/\//iu.test(item.href) ? ' target="_blank" rel="noopener"' : "";
+  return `<a href="${href}"${externalAttrs}>${escapeHtml(item.value)}</a>`;
 }
 
 function visitSectionDetails(section, kind) {
@@ -357,10 +366,10 @@ function visitSectionDetails(section, kind) {
   }
   if (kind === "contact") {
     const details = [];
-    pushVisitDetail(details, "โทรศัพท์", section.phone);
+    pushVisitPhoneDetail(details, section.phone);
     pushVisitDetail(details, "LINE", section.line);
-    pushVisitDetail(details, "Facebook", section.facebook);
-    pushVisitDetail(details, "อีเมล", section.email);
+    pushVisitFacebookDetail(details, section.facebook);
+    pushVisitEmailDetail(details, section.email);
     return details;
   }
   const details = [];
@@ -374,6 +383,26 @@ function visitSectionDetails(section, kind) {
 function pushVisitDetail(details, term, value, options = {}) {
   const displayValue = cleanVisitDetailText(value, options);
   if (displayValue) details.push({ term, value: displayValue });
+}
+
+function pushVisitPhoneDetail(details, value) {
+  const displayValue = cleanVisitDetailText(value);
+  if (!displayValue) return;
+  const phoneHref = displayValue.replace(/[^\d+]/gu, "");
+  details.push({ term: "โทรศัพท์", value: displayValue, href: phoneHref ? `tel:${phoneHref}` : "" });
+}
+
+function pushVisitEmailDetail(details, value) {
+  const displayValue = cleanVisitDetailText(value);
+  if (!displayValue) return;
+  details.push({ term: "อีเมล", value: displayValue, href: `mailto:${displayValue}` });
+}
+
+function pushVisitFacebookDetail(details, value) {
+  const displayValue = cleanVisitDetailText(value);
+  if (!displayValue) return;
+  const facebook = formatVisitFacebookContact(displayValue);
+  details.push({ term: "Facebook", value: facebook.label, href: facebook.href });
 }
 
 function cleanVisitDetailText(value, options = {}) {
@@ -392,6 +421,31 @@ function comparableVisitText(value) {
     .replace(/\s+/gu, "")
     .replace(/สำหรับชาวต่างชาติ/gu, "")
     .replace(/เมื่อแสดงบัตรประชาชน/gu, "");
+}
+
+function formatVisitFacebookContact(value) {
+  const text = String(value || "").trim();
+  const href = normalizeVisitFacebookHref(text);
+  if (!href) return { label: text, href: "" };
+
+  try {
+    const url = new URL(href);
+    const pathParts = url.pathname
+      .split("/")
+      .map((item) => item.trim())
+      .filter(Boolean);
+    const handle = pathParts.find((part) => part !== "profile.php" && part !== "pages");
+    return { label: handle || "Facebook", href };
+  } catch {
+    return { label: text, href: "" };
+  }
+}
+
+function normalizeVisitFacebookHref(value) {
+  const text = String(value || "").trim();
+  if (!/facebook\.com/iu.test(text)) return "";
+  if (/^https?:\/\//iu.test(text)) return text;
+  return `https://${text.replace(/^\/+/u, "")}`;
 }
 
 function normalizeVisitTimetable(rows) {
