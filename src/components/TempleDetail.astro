@@ -258,7 +258,6 @@ const templeJsonLd = createTempleJsonLd({
                 {visitSections.map((section) => (
                   <article class={`temple-detail-visit-card temple-detail-visit-card--${section.kind} ${section.status === "verified" ? "is-verified" : "is-listed"}`}>
                     <span class="temple-detail-visit-card__label">{section.label}</span>
-                    <p>{section.summary}</p>
                     {(section.timetable || []).length > 0 && (
                       <table class="temple-detail-visit-timetable">
                         <tbody>

@@ -323,7 +323,6 @@ function renderVisitSection(section) {
   const timetable = Array.isArray(section.timetable) ? section.timetable : [];
   return `<article class="temple-detail-visit-card temple-detail-visit-card--${escapeHtml(section.kind || "info")} ${className}">
     <span class="temple-detail-visit-card__label">${escapeHtml(section.label)}</span>
-    <p>${escapeHtml(section.summary)}</p>
     ${
       timetable.length
         ? `<table class="temple-detail-visit-timetable"><tbody>${timetable
