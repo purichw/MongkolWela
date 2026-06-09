@@ -108,6 +108,48 @@ async function readBundledLiveContent() {
   }
 }
 
+function mergeOrderedById(contentItems = [], bundledItems = []) {
+  const existingById = new Map(contentItems.filter((item) => item?.id).map((item) => [item.id, item]));
+  const bundledIds = new Set(bundledItems.filter((item) => item?.id).map((item) => item.id));
+  const usedIds = new Set();
+  const merged = [];
+
+  bundledItems.forEach((bundledItem) => {
+    const existingItem = bundledItem?.id ? existingById.get(bundledItem.id) : null;
+    if (!existingItem) {
+      merged.push(bundledItem);
+      return;
+    }
+    usedIds.add(existingItem.id);
+    merged.push({
+      ...existingItem,
+      ...(Array.isArray(existingItem.items) || Array.isArray(bundledItem.items)
+        ? { items: mergeOrderedById(existingItem.items || [], bundledItem.items || []) }
+        : {}),
+    });
+  });
+
+  contentItems.forEach((item) => {
+    if (!item?.id || (!usedIds.has(item.id) && !bundledIds.has(item.id))) merged.push(item);
+  });
+
+  return merged;
+}
+
+function mergeWithBundledContent(content, bundledContent) {
+  if (!content || !bundledContent || content === bundledContent) return content;
+
+  return {
+    ...content,
+    pages: mergeOrderedById(content.pages || [], bundledContent.pages || []),
+    navigation: {
+      ...(content.navigation || {}),
+      tabs: mergeOrderedById(content.navigation?.tabs || [], bundledContent.navigation?.tabs || []),
+      utility: mergeOrderedById(content.navigation?.utility || [], bundledContent.navigation?.utility || []),
+    },
+  };
+}
+
 export function githubContentConfig() {
   return {
     owner: process.env.MONGKOLWELA_GITHUB_OWNER || "purichw",
@@ -127,12 +169,17 @@ export async function readGithubContent() {
 }
 
 export async function readLiveContent() {
+  const bundledContent = readBundledLiveContent();
   const sources = isProductionRuntime()
-    ? [readDatabaseContent(), readGithubContent(), readBundledLiveContent(), readDefaultContent()]
-    : [readBundledLiveContent(), readDatabaseContent(), readGithubContent(), readDefaultContent()];
+    ? [readDatabaseContent(), readGithubContent(), bundledContent, readDefaultContent()]
+    : [bundledContent, readDatabaseContent(), readGithubContent(), readDefaultContent()];
   const results = await Promise.allSettled(sources);
   const match = results.find((result) => result.status === "fulfilled" && result.value);
-  if (match?.status === "fulfilled") return match.value;
+  if (match?.status === "fulfilled") {
+    const bundledMatch = results[isProductionRuntime() ? 2 : 0];
+    const bundled = bundledMatch?.status === "fulfilled" ? bundledMatch.value : null;
+    return mergeWithBundledContent(match.value, bundled);
+  }
   throw new Error("Content source unavailable");
 }
 
