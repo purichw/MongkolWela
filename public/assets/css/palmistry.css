@@ -3,10 +3,9 @@
 }
 
 .palmistry-page main {
-  padding: 28px 0 0;
+  padding: 0;
 }
 
-.palm-hero,
 .palm-tool,
 .palm-method,
 .palm-sources {
@@ -15,15 +14,10 @@
 }
 
 .palm-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
-  gap: 34px;
-  align-items: start;
   min-height: 360px;
-  padding: 26px 0 24px;
 }
 
-.palm-hero > div:first-child {
+.palm-hero .feature-hero__copy {
   max-width: 760px;
 }
 
@@ -45,17 +39,18 @@
 .palm-hero h1 {
   max-width: 760px;
   margin: 0;
-  font-size: clamp(3.6rem, 6.2vw, 5.9rem);
-  font-weight: 900;
+  font-size: var(--feature-title-size, clamp(2.8rem, 7vw, 6.2rem));
+  font-weight: 800;
   letter-spacing: 0;
-  line-height: 0.98;
+  line-height: 1;
+  text-wrap: balance;
 }
 
-.palm-hero p {
+.palm-hero .feature-hero__lead {
   max-width: 680px;
-  margin: 18px 0 0;
+  margin: 22px 0 0;
   color: var(--ink-soft);
-  font-size: 1.05rem;
+  font-size: var(--feature-lead-size, clamp(1rem, 1.45vw, 1.24rem));
   line-height: 1.7;
 }
 
@@ -73,164 +68,189 @@
 
 .palm-diagram-card {
   display: grid;
-  gap: 14px;
-  padding: 16px;
+  gap: 12px;
+  padding: 14px;
 }
 
-.palm-diagram {
-  position: relative;
-  min-height: 330px;
-  overflow: hidden;
-  isolation: isolate;
-  background:
-    radial-gradient(circle at 50% 58%, rgba(194, 141, 53, 0.28), transparent 34%),
-    linear-gradient(145deg, #fffaf0 0%, #f5e4c9 100%);
+.palm-view-switcher {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  background: rgba(77, 56, 41, 0.07);
   border: 1px solid rgba(77, 56, 41, 0.16);
-  border-radius: var(--radius);
+  border-radius: 8px;
 }
 
-.palm-diagram::before {
-  position: absolute;
-  inset: 64px 78px 30px 92px;
-  z-index: 1;
-  background: linear-gradient(160deg, rgba(255, 244, 219, 0.98), rgba(225, 190, 139, 0.72));
-  border: 2px solid rgba(142, 45, 36, 0.16);
-  border-radius: 48% 46% 39% 42% / 58% 56% 43% 44%;
-  content: "";
-  transform: rotate(-3deg);
+.palm-view-switcher button {
+  min-width: 0;
+  min-height: 38px;
+  padding: 7px 8px;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 900;
+  cursor: pointer;
 }
 
-.palm-finger {
-  position: absolute;
-  z-index: 0;
-  bottom: 244px;
-  width: 46px;
-  background: linear-gradient(180deg, #fff2d6, #dfbd85);
-  border: 2px solid rgba(142, 45, 36, 0.14);
-  border-radius: 999px;
+.palm-view-switcher button:hover {
+  color: var(--ink);
+  background: rgba(255, 253, 246, 0.7);
 }
 
-.palm-finger.one {
-  left: 118px;
-  height: 96px;
-  transform: rotate(-8deg);
-}
-
-.palm-finger.two {
-  left: 174px;
-  height: 132px;
-  transform: rotate(-1deg);
-}
-
-.palm-finger.three {
-  left: 230px;
-  height: 126px;
-  transform: rotate(4deg);
-}
-
-.palm-finger.four {
-  left: 286px;
-  height: 94px;
-  transform: rotate(10deg);
-}
-
-.palm-thumb {
-  position: absolute;
-  top: 154px;
-  left: 60px;
-  z-index: 0;
-  width: 90px;
-  height: 132px;
-  background: linear-gradient(145deg, #fff2d6, #dfbd85);
-  border: 2px solid rgba(142, 45, 36, 0.14);
-  border-radius: 999px 999px 48px 999px;
-  transform: rotate(-40deg);
-}
-
-.palm-line {
-  position: absolute;
-  z-index: 2;
-  height: 5px;
-  background: var(--lacquer);
-  border-radius: 999px;
-  box-shadow: 0 0 0 7px rgba(142, 45, 36, 0.08);
-}
-
-.palm-line.heart {
-  top: 136px;
-  left: 136px;
-  width: 186px;
-  transform: rotate(-6deg);
-}
-
-.palm-line.head {
-  top: 186px;
-  left: 132px;
-  width: 196px;
-  transform: rotate(8deg);
-}
-
-.palm-line.life {
-  top: 150px;
-  left: 116px;
-  width: 164px;
-  height: 6px;
-  border-radius: 100%;
-  transform: rotate(88deg);
-  transform-origin: left center;
-}
-
-.palm-line.fate {
-  top: 134px;
-  left: 244px;
-  width: 148px;
-  background: var(--jade);
-  transform: rotate(88deg);
-  box-shadow: 0 0 0 7px rgba(39, 106, 82, 0.08);
-}
-
-.palm-diagram-label {
-  position: absolute;
-  z-index: 3;
-  display: inline-grid;
-  place-items: center;
-  min-height: 34px;
-  min-width: 84px;
-  padding: 6px 12px;
+.palm-view-switcher button[aria-pressed="true"] {
   color: #fffaf0;
   background: var(--jade-dark);
-  border: 1px solid rgba(234, 211, 160, 0.58);
-  border-radius: 999px;
-  font-size: 0.82rem;
+  box-shadow: 0 4px 12px rgba(18, 61, 52, 0.18);
+}
+
+.palm-hand-stage {
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(128, 93, 56, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(128, 93, 56, 0.045) 1px, transparent 1px),
+    #fffaf0;
+  background-size: 34px 34px;
+  border: 1px solid rgba(77, 56, 41, 0.16);
+  border-radius: 8px;
+}
+
+.palm-hand-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 21 / 20;
+}
+
+.palm-natural-creases path {
+  fill: none;
+  stroke: #b77f58;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  opacity: 0.45;
+}
+
+.palm-nails ellipse {
+  fill: rgba(255, 253, 246, 0.62);
+  stroke: #b77f58;
+  stroke-width: 1;
+}
+
+.palm-map-layer {
+  animation: palm-layer-in 180ms ease-out;
+}
+
+.palm-map-layer.is-hidden {
+  display: none;
+}
+
+.palm-map-line {
+  fill: none;
+  stroke: var(--lacquer);
+  stroke-width: 4.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.palm-map-line--fate {
+  stroke: #6b4b8a;
+}
+
+.palm-map-line--sun {
+  stroke: #b57d0a;
+}
+
+.palm-map-line--mercury {
+  stroke: var(--jade);
+}
+
+.palm-map-line--marriage {
+  stroke: #3f7f55;
+}
+
+.palm-map-leader {
+  fill: none;
+  stroke: rgba(77, 56, 41, 0.54);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 4;
+}
+
+.palm-map-label rect {
+  fill: var(--jade-dark);
+  stroke: rgba(234, 211, 160, 0.72);
+  stroke-width: 1;
+}
+
+.palm-map-label text {
+  fill: #fffaf0;
+  font-size: 13px;
   font-weight: 900;
-  box-shadow: 0 8px 18px rgba(18, 61, 52, 0.22);
+  text-anchor: middle;
 }
 
-.palm-diagram-label.heart {
-  top: 105px;
-  right: 26px;
+.palm-mount-layer ellipse {
+  fill: rgba(194, 141, 53, 0.18);
+  stroke: rgba(142, 45, 36, 0.62);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
 }
 
-.palm-diagram-label.head {
-  top: 188px;
-  right: 20px;
+.palm-mount-marker circle {
+  fill: var(--lacquer);
+  stroke: #fff4d5;
+  stroke-width: 1.2;
 }
 
-.palm-diagram-label.life {
-  bottom: 58px;
-  left: 34px;
+.palm-mount-marker text {
+  fill: #fffaf0;
+  font-size: 13px;
+  font-weight: 900;
+  text-anchor: middle;
 }
 
-.palm-diagram-label.fate {
-  right: 72px;
-  bottom: 30px;
+.palm-mount-legend {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
 }
 
-.palm-diagram-card > p {
+.palm-mount-legend span {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-soft);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.palm-mount-legend b {
+  display: inline-grid;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  color: #fffaf0;
+  background: var(--lacquer);
+  border-radius: 50%;
+  font-size: 0.7rem;
+}
+
+.palm-view-note {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 0.92rem;
+  font-size: 0.82rem;
   line-height: 1.55;
+}
+
+@keyframes palm-layer-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
 }
 
 .palm-tool {
@@ -679,84 +699,14 @@
 
   .palm-hero {
     min-height: 0;
-    padding: 22px 0 20px;
   }
 
   .palm-hero h1 {
-    font-size: clamp(3rem, 17vw, 4.5rem);
+    font-size: var(--feature-title-mobile-size, 2.8rem);
   }
 
-  .palm-diagram {
-    min-height: 300px;
-  }
-
-  .palm-diagram::before {
-    inset: 58px 52px 24px 62px;
-  }
-
-  .palm-finger.one {
-    left: 88px;
-  }
-
-  .palm-finger.two {
-    left: 138px;
-  }
-
-  .palm-finger.three {
-    left: 188px;
-  }
-
-  .palm-finger.four {
-    left: 238px;
-  }
-
-  .palm-thumb {
-    left: 34px;
-  }
-
-  .palm-line.heart {
-    left: 104px;
-    width: 170px;
-  }
-
-  .palm-line.head {
-    left: 108px;
-    width: 176px;
-  }
-
-  .palm-line.life {
-    left: 96px;
-    width: 154px;
-  }
-
-  .palm-line.fate {
-    left: 190px;
-    width: 142px;
-  }
-
-  .palm-diagram-label {
-    min-width: auto;
-    font-size: 0.74rem;
-  }
-
-  .palm-diagram-label.heart {
-    top: 108px;
-    right: 18px;
-  }
-
-  .palm-diagram-label.head {
-    top: 206px;
-    right: 10px;
-  }
-
-  .palm-diagram-label.life {
-    bottom: 48px;
-    left: 18px;
-  }
-
-  .palm-diagram-label.fate {
-    right: 74px;
-    bottom: 108px;
+  .palm-mount-legend {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .palm-form,

@@ -1,0 +1,61 @@
+{
+  "life_line": {
+    "long_clear": "life_line_long_clear.png",
+    "short": "life_line_short.png",
+    "broken": "life_line_broken.png",
+    "chained": "life_line_chained.png",
+    "double_mars": "life_line_double_mars.png",
+    "branch_up": "life_line_branch_up.png",
+    "branch_down": "life_line_branch_down.png",
+    "wide_arc": "life_line_wide_arc.png",
+    "curves_to_moon": "life_line_curves_to_moon.png"
+  },
+  "head_line": {
+    "straight_long": "head_line_straight_long.png",
+    "slight_curve": "head_line_slight_curve.png",
+    "deep_curve": "head_line_deep_curve.png",
+    "short": "head_line_short.png",
+    "double": "head_line_double.png",
+    "forked": "head_line_forked.png",
+    "broken": "head_line_broken.png"
+  },
+  "heart_line": {
+    "long_curved": "heart_line_long_curved.png",
+    "long_straight": "heart_line_long_straight.png",
+    "short": "heart_line_short.png",
+    "wavy": "heart_line_wavy.png",
+    "broken": "heart_line_broken.png",
+    "curves_up": "heart_line_curves_up.png",
+    "points_jupiter": "heart_line_points_jupiter.png"
+  },
+  "fate_line": {
+    "clear_from_wrist": "fate_line_clear_from_wrist.png",
+    "from_life_line": "fate_line_from_life_line.png",
+    "from_moon_mount": "fate_line_from_moon_mount.png",
+    "broken": "fate_line_broken.png",
+    "absent": "fate_line_absent.png",
+    "branch_jupiter": "fate_line_branch_jupiter.png",
+    "from_head_line": "fate_line_from_head_line.png",
+    "stops_at_heart": "fate_line_stops_at_heart.png",
+    "stops_at_head": "fate_line_stops_at_head.png",
+    "branch_sun": "fate_line_branch_sun.png"
+  },
+  "sun_line": {
+    "clear_present": "sun_line_clear_present.png",
+    "short": "sun_line_short.png",
+    "absent": "sun_line_absent.png"
+  },
+  "mercury_line": {
+    "absent": "mercury_line_absent.png",
+    "clear_straight": "mercury_line_clear_straight.png",
+    "wavy": "mercury_line_wavy.png"
+  },
+  "marriage_line": {
+    "one_clear": "marriage_line_one_clear.png",
+    "two_separate": "marriage_line_two_separate.png",
+    "two_close": "marriage_line_two_close.png",
+    "curves_down": "marriage_line_curves_down.png",
+    "crosses_heart": "marriage_line_crosses_heart.png",
+    "curves_up": "marriage_line_curves_up.png"
+  }
+}

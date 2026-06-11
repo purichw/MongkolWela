@@ -1,0 +1,59 @@
+---
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  breadcrumbs: BreadcrumbItem[];
+  kicker: string;
+  title: string;
+  lead: string;
+  class?: string;
+  mediaLabel?: string;
+  mediaWidth?: string;
+  mediaAlign?: "start" | "center" | "end";
+}
+
+const {
+  breadcrumbs,
+  kicker,
+  title,
+  lead,
+  class: className = "",
+  mediaLabel,
+  mediaWidth,
+  mediaAlign,
+} = Astro.props as Props;
+
+const styleVars = [
+  mediaWidth ? `--feature-hero-media-width: ${mediaWidth}` : "",
+  mediaAlign ? `--feature-hero-media-align: ${mediaAlign}` : "",
+]
+  .filter(Boolean)
+  .join("; ");
+---
+
+<section class:list={["feature-hero", className]} style={styleVars}>
+  <div class="feature-hero__copy">
+    <nav class="feature-breadcrumb" aria-label="breadcrumb">
+      {breadcrumbs.map((item, index) => (
+        <>
+          {index > 0 && <span>/</span>}
+          {item.href ? <a href={item.href}>{item.label}</a> : <span>{item.label}</span>}
+        </>
+      ))}
+    </nav>
+    <p class="section-kicker">{kicker}</p>
+    <h1>{title}</h1>
+    <p class="feature-hero__lead">{lead}</p>
+  </div>
+
+  {
+    Astro.slots.has("media") && (
+      <div class="feature-hero__media" aria-label={mediaLabel}>
+        <slot name="media" />
+      </div>
+    )
+  }
+</section>

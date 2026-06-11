@@ -1,0 +1,683 @@
+---
+// PalmLineWidget.astro
+// Interactive palm line reading widget
+// Usage: <PalmLineWidget /> — images served from /public/images/lines/
+---
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+<div id="plw">
+  <div class="plw-header">
+    <h2 class="plw-title">ลักษณะเส้นลายมือ</h2>
+    <p class="plw-subtitle">รวม 45 ลักษณะจากเส้นหลักและเส้นรอง เลือกเฉพาะลักษณะที่เห็นชัดบนมือ</p>
+  </div>
+  <div class="plw-body">
+    <nav id="plw-sidebar" class="plw-sidebar"></nav>
+    <div class="plw-main">
+      <div id="plw-grid" class="plw-grid"></div>
+      <aside id="plw-detail" class="plw-detail"></aside>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+#plw {
+  font-family: 'Noto Sans Thai', system-ui, sans-serif;
+  background: #0d0d1a;
+  color: #e0d8c8;
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 1100px;
+  margin: 0 auto;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+}
+#plw .plw-header {
+  padding: 22px 28px 14px;
+  border-bottom: 1px solid #1e1e32;
+  background: linear-gradient(135deg, #161628 0%, #0d0d1a 100%);
+}
+#plw .plw-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #c9a227;
+  margin: 0 0 4px;
+}
+#plw .plw-subtitle {
+  font-size: 0.82rem;
+  color: #aaa4b8;
+  margin: 0;
+}
+#plw .plw-body {
+  display: flex;
+  min-height: 540px;
+}
+
+/* ── SIDEBAR ─────────────────────────────── */
+#plw .plw-sidebar {
+  width: 172px;
+  flex-shrink: 0;
+  background: #0b0b16;
+  border-right: 1px solid #1e1e32;
+  padding: 10px 0 20px;
+  overflow-y: auto;
+}
+#plw .plw-group-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #aaa4b8;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 16px 16px 5px;
+}
+#plw .plw-line-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 9px 16px;
+  font-family: 'Noto Sans Thai', sans-serif;
+  font-size: 0.85rem;
+  color: #b7b1c2;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s, border-color 0.12s;
+  line-height: 1.4;
+}
+#plw .plw-line-btn:hover {
+  color: #ccc;
+  background: #13132a;
+}
+#plw .plw-line-btn.plw-active {
+  color: #c9a227;
+  border-left-color: #c9a227;
+  background: #13132a;
+  font-weight: 600;
+}
+
+/* ── MAIN AREA ───────────────────────────── */
+#plw .plw-main {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+}
+
+/* ── IMAGE GRID ──────────────────────────── */
+#plw .plw-grid {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 10px;
+  align-content: start;
+}
+#plw .plw-card {
+  background: #13132a;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+}
+#plw .plw-card:hover {
+  border-color: #2e2e50;
+  transform: translateY(-2px);
+}
+#plw .plw-card.plw-active {
+  border-color: #c9a227;
+  box-shadow: 0 0 18px rgba(201,162,39,0.22);
+}
+#plw .plw-card img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: contain;
+  background: #1c1c32;
+  display: block;
+}
+#plw .plw-card-no-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: #181828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2a2a40;
+  font-size: 1.4rem;
+}
+#plw .plw-card-label {
+  font-size: 0.71rem;
+  padding: 5px 6px 8px;
+  text-align: center;
+  color: #bcb6c7;
+  line-height: 1.35;
+}
+#plw .plw-card.plw-active .plw-card-label {
+  color: #c9a227;
+}
+
+/* ── DETAIL PANEL ────────────────────────── */
+#plw .plw-detail {
+  width: 276px;
+  flex-shrink: 0;
+  background: #0b0b16;
+  border-left: 1px solid #1e1e32;
+  overflow-y: auto;
+  padding: 20px 16px 24px;
+}
+#plw .plw-placeholder {
+  color: #aaa4b8;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 60px;
+  line-height: 2.2;
+}
+#plw .plw-detail-img {
+  width: 100%;
+  max-width: 160px;
+  display: block;
+  margin: 0 auto 14px;
+  border-radius: 8px;
+  border: 1px solid #1e1e32;
+  background: #1c1c32;
+}
+#plw .plw-detail-line {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #c9a227;
+  margin: 0 0 2px;
+}
+#plw .plw-detail-variant {
+  font-size: 0.78rem;
+  color: #aaa4b8;
+  margin: 0 0 14px;
+}
+#plw .plw-divider {
+  height: 1px;
+  background: #1e1e32;
+  margin: 0 0 14px;
+}
+#plw .plw-reading-block {
+  margin-bottom: 9px;
+  padding: 10px 12px;
+  background: #13132a;
+  border-radius: 8px;
+  border-left: 3px solid #2a2a40;
+}
+#plw .plw-reading-block.good  { border-left-color: #4caf50; }
+#plw .plw-reading-block.warning { border-left-color: #ef5350; }
+#plw .plw-reading-block.neutral { border-left-color: #ffc107; }
+#plw .plw-reading-cat {
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin: 0 0 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+#plw .plw-reading-cat.good    { color: #4caf50; }
+#plw .plw-reading-cat.warning { color: #ef5350; }
+#plw .plw-reading-cat.neutral { color: #ffc107; }
+#plw .plw-reading-text {
+  font-size: 0.81rem;
+  color: #c8c2cc;
+  line-height: 1.65;
+  margin: 0;
+}
+#plw .plw-no-reading {
+  font-size: 0.78rem;
+  color: #aaa4b8;
+  text-align: center;
+  padding: 16px 0;
+  font-style: italic;
+}
+#plw .plw-disclaimer {
+  margin-top: 16px;
+  padding: 10px 12px;
+  background: #080810;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  color: #aaa4b8;
+  text-align: center;
+  line-height: 1.8;
+  border: 1px solid #13132a;
+}
+
+/* ── RESPONSIVE ──────────────────────────── */
+@media (max-width: 768px) {
+  #plw .plw-body { flex-direction: column; }
+  #plw .plw-sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #1e1e32;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px;
+    gap: 4px;
+  }
+  #plw .plw-group-label { display: none; }
+  #plw .plw-line-btn {
+    white-space: nowrap;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 6px;
+    flex-shrink: 0;
+    padding: 7px 14px;
+  }
+  #plw .plw-line-btn.plw-active {
+    border-left-color: transparent;
+    border-bottom-color: #c9a227;
+    background: #13132a;
+  }
+  #plw .plw-main { flex-direction: column; }
+  #plw .plw-detail {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #1e1e32;
+  }
+  #plw .plw-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
+</style>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────────────────────
+
+const LINE_TYPES = [
+  {
+    id: 'life_line', nameTh: 'เส้นชีวิต', group: 'main',
+    variants: [
+      { id: 'long_clear',    nameTh: 'ยาวชัดเจน' },
+      { id: 'short',         nameTh: 'สั้น' },
+      { id: 'broken',        nameTh: 'ขาดตอน' },
+      { id: 'chained',       nameTh: 'เป็นลูกโซ่' },
+      { id: 'double_mars',   nameTh: 'คู่ขนาน (Line of Mars)' },
+      { id: 'branch_up',     nameTh: 'มีกิ่งขึ้น' },
+      { id: 'branch_down',   nameTh: 'มีกิ่งลง' },
+      { id: 'wide_arc',      nameTh: 'โค้งกว้าง' },
+      { id: 'curves_to_moon',nameTh: 'โค้งไปเนินจันทร์' },
+    ]
+  },
+  {
+    id: 'head_line', nameTh: 'เส้นสมอง', group: 'main',
+    variants: [
+      { id: 'straight_long', nameTh: 'ตรงยาว' },
+      { id: 'slight_curve',  nameTh: 'โค้งเล็กน้อย' },
+      { id: 'deep_curve',    nameTh: 'โค้งลึก' },
+      { id: 'short',         nameTh: 'สั้น' },
+      { id: 'double',        nameTh: 'คู่ขนาน' },
+      { id: 'forked',        nameTh: 'ปลายแยก' },
+      { id: 'broken',        nameTh: 'ขาดตอน' },
+    ]
+  },
+  {
+    id: 'heart_line', nameTh: 'เส้นหัวใจ', group: 'main',
+    variants: [
+      { id: 'long_curved',   nameTh: 'ยาวโค้ง' },
+      { id: 'long_straight', nameTh: 'ยาวตรง' },
+      { id: 'short',         nameTh: 'สั้น' },
+      { id: 'wavy',          nameTh: 'เป็นคลื่น' },
+      { id: 'broken',        nameTh: 'ขาดตอน' },
+      { id: 'curves_up',     nameTh: 'ปลายโค้งขึ้น' },
+      { id: 'points_jupiter',nameTh: 'ปลายชี้เนินพฤหัส' },
+    ]
+  },
+  {
+    id: 'fate_line', nameTh: 'เส้นวาสนา', group: 'minor',
+    variants: [
+      { id: 'clear_from_wrist', nameTh: 'ชัดจากข้อมือ' },
+      { id: 'from_life_line',   nameTh: 'เริ่มจากเส้นชีวิต' },
+      { id: 'from_moon_mount',  nameTh: 'เริ่มจากเนินจันทร์' },
+      { id: 'broken',           nameTh: 'ขาดๆ หายๆ' },
+      { id: 'absent',           nameTh: 'ไม่มีเส้น' },
+      { id: 'branch_jupiter',   nameTh: 'กิ่งขึ้นพฤหัส' },
+      { id: 'from_head_line',   nameTh: 'เริ่มจากเส้นสมอง' },
+      { id: 'stops_at_heart',   nameTh: 'หยุดที่เส้นหัวใจ' },
+      { id: 'stops_at_head',    nameTh: 'หยุดที่เส้นสมอง' },
+      { id: 'branch_sun',       nameTh: 'กิ่งขึ้นเนินอาทิตย์' },
+    ]
+  },
+  {
+    id: 'sun_line', nameTh: 'เส้นอาทิตย์', group: 'minor',
+    variants: [
+      { id: 'clear_present', nameTh: 'มีเส้นชัดเจน' },
+      { id: 'short',         nameTh: 'มีแต่เส้นสั้น' },
+      { id: 'absent',        nameTh: 'ไม่มีเส้น' },
+    ]
+  },
+  {
+    id: 'mercury_line', nameTh: 'เส้นพุธ', group: 'minor',
+    variants: [
+      { id: 'absent', nameTh: 'ไม่มีเส้น' },
+      { id: 'clear_straight', nameTh: 'มีเส้นตรงชัด' },
+      { id: 'wavy',   nameTh: 'เป็นคลื่น' },
+    ]
+  },
+  {
+    id: 'marriage_line', nameTh: 'เส้นสมรส', group: 'minor',
+    variants: [
+      { id: 'one_clear',     nameTh: '1 เส้นชัดเจน' },
+      { id: 'two_separate',  nameTh: '2 เส้นห่างกัน' },
+      { id: 'two_close',     nameTh: '2 เส้นชิดกัน' },
+      { id: 'curves_down',   nameTh: 'โค้งลง' },
+      { id: 'crosses_heart', nameTh: 'ตัดผ่านเส้นหัวใจ' },
+      { id: 'curves_up',     nameTh: 'โค้งขึ้น' },
+    ]
+  },
+];
+
+// Image filenames (from /public/images/lines/index.json)
+const IMG_INDEX = {
+  life_line:     { long_clear:'life_line_long_clear.png', short:'life_line_short.png', broken:'life_line_broken.png', chained:'life_line_chained.png', double_mars:'life_line_double_mars.png', branch_up:'life_line_branch_up.png', branch_down:'life_line_branch_down.png', wide_arc:'life_line_wide_arc.png', curves_to_moon:'life_line_curves_to_moon.png' },
+  head_line:     { straight_long:'head_line_straight_long.png', slight_curve:'head_line_slight_curve.png', deep_curve:'head_line_deep_curve.png', short:'head_line_short.png', double:'head_line_double.png', forked:'head_line_forked.png', broken:'head_line_broken.png' },
+  heart_line:    { long_curved:'heart_line_long_curved.png', long_straight:'heart_line_long_straight.png', short:'heart_line_short.png', wavy:'heart_line_wavy.png', broken:'heart_line_broken.png', curves_up:'heart_line_curves_up.png', points_jupiter:'heart_line_points_jupiter.png' },
+  fate_line:     { clear_from_wrist:'fate_line_clear_from_wrist.png', from_life_line:'fate_line_from_life_line.png', from_moon_mount:'fate_line_from_moon_mount.png', broken:'fate_line_broken.png', absent:'fate_line_absent.png', branch_jupiter:'fate_line_branch_jupiter.png', from_head_line:'fate_line_from_head_line.png', stops_at_heart:'fate_line_stops_at_heart.png', stops_at_head:'fate_line_stops_at_head.png', branch_sun:'fate_line_branch_sun.png' },
+  sun_line:      { clear_present:'sun_line_clear_present.png', short:'sun_line_short.png', absent:'sun_line_absent.png' },
+  mercury_line:  { absent:'mercury_line_absent.png', clear_straight:'mercury_line_clear_straight.png', wavy:'mercury_line_wavy.png' },
+  marriage_line: { one_clear:'marriage_line_one_clear.png', two_separate:'marriage_line_two_separate.png', two_close:'marriage_line_two_close.png', curves_down:'marriage_line_curves_down.png', crosses_heart:'marriage_line_crosses_heart.png', curves_up:'marriage_line_curves_up.png' },
+};
+
+// Readings data — keyed by [line_type][variant_id][category_id]
+const READINGS = {
+  life_line: {
+    long_clear:     { health: { text: 'สุขภาพแข็งแรง มีพลังงานสูง อายุยืน', level: 'good' } },
+    short:          { health: { text: 'ต้องดูแลสุขภาพเป็นพิเศษ ร่างกายอ่อนแอกว่าคนอื่น ควรพักผ่อนให้เพียงพอ', level: 'warning' } },
+    broken:         { health: { text: 'มีช่วงสุขภาพย่ำแย่ในชีวิต อาจป่วยหนักหรืออุบัติเหตุ ระวังตัวในช่วงนั้น', level: 'warning' } },
+    chained:        { health: { text: 'ระบบภูมิคุ้มกันอ่อนแอ ป่วยบ่อยในช่วงนั้น ควรดูแลตัวเองและพักผ่อนมากขึ้น', level: 'warning' } },
+    double_mars:    { health: { text: 'มีพลังสำรองสูง ต้านโรคได้ดี แม้ป่วยก็ฟื้นตัวเร็ว', level: 'good' } },
+    branch_up:      {
+      health: { text: 'มีพลังงานเพิ่มขึ้นในช่วงนั้น ฟื้นตัวดี หลังผ่านช่วงยากก็ดีขึ้น', level: 'good' },
+      fate:   { text: 'โอกาสใหม่ในชีวิต มีการยกระดับตัวเอง ชีวิตดีขึ้นอย่างมีนัยสำคัญ', level: 'good' },
+    },
+    branch_down:    {
+      career:      { text: 'การงานอาจชะลอหรือถดถอยในช่วงนั้น ควรประคองกำลังและไม่รับภาระเกินตัว', level: 'warning' },
+      health:      { text: 'เป็นช่วงที่พลังลดลง ควรดูแลสุขภาพและให้เวลากับการพักฟื้น', level: 'warning' },
+      personality: { text: 'อาจรู้สึกอ่อนล้าหรือหมดแรงง่ายกว่าปกติ แต่เป็นลักษณะที่อ่านตามช่วงของเส้น', level: 'neutral' },
+    },
+    wide_arc:      {
+      love:        { text: 'มีเสน่ห์และพลังดึงดูดสูง เปิดรับความสัมพันธ์และประสบการณ์ใหม่ได้ดี', level: 'good' },
+      career:      { text: 'มีแรงทำงานต่อเนื่อง เหมาะกับงานที่ต้องใช้พลังและความอึด', level: 'good' },
+      health:      { text: 'พื้นฐานร่างกายแข็งแรงและมีพลังชีวิตสูง', level: 'good' },
+      personality: { text: 'บุคลิกกระตือรือร้น ชอบออกไปพบโลกกว้าง และมีความน่าสนใจในตัวเอง', level: 'good' },
+    },
+    curves_to_moon: {
+      health: { text: 'มักเดินทางไกล ชีวิตไม่อยู่ที่เดิม อาจมีโรคที่เกิดจากสภาพแวดล้อม', level: 'neutral' },
+      fate:   { text: 'ชะตาพาไปพบสิ่งใหม่ในที่ไกลๆ ชีวิตจะโลดแล่นและหลากหลาย', level: 'neutral' },
+    },
+  },
+  head_line: {
+    straight_long:  {
+      career:      { text: 'เหมาะงานที่ต้องความแม่นยำ วิทยาศาสตร์ วิศวกรรม การเงิน', level: 'good' },
+      personality: { text: 'นักปฏิบัติ มีระบบ คิดรอบคอบ ตัดสินใจบนข้อมูล', level: 'good' },
+    },
+    slight_curve:   {
+      career:      { text: 'เหมาะงานสร้างสรรค์ ศิลปะ การเขียน ออกแบบ', level: 'good' },
+      personality: { text: 'สร้างสรรค์ จินตนาการดี ชอบศิลปะ มีความคิดนอกกรอบ', level: 'good' },
+    },
+    deep_curve:     {
+      career:      { text: 'นักฝัน มีจินตนาการสูง เหมาะงานสร้างสรรค์ นักเขียน นักดนตรี', level: 'good' },
+      personality: { text: 'ลึกซึ้ง ชอบจินตนาการ บางครั้งอยู่ในโลกของตัวเอง มีความไวทางอารมณ์', level: 'neutral' },
+    },
+    short:          {
+      career:      { text: 'ตัดสินใจเร็ว เน้นผลลัพธ์จริงจัง ไม่ชอบทฤษฎียาวๆ', level: 'neutral' },
+      personality: { text: 'ตรงไปตรงมา มีสัญชาตญาณดี เชื่อใจตัวเองสูง ไม่ชอบอ้อมค้อม', level: 'neutral' },
+    },
+    double:         {
+      career:      { text: 'สามารถทำงานหลายอย่างพร้อมกัน มีความสามารถหลายด้าน', level: 'good' },
+      personality: { text: 'มีบุคลิกหลายด้าน เข้าใจมุมมองของคนต่างกัน บางครั้งรู้สึกแตกออกเป็นสองด้าน', level: 'good' },
+    },
+    forked:         {
+      career:      { text: 'ยืดหยุ่นสูง ทำงานทั้งฝั่งวิชาการและสร้างสรรค์ได้ดี', level: 'good' },
+      personality: { text: 'สมดุลระหว่างตรรกะและความคิดสร้างสรรค์ เป็นนักสื่อสารที่ดี', level: 'good' },
+    },
+    broken:         {
+      career:      { text: 'ความคิดขาดความต่อเนื่อง ระวังการตัดสินใจผิดพลาดในช่วงสำคัญ', level: 'warning' },
+      personality: { text: 'ความคิดเปลี่ยนแปลงบ่อย บางครั้งขาดสมาธิและความมั่นใจ', level: 'warning' },
+    },
+  },
+  heart_line: {
+    long_curved:   { love: { text: 'คุณรักลึก กล้าแสดงออก เป็นคนที่คู่รักต้องการ ชีวิตรักสดใส', level: 'good' } },
+    long_straight: { love: { text: 'คุณรักด้วยเหตุผล ซื่อสัตย์ มั่นคง ไม่ค่อยแสดงอารมณ์ แต่รักจริง', level: 'good' } },
+    short:         { love: { text: 'คุณชอบอิสระ ไม่ยึดติดความรัก อาจชอบอยู่คนเดียวหรือรักสั้นๆ หลายครั้ง', level: 'neutral' } },
+    wavy:          { love: { text: 'คุณมีเสน่ห์ดึงดูดหลายคน แต่อาจโลเลในความสัมพันธ์ ระวังการตัดสินใจ', level: 'warning' } },
+    broken:        { love: { text: 'คุณผ่านบาดแผลทางใจ เชื่อใจคนได้ยาก แต่เมื่อเปิดใจได้จะรักจริงและลึกมาก', level: 'warning' } },
+    curves_up:     { love: { text: 'คุณกล้ารัก บอกตรงๆ ชีวิตคู่มักราบรื่นเพราะสื่อสารได้ดี', level: 'good' } },
+    points_jupiter: {
+      love:        { text: 'มีมาตรฐานและอุดมคติสูงในความรัก ต้องการความสัมพันธ์ที่มีคุณค่าและชัดเจน', level: 'neutral' },
+      career:      { text: 'มุ่งหวังตำแหน่งหรือบทบาทที่สูงขึ้น และจริงจังกับความสำเร็จ', level: 'good' },
+      fate:        { text: 'แนวทางชีวิตสัมพันธ์กับความทะเยอทะยานและอุดมการณ์ที่ตั้งไว้', level: 'good' },
+      personality: { text: 'มีอุดมการณ์ เชื่อมั่นในหลักของตน และคาดหวังกับตัวเองสูง', level: 'neutral' },
+    },
+  },
+  fate_line: {
+    clear_from_wrist: {
+      career: { text: 'การงานราบรื่น โชคดีมาตลอด มีโอกาสดีเข้ามาเสมอ เส้นทางชัดเจน', level: 'good' },
+      fate:   { text: 'โชคชะตาเป็นใจมาตลอดชีวิต ดีตั้งแต่เกิด มีดวงชะตาแรง', level: 'good' },
+    },
+    from_life_line: {
+      career: { text: 'Self-made person ทุกอย่างได้มาด้วยความพยายามของตัวเอง ไม่ใช่โชค', level: 'good' },
+      fate:   { text: 'สร้างชะตาตัวเอง ชีวิตขึ้นกับความพยายาม ไม่ต้องพึ่งดวง', level: 'neutral' },
+    },
+    from_moon_mount: {
+      career: { text: 'อาชีพที่เกี่ยวกับสาธารณชน ศิลปะ การท่องเที่ยว หรือได้รับการสนับสนุนจากผู้อื่น', level: 'good' },
+      fate:   { text: 'ชะตาได้รับแรงสนับสนุนจากคนรอบข้าง ประชาชน หรือการเดินทาง', level: 'good' },
+    },
+    broken: {
+      career: { text: 'การงานมีความไม่แน่นอน เปลี่ยนงานบ่อย แต่ก็ยืดหยุ่นและเรียนรู้ได้เร็ว', level: 'warning' },
+      fate:   { text: 'ชีวิตมีการเปลี่ยนแปลงหลายครั้ง แต่ละช่วงแตกต่างกัน ยังดีที่แต่ละช่วงก็ดี', level: 'neutral' },
+    },
+    absent: {
+      career: { text: 'ชีวิตพึ่งตัวเองล้วน ต้องสร้างทุกอย่างเอง ไม่มีโชคพิเศษ แต่พยายามได้ผล', level: 'neutral' },
+      fate:   { text: 'ไม่มีดวงพิเศษ ชีวิตขึ้นกับตัวเองล้วน ลายมือเปลี่ยนได้ตามกรรม', level: 'neutral' },
+    },
+    branch_jupiter: {
+      career: { text: 'มีโอกาสก้าวหน้าในสายอาชีพ ชื่อเสียงและตำแหน่งสูงขึ้น อาชีพที่มีอำนาจ', level: 'good' },
+      fate:   { text: 'โชคชะตาเปิดกว้าง มีการพัฒนาตัวเองอย่างต่อเนื่อง เข้าถึงตำแหน่งสูง', level: 'good' },
+    },
+    from_head_line: {
+      career:      { text: 'ความสำเร็จมาอย่างค่อยเป็นค่อยไปจากความคิด ความรู้ และประสบการณ์ มักเด่นชัดขึ้นในช่วงหลังของชีวิต', level: 'good' },
+      fate:        { text: 'ชะตาเปิดจากการตัดสินใจและปัญญามากกว่าโชคที่ได้มาโดยง่าย', level: 'neutral' },
+      personality: { text: 'พึ่งการวางแผนและเหตุผลสูง เชื่อในการสร้างทางเดินของตัวเอง', level: 'good' },
+    },
+    stops_at_heart: {
+      career: { text: 'อาชีพอาจหยุดชะงักเพราะความรัก ระวังเรื่องส่วนตัวกระทบงาน', level: 'warning' },
+      fate:   { text: 'ชะตาถูกกำหนดโดยอารมณ์และความรัก ต้องสมดุลระหว่างใจกับเป้าหมาย', level: 'neutral' },
+    },
+    stops_at_head: {
+      career:      { text: 'การงานอาจติดขัดจากการตัดสินใจหรือกรอบความคิดของตัวเอง ควรทบทวนข้อมูลก่อนเลือกทางสำคัญ', level: 'warning' },
+      personality: { text: 'ควรพัฒนาวิธีตัดสินใจ เปิดรับมุมมองใหม่ และระวังความมั่นใจที่เร็วเกินไป', level: 'neutral' },
+    },
+    branch_sun: {
+      career: { text: 'มีโอกาสประสบความสำเร็จพร้อมชื่อเสียงหรือการยอมรับในผลงาน', level: 'good' },
+      fate:   { text: 'จังหวะชะตาหนุนทั้งความสำเร็จ โชคลาภ และการเป็นที่รู้จัก', level: 'good' },
+    },
+  },
+  sun_line: {
+    clear_present: {
+      career: { text: 'การงานได้รับการยอมรับ มีชื่อเสียง ชีวิตมีความสุขและความสำเร็จที่คนอื่นเห็น', level: 'good' },
+      fate:   { text: 'ชีวิตมีแสงสว่าง ได้รับการยอมรับและชื่นชม ดวงดีมีความสุข', level: 'good' },
+    },
+    short: {
+      career: { text: 'มีศักยภาพด้านชื่อเสียงหรือผลงานเด่น แต่ยังต้องใช้เวลาและความต่อเนื่องจึงจะเปิดออกเต็มที่', level: 'neutral' },
+    },
+    absent: {
+      career: { text: 'แม้จะเก่งแค่ไหน อาจไม่ได้รับการยอมรับ ต้องพยายามมากกว่าคนอื่นเพื่อให้เห็น', level: 'warning' },
+      fate:   { text: 'แม้ชะตาดี แต่ชีวิตขาดความสุขหรือการยอมรับ ควรสร้างความสุขจากภายใน', level: 'warning' },
+    },
+  },
+  mercury_line: {
+    absent: { health: { text: 'ดีที่สุด หมายถึงสุขภาพแข็งแรงโดยธรรมชาติ ไม่ต้องกังวลเรื่องสุขภาพ', level: 'good' } },
+    clear_straight: {
+      career: { text: 'ทำงานได้มีประสิทธิภาพ โดยเฉพาะงานที่ใช้การสื่อสาร การค้า หรือการจัดระบบ', level: 'good' },
+      health: { text: 'ระบบร่างกายทำงานได้ดีและมีพื้นฐานสุขภาพแข็งแรง', level: 'good' },
+    },
+    wavy:   { health: { text: 'ระวังระบบย่อยอาหาร โรคกระเพาะ ควรควบคุมอาหารและลดความเครียด', level: 'warning' } },
+  },
+  marriage_line: {
+    one_clear:    { love: { text: 'คุณมีเนื้อคู่แท้ ความสัมพันธ์มั่นคงและยืนยาว ชีวิตคู่ที่ดี', level: 'good' } },
+    two_separate: { love: { text: 'ชีวิตรักสำคัญ 2 ครั้ง ทั้งสองมีความสุขในแบบของตัวเอง', level: 'neutral' } },
+    two_close:    { love: { text: 'ระวังบุคคลที่สามเข้ามาในชีวิตคู่ หรือความลังเลในความสัมพันธ์', level: 'warning' } },
+    curves_down:  { love: { text: 'ความสัมพันธ์อาจจบลงด้วยความเจ็บปวดหรือการสูญเสีย ต้องระวังเรื่องสุขภาพคู่', level: 'warning' } },
+    crosses_heart:{ love: { text: 'ตำราเดิมอ่านเป็นสัญญาณของการสูญเสียคนรักหรือความสัมพันธ์ที่กระทบใจอย่างมาก ควรอ่านร่วมกับเส้นหัวใจและมือทั้งสองข้าง', level: 'warning' } },
+    curves_up:    { love: { text: 'ชีวิตคู่พัฒนาขึ้นเรื่อยๆ รักยืนยาว คู่ครองช่วยยกระดับชีวิตซึ่งกันและกัน', level: 'good' } },
+  },
+};
+
+// Category definitions
+const CATEGORIES = [
+  { id: 'love',        nameTh: 'ความรัก',     icon: '❤️' },
+  { id: 'career',      nameTh: 'การงาน',      icon: '💼' },
+  { id: 'health',      nameTh: 'สุขภาพ',      icon: '🌿' },
+  { id: 'fate',        nameTh: 'โชคชะตา',     icon: '✨' },
+  { id: 'personality', nameTh: 'บุคลิกภาพ',   icon: '🧠' },
+];
+
+const GROUP_LABELS = { main: 'เส้นหลัก', minor: 'เส้นรอง' };
+
+// ─────────────────────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────────────────────
+
+type LineTypeId = keyof typeof IMG_INDEX;
+type Reading = { text: string; level: string };
+
+let activeLine: LineTypeId = 'life_line';
+let activeVariant: string | null = null;
+
+// ─────────────────────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────────────────────
+
+function imgSrc(lineType: LineTypeId, variantId: string) {
+  const variants = IMG_INDEX[lineType] as Record<string, string>;
+  const filename = variants[variantId];
+  return filename ? `/images/lines/${filename}` : null;
+}
+
+// ─────────────────────────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────────────────────────
+
+function renderSidebar() {
+  const sidebar = document.getElementById('plw-sidebar');
+  if (!sidebar) return;
+
+  let html = '';
+  for (const [groupId, groupLabel] of Object.entries(GROUP_LABELS)) {
+    html += `<div class="plw-group-label">${groupLabel}</div>`;
+    LINE_TYPES.filter(l => l.group === groupId).forEach(l => {
+      const active = l.id === activeLine ? ' plw-active' : '';
+      html += `<button class="plw-line-btn${active}" data-line="${l.id}">${l.nameTh}</button>`;
+    });
+  }
+  sidebar.innerHTML = html;
+  sidebar.querySelectorAll<HTMLButtonElement>('.plw-line-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeLine = btn.dataset.line as LineTypeId;
+      activeVariant = null;
+      renderSidebar();
+      renderGrid();
+      renderDetail();
+    });
+  });
+}
+
+function renderGrid() {
+  const grid = document.getElementById('plw-grid');
+  if (!grid) return;
+
+  const lineType = LINE_TYPES.find(l => l.id === activeLine);
+  if (!lineType) return;
+
+  grid.innerHTML = lineType.variants.map(v => {
+    const src = imgSrc(activeLine, v.id);
+    const active = v.id === activeVariant ? ' plw-active' : '';
+    const imgHtml = src
+      ? `<img src="${src}" alt="${v.nameTh}" loading="lazy" />`
+      : `<div class="plw-card-no-img">☯</div>`;
+    return `
+      <div class="plw-card${active}" data-variant="${v.id}">
+        ${imgHtml}
+        <div class="plw-card-label">${v.nameTh}</div>
+      </div>`;
+  }).join('');
+
+  grid.querySelectorAll<HTMLElement>('.plw-card').forEach(card => {
+    card.addEventListener('click', () => {
+      activeVariant = card.dataset.variant ?? null;
+      renderGrid();
+      renderDetail();
+    });
+  });
+}
+
+function renderDetail() {
+  const detail = document.getElementById('plw-detail');
+  if (!detail) return;
+
+  if (!activeVariant) {
+    detail.innerHTML = `<div class="plw-placeholder">← เลือกลักษณะเส้น<br>เพื่อดูคำทำนาย</div>`;
+    return;
+  }
+
+  const lineType = LINE_TYPES.find(l => l.id === activeLine);
+  const variant  = lineType?.variants.find(v => v.id === activeVariant);
+  const lineReadings = READINGS[activeLine] as Record<string, Record<string, Reading>>;
+  const readings = lineReadings[activeVariant] ?? {};
+  const src      = imgSrc(activeLine, activeVariant);
+
+  let html = '';
+
+  // Selected image preview
+  if (src) {
+    html += `<img src="${src}" alt="${variant?.nameTh}" class="plw-detail-img" />`;
+  }
+
+  // Title
+  html += `
+    <div class="plw-detail-line">${lineType?.nameTh}</div>
+    <div class="plw-detail-variant">${variant?.nameTh}</div>
+    <div class="plw-divider"></div>
+  `;
+
+  // Readings by category
+  const hasReadings = Object.keys(readings).length > 0;
+  if (hasReadings) {
+    CATEGORIES.forEach(cat => {
+      const r = readings[cat.id];
+      if (!r) return;
+      html += `
+        <div class="plw-reading-block ${r.level}">
+          <div class="plw-reading-cat ${r.level}">${cat.icon} ${cat.nameTh}</div>
+          <p class="plw-reading-text">${r.text}</p>
+        </div>`;
+    });
+  } else {
+    html += `<div class="plw-no-reading">ยังไม่มีคำทำนายสำหรับลักษณะนี้</div>`;
+  }
+
+  // Disclaimer
+  html += `
+    <div class="plw-disclaimer">
+      ลายมือเปลี่ยนได้ตามกรรมและการกระทำ<br>
+      เพื่อการสำรวจตนเอง ไม่ใช่คำทำนายที่แน่นอน
+    </div>`;
+
+  detail.innerHTML = html;
+}
+
+// ─────────────────────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────────────────────
+
+renderSidebar();
+renderGrid();
+renderDetail();
+</script>

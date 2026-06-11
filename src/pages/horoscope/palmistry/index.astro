@@ -1,8 +1,10 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import FeaturePageHero from "../../../components/FeaturePageHero.astro";
+import PalmistryHandDiagram from "../../../components/PalmistryHandDiagram.astro";
+import PalmLineWidget from "../../../components/PalmLineWidget.astro";
 
 const extraScripts = ["/assets/js/palmistry.js"];
-const extraStyles = ["/assets/css/palmistry.css"];
 
 const featureGroups = [
   {
@@ -60,52 +62,24 @@ const breadcrumbs = [
   lang="th"
   locale="th"
   page="palmistry"
-  bodyClass="palmistry-page"
-  extraStyles={extraStyles}
+  bodyClass="palmistry-page feature-template-page"
   extraScripts={extraScripts}
   canonicalPath="/horoscope/palmistry/"
   breadcrumbs={breadcrumbs}
 >
   <main>
-    <section class="palm-hero">
-      <div>
-        <nav class="palm-breadcrumb" aria-label="breadcrumb">
-          <a href="/">หน้าแรก</a>
-          <span>/</span>
-          <a href="/#horoscope">ดูดวง</a>
-          <span>/</span>
-          <span>อ่านลายมือ</span>
-        </nav>
-        <p class="section-kicker">หัตถศาสตร์ไทย-first</p>
-        <h1>อ่านลายมือ</h1>
-        <p>
-          เริ่มจากระบุเส้นให้ถูกก่อนอ่านผล เลือกเฉพาะลักษณะที่เห็นชัด
-          แล้วระบบจะแสดงคำอ่านจาก rulebook ที่มีแหล่งอ้างอิง ไม่ใช้ AI แต่งคำทำนายสด
-        </p>
-      </div>
-
-      <aside class="palm-diagram-card" aria-label="แผนภาพเส้นหลักบนฝ่ามือ">
-        <div class="palm-diagram">
-          <span class="palm-finger one"></span>
-          <span class="palm-finger two"></span>
-          <span class="palm-finger three"></span>
-          <span class="palm-finger four"></span>
-          <span class="palm-thumb"></span>
-          <span class="palm-line heart"></span>
-          <span class="palm-line head"></span>
-          <span class="palm-line life"></span>
-          <span class="palm-line fate"></span>
-          <span class="palm-diagram-label heart">เส้นหัวใจ</span>
-          <span class="palm-diagram-label head">เส้นสมอง</span>
-          <span class="palm-diagram-label life">เส้นชีวิต</span>
-          <span class="palm-diagram-label fate">เส้นวาสนา</span>
-        </div>
-        <p>
-          แผนภาพนี้เป็นตัวช่วยระบุตำแหน่ง ไม่ใช่การอ่านจากรูปจริง
-          ถ้าเส้นใดไม่ชัด ให้เว้นไว้เพื่อกันผลอ่านที่เกินหลักฐาน
-        </p>
-      </aside>
-    </section>
+    <FeaturePageHero
+      class="palm-hero"
+      breadcrumbs={breadcrumbs}
+      kicker="หัตถศาสตร์ไทย-first"
+      title="อ่านลายมือ"
+      lead="เริ่มจากระบุเส้นให้ถูกก่อนอ่านผล เลือกเฉพาะลักษณะที่เห็นชัด แล้วระบบจะแสดงคำอ่านจาก rulebook ที่มีแหล่งอ้างอิง ไม่ใช้ AI แต่งคำทำนายสด"
+      mediaLabel="แผนภาพเส้นหลักบนฝ่ามือ"
+      mediaWidth="500px"
+      mediaAlign="end"
+    >
+      <PalmistryHandDiagram slot="media" />
+    </FeaturePageHero>
 
     <section class="palm-tool" id="palmistry-tool">
       <form class="palm-form" data-palmistry-form>
@@ -158,6 +132,10 @@ const breadcrumbs = [
         <div class="palm-result-summary" data-palmistry-summary></div>
         <div data-palmistry-result></div>
       </section>
+    </section>
+
+    <section class="palm-lines-reference">
+      <PalmLineWidget />
     </section>
 
     <section class="palm-method">
