@@ -30,6 +30,72 @@ const mountLabels = [
       <desc id="palm-map-desc">
         เปลี่ยนมุมมองเพื่อดูเส้นหลัก เส้นรอง หรือเนินทั้งเก้าตำแหน่งตามหลักหัตถศาสตร์
       </desc>
+      <style is:inline>
+        .palm-natural-creases path {
+          fill: none;
+          stroke: #b77f58;
+          stroke-width: 1.25;
+          stroke-linecap: round;
+          opacity: 0.45;
+        }
+
+        .palm-nails ellipse {
+          fill: rgba(255, 253, 246, 0.62);
+          stroke: #b77f58;
+          stroke-width: 1;
+        }
+
+        .palm-map-layer.is-hidden {
+          display: none;
+        }
+
+        .palm-map-line {
+          fill: none;
+          stroke: #8e2d24;
+          stroke-width: 4.6;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        .palm-map-line--fate { stroke: #6b4b8a; }
+        .palm-map-line--sun { stroke: #b57d0a; }
+        .palm-map-line--mercury { stroke: #246b59; }
+        .palm-map-line--marriage { stroke: #3f7f55; }
+
+        .palm-map-leader {
+          fill: none;
+          stroke: rgba(77, 56, 41, 0.54);
+          stroke-width: 1.4;
+          stroke-dasharray: 3 4;
+        }
+
+        .palm-map-label rect {
+          fill: #123d34;
+          stroke: rgba(234, 211, 160, 0.72);
+          stroke-width: 1;
+        }
+
+        .palm-map-label text,
+        .palm-mount-marker text {
+          fill: #fffaf0;
+          font-size: 13px;
+          font-weight: 900;
+          text-anchor: middle;
+        }
+
+        .palm-mount-layer ellipse {
+          fill: rgba(194, 141, 53, 0.18);
+          stroke: rgba(142, 45, 36, 0.62);
+          stroke-width: 1.5;
+          stroke-dasharray: 4 4;
+        }
+
+        .palm-mount-marker circle {
+          fill: #8e2d24;
+          stroke: #fff4d5;
+          stroke-width: 1.2;
+        }
+      </style>
       <defs>
         <radialGradient id="palm-skin" cx="45%" cy="38%" r="72%">
           <stop offset="0%" stop-color="#fff8ec" />

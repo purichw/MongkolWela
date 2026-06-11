@@ -49,6 +49,23 @@ test.describe("Mongkol Wela smoke regression", () => {
     await expect(openButton).toBeFocused();
   });
 
+  test("palmistry diagram has direct and inline critical styles", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "chromium-desktop", "critical style wiring is browser-independent");
+    await skipIntroLoader(page);
+    await page.goto("/horoscope/palmistry/", { waitUntil: "domcontentloaded" });
+
+    await expect(page.locator('link[href*="palmistry.css?feature=20260611-03"]')).toHaveCount(1);
+    await expect(page.locator(".palm-hand-map style")).toContainText(".palm-map-line");
+
+    const line = page.locator(".palm-map-line").first();
+    await expect(line).toHaveCSS("fill", "none");
+    await expect(line).not.toHaveCSS("stroke", "rgb(0, 0, 0)");
+    await expect(page.getByRole("button", { name: "เส้นหลัก", exact: true })).not.toHaveCSS(
+      "background-color",
+      "rgba(0, 0, 0, 0)"
+    );
+  });
+
   test("404 keeps recovery links visible", async ({ page }) => {
     await skipIntroLoader(page);
     await page.goto("/404.html", { waitUntil: "domcontentloaded" });

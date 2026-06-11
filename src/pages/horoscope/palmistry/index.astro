@@ -5,6 +5,7 @@ import PalmistryHandDiagram from "../../../components/PalmistryHandDiagram.astro
 import PalmLineWidget from "../../../components/PalmLineWidget.astro";
 
 const extraScripts = ["/assets/js/palmistry.js"];
+const extraStyles = ["/assets/css/palmistry.css?feature=20260611-03"];
 
 const featureGroups = [
   {
@@ -63,6 +64,7 @@ const breadcrumbs = [
   locale="th"
   page="palmistry"
   bodyClass="palmistry-page feature-template-page"
+  extraStyles={extraStyles}
   extraScripts={extraScripts}
   canonicalPath="/horoscope/palmistry/"
   breadcrumbs={breadcrumbs}
