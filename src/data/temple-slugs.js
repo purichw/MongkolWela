@@ -1,4 +1,5 @@
 export function createTempleSlug(temple) {
+  if (temple?.cmsSlug) return temple.cmsSlug;
   const rank = String(temple.rank || "").padStart(3, "0");
   const text = `${rank}-${temple.name || "temple"}-${temple.province || "thailand"}`;
   return text

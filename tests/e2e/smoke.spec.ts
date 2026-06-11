@@ -49,6 +49,23 @@ test.describe("Mongkol Wela smoke regression", () => {
     await expect(openButton).toBeFocused();
   });
 
+  test("temple cards and map payload keep usable images", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "chromium-desktop", "image data contract is covered once");
+    await skipIntroLoader(page);
+    await page.goto("/temples/popular/", { waitUntil: "domcontentloaded" });
+
+    const firstCardImage = page.locator("[data-popular-temple-card] picture img").first();
+    await expect(firstCardImage).toBeVisible();
+    await expect(firstCardImage).toHaveAttribute("src", /^https?:\/\//);
+
+    const mapPayload = await page.locator('script[id^="templeMapData-"]').textContent();
+    const firstMapTemple = JSON.parse(mapPayload || "{}").items?.[0];
+    const matchingCardImage = page.locator(
+      `[data-popular-temple-card][href="${firstMapTemple.detailUrl}"] picture img`,
+    );
+    await expect(matchingCardImage).toHaveAttribute("src", /^https?:\/\//);
+  });
+
   test("palmistry diagram has direct and inline critical styles", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "chromium-desktop", "critical style wiring is browser-independent");
     await skipIntroLoader(page);

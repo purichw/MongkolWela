@@ -174,7 +174,8 @@
     ]
   },
   "temples": {
-    "overrides": {}
+    "overrides": {},
+    "records": {}
   },
   "analytics": {
     "enabled": true,

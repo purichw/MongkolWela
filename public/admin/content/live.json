@@ -321,7 +321,8 @@
     ]
   },
   "temples": {
-    "overrides": {}
+    "overrides": {},
+    "records": {}
   },
   "navigation": {
     "tabs": [

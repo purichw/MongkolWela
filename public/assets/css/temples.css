@@ -248,6 +248,10 @@
   transition: transform 220ms ease, filter 220ms ease;
 }
 
+.temple-responsive-picture {
+  display: contents;
+}
+
 .popular-temple-card:hover img,
 .popular-temple-card:focus-visible img {
   filter: saturate(1.08) contrast(1.04);

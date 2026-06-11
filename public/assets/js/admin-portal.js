@@ -7,8 +7,22 @@ const state = {
   analytics: null,
   templeCatalog: [],
   selectedTempleKey: "",
-  templeCollectionFilter: "",
+  templeCollectionFilter: "popular",
+  templeSearch: "",
+  media: { provider: "", cloudinary: { enabled: false }, imagekit: { enabled: false } },
 };
+
+const TEMPLE_COLLECTIONS = [
+  { key: "popular", label: "สายไหว้พระ 9 วัด" },
+  { key: "mu", label: "สายมู" },
+  { key: "sacred", label: "วัดศักดิ์สิทธิ์" },
+];
+
+const TEMPLE_IMAGE_FIELDS = [
+  { role: "card", label: "รูปหน้า Overview List", ratio: 16 / 10, ratioLabel: "16 : 10" },
+  { role: "hero", label: "รูป Banner หน้ารายละเอียด", ratio: 16 / 10, ratioLabel: "16 : 10" },
+  { role: "map", label: "รูปใน Maps", ratio: 16 / 9, ratioLabel: "16 : 9" },
+];
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -79,8 +93,7 @@ async function boot() {
   try {
     state.session = await api("/api/admin/session");
     await loadContent();
-    await loadTemples();
-    await loadAnalytics();
+    await Promise.all([loadTemples(), loadAnalytics(), loadMediaConfig()]);
     renderAdmin();
   } catch {
     renderLogin();
@@ -180,9 +193,24 @@ async function loadTemples() {
   try {
     const payload = await api("/api/admin/temples");
     state.templeCatalog = payload.temples || [];
-    state.selectedTempleKey ||= state.templeCatalog[0]?.key || "";
+    const currentExists = state.templeCatalog.some((item) => item.key === state.selectedTempleKey);
+    if (!currentExists) {
+      state.selectedTempleKey =
+        state.templeCatalog.find((item) => item.collection === state.templeCollectionFilter)?.key ||
+        state.templeCatalog[0]?.key ||
+        "";
+    }
   } catch {
     state.templeCatalog = [];
+  }
+}
+
+async function loadMediaConfig() {
+  try {
+    const payload = await api("/api/admin/media");
+    state.media = payload.media || state.media;
+  } catch {
+    state.media = { provider: "", cloudinary: { enabled: false }, imagekit: { enabled: false } };
   }
 }
 
@@ -349,157 +377,187 @@ function renderPatchEditor(patch, index) {
   </article>`;
 }
 
-function templeOverrides() {
+function templeRecords() {
   state.content.temples ||= {};
-  state.content.temples.overrides ||= {};
-  return state.content.temples.overrides;
+  state.content.temples.records ||= {};
+  return state.content.temples.records;
 }
 
 function currentTempleRecord() {
-  if (!state.selectedTempleKey) state.selectedTempleKey = state.templeCatalog[0]?.key || "";
-  return state.templeCatalog.find((item) => item.key === state.selectedTempleKey) || state.templeCatalog[0] || null;
+  const visibleCatalog = filteredTempleCatalog();
+  if (!state.selectedTempleKey) state.selectedTempleKey = visibleCatalog[0]?.key || "";
+  return state.templeCatalog.find((item) => item.key === state.selectedTempleKey) || visibleCatalog[0] || null;
 }
 
-function currentTempleOverride({ create = true } = {}) {
+function currentTempleEdit({ create = true } = {}) {
   const record = currentTempleRecord();
   if (!record) return null;
-  const overrides = templeOverrides();
-  if (!create) return overrides[record.key] || null;
-  overrides[record.key] ||= {
+  const records = templeRecords();
+  if (!create) return records[record.key] || null;
+  records[record.key] ||= {
     key: record.key,
     collection: record.collection,
     slug: record.slug,
-    detailUrl: record.detailUrl,
-    enabled: true,
+    source: record.source || "dataset",
+    status: "active",
     fields: {},
-    visitInfo: {},
+    images: {},
   };
-  return overrides[record.key];
+  return records[record.key];
 }
 
-function templeValue(record, override, field) {
-  return override?.fields?.[field] ?? record?.temple?.[field] ?? "";
+function templeValue(record, edit, field) {
+  return edit?.fields?.[field] ?? record?.temple?.[field] ?? "";
 }
 
-function visitValue(record, override, section, field) {
-  return override?.visitInfo?.[section]?.[field] ?? record?.visitInfo?.[section]?.[field] ?? "";
+function filteredTempleCatalog() {
+  const query = normalizeAdminSearch(state.templeSearch);
+  return state.templeCatalog.filter((item) => {
+    if (item.collection !== state.templeCollectionFilter) return false;
+    if (!query) return true;
+    return normalizeAdminSearch(`${item.temple.name} ${item.temple.province} ${item.temple.district}`).includes(query);
+  });
+}
+
+function normalizeAdminSearch(value = "") {
+  return String(value).trim().toLocaleLowerCase("th").normalize("NFC");
 }
 
 function renderTemples() {
   setTitle("Temples");
+  const collection = TEMPLE_COLLECTIONS.find((item) => item.key === state.templeCollectionFilter) || TEMPLE_COLLECTIONS[0];
+  const visible = filteredTempleCatalog();
   const record = currentTempleRecord();
-  if (!record) {
-    $("#adminContent").innerHTML = `<div class="mw-admin-card">${empty("โหลดข้อมูลวัดไม่สำเร็จ")}</div>`;
-    return;
-  }
-  const override = currentTempleOverride({ create: false });
-  const changedCount = Object.values(templeOverrides()).filter((item) => item?.enabled !== false).length;
-  $("#adminContent").innerHTML = `<div class="mw-admin-toolbar">
-    <label class="mw-admin-inline-label">ชุดข้อมูล
-      <select data-temple-filter="collection">
-        <option value="" ${state.templeCollectionFilter === "" ? "selected" : ""}>ทั้งหมด</option>
-        <option value="popular" ${state.templeCollectionFilter === "popular" ? "selected" : ""}>สายไหว้พระ 9 วัด</option>
-        <option value="mu" ${state.templeCollectionFilter === "mu" ? "selected" : ""}>สายมู</option>
-        <option value="sacred" ${state.templeCollectionFilter === "sacred" ? "selected" : ""}>วัดศักดิ์สิทธิ์</option>
-      </select>
-    </label>
-    <label class="mw-admin-inline-label">วัด
-      <select data-field="selectedTemple">
-        ${state.templeCatalog
-          .filter((item) => !state.templeCollectionFilter || item.collection === state.templeCollectionFilter)
-          .map((item) => `<option value="${escapeHtml(item.key)}" ${item.key === record.key ? "selected" : ""}>${escapeHtml(item.collectionLabel)} · #${escapeHtml(item.temple.rank)} ${escapeHtml(item.temple.name)} (${escapeHtml(item.temple.province)})</option>`)
-          .join("")}
-      </select>
-    </label>
-    <a class="mw-admin-btn" target="_blank" rel="noopener" href="${escapeHtml(record.detailUrl)}">Preview</a>
-    <button class="mw-admin-btn mw-admin-btn-danger" type="button" data-action="reset-temple-override">Reset override</button>
-  </div>
-  <div class="mw-admin-grid mw-admin-grid--three">
-    ${statCard("Editable temples", state.templeCatalog.length)}
-    ${statCard("Overrides", changedCount)}
-    ${statCard("Current", record.collectionLabel)}
-  </div>
-  <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>ข้อมูลหลัก</h2><span class="mw-admin-muted">${escapeHtml(record.key)}</span></div>
-    <div class="mw-admin-form-grid">
-      ${templeInput("name", "ชื่อที่แสดง", record, override)}
-      ${templeInput("rank", "อันดับ", record, override, "number")}
-      ${templeInput("region", "ภาค", record, override)}
-      ${templeInput("province", "จังหวัด", record, override)}
-      ${templeInput("district", "อำเภอ / เขต", record, override)}
-      ${templeInput("placeType", "ประเภทสถานที่", record, override)}
-      ${templeTextarea("blessings", "จุดประสงค์/พรที่เกี่ยวข้อง", record, override)}
-      ${templeTextarea("objectHero", "สิ่งที่นิยมสักการะ", record, override)}
+  const edit = currentTempleEdit({ create: false });
+  const recordCount = Object.keys(templeRecords()).length;
+
+  $("#adminContent").innerHTML = `
+    <div class="mw-admin-temple-tabs" role="tablist" aria-label="หมวดสถานที่">
+      ${TEMPLE_COLLECTIONS.map((item) => {
+        const count = state.templeCatalog.filter((temple) => temple.collection === item.key).length;
+        return `<button type="button" role="tab" aria-selected="${item.key === state.templeCollectionFilter}" class="${item.key === state.templeCollectionFilter ? "is-active" : ""}" data-temple-collection="${item.key}">
+          <strong>${escapeHtml(item.label)}</strong><span>${count.toLocaleString("th-TH")}</span>
+        </button>`;
+      }).join("")}
+    </div>
+    <div class="mw-admin-temple-summary">
+      <div><p>จัดการสถานที่</p><h2>${escapeHtml(collection.label)}</h2></div>
+      <div>
+        <span>${visible.length.toLocaleString("th-TH")} สถานที่</span>
+        <span>${recordCount.toLocaleString("th-TH")} รายการที่แก้จาก Admin</span>
+        <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="add-temple">+ เพิ่มสถานที่</button>
+      </div>
+    </div>
+    <div class="mw-admin-temple-workspace">
+      <aside class="mw-admin-temple-list">
+        <label class="mw-admin-temple-search">
+          <span>ค้นหา</span>
+          <input type="search" value="${escapeHtml(state.templeSearch)}" placeholder="ชื่อสถานที่ จังหวัด หรือเขต" data-temple-search>
+        </label>
+        <div class="mw-admin-temple-list-scroll">
+          ${visible.map((item) => renderTempleListItem(item)).join("") || empty("ไม่พบสถานที่")}
+        </div>
+      </aside>
+      <section class="mw-admin-temple-editor">
+        ${record ? renderTempleEditor(record, edit) : renderTempleEmptyState()}
+      </section>
+    </div>`;
+}
+
+function renderTempleListItem(record) {
+  const image = templeImageValue(record, templeRecords()[record.key], "card", "desktop");
+  return `<button type="button" class="mw-admin-temple-list-item ${record.key === state.selectedTempleKey ? "is-active" : ""}" data-select-temple="${escapeHtml(record.key)}">
+    <span class="mw-admin-temple-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="">` : "<i>ไม่มีรูป</i>"}</span>
+    <span><strong data-temple-list-title>#${escapeHtml(record.temple.rank || "-")} ${escapeHtml(record.temple.name || "ยังไม่มีชื่อ")}</strong><small>${escapeHtml([record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง")}</small></span>
+    ${record.source === "admin" ? '<b>ใหม่</b>' : ""}
+  </button>`;
+}
+
+function renderTempleEmptyState() {
+  return `<div class="mw-admin-temple-empty">
+    <strong>ยังไม่มีสถานที่ในหมวดนี้</strong>
+    <p>เริ่มสร้างสถานที่แรก แล้วเพิ่มรูปสำหรับหน้า Overview, Banner และ Maps ได้ทันที</p>
+    <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="add-temple">+ เพิ่มสถานที่</button>
+  </div>`;
+}
+
+function renderTempleEditor(record, edit) {
+  const provider = state.media.provider
+    ? `อัปโหลดตรงไป ${state.media.provider === "cloudinary" ? "Cloudinary" : "ImageKit"}`
+    : "ยังไม่ได้ตั้งค่า Cloudinary หรือ ImageKit";
+  return `<div class="mw-admin-temple-editor-head">
+    <div>
+      <p data-temple-editor-rank>${escapeHtml(record.collectionLabel)} · #${escapeHtml(record.temple.rank || "-")}</p>
+      <h2 data-temple-editor-name>${escapeHtml(templeValue(record, edit, "name") || "สถานที่ใหม่")}</h2>
+      <small>${escapeHtml(record.key)}</small>
+    </div>
+    <div>
+      <a class="mw-admin-btn" target="_blank" rel="noopener" href="${escapeHtml(record.detailUrl)}">เปิดหน้าจริง</a>
+      ${record.source === "admin"
+        ? '<button class="mw-admin-btn mw-admin-btn-danger" type="button" data-action="delete-temple">ลบสถานที่</button>'
+        : '<button class="mw-admin-btn mw-admin-btn-danger" type="button" data-action="delete-temple">นำออกจากหมวด</button>'}
     </div>
   </div>
-  <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>รูปภาพและพิกัด</h2></div>
+  <div class="mw-admin-temple-section">
+    <div class="mw-admin-temple-section-head"><div><span>01</span><h3>ข้อมูลสถานที่</h3></div><p>ข้อมูลส่วนอื่นจะเพิ่มในเฟสถัดไป</p></div>
     <div class="mw-admin-form-grid">
-      ${templeInput("imageUrl", "รูป card/detail hero URL", record, override)}
-      ${templeInput("imageAlt", "Alt text", record, override)}
-      ${templeInput("imageSourceLabel", "ชื่อแหล่งรูป", record, override)}
-      ${templeInput("imageSourceUrl", "URL แหล่งรูป", record, override)}
-      ${templeInput("plusCode", "Plus Code", record, override)}
-      ${templeInput("latitude", "Latitude", record, override, "number")}
-      ${templeInput("longitude", "Longitude", record, override, "number")}
-      ${templeTextarea("travelModes", "วิธีเดินทาง (คั่นด้วย ;)", record, override)}
+      <label>ชื่อสถานที่<input data-temple-field="name" value="${escapeHtml(templeValue(record, edit, "name"))}" required></label>
+      <label>อันดับในหมวด<input type="number" min="1" data-temple-field="rank" value="${escapeHtml(templeValue(record, edit, "rank"))}"></label>
     </div>
   </div>
-  <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>ค่าเข้า เวลาเปิด-ปิด และติดต่อ</h2><span class="mw-admin-muted">กรอกเฉพาะข้อมูลที่ตรวจสอบแล้ว</span></div>
-    <div class="mw-admin-form-grid">
-      ${visitStatusSelect("admission", "สถานะค่าเข้าชม", record, override)}
-      ${visitStatusSelect("hours", "สถานะเวลาเปิด-ปิด", record, override)}
-      ${visitStatusSelect("contact", "สถานะช่องทางติดต่อ", record, override)}
-      ${visitTextarea("admission", "summary", "สรุปค่าเข้าชม", record, override)}
-      ${visitTextarea("hours", "summary", "สรุปเวลาเปิด-ปิด/วันหยุด", record, override)}
-      ${visitTextarea("contact", "summary", "สรุปช่องทางติดต่อ", record, override)}
-      ${visitInput("admission", "thai", "ค่าเข้า คนไทย", record, override)}
-      ${visitInput("admission", "foreign", "ค่าเข้า ชาวต่างชาติ", record, override)}
-      ${visitInput("admission", "adult", "ค่าเข้า ผู้ใหญ่", record, override)}
-      ${visitInput("admission", "child", "ค่าเข้า เด็ก", record, override)}
-      ${visitInput("hours", "regular", "เวลาปกติ", record, override)}
-      ${visitInput("hours", "closed", "วันหยุด", record, override)}
-      ${visitInput("hours", "holidayNotes", "หมายเหตุวันหยุด", record, override)}
-      ${visitInput("contact", "phone", "โทรศัพท์", record, override)}
-      ${visitInput("contact", "line", "LINE", record, override)}
-      ${visitInput("contact", "facebook", "Facebook", record, override)}
-      ${visitInput("contact", "email", "อีเมล", record, override)}
+  <div class="mw-admin-temple-section">
+    <div class="mw-admin-temple-section-head">
+      <div><span>02</span><h3>รูปภาพ</h3></div>
+      <p class="${state.media.provider ? "is-ready" : "is-warning"}">${escapeHtml(provider)}</p>
     </div>
-    <div class="mw-admin-form-grid">
-      <label>หมายเหตุ fallback<textarea data-visit-field="notice">${escapeHtml(override.visitInfo?.notice ?? record.visitInfo?.notice ?? "")}</textarea></label>
-      <label>แหล่งข้อมูล JSON<textarea data-visit-field="sourcesJson">${escapeHtml(JSON.stringify(override.visitInfo?.sources ?? record.visitInfo?.sources ?? [], null, 2))}</textarea></label>
+    <p class="mw-admin-temple-media-note">แต่ละตำแหน่งแยก Desktop และ Mobile เพื่อเลือกจุดครอปที่เหมาะกับหน้าจอจริง รูปใน Maps จะใช้รูป Overview เป็นค่าเริ่มต้นถ้ายังไม่ได้กำหนด</p>
+    <div class="mw-admin-temple-image-groups">
+      ${TEMPLE_IMAGE_FIELDS.map((field) => renderTempleImageGroup(record, edit, field)).join("")}
     </div>
   </div>`;
 }
 
-function templeInput(field, label, record, override, type = "text") {
-  const step = type === "number" ? ' step="any"' : "";
-  return `<label>${escapeHtml(label)}<input type="${type}"${step} data-temple-field="${field}" value="${escapeHtml(templeValue(record, override, field))}"></label>`;
+function renderTempleImageGroup(record, edit, field) {
+  return `<section class="mw-admin-temple-image-group">
+    <header><div><h4>${escapeHtml(field.label)}</h4><span>${escapeHtml(field.ratioLabel)}</span></div><small>${field.role === "card" ? "หน้า Cards" : field.role === "hero" ? "Banner หน้ารายละเอียด" : "Popup เมื่อเลือกหมุด"}</small></header>
+    <div class="mw-admin-temple-image-variants">
+      ${renderTempleImageField(record, edit, field, "desktop", "Desktop / Tablet")}
+      ${renderTempleImageField(record, edit, field, "mobile", "Mobile")}
+    </div>
+  </section>`;
 }
 
-function templeTextarea(field, label, record, override) {
-  return `<label>${escapeHtml(label)}<textarea data-temple-field="${field}">${escapeHtml(templeValue(record, override, field))}</textarea></label>`;
+function renderTempleImageField(record, edit, field, viewport, label) {
+  const url = templeImageValue(record, edit, field.role, viewport);
+  const inputId = `temple-image-${field.role}-${viewport}`;
+  return `<div class="mw-admin-image-field" data-image-role="${field.role}" data-image-viewport="${viewport}" data-image-ratio="${field.ratio}">
+    <div class="mw-admin-image-field-head"><strong>${escapeHtml(label)}</strong><span>${escapeHtml(field.ratioLabel)}</span></div>
+    <div class="mw-admin-image-preview" style="aspect-ratio:${field.ratio}">
+      ${url ? `<img src="${escapeHtml(url)}" alt="">` : `<span>ยังไม่มีรูป</span>`}
+    </div>
+    <div class="mw-admin-image-url-row">
+      <input id="${inputId}" type="url" value="${escapeHtml(url)}" placeholder="Wikimedia, Cloudinary, ImageKit หรือ HTTPS URL" data-image-url>
+      <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="use-temple-image-url">ใช้ URL</button>
+    </div>
+    <div class="mw-admin-image-actions">
+      <label class="mw-admin-btn mw-admin-btn-sm">อัปโหลด<input type="file" accept="image/*" data-temple-image-upload hidden></label>
+      <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="crop-temple-image" ${url ? "" : "disabled"}>Crop</button>
+      <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="reuse-temple-image">ใช้รูปเดิม</button>
+      <button class="mw-admin-btn mw-admin-btn-sm mw-admin-btn-danger" type="button" data-action="clear-temple-image" ${url ? "" : "disabled"}>ลบรูป</button>
+    </div>
+  </div>`;
 }
 
-function visitInput(section, field, label, record, override) {
-  return `<label>${escapeHtml(label)}<input data-visit-section="${section}" data-visit-prop="${field}" value="${escapeHtml(visitValue(record, override, section, field))}"></label>`;
-}
-
-function visitTextarea(section, field, label, record, override) {
-  return `<label>${escapeHtml(label)}<textarea data-visit-section="${section}" data-visit-prop="${field}">${escapeHtml(visitValue(record, override, section, field))}</textarea></label>`;
-}
-
-function visitStatusSelect(section, label, record, override) {
-  const value = visitValue(record, override, section, "status") || "needs-direct-check";
-  const options = [
-    ["verified", "ยืนยันแล้ว"],
-    ["listed", "มีแหล่งระบุ"],
-    ["needs-direct-check", "ให้ตรวจสอบกับสถานที่"],
-  ];
-  return `<label>${escapeHtml(label)}<select data-visit-section="${section}" data-visit-prop="status">
-    ${options.map(([id, text]) => `<option value="${id}" ${value === id ? "selected" : ""}>${escapeHtml(text)}</option>`).join("")}
-  </select></label>`;
+function templeImageValue(record, edit, role, viewport) {
+  return (
+    edit?.images?.[role]?.[viewport]?.url ??
+    record?.temple?.images?.[role]?.[viewport]?.url ??
+    (viewport === "mobile"
+      ? edit?.images?.[role]?.desktop?.url ?? record?.temple?.images?.[role]?.desktop?.url
+      : "") ??
+    record?.temple?.imageUrl ??
+    ""
+  );
 }
 
 function renderSections() {
@@ -629,6 +687,20 @@ function empty(text) {
 }
 
 function handleGlobalClick(event) {
+  const templeTab = event.target.closest("[data-temple-collection]");
+  if (templeTab) {
+    state.templeCollectionFilter = templeTab.dataset.templeCollection;
+    state.templeSearch = "";
+    state.selectedTempleKey = state.templeCatalog.find((item) => item.collection === state.templeCollectionFilter)?.key || "";
+    renderTemples();
+    return;
+  }
+  const templeItem = event.target.closest("[data-select-temple]");
+  if (templeItem) {
+    state.selectedTempleKey = templeItem.dataset.selectTemple;
+    renderTemples();
+    return;
+  }
   const sectionButton = event.target.closest("[data-section]");
   if (sectionButton) {
     if (sectionButton.dataset.pageJump) state.selectedPageId = sectionButton.dataset.pageJump;
@@ -668,6 +740,12 @@ function handleGlobalClick(event) {
     "add-card": addCard,
     "remove-card": removeCard,
     "reset-temple-override": resetTempleOverride,
+    "add-temple": addTemple,
+    "delete-temple": deleteTemple,
+    "use-temple-image-url": useTempleImageUrl,
+    "crop-temple-image": cropTempleImage,
+    "reuse-temple-image": reuseTempleImage,
+    "clear-temple-image": clearTempleImage,
     "add-rich-block": () => addBlock("richText"),
     "add-hero-block": () => addBlock("hero"),
     "add-cards-block": () => addBlock("cards"),
@@ -689,16 +767,18 @@ function handleInput(event) {
     renderAdmin();
     return;
   }
-  if (target.matches("[data-field='selectedTemple']")) {
-    state.selectedTempleKey = target.value;
+  if (target.matches("[data-temple-search]")) {
+    state.templeSearch = target.value;
     renderTemples();
+    requestAnimationFrame(() => {
+      const input = $("[data-temple-search]");
+      input?.focus();
+      input?.setSelectionRange(input.value.length, input.value.length);
+    });
     return;
   }
-  if (target.matches("[data-temple-filter='collection']")) {
-    state.templeCollectionFilter = target.value;
-    const next = state.templeCatalog.find((item) => !target.value || item.collection === target.value);
-    state.selectedTempleKey = next?.key || "";
-    renderTemples();
+  if (target.matches("[data-temple-image-upload]")) {
+    handleTempleImageUpload(target);
     return;
   }
   if (updateTempleFromInput(target)) {
@@ -718,42 +798,38 @@ function handleInput(event) {
 }
 
 function updateTempleFromInput(target) {
-  if (!target.matches("[data-temple-field], [data-visit-section][data-visit-prop], [data-visit-field]")) return false;
-  const override = currentTempleOverride();
-  if (!override) return true;
-  override.fields ||= {};
-  override.visitInfo ||= {};
+  if (!target.matches("[data-temple-field]")) return false;
+  const edit = currentTempleEdit();
+  if (!edit) return true;
+  edit.fields ||= {};
 
   if (target.matches("[data-temple-field]")) {
     const key = target.dataset.templeField;
     const numeric = target.type === "number";
     const value = numeric && target.value !== "" ? Number(target.value) : target.value;
-    override.fields[key] = value;
-  }
-
-  if (target.matches("[data-visit-section][data-visit-prop]")) {
-    const section = target.dataset.visitSection;
-    const key = target.dataset.visitProp;
-    override.visitInfo[section] ||= { status: "verified" };
-    override.visitInfo[section].status ||= "verified";
-    override.visitInfo[section][key] = target.value;
-  }
-
-  if (target.matches("[data-visit-field]")) {
-    const key = target.dataset.visitField;
-    if (key === "sourcesJson") {
-      try {
-        override.visitInfo.sources = JSON.parse(target.value || "[]");
-        target.setCustomValidity("");
-      } catch {
-        target.setCustomValidity("JSON ไม่ถูกต้อง");
-      }
-    } else {
-      override.visitInfo[key] = target.value;
+    edit.fields[key] = value;
+    const catalogRecord = currentTempleRecord();
+    if (catalogRecord) {
+      catalogRecord.temple[key] = value;
+      syncTempleEditorLabels(catalogRecord);
     }
   }
 
   return true;
+}
+
+function syncTempleEditorLabels(record) {
+  const name = record.temple.name || "ยังไม่มีชื่อ";
+  const rank = record.temple.rank || "-";
+  const listItem = [...document.querySelectorAll("[data-select-temple]")]
+    .find((item) => item.dataset.selectTemple === record.key);
+  const listTitle = listItem?.querySelector("[data-temple-list-title]");
+  if (listTitle) listTitle.textContent = `#${rank} ${name}`;
+
+  const editorName = $("[data-temple-editor-name]");
+  const editorRank = $("[data-temple-editor-rank]");
+  if (editorName) editorName.textContent = name;
+  if (editorRank) editorRank.textContent = `${record.collectionLabel} · #${rank}`;
 }
 
 function updatePatchFromInput(target, page) {
@@ -1097,12 +1173,426 @@ function removeCard(button) {
   renderComponents();
 }
 
-function resetTempleOverride() {
+async function resetTempleOverride() {
   const record = currentTempleRecord();
   if (!record) return;
-  delete templeOverrides()[record.key];
+  delete templeRecords()[record.key];
+  await loadTemples();
   markDirty();
   renderTemples();
+}
+
+function addTemple() {
+  const collection = state.templeCollectionFilter || "popular";
+  const createdAt = Date.now();
+  const key = `${collection}:admin-${createdAt}`;
+  const maxRank = Math.max(
+    0,
+    ...state.templeCatalog.filter((item) => item.collection === collection).map((item) => Number(item.temple.rank) || 0),
+  );
+  const edit = {
+    key,
+    collection,
+    slug: `${String(maxRank + 1).padStart(3, "0")}-สถานที่ใหม่-thailand-${createdAt}`,
+    source: "admin",
+    status: "active",
+    fields: {
+      rank: maxRank + 1,
+      name: "สถานที่ใหม่",
+      region: "",
+      province: "",
+      district: "",
+      imageAlt: "",
+    },
+    images: {},
+  };
+  templeRecords()[key] = edit;
+  const collectionLabel = TEMPLE_COLLECTIONS.find((item) => item.key === collection)?.label || collection;
+  state.templeCatalog.push({
+    key,
+    collection,
+    collectionLabel,
+    slug: edit.slug,
+    detailUrl: `/temples/${collection}/${edit.slug}/`,
+    source: "admin",
+    temple: { ...edit.fields, images: {} },
+    visitInfo: {},
+  });
+  state.selectedTempleKey = key;
+  state.templeSearch = "";
+  markDirty();
+  renderTemples();
+  requestAnimationFrame(() => $("[data-temple-field='name']")?.select());
+}
+
+function deleteTemple() {
+  const record = currentTempleRecord();
+  if (!record) return;
+  const message = record.source === "admin"
+    ? `ลบ “${record.temple.name}” ออกจากระบบ?`
+    : `นำ “${record.temple.name}” ออกจากหมวดนี้? ข้อมูลต้นฉบับจะไม่ถูกแก้ไข`;
+  if (!confirm(message)) return;
+  const edit = currentTempleEdit();
+  edit.status = "deleted";
+  state.templeCatalog = state.templeCatalog.filter((item) => item.key !== record.key);
+  state.selectedTempleKey = state.templeCatalog.find((item) => item.collection === state.templeCollectionFilter)?.key || "";
+  markDirty();
+  renderTemples();
+}
+
+function imageFieldFromButton(button) {
+  const root = button.closest("[data-image-role][data-image-viewport]");
+  if (!root) return null;
+  return {
+    root,
+    role: root.dataset.imageRole,
+    viewport: root.dataset.imageViewport,
+    ratio: Number(root.dataset.imageRatio) || 1,
+  };
+}
+
+function setTempleImage(role, viewport, url, metadata = {}) {
+  const edit = currentTempleEdit();
+  const catalogRecord = currentTempleRecord();
+  if (!edit || !catalogRecord) return;
+  edit.images ||= {};
+  edit.images[role] ||= {};
+  edit.images[role][viewport] = { ...(edit.images[role][viewport] || {}), ...metadata, url };
+  catalogRecord.temple.images ||= {};
+  catalogRecord.temple.images[role] ||= {};
+  catalogRecord.temple.images[role][viewport] = { ...(catalogRecord.temple.images[role][viewport] || {}), ...metadata, url };
+  if (role === "card" && viewport === "desktop") catalogRecord.temple.imageUrl = url;
+  markDirty();
+}
+
+async function useTempleImageUrl(button) {
+  const field = imageFieldFromButton(button);
+  if (!field) return;
+  const input = field.root.querySelector("[data-image-url]");
+  const sourceUrl = String(input?.value || "").trim();
+  if (!/^https:\/\//iu.test(sourceUrl)) {
+    setStatus("กรุณาใช้ HTTPS image URL", "error");
+    input?.focus();
+    return;
+  }
+  try {
+    setStatus(state.media.provider ? "กำลังนำรูปเข้า Media Library..." : "กำลังใช้ URL ภายนอก...", "info");
+    const result = state.media.provider ? await uploadAdminMedia(sourceUrl, templeImageFilename(field)) : sourceUrl;
+    setTempleImage(field.role, field.viewport, result, {
+      originalUrl: sourceUrl,
+      provider: detectImageProvider(result),
+    });
+    setStatus("เพิ่มรูปแล้ว กด Crop เพื่อปรับจุดภาพได้", "ok");
+    renderTemples();
+  } catch (error) {
+    setTempleImage(field.role, field.viewport, sourceUrl, { originalUrl: sourceUrl, provider: detectImageProvider(sourceUrl) });
+    setStatus(`ใช้ URL ภายนอกแล้ว แต่ import ไม่สำเร็จ: ${error.message}`, "warn");
+    renderTemples();
+  }
+}
+
+function cropTempleImage(button) {
+  const field = imageFieldFromButton(button);
+  if (!field) return;
+  const sourceUrl = field.root.querySelector("[data-image-url]")?.value || templeImageValue(currentTempleRecord(), currentTempleEdit({ create: false }), field.role, field.viewport);
+  if (!sourceUrl) return;
+  openTempleCropper(sourceUrl, field);
+}
+
+function reuseTempleImage(button) {
+  const field = imageFieldFromButton(button);
+  const record = currentTempleRecord();
+  const edit = currentTempleEdit({ create: false });
+  if (!field || !record) return;
+  const candidates = [
+    templeImageValue(record, edit, field.role, field.viewport === "mobile" ? "desktop" : "mobile"),
+    templeImageValue(record, edit, "card", "desktop"),
+    record.temple.imageUrl,
+  ].filter(Boolean);
+  if (!candidates.length) {
+    setStatus("ยังไม่มีรูปต้นทางให้ใช้ซ้ำ", "warn");
+    return;
+  }
+  setTempleImage(field.role, field.viewport, candidates[0], { provider: detectImageProvider(candidates[0]) });
+  setStatus("ใช้รูปเดิมแล้ว สามารถ Crop แยกสำหรับช่องนี้ได้", "ok");
+  renderTemples();
+}
+
+function clearTempleImage(button) {
+  const field = imageFieldFromButton(button);
+  const edit = currentTempleEdit();
+  if (!field || !edit) return;
+  edit.images ||= {};
+  edit.images[field.role] ||= {};
+  edit.images[field.role][field.viewport] = { url: "" };
+  const record = currentTempleRecord();
+  if (record?.temple?.images?.[field.role]) record.temple.images[field.role][field.viewport] = { url: "" };
+  markDirty();
+  renderTemples();
+}
+
+function handleTempleImageUpload(input) {
+  const field = imageFieldFromButton(input);
+  const file = input.files?.[0];
+  if (!field || !file) return;
+  if (!file.type.startsWith("image/")) {
+    setStatus("ไฟล์ที่เลือกไม่ใช่รูปภาพ", "error");
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => openTempleCropper(String(reader.result || ""), { ...field, fileName: file.name });
+  reader.onerror = () => setStatus("อ่านไฟล์รูปไม่สำเร็จ", "error");
+  reader.readAsDataURL(file);
+}
+
+function templeImageFilename(field) {
+  const record = currentTempleRecord();
+  const safeName = String(record?.temple?.name || "temple")
+    .normalize("NFC")
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-+|-+$/g, "");
+  return `${safeName || "temple"}-${field.role}-${field.viewport}.jpg`;
+}
+
+function detectImageProvider(url = "") {
+  if (/res\.cloudinary\.com/iu.test(url)) return "cloudinary";
+  if (/ik\.imagekit\.io/iu.test(url) || /imagekit\.io/iu.test(url)) return "imagekit";
+  if (/wikimedia\.org|wikipedia\.org/iu.test(url)) return "wikimedia";
+  return "external";
+}
+
+async function uploadAdminMedia(fileValue, fileName) {
+  if (state.media.provider === "cloudinary" && state.media.cloudinary?.enabled) {
+    const form = new FormData();
+    form.append("file", fileValue);
+    form.append("upload_preset", state.media.cloudinary.uploadPreset);
+    form.append("folder", "mongkolwela/temples");
+    form.append("context", `source=admin_portal|temple=${currentTempleRecord()?.key || ""}`);
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${state.media.cloudinary.cloudName}/image/upload`, {
+      method: "POST",
+      body: form,
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok || !payload.secure_url) throw new Error(payload.error?.message || "Cloudinary upload failed");
+    return payload.secure_url;
+  }
+  if (state.media.provider === "imagekit" && state.media.imagekit?.enabled) {
+    const auth = await api("/api/admin/media", {
+      method: "POST",
+      body: JSON.stringify({ action: "imagekit-auth" }),
+    });
+    const form = new FormData();
+    form.append("file", fileValue);
+    form.append("fileName", fileName || "temple-image.jpg");
+    form.append("folder", "/mongkolwela/temples");
+    form.append("useUniqueFileName", "true");
+    form.append("publicKey", auth.authentication.publicKey);
+    form.append("signature", auth.authentication.signature);
+    form.append("expire", String(auth.authentication.expire));
+    form.append("token", auth.authentication.token);
+    const response = await fetch("https://upload.imagekit.io/api/v1/files/upload", { method: "POST", body: form });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok || !payload.url) throw new Error(payload.message || "ImageKit upload failed");
+    return payload.url;
+  }
+  throw new Error("ยังไม่ได้ตั้งค่า Cloudinary หรือ ImageKit");
+}
+
+let templeCropState = null;
+
+function openTempleCropper(src, field) {
+  let overlay = $("#templeCropOverlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "templeCropOverlay";
+    overlay.className = "mw-admin-crop-overlay";
+    document.body.appendChild(overlay);
+  }
+  const fieldLabel = TEMPLE_IMAGE_FIELDS.find((item) => item.role === field.role);
+  overlay.innerHTML = `<div class="mw-admin-crop-modal" role="dialog" aria-modal="true" aria-labelledby="templeCropTitle">
+    <header><div><span>${escapeHtml(field.viewport === "mobile" ? "Mobile" : "Desktop / Tablet")}</span><h2 id="templeCropTitle">Crop ${escapeHtml(fieldLabel?.label || "รูปภาพ")} · ${escapeHtml(fieldLabel?.ratioLabel || "")}</h2></div><button type="button" data-crop-close aria-label="ปิด">×</button></header>
+    <div class="mw-admin-crop-stage">
+      <div class="mw-admin-crop-wrap" data-crop-wrap>
+        <img ${/^data:/iu.test(src) ? "" : 'crossorigin="anonymous"'} src="${escapeHtml(src)}" alt="" data-crop-image>
+        <div class="mw-admin-crop-selection" data-crop-selection><i data-crop-handle="nw"></i><i data-crop-handle="ne"></i><i data-crop-handle="sw"></i><i data-crop-handle="se"></i></div>
+      </div>
+    </div>
+    <footer><p>ลากกรอบเพื่อเลือกภาพ ระบบจะบันทึกเป็น JPEG ตามสัดส่วนที่กำหนด</p><div><button class="mw-admin-btn" type="button" data-crop-close>ยกเลิก</button><button class="mw-admin-btn mw-admin-btn-primary" type="button" data-crop-apply>Crop และบันทึก</button></div></footer>
+  </div>`;
+  overlay.classList.add("is-open");
+  overlay.querySelectorAll("[data-crop-close]").forEach((button) => button.addEventListener("click", closeTempleCropper));
+  overlay.querySelector("[data-crop-apply]")?.addEventListener("click", applyTempleCrop);
+  const image = overlay.querySelector("[data-crop-image]");
+  image.addEventListener("load", () => initializeTempleCrop(field, src));
+  image.addEventListener("error", () => setStatus("โหลดรูปเพื่อ Crop ไม่สำเร็จ ลอง import เข้า Media Library ก่อน", "error"));
+  if (image.complete && image.naturalWidth) initializeTempleCrop(field, src);
+}
+
+function initializeTempleCrop(field, src) {
+  const overlay = $("#templeCropOverlay");
+  const image = overlay?.querySelector("[data-crop-image]");
+  const selection = overlay?.querySelector("[data-crop-selection]");
+  if (!image || !selection) return;
+  const width = image.clientWidth;
+  const height = image.clientHeight;
+  let cropWidth;
+  let cropHeight;
+  if (width / height > field.ratio) {
+    cropHeight = height;
+    cropWidth = cropHeight * field.ratio;
+  } else {
+    cropWidth = width;
+    cropHeight = cropWidth / field.ratio;
+  }
+  templeCropState = {
+    ...field,
+    src,
+    image,
+    selection,
+    displayWidth: width,
+    displayHeight: height,
+    x: (width - cropWidth) / 2,
+    y: (height - cropHeight) / 2,
+    width: cropWidth,
+    height: cropHeight,
+  };
+  updateTempleCropSelection();
+  bindTempleCropPointerEvents();
+}
+
+function bindTempleCropPointerEvents() {
+  const state = templeCropState;
+  if (!state) return;
+  state.selection.onpointerdown = (event) => {
+    event.preventDefault();
+    const handle = event.target.dataset.cropHandle || "";
+    const start = { x: event.clientX, y: event.clientY, ...pickCropBox(state) };
+    state.selection.setPointerCapture?.(event.pointerId);
+    const move = (moveEvent) => {
+      const dx = moveEvent.clientX - start.x;
+      const dy = moveEvent.clientY - start.y;
+      if (!handle) moveTempleCrop(start, dx, dy);
+      else resizeTempleCrop(handle, start, dx, dy);
+      updateTempleCropSelection();
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  };
+}
+
+function pickCropBox(state) {
+  return { cropX: state.x, cropY: state.y, cropWidth: state.width, cropHeight: state.height };
+}
+
+function moveTempleCrop(start, dx, dy) {
+  const state = templeCropState;
+  state.x = Math.max(0, Math.min(start.cropX + dx, state.displayWidth - state.width));
+  state.y = Math.max(0, Math.min(start.cropY + dy, state.displayHeight - state.height));
+}
+
+function resizeTempleCrop(handle, start, dx, dy) {
+  const state = templeCropState;
+  const fromLeft = handle.includes("w");
+  const fromTop = handle.includes("n");
+  const anchorX = fromLeft ? start.cropX + start.cropWidth : start.cropX;
+  const anchorY = fromTop ? start.cropY + start.cropHeight : start.cropY;
+  let width = Math.max(60, fromLeft ? start.cropWidth - dx : start.cropWidth + dx);
+  let height = width / state.ratio;
+  if (height > state.displayHeight) {
+    height = state.displayHeight;
+    width = height * state.ratio;
+  }
+  let x = fromLeft ? anchorX - width : anchorX;
+  let y = fromTop ? anchorY - height : anchorY;
+  if (x < 0) {
+    x = 0;
+    width = anchorX;
+    height = width / state.ratio;
+    y = fromTop ? anchorY - height : anchorY;
+  }
+  if (y < 0) {
+    y = 0;
+    height = anchorY;
+    width = height * state.ratio;
+    x = fromLeft ? anchorX - width : anchorX;
+  }
+  if (x + width > state.displayWidth) {
+    width = state.displayWidth - x;
+    height = width / state.ratio;
+  }
+  if (y + height > state.displayHeight) {
+    height = state.displayHeight - y;
+    width = height * state.ratio;
+    x = fromLeft ? anchorX - width : anchorX;
+  }
+  state.x = Math.max(0, x);
+  state.y = Math.max(0, y);
+  state.width = Math.max(1, width);
+  state.height = Math.max(1, height);
+}
+
+function updateTempleCropSelection() {
+  const state = templeCropState;
+  if (!state) return;
+  Object.assign(state.selection.style, {
+    left: `${state.x}px`,
+    top: `${state.y}px`,
+    width: `${state.width}px`,
+    height: `${state.height}px`,
+  });
+}
+
+async function applyTempleCrop() {
+  const state = templeCropState;
+  if (!state) return;
+  const button = $("#templeCropOverlay [data-crop-apply]");
+  try {
+    button.disabled = true;
+    button.textContent = "กำลังบันทึก...";
+    const scaleX = state.image.naturalWidth / state.displayWidth;
+    const scaleY = state.image.naturalHeight / state.displayHeight;
+    const outputWidth = Math.min(state.viewport === "mobile" ? 1080 : 1600, Math.round(state.width * scaleX));
+    const outputHeight = Math.round(outputWidth / state.ratio);
+    const canvas = document.createElement("canvas");
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
+    const context = canvas.getContext("2d");
+    context.drawImage(
+      state.image,
+      state.x * scaleX,
+      state.y * scaleY,
+      state.width * scaleX,
+      state.height * scaleY,
+      0,
+      0,
+      outputWidth,
+      outputHeight,
+    );
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
+    const url = await uploadAdminMedia(dataUrl, state.fileName || templeImageFilename(state));
+    setTempleImage(state.role, state.viewport, url, {
+      originalUrl: state.src,
+      provider: detectImageProvider(url),
+      width: outputWidth,
+      height: outputHeight,
+    });
+    closeTempleCropper();
+    setStatus("Crop และบันทึกรูปแล้ว", "ok");
+    renderTemples();
+  } catch (error) {
+    button.disabled = false;
+    button.textContent = "Crop และบันทึก";
+    setStatus(`บันทึกรูปไม่สำเร็จ: ${error.message}`, "error");
+  }
+}
+
+function closeTempleCropper() {
+  $("#templeCropOverlay")?.classList.remove("is-open");
+  templeCropState = null;
 }
 
 function addBlock(type) {

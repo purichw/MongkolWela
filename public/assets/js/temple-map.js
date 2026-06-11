@@ -44,9 +44,12 @@ function initializeTempleMapWidget(root) {
   if (!modal || !openButton || !payloadNode) return;
 
   const payload = readPayload(payloadNode);
+  const cardData = collectTempleCardData();
+  payload.items = payload.items.map((item) => ({ ...(cardData.get(item.detailUrl) || {}), ...item }));
   mapStates.set(modal, {
     root,
     payload,
+    cardData,
     map: null,
     clusterGroup: null,
     markers: [],
@@ -165,8 +168,9 @@ function initTempleMap(modal, state) {
   });
 
   state.payload.items.forEach((item) => {
+    const cardImages = state.cardData.get(item.detailUrl);
     const marker = window.L.marker([item.latitude, item.longitude], { icon: icons.defaultIcon })
-      .bindPopup(renderTemplePopup(item), {
+      .bindPopup(renderTemplePopup(item, cardImages, state.payload.placeholderImage), {
         maxWidth: 300,
         minWidth: 250,
         autoPan: true,
@@ -224,9 +228,31 @@ function bindTempleMarkerHover(marker, state) {
   });
 }
 
-function renderTemplePopup(item) {
-  const img = item.imageUrl
-    ? `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.imageAlt || item.name)}" loading="lazy">`
+function collectTempleCardData() {
+  return new Map(
+    [...document.querySelectorAll("[data-popular-temple-card]")].map((card) => [
+      card.getAttribute("href") || "",
+      {
+        name: card.dataset.name || "",
+        region: card.dataset.region || "",
+        province: card.dataset.province || "",
+        district: card.dataset.district || "",
+        imageAlt: card.querySelector("picture img")?.getAttribute("alt") || card.dataset.name || "",
+        desktop: card.querySelector("picture img")?.getAttribute("src") || "",
+        mobile: card.querySelector("picture source")?.getAttribute("srcset") || "",
+      },
+    ]),
+  );
+}
+
+function renderTemplePopup(item, cardImages = {}, placeholderImage = "") {
+  const desktopImage = item.imageUrl || cardImages.desktop || placeholderImage;
+  const mobileImage = item.imageMobileUrl || cardImages.mobile || desktopImage;
+  const img = desktopImage
+    ? `<picture class="temple-responsive-picture">
+        ${mobileImage && mobileImage !== desktopImage ? `<source media="(max-width: 767px)" srcset="${escapeHtml(mobileImage)}">` : ""}
+        <img src="${escapeHtml(desktopImage)}" alt="${escapeHtml(item.imageAlt || item.name)}" loading="lazy">
+      </picture>`
     : `<div class="temple-map-popup__image-placeholder"></div>`;
   const place = [item.province, item.district].filter(Boolean).join(" / ");
   return `

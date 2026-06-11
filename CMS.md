@@ -13,4 +13,23 @@ Production `/api/admin/content` may read from Supabase first, but it must expose
 
 Do not rely on stale database content to define navigation. Database content is a published copy; the repo JSON files define the deployable contract.
 
+## Admin Media
+
+Temple image uploads go directly from the browser to the configured media provider so the image bytes do not pass through Vercel Functions.
+
+Cloudinary:
+
+- `ADMIN_MEDIA_PROVIDER=cloudinary`
+- `CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_UNSIGNED_UPLOAD_PRESET`
+
+ImageKit:
+
+- `ADMIN_MEDIA_PROVIDER=imagekit`
+- `IMAGEKIT_PUBLIC_KEY`
+- `IMAGEKIT_PRIVATE_KEY`
+- `IMAGEKIT_URL_ENDPOINT` (optional display URL)
+
+The private ImageKit key remains server-only. `/api/admin/media` returns a short-lived upload signature after validating the Admin session.
+
 The production smoke test checks `/api/admin/content` against `live.json` so missing Admin Portal menu/page entries are caught after every deploy.

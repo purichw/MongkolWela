@@ -2,6 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import TempleSearchHero from "../../../components/TempleSearchHero.astro";
 import TempleMapOverlay from "../../../components/TempleMapOverlay.astro";
+import TempleResponsiveImage from "../../../components/TempleResponsiveImage.astro";
 import sacredTemples from "../../../data/sacred-temples.json";
 import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data/temple-images.js";
 import { getTempleDetailUrl } from "../../../data/temple-slugs.js";
@@ -21,6 +22,9 @@ type TempleCard = {
   province: string;
   district?: string;
   imageUrl?: string;
+  imageMobileUrl?: string;
+  mapImageUrl?: string;
+  mapImageMobileUrl?: string;
   imageAlt?: string;
   placeType?: string;
   blessings?: string;
@@ -160,7 +164,7 @@ const itemListJsonLd = createItemListJsonLd({
       >
         {rankedTemples.map((temple) => {
           const hasTempleImage = Boolean(temple.imageUrl) && temple.imageUrl !== templePlaceholderImage;
-          const imageUrl = hasTempleImage ? temple.imageUrl : templePlaceholderImage;
+          const imageUrl = hasTempleImage ? String(temple.imageUrl) : templePlaceholderImage;
           const imageAlt = temple.imageAlt || `${temple.name} ${temple.province}`;
 
           return (
@@ -179,12 +183,13 @@ const itemListJsonLd = createItemListJsonLd({
               data-image-placeholder={hasTempleImage ? undefined : "true"}
             >
               <figure>
-                <img
-                  src={imageUrl}
+                <TempleResponsiveImage
+                  desktopSrc={imageUrl}
+                  mobileSrc={temple.imageMobileUrl || imageUrl}
                   alt={imageAlt}
                   loading="lazy"
                   decoding="async"
-                  data-fallback-src={templePlaceholderImage}
+                  fallbackSrc={templePlaceholderImage}
                 />
                 <figcaption>#{temple.rank.toString().padStart(2, "0")}</figcaption>
                 <span class="popular-temple-distance" data-popular-temple-distance hidden></span>

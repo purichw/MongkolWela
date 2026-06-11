@@ -1,0 +1,34 @@
+---
+interface Props {
+  desktopSrc: string;
+  mobileSrc?: string;
+  alt: string;
+  loading?: "eager" | "lazy";
+  decoding?: "async" | "auto" | "sync";
+  fetchpriority?: "high" | "low" | "auto";
+  fallbackSrc?: string;
+}
+
+const {
+  desktopSrc,
+  mobileSrc = desktopSrc,
+  alt,
+  loading = "lazy",
+  decoding = "async",
+  fetchpriority,
+  fallbackSrc,
+} = Astro.props as Props;
+---
+
+<picture class="temple-responsive-picture">
+  {mobileSrc && mobileSrc !== desktopSrc && <source media="(max-width: 767px)" srcset={mobileSrc} data-temple-mobile-source />}
+  <img
+    src={desktopSrc}
+    alt={alt}
+    loading={loading}
+    decoding={decoding}
+    fetchpriority={fetchpriority}
+    data-fallback-src={fallbackSrc}
+    data-temple-desktop-image
+  />
+</picture>

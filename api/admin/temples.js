@@ -1,11 +1,16 @@
-import fs from "node:fs/promises";
-import path from "node:path";
 import { requireAdmin, sendJson } from "./_shared.js";
+import popularTemples from "../../src/data/popular-temples.json" with { type: "json" };
+import muTemples from "../../src/data/mu-temples.json" with { type: "json" };
+import sacredTemples from "../../src/data/sacred-temples.json" with { type: "json" };
+import visitInfoData from "../../src/data/temple-visit-info.json" with { type: "json" };
+import { applyTempleCmsRecords, templeCollectionConfig } from "../../src/data/temple-cms.js";
+import { createTempleSlug } from "../../src/data/temple-slugs.js";
+import { readLiveContent } from "./_shared.js";
 
-const DATA_FILES = {
-  popular: "popular-temples.json",
-  mu: "mu-temples.json",
-  sacred: "sacred-temples.json",
+const DATASETS = {
+  popular: popularTemples,
+  mu: muTemples,
+  sacred: sacredTemples,
 };
 
 const COLLECTION_LABELS = {
@@ -19,25 +24,6 @@ const COLLECTION_ORDER = {
   mu: 2,
   sacred: 3,
 };
-
-function createTempleSlug(temple) {
-  const rank = String(temple.rank || "").padStart(3, "0");
-  const text = `${rank}-${temple.name || "temple"}-${temple.province || "thailand"}`;
-  return text
-    .normalize("NFC")
-    .replace(/[^\p{L}\p{N}]+/gu, "-")
-    .replace(/^-+|-+$/g, "")
-    .replace(/-{2,}/g, "-");
-}
-
-async function readJson(relativePath) {
-  const filePath = path.join(process.cwd(), relativePath);
-  return JSON.parse(await fs.readFile(filePath, "utf8"));
-}
-
-function imageKey(temple) {
-  return `${temple.name}|${temple.province}`;
-}
 
 function normalizeVisitInfo(temple, visitInfoData) {
   const fallbackNotice = visitInfoData.fallbackNotice || "กรุณาตรวจสอบกับสถานที่ดังกล่าว";
@@ -55,59 +41,40 @@ function normalizeVisitInfo(temple, visitInfoData) {
   };
 }
 
-function applyImageOverride(collection, temple, imageOverrides) {
-  const collectionOverrides = imageOverrides[collection] || {};
-  const key = imageKey(temple);
-  const direct = collectionOverrides[key];
-  if (direct) return { ...temple, ...direct };
-
-  for (const [name, overrides] of Object.entries(imageOverrides)) {
-    if (name.startsWith("_") || !overrides || typeof overrides !== "object") continue;
-    if (overrides[key]) return { ...temple, ...overrides[key] };
-  }
-  return temple;
-}
-
 async function loadTempleCatalog() {
-  const [imageOverrides, visitInfoData] = await Promise.all([
-    readJson("src/data/temple-image-overrides.json").catch(() => ({})),
-    readJson("src/data/temple-visit-info.json").catch(() => ({})),
-  ]);
-
-  const collections = await Promise.all(
-    Object.entries(DATA_FILES).map(async ([collection, file]) => {
-      const temples = await readJson(`src/data/${file}`);
-      return temples.map((sourceTemple) => {
-        const temple = applyImageOverride(collection, sourceTemple, imageOverrides);
-        const slug = createTempleSlug(temple);
-        const detailUrl = `/temples/${collection}/${slug}/`;
-        return {
-          key: `${collection}:${slug}`,
-          collection,
-          collectionLabel: COLLECTION_LABELS[collection],
-          slug,
-          detailUrl,
-          temple: {
-            rank: temple.rank,
-            name: temple.name,
-            region: temple.region,
-            province: temple.province,
-            district: temple.district || "",
-            placeType: temple.placeType || "",
-            blessings: temple.blessings || "",
-            objectHero: temple.objectHero || "",
-            imageUrl: temple.imageUrl || "",
-            imageAlt: temple.imageAlt || "",
-            imageSourceLabel: temple.imageSourceLabel || "",
-            imageSourceUrl: temple.imageSourceUrl || "",
-            plusCode: temple.plusCode || "",
-            latitude: temple.latitude ?? "",
-            longitude: temple.longitude ?? "",
-            travelModes: temple.travelModes || "",
-          },
-          visitInfo: normalizeVisitInfo(temple, visitInfoData),
-        };
-      });
+  const content = await readLiveContent();
+  const collections = Object.entries(DATASETS).map(([collection, temples]) =>
+    applyTempleCmsRecords(collection, temples, content).map((temple) => {
+      const slug = temple.cmsSlug || createTempleSlug(temple);
+      const detailUrl = `/temples/${collection}/${slug}/`;
+      return {
+        key: temple.cmsKey || `${collection}:${slug}`,
+        collection,
+        collectionLabel: templeCollectionConfig[collection]?.label || COLLECTION_LABELS[collection],
+        slug,
+        detailUrl,
+        source: temple.cmsSource || "dataset",
+        temple: {
+          rank: temple.rank,
+          name: temple.name,
+          region: temple.region,
+          province: temple.province,
+          district: temple.district || "",
+          placeType: temple.placeType || "",
+          blessings: temple.blessings || "",
+          objectHero: temple.objectHero || "",
+          imageUrl: temple.imageUrl || "",
+          imageAlt: temple.imageAlt || "",
+          imageSourceLabel: temple.imageSourceLabel || "",
+          imageSourceUrl: temple.imageSourceUrl || "",
+          images: temple.cmsImages || {},
+          plusCode: temple.plusCode || "",
+          latitude: temple.latitude ?? "",
+          longitude: temple.longitude ?? "",
+          travelModes: temple.travelModes || "",
+        },
+        visitInfo: normalizeVisitInfo(temple, visitInfoData),
+      };
     }),
   );
 

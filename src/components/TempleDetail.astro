@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import TempleResponsiveImage from "./TempleResponsiveImage.astro";
 import { getTempleTravel } from "../data/temple-travel.js";
 import { getTempleVisitInfo } from "../data/temple-visit-info.js";
 import { getTempleDetailUrl } from "../data/temple-slugs.js";
@@ -16,6 +17,8 @@ interface Props {
     province: string;
     district?: string;
     imageUrl?: string;
+    detailImageUrl?: string;
+    detailImageMobileUrl?: string;
     imageAlt?: string;
     placeType?: string;
     blessings?: string;
@@ -108,7 +111,8 @@ type VisitInfoSection = {
 };
 
 const { collection, collectionLabel, collectionHref, temple, placeholderImage, relatedTemples = [] } = Astro.props as Props;
-const imageUrl = temple.imageUrl || placeholderImage;
+const imageUrl = temple.detailImageUrl || temple.imageUrl || placeholderImage;
+const imageMobileUrl = temple.detailImageMobileUrl || imageUrl;
 const title = `${temple.name} | ${collectionLabel} | มงคลเวลา`;
 const detailUrl = getTempleDetailUrl(collection, temple);
 const hasCoordinates = Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude));
@@ -260,13 +264,14 @@ const templeJsonLd = createTempleJsonLd({
 
     <section class="temple-detail-hero" aria-labelledby="temple-detail-title">
       <figure class="temple-detail-hero__media">
-        <img
-          src={imageUrl}
+        <TempleResponsiveImage
+          desktopSrc={imageUrl}
+          mobileSrc={imageMobileUrl}
           alt={temple.imageAlt || `${temple.name} ${temple.province}`}
           loading="eager"
           decoding="async"
           fetchpriority="high"
-          data-fallback-src={placeholderImage}
+          fallbackSrc={placeholderImage}
         />
         <figcaption>{sourceLabel}</figcaption>
       </figure>

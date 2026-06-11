@@ -239,7 +239,7 @@ function templeKeyFromHref(href = "") {
 }
 
 function getTempleOverride(content, key) {
-  const override = content?.temples?.overrides?.[key];
+  const override = content?.temples?.records?.[key] || content?.temples?.overrides?.[key];
   if (!override || override.enabled === false) return null;
   return override;
 }
@@ -294,12 +294,16 @@ function applyTempleCardOverrides(content) {
     setText(".popular-temple-card-body p", `${province}${district ? ` / ${district}` : ""}`, card);
 
     const image = card.querySelector("img");
-    if (image && fields.imageUrl) {
-      image.src = fields.imageUrl;
+    const cardDesktop = override.images?.card?.desktop?.url || fields.imageUrl;
+    const cardMobile = override.images?.card?.mobile?.url || cardDesktop;
+    if (image && cardDesktop) {
+      image.src = cardDesktop;
       image.dataset.fallbackApplied = "";
       card.classList.remove("is-placeholder");
       card.removeAttribute("data-image-placeholder");
     }
+    const mobileSource = card.querySelector("[data-temple-mobile-source]");
+    if (mobileSource && cardMobile) mobileSource.srcset = cardMobile;
     if (image && fields.imageAlt !== undefined) image.alt = fields.imageAlt;
   });
   document.dispatchEvent(new CustomEvent("mw:temple-overrides-applied"));
@@ -483,7 +487,11 @@ function applyTempleDetailOverride(content) {
   setText("#temple-detail-title", name, root);
   document.title = document.title.replace(/^.*?\s\|/, `${name} |`);
   const image = root.querySelector(".temple-detail-hero__media img");
-  if (image && fields.imageUrl) image.src = fields.imageUrl;
+  const heroDesktop = override.images?.hero?.desktop?.url || fields.imageUrl;
+  const heroMobile = override.images?.hero?.mobile?.url || heroDesktop;
+  if (image && heroDesktop) image.src = heroDesktop;
+  const mobileSource = root.querySelector(".temple-detail-hero__media [data-temple-mobile-source]");
+  if (mobileSource && heroMobile) mobileSource.srcset = heroMobile;
   if (image && fields.imageAlt !== undefined) image.alt = fields.imageAlt;
   setText(".temple-detail-hero__media figcaption", fieldValue(override, "imageSourceLabel", currentSourceLabel), root);
 
@@ -558,7 +566,7 @@ function applyTempleDetailOverride(content) {
 }
 
 function applyTempleOverrides(content) {
-  if (!content?.temples?.overrides) return;
+  if (!content?.temples?.records && !content?.temples?.overrides) return;
   applyTempleCardOverrides(content);
   applyTempleDetailOverride(content);
 }

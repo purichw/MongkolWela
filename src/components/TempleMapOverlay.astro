@@ -8,6 +8,8 @@ interface TempleMapItem {
   province: string;
   district?: string;
   imageUrl?: string;
+  mapImageUrl?: string;
+  mapImageMobileUrl?: string;
   imageAlt?: string;
   latitude?: number | null;
   longitude?: number | null;
@@ -28,17 +30,24 @@ const modalId = `templeMapModal-${collection}`;
 const payloadId = `templeMapData-${collection}`;
 const mapItems = temples
   .filter((temple) => Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude)))
-  .map((temple) => ({
-    rank: temple.rank,
-    name: temple.name,
-    region: temple.region,
-    province: temple.province,
-    district: temple.district || "",
-    placeType: temple.placeType || "วัดและสถานที่ศักดิ์สิทธิ์",
-    latitude: Number(temple.latitude),
-    longitude: Number(temple.longitude),
-    detailUrl: getTempleDetailUrl(collection, temple),
-  }));
+  .map((temple) => {
+    const cardImage = temple.imageUrl || "";
+    const mapImage = temple.mapImageUrl && temple.mapImageUrl !== cardImage ? temple.mapImageUrl : "";
+    const cardMobileImage = temple.imageMobileUrl || cardImage;
+    const mapMobileImage =
+      temple.mapImageMobileUrl && temple.mapImageMobileUrl !== (mapImage || cardMobileImage)
+        ? temple.mapImageMobileUrl
+        : "";
+    return {
+      rank: temple.rank,
+      latitude: Number(temple.latitude),
+      longitude: Number(temple.longitude),
+      detailUrl: getTempleDetailUrl(collection, temple),
+      ...(mapImage ? { imageUrl: mapImage } : {}),
+      ...(mapMobileImage ? { imageMobileUrl: mapMobileImage } : {}),
+      ...(mapImage || mapMobileImage ? { imageAlt: temple.imageAlt || `${temple.name} ${temple.province}` } : {}),
+    };
+  });
 const payload = JSON.stringify({
   collection,
   title,
