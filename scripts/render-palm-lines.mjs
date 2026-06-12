@@ -242,7 +242,6 @@ function renderSvg(lines) {
     <path d="M128 177 C155 189 206 199 245 212"/>
     <path d="M116 209 C152 218 196 230 234 244"/>
     <path d="M117 192 C101 229 101 287 126 330"/>
-    <path d="M162 176 C164 225 167 288 169 338"/>
   </g>
   <path d="M93 354 C122 365 184 366 225 352" fill="none" stroke="#c99168" stroke-width="1.6" opacity=".55"/>
   <g fill="none" stroke="#b9352c" stroke-linecap="round" stroke-linejoin="round">
