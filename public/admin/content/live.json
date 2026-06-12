@@ -308,7 +308,7 @@
     "enabled": true,
     "sampleRate": 1
   },
-  "updatedAt": "2026-06-12T08:56:27.371Z",
+  "updatedAt": "2026-06-12T08:57:30.931Z",
   "components": {
     "cards": [
       {
@@ -558,7 +558,7 @@
       }
     ]
   },
-  "publishedAt": "2026-06-12T08:56:27.371Z",
+  "publishedAt": "2026-06-12T08:57:30.931Z",
   "publishedBy": "Admin",
   "schemaVersion": 1,
   "temples": {
@@ -570,7 +570,7 @@
         "source": "dataset",
         "status": "active",
         "fields": {
-          "rank": 10
+          "rank": 11
         },
         "images": {}
       },
@@ -581,7 +581,7 @@
         "source": "dataset",
         "status": "active",
         "fields": {
-          "rank": 11
+          "rank": 10
         },
         "images": {}
       }
