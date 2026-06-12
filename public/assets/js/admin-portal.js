@@ -9,6 +9,7 @@ const state = {
   selectedTempleKey: "",
   templeCollectionFilter: "popular",
   templeSearch: "",
+  templeListScroll: {},
   media: { provider: "", cloudinary: { enabled: false }, imagekit: { enabled: false } },
 };
 
@@ -125,6 +126,7 @@ function renderAppShell() {
   $("#adminApp").addEventListener("click", handleGlobalClick);
   $("#adminApp").addEventListener("input", handleInput);
   $("#adminApp").addEventListener("change", handleInput);
+  $("#adminApp").addEventListener("error", handleAdminImageError, true);
 }
 
 function navButton(id, label, iconName) {
@@ -423,7 +425,8 @@ function normalizeAdminSearch(value = "") {
   return String(value).trim().toLocaleLowerCase("th").normalize("NFC");
 }
 
-function renderTemples() {
+function renderTemples({ rememberScroll = true } = {}) {
+  if (rememberScroll) rememberTempleListScroll();
   setTitle("Temples");
   const collection = TEMPLE_COLLECTIONS.find((item) => item.key === state.templeCollectionFilter) || TEMPLE_COLLECTIONS[0];
   const visible = filteredTempleCatalog();
@@ -462,12 +465,13 @@ function renderTemples() {
         ${record ? renderTempleEditor(record, edit) : renderTempleEmptyState()}
       </section>
     </div>`;
+  restoreTempleListScroll();
 }
 
 function renderTempleListItem(record) {
   const image = templeImageValue(record, templeRecords()[record.key], "card", "desktop");
   return `<button type="button" class="mw-admin-temple-list-item ${record.key === state.selectedTempleKey ? "is-active" : ""}" data-select-temple="${escapeHtml(record.key)}">
-    <span class="mw-admin-temple-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="">` : "<i>ไม่มีรูป</i>"}</span>
+    <span class="mw-admin-temple-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" data-admin-temple-image>` : "<i>ไม่มีรูป</i>"}</span>
     <span><strong data-temple-list-title>#${escapeHtml(record.temple.rank || "-")} ${escapeHtml(record.temple.name || "ยังไม่มีชื่อ")}</strong><small>${escapeHtml([record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง")}</small></span>
     ${record.source === "admin" ? '<b>ใหม่</b>' : ""}
   </button>`;
@@ -533,7 +537,7 @@ function renderTempleImageField(record, edit, field, viewport, label) {
   return `<div class="mw-admin-image-field" data-image-role="${field.role}" data-image-viewport="${viewport}" data-image-ratio="${field.ratio}">
     <div class="mw-admin-image-field-head"><strong>${escapeHtml(label)}</strong><span>${escapeHtml(field.ratioLabel)}</span></div>
     <div class="mw-admin-image-preview" style="aspect-ratio:${field.ratio}">
-      ${url ? `<img src="${escapeHtml(url)}" alt="">` : `<span>ยังไม่มีรูป</span>`}
+      ${url ? `<img src="${escapeHtml(url)}" alt="" data-admin-temple-image>` : `<span>ยังไม่มีรูป</span>`}
     </div>
     <div class="mw-admin-image-url-row">
       <input id="${inputId}" type="url" value="${escapeHtml(url)}" placeholder="Wikimedia, Cloudinary, ImageKit หรือ HTTPS URL" data-image-url>
@@ -558,6 +562,17 @@ function templeImageValue(record, edit, role, viewport) {
     record?.temple?.imageUrl ??
     ""
   );
+}
+
+function handleAdminImageError(event) {
+  const image = event.target.closest?.("[data-admin-temple-image]");
+  if (!image) return;
+  const container = image.closest(".mw-admin-image-preview, .mw-admin-temple-list-thumb");
+  if (!container) return;
+  container.classList.add("is-error");
+  container.innerHTML = container.classList.contains("mw-admin-image-preview")
+    ? "<span>โหลดรูปไม่ได้<br><small>ตรวจสอบ URL หรือลองอัปโหลดใหม่</small></span>"
+    : "<i>รูปเสีย</i>";
 }
 
 function renderSections() {
@@ -689,14 +704,16 @@ function empty(text) {
 function handleGlobalClick(event) {
   const templeTab = event.target.closest("[data-temple-collection]");
   if (templeTab) {
+    rememberTempleListScroll();
     state.templeCollectionFilter = templeTab.dataset.templeCollection;
     state.templeSearch = "";
     state.selectedTempleKey = state.templeCatalog.find((item) => item.collection === state.templeCollectionFilter)?.key || "";
-    renderTemples();
+    renderTemples({ rememberScroll: false });
     return;
   }
   const templeItem = event.target.closest("[data-select-temple]");
   if (templeItem) {
+    event.preventDefault();
     state.selectedTempleKey = templeItem.dataset.selectTemple;
     renderTemples();
     return;
@@ -758,6 +775,26 @@ function handleGlobalClick(event) {
     },
   };
   actions[action]?.(actionButton);
+}
+
+function rememberTempleListScroll() {
+  const list = $(".mw-admin-temple-list-scroll");
+  if (!list) return;
+  state.templeListScroll[state.templeCollectionFilter] = list.scrollTop;
+}
+
+function restoreTempleListScroll() {
+  const list = $(".mw-admin-temple-list-scroll");
+  if (!list) return;
+  const collection = state.templeCollectionFilter;
+  const scrollTop = Number(state.templeListScroll[collection]) || 0;
+  const restore = () => {
+    if (state.templeCollectionFilter !== collection) return;
+    const currentList = $(".mw-admin-temple-list-scroll");
+    if (currentList) currentList.scrollTop = scrollTop;
+  };
+  restore();
+  requestAnimationFrame(restore);
 }
 
 function handleInput(event) {
@@ -1276,7 +1313,8 @@ async function useTempleImageUrl(button) {
     return;
   }
   try {
-    setStatus(state.media.provider ? "กำลังนำรูปเข้า Media Library..." : "กำลังใช้ URL ภายนอก...", "info");
+    setStatus(state.media.provider ? "กำลังตรวจสอบและนำรูปเข้า Media Library..." : "กำลังตรวจสอบ URL...", "info");
+    await verifyImageLoads(sourceUrl);
     const result = state.media.provider ? await uploadAdminMedia(sourceUrl, templeImageFilename(field)) : sourceUrl;
     setTempleImage(field.role, field.viewport, result, {
       originalUrl: sourceUrl,
@@ -1285,10 +1323,18 @@ async function useTempleImageUrl(button) {
     setStatus("เพิ่มรูปแล้ว กด Crop เพื่อปรับจุดภาพได้", "ok");
     renderTemples();
   } catch (error) {
-    setTempleImage(field.role, field.viewport, sourceUrl, { originalUrl: sourceUrl, provider: detectImageProvider(sourceUrl) });
-    setStatus(`ใช้ URL ภายนอกแล้ว แต่ import ไม่สำเร็จ: ${error.message}`, "warn");
-    renderTemples();
+    field.root.classList.add("is-error");
+    setStatus(`ยังไม่บันทึกรูป: ${error.message}`, "error");
   }
+}
+
+function verifyImageLoads(url) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(url);
+    image.onerror = () => reject(new Error("URL นี้เปิดเป็นรูปภาพไม่ได้ กรุณาตรวจสอบลิงก์"));
+    image.src = url;
+  });
 }
 
 function cropTempleImage(button) {

@@ -528,6 +528,15 @@
   font-style: normal;
 }
 
+.mw-admin-temple-list-thumb.is-error {
+  background: #f6e8e5;
+}
+
+.mw-admin-temple-list-thumb.is-error i {
+  color: #9b3028;
+  font-weight: 800;
+}
+
 .mw-admin-temple-list-item strong,
 .mw-admin-temple-list-item small {
   display: block;
@@ -721,6 +730,23 @@
   color: rgba(4, 10, 12, 0.44);
   font-size: 0.76rem;
   font-weight: 800;
+  text-align: center;
+}
+
+.mw-admin-image-preview > span small {
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.mw-admin-image-preview.is-error,
+.mw-admin-image-field.is-error .mw-admin-image-preview {
+  border-color: #d9a39e;
+  background: #fff5f3;
+}
+
+.mw-admin-image-preview.is-error > span,
+.mw-admin-image-field.is-error .mw-admin-image-preview > span {
+  color: #9b3028;
 }
 
 .mw-admin-image-url-row {

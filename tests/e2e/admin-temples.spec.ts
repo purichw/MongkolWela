@@ -9,27 +9,34 @@ const collections = [
   { key: "sacred", label: "วัดศักดิ์สิทธิ์", name: "วัดโสธรวราราม" },
 ];
 
-const temples = collections.map((collection) => ({
-  key: `${collection.key}:001`,
-  collection: collection.key,
-  collectionLabel: collection.label,
-  slug: `001-${collection.key}`,
-  detailUrl: `/temples/${collection.key}/001-${collection.key}/`,
-  source: "dataset",
-  temple: {
-    rank: 1,
-    name: collection.name,
-    province: "กรุงเทพมหานคร",
-    district: "พระนคร",
-    imageUrl,
-    images: {
-      card: { desktop: { url: imageUrl }, mobile: { url: imageUrl } },
-      hero: { desktop: { url: imageUrl }, mobile: { url: imageUrl } },
-      map: { desktop: { url: imageUrl }, mobile: { url: imageUrl } },
-    },
-  },
-  visitInfo: {},
-}));
+const temples = collections.flatMap((collection) => {
+  const count = collection.key === "sacred" ? 50 : 1;
+  return Array.from({ length: count }, (_, index) => {
+    const rank = index + 1;
+    const paddedRank = String(rank).padStart(3, "0");
+    return {
+      key: `${collection.key}:${paddedRank}`,
+      collection: collection.key,
+      collectionLabel: collection.label,
+      slug: `${paddedRank}-${collection.key}`,
+      detailUrl: `/temples/${collection.key}/${paddedRank}-${collection.key}/`,
+      source: "dataset",
+      temple: {
+        rank,
+        name: rank === 1 ? collection.name : `วัดทดสอบ ${rank}`,
+        province: "กรุงเทพมหานคร",
+        district: "พระนคร",
+        imageUrl,
+        images: {
+          card: { desktop: { url: imageUrl }, mobile: { url: imageUrl } },
+          hero: { desktop: { url: imageUrl }, mobile: { url: imageUrl } },
+          map: { desktop: { url: imageUrl }, mobile: { url: imageUrl } },
+        },
+      },
+      visitInfo: {},
+    };
+  });
+});
 
 async function mockAdminApis(page) {
   await page.route("**/api/admin/**", async (route) => {
@@ -84,7 +91,7 @@ test.describe("Temple Admin Portal", () => {
     await expect(page.locator("[data-temple-editor-name]")).toHaveText("วัดทดสอบระบบ Admin");
     await expect(page.locator("[data-temple-list-title]")).toContainText("วัดทดสอบระบบ Admin");
 
-    await page.getByRole("tab", { name: "วัดศักดิ์สิทธิ์ 1", exact: true }).click();
+    await page.getByRole("tab", { name: "วัดศักดิ์สิทธิ์ 50", exact: true }).click();
     await page.getByRole("searchbox", { name: "ค้นหา", exact: true }).fill("โสธร");
     await expect(page.locator("[data-select-temple]")).toHaveCount(1);
     await expect(page.getByLabel("ชื่อสถานที่", { exact: true })).toHaveValue("วัดโสธรวราราม");
@@ -110,5 +117,41 @@ test.describe("Temple Admin Portal", () => {
     await expect(dialog).toBeVisible();
     await expect(dialog.locator("[data-crop-selection]")).toBeVisible();
     await expect(dialog.getByRole("button", { name: "Crop และบันทึก", exact: true })).toBeEnabled();
+  });
+
+  test("keeps the temple list at the same scroll position after selecting an item", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name.includes("mobile"), "desktop sidebar has an independent scroll container");
+    await page.getByRole("tab", { name: "วัดศักดิ์สิทธิ์ 50", exact: true }).click();
+    const list = page.locator(".mw-admin-temple-list-scroll");
+    const item = page.locator('[data-select-temple="sacred:042"]');
+    await item.scrollIntoViewIfNeeded();
+    const before = await list.evaluate((element) => element.scrollTop);
+    expect(before).toBeGreaterThan(0);
+
+    await item.click();
+    await expect(page.getByLabel("ชื่อสถานที่", { exact: true })).toHaveValue("วัดทดสอบ 42");
+    await expect
+      .poll(async () => Math.abs((await list.evaluate((element) => element.scrollTop)) - before))
+      .toBeLessThanOrEqual(2);
+  });
+
+  test("shows a clear fallback and rejects a broken image URL", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "chromium-desktop", "broken image handling is covered once");
+    await page.route("https://images.example.test/broken.jpg", (route) =>
+      route.fulfill({ status: 404, contentType: "text/plain", body: "Not found" }),
+    );
+
+    const imageField = page.locator(
+      '.mw-admin-image-field[data-image-role="card"][data-image-viewport="desktop"]',
+    );
+    const previewImage = imageField.locator("[data-admin-temple-image]");
+    await previewImage.evaluate((image) => {
+      image.setAttribute("src", "https://images.example.test/broken.jpg");
+    });
+    await expect(imageField.getByText("โหลดรูปไม่ได้")).toBeVisible();
+
+    await imageField.getByRole("textbox").fill("https://images.example.test/broken.jpg");
+    await imageField.getByRole("button", { name: "ใช้ URL", exact: true }).click();
+    await expect(page.locator("#adminStatus")).toContainText("ยังไม่บันทึกรูป");
   });
 });
