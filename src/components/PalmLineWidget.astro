@@ -1,289 +1,57 @@
 ---
-// PalmLineWidget.astro
-// Interactive palm line reading widget
-// Usage: <PalmLineWidget /> — images served from /public/images/lines/
+// Interactive palm line reading widget. Images are served from /public/images/lines/.
 ---
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<section id="plw" class="plw-shell" aria-labelledby="plw-title">
+  <header class="plw-header">
+    <div>
+      <p class="section-kicker">อ่านแบบสองชั้น</p>
+      <h2 id="plw-title" class="plw-title">อ่านลายมือจากพื้นฐานและบริบทของมือ</h2>
+      <p class="plw-subtitle">
+        เลือกลักษณะจากภาพ แล้วระบบจะรวมความหมายของเส้นเข้ากับมือถนัด มือไม่ถนัด
+        หรือพัฒนาการระหว่างสองมือ
+      </p>
+    </div>
 
-<div id="plw">
-  <div class="plw-header">
-    <h2 class="plw-title">ลักษณะเส้นลายมือ</h2>
-    <p class="plw-subtitle">รวม 45 ลักษณะจากเส้นหลักและเส้นรอง เลือกเฉพาะลักษณะที่เห็นชัดบนมือ</p>
-  </div>
+    <div class="plw-controls">
+      <fieldset class="plw-control-group">
+        <legend>มือที่ถนัด</legend>
+        <div class="plw-segmented" data-plw-handedness>
+          <button type="button" data-handedness="right" aria-pressed="true">ถนัดขวา</button>
+          <button type="button" data-handedness="left" aria-pressed="false">ถนัดซ้าย</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="plw-control-group">
+        <legend>รูปแบบการอ่าน</legend>
+        <div class="plw-segmented plw-segmented--mode" data-plw-mode>
+          <button type="button" data-mode="dominant" aria-pressed="true">มือถนัด</button>
+          <button type="button" data-mode="nonDominant" aria-pressed="false">มือไม่ถนัด</button>
+          <button type="button" data-mode="compare" aria-pressed="false">เทียบสองมือ</button>
+        </div>
+      </fieldset>
+    </div>
+  </header>
+
+  <div class="plw-context" data-plw-context aria-live="polite"></div>
+
   <div class="plw-body">
-    <nav id="plw-sidebar" class="plw-sidebar"></nav>
+    <nav id="plw-sidebar" class="plw-sidebar" aria-label="ประเภทเส้นลายมือ"></nav>
     <div class="plw-main">
-      <div id="plw-grid" class="plw-grid"></div>
-      <aside id="plw-detail" class="plw-detail"></aside>
+      <section class="plw-picker" aria-labelledby="plw-picker-title">
+        <div class="plw-picker-head">
+          <div>
+            <p class="section-kicker">เลือกลักษณะที่เห็นชัด</p>
+            <h3 id="plw-picker-title" data-plw-line-title>เส้นชีวิต</h3>
+          </div>
+          <div class="plw-hand-key" data-plw-hand-key></div>
+        </div>
+        <div id="plw-grid" class="plw-grid"></div>
+      </section>
+      <aside id="plw-detail" class="plw-detail" aria-live="polite"></aside>
     </div>
   </div>
-</div>
-
-<style is:global>
-#plw {
-  font-family: 'Noto Sans Thai', system-ui, sans-serif;
-  background: #0d0d1a;
-  color: #e0d8c8;
-  border-radius: 16px;
-  overflow: hidden;
-  max-width: 1100px;
-  margin: 0 auto;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
-}
-#plw .plw-header {
-  padding: 22px 28px 14px;
-  border-bottom: 1px solid #1e1e32;
-  background: linear-gradient(135deg, #161628 0%, #0d0d1a 100%);
-}
-#plw .plw-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #c9a227;
-  margin: 0 0 4px;
-}
-#plw .plw-subtitle {
-  font-size: 0.82rem;
-  color: #aaa4b8;
-  margin: 0;
-}
-#plw .plw-body {
-  display: flex;
-  min-height: 540px;
-}
-
-/* ── SIDEBAR ─────────────────────────────── */
-#plw .plw-sidebar {
-  width: 172px;
-  flex-shrink: 0;
-  background: #0b0b16;
-  border-right: 1px solid #1e1e32;
-  padding: 10px 0 20px;
-  overflow-y: auto;
-}
-#plw .plw-group-label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #aaa4b8;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  padding: 16px 16px 5px;
-}
-#plw .plw-line-btn {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 9px 16px;
-  font-family: 'Noto Sans Thai', sans-serif;
-  font-size: 0.85rem;
-  color: #b7b1c2;
-  background: none;
-  border: none;
-  border-left: 3px solid transparent;
-  cursor: pointer;
-  transition: color 0.12s, background 0.12s, border-color 0.12s;
-  line-height: 1.4;
-}
-#plw .plw-line-btn:hover {
-  color: #ccc;
-  background: #13132a;
-}
-#plw .plw-line-btn.plw-active {
-  color: #c9a227;
-  border-left-color: #c9a227;
-  background: #13132a;
-  font-weight: 600;
-}
-
-/* ── MAIN AREA ───────────────────────────── */
-#plw .plw-main {
-  flex: 1;
-  display: flex;
-  min-width: 0;
-}
-
-/* ── IMAGE GRID ──────────────────────────── */
-#plw .plw-grid {
-  flex: 1;
-  padding: 16px;
-  overflow-y: auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
-  gap: 10px;
-  align-content: start;
-}
-#plw .plw-card {
-  background: #13132a;
-  border: 2px solid transparent;
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
-}
-#plw .plw-card:hover {
-  border-color: #2e2e50;
-  transform: translateY(-2px);
-}
-#plw .plw-card.plw-active {
-  border-color: #c9a227;
-  box-shadow: 0 0 18px rgba(201,162,39,0.22);
-}
-#plw .plw-card img {
-  width: 100%;
-  aspect-ratio: 3/4;
-  object-fit: contain;
-  background: #1c1c32;
-  display: block;
-}
-#plw .plw-card-no-img {
-  width: 100%;
-  aspect-ratio: 3/4;
-  background: #181828;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #2a2a40;
-  font-size: 1.4rem;
-}
-#plw .plw-card-label {
-  font-size: 0.71rem;
-  padding: 5px 6px 8px;
-  text-align: center;
-  color: #bcb6c7;
-  line-height: 1.35;
-}
-#plw .plw-card.plw-active .plw-card-label {
-  color: #c9a227;
-}
-
-/* ── DETAIL PANEL ────────────────────────── */
-#plw .plw-detail {
-  width: 276px;
-  flex-shrink: 0;
-  background: #0b0b16;
-  border-left: 1px solid #1e1e32;
-  overflow-y: auto;
-  padding: 20px 16px 24px;
-}
-#plw .plw-placeholder {
-  color: #aaa4b8;
-  font-size: 0.85rem;
-  text-align: center;
-  margin-top: 60px;
-  line-height: 2.2;
-}
-#plw .plw-detail-img {
-  width: 100%;
-  max-width: 160px;
-  display: block;
-  margin: 0 auto 14px;
-  border-radius: 8px;
-  border: 1px solid #1e1e32;
-  background: #1c1c32;
-}
-#plw .plw-detail-line {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #c9a227;
-  margin: 0 0 2px;
-}
-#plw .plw-detail-variant {
-  font-size: 0.78rem;
-  color: #aaa4b8;
-  margin: 0 0 14px;
-}
-#plw .plw-divider {
-  height: 1px;
-  background: #1e1e32;
-  margin: 0 0 14px;
-}
-#plw .plw-reading-block {
-  margin-bottom: 9px;
-  padding: 10px 12px;
-  background: #13132a;
-  border-radius: 8px;
-  border-left: 3px solid #2a2a40;
-}
-#plw .plw-reading-block.good  { border-left-color: #4caf50; }
-#plw .plw-reading-block.warning { border-left-color: #ef5350; }
-#plw .plw-reading-block.neutral { border-left-color: #ffc107; }
-#plw .plw-reading-cat {
-  font-size: 0.7rem;
-  font-weight: 700;
-  margin: 0 0 5px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-#plw .plw-reading-cat.good    { color: #4caf50; }
-#plw .plw-reading-cat.warning { color: #ef5350; }
-#plw .plw-reading-cat.neutral { color: #ffc107; }
-#plw .plw-reading-text {
-  font-size: 0.81rem;
-  color: #c8c2cc;
-  line-height: 1.65;
-  margin: 0;
-}
-#plw .plw-no-reading {
-  font-size: 0.78rem;
-  color: #aaa4b8;
-  text-align: center;
-  padding: 16px 0;
-  font-style: italic;
-}
-#plw .plw-disclaimer {
-  margin-top: 16px;
-  padding: 10px 12px;
-  background: #080810;
-  border-radius: 6px;
-  font-size: 0.68rem;
-  color: #aaa4b8;
-  text-align: center;
-  line-height: 1.8;
-  border: 1px solid #13132a;
-}
-
-/* ── RESPONSIVE ──────────────────────────── */
-@media (max-width: 768px) {
-  #plw .plw-body { flex-direction: column; }
-  #plw .plw-sidebar {
-    width: 100%;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid #1e1e32;
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    padding: 8px;
-    gap: 4px;
-  }
-  #plw .plw-group-label { display: none; }
-  #plw .plw-line-btn {
-    white-space: nowrap;
-    border-left: none;
-    border-bottom: 2px solid transparent;
-    border-radius: 6px;
-    flex-shrink: 0;
-    padding: 7px 14px;
-  }
-  #plw .plw-line-btn.plw-active {
-    border-left-color: transparent;
-    border-bottom-color: #c9a227;
-    background: #13132a;
-  }
-  #plw .plw-main { flex-direction: column; }
-  #plw .plw-detail {
-    width: 100%;
-    border-left: none;
-    border-top: 1px solid #1e1e32;
-  }
-  #plw .plw-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  }
-}
-</style>
+</section>
 
 <script>
 // ─────────────────────────────────────────────────────────────
@@ -387,28 +155,28 @@ const IMG_INDEX = {
 // Readings data — keyed by [line_type][variant_id][category_id]
 const READINGS = {
   life_line: {
-    long_clear:     { health: { text: 'สุขภาพแข็งแรง มีพลังงานสูง อายุยืน', level: 'good' } },
-    short:          { health: { text: 'ต้องดูแลสุขภาพเป็นพิเศษ ร่างกายอ่อนแอกว่าคนอื่น ควรพักผ่อนให้เพียงพอ', level: 'warning' } },
-    broken:         { health: { text: 'มีช่วงสุขภาพย่ำแย่ในชีวิต อาจป่วยหนักหรืออุบัติเหตุ ระวังตัวในช่วงนั้น', level: 'warning' } },
-    chained:        { health: { text: 'ระบบภูมิคุ้มกันอ่อนแอ ป่วยบ่อยในช่วงนั้น ควรดูแลตัวเองและพักผ่อนมากขึ้น', level: 'warning' } },
-    double_mars:    { health: { text: 'มีพลังสำรองสูง ต้านโรคได้ดี แม้ป่วยก็ฟื้นตัวเร็ว', level: 'good' } },
+    long_clear:     { health: { text: 'ตามตำรามักอ่านว่ามีฐานพลังและจังหวะชีวิตที่ต่อเนื่อง ไม่ได้ใช้ยืนยันอายุขัยหรือภาวะสุขภาพจริง', level: 'good' } },
+    short:          { health: { text: 'เส้นชีวิตสั้นไม่เท่ากับอายุสั้น ควรอ่านร่วมกับความชัด ความต่อเนื่อง และเส้นอื่นมากกว่าตัดสินจากความยาวเพียงอย่างเดียว', level: 'neutral' } },
+    broken:         { health: { text: 'ตำรามักอ่านเป็นช่วงเปลี่ยนผ่านหรือจังหวะที่พลังชีวิตไม่ต่อเนื่อง ไม่ควรโยงตรงกับโรค อุบัติเหตุ หรืออายุขัย', level: 'warning' } },
+    chained:        { health: { text: 'มักอ่านว่าเป็นช่วงที่พลังหรือความมั่นคงแกว่ง ควรใช้เป็นข้อเตือนให้ดูแลสมดุลชีวิต ไม่ใช่ข้อสรุปทางการแพทย์', level: 'warning' } },
+    double_mars:    { health: { text: 'ตำราเรียกว่าเส้นช่วยชีวิตหรือ Line of Mars มักตีความเป็นแรงพยุงและความสามารถในการฟื้นตัวเชิงสัญลักษณ์', level: 'good' } },
     branch_up:      {
-      health: { text: 'มีพลังงานเพิ่มขึ้นในช่วงนั้น ฟื้นตัวดี หลังผ่านช่วงยากก็ดีขึ้น', level: 'good' },
+      health: { text: 'มักอ่านเป็นจังหวะที่แรงขับและความมั่นใจเพิ่มขึ้นหลังผ่านช่วงติดขัด', level: 'good' },
       fate:   { text: 'โอกาสใหม่ในชีวิต มีการยกระดับตัวเอง ชีวิตดีขึ้นอย่างมีนัยสำคัญ', level: 'good' },
     },
     branch_down:    {
       career:      { text: 'การงานอาจชะลอหรือถดถอยในช่วงนั้น ควรประคองกำลังและไม่รับภาระเกินตัว', level: 'warning' },
-      health:      { text: 'เป็นช่วงที่พลังลดลง ควรดูแลสุขภาพและให้เวลากับการพักฟื้น', level: 'warning' },
+      health:      { text: 'มักอ่านเป็นช่วงที่กำลังหรือแรงขับลดลง ควรจัดสมดุลการพักและภาระให้เหมาะสม', level: 'warning' },
       personality: { text: 'อาจรู้สึกอ่อนล้าหรือหมดแรงง่ายกว่าปกติ แต่เป็นลักษณะที่อ่านตามช่วงของเส้น', level: 'neutral' },
     },
     wide_arc:      {
       love:        { text: 'มีเสน่ห์และพลังดึงดูดสูง เปิดรับความสัมพันธ์และประสบการณ์ใหม่ได้ดี', level: 'good' },
       career:      { text: 'มีแรงทำงานต่อเนื่อง เหมาะกับงานที่ต้องใช้พลังและความอึด', level: 'good' },
-      health:      { text: 'พื้นฐานร่างกายแข็งแรงและมีพลังชีวิตสูง', level: 'good' },
+      health:      { text: 'ตามตำรามักโยงกับพลังชีวิตที่เปิดกว้างและความกระตือรือร้น ไม่ใช่การประเมินสุขภาพร่างกาย', level: 'good' },
       personality: { text: 'บุคลิกกระตือรือร้น ชอบออกไปพบโลกกว้าง และมีความน่าสนใจในตัวเอง', level: 'good' },
     },
     curves_to_moon: {
-      health: { text: 'มักเดินทางไกล ชีวิตไม่อยู่ที่เดิม อาจมีโรคที่เกิดจากสภาพแวดล้อม', level: 'neutral' },
+      health: { text: 'มักอ่านว่าจังหวะชีวิตสัมพันธ์กับการเดินทาง การเปลี่ยนที่อยู่ หรือสภาพแวดล้อมใหม่', level: 'neutral' },
       fate:   { text: 'ชะตาพาไปพบสิ่งใหม่ในที่ไกลๆ ชีวิตจะโลดแล่นและหลากหลาย', level: 'neutral' },
     },
   },
@@ -513,47 +281,79 @@ const READINGS = {
     },
   },
   mercury_line: {
-    absent: { health: { text: 'ดีที่สุด หมายถึงสุขภาพแข็งแรงโดยธรรมชาติ ไม่ต้องกังวลเรื่องสุขภาพ', level: 'good' } },
+    absent: { health: { text: 'ตำราบางสายถือว่าการไม่มีเส้นพุธเด่นไม่ใช่สัญญาณเสีย แต่ไม่สามารถใช้ยืนยันสุขภาพจริงได้', level: 'neutral' } },
     clear_straight: {
       career: { text: 'ทำงานได้มีประสิทธิภาพ โดยเฉพาะงานที่ใช้การสื่อสาร การค้า หรือการจัดระบบ', level: 'good' },
-      health: { text: 'ระบบร่างกายทำงานได้ดีและมีพื้นฐานสุขภาพแข็งแรง', level: 'good' },
+      health: { text: 'ในเชิงสัญลักษณ์มักอ่านว่าเจ้าชะตาจัดระบบชีวิตและสื่อสารความต้องการของตนได้ค่อนข้างชัด', level: 'neutral' },
     },
-    wavy:   { health: { text: 'ระวังระบบย่อยอาหาร โรคกระเพาะ ควรควบคุมอาหารและลดความเครียด', level: 'warning' } },
+    wavy:   { health: { text: 'ตำราเดิมมักให้ระวังความไม่เป็นระบบและความเครียดสะสม แต่ไม่ควรใช้วินิจฉัยอวัยวะหรือโรคเฉพาะ', level: 'warning' } },
   },
   marriage_line: {
-    one_clear:    { love: { text: 'คุณมีเนื้อคู่แท้ ความสัมพันธ์มั่นคงและยืนยาว ชีวิตคู่ที่ดี', level: 'good' } },
+    one_clear:    { love: { text: 'ตำรามักอ่านว่าเจ้าชะตาให้ความสำคัญกับความสัมพันธ์หลักที่ชัดเจนและมีแนวโน้มรักษาความผูกพันระยะยาว', level: 'good' } },
     two_separate: { love: { text: 'ชีวิตรักสำคัญ 2 ครั้ง ทั้งสองมีความสุขในแบบของตัวเอง', level: 'neutral' } },
-    two_close:    { love: { text: 'ระวังบุคคลที่สามเข้ามาในชีวิตคู่ หรือความลังเลในความสัมพันธ์', level: 'warning' } },
-    curves_down:  { love: { text: 'ความสัมพันธ์อาจจบลงด้วยความเจ็บปวดหรือการสูญเสีย ต้องระวังเรื่องสุขภาพคู่', level: 'warning' } },
-    crosses_heart:{ love: { text: 'ตำราเดิมอ่านเป็นสัญญาณของการสูญเสียคนรักหรือความสัมพันธ์ที่กระทบใจอย่างมาก ควรอ่านร่วมกับเส้นหัวใจและมือทั้งสองข้าง', level: 'warning' } },
+    two_close:    { love: { text: 'มักอ่านว่ามีความรู้สึกหรือความสัมพันธ์สองชั้นที่อยู่ใกล้กัน ควรระวังความลังเลและสื่อสารขอบเขตให้ชัด โดยไม่ฟันธงเรื่องบุคคลที่สาม', level: 'warning' } },
+    curves_down:  { love: { text: 'มักอ่านว่าความสัมพันธ์มีแรงกดหรือภาระทางใจ ควรพิจารณาร่วมกับเส้นหัวใจและสถานการณ์จริงโดยไม่ฟันธงเรื่องการสูญเสีย', level: 'warning' } },
+    crosses_heart:{ love: { text: 'ตำราเดิมมองว่าเป็นความสัมพันธ์ที่กระทบใจมาก ควรอ่านร่วมกับเส้นหัวใจและมือทั้งสองข้าง ไม่ใช้ทำนายการสูญเสียแบบตายตัว', level: 'warning' } },
     curves_up:    { love: { text: 'ชีวิตคู่พัฒนาขึ้นเรื่อยๆ รักยืนยาว คู่ครองช่วยยกระดับชีวิตซึ่งกันและกัน', level: 'good' } },
   },
 };
 
 // Category definitions
 const CATEGORIES = [
-  { id: 'love',        nameTh: 'ความรัก',     icon: '❤️' },
-  { id: 'career',      nameTh: 'การงาน',      icon: '💼' },
-  { id: 'health',      nameTh: 'สุขภาพ',      icon: '🌿' },
-  { id: 'fate',        nameTh: 'โชคชะตา',     icon: '✨' },
-  { id: 'personality', nameTh: 'บุคลิกภาพ',   icon: '🧠' },
+  { id: 'love',        nameTh: 'ความรัก' },
+  { id: 'career',      nameTh: 'การงาน' },
+  { id: 'health',      nameTh: 'สุขภาพ' },
+  { id: 'fate',        nameTh: 'โชคชะตา' },
+  { id: 'personality', nameTh: 'บุคลิกภาพ' },
 ];
 
 const GROUP_LABELS = { main: 'เส้นหลัก', minor: 'เส้นรอง' };
 
-// ─────────────────────────────────────────────────────────────
-//  STATE
-// ─────────────────────────────────────────────────────────────
+const COMPARISON_PROFILES = {
+  life_line: {
+    long_clear: { dimension: 'ความชัดและความต่อเนื่อง', rank: 3 },
+    chained: { dimension: 'ความชัดและความต่อเนื่อง', rank: 1 },
+    broken: { dimension: 'ความชัดและความต่อเนื่อง', rank: 0 },
+  },
+  head_line: {
+    straight_long: { dimension: 'ความต่อเนื่องของแนวคิด', rank: 3 },
+    broken: { dimension: 'ความต่อเนื่องของแนวคิด', rank: 0 },
+  },
+  heart_line: {
+    long_curved: { dimension: 'ความต่อเนื่องทางอารมณ์', rank: 3 },
+    long_straight: { dimension: 'ความต่อเนื่องทางอารมณ์', rank: 3 },
+    wavy: { dimension: 'ความต่อเนื่องทางอารมณ์', rank: 1 },
+    broken: { dimension: 'ความต่อเนื่องทางอารมณ์', rank: 0 },
+  },
+  fate_line: {
+    clear_from_wrist: { dimension: 'ความชัดของแกนชีวิต', rank: 3 },
+    broken: { dimension: 'ความชัดของแกนชีวิต', rank: 1 },
+    absent: { dimension: 'ความชัดของแกนชีวิต', rank: 0 },
+  },
+  sun_line: {
+    clear_present: { dimension: 'ความชัดของเส้นอาทิตย์', rank: 3 },
+    short: { dimension: 'ความชัดของเส้นอาทิตย์', rank: 2 },
+    absent: { dimension: 'ความชัดของเส้นอาทิตย์', rank: 0 },
+  },
+  mercury_line: {
+    clear_straight: { dimension: 'ความชัดของเส้นพุธ', rank: 2 },
+    wavy: { dimension: 'ความชัดของเส้นพุธ', rank: 1 },
+  },
+  marriage_line: {},
+};
 
 type LineTypeId = keyof typeof IMG_INDEX;
 type Reading = { text: string; level: string };
+type HandRole = 'dominant' | 'nonDominant';
+type ReadingMode = HandRole | 'compare';
 
 let activeLine: LineTypeId = 'life_line';
-let activeVariant: string | null = null;
-
-// ─────────────────────────────────────────────────────────────
-//  HELPERS
-// ─────────────────────────────────────────────────────────────
+let handedness: 'right' | 'left' = 'right';
+let readingMode: ReadingMode = 'dominant';
+const selections: Record<HandRole, Partial<Record<LineTypeId, string>>> = {
+  dominant: {},
+  nonDominant: {},
+};
 
 function imgSrc(lineType: LineTypeId, variantId: string) {
   const variants = IMG_INDEX[lineType] as Record<string, string>;
@@ -561,9 +361,83 @@ function imgSrc(lineType: LineTypeId, variantId: string) {
   return filename ? `/images/lines/${filename}` : null;
 }
 
-// ─────────────────────────────────────────────────────────────
-//  RENDER
-// ─────────────────────────────────────────────────────────────
+function physicalHand(role: HandRole) {
+  if (role === 'dominant') return handedness === 'right' ? 'มือขวา' : 'มือซ้าย';
+  return handedness === 'right' ? 'มือซ้าย' : 'มือขวา';
+}
+
+function handLabel(role: HandRole) {
+  return `${physicalHand(role)} · ${role === 'dominant' ? 'มือถนัด' : 'มือไม่ถนัด'}`;
+}
+
+function getLineType(lineId: LineTypeId) {
+  return LINE_TYPES.find(line => line.id === lineId);
+}
+
+function getVariant(lineId: LineTypeId, variantId?: string) {
+  return getLineType(lineId)?.variants.find(variant => variant.id === variantId);
+}
+
+function getReadings(lineId: LineTypeId, variantId?: string) {
+  if (!variantId) return {};
+  const lineReadings = READINGS[lineId] as Record<string, Record<string, Reading>>;
+  return lineReadings[variantId] ?? {};
+}
+
+function contextText(role: HandRole) {
+  if (role === 'dominant') {
+    return 'เมื่อพบในมือถนัด ความหมายนี้เน้นสิ่งที่กำลังแสดงออกผ่านการตัดสินใจ พฤติกรรม และวิถีชีวิตปัจจุบัน';
+  }
+  return 'เมื่อพบในมือไม่ถนัด ความหมายนี้เน้นพื้นฐานเดิม ธรรมชาติภายใน และแนวโน้มที่ติดตัวมาก่อนการปรับตัว';
+}
+
+function comparisonResult(nonDominantId: string, dominantId: string) {
+  if (nonDominantId === dominantId) {
+    return {
+      state: 'same',
+      title: 'พื้นฐานและการแสดงออกไปในทิศเดียวกัน',
+      text: 'ลักษณะเดียวกันปรากฏทั้งสองมือ จึงใช้เป็นสัญญาณยืนยันว่าธรรมชาติภายในกับสิ่งที่แสดงออกในปัจจุบันค่อนข้างสอดคล้องกัน',
+    };
+  }
+
+  const lineProfiles = COMPARISON_PROFILES[activeLine] as
+    | Record<string, { dimension: string; rank: number }>
+    | undefined;
+  const before = lineProfiles?.[nonDominantId];
+  const current = lineProfiles?.[dominantId];
+
+  if (before && current && before.dimension === current.dimension) {
+    if (current.rank > before.rank) {
+      return {
+        state: 'stronger',
+        title: `${before.dimension}เด่นขึ้นในมือถนัด`,
+        text: 'เมื่อเทียบกับพื้นฐานเดิม มือถนัดแสดงความชัดหรือความต่อเนื่องมากขึ้น ตำราจึงอ่านเป็นพัฒนาการที่เกิดจากการใช้ชีวิตและการปรับตัว',
+      };
+    }
+    if (current.rank < before.rank) {
+      return {
+        state: 'weaker',
+        title: `${before.dimension}อ่อนลงในมือถนัด`,
+        text: 'มือถนัดมีความชัดหรือความต่อเนื่องน้อยกว่าพื้นฐานเดิม ควรอ่านเป็นจุดที่ต้องทบทวนบริบทชีวิต ไม่ใช่คำตัดสินว่าจะเกิดเรื่องร้าย',
+      };
+    }
+  }
+
+  return {
+    state: 'changed',
+    title: 'รูปแบบเปลี่ยนไปจากพื้นฐานเดิม',
+    text: 'ลักษณะสองมือเป็นคนละรูปแบบและไม่อยู่บนสเกลเดียวกัน จึงควรอ่านว่าแนวทางการแสดงออกเปลี่ยนไป โดยไม่ตัดสินว่าดีกว่าหรือแย่กว่า',
+  };
+}
+
+function escapeHtml(value: unknown) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 function renderSidebar() {
   const sidebar = document.getElementById('plw-sidebar');
@@ -574,46 +448,104 @@ function renderSidebar() {
     html += `<div class="plw-group-label">${groupLabel}</div>`;
     LINE_TYPES.filter(l => l.group === groupId).forEach(l => {
       const active = l.id === activeLine ? ' plw-active' : '';
-      html += `<button class="plw-line-btn${active}" data-line="${l.id}">${l.nameTh}</button>`;
+      const dominantDone = Boolean(selections.dominant[l.id as LineTypeId]);
+      const nonDominantDone = Boolean(selections.nonDominant[l.id as LineTypeId]);
+      const complete =
+        readingMode === 'compare'
+          ? dominantDone && nonDominantDone
+          : Boolean(selections[readingMode][l.id as LineTypeId]);
+      html += `
+        <button class="plw-line-btn${active}" type="button" data-line="${l.id}" aria-pressed="${l.id === activeLine}">
+          <span>${l.nameTh}</span>
+          ${complete ? '<b aria-label="เลือกแล้ว">เลือกแล้ว</b>' : ''}
+        </button>`;
     });
   }
   sidebar.innerHTML = html;
   sidebar.querySelectorAll<HTMLButtonElement>('.plw-line-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       activeLine = btn.dataset.line as LineTypeId;
-      activeVariant = null;
-      renderSidebar();
-      renderGrid();
-      renderDetail();
+      renderAll();
     });
   });
+}
+
+function renderContext() {
+  const context = document.querySelector<HTMLElement>('[data-plw-context]');
+  const handKey = document.querySelector<HTMLElement>('[data-plw-hand-key]');
+  const lineTitle = document.querySelector<HTMLElement>('[data-plw-line-title]');
+  if (!context || !handKey || !lineTitle) return;
+
+  lineTitle.textContent = getLineType(activeLine)?.nameTh ?? 'เส้นลายมือ';
+
+  if (readingMode === 'compare') {
+    context.innerHTML = `
+      <strong>เทียบสองมือ</strong>
+      <span>${escapeHtml(handLabel('nonDominant'))} ใช้อ่านพื้นฐานเดิม</span>
+      <span>${escapeHtml(handLabel('dominant'))} ใช้อ่านสิ่งที่พัฒนาและชีวิตปัจจุบัน</span>
+    `;
+    handKey.innerHTML = `
+      <span class="plw-key plw-key--base">${escapeHtml(physicalHand('nonDominant'))} · พื้นฐาน</span>
+      <span class="plw-key plw-key--current">${escapeHtml(physicalHand('dominant'))} · ปัจจุบัน</span>
+    `;
+    return;
+  }
+
+  context.innerHTML = `
+    <strong>${escapeHtml(handLabel(readingMode))}</strong>
+    <span>${escapeHtml(contextText(readingMode))}</span>
+  `;
+  handKey.innerHTML = `<span class="plw-key">${escapeHtml(handLabel(readingMode))}</span>`;
 }
 
 function renderGrid() {
   const grid = document.getElementById('plw-grid');
   if (!grid) return;
 
-  const lineType = LINE_TYPES.find(l => l.id === activeLine);
+  const lineType = getLineType(activeLine);
   if (!lineType) return;
 
   grid.innerHTML = lineType.variants.map(v => {
     const src = imgSrc(activeLine, v.id);
-    const active = v.id === activeVariant ? ' plw-active' : '';
+    const dominantActive = selections.dominant[activeLine] === v.id;
+    const nonDominantActive = selections.nonDominant[activeLine] === v.id;
+    const singleActive = readingMode !== 'compare' && selections[readingMode][activeLine] === v.id;
+    const active = dominantActive || nonDominantActive || singleActive ? ' plw-active' : '';
     const imgHtml = src
       ? `<img src="${src}" alt="${v.nameTh}" loading="lazy" />`
-      : `<div class="plw-card-no-img">☯</div>`;
+      : `<div class="plw-card-no-img" aria-hidden="true">ไม่มีภาพ</div>`;
+
+    if (readingMode === 'compare') {
+      return `
+        <article class="plw-card${active}" data-variant="${v.id}">
+          ${imgHtml}
+          <div class="plw-card-label">${v.nameTh}</div>
+          <div class="plw-card-actions">
+            <button class="${nonDominantActive ? 'is-selected' : ''}" type="button" data-select-hand="nonDominant">
+              ${escapeHtml(physicalHand('nonDominant'))}
+            </button>
+            <button class="${dominantActive ? 'is-selected' : ''}" type="button" data-select-hand="dominant">
+              ${escapeHtml(physicalHand('dominant'))}
+            </button>
+          </div>
+        </article>`;
+    }
+
     return `
-      <div class="plw-card${active}" data-variant="${v.id}">
+      <button class="plw-card plw-card--single${active}" type="button" data-variant="${v.id}" data-select-hand="${readingMode}">
         ${imgHtml}
         <div class="plw-card-label">${v.nameTh}</div>
-      </div>`;
+      </button>`;
   }).join('');
 
-  grid.querySelectorAll<HTMLElement>('.plw-card').forEach(card => {
-    card.addEventListener('click', () => {
-      activeVariant = card.dataset.variant ?? null;
-      renderGrid();
-      renderDetail();
+  grid.querySelectorAll<HTMLButtonElement>('[data-select-hand]').forEach(button => {
+    button.addEventListener('click', () => {
+      const card = button.closest<HTMLElement>('[data-variant]');
+      const role = button.dataset.selectHand as HandRole;
+      const variantId = card?.dataset.variant;
+      if (!variantId || !role) return;
+      selections[role][activeLine] = variantId;
+      renderAll();
     });
   });
 }
@@ -622,62 +554,162 @@ function renderDetail() {
   const detail = document.getElementById('plw-detail');
   if (!detail) return;
 
-  if (!activeVariant) {
-    detail.innerHTML = `<div class="plw-placeholder">← เลือกลักษณะเส้น<br>เพื่อดูคำทำนาย</div>`;
+  if (readingMode === 'compare') {
+    renderComparison(detail);
     return;
   }
 
-  const lineType = LINE_TYPES.find(l => l.id === activeLine);
-  const variant  = lineType?.variants.find(v => v.id === activeVariant);
-  const lineReadings = READINGS[activeLine] as Record<string, Record<string, Reading>>;
-  const readings = lineReadings[activeVariant] ?? {};
-  const src      = imgSrc(activeLine, activeVariant);
-
-  let html = '';
-
-  // Selected image preview
-  if (src) {
-    html += `<img src="${src}" alt="${variant?.nameTh}" class="plw-detail-img" />`;
+  const selectedId = selections[readingMode][activeLine];
+  if (!selectedId) {
+    detail.innerHTML = `
+      <div class="plw-placeholder">
+        <strong>เลือกภาพที่ตรงกับมือ</strong>
+        <span>คำอ่านจะประกอบจากความหมายพื้นฐานของเส้น และบริบทของ${readingMode === 'dominant' ? 'มือถนัด' : 'มือไม่ถนัด'}</span>
+      </div>`;
+    return;
   }
 
-  // Title
-  html += `
-    <div class="plw-detail-line">${lineType?.nameTh}</div>
-    <div class="plw-detail-variant">${variant?.nameTh}</div>
-    <div class="plw-divider"></div>
-  `;
-
-  // Readings by category
-  const hasReadings = Object.keys(readings).length > 0;
-  if (hasReadings) {
-    CATEGORIES.forEach(cat => {
-      const r = readings[cat.id];
-      if (!r) return;
-      html += `
-        <div class="plw-reading-block ${r.level}">
-          <div class="plw-reading-cat ${r.level}">${cat.icon} ${cat.nameTh}</div>
-          <p class="plw-reading-text">${r.text}</p>
-        </div>`;
-    });
-  } else {
-    html += `<div class="plw-no-reading">ยังไม่มีคำทำนายสำหรับลักษณะนี้</div>`;
-  }
-
-  // Disclaimer
-  html += `
-    <div class="plw-disclaimer">
-      ลายมือเปลี่ยนได้ตามกรรมและการกระทำ<br>
-      เพื่อการสำรวจตนเอง ไม่ใช่คำทำนายที่แน่นอน
-    </div>`;
-
-  detail.innerHTML = html;
+  detail.innerHTML = renderSingleReading(readingMode, selectedId);
 }
 
-// ─────────────────────────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────────────────────────
+function renderSingleReading(role: HandRole, variantId: string) {
+  const lineType = getLineType(activeLine);
+  const variant = getVariant(activeLine, variantId);
+  const readings = getReadings(activeLine, variantId);
+  const src = imgSrc(activeLine, variantId);
+  const readingBlocks = CATEGORIES.map(category => {
+    const reading = readings[category.id];
+    if (!reading) return '';
+    return `
+      <div class="plw-reading-block ${reading.level}">
+        <div class="plw-reading-cat">${category.nameTh}</div>
+        <p class="plw-reading-text">${escapeHtml(reading.text)}</p>
+        <p class="plw-reading-context">${escapeHtml(contextText(role))}</p>
+      </div>`;
+  }).join('');
 
-renderSidebar();
-renderGrid();
-renderDetail();
+  return `
+    <div class="plw-detail-heading">
+      ${src ? `<img src="${src}" alt="${escapeHtml(variant?.nameTh)}" class="plw-detail-img" />` : ''}
+      <div>
+        <span>${escapeHtml(lineType?.nameTh)}</span>
+        <h3>${escapeHtml(variant?.nameTh)}</h3>
+        <small>${escapeHtml(handLabel(role))}</small>
+      </div>
+    </div>
+    <div class="plw-formula" aria-label="วิธีประกอบคำอ่าน">
+      <span>ความหมายพื้นฐาน</span><b>+</b><span>บริบทของมือ</span>
+    </div>
+    ${readingBlocks || '<div class="plw-no-reading">ยังไม่มีคำอ่านสำหรับลักษณะนี้</div>'}
+    ${renderDisclaimer()}
+  `;
+}
+
+function renderComparison(detail: HTMLElement) {
+  const baseId = selections.nonDominant[activeLine];
+  const currentId = selections.dominant[activeLine];
+
+  if (!baseId || !currentId) {
+    const missing = !baseId && !currentId
+      ? 'เลือกหนึ่งลักษณะให้มือทั้งสองข้าง'
+      : `เหลือเลือก${!baseId ? handLabel('nonDominant') : handLabel('dominant')}`;
+    detail.innerHTML = `
+      <div class="plw-placeholder">
+        <strong>${escapeHtml(missing)}</strong>
+        <span>ใช้ปุ่มใต้ภาพเพื่อกำหนดลักษณะของแต่ละมือ แล้วระบบจะเทียบพื้นฐานเดิมกับสิ่งที่แสดงออกในปัจจุบัน</span>
+      </div>`;
+    return;
+  }
+
+  const lineType = getLineType(activeLine);
+  const baseVariant = getVariant(activeLine, baseId);
+  const currentVariant = getVariant(activeLine, currentId);
+  const comparison = comparisonResult(baseId, currentId);
+
+  detail.innerHTML = `
+    <div class="plw-comparison-pair">
+      ${renderComparisonHand('nonDominant', baseId)}
+      ${renderComparisonHand('dominant', currentId)}
+    </div>
+    <section class="plw-comparison-result plw-comparison-result--${comparison.state}">
+      <p class="section-kicker">ผลการเปรียบเทียบ</p>
+      <h3>${escapeHtml(comparison.title)}</h3>
+      <p>${escapeHtml(comparison.text)}</p>
+    </section>
+    <div class="plw-formula" aria-label="วิธีประกอบคำอ่าน">
+      <span>${escapeHtml(baseVariant?.nameTh)}</span><b>+</b>
+      <span>${escapeHtml(currentVariant?.nameTh)}</span><b>=</b>
+      <span>พัฒนาการของ${escapeHtml(lineType?.nameTh)}</span>
+    </div>
+    <div class="plw-compare-readings">
+      ${renderBaseMeaning('พื้นฐานเดิม', baseId)}
+      ${baseId === currentId ? '' : renderBaseMeaning('การแสดงออกปัจจุบัน', currentId)}
+    </div>
+    ${renderDisclaimer()}
+  `;
+}
+
+function renderComparisonHand(role: HandRole, variantId: string) {
+  const variant = getVariant(activeLine, variantId);
+  const src = imgSrc(activeLine, variantId);
+  return `
+    <article>
+      ${src ? `<img src="${src}" alt="${escapeHtml(variant?.nameTh)}" />` : ''}
+      <span>${escapeHtml(handLabel(role))}</span>
+      <strong>${escapeHtml(variant?.nameTh)}</strong>
+    </article>`;
+}
+
+function renderBaseMeaning(label: string, variantId: string) {
+  const variant = getVariant(activeLine, variantId);
+  const readings = getReadings(activeLine, variantId);
+  const items = CATEGORIES.map(category => {
+    const reading = readings[category.id];
+    if (!reading) return '';
+    return `<li><b>${category.nameTh}</b><span>${escapeHtml(reading.text)}</span></li>`;
+  }).join('');
+
+  return `
+    <section class="plw-base-meaning">
+      <span>${escapeHtml(label)}</span>
+      <h4>${escapeHtml(variant?.nameTh)}</h4>
+      <ul>${items || '<li><span>ยังไม่มีคำอ่านสำหรับลักษณะนี้</span></li>'}</ul>
+    </section>`;
+}
+
+function renderDisclaimer() {
+  return `
+    <div class="plw-disclaimer">
+      ใช้เพื่อสำรวจตนเองตามความเชื่อด้านหัตถศาสตร์ ไม่ใช่คำวินิจฉัยสุขภาพหรือคำทำนายที่แน่นอน
+    </div>`;
+}
+
+function renderAll() {
+  renderSidebar();
+  renderContext();
+  renderGrid();
+  renderDetail();
+}
+
+document.querySelectorAll<HTMLButtonElement>('[data-handedness]').forEach(button => {
+  button.addEventListener('click', () => {
+    handedness = button.dataset.handedness as 'right' | 'left';
+    document.querySelectorAll<HTMLButtonElement>('[data-handedness]').forEach(item => {
+      item.setAttribute('aria-pressed', String(item === button));
+    });
+    renderAll();
+  });
+});
+
+document.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach(button => {
+  button.addEventListener('click', () => {
+    readingMode = button.dataset.mode as ReadingMode;
+    document.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach(item => {
+      item.setAttribute('aria-pressed', String(item === button));
+    });
+    renderAll();
+  });
+});
+
+renderAll();
 </script>

@@ -622,8 +622,10 @@
 }
 
 .temple-detail-notes li {
-  position: relative;
-  padding-left: 22px;
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
   color: var(--ink);
   font-weight: 800;
   line-height: 1.55;
@@ -631,9 +633,6 @@
 
 .temple-detail-notes li::before {
   content: "";
-  position: absolute;
-  left: 0;
-  top: 0.72em;
   width: 8px;
   height: 8px;
   border-radius: 50%;

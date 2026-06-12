@@ -66,12 +66,12 @@ test.describe("Mongkol Wela smoke regression", () => {
     await expect(matchingCardImage).toHaveAttribute("src", /^https?:\/\//);
   });
 
-  test("palmistry diagram has direct and inline critical styles", async ({ page }, testInfo) => {
+  test("palmistry diagram and two-hand reading stay interactive", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "chromium-desktop", "critical style wiring is browser-independent");
     await skipIntroLoader(page);
     await page.goto("/horoscope/palmistry/", { waitUntil: "domcontentloaded" });
 
-    await expect(page.locator('link[href*="palmistry.css?feature=20260611-03"]')).toHaveCount(1);
+    await expect(page.locator('link[href*="palmistry.css?feature=20260612-03"]')).toHaveCount(1);
     await expect(page.locator(".palm-hand-map style")).toContainText(".palm-map-line");
 
     const line = page.locator(".palm-map-line").first();
@@ -81,6 +81,25 @@ test.describe("Mongkol Wela smoke regression", () => {
       "background-color",
       "rgba(0, 0, 0, 0)"
     );
+
+    const sourceDisclosure = page.locator(".palm-source-disclosure");
+    await expect(sourceDisclosure).not.toHaveAttribute("open", "");
+    await sourceDisclosure.getByText("แหล่งข้อมูลที่ใช้ยืนยัน", { exact: true }).click();
+    await expect(sourceDisclosure).toHaveAttribute("open", "");
+    await expect(sourceDisclosure.locator("a")).toHaveCount(9);
+
+    await page.getByRole("button", { name: "เทียบสองมือ" }).click();
+    await expect(page.locator("[data-plw-context]")).toContainText("เทียบสองมือ");
+
+    await page.locator('[data-variant="long_clear"] [data-select-hand="nonDominant"]').click();
+    await page.locator('[data-variant="broken"] [data-select-hand="dominant"]').click();
+
+    await expect(page.locator(".plw-comparison-result")).toContainText("อ่อนลงในมือถนัด");
+    await expect(page.locator(".plw-formula")).toContainText("พัฒนาการของเส้นชีวิต");
+
+    await page.getByRole("button", { name: "ถนัดซ้าย" }).click();
+    await expect(page.locator("[data-plw-context]")).toContainText("มือขวา · มือไม่ถนัด");
+    await expect(page.locator("[data-plw-context]")).toContainText("มือซ้าย · มือถนัด");
   });
 
   test("404 keeps recovery links visible", async ({ page }) => {
