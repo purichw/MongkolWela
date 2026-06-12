@@ -558,6 +558,7 @@
 .temple-detail-layout {
   position: relative;
   isolation: isolate;
+  z-index: 20;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
   gap: 34px;
@@ -1240,12 +1241,12 @@
 
 .temple-detail-confidence__help-panel {
   position: absolute;
-  z-index: 702;
+  z-index: 3000;
   top: calc(100% + 9px);
   right: 0;
   display: none;
-  width: min(340px, calc(100vw - 48px));
-  padding: 16px;
+  width: min(300px, calc(100vw - 48px));
+  padding: 13px 14px;
   color: var(--ink);
   background: rgba(255, 253, 246, 0.98);
   border: 1px solid rgba(77, 56, 41, 0.16);
@@ -1260,15 +1261,15 @@
 .temple-detail-confidence__help-panel > strong {
   display: block;
   color: var(--ink);
-  font-size: 0.96rem;
+  font-size: 0.78rem;
   font-weight: 900;
   line-height: 1.4;
 }
 
 .temple-detail-confidence__help-panel ul {
   display: grid;
-  gap: 12px;
-  margin: 14px 0;
+  gap: 9px;
+  margin: 11px 0;
   padding: 0;
   list-style: none;
 }
@@ -1279,9 +1280,9 @@
   gap: 10px;
   align-items: start;
   color: rgba(77, 56, 41, 0.72);
-  font-size: 0.84rem;
-  font-weight: 750;
-  line-height: 1.55;
+  font-size: 0.72rem;
+  font-weight: 650;
+  line-height: 1.48;
 }
 
 .temple-detail-confidence__help-panel li i {
@@ -1304,17 +1305,17 @@
   display: block;
   margin-bottom: 2px;
   color: var(--ink);
-  font-weight: 900;
+  font-weight: 850;
 }
 
 .temple-detail-confidence__help-panel p {
   margin: 0;
-  padding-top: 12px;
+  padding-top: 10px;
   color: rgba(77, 56, 41, 0.68);
   border-top: 1px solid rgba(77, 56, 41, 0.12);
-  font-size: 0.8rem;
-  font-weight: 800;
-  line-height: 1.55;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.48;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1502,6 +1503,8 @@
 .temple-detail-related {
   margin-top: 56px;
   padding-top: 36px;
+  position: relative;
+  z-index: 1;
   border-top: 1px dashed rgba(77, 56, 41, 0.26);
 }
 
