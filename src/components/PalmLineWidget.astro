@@ -350,6 +350,7 @@ type ReadingMode = HandRole | 'compare';
 let activeLine: LineTypeId = 'life_line';
 let handedness: 'right' | 'left' = 'right';
 let readingMode: ReadingMode = 'dominant';
+const PALM_LINE_IMAGE_VERSION = '20260612-04';
 const selections: Record<HandRole, Partial<Record<LineTypeId, string>>> = {
   dominant: {},
   nonDominant: {},
@@ -358,16 +359,31 @@ const selections: Record<HandRole, Partial<Record<LineTypeId, string>>> = {
 function imgSrc(lineType: LineTypeId, variantId: string) {
   const variants = IMG_INDEX[lineType] as Record<string, string>;
   const filename = variants[variantId];
-  return filename ? `/images/lines/${filename}` : null;
+  return filename ? `/images/lines/${filename}?v=${PALM_LINE_IMAGE_VERSION}` : null;
+}
+
+function physicalHandSide(role: HandRole) {
+  if (role === 'dominant') return handedness === 'right' ? 'right' : 'left';
+  return handedness === 'right' ? 'left' : 'right';
 }
 
 function physicalHand(role: HandRole) {
-  if (role === 'dominant') return handedness === 'right' ? 'มือขวา' : 'มือซ้าย';
-  return handedness === 'right' ? 'มือซ้าย' : 'มือขวา';
+  return physicalHandSide(role) === 'right' ? 'มือขวา' : 'มือซ้าย';
 }
 
 function handLabel(role: HandRole) {
   return `${physicalHand(role)} · ${role === 'dominant' ? 'มือถนัด' : 'มือไม่ถนัด'}`;
+}
+
+function handImageClass(role?: HandRole) {
+  const side = role ? physicalHandSide(role) : 'right';
+  return `plw-hand-image plw-hand-image--${side}`;
+}
+
+function renderHandImage(src: string | null, alt: string, role?: HandRole) {
+  return src
+    ? `<img src="${src}" alt="${escapeHtml(alt)}" loading="lazy" class="${handImageClass(role)}" />`
+    : `<div class="plw-card-no-img" aria-hidden="true">ไม่มีภาพ</div>`;
 }
 
 function getLineType(lineId: LineTypeId) {
@@ -511,14 +527,14 @@ function renderGrid() {
     const nonDominantActive = selections.nonDominant[activeLine] === v.id;
     const singleActive = readingMode !== 'compare' && selections[readingMode][activeLine] === v.id;
     const active = dominantActive || nonDominantActive || singleActive ? ' plw-active' : '';
-    const imgHtml = src
-      ? `<img src="${src}" alt="${v.nameTh}" loading="lazy" />`
-      : `<div class="plw-card-no-img" aria-hidden="true">ไม่มีภาพ</div>`;
 
     if (readingMode === 'compare') {
       return `
         <article class="plw-card${active}" data-variant="${v.id}">
-          ${imgHtml}
+          <div class="plw-card-compare-images" aria-label="ตัวอย่าง${escapeHtml(v.nameTh)}บนฝ่ามือทั้งสองข้าง">
+            ${renderHandImage(src, `${v.nameTh}บน${physicalHand('nonDominant')}`, 'nonDominant')}
+            ${renderHandImage(src, `${v.nameTh}บน${physicalHand('dominant')}`, 'dominant')}
+          </div>
           <div class="plw-card-label">${v.nameTh}</div>
           <div class="plw-card-actions">
             <button class="${nonDominantActive ? 'is-selected' : ''}" type="button" data-select-hand="nonDominant">
@@ -533,7 +549,7 @@ function renderGrid() {
 
     return `
       <button class="plw-card plw-card--single${active}" type="button" data-variant="${v.id}" data-select-hand="${readingMode}">
-        ${imgHtml}
+        ${renderHandImage(src, `${v.nameTh}บน${physicalHand(readingMode)}`, readingMode)}
         <div class="plw-card-label">${v.nameTh}</div>
       </button>`;
   }).join('');
@@ -590,7 +606,7 @@ function renderSingleReading(role: HandRole, variantId: string) {
 
   return `
     <div class="plw-detail-heading">
-      ${src ? `<img src="${src}" alt="${escapeHtml(variant?.nameTh)}" class="plw-detail-img" />` : ''}
+      ${src ? `<img src="${src}" alt="${escapeHtml(`${variant?.nameTh ?? ''}บน${physicalHand(role)}`)}" class="plw-detail-img ${handImageClass(role)}" />` : ''}
       <div>
         <span>${escapeHtml(lineType?.nameTh)}</span>
         <h3>${escapeHtml(variant?.nameTh)}</h3>
@@ -654,7 +670,7 @@ function renderComparisonHand(role: HandRole, variantId: string) {
   const src = imgSrc(activeLine, variantId);
   return `
     <article>
-      ${src ? `<img src="${src}" alt="${escapeHtml(variant?.nameTh)}" />` : ''}
+      ${src ? `<img src="${src}" alt="${escapeHtml(`${variant?.nameTh ?? ''}บน${physicalHand(role)}`)}" class="${handImageClass(role)}" />` : ''}
       <span>${escapeHtml(handLabel(role))}</span>
       <strong>${escapeHtml(variant?.nameTh)}</strong>
     </article>`;

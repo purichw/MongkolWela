@@ -604,11 +604,37 @@
   background-size: 24px 24px;
 }
 
+.plw-hand-image {
+  transform-origin: center;
+}
+
+.plw-hand-image--left {
+  transform: scaleX(-1);
+}
+
 .plw-card-no-img {
   display: grid;
   place-items: center;
   color: var(--ink-soft);
   font-size: 0.78rem;
+}
+
+.plw-card-compare-images {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background:
+    linear-gradient(rgba(128, 93, 56, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(128, 93, 56, 0.04) 1px, transparent 1px),
+    #fffaf0;
+  background-size: 24px 24px;
+}
+
+.plw-card-compare-images img {
+  background: transparent;
+}
+
+.plw-card-compare-images img + img {
+  border-left: 1px solid rgba(77, 56, 41, 0.12);
 }
 
 .plw-card-label {
