@@ -984,10 +984,7 @@
 }
 
 .palm-method-head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.72fr);
-  gap: 24px;
-  align-items: end;
+  display: block;
   margin-bottom: 18px;
 }
 

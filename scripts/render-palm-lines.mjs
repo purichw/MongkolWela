@@ -238,11 +238,6 @@ function renderSvg(lines) {
     <path d="M55 202 Q64 208 70 218 M63 231 Q74 239 84 244"/>
     <path d="M98 169 Q112 176 128 166 M139 166 Q154 174 169 166 M179 166 Q194 173 208 166 M219 167 Q233 174 247 166"/>
   </g>
-  <g fill="none" stroke="#d2a984" stroke-width="1.55" stroke-linecap="round" opacity=".72">
-    <path d="M128 177 C155 189 206 199 245 212"/>
-    <path d="M116 209 C152 218 196 230 234 244"/>
-    <path d="M117 192 C101 229 101 287 126 330"/>
-  </g>
   <path d="M93 354 C122 365 184 366 225 352" fill="none" stroke="#c99168" stroke-width="1.6" opacity=".55"/>
   <g fill="none" stroke="#b9352c" stroke-linecap="round" stroke-linejoin="round">
     ${lines.map(renderLine).join("\n    ")}

@@ -1,4 +1,4 @@
-import { palmLines, palmistrySources } from "./palmistry-data.js";
+import { palmLines } from "./palmistry-data.js";
 
 const diagramNotes = {
   main: "เส้นหลักใช้เริ่มอ่านโครงเรื่องใหญ่ของชีวิต: หัวใจ สมอง และชีวิต",
@@ -43,20 +43,15 @@ function renderLineGuide(container) {
   if (!container) return;
 
   container.innerHTML = palmLines
-    .map((line) => {
-      const sourceLabels = line.sourceIds
-        .map((sourceId) => palmistrySources[sourceId]?.label)
-        .filter(Boolean);
-
-      return `
+    .map(
+      (line) => `
         <article class="palm-guide-card" data-guide-line="${escapeAttribute(line.id)}">
           <span>${escapeHtml(line.shortLabel)}</span>
           <h3>${escapeHtml(line.label)}</h3>
           <p>${escapeHtml(line.guide)}</p>
-          <small>อ้างอิง: ${sourceLabels.map(escapeHtml).join(", ")}</small>
         </article>
-      `;
-    })
+      `,
+    )
     .join("");
 }
 
