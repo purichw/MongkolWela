@@ -110,6 +110,59 @@ type VisitInfoSection = {
   timetable?: { day: string; time: string }[];
 };
 
+type ConfidenceTone = "low" | "medium" | "high";
+
+type ConfidenceMeta = {
+  label: string;
+  description: string;
+  value: number;
+  tone: ConfidenceTone;
+};
+
+const confidenceLabels: Record<string, ConfidenceMeta> = {
+  high: {
+    label: "สูง",
+    description: "ชื่อ สถานที่ และแหล่งอ้างอิงตรงกันชัดเจน",
+    value: 100,
+    tone: "high",
+  },
+  "medium-high": {
+    label: "ค่อนข้างสูง",
+    description: "ข้อมูลหลักตรงกัน แต่ยังมีบางส่วนที่ใช้การเทียบเคียง",
+    value: 82,
+    tone: "high",
+  },
+  accepted_province_match: {
+    label: "ตรงระดับจังหวัด",
+    description: "ข้อมูลจังหวัดตรงกัน ใช้ได้เป็นแนวทางและควรตรวจจุดย่อยซ้ำ",
+    value: 68,
+    tone: "medium",
+  },
+  medium: {
+    label: "ปานกลาง",
+    description: "ข้อมูลใช้งานได้ แต่มีส่วนที่อาศัย fallback หรือ heuristic",
+    value: 58,
+    tone: "medium",
+  },
+  low: {
+    label: "ควรตรวจซ้ำ",
+    description: "มีข้อมูลพอแสดงผล แต่ยังไม่ควรใช้เป็นข้อสรุปสุดท้าย",
+    value: 34,
+    tone: "low",
+  },
+};
+
+const getConfidenceMeta = (confidence?: string): ConfidenceMeta | null => {
+  const key = String(confidence || "").trim().toLowerCase();
+  if (!key) return null;
+  return confidenceLabels[key] || {
+    label: "รอตรวจซ้ำ",
+    description: "ยังไม่มีระดับความมั่นใจมาตรฐานสำหรับข้อมูลชุดนี้",
+    value: 28,
+    tone: "low",
+  };
+};
+
 const { collection, collectionLabel, collectionHref, temple, placeholderImage, relatedTemples = [] } = Astro.props as Props;
 const imageUrl = temple.detailImageUrl || temple.imageUrl || placeholderImage;
 const imageMobileUrl = temple.detailImageMobileUrl || imageUrl;
@@ -128,6 +181,7 @@ const travelModeItems = splitList(temple.travelModes);
 const travelDetail = temple.travelDetail || {};
 const travelView = getTempleTravel(travelDetail) as TravelView;
 const hasTravelDetail = travelView.hasTravelDetail;
+const travelConfidence = getConfidenceMeta(travelDetail.confidence);
 const visitInfo = getTempleVisitInfo(temple);
 const visitSections = visitInfo.sections as VisitInfoSection[];
 const hasVisibleVisitInfo = Boolean(visitInfo.hasVisibleSections);
@@ -490,12 +544,29 @@ const templeJsonLd = createTempleJsonLd({
             ) : (
               travelDetail.summary && <p class="temple-detail-transit__fallback">{travelDetail.summary}</p>
             )}
-            {(travelDetail.confidence || travelDetail.updatedAt) && (
-              <small>
-                {travelDetail.confidence && `ความมั่นใจข้อมูล: ${travelDetail.confidence}`}
-                {travelDetail.confidence && travelDetail.updatedAt ? " · " : ""}
-                {travelDetail.updatedAt && `อัปเดต ${travelDetail.updatedAt}`}
-              </small>
+            {(travelConfidence || travelDetail.updatedAt) && (
+              <div class="temple-detail-confidence">
+                {travelConfidence && (
+                  <div class="temple-detail-confidence__score" data-confidence-tone={travelConfidence.tone}>
+                    <div class="temple-detail-confidence__label">
+                      <span>ความมั่นใจข้อมูล</span>
+                      <strong>{travelConfidence.label}</strong>
+                    </div>
+                    <div
+                      class="temple-detail-confidence__bar"
+                      role="progressbar"
+                      aria-label={`ความมั่นใจข้อมูล ${travelConfidence.label}`}
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      aria-valuenow={travelConfidence.value}
+                    >
+                      <span style={`--confidence-value: ${travelConfidence.value}%;`}></span>
+                    </div>
+                    <p>{travelConfidence.description}</p>
+                  </div>
+                )}
+                {travelDetail.updatedAt && <small>อัปเดต {travelDetail.updatedAt}</small>}
+              </div>
             )}
           </section>
         )}
