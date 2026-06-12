@@ -10,6 +10,7 @@ const state = {
   templeCollectionFilter: "popular",
   templeSearch: "",
   templeListScroll: {},
+  draggingTempleKey: "",
   secondaryReady: false,
   secondaryLoading: false,
   media: { provider: "", cloudinary: { enabled: false }, imagekit: { enabled: false } },
@@ -134,6 +135,11 @@ function renderAppShell() {
   $("#adminApp").addEventListener("input", handleInput);
   $("#adminApp").addEventListener("change", handleInput);
   $("#adminApp").addEventListener("error", handleAdminImageError, true);
+  $("#adminApp").addEventListener("dragstart", handleTempleDragStart);
+  $("#adminApp").addEventListener("dragover", handleTempleDragOver);
+  $("#adminApp").addEventListener("drop", handleTempleDrop);
+  $("#adminApp").addEventListener("dragend", handleTempleDragEnd);
+  $("#adminApp").addEventListener("keydown", handleTempleReorderKeydown);
 }
 
 function navButton(id, label, iconName) {
@@ -423,6 +429,12 @@ function templeRecords() {
   return state.content.temples.records;
 }
 
+function templeOrders() {
+  state.content.temples ||= {};
+  state.content.temples.order ||= {};
+  return state.content.temples.order;
+}
+
 function currentTempleRecord() {
   const visibleCatalog = filteredTempleCatalog();
   if (!state.selectedTempleKey) state.selectedTempleKey = visibleCatalog[0]?.key || "";
@@ -508,11 +520,15 @@ function renderTemples({ rememberScroll = true } = {}) {
 
 function renderTempleListItem(record) {
   const image = templeImageValue(record, templeRecords()[record.key], "card", "desktop");
-  return `<button type="button" class="mw-admin-temple-list-item ${record.key === state.selectedTempleKey ? "is-active" : ""}" data-select-temple="${escapeHtml(record.key)}">
-    <span class="mw-admin-temple-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" data-admin-temple-image>` : "<i>ไม่มีรูป</i>"}</span>
-    <span><strong data-temple-list-title>#${escapeHtml(record.temple.rank || "-")} ${escapeHtml(record.temple.name || "ยังไม่มีชื่อ")}</strong><small>${escapeHtml([record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง")}</small></span>
-    ${record.source === "admin" ? '<b>ใหม่</b>' : ""}
-  </button>`;
+  const reorderDisabled = Boolean(state.templeSearch);
+  return `<div class="mw-admin-temple-list-item ${record.key === state.selectedTempleKey ? "is-active" : ""}" data-temple-row="${escapeHtml(record.key)}">
+    <button type="button" class="mw-admin-temple-list-select" data-select-temple="${escapeHtml(record.key)}">
+      <span class="mw-admin-temple-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" data-admin-temple-image>` : "<i>ไม่มีรูป</i>"}</span>
+      <span><strong data-temple-list-title>#${escapeHtml(record.temple.rank || "-")} ${escapeHtml(record.temple.name || "ยังไม่มีชื่อ")}</strong><small>${escapeHtml([record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง")}</small></span>
+      ${record.source === "admin" ? '<b>ใหม่</b>' : ""}
+    </button>
+    <button type="button" class="mw-admin-temple-drag-handle" draggable="${reorderDisabled ? "false" : "true"}" data-temple-drag-key="${escapeHtml(record.key)}" aria-label="จัดลำดับ ${escapeHtml(record.temple.name || "สถานที่")}" title="${reorderDisabled ? "ล้างคำค้นหาเพื่อจัดลำดับ" : "ลากเพื่อจัดลำดับ ใช้ปุ่มลูกศรขึ้นลงบนคีย์บอร์ดได้"}" ${reorderDisabled ? "disabled" : ""}>⋮⋮</button>
+  </div>`;
 }
 
 function renderTempleEmptyState() {
@@ -542,9 +558,8 @@ function renderTempleEditor(record, edit) {
   </div>
   <div class="mw-admin-temple-section">
     <div class="mw-admin-temple-section-head"><div><span>01</span><h3>ข้อมูลสถานที่</h3></div><p>ข้อมูลส่วนอื่นจะเพิ่มในเฟสถัดไป</p></div>
-    <div class="mw-admin-form-grid">
+    <div class="mw-admin-form-grid mw-admin-form-grid--single">
       <label>ชื่อสถานที่<input data-temple-field="name" value="${escapeHtml(templeValue(record, edit, "name"))}" required></label>
-      <label>อันดับในหมวด<input type="number" min="1" data-temple-field="rank" value="${escapeHtml(templeValue(record, edit, "rank"))}"></label>
     </div>
   </div>
   <div class="mw-admin-temple-section">
@@ -737,6 +752,122 @@ function renderAnalytics() {
 
 function empty(text) {
   return `<p class="mw-admin-empty">${escapeHtml(text)}</p>`;
+}
+
+function collectionTemples(collection = state.templeCollectionFilter) {
+  return state.templeCatalog.filter((item) => item.collection === collection);
+}
+
+function replaceCollectionTemples(collection, orderedItems) {
+  const orderedByCollection = new Map();
+  TEMPLE_COLLECTIONS.forEach((item) => {
+    orderedByCollection.set(item.key, item.key === collection ? orderedItems : collectionTemples(item.key));
+  });
+  const knownCollections = new Set(TEMPLE_COLLECTIONS.map((item) => item.key));
+  state.templeCatalog = [
+    ...TEMPLE_COLLECTIONS.flatMap((item) => orderedByCollection.get(item.key) || []),
+    ...state.templeCatalog.filter((item) => !knownCollections.has(item.collection)),
+  ];
+}
+
+function persistTempleOrder(collection, orderedItems) {
+  templeOrders()[collection] = orderedItems.map((item) => item.key);
+  Object.values(templeRecords()).forEach((record) => {
+    if (record?.collection === collection && record.fields) delete record.fields.rank;
+  });
+  orderedItems.forEach((item, index) => {
+    item.temple.rank = index + 1;
+  });
+  replaceCollectionTemples(collection, orderedItems);
+}
+
+function reorderTemple(sourceKey, targetKey, placeAfter = false) {
+  if (!sourceKey || !targetKey || sourceKey === targetKey || state.templeSearch) return false;
+  const source = state.templeCatalog.find((item) => item.key === sourceKey);
+  const target = state.templeCatalog.find((item) => item.key === targetKey);
+  if (!source || !target || source.collection !== target.collection) return false;
+
+  const orderedItems = collectionTemples(source.collection);
+  const sourceIndex = orderedItems.findIndex((item) => item.key === sourceKey);
+  if (sourceIndex < 0) return false;
+  const [moved] = orderedItems.splice(sourceIndex, 1);
+  let targetIndex = orderedItems.findIndex((item) => item.key === targetKey);
+  if (targetIndex < 0) return false;
+  if (placeAfter) targetIndex += 1;
+  orderedItems.splice(targetIndex, 0, moved);
+  persistTempleOrder(source.collection, orderedItems);
+  state.selectedTempleKey = sourceKey;
+  markDirty();
+  renderTemples();
+  return true;
+}
+
+function moveTempleByOffset(key, offset) {
+  if (!key || !offset || state.templeSearch) return;
+  const record = state.templeCatalog.find((item) => item.key === key);
+  if (!record) return;
+  const orderedItems = collectionTemples(record.collection);
+  const sourceIndex = orderedItems.findIndex((item) => item.key === key);
+  const targetIndex = sourceIndex + offset;
+  if (sourceIndex < 0 || targetIndex < 0 || targetIndex >= orderedItems.length) return;
+  const targetKey = orderedItems[targetIndex].key;
+  if (!reorderTemple(key, targetKey, offset > 0)) return;
+  requestAnimationFrame(() => {
+    $(`[data-temple-drag-key="${CSS.escape(key)}"]`)?.focus();
+  });
+}
+
+function clearTempleDropIndicators() {
+  $$("[data-temple-row].is-drop-before, [data-temple-row].is-drop-after").forEach((row) => {
+    row.classList.remove("is-drop-before", "is-drop-after");
+  });
+}
+
+function handleTempleDragStart(event) {
+  const handle = event.target.closest?.("[data-temple-drag-key]");
+  if (!handle || state.templeSearch) return;
+  state.draggingTempleKey = handle.dataset.templeDragKey;
+  handle.closest("[data-temple-row]")?.classList.add("is-dragging");
+  event.dataTransfer?.setData("text/plain", state.draggingTempleKey);
+  if (event.dataTransfer) event.dataTransfer.effectAllowed = "move";
+}
+
+function handleTempleDragOver(event) {
+  const row = event.target.closest?.("[data-temple-row]");
+  if (!row || !state.draggingTempleKey || row.dataset.templeRow === state.draggingTempleKey) return;
+  const source = state.templeCatalog.find((item) => item.key === state.draggingTempleKey);
+  const target = state.templeCatalog.find((item) => item.key === row.dataset.templeRow);
+  if (!source || !target || source.collection !== target.collection) return;
+  event.preventDefault();
+  clearTempleDropIndicators();
+  const bounds = row.getBoundingClientRect();
+  row.classList.add(event.clientY > bounds.top + bounds.height / 2 ? "is-drop-after" : "is-drop-before");
+  if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
+}
+
+function handleTempleDrop(event) {
+  const row = event.target.closest?.("[data-temple-row]");
+  if (!row || !state.draggingTempleKey) return;
+  event.preventDefault();
+  const placeAfter = row.classList.contains("is-drop-after");
+  const sourceKey = state.draggingTempleKey;
+  const targetKey = row.dataset.templeRow;
+  clearTempleDropIndicators();
+  state.draggingTempleKey = "";
+  reorderTemple(sourceKey, targetKey, placeAfter);
+}
+
+function handleTempleDragEnd() {
+  state.draggingTempleKey = "";
+  clearTempleDropIndicators();
+  $$("[data-temple-row].is-dragging").forEach((row) => row.classList.remove("is-dragging"));
+}
+
+function handleTempleReorderKeydown(event) {
+  const handle = event.target.closest?.("[data-temple-drag-key]");
+  if (!handle || !["ArrowUp", "ArrowDown"].includes(event.key)) return;
+  event.preventDefault();
+  moveTempleByOffset(handle.dataset.templeDragKey, event.key === "ArrowUp" ? -1 : 1);
 }
 
 function handleGlobalClick(event) {
@@ -1293,6 +1424,7 @@ function addTemple() {
     temple: { ...edit.fields, images: {} },
     visitInfo: {},
   });
+  persistTempleOrder(collection, collectionTemples(collection));
   state.selectedTempleKey = key;
   state.templeSearch = "";
   markDirty();
@@ -1310,6 +1442,7 @@ function deleteTemple() {
   const edit = currentTempleEdit();
   edit.status = "deleted";
   state.templeCatalog = state.templeCatalog.filter((item) => item.key !== record.key);
+  persistTempleOrder(record.collection, collectionTemples(record.collection));
   state.selectedTempleKey = state.templeCatalog.find((item) => item.collection === state.templeCollectionFilter)?.key || "";
   markDirty();
   renderTemples();

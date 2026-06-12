@@ -60,6 +60,11 @@ function recordsFromContent(content) {
   return records && typeof records === "object" ? records : {};
 }
 
+function collectionOrderFromContent(content, collection) {
+  const order = content?.temples?.order?.[collection];
+  return Array.isArray(order) ? order.filter(Boolean) : [];
+}
+
 function imageVariant(value, fallbackUrl = "") {
   if (typeof value === "string") return { url: value };
   if (value && typeof value === "object") return { ...value, url: value.url || fallbackUrl };
@@ -118,6 +123,7 @@ function mergeTempleRecord(baseTemple, record, collection, key) {
 export function applyTempleCmsRecords(collection, temples, content = liveContent) {
   const records = recordsFromContent(content);
   const legacyOverrides = content?.temples?.overrides || {};
+  const explicitOrder = collectionOrderFromContent(content, collection);
   const usedKeys = new Set();
   const merged = [];
 
@@ -135,10 +141,25 @@ export function applyTempleCmsRecords(collection, temples, content = liveContent
     merged.push(mergeTempleRecord({}, record, collection, key));
   });
 
-  return merged.sort((a, b) => {
+  const ranked = merged.sort((a, b) => {
     const rankDifference = (Number(a.rank) || Number.MAX_SAFE_INTEGER) - (Number(b.rank) || Number.MAX_SAFE_INTEGER);
     return rankDifference || String(a.name || "").localeCompare(String(b.name || ""), "th");
   });
+
+  if (!explicitOrder.length) return ranked;
+
+  const positions = new Map(explicitOrder.map((key, index) => [key, index]));
+  ranked.sort((a, b) => {
+    const aPosition = positions.get(a.cmsKey);
+    const bPosition = positions.get(b.cmsKey);
+    if (aPosition !== undefined && bPosition !== undefined) return aPosition - bPosition;
+    if (aPosition !== undefined) return -1;
+    if (bPosition !== undefined) return 1;
+    const rankDifference = (Number(a.rank) || Number.MAX_SAFE_INTEGER) - (Number(b.rank) || Number.MAX_SAFE_INTEGER);
+    return rankDifference || String(a.name || "").localeCompare(String(b.name || ""), "th");
+  });
+
+  return ranked.map((temple, index) => ({ ...temple, rank: index + 1 }));
 }
 
 export function getTempleCmsRecordMap(content = liveContent) {

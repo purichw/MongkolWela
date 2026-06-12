@@ -378,6 +378,10 @@
   gap: 18px 20px;
 }
 
+.mw-admin-form-grid--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .mw-admin-content label,
 .mw-admin-login label {
   display: grid;
@@ -577,20 +581,17 @@
 }
 
 .mw-admin-temple-list-item {
+  position: relative;
   display: grid;
-  grid-template-columns: 54px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) 34px;
   align-items: center;
-  gap: 10px;
+  gap: 2px;
   width: 100%;
   min-height: 66px;
-  padding: 7px;
   border: 1px solid transparent;
   border-radius: 6px;
   background: transparent;
   color: #040a0c;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
 }
 
 .mw-admin-temple-list-item:hover,
@@ -601,6 +602,77 @@
 
 .mw-admin-temple-list-item.is-active {
   box-shadow: inset 3px 0 #ffde00;
+}
+
+.mw-admin-temple-list-item.is-dragging {
+  opacity: 0.42;
+}
+
+.mw-admin-temple-list-item.is-drop-before::before,
+.mw-admin-temple-list-item.is-drop-after::after {
+  position: absolute;
+  right: 4px;
+  left: 4px;
+  z-index: 2;
+  height: 3px;
+  border-radius: 999px;
+  background: #d4ae13;
+  content: "";
+  pointer-events: none;
+}
+
+.mw-admin-temple-list-item.is-drop-before::before {
+  top: -5px;
+}
+
+.mw-admin-temple-list-item.is-drop-after::after {
+  bottom: -5px;
+}
+
+.mw-admin-temple-list-select {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 7px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mw-admin-temple-drag-handle {
+  display: grid;
+  width: 32px;
+  height: 40px;
+  place-items: center;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(4, 10, 12, 0.42);
+  font: 900 1rem/1 "Noto Sans Thai", sans-serif;
+  letter-spacing: 0;
+  cursor: grab;
+  touch-action: none;
+}
+
+.mw-admin-temple-drag-handle:hover,
+.mw-admin-temple-drag-handle:focus-visible {
+  background: #eee9df;
+  color: #040a0c;
+}
+
+.mw-admin-temple-drag-handle:active {
+  cursor: grabbing;
+}
+
+.mw-admin-temple-drag-handle:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
 }
 
 .mw-admin-temple-list-thumb {
@@ -651,7 +723,7 @@
   font-size: 0.68rem;
 }
 
-.mw-admin-temple-list-item > b {
+.mw-admin-temple-list-select > b {
   padding: 3px 6px;
   border-radius: 999px;
   background: #dceade;
