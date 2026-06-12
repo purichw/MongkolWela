@@ -11,10 +11,14 @@ const state = {
   templeSearch: "",
   templeListScroll: {},
   draggingTempleKey: "",
+  publishing: false,
   secondaryReady: false,
   secondaryLoading: false,
   media: { provider: "", cloudinary: { enabled: false }, imagekit: { enabled: false } },
 };
+
+const PUBLISH_VERIFY_TIMEOUT_MS = 90000;
+const PUBLISH_VERIFY_INTERVAL_MS = 600;
 
 const TEMPLE_COLLECTIONS = [
   { key: "popular", label: "สายไหว้พระ 9 วัด" },
@@ -64,6 +68,63 @@ function setStatus(message, type = "info") {
   if (!el) return;
   el.textContent = message;
   el.dataset.type = type;
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function setPublishControlsDisabled(disabled) {
+  $$('[data-action="publish"]').forEach((button) => {
+    button.disabled = disabled;
+    button.setAttribute("aria-busy", disabled ? "true" : "false");
+  });
+}
+
+function setPublishProgress(progress, title, detail = "") {
+  const panel = $("#adminPublishProgress");
+  if (!panel) return;
+  const percent = Math.max(0, Math.min(100, Math.round(progress)));
+  panel.hidden = false;
+  panel.dataset.active = "true";
+  $("[data-publish-progress-title]", panel).textContent = title;
+  $("[data-publish-progress-value]", panel).textContent = `${percent}%`;
+  $("[data-publish-progress-detail]", panel).textContent = detail;
+  $("[data-publish-progress-bar]", panel).style.width = `${percent}%`;
+}
+
+function hidePublishProgress() {
+  const panel = $("#adminPublishProgress");
+  if (!panel) return;
+  panel.hidden = true;
+  panel.dataset.active = "false";
+}
+
+function publishedContentMatches(expected, actual) {
+  if (!expected || !actual) return false;
+  return Boolean(expected.publishedAt && actual.publishedAt === expected.publishedAt);
+}
+
+async function waitForPublishedContent(expectedContent) {
+  const startedAt = Date.now();
+  let attempt = 0;
+  while (Date.now() - startedAt < PUBLISH_VERIFY_TIMEOUT_MS) {
+    attempt += 1;
+    const elapsed = Date.now() - startedAt;
+    const progress = Math.min(96, 48 + (elapsed / PUBLISH_VERIFY_TIMEOUT_MS) * 48);
+    setPublishProgress(
+      progress,
+      "กำลังตรวจหน้าเว็บจริง",
+      attempt === 1 ? "กำลังอ่านข้อมูล live หลัง publish" : `รอตรวจซ้ำครั้งที่ ${attempt}`,
+    );
+    const payload = await api(`/api/admin/content?verify=${Date.now()}`, {
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache" },
+    });
+    if (publishedContentMatches(expectedContent, payload.content)) return payload.content;
+    await sleep(PUBLISH_VERIFY_INTERVAL_MS);
+  }
+  throw new Error("Publish สำเร็จแล้ว แต่ยังตรวจไม่พบเวอร์ชันใหม่บนหน้าเว็บ");
 }
 
 function markDirty() {
@@ -119,6 +180,14 @@ function renderAppShell() {
         <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="publish">${icon("publish")} Publish</button>
       </div>
     </header>
+    <div id="adminPublishProgress" class="mw-admin-publish-progress" role="status" aria-live="polite" hidden>
+      <div class="mw-admin-publish-progress-head">
+        <strong data-publish-progress-title>กำลัง publish</strong>
+        <span data-publish-progress-value>0%</span>
+      </div>
+      <div class="mw-admin-publish-progress-track"><i data-publish-progress-bar></i></div>
+      <p data-publish-progress-detail>กำลังเตรียมข้อมูล</p>
+    </div>
     <nav class="mw-admin-nav" id="adminNav" aria-label="Admin navigation"></nav>
     <main class="mw-admin-main">
       <header class="mw-admin-top">
@@ -1124,18 +1193,39 @@ function saveDraft() {
 }
 
 async function publish() {
+  if (state.publishing) return;
+  state.publishing = true;
+  setPublishControlsDisabled(true);
   try {
     setStatus("กำลัง publish...", "info");
+    setPublishProgress(8, "กำลังส่งข้อมูล", "กำลังบันทึก content ใหม่");
     const payload = await api("/api/admin/content", {
       method: "POST",
       body: JSON.stringify({ content: state.content }),
     });
+    setPublishProgress(
+      payload.meta?.fast ? 52 : 42,
+      "บันทึก publish แล้ว",
+      payload.meta?.fast ? "กำลังตรวจว่า visitor อ่านข้อมูลใหม่ได้แล้ว" : "กำลังตรวจข้อมูล live",
+    );
     state.content = payload.content;
+    const verifiedContent = await waitForPublishedContent(payload.content);
+    state.content = verifiedContent;
     state.dirty = false;
+    setPublishProgress(100, "หน้าเว็บอัปเดตแล้ว", "visitor จะเห็นข้อมูลเวอร์ชันล่าสุดเมื่อเปิดหรือรีโหลดหน้า");
     setStatus(`Published (${payload.meta?.mode || "content"})`, "ok");
     renderAdmin();
+    setPublishControlsDisabled(true);
+    setTimeout(() => {
+      hidePublishProgress();
+      if (!state.publishing) setPublishControlsDisabled(false);
+    }, 2400);
   } catch (error) {
     setStatus(error.message, "error");
+    setPublishProgress(100, "Publish มีปัญหา", error.message);
+  } finally {
+    state.publishing = false;
+    setPublishControlsDisabled(false);
   }
 }
 

@@ -43,6 +43,7 @@ export default async function handler(req, res) {
         commitSha: publish.commitSha || "",
         contentSha: publish.contentSha || "",
         warnings: publish.warnings || [],
+        fast: publish.fast === true,
         publishedAt: content.publishedAt,
         actor: session.actor,
       },

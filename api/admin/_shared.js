@@ -169,27 +169,40 @@ export async function readGithubContent() {
 }
 
 export async function readLiveContent() {
-  const bundledContent = readBundledLiveContent();
+  const bundled = await readBundledLiveContent();
   const sources = isProductionRuntime()
-    ? [readDatabaseContent(), readGithubContent(), bundledContent, readDefaultContent()]
-    : [bundledContent, readDatabaseContent(), readGithubContent(), readDefaultContent()];
-  const results = await Promise.allSettled(sources);
-  const match = results.find((result) => result.status === "fulfilled" && result.value);
-  if (match?.status === "fulfilled") {
-    const bundledMatch = results[isProductionRuntime() ? 2 : 0];
-    const bundled = bundledMatch?.status === "fulfilled" ? bundledMatch.value : null;
-    return mergeWithBundledContent(match.value, bundled);
+    ? [readDatabaseContent, readGithubContent, async () => bundled, readDefaultContent]
+    : [async () => bundled, readDatabaseContent, readGithubContent, readDefaultContent];
+
+  for (const readSource of sources) {
+    try {
+      const content = await readSource();
+      if (content) return mergeWithBundledContent(content, bundled);
+    } catch {
+      // Try the next source.
+    }
   }
+
   throw new Error("Content source unavailable");
 }
 
-export async function publishLiveContent(content, actor = "admin") {
+export async function publishLiveContent(content, actor = "admin", { fast = isProductionRuntime() } = {}) {
   const publishResults = [];
   const failures = [];
 
   if (hasWritableDatabase()) {
     try {
-      publishResults.push(await writeDatabaseContent(content, actor, { source: "admin" }));
+      const databaseResult = await writeDatabaseContent(content, actor, { source: "admin" });
+      publishResults.push(databaseResult);
+      if (fast) {
+        return {
+          mode: databaseResult.mode,
+          commitSha: "",
+          contentSha: "",
+          warnings: [],
+          fast: true,
+        };
+      }
     } catch (error) {
       failures.push(error);
     }
@@ -207,6 +220,7 @@ export async function publishLiveContent(content, actor = "admin") {
       commitSha: publishResults.find((result) => result.commitSha)?.commitSha || "",
       contentSha: publishResults.find((result) => result.contentSha)?.contentSha || "",
       warnings: failures.map((error) => error.message).filter(Boolean),
+      fast: false,
     };
   }
 

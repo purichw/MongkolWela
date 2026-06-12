@@ -62,6 +62,58 @@
   justify-content: flex-end;
 }
 
+.mw-admin-publish-progress {
+  max-width: 1280px;
+  margin: -8px auto 22px;
+  padding: 12px 14px;
+  border: 1px solid rgba(4, 10, 12, 0.1);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 14px 36px rgba(4, 10, 12, 0.08);
+}
+
+.mw-admin-publish-progress[hidden] {
+  display: none;
+}
+
+.mw-admin-publish-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.mw-admin-publish-progress-head span {
+  color: #7a4f00;
+  font-variant-numeric: tabular-nums;
+}
+
+.mw-admin-publish-progress-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #f1e7cf;
+}
+
+.mw-admin-publish-progress-track i {
+  display: block;
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #9f2f27, #d09a2d, #218c5a);
+  transition: width 240ms ease;
+}
+
+.mw-admin-publish-progress p {
+  margin: 8px 0 0;
+  color: rgba(4, 10, 12, 0.58);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
 .mw-admin-nav {
   display: flex;
   gap: 8px;
@@ -195,6 +247,13 @@
   font-weight: 800;
   text-decoration: none;
   cursor: pointer;
+}
+
+.mw-admin-btn:disabled,
+.mw-admin-item-head button:disabled,
+.mw-admin-nav-row button:disabled {
+  cursor: progress;
+  opacity: 0.62;
 }
 
 .mw-admin-btn-primary {
