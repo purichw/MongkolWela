@@ -1,5 +1,5 @@
 ---
-const assetVersion = "20260612-02";
+const assetVersion = "20260612-03";
 ---
 
 <!doctype html>
@@ -18,7 +18,48 @@ const assetVersion = "20260612-02";
     <link rel="stylesheet" href={`/styles.css?v=${assetVersion}`} />
   </head>
   <body class="admin-page">
-    <div id="adminApp" data-admin-app></div>
+    <div id="adminApp" data-admin-app>
+      <div class="mw-admin-shell">
+        <header class="mw-admin-header">
+          <a class="mw-admin-logo" href="/admin/"><span>MW</span><strong>มงคลเวลา</strong><small>Content Management</small></a>
+          <div class="mw-admin-header-actions">
+            <span class="mw-admin-status">กำลังโหลด</span>
+            <button class="mw-admin-btn" type="button" disabled>เปิดเว็บ</button>
+            <button class="mw-admin-btn mw-admin-btn-primary" type="button" disabled>✓ Publish</button>
+          </div>
+        </header>
+        <nav class="mw-admin-nav" aria-label="Admin navigation">
+          <span class="mw-admin-ghost is-active">⌁ <strong>Dashboard</strong></span>
+          <span class="mw-admin-ghost">▤ <strong>Pages & Content</strong></span>
+          <span class="mw-admin-ghost">◇ <strong>Temples</strong></span>
+          <span class="mw-admin-ghost">↕ <strong>Sections</strong></span>
+        </nav>
+        <main class="mw-admin-main">
+          <header class="mw-admin-top">
+            <div><p>Admin Portal</p><h1>Dashboard</h1></div>
+            <div class="mw-admin-top-actions">
+              <button class="mw-admin-btn" type="button" disabled>Save draft</button>
+              <button class="mw-admin-btn" type="button" disabled>ออกจากระบบ</button>
+            </div>
+          </header>
+          <section class="mw-admin-content">
+            <div class="mw-admin-grid mw-admin-loading-grid" aria-hidden="true">
+              <article class="mw-admin-stat mw-admin-skeleton-card"><i></i><span></span></article>
+              <article class="mw-admin-stat mw-admin-skeleton-card"><i></i><span></span></article>
+              <article class="mw-admin-stat mw-admin-skeleton-card"><i></i><span></span></article>
+              <article class="mw-admin-stat mw-admin-skeleton-card"><i></i><span></span></article>
+            </div>
+            <div class="mw-admin-card mw-admin-skeleton-panel" role="status" aria-live="polite">
+              <div>
+                <strong>กำลังโหลดข้อมูล</strong>
+                <p>กำลังเตรียมข้อมูลสำหรับ Admin Portal</p>
+              </div>
+              <span></span><span></span><span></span>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
     <script is:inline type="module" src={`/assets/js/admin-portal.js?v=${assetVersion}`}></script>
   </body>
 </html>

@@ -10,6 +10,8 @@ const state = {
   templeCollectionFilter: "popular",
   templeSearch: "",
   templeListScroll: {},
+  secondaryReady: false,
+  secondaryLoading: false,
   media: { provider: "", cloudinary: { enabled: false }, imagekit: { enabled: false } },
 };
 
@@ -52,7 +54,7 @@ async function api(path, options = {}) {
     ...options,
   });
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok || payload.ok === false) throw new Error(payload.error || `API failed: ${response.status}`);
+  if (!response.ok || payload.ok !== true) throw new Error(payload.error || `API failed: ${response.status}`);
   return payload;
 }
 
@@ -91,11 +93,16 @@ function icon(name) {
 
 async function boot() {
   renderAppShell();
+  renderSideNav();
+  renderAdminLoading("Dashboard", "กำลังตรวจสอบสิทธิ์", "กำลังเตรียมข้อมูลสำหรับ Admin Portal");
   try {
+    state.secondaryReady = false;
     state.session = await api("/api/admin/session");
+    setStatus("กำลังโหลดข้อมูลหลัก...", "info");
     await loadContent();
-    await Promise.all([loadTemples(), loadAnalytics(), loadMediaConfig()]);
     renderAdmin();
+    setStatus("กำลังโหลดข้อมูลเสริม...", "info");
+    void loadSecondaryAdminData();
   } catch {
     renderLogin();
   }
@@ -216,8 +223,25 @@ async function loadMediaConfig() {
   }
 }
 
+async function loadSecondaryAdminData() {
+  state.secondaryLoading = true;
+  await Promise.allSettled([loadTemples(), loadAnalytics(), loadMediaConfig()]);
+  state.secondaryReady = true;
+  state.secondaryLoading = false;
+  if (["dashboard", "temples", "analytics"].includes(state.section)) renderAdmin();
+  if (!state.dirty) setStatus("พร้อมใช้งาน", "ok");
+}
+
 function renderAdmin() {
   renderSideNav();
+  if (!state.content) {
+    renderAdminLoading("Dashboard", "กำลังโหลดข้อมูล", "กำลังเตรียมข้อมูลหลักสำหรับ Admin Portal");
+    return;
+  }
+  if (state.section === "temples" && !state.secondaryReady) {
+    renderAdminLoading("Temples", "กำลังโหลดข้อมูลวัด", "กำลังเตรียมรายการสถานที่ รูปภาพ และการตั้งค่าอัปโหลด");
+    return;
+  }
   const renderers = {
     dashboard: renderDashboard,
     pages: renderPages,
@@ -232,6 +256,20 @@ function renderAdmin() {
 
 function setTitle(title) {
   $("#adminTitle").textContent = title;
+}
+
+function renderAdminLoading(title = "Dashboard", heading = "กำลังโหลดข้อมูล", detail = "กำลังเตรียมข้อมูลสำหรับ Admin Portal") {
+  setTitle(title);
+  $("#adminContent").innerHTML = `<div class="mw-admin-grid mw-admin-loading-grid" aria-hidden="true">
+    ${Array.from({ length: 4 }, () => `<article class="mw-admin-stat mw-admin-skeleton-card"><i></i><span></span></article>`).join("")}
+  </div>
+  <div class="mw-admin-card mw-admin-skeleton-panel" role="status" aria-live="polite">
+    <div>
+      <strong>${escapeHtml(heading)}</strong>
+      <p>${escapeHtml(detail)}</p>
+    </div>
+    <span></span><span></span><span></span>
+  </div>`;
 }
 
 function renderDashboard() {

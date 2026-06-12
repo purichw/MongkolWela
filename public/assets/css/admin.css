@@ -91,13 +91,15 @@
 
 .mw-admin-nav button:hover,
 .mw-admin-nav button.is-active,
-.mw-admin-ghost:hover {
+.mw-admin-ghost:hover,
+.mw-admin-ghost.is-active {
   border-color: rgba(4, 10, 12, 0.12);
   background: #fff;
   color: #040a0c;
 }
 
-.mw-admin-nav button.is-active {
+.mw-admin-nav button.is-active,
+.mw-admin-ghost.is-active {
   background: #040a0c;
   color: #ffde00;
 }
@@ -217,6 +219,95 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
+}
+
+.mw-admin-loading-grid {
+  pointer-events: none;
+}
+
+.mw-admin-skeleton-card,
+.mw-admin-skeleton-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.mw-admin-skeleton-card::after,
+.mw-admin-skeleton-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 222, 0, 0.18), transparent);
+  animation: mw-admin-skeleton 1.4s ease-in-out infinite;
+}
+
+.mw-admin-skeleton-card i,
+.mw-admin-skeleton-card span,
+.mw-admin-skeleton-panel > span {
+  display: block;
+  border-radius: 999px;
+  background: #ebe5da;
+}
+
+.mw-admin-skeleton-card i {
+  width: 46%;
+  height: 32px;
+  margin-bottom: 13px;
+}
+
+.mw-admin-skeleton-card span {
+  width: 62%;
+  height: 13px;
+}
+
+.mw-admin-skeleton-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.mw-admin-skeleton-panel strong,
+.mw-admin-skeleton-panel p {
+  display: block;
+  margin: 0;
+}
+
+.mw-admin-skeleton-panel strong {
+  font-size: 1rem;
+}
+
+.mw-admin-skeleton-panel p {
+  color: rgba(4, 10, 12, 0.54);
+  font-size: 0.84rem;
+}
+
+.mw-admin-skeleton-panel > span {
+  height: 14px;
+}
+
+.mw-admin-skeleton-panel > span:nth-child(2) {
+  width: 84%;
+}
+
+.mw-admin-skeleton-panel > span:nth-child(3) {
+  width: 66%;
+}
+
+.mw-admin-skeleton-panel > span:nth-child(4) {
+  width: 74%;
+}
+
+@keyframes mw-admin-skeleton {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mw-admin-skeleton-card::after,
+  .mw-admin-skeleton-panel::after {
+    animation: none;
+    transform: none;
+  }
 }
 
 .mw-admin-grid--three {
