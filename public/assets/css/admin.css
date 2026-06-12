@@ -577,6 +577,7 @@
   min-height: 0;
   max-height: none;
   overflow-y: auto;
+  padding-left: 28px;
   padding-right: 3px;
 }
 
@@ -602,6 +603,41 @@
 
 .mw-admin-temple-list-item.is-active {
   box-shadow: inset 3px 0 #ffde00;
+}
+
+.mw-admin-temple-move-controls {
+  position: absolute;
+  top: 50%;
+  left: -27px;
+  display: grid;
+  gap: 3px;
+  transform: translateY(-50%);
+}
+
+.mw-admin-temple-move-controls button {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #d8cfc0;
+  border-radius: 4px;
+  background: #fff;
+  color: #5d554c;
+  font: 900 0.72rem/1 "Noto Sans Thai", sans-serif;
+  cursor: pointer;
+}
+
+.mw-admin-temple-move-controls button:hover,
+.mw-admin-temple-move-controls button:focus-visible {
+  border-color: #b38d00;
+  background: #fff7cc;
+  color: #040a0c;
+}
+
+.mw-admin-temple-move-controls button:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
 }
 
 .mw-admin-temple-list-item.is-dragging {
@@ -1085,6 +1121,7 @@
   .mw-admin-temple-list-scroll {
     grid-auto-flow: column;
     grid-auto-columns: minmax(230px, 72vw);
+    column-gap: 35px;
     max-height: none;
     overflow-x: auto;
     overflow-y: hidden;

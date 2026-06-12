@@ -521,7 +521,16 @@ function renderTemples({ rememberScroll = true } = {}) {
 function renderTempleListItem(record) {
   const image = templeImageValue(record, templeRecords()[record.key], "card", "desktop");
   const reorderDisabled = Boolean(state.templeSearch);
+  const collectionItems = collectionTemples(record.collection);
+  const collectionIndex = collectionItems.findIndex((item) => item.key === record.key);
+  const isActive = record.key === state.selectedTempleKey;
+  const disableMoveUp = reorderDisabled || collectionIndex <= 0;
+  const disableMoveDown = reorderDisabled || collectionIndex < 0 || collectionIndex >= collectionItems.length - 1;
   return `<div class="mw-admin-temple-list-item ${record.key === state.selectedTempleKey ? "is-active" : ""}" data-temple-row="${escapeHtml(record.key)}">
+    ${isActive ? `<span class="mw-admin-temple-move-controls" aria-label="เลื่อนอันดับ ${escapeHtml(record.temple.name || "สถานที่")}">
+      <button type="button" data-temple-move-key="${escapeHtml(record.key)}" data-temple-move-offset="-1" aria-label="เลื่อนขึ้นหนึ่งอันดับ" title="${reorderDisabled ? "ล้างคำค้นหาเพื่อจัดลำดับ" : "เลื่อนขึ้นหนึ่งอันดับ"}" ${disableMoveUp ? "disabled" : ""}>↑</button>
+      <button type="button" data-temple-move-key="${escapeHtml(record.key)}" data-temple-move-offset="1" aria-label="เลื่อนลงหนึ่งอันดับ" title="${reorderDisabled ? "ล้างคำค้นหาเพื่อจัดลำดับ" : "เลื่อนลงหนึ่งอันดับ"}" ${disableMoveDown ? "disabled" : ""}>↓</button>
+    </span>` : ""}
     <button type="button" class="mw-admin-temple-list-select" data-select-temple="${escapeHtml(record.key)}">
       <span class="mw-admin-temple-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" data-admin-temple-image>` : "<i>ไม่มีรูป</i>"}</span>
       <span><strong data-temple-list-title>#${escapeHtml(record.temple.rank || "-")} ${escapeHtml(record.temple.name || "ยังไม่มีชื่อ")}</strong><small>${escapeHtml([record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง")}</small></span>
@@ -871,6 +880,12 @@ function handleTempleReorderKeydown(event) {
 }
 
 function handleGlobalClick(event) {
+  const templeMove = event.target.closest("[data-temple-move-key]");
+  if (templeMove) {
+    moveTempleByOffset(templeMove.dataset.templeMoveKey, Number(templeMove.dataset.templeMoveOffset));
+    return;
+  }
+
   const templeTab = event.target.closest("[data-temple-collection]");
   if (templeTab) {
     rememberTempleListScroll();
