@@ -1,0 +1,231 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import TempleSearchHero from "../../../components/TempleSearchHero.astro";
+import templePageBanners from "../../../data/temple-page-banners.json";
+import { getTemplePlannerData } from "../../../data/temple-planner.js";
+
+const plannerData = getTemplePlannerData();
+const plannerPayload = JSON.stringify(plannerData).replace(/</g, "\\u003c");
+const extraStyles = ["/assets/css/temple-planner.css?feature=20260612-01"];
+const extraScripts = ["/assets/js/temple-planner.js"];
+const pageTitle = "วางแผนไหว้พระ 9 วัด | มงคลเวลา";
+const pageDescription =
+  "ตัวช่วยเลือกและจัดแผนไหว้พระ 3 5 หรือ 9 แห่งจากรายการและแผนที่ พร้อมประมาณระยะทาง เวลาเดินทาง และลำดับทริปแบบไม่ใช้ข้อมูลจราจรจริง";
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  lang="th"
+  locale="th"
+  page="templesPlanner"
+  bodyClass="temple-planner-page"
+  extraStyles={extraStyles}
+  extraScripts={extraScripts}
+  canonicalPath="/temples/planner/"
+  image="/assets/images/hero-temple-red.jpg"
+  imageAlt="วางแผนเส้นทางไหว้พระและสถานที่ศักดิ์สิทธิ์"
+  breadcrumbs={[
+    { label: "หน้าแรก", href: "/" },
+    { label: "วัดดังเสริมมงคล", href: "/temples/" },
+    { label: "วางแผนไหว้พระ", href: "/temples/planner/" },
+  ]}
+>
+  <main class="temple-planner" data-temple-planner>
+    <TempleSearchHero
+      banner={templePageBanners.popular}
+      breadcrumbs={[
+        { label: "หน้าแรก", href: "../../../" },
+        { label: "วัดดังเสริมมงคล", href: "../../" },
+        { label: "วางแผนไหว้พระ" },
+      ]}
+      kicker="ตัวช่วยวางแผนการเดินทาง"
+      title="วางแผนไหว้พระ"
+      description="เลือก 3, 5 หรือ 9 แห่ง แล้วให้ระบบช่วยจัดลำดับที่เดินทางต่อกันได้ พร้อมเวลาประมาณการสำหรับรถยนต์และแท็กซี่"
+    >
+      <section slot="panel" class="planner-setup" aria-labelledby="planner-setup-title">
+        <div class="planner-setup__heading">
+          <div>
+            <p class="section-kicker">ตั้งค่าทริป</p>
+            <h2 id="planner-setup-title">เริ่มจากเวลาและพื้นที่ที่สะดวก</h2>
+          </div>
+          <p>ระบบคำนวณจากพิกัดและกฎประมาณการ ไม่ใช่สภาพจราจรแบบเรียลไทม์</p>
+        </div>
+
+        <div class="planner-setup__grid">
+          <fieldset class="planner-field planner-field--count">
+            <legend>จำนวนสถานที่</legend>
+            <div class="planner-segmented" data-planner-count>
+              {[3, 5, 9].map((count) => (
+                <label>
+                  <input type="radio" name="planner-count" value={count} checked={count === 9} />
+                  <span>{count} แห่ง</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <label class="planner-field">
+            <span>เวลาที่มี</span>
+            <select data-planner-budget>
+              <option value="300">ครึ่งวัน · ประมาณ 5 ชั่วโมง</option>
+              <option value="600" selected>เต็มวัน · ประมาณ 10 ชั่วโมง</option>
+              <option value="720">เต็มวันแบบสบาย · ประมาณ 12 ชั่วโมง</option>
+            </select>
+          </label>
+
+          <label class="planner-field">
+            <span>เวลาเริ่ม</span>
+            <input type="time" value="08:00" data-planner-start-time />
+          </label>
+
+          <label class="planner-field">
+            <span>ภาค</span>
+            <select data-planner-region>
+              <option value="">ทุกภาค</option>
+              {plannerData.filters.regions.map((region) => <option value={region}>{region}</option>)}
+            </select>
+          </label>
+
+          <label class="planner-field">
+            <span>จังหวัด</span>
+            <select data-planner-province>
+              <option value="">ทุกจังหวัด</option>
+              {plannerData.filters.provinces.map((province) => <option value={province}>{province}</option>)}
+            </select>
+          </label>
+
+          <label class="planner-field">
+            <span>จุดประสงค์</span>
+            <select data-planner-purpose>
+              <option value="">ไหว้พระและเสริมสิริมงคลทั่วไป</option>
+              {plannerData.filters.purposes.map((purpose) => <option value={purpose}>{purpose}</option>)}
+            </select>
+          </label>
+
+          <label class="planner-field planner-field--start">
+            <span>จุดเริ่มต้น</span>
+            <select data-planner-start>
+              <option value="">ให้ระบบเริ่มจากสถานที่แรก</option>
+              {plannerData.items.map((item) => <option value={item.id}>{item.name} · {item.province}</option>)}
+            </select>
+          </label>
+
+          <button class="planner-location-button" type="button" data-planner-location>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2m0-14-2 2M7 17l-2 2"></path>
+            </svg>
+            ใช้ตำแหน่งปัจจุบัน
+          </button>
+        </div>
+
+        <div class="planner-setup__actions">
+          <button class="planner-primary-button" type="button" data-planner-auto>
+            จัดแผนอัตโนมัติ
+          </button>
+          <a href="#planner-pick">หรือเลือกสถานที่เองจากรายการและแผนที่</a>
+        </div>
+        <p class="planner-location-status" role="status" aria-live="polite" data-planner-location-status></p>
+      </section>
+    </TempleSearchHero>
+
+    <section class="planner-pick" id="planner-pick" aria-labelledby="planner-pick-title">
+      <div class="planner-section-head">
+        <div>
+          <p class="section-kicker">เลือกสถานที่เอง</p>
+          <h2 id="planner-pick-title">จิ้มเลือกจากรายการหรือแผนที่</h2>
+        </div>
+        <div class="planner-selection-count" aria-live="polite">
+          เลือกแล้ว <strong data-planner-selected-count>0</strong>/<span data-planner-target-count>9</span>
+        </div>
+      </div>
+
+      <div class="planner-selected-tray" data-planner-selected-tray>
+        <p>ยังไม่ได้เลือกสถานที่ ระบบสามารถแนะนำให้ครบตามจำนวนได้</p>
+      </div>
+
+      <div class="planner-pick__toolbar">
+        <div class="planner-tabs" role="tablist" aria-label="วิธีเลือกสถานที่">
+          <button type="button" role="tab" aria-selected="true" data-planner-picker-tab="list">รายการ</button>
+          <button type="button" role="tab" aria-selected="false" data-planner-picker-tab="map">แผนที่</button>
+        </div>
+        <label class="planner-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-4-4"></path>
+          </svg>
+          <span class="sr-only">ค้นหาสถานที่</span>
+          <input type="search" placeholder="ค้นหาชื่อ จังหวัด หรือพรที่ต้องการ" data-planner-search />
+        </label>
+      </div>
+
+      <div class="planner-picker-panel" role="tabpanel" data-planner-picker-panel="list">
+        <div class="planner-place-grid" data-planner-place-grid></div>
+        <button class="planner-more-button" type="button" data-planner-more hidden>ดูสถานที่เพิ่ม</button>
+        <p class="planner-empty" data-planner-empty hidden>ไม่พบสถานที่ที่ตรงกับตัวกรอง</p>
+      </div>
+
+      <div class="planner-picker-panel" role="tabpanel" data-planner-picker-panel="map" hidden>
+        <div class="planner-map-shell">
+          <div class="planner-map" data-planner-selection-map aria-label="แผนที่เลือกวัดและสถานที่ศักดิ์สิทธิ์"></div>
+          <div class="planner-map-note">
+            แตะหมุดเพื่อดูข้อมูลและเพิ่มในทริป หมุดสีแดงคือสถานที่ที่เลือกแล้ว
+          </div>
+        </div>
+      </div>
+
+      <div class="planner-pick__actions">
+        <button class="planner-primary-button" type="button" data-planner-build>
+          จัดลำดับสถานที่ที่เลือก
+        </button>
+        <button class="planner-secondary-button" type="button" data-planner-clear-selection>
+          ล้างที่เลือก
+        </button>
+      </div>
+    </section>
+
+    <section class="planner-result" aria-labelledby="planner-result-title" data-planner-result hidden>
+      <div class="planner-section-head">
+        <div>
+          <p class="section-kicker">แผนการเดินทาง</p>
+          <h2 id="planner-result-title">ทริปที่จัดให้</h2>
+        </div>
+        <button class="planner-secondary-button" type="button" data-planner-edit>กลับไปปรับสถานที่</button>
+      </div>
+
+      <div class="planner-summary" data-planner-summary></div>
+      <div class="planner-warnings" data-planner-warnings hidden></div>
+
+      <div class="planner-result__toolbar">
+        <div class="planner-tabs" role="tablist" aria-label="มุมมองแผนการเดินทาง">
+          <button type="button" role="tab" aria-selected="true" data-planner-result-tab="timeline">แผนตามเวลา</button>
+          <button type="button" role="tab" aria-selected="false" data-planner-result-tab="map">ดูบนแผนที่</button>
+        </div>
+        <div class="planner-result__actions">
+          <button class="planner-secondary-button" type="button" data-planner-save>บันทึกแผน</button>
+          <a class="planner-primary-button" href="#" target="_blank" rel="noopener" data-planner-google>
+            เปิดเส้นทางใน Google Maps
+          </a>
+        </div>
+      </div>
+
+      <div role="tabpanel" data-planner-result-panel="timeline">
+        <ol class="planner-timeline" data-planner-timeline></ol>
+      </div>
+      <div role="tabpanel" data-planner-result-panel="map" hidden>
+        <div class="planner-map-shell">
+          <div class="planner-map planner-map--route" data-planner-route-map aria-label="แผนที่ลำดับการเดินทาง"></div>
+          <div class="planner-map-note">เส้นเชื่อมใช้เพื่อแสดงลำดับโดยประมาณ ไม่ใช่แนวถนนจริง</div>
+        </div>
+      </div>
+
+      <p class="planner-disclaimer">
+        ระยะทางและเวลาเป็นค่าประมาณสำหรับวางแผนจากพิกัด ไม่รวมสภาพจราจร เหตุปิดถนน เวลาเปิด–ปิด หรือเวลารอจริง
+        ควรตรวจเส้นทางอีกครั้งก่อนออกเดินทาง
+      </p>
+    </section>
+
+    <script is:inline type="application/json" id="templePlannerData" set:html={plannerPayload}></script>
+  </main>
+</BaseLayout>

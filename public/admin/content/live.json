@@ -232,6 +232,16 @@
       "sections": []
     },
     {
+      "id": "templesPlanner",
+      "kind": "existing",
+      "label": "วางแผนไหว้พระ",
+      "route": "/temples/planner/",
+      "blocks": [],
+      "enabled": true,
+      "patches": [],
+      "sections": []
+    },
+    {
       "id": "templesPopular",
       "kind": "existing",
       "label": "สายไหว้พระ 9 วัด",
@@ -502,6 +512,12 @@
         "id": "temples",
         "href": "temples/",
         "items": [
+          {
+            "id": "temple-planner",
+            "href": "temples/planner/",
+            "label": "วางแผนไหว้พระ",
+            "enabled": true
+          },
           {
             "id": "temple-featured-section",
             "label": "วัดเด่นวัดดัง",

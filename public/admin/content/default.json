@@ -74,6 +74,7 @@
         "href": "temples/",
         "enabled": true,
         "items": [
+          { "id": "temple-planner", "label": "วางแผนไหว้พระ", "href": "temples/planner/", "enabled": true },
           { "id": "temple-featured-section", "label": "วัดเด่นวัดดัง", "section": true, "enabled": true },
           { "id": "popular-temples", "label": "สายไหว้พระ 9 วัด", "href": "temples/popular/", "enabled": true },
           { "id": "mu-temples", "label": "สายมู", "href": "temples/mu/", "enabled": true },
@@ -125,6 +126,7 @@
     { "id": "tarotCareer", "label": "ไพ่ยิปซีการงาน อาชีพ", "route": "/tarot/career/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotLuck", "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค", "route": "/tarot/luck/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "temples", "label": "วัดดังเสริมมงคล", "route": "/temples/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
+    { "id": "templesPlanner", "label": "วางแผนไหว้พระ", "route": "/temples/planner/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "templesPopular", "label": "สายไหว้พระ 9 วัด", "route": "/temples/popular/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "templesMu", "label": "สายมู", "route": "/temples/mu/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "templesSacred", "label": "วัดศักดิ์สิทธิ์", "route": "/temples/sacred/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },

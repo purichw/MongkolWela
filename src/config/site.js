@@ -73,6 +73,7 @@ export const siteConfig = {
         label: "วัดดังเสริมมงคล",
         href: "temples/",
         items: [
+          { label: "วางแผนไหว้พระ", href: "temples/planner/" },
           { label: "วัดเด่นวัดดัง", section: true },
           { label: "สายไหว้พระ 9 วัด", href: "temples/popular/" },
           { label: "สายมู", href: "temples/mu/" },
@@ -209,6 +210,13 @@ export const siteConfig = {
           { label: "สายไหว้พระ 9 วัด", href: "temples/popular/" },
           { label: "รวมเส้นทางไหว้พระและวัดเด่นสำหรับเสริมมงคล" },
           { label: "ปรึกษาครูโหร", href: "#consult" },
+        ],
+      },
+      templesPlanner: {
+        topbar: [
+          { label: "วางแผนไหว้พระ", href: "temples/planner/" },
+          { label: "เลือก 3, 5 หรือ 9 แห่ง พร้อมเวลาประมาณการสำหรับรถยนต์และแท็กซี่" },
+          { label: "ดูวัดดังเสริมมงคล", href: "temples/" },
         ],
       },
       templesMu: {

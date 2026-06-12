@@ -8,6 +8,7 @@ export const watArunPopularRoute = getTempleDetailUrl("popular", {
 
 export const nfrKeyRoutes = [
   { path: "/", headingPattern: "มงคลเวลา|วันนี้" },
+  { path: "/temples/planner/", headingPattern: "วางแผนไหว้พระ" },
   { path: "/temples/popular/", headingPattern: "สายไหว้พระ 9 วัด" },
   { path: "/temples/mu/", headingPattern: "สายมู" },
   { path: "/horoscope/palmistry/", headingPattern: "อ่านลายมือ" },
