@@ -116,6 +116,27 @@
         })
       }
     </div>
+
+    <div class="plw-camera-panel" data-camera-panel hidden>
+      <div class="plw-camera-dialog" role="dialog" aria-modal="true" aria-labelledby="plw-camera-title">
+        <div class="plw-camera-head">
+          <div>
+            <p class="section-kicker">ถ่ายรูปฝ่ามือ</p>
+            <h4 id="plw-camera-title" data-camera-title>ถ่ายรูปฝ่ามือ</h4>
+          </div>
+          <button type="button" data-camera-close aria-label="ปิดกล้อง">ปิด</button>
+        </div>
+        <div class="plw-camera-frame">
+          <video data-camera-video autoplay playsinline muted></video>
+          <canvas data-camera-canvas hidden></canvas>
+        </div>
+        <p class="plw-camera-message" data-camera-message aria-live="polite"></p>
+        <div class="plw-camera-actions">
+          <button type="button" data-camera-capture disabled>ใช้รูปนี้</button>
+          <button type="button" data-camera-cancel>ยกเลิก</button>
+        </div>
+      </div>
+    </div>
   </section>
 
   <div class="plw-body">
@@ -451,6 +472,8 @@ const palmPhotos: Record<PhysicalHandSide, PalmPhotoState> = {
   left: { url: null, name: '', rotation: 0, zoom: 1 },
   right: { url: null, name: '', rotation: 0, zoom: 1 },
 };
+let activeCameraSide: PhysicalHandSide | null = null;
+let palmCameraStream: MediaStream | null = null;
 
 function imgSrc(lineType: LineTypeId, variantId: string) {
   const variants = IMG_INDEX[lineType] as Record<string, string>;
@@ -821,6 +844,18 @@ function setPhotoMessage(side: PhysicalHandSide, message: string, isError = fals
   element.classList.toggle('is-error', isError);
 }
 
+function setCameraMessage(message: string, isError = false) {
+  const element = document.querySelector<HTMLElement>('[data-camera-message]');
+  if (!element) return;
+  element.textContent = message;
+  element.classList.toggle('is-error', isError);
+}
+
+function setCameraCaptureEnabled(enabled: boolean) {
+  const button = document.querySelector<HTMLButtonElement>('[data-camera-capture]');
+  if (button) button.disabled = !enabled;
+}
+
 function renderPalmPhoto(side: PhysicalHandSide) {
   const state = palmPhotos[side];
   const card = document.querySelector<HTMLElement>(`[data-photo-card="${side}"]`);
@@ -888,11 +923,108 @@ function usePalmPhoto(side: PhysicalHandSide, file?: File) {
   setPhotoMessage(side, `พร้อมใช้เป็นภาพอ้างอิง${photoSideLabel(side)}`);
 }
 
+function canUseLiveCamera() {
+  return Boolean(window.isSecureContext && navigator.mediaDevices?.getUserMedia);
+}
+
+function stopPalmCamera() {
+  palmCameraStream?.getTracks().forEach(track => track.stop());
+  palmCameraStream = null;
+  const video = document.querySelector<HTMLVideoElement>('[data-camera-video]');
+  if (video) video.srcObject = null;
+}
+
+function closePalmCamera(message = '') {
+  stopPalmCamera();
+  const panel = document.querySelector<HTMLElement>('[data-camera-panel]');
+  const side = activeCameraSide;
+  activeCameraSide = null;
+  if (panel) panel.hidden = true;
+  setCameraMessage('');
+  setCameraCaptureEnabled(false);
+  if (side && message) setPhotoMessage(side, message);
+}
+
+async function openPalmCamera(side: PhysicalHandSide) {
+  if (!canUseLiveCamera()) {
+    const input = document.querySelector<HTMLInputElement>(
+      `[data-photo-input="${side}"][data-photo-source="camera"]`,
+    );
+    input?.click();
+    return;
+  }
+
+  const panel = document.querySelector<HTMLElement>('[data-camera-panel]');
+  const title = document.querySelector<HTMLElement>('[data-camera-title]');
+  const video = document.querySelector<HTMLVideoElement>('[data-camera-video]');
+  if (!panel || !title || !video) return;
+
+  activeCameraSide = side;
+  panel.hidden = false;
+  title.textContent = `ถ่ายรูป${photoSideLabel(side)}`;
+  setCameraMessage('กำลังขอสิทธิ์เปิดกล้อง...');
+  setCameraCaptureEnabled(false);
+  stopPalmCamera();
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' } },
+      audio: false,
+    });
+    if (activeCameraSide !== side) {
+      stream.getTracks().forEach(track => track.stop());
+      return;
+    }
+    palmCameraStream = stream;
+    video.srcObject = stream;
+    await video.play().catch(() => undefined);
+    setCameraCaptureEnabled(true);
+    setCameraMessage('จัดฝ่ามือให้อยู่ในกรอบ แล้วกดใช้รูปนี้');
+  } catch {
+    setCameraCaptureEnabled(false);
+    setCameraMessage('เปิดกล้องไม่ได้ ลองอนุญาตกล้องในเบราว์เซอร์ หรือใช้ปุ่มเลือกรูปแทน', true);
+    setPhotoMessage(side, 'เปิดกล้องไม่ได้ ใช้ปุ่มเลือกรูปแทนได้', true);
+  }
+}
+
+function capturePalmCameraPhoto() {
+  const side = activeCameraSide;
+  const video = document.querySelector<HTMLVideoElement>('[data-camera-video]');
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-camera-canvas]');
+  if (!side || !video || !canvas || !palmCameraStream) return;
+
+  const width = video.videoWidth || 1280;
+  const height = video.videoHeight || 960;
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext('2d');
+  if (!context) {
+    setCameraMessage('จับภาพไม่ได้ ลองใช้ปุ่มเลือกรูปแทน', true);
+    return;
+  }
+
+  context.drawImage(video, 0, 0, width, height);
+  canvas.toBlob(blob => {
+    if (!blob) {
+      setCameraMessage('จับภาพไม่ได้ ลองใช้ปุ่มเลือกรูปแทน', true);
+      return;
+    }
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const file = new File([blob], `รูป${photoSideLabel(side)}-${timestamp}.jpg`, { type: 'image/jpeg' });
+    usePalmPhoto(side, file);
+    closePalmCamera('ถ่ายรูปแล้ว ใช้เป็นภาพอ้างอิงในหน้านี้เท่านั้น');
+  }, 'image/jpeg', 0.92);
+}
+
 function initPalmPhotos() {
   document.querySelectorAll<HTMLButtonElement>('[data-photo-trigger]').forEach(button => {
     button.addEventListener('click', () => {
       const side = button.dataset.photoTrigger as PhysicalHandSide;
       const source = button.dataset.photoSource;
+      if (source === 'camera') {
+        void openPalmCamera(side);
+        return;
+      }
       const input = document.querySelector<HTMLInputElement>(
         `[data-photo-input="${side}"][data-photo-source="${source}"]`,
       );
@@ -943,7 +1075,18 @@ function initPalmPhotos() {
     });
   });
 
+  document.querySelector<HTMLButtonElement>('[data-camera-capture]')?.addEventListener('click', () => {
+    capturePalmCameraPhoto();
+  });
+  document.querySelectorAll<HTMLButtonElement>('[data-camera-close], [data-camera-cancel]').forEach(button => {
+    button.addEventListener('click', () => closePalmCamera('ปิดกล้องแล้ว'));
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && activeCameraSide) closePalmCamera('ปิดกล้องแล้ว');
+  });
+
   window.addEventListener('pagehide', () => {
+    stopPalmCamera();
     (Object.keys(palmPhotos) as PhysicalHandSide[]).forEach(side => {
       if (palmPhotos[side].url) URL.revokeObjectURL(palmPhotos[side].url);
     });

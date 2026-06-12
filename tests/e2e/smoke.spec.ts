@@ -71,7 +71,7 @@ test.describe("Mongkol Wela smoke regression", () => {
     await skipIntroLoader(page);
     await page.goto("/horoscope/palmistry/", { waitUntil: "domcontentloaded" });
 
-    await expect(page.locator('link[href*="palmistry.css?feature=20260612-08"]')).toHaveCount(1);
+    await expect(page.locator('link[href*="palmistry.css?feature=20260612-09"]')).toHaveCount(1);
     await expect(page.locator(".palm-hand-map style")).toContainText(".palm-map-line");
 
     const leftCameraInput = page.locator(
@@ -82,6 +82,12 @@ test.describe("Mongkol Wela smoke regression", () => {
     );
     await expect(leftCameraInput).toHaveAttribute("capture", "environment");
     await expect(leftLibraryInput).toHaveAttribute("accept", "image/jpeg,image/png,image/webp");
+    await page.locator('[data-photo-trigger="left"][data-photo-source="camera"]').click();
+    await expect(page.locator('[data-camera-panel]')).toBeVisible();
+    await expect(page.locator('[data-camera-message]')).toContainText("กำลังขอสิทธิ์");
+    await expect(page.locator('[data-camera-capture]')).toBeDisabled();
+    await page.locator('[data-camera-cancel]').click();
+    await expect(page.locator('[data-camera-panel]')).toBeHidden();
     await leftLibraryInput.setInputFiles({
       name: "left-palm.png",
       mimeType: "image/png",
