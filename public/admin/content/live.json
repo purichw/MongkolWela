@@ -308,7 +308,7 @@
     "enabled": true,
     "sampleRate": 1
   },
-  "updatedAt": "2026-06-12T08:55:51.572Z",
+  "updatedAt": "2026-06-12T08:56:27.371Z",
   "components": {
     "cards": [
       {
@@ -558,7 +558,7 @@
       }
     ]
   },
-  "publishedAt": "2026-06-12T08:55:51.572Z",
+  "publishedAt": "2026-06-12T08:56:27.371Z",
   "publishedBy": "Admin",
   "schemaVersion": 1,
   "temples": {
@@ -571,6 +571,17 @@
         "status": "active",
         "fields": {
           "rank": 10
+        },
+        "images": {}
+      },
+      "popular:010-ว-หารพระมงคลบพ-ตร-พระนครศร-อย-ธยา": {
+        "key": "popular:010-ว-หารพระมงคลบพ-ตร-พระนครศร-อย-ธยา",
+        "collection": "popular",
+        "slug": "010-ว-หารพระมงคลบพ-ตร-พระนครศร-อย-ธยา",
+        "source": "dataset",
+        "status": "active",
+        "fields": {
+          "rank": 11
         },
         "images": {}
       }
