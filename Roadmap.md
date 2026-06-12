@@ -1,6 +1,6 @@
 # Roadmap
 
-Last updated: 2026-06-07
+Last updated: 2026-06-12
 
 ## Current Status
 
@@ -11,9 +11,8 @@ Production is live at:
 Latest known code state:
 
 - Branch: `main`
-- Synced with `origin/main`
-- Last code commit at time of this document: `8c913e1 Color temple region tags`
-- Only known untracked item: `outputs/` from local/generated artifacts.
+- The current release includes the confidence power bar, visitor-facing level definitions, and responsive `!` explanation control.
+- The worktree may contain unrelated user changes and generated test artifacts; inspect status and stage only intended files.
 
 ## Recently Completed
 
@@ -33,20 +32,28 @@ Latest known code state:
 - Added separate banner configuration for temple pages through `src/data/temple-page-banners.json`.
 - Added normalized travel route objects and readable grouped travel details on temple detail pages.
 - Added a global scroll progress indicator.
-- Replaced the old top loading bar with a session-aware transparent overlay loader, vector outline icon animation, skeleton state, and timeout messaging.
+- Replaced the old top loading bar with a session-aware transparent overlay loader, vector outline icon animation, simulated progress, and timeout messaging.
+- Refined the loader into a soft full-page smoke treatment without a visible framed panel.
+- Added Thai travel-data confidence labels and a color-coded power bar to temple detail pages.
+- Added a concise `!` explanation control beside the power bar with hover/focus support on desktop and tap support on mobile.
+- Added `/horoscope/palmistry/` with a switchable hand reference diagram, 45 line characteristics, nine mounts, handedness selection, dominant/non-dominant readings, and two-hand comparison.
+- Added focused Tarot pages for love, money, and career.
+- Added the 78-card Tarot meaning index and individual card pages using original Rider-Waite-Smith imagery.
+- Added detailed Thai-first Major Arcana interpretations with restrained Western context.
+- Added the Palmistry and Tarot pages to the code-owned Admin Portal page registry/navigation.
 - Deployed latest changes to production.
 
 ## Current Working Set
 
-No active unfinished implementation is known.
+No confidence-indicator implementation remains pending after the current release.
+Keep unrelated Admin Portal/Tarot changes, visual snapshots, `.claude/`, Playwright reports, `public/images/hand.png`, and test artifacts out of unrelated commits unless explicitly requested.
 
-Before starting new work:
+Checks already completed for the confidence refinement:
 
-```sh
-git status --short --branch
-```
-
-If only `?? outputs/` appears, that is expected from previous local artifact work.
+- `npm run check`
+- `npm run build`
+- Targeted desktop and mobile browser verification
+- Tooltip open/close behavior, Escape handling, no horizontal overflow, and no console errors
 
 ## CMS Content Guardrail
 
@@ -213,6 +220,18 @@ npm run smoke:production
 ```
 
 Then review the smoke output before sharing the deployment.
+
+### Deferred Batch Checks
+
+To conserve usage without weakening normal project integrity, collect these for a periodic release/maintenance sweep unless the current change directly affects them:
+
+- Full `npm run nfr`
+- Full `npm run test:e2e`
+- Broad visual snapshot review
+- Cross-route regression sweep
+- Extended accessibility/performance review
+
+Do not defer focused CMS validation when changing Admin Portal page registry or navigation.
 
 ## Product Decisions To Preserve
 

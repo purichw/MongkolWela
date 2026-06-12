@@ -552,17 +552,53 @@ const templeJsonLd = createTempleJsonLd({
                       <span>ความมั่นใจข้อมูล</span>
                       <strong>{travelConfidence.label}</strong>
                     </div>
-                    <div
-                      class="temple-detail-confidence__bar"
-                      role="progressbar"
-                      aria-label={`ความมั่นใจข้อมูล ${travelConfidence.label}`}
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                      aria-valuenow={travelConfidence.value}
-                    >
-                      <span style={`--confidence-value: ${travelConfidence.value}%;`}></span>
+                    <div class="temple-detail-confidence__bar-row">
+                      <div
+                        class="temple-detail-confidence__bar"
+                        role="progressbar"
+                        aria-label={`ความมั่นใจข้อมูล ${travelConfidence.label}`}
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow={travelConfidence.value}
+                      >
+                        <span style={`--confidence-value: ${travelConfidence.value}%;`}></span>
+                      </div>
+                      <div class="temple-detail-confidence__help" data-confidence-help>
+                        <button
+                          type="button"
+                          aria-label="ดูคำอธิบายระดับความมั่นใจ"
+                          aria-expanded="false"
+                          aria-controls="temple-confidence-help"
+                          title="คำอธิบายระดับความมั่นใจ"
+                          data-confidence-help-toggle
+                        >
+                          <span aria-hidden="true">!</span>
+                        </button>
+                        <div
+                          class="temple-detail-confidence__help-panel"
+                          id="temple-confidence-help"
+                          aria-hidden="true"
+                          data-confidence-help-panel
+                        >
+                          <strong>ระดับความมั่นใจหมายถึงอะไร</strong>
+                          <ul>
+                            <li data-confidence-tone="high">
+                              <i aria-hidden="true"></i>
+                              <span><b>สีเขียว · ยืนยันได้ดี</b>ชื่อสถานที่ พิกัด และข้อมูลการเดินทางตรงกันจากหลายแหล่ง</span>
+                            </li>
+                            <li data-confidence-tone="medium">
+                              <i aria-hidden="true"></i>
+                              <span><b>สีทอง · ใช้เป็นแนวทาง</b>ข้อมูลส่วนใหญ่ตรงกัน แต่บางรายละเอียดอาจต้องตรวจสอบเพิ่ม</span>
+                            </li>
+                            <li data-confidence-tone="low">
+                              <i aria-hidden="true"></i>
+                              <span><b>สีน้ำตาลอ่อน · ควรตรวจซ้ำ</b>แหล่งข้อมูลยังไม่เพียงพอหรือมีรายละเอียดไม่ตรงกัน</span>
+                            </li>
+                          </ul>
+                          <p>เวลาเปิดและเส้นทางอาจเปลี่ยนแปลง ควรตรวจสอบก่อนเดินทาง</p>
+                        </div>
+                      </div>
                     </div>
-                    <p>{travelConfidence.description}</p>
                   </div>
                 )}
                 {travelDetail.updatedAt && <small>อัปเดต {travelDetail.updatedAt}</small>}

@@ -2,9 +2,14 @@
 
 This file is for coding agents working in this repository.
 
-## First Commands
+## First Steps
 
-Start every coding task with:
+Before every coding task:
+
+1. Read `AGENTS.md`.
+2. Read `Architecture.md`.
+3. Read `Roadmap.md`.
+4. Run:
 
 ```sh
 git status --short --branch
@@ -27,11 +32,7 @@ This is the Mongkol Wela Astro site.
 - GitHub: `purichw/hora-astro`
 - Default branch: `main`
 
-Read these before substantial work:
-
-- `Architecture.md`
-- `Roadmap.md`
-- `CMS.md` when changing Admin Portal content, page registry, or navigation.
+Also read `CMS.md` when changing Admin Portal content, page registry, or navigation.
 
 ## Commands
 
@@ -176,6 +177,39 @@ Important CSS:
 - `public/assets/css/temples.css`
 - `public/assets/css/temple-map.css`
 
+## Horoscope Feature Map
+
+Important routes:
+
+- `/horoscope/palmistry/`
+- `/tarot/daily/`
+- `/tarot/monthly/`
+- `/tarot/luck/`
+- `/tarot/love/`
+- `/tarot/money/`
+- `/tarot/career/`
+- `/tarot/meanings/`
+- `/tarot/meanings/[card]/`
+
+Palmistry:
+
+- `src/pages/horoscope/palmistry/index.astro`
+- `src/components/PalmistryHandDiagram.astro`
+- `src/components/PalmLineWidget.astro`
+- `public/assets/js/palmistry.js`
+- `public/assets/js/palmistry-data.js`
+- `public/assets/css/palmistry.css`
+
+Tarot:
+
+- `src/data/tarot-topic-pages.js`
+- `src/data/tarot-meanings.js`
+- `src/data/tarot-major-arcana-details.js`
+- `public/assets/js/tarot-data.js`
+- `public/assets/js/tarot-spread.js`
+- `public/assets/js/tarot-spread-result.js`
+- `public/assets/css/tarot.css`
+
 ## Verification Expectations
 
 For any implementation:
@@ -186,6 +220,14 @@ npm run build
 ```
 
 For frontend changes, verify at least one relevant desktop and mobile viewport.
+
+Keep verification proportional to the change:
+
+- Use targeted browser checks for small UI changes.
+- Run full E2E only when changing a tested route, shared interaction contract, or visual baseline.
+- Run broad `npm run nfr` periodically as a release/maintenance sweep rather than after every small change.
+- `npm run nfr:cms` remains required when page registry or navigation content changes.
+- Keep a checklist of deferred NFR/E2E coverage when intentionally batching those checks.
 
 For map changes, verify:
 
@@ -201,6 +243,25 @@ For deployment tasks:
 2. Push `main`.
 3. Run `vercel --prod --yes`.
 4. Smoke-test production.
+
+## Temple Detail Confidence UI
+
+The travel-data confidence indicator on temple detail pages is implemented by:
+
+- `src/components/TempleDetail.astro`
+- `public/assets/css/temple-map.css`
+- `public/assets/js/temple-detail.js`
+
+Preserve these interaction rules:
+
+- Show the Thai confidence label next to `ความมั่นใจข้อมูล`.
+- Keep the power bar and the circular `!` information control on the same row.
+- Keep the information control visually light and transparent; its glyph must be optically centered.
+- Desktop users can reveal the explanation by hover or keyboard focus.
+- Touch/mobile users can tap to open or close it.
+- Clicking outside or pressing Escape closes an open explanation.
+- The panel explains the green, gold, and light-brown levels in concise visitor-facing Thai.
+- Verify that the panel does not create horizontal overflow or sit behind the map.
 
 ## References
 

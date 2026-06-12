@@ -20,11 +20,39 @@ let toastTimer;
 document.querySelectorAll("[data-temple-detail-map]").forEach(initializeDetailMap);
 document.querySelector("[data-temple-detail-copy]")?.addEventListener("click", copyCurrentUrl);
 document.querySelector("[data-temple-detail-share]")?.addEventListener("click", shareCurrentPage);
+document.querySelectorAll("[data-confidence-help]").forEach(initializeConfidenceHelp);
+
+document.addEventListener("click", (event) => {
+  if (event.target instanceof Element && event.target.closest("[data-confidence-help]")) return;
+  document.querySelectorAll("[data-confidence-help].is-open").forEach(closeConfidenceHelp);
+});
 
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
   document.querySelectorAll("[data-temple-detail-map-modal].is-open").forEach((modal) => closeDetailMapModal(modal));
+  document.querySelectorAll("[data-confidence-help].is-open").forEach(closeConfidenceHelp);
 });
+
+function initializeConfidenceHelp(help) {
+  const button = help.querySelector("[data-confidence-help-toggle]");
+  const panel = help.querySelector("[data-confidence-help-panel]");
+  if (!button || !panel) return;
+
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const shouldOpen = !help.classList.contains("is-open");
+    document.querySelectorAll("[data-confidence-help].is-open").forEach(closeConfidenceHelp);
+    help.classList.toggle("is-open", shouldOpen);
+    button.setAttribute("aria-expanded", String(shouldOpen));
+    panel.setAttribute("aria-hidden", String(!shouldOpen));
+  });
+}
+
+function closeConfidenceHelp(help) {
+  help.classList.remove("is-open");
+  help.querySelector("[data-confidence-help-toggle]")?.setAttribute("aria-expanded", "false");
+  help.querySelector("[data-confidence-help-panel]")?.setAttribute("aria-hidden", "true");
+}
 
 async function initializeDetailMap(element) {
   const lat = Number(element.dataset.lat);

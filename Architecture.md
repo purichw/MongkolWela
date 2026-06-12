@@ -1,6 +1,6 @@
 # Architecture
 
-Last updated: 2026-06-07
+Last updated: 2026-06-12
 
 ## Project Shape
 
@@ -55,7 +55,8 @@ Important behavior:
 - A fixed scroll progress indicator is rendered by `BaseLayout.astro`, styled in `base.css`, and updated by `scroll-progress.js`.
 - A global page loader is rendered by `LoadingScreen.astro`, styled in `base.css`, and controlled by `page-loader.js`.
   It shows a 3-second simulated intro once per browser session, then only reappears for slow loads or pending internal navigation.
-  The loader uses transparent vector outline icons, a subtle skeleton state, simulated progress, and timeout messaging for unusually long loads.
+  The loader uses a soft full-page smoke treatment, transparent vector outline icons, simulated progress, and timeout messaging for unusually long loads.
+  It intentionally avoids a visibly framed loading card or skeleton panel.
 
 Shared shell components:
 
@@ -71,6 +72,7 @@ Routes include:
 
 - `/`
 - `/horoscope/life-graph/`
+- `/horoscope/palmistry/`
 - `/horoscope/seamsi/`
 - `/horoscope/thai-astrology/`
 - `/calendar/`
@@ -78,6 +80,11 @@ Routes include:
 - `/tarot/daily/`
 - `/tarot/monthly/`
 - `/tarot/luck/`
+- `/tarot/love/`
+- `/tarot/money/`
+- `/tarot/career/`
+- `/tarot/meanings/`
+- `/tarot/meanings/[card]/`
 
 Feature JS lives under `public/assets/js/`, for example:
 
@@ -92,6 +99,54 @@ Feature JS lives under `public/assets/js/`, for example:
 - `tarot-spread-result.js`
 
 CSS is split by feature in `public/assets/css/`.
+
+### Palmistry
+
+Route:
+
+- `src/pages/horoscope/palmistry/index.astro`
+
+Main components:
+
+- `src/components/PalmistryHandDiagram.astro`: reference hand with switchable main-line, minor-line, and nine-mount views.
+- `src/components/PalmLineWidget.astro`: interactive reader covering 45 line variants, dominant/non-dominant hand context, and two-hand comparison.
+
+Supporting assets:
+
+- `public/assets/js/palmistry.js`
+- `public/assets/js/palmistry-data.js`
+- `public/assets/css/palmistry.css`
+- `public/images/lines/`
+
+Reading model:
+
+- Layer 1: the base meaning of the selected line characteristic.
+- Layer 2: dominant hand, non-dominant hand, or comparison context.
+- Final result: base line meaning + hand context + comparison result.
+
+The physical left/right hand is derived from the visitor's handedness. The dominant hand represents developed/current expression; the non-dominant hand represents underlying potential or earlier disposition. Comparing both hands describes continuity, strengthening, weakening, or changed expression without automatically labeling every difference good or bad.
+
+### Tarot
+
+Topic routes are generated from:
+
+- `src/data/tarot-topic-pages.js`
+
+Current focused one-card topics:
+
+- `/tarot/love/`
+- `/tarot/money/`
+- `/tarot/career/`
+
+The 78-card knowledge base uses:
+
+- `src/data/tarot-meanings.js`
+- `src/data/tarot-major-arcana-details.js`
+- `src/pages/tarot/meanings/index.astro`
+- `src/pages/tarot/meanings/[card].astro`
+- Original Rider-Waite-Smith images under `public/assets/images/tarot/rws-jpg/` and thumbnails under `rws-thumb/`.
+
+The public reading tone is Thai-first, with restrained Western context such as elements, astrology, numerology, and archetypes when it improves interpretation.
 
 ### Temple Hub
 
@@ -310,6 +365,8 @@ Behavior:
 - Google Maps external link, preferring Plus Code with coordinate fallback.
 - Metadata block with area and travel mode fields.
 - Source-backed travel detail section, shown only when structured `travelDetail` data exists. It uses compact recommendation cards plus grouped route rows from `travelDetail.routes`, with legacy access strings kept as fallback.
+- Travel-data confidence is presented as a Thai label plus a color-coded power bar. A lightweight circular `!` control stays on the right of the bar and opens a concise explanation of the green, gold, and light-brown levels.
+  Desktop supports hover and keyboard focus; touch/mobile uses tap. The client script also closes the panel on outside click or Escape.
 - Related cards from same province/region where possible.
 
 Detail URL helper:
@@ -368,6 +425,12 @@ Typical checks:
 npm run check
 npm run build
 ```
+
+Verification is intentionally proportional to reduce unnecessary usage:
+
+- Small UI changes: targeted desktop/mobile browser checks plus `check` and `build`.
+- Full E2E: tested-route changes, shared interaction changes, visual baseline work, or a planned release sweep.
+- Broad NFR: periodic maintenance/release sweep, except focused CMS validation remains mandatory for page registry/navigation changes.
 
 Development server:
 

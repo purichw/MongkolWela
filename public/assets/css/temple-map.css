@@ -1148,9 +1148,9 @@
 .temple-detail-confidence__label {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 10px;
+  gap: 5px 8px;
   align-items: baseline;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .temple-detail-confidence__label span {
@@ -1165,6 +1165,15 @@
   font-size: 0.95rem;
   font-weight: 900;
   line-height: 1.35;
+}
+
+.temple-detail-confidence__bar-row {
+  position: relative;
+  z-index: 700;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 26px;
+  gap: 9px;
+  align-items: center;
 }
 
 .temple-detail-confidence__bar {
@@ -1186,12 +1195,163 @@
   box-shadow: 0 0 18px var(--confidence-glow);
 }
 
-.temple-detail-confidence p {
+.temple-detail-confidence__help {
+  position: relative;
+  z-index: 701;
+  width: 26px;
+  height: 26px;
+}
+
+.temple-detail-confidence__help button {
+  display: flex;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  color: rgba(77, 56, 41, 0.5);
+  background: transparent;
+  border: 1px solid rgba(109, 79, 47, 0.15);
+  border-radius: 50%;
+  cursor: help;
+  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+
+.temple-detail-confidence__help button > span {
+  display: block;
+  font-family: Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  transform: translateY(-0.25px);
+}
+
+.temple-detail-confidence__help button:hover,
+.temple-detail-confidence__help button[aria-expanded="true"] {
+  color: rgba(77, 56, 41, 0.76);
+  background: rgba(214, 173, 85, 0.08);
+  border-color: rgba(214, 173, 85, 0.3);
+}
+
+.temple-detail-confidence__help button:focus-visible {
+  outline: 2px solid rgba(47, 85, 72, 0.7);
+  outline-offset: 3px;
+}
+
+.temple-detail-confidence__help-panel {
+  position: absolute;
+  z-index: 702;
+  top: calc(100% + 9px);
+  right: 0;
+  display: none;
+  width: min(340px, calc(100vw - 48px));
+  padding: 16px;
+  color: var(--ink);
+  background: rgba(255, 253, 246, 0.98);
+  border: 1px solid rgba(77, 56, 41, 0.16);
+  border-radius: 8px;
+  box-shadow: 0 18px 44px rgba(68, 48, 22, 0.16);
+}
+
+.temple-detail-confidence__help.is-open .temple-detail-confidence__help-panel {
+  display: block;
+}
+
+.temple-detail-confidence__help-panel > strong {
+  display: block;
+  color: var(--ink);
+  font-size: 0.96rem;
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+.temple-detail-confidence__help-panel ul {
+  display: grid;
+  gap: 12px;
+  margin: 14px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.temple-detail-confidence__help-panel li {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  color: rgba(77, 56, 41, 0.72);
+  font-size: 0.84rem;
+  font-weight: 750;
+  line-height: 1.55;
+}
+
+.temple-detail-confidence__help-panel li i {
+  width: 8px;
+  height: 8px;
+  margin-top: 0.46em;
+  background: #b88963;
+  border-radius: 50%;
+}
+
+.temple-detail-confidence__help-panel li[data-confidence-tone="medium"] i {
+  background: #d6ad55;
+}
+
+.temple-detail-confidence__help-panel li[data-confidence-tone="high"] i {
+  background: #2f5548;
+}
+
+.temple-detail-confidence__help-panel li b {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.temple-detail-confidence__help-panel p {
   margin: 0;
+  padding-top: 12px;
   color: rgba(77, 56, 41, 0.68);
-  font-size: 0.86rem;
+  border-top: 1px solid rgba(77, 56, 41, 0.12);
+  font-size: 0.8rem;
   font-weight: 800;
-  line-height: 1.58;
+  line-height: 1.55;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .temple-detail-confidence__help-panel {
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-5px);
+    visibility: hidden;
+    transition: opacity 150ms ease, transform 150ms ease, visibility 150ms ease;
+  }
+
+  .temple-detail-confidence__help:hover .temple-detail-confidence__help-panel,
+  .temple-detail-confidence__help:focus-within .temple-detail-confidence__help-panel,
+  .temple-detail-confidence__help.is-open .temple-detail-confidence__help-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+  }
+}
+
+@media (max-width: 760px) {
+  .temple-detail-confidence__help-panel {
+    top: calc(100% + 9px);
+    right: 0;
+    bottom: auto;
+    display: none;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    visibility: visible;
+  }
+
+  .temple-detail-confidence__help.is-open .temple-detail-confidence__help-panel {
+    display: block;
+  }
 }
 
 .temple-detail-transit small {
