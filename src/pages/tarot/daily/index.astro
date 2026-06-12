@@ -1,8 +1,16 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import FeaturePageHero from "../../../components/FeaturePageHero.astro";
 
-const mainContent = "<main id=\"daily-tarot\">\n      <section class=\"tarot-hero\">\n        <div>\n          <nav class=\"tarot-breadcrumb\" aria-label=\"breadcrumb\">\n            <a href=\"../../\">หน้าแรก</a>\n            <span>/</span>\n            <span>ไพ่ยิปซีรายวัน</span>\n          </nav>\n          <p class=\"section-kicker\">Daily Tarot</p>\n          <h1>ดูดวงไพ่ยิปซีรายวัน</h1>\n          <p class=\"tarot-hero-copy\">\n            ตั้งจิตให้สงบ สับไพ่หรือตัดไพ่ตามความรู้สึก แล้วเลือกไพ่ 1 ใบ\n            เพื่ออ่านคำทำนายประจำวัน พร้อมคำแนะนำ ข้อควรระวัง สีและเวลามงคล\n          </p>\n        </div>\n\n        <aside class=\"tarot-ritual-panel\" aria-label=\"ขั้นตอนการดูไพ่\">\n          <ol>\n            <li><span>1</span>หายใจเข้าออกลึก ๆ แล้วตั้งคำถามในใจ</li>\n            <li><span>2</span>สับไพ่หรือตัดไพ่เพื่อเปลี่ยนจังหวะพลังงาน</li>\n            <li><span>3</span>เลือกไพ่ที่เรียกสายตาหรือใจของคุณ 1 ใบ</li>\n            <li><span>4</span>กดทำนายเพื่อเปิดคำพยากรณ์</li>\n          </ol>\n        </aside>\n      </section>\n\n      <section class=\"tarot-oracle\">\n        <aside class=\"tarot-intention\">\n          <p class=\"section-kicker\">ตั้งจิต</p>\n          <h2>ก่อนเลือกไพ่</h2>\n          <p>\n            โปรดใช้ไพ่ด้วยความเคารพ ไม่ต้องถามซ้ำเพื่อเอาคำตอบที่ถูกใจ\n            คำทำนายเป็นกระจกให้ทบทวน ไม่ใช่นายเหนือชีวิต\n          </p>\n          <div class=\"tarot-warning\">ไม่ควรดูไพ่รายวันเกินวันละครั้ง</div>\n        </aside>\n\n        <form class=\"tarot-deck-stage\" data-tarot-form>\n          <div class=\"tarot-deck-head\">\n            <div>\n              <p class=\"section-kicker\">สำรับ 78 ใบ</p>\n              <h2>เลือกไพ่ 1 ใบ แล้วกดทำนาย</h2>\n              <p class=\"tarot-status\" data-tarot-status aria-live=\"polite\"></p>\n            </div>\n            <div class=\"tarot-deck-actions\">\n              <button class=\"tarot-control\" type=\"button\" data-tarot-shuffle>สับไพ่</button>\n              <button class=\"tarot-control\" type=\"button\" data-tarot-cut>ตัดไพ่</button>\n              <button class=\"tarot-read-button btn-disable\" type=\"submit\" data-tarot-read disabled>\n                ทำนาย\n              </button>\n            </div>\n          </div>\n\n          <input type=\"hidden\" data-tarot-selected name=\"tarot_card_selected\">\n          <input type=\"hidden\" data-tarot-count name=\"tarot_card_count\" value=\"0\">\n          <div class=\"tarot-deck-grid\" data-tarot-deck aria-label=\"สำรับไพ่ยิปซี 78 ใบ\"></div>\n        </form>\n      </section>\n\n      <section class=\"tarot-note\">\n        <p class=\"section-kicker\">แนวคิดของเรา</p>\n        <h2>ไพ่เป็นพื้นที่สนทนากับใจ ไม่ใช่คำสั่งตายตัว</h2>\n        <p>\n          ไพ่แต่ละใบถูกออกแบบเป็นศิลปะเชิงสัญลักษณ์ของมงคลเวลาเอง\n          ไม่อ้างอิงแอปภายนอกและไม่ใช้ภาพไพ่ลิขสิทธิ์จากสำรับอื่น\n          เพื่อให้ประสบการณ์ดูร่วมสมัย แต่ยังสงบ ขลัง และเคารพธรรมเนียมการพยากรณ์\n        </p>\n      </section>\n    </main>";
 const extraScripts = ["/assets/js/tarot-daily.js"];
+const breadcrumbs = [
+  { label: "หน้าแรก", href: "/" },
+  { label: "ไพ่ยิปซีรายวัน" },
+];
+const seoBreadcrumbs = [
+  { label: "หน้าแรก", href: "/" },
+  { label: "ไพ่ยิปซีรายวัน", href: "/tarot/daily/" },
+];
 ---
 
 <BaseLayout
@@ -13,6 +21,69 @@ const extraScripts = ["/assets/js/tarot-daily.js"];
   page="tarotDaily"
   bodyClass="tarot-page"
   extraScripts={extraScripts}
+  canonicalPath="/tarot/daily/"
+  breadcrumbs={seoBreadcrumbs}
 >
-  <Fragment set:html={mainContent} />
+  <main id="daily-tarot">
+    <FeaturePageHero
+      class="tarot-hero"
+      breadcrumbs={breadcrumbs}
+      kicker="Daily Tarot"
+      title="ดูดวงไพ่ยิปซีรายวัน"
+      lead="ตั้งจิตให้สงบ สับไพ่หรือตัดไพ่ตามความรู้สึก แล้วเลือกไพ่ 1 ใบ เพื่ออ่านคำทำนายประจำวัน พร้อมคำแนะนำ ข้อควรระวัง สีและเวลามงคล"
+      mediaLabel="ขั้นตอนการดูไพ่"
+    >
+      <aside class="tarot-ritual-panel" slot="media">
+        <ol>
+          <li><span>1</span>หายใจเข้าออกลึก ๆ แล้วตั้งคำถามในใจ</li>
+          <li><span>2</span>สับไพ่หรือตัดไพ่เพื่อเปลี่ยนจังหวะพลังงาน</li>
+          <li><span>3</span>เลือกไพ่ที่เรียกสายตาหรือใจของคุณ 1 ใบ</li>
+          <li><span>4</span>กดทำนายเพื่อเปิดคำพยากรณ์</li>
+        </ol>
+      </aside>
+    </FeaturePageHero>
+
+    <section class="tarot-oracle">
+      <aside class="tarot-intention">
+        <p class="section-kicker">ตั้งจิต</p>
+        <h2>ก่อนเลือกไพ่</h2>
+        <p>
+          โปรดใช้ไพ่ด้วยความเคารพ ไม่ต้องถามซ้ำเพื่อเอาคำตอบที่ถูกใจ
+          คำทำนายเป็นกระจกให้ทบทวน ไม่ใช่นายเหนือชีวิต
+        </p>
+        <div class="tarot-warning">ไม่ควรดูไพ่รายวันเกินวันละครั้ง</div>
+      </aside>
+
+      <form class="tarot-deck-stage" data-tarot-form>
+        <div class="tarot-deck-head">
+          <div>
+            <p class="section-kicker">สำรับ 78 ใบ</p>
+            <h2>เลือกไพ่ 1 ใบ แล้วกดทำนาย</h2>
+            <p class="tarot-status" data-tarot-status aria-live="polite"></p>
+          </div>
+          <div class="tarot-deck-actions">
+            <button class="tarot-control" type="button" data-tarot-shuffle>สับไพ่</button>
+            <button class="tarot-control" type="button" data-tarot-cut>ตัดไพ่</button>
+            <button class="tarot-read-button btn-disable" type="submit" data-tarot-read disabled>
+              ทำนาย
+            </button>
+          </div>
+        </div>
+
+        <input type="hidden" data-tarot-selected name="tarot_card_selected">
+        <input type="hidden" data-tarot-count name="tarot_card_count" value="0">
+        <div class="tarot-deck-grid" data-tarot-deck aria-label="สำรับไพ่ยิปซี 78 ใบ"></div>
+      </form>
+    </section>
+
+    <section class="tarot-note">
+      <p class="section-kicker">แนวคิดของเรา</p>
+      <h2>ไพ่เป็นพื้นที่สนทนากับใจ ไม่ใช่คำสั่งตายตัว</h2>
+      <p>
+        ไพ่แต่ละใบถูกออกแบบเป็นศิลปะเชิงสัญลักษณ์ของมงคลเวลาเอง
+        ไม่อ้างอิงแอปภายนอกและไม่ใช้ภาพไพ่ลิขสิทธิ์จากสำรับอื่น
+        เพื่อให้ประสบการณ์ดูร่วมสมัย แต่ยังสงบ ขลัง และเคารพธรรมเนียมการพยากรณ์
+      </p>
+    </section>
+  </main>
 </BaseLayout>
