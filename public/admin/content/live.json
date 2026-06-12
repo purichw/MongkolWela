@@ -308,7 +308,7 @@
     "enabled": true,
     "sampleRate": 1
   },
-  "updatedAt": "2026-06-09T00:00:00.000Z",
+  "updatedAt": "2026-06-12T08:55:51.572Z",
   "components": {
     "cards": [
       {
@@ -319,10 +319,6 @@
         "title": "การ์ดตัวอย่าง"
       }
     ]
-  },
-  "temples": {
-    "overrides": {},
-    "records": {}
   },
   "navigation": {
     "tabs": [
@@ -562,7 +558,22 @@
       }
     ]
   },
-  "publishedAt": "2026-06-08T12:46:09.052Z",
-  "publishedBy": "Codex Supabase Publish Retest",
-  "schemaVersion": 1
+  "publishedAt": "2026-06-12T08:55:51.572Z",
+  "publishedBy": "Admin",
+  "schemaVersion": 1,
+  "temples": {
+    "records": {
+      "popular:011-ว-ดสระเกศ-กร-งเทพมหานคร": {
+        "key": "popular:011-ว-ดสระเกศ-กร-งเทพมหานคร",
+        "collection": "popular",
+        "slug": "011-ว-ดสระเกศ-กร-งเทพมหานคร",
+        "source": "dataset",
+        "status": "active",
+        "fields": {
+          "rank": 10
+        },
+        "images": {}
+      }
+    }
+  }
 }
