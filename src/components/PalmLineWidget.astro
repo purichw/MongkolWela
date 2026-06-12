@@ -659,7 +659,7 @@ function renderComparison(detail: HTMLElement) {
     </div>
     <div class="plw-compare-readings">
       ${renderBaseMeaning('พื้นฐานเดิม', baseId)}
-      ${baseId === currentId ? '' : renderBaseMeaning('การแสดงออกปัจจุบัน', currentId)}
+      ${baseId === currentId ? renderSameCurrentMeaning(currentId) : renderBaseMeaning('การแสดงออกปัจจุบัน', currentId)}
     </div>
     ${renderDisclaimer()}
   `;
@@ -690,6 +690,20 @@ function renderBaseMeaning(label: string, variantId: string) {
       <span>${escapeHtml(label)}</span>
       <h4>${escapeHtml(variant?.nameTh)}</h4>
       <ul>${items || '<li><span>ยังไม่มีคำอ่านสำหรับลักษณะนี้</span></li>'}</ul>
+    </section>`;
+}
+
+function renderSameCurrentMeaning(variantId: string) {
+  const variant = getVariant(activeLine, variantId);
+  return `
+    <section class="plw-base-meaning plw-base-meaning--same-current">
+      <span>การแสดงออกปัจจุบัน</span>
+      <h4>${escapeHtml(variant?.nameTh)}</h4>
+      <p>
+        ลักษณะเดียวกับพื้นฐานเดิม ความหมายหลักจึงเหมือนกัน
+        แต่เมื่ออยู่ในมือถนัดจะเน้นสิ่งที่กำลังแสดงผ่านพฤติกรรม
+        การตัดสินใจ และวิถีชีวิตตอนนี้
+      </p>
     </section>`;
 }
 
