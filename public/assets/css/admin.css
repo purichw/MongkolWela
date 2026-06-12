@@ -544,7 +544,10 @@
 }
 
 .mw-admin-temple-list {
+  display: flex;
+  min-height: 0;
   min-width: 0;
+  flex-direction: column;
   padding: 18px;
   background: #f4f2ed;
   border-right: 1px solid #ded5c7;
@@ -564,8 +567,11 @@
 
 .mw-admin-temple-list-scroll {
   display: grid;
+  flex: 1 1 0;
   gap: 7px;
-  max-height: 820px;
+  align-content: start;
+  min-height: 0;
+  max-height: none;
   overflow-y: auto;
   padding-right: 3px;
 }
