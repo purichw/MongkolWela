@@ -71,8 +71,34 @@ test.describe("Mongkol Wela smoke regression", () => {
     await skipIntroLoader(page);
     await page.goto("/horoscope/palmistry/", { waitUntil: "domcontentloaded" });
 
-    await expect(page.locator('link[href*="palmistry.css?feature=20260612-03"]')).toHaveCount(1);
+    await expect(page.locator('link[href*="palmistry.css?feature=20260612-08"]')).toHaveCount(1);
     await expect(page.locator(".palm-hand-map style")).toContainText(".palm-map-line");
+
+    const leftCameraInput = page.locator(
+      '[data-photo-input="left"][data-photo-source="camera"]',
+    );
+    const leftLibraryInput = page.locator(
+      '[data-photo-input="left"][data-photo-source="library"]',
+    );
+    await expect(leftCameraInput).toHaveAttribute("capture", "environment");
+    await expect(leftLibraryInput).toHaveAttribute("accept", "image/jpeg,image/png,image/webp");
+    await leftLibraryInput.setInputFiles({
+      name: "left-palm.png",
+      mimeType: "image/png",
+      buffer: Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2Z84AAAAASUVORK5CYII=",
+        "base64",
+      ),
+    });
+    await expect(page.locator('[data-photo-preview="left"]')).toBeVisible();
+    await expect(page.locator('[data-photo-state="left"]')).toHaveText("left-palm.png");
+    await page.locator('[data-photo-rotate="left"]').click();
+    await expect(page.locator('[data-photo-preview="left"]')).toHaveAttribute(
+      "style",
+      /rotate\(90deg\)/,
+    );
+    await page.locator('[data-photo-remove="left"]').click();
+    await expect(page.locator('[data-photo-preview="left"]')).toBeHidden();
 
     const line = page.locator(".palm-map-line").first();
     await expect(line).toHaveCSS("fill", "none");

@@ -35,6 +35,89 @@
 
   <div class="plw-context" data-plw-context aria-live="polite"></div>
 
+  <section class="plw-photos" aria-labelledby="plw-photos-title">
+    <div class="plw-photos-head">
+      <div>
+        <p class="section-kicker">รูปฝ่ามือของคุณ</p>
+        <h3 id="plw-photos-title">ถ่ายรูปหรือเลือกรูปไว้เทียบกับตัวอย่าง</h3>
+      </div>
+      <p>รูปอยู่ในแท็บนี้เท่านั้น ไม่ส่งขึ้นเซิร์ฟเวอร์ และจะหายเมื่อรีเฟรชหรือปิดหน้า</p>
+    </div>
+
+    <div class="plw-photo-grid">
+      {
+        (["left", "right"] as const).map((side) => {
+          const sideLabel = side === "left" ? "มือซ้าย" : "มือขวา";
+          return (
+            <article class="plw-photo-card" data-photo-card={side}>
+              <div class="plw-photo-card-head">
+                <strong>{sideLabel}</strong>
+                <span data-photo-state={side}>ยังไม่มีรูป</span>
+              </div>
+
+              <div class="plw-photo-stage" data-photo-dropzone={side} data-photo-empty="true">
+                <div class="plw-photo-empty" data-photo-empty-state={side}>
+                  <span aria-hidden="true">+</span>
+                  <strong>วางฝ่ามือให้เต็มภาพ</strong>
+                  <small>JPG, PNG หรือ WebP ไม่เกิน 10 MB</small>
+                </div>
+                <img
+                  data-photo-preview={side}
+                  alt={`รูปฝ่ามือ${sideLabel.replace("มือ", "")}ที่เลือกจากเครื่อง`}
+                  hidden
+                />
+              </div>
+
+              <div class="plw-photo-primary-actions">
+                <button type="button" data-photo-trigger={side} data-photo-source="camera">
+                  ถ่ายรูป
+                </button>
+                <button type="button" data-photo-trigger={side} data-photo-source="library">
+                  เลือกรูป
+                </button>
+              </div>
+
+              <div class="plw-photo-edit-actions" data-photo-tools={side} hidden>
+                <label>
+                  <span>ซูม</span>
+                  <input
+                    type="range"
+                    min="1"
+                    max="2.4"
+                    step="0.05"
+                    value="1"
+                    data-photo-zoom={side}
+                  />
+                </label>
+                <button type="button" data-photo-rotate={side}>หมุน</button>
+                <button type="button" data-photo-remove={side}>ลบรูป</button>
+              </div>
+
+              <input
+                class="plw-photo-input"
+                type="file"
+                accept="image/*"
+                capture="environment"
+                data-photo-input={side}
+                data-photo-source="camera"
+                tabindex="-1"
+              />
+              <input
+                class="plw-photo-input"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                data-photo-input={side}
+                data-photo-source="library"
+                tabindex="-1"
+              />
+              <p class="plw-photo-message" data-photo-message={side} aria-live="polite"></p>
+            </article>
+          );
+        })
+      }
+    </div>
+  </section>
+
   <div class="plw-body">
     <nav id="plw-sidebar" class="plw-sidebar" aria-label="ประเภทเส้นลายมือ"></nav>
     <div class="plw-main">
@@ -346,14 +429,27 @@ type LineTypeId = keyof typeof IMG_INDEX;
 type Reading = { text: string; level: string };
 type HandRole = 'dominant' | 'nonDominant';
 type ReadingMode = HandRole | 'compare';
+type PhysicalHandSide = 'left' | 'right';
+type PalmPhotoState = {
+  url: string | null;
+  name: string;
+  rotation: number;
+  zoom: number;
+};
 
 let activeLine: LineTypeId = 'life_line';
 let handedness: 'right' | 'left' = 'right';
 let readingMode: ReadingMode = 'dominant';
 const PALM_LINE_IMAGE_VERSION = '20260612-06';
+const MAX_PALM_PHOTO_BYTES = 10 * 1024 * 1024;
+const ALLOWED_PALM_PHOTO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const selections: Record<HandRole, Partial<Record<LineTypeId, string>>> = {
   dominant: {},
   nonDominant: {},
+};
+const palmPhotos: Record<PhysicalHandSide, PalmPhotoState> = {
+  left: { url: null, name: '', rotation: 0, zoom: 1 },
+  right: { url: null, name: '', rotation: 0, zoom: 1 },
 };
 
 function imgSrc(lineType: LineTypeId, variantId: string) {
@@ -714,6 +810,146 @@ function renderDisclaimer() {
     </div>`;
 }
 
+function photoSideLabel(side: PhysicalHandSide) {
+  return side === 'left' ? 'มือซ้าย' : 'มือขวา';
+}
+
+function setPhotoMessage(side: PhysicalHandSide, message: string, isError = false) {
+  const element = document.querySelector<HTMLElement>(`[data-photo-message="${side}"]`);
+  if (!element) return;
+  element.textContent = message;
+  element.classList.toggle('is-error', isError);
+}
+
+function renderPalmPhoto(side: PhysicalHandSide) {
+  const state = palmPhotos[side];
+  const card = document.querySelector<HTMLElement>(`[data-photo-card="${side}"]`);
+  const stage = document.querySelector<HTMLElement>(`[data-photo-dropzone="${side}"]`);
+  const empty = document.querySelector<HTMLElement>(`[data-photo-empty-state="${side}"]`);
+  const preview = document.querySelector<HTMLImageElement>(`[data-photo-preview="${side}"]`);
+  const tools = document.querySelector<HTMLElement>(`[data-photo-tools="${side}"]`);
+  const status = document.querySelector<HTMLElement>(`[data-photo-state="${side}"]`);
+  const zoom = document.querySelector<HTMLInputElement>(`[data-photo-zoom="${side}"]`);
+  if (!card || !stage || !empty || !preview || !tools || !status || !zoom) return;
+
+  const hasPhoto = Boolean(state.url);
+  stage.dataset.photoEmpty = String(!hasPhoto);
+  card.classList.toggle('has-photo', hasPhoto);
+  empty.hidden = hasPhoto;
+  preview.hidden = !hasPhoto;
+  tools.hidden = !hasPhoto;
+  status.textContent = hasPhoto ? state.name : 'ยังไม่มีรูป';
+  zoom.value = String(state.zoom);
+
+  if (state.url) {
+    preview.src = state.url;
+    preview.style.transform = `scale(${state.zoom}) rotate(${state.rotation}deg)`;
+  } else {
+    preview.removeAttribute('src');
+    preview.style.removeProperty('transform');
+  }
+}
+
+function clearPalmPhoto(side: PhysicalHandSide, message = '') {
+  const state = palmPhotos[side];
+  if (state.url) URL.revokeObjectURL(state.url);
+  palmPhotos[side] = { url: null, name: '', rotation: 0, zoom: 1 };
+  document
+    .querySelectorAll<HTMLInputElement>(`[data-photo-input="${side}"]`)
+    .forEach(input => {
+      input.value = '';
+    });
+  renderPalmPhoto(side);
+  setPhotoMessage(side, message);
+}
+
+function usePalmPhoto(side: PhysicalHandSide, file?: File) {
+  if (!file) return;
+
+  if (!ALLOWED_PALM_PHOTO_TYPES.has(file.type)) {
+    setPhotoMessage(side, 'ใช้ไฟล์ JPG, PNG หรือ WebP เท่านั้น', true);
+    return;
+  }
+
+  if (file.size > MAX_PALM_PHOTO_BYTES) {
+    setPhotoMessage(side, 'รูปต้องมีขนาดไม่เกิน 10 MB', true);
+    return;
+  }
+
+  const previousUrl = palmPhotos[side].url;
+  palmPhotos[side] = {
+    url: URL.createObjectURL(file),
+    name: file.name || `รูป${photoSideLabel(side)}`,
+    rotation: 0,
+    zoom: 1,
+  };
+  if (previousUrl) URL.revokeObjectURL(previousUrl);
+  renderPalmPhoto(side);
+  setPhotoMessage(side, `พร้อมใช้เป็นภาพอ้างอิง${photoSideLabel(side)}`);
+}
+
+function initPalmPhotos() {
+  document.querySelectorAll<HTMLButtonElement>('[data-photo-trigger]').forEach(button => {
+    button.addEventListener('click', () => {
+      const side = button.dataset.photoTrigger as PhysicalHandSide;
+      const source = button.dataset.photoSource;
+      const input = document.querySelector<HTMLInputElement>(
+        `[data-photo-input="${side}"][data-photo-source="${source}"]`,
+      );
+      input?.click();
+    });
+  });
+
+  document.querySelectorAll<HTMLInputElement>('[data-photo-input]').forEach(input => {
+    input.addEventListener('change', () => {
+      const side = input.dataset.photoInput as PhysicalHandSide;
+      usePalmPhoto(side, input.files?.[0]);
+    });
+  });
+
+  document.querySelectorAll<HTMLInputElement>('[data-photo-zoom]').forEach(input => {
+    input.addEventListener('input', () => {
+      const side = input.dataset.photoZoom as PhysicalHandSide;
+      palmPhotos[side].zoom = Number(input.value);
+      renderPalmPhoto(side);
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-photo-rotate]').forEach(button => {
+    button.addEventListener('click', () => {
+      const side = button.dataset.photoRotate as PhysicalHandSide;
+      palmPhotos[side].rotation = (palmPhotos[side].rotation + 90) % 360;
+      renderPalmPhoto(side);
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-photo-remove]').forEach(button => {
+    button.addEventListener('click', () => {
+      clearPalmPhoto(button.dataset.photoRemove as PhysicalHandSide, 'ลบรูปออกแล้ว');
+    });
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-photo-dropzone]').forEach(dropzone => {
+    const side = dropzone.dataset.photoDropzone as PhysicalHandSide;
+    dropzone.addEventListener('dragover', event => {
+      event.preventDefault();
+      dropzone.classList.add('is-dragging');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('is-dragging'));
+    dropzone.addEventListener('drop', event => {
+      event.preventDefault();
+      dropzone.classList.remove('is-dragging');
+      usePalmPhoto(side, event.dataTransfer?.files[0]);
+    });
+  });
+
+  window.addEventListener('pagehide', () => {
+    (Object.keys(palmPhotos) as PhysicalHandSide[]).forEach(side => {
+      if (palmPhotos[side].url) URL.revokeObjectURL(palmPhotos[side].url);
+    });
+  }, { once: true });
+}
+
 function renderAll() {
   renderSidebar();
   renderContext();
@@ -741,5 +977,6 @@ document.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach(button => {
   });
 });
 
+initPalmPhotos();
 renderAll();
 </script>
