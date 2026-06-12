@@ -42,6 +42,18 @@ Validation commands:
 - `npm run cms:verify:production`: validates production `/api/admin/content` against `live.json`.
 - `npm run smoke:production`: includes the production CMS API check.
 
+## Verification Workflow
+
+The project uses proportional verification to conserve usage during frequent UI/data iteration.
+
+During small edits, prefer `git diff --check` and focused Browser spot-checks for only the touched page/flow. UI work should get a brief desktop and mobile pass. Do not run full E2E or `npm run nfr` during ordinary incremental edits.
+
+Before commit, run `npm run check` and `git status --short --branch`. If a one-page CSS/markup change has a clearly relevant targeted E2E test, run only that test; otherwise Browser verification is acceptable when it clearly covers the change.
+
+Before deploy, run `npm run build` and targeted smoke checks for touched routes. After deploy, smoke production on key routes plus touched routes.
+
+NFR is not a per-deploy requirement. Batch `npm run nfr` into release/maintenance sweeps: before major releases, after CMS/SEO/data/config changes, or about weekly. When checks are intentionally deferred, keep a short checklist of the deferred NFR/E2E coverage.
+
 ## Global Layout And Assets
 
 All normal pages use `src/layouts/BaseLayout.astro`.

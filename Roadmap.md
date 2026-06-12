@@ -11,7 +11,9 @@ Production is live at:
 Latest known code state:
 
 - Branch: `main`
-- The current release includes the confidence power bar, visitor-facing level definitions, and responsive `!` explanation control.
+- Latest production commit: `9e88f31 Bust confidence tooltip CSS cache`.
+- The current release includes the confidence power bar, visitor-facing level definitions, responsive `!` explanation control, and CSS cache bust for the confidence tooltip fix.
+- Admin Portal temple ranking can now be changed through drag-and-drop plus compact manual up/down controls on the selected sidebar item.
 - The worktree may contain unrelated user changes and generated test artifacts; inspect status and stage only intended files.
 
 ## Recently Completed
@@ -41,6 +43,7 @@ Latest known code state:
 - Added the 78-card Tarot meaning index and individual card pages using original Rider-Waite-Smith imagery.
 - Added detailed Thai-first Major Arcana interpretations with restrained Western context.
 - Added the Palmistry and Tarot pages to the code-owned Admin Portal page registry/navigation.
+- Added Admin Portal drag-and-drop temple ranking plus compact manual up/down controls for the selected sidebar item.
 - Deployed latest changes to production.
 
 ## Current Working Set
@@ -76,7 +79,6 @@ This prevents `/api/admin/content` from overwriting the rendered nav with an old
 Build an Admin Portal or content management path so these can be edited without code changes:
 
 - Temple/place names.
-- Rankings.
 - Card images and fallback images.
 - Detail hero images.
 - Detail annotation pin placement/editing, including x/y position and label fields. Pins are currently hidden on the public detail hero.
@@ -196,12 +198,29 @@ Scratch generator:
 
 ## Verification Checklist
 
-For normal code/CSS/JS work:
+Use proportional verification to conserve usage during normal iteration.
 
-```sh
-npm run check
-npm run build
-```
+During small iterative edits:
+
+- Do not run `npm run nfr`.
+- Do not run full E2E.
+- Run `git diff --check`.
+- For UI edits, use Browser spot-checks only on the touched page/flow at desktop and mobile sizes.
+
+Before commit:
+
+- Run `npm run check`.
+- If CSS/markup changed for one page, run only the targeted E2E test when one clearly applies, or skip E2E when Browser verification is already clear.
+- Run `git status --short --branch`.
+
+Before deploy:
+
+- Run `npm run build`.
+- Run targeted smoke checks for touched route(s).
+
+After deploy:
+
+- Smoke production on important route(s) plus touched route(s).
 
 For visual work:
 
@@ -216,7 +235,6 @@ For production deploy:
 ```sh
 git push origin main
 vercel --prod --yes
-npm run smoke:production
 ```
 
 Then review the smoke output before sharing the deployment.
@@ -230,6 +248,8 @@ To conserve usage without weakening normal project integrity, collect these for 
 - Broad visual snapshot review
 - Cross-route regression sweep
 - Extended accessibility/performance review
+
+Run NFR as a batch before a large release, after CMS/SEO/data/config work, or about weekly. Do not run it on every deploy.
 
 Do not defer focused CMS validation when changing Admin Portal page registry or navigation.
 

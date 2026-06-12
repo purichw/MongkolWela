@@ -212,12 +212,35 @@ Tarot:
 
 ## Verification Expectations
 
-For any implementation:
+Use proportional verification so small edits do not burn usage on broad suites.
 
-```sh
-npm run check
-npm run build
-```
+During small iterative edits:
+
+- Do not run `npm run nfr`.
+- Do not run full E2E.
+- Run `git diff --check`.
+- For UI edits, use a short Browser spot-check on only the touched page/flow at desktop and mobile sizes.
+
+Before commit:
+
+- Run `npm run check`.
+- If the change touches CSS/markup for one page, run only the targeted E2E test when one clearly covers that page, or skip E2E when Browser verification is already clear.
+- Run `git status --short --branch`.
+
+Before deploy:
+
+- Run `npm run build`.
+- Run targeted smoke checks for the route(s) touched.
+
+After deploy:
+
+- Smoke-test production on key route(s) plus the route(s) touched.
+
+NFR:
+
+- Do not run NFR on every deploy.
+- Batch NFR into release/maintenance sweeps, such as before a large release, after CMS/SEO/data/config work, or about weekly.
+- Keep a checklist of deferred NFR/E2E coverage when intentionally batching those checks.
 
 For frontend changes, verify at least one relevant desktop and mobile viewport.
 
@@ -227,7 +250,6 @@ Keep verification proportional to the change:
 - Run full E2E only when changing a tested route, shared interaction contract, or visual baseline.
 - Run broad `npm run nfr` periodically as a release/maintenance sweep rather than after every small change.
 - `npm run nfr:cms` remains required when page registry or navigation content changes.
-- Keep a checklist of deferred NFR/E2E coverage when intentionally batching those checks.
 
 For map changes, verify:
 
