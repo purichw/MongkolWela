@@ -6,7 +6,7 @@ import { getTemplePlannerData } from "../../../data/temple-planner.js";
 
 const plannerData = getTemplePlannerData();
 const plannerPayload = JSON.stringify(plannerData).replace(/</g, "\\u003c");
-const extraStyles = ["/assets/css/temple-planner.css?feature=20260612-05"];
+const extraStyles = ["/assets/css/temple-planner.css?feature=20260615-03"];
 const extraScripts = ["/assets/js/temple-planner.js"];
 const pageTitle = "วางแผนไหว้พระ 9 วัด | มงคลเวลา";
 const pageDescription =
@@ -46,7 +46,7 @@ const pageDescription =
       <section slot="panel" class="planner-setup" aria-labelledby="planner-setup-title">
         <div class="planner-setup__heading">
           <div>
-            <p class="section-kicker">ตั้งค่าทริป</p>
+            <p class="section-kicker">จุดเริ่มต้นและค้นหาใกล้ฉัน</p>
             <h2 id="planner-setup-title">เลือกเงื่อนไข แล้วให้ระบบจัดเส้นทาง</h2>
           </div>
           <p>ภาค จังหวัด และจุดประสงค์ใช้คัดสถานที่ ส่วนจุดเริ่มต้นใช้คำนวณลำดับและเวลาเดินทาง</p>
@@ -103,12 +103,42 @@ const pageDescription =
             </select>
           </label>
 
-          <div class="planner-route-start">
-            <div class="planner-route-start__intro">
-              <h3>จุดเริ่มต้นและค้นหาใกล้ฉัน</h3>
-              <p>เลือกจุดเริ่มต้นไว้คำนวณเส้นทาง หรือกดค้นหาใกล้ฉันเพื่อดูสถานที่ในรัศมี โดยไม่ใช้ภาค จังหวัด และจุดประสงค์</p>
+          <div class="planner-search-actions" aria-label="เลือกวิธีค้นหาและจัดแผน">
+            <div class="planner-search-actions__group">
+              <span>ค้นหาด้วยตัวเอง</span>
+              <p>ดูรายการหรือแผนที่ก่อน แล้วค่อยเลือกสถานที่เอง</p>
+              <div class="planner-search-actions__buttons">
+                <button class="planner-secondary-button planner-filter-button" type="button" data-planner-filter-search>
+                  ค้นหาสถานที่
+                </button>
+                <button class="planner-location-button" type="button" data-planner-location>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2m0-14-2 2M7 17l-2 2"></path>
+                  </svg>
+                  ค้นหาใกล้ฉัน
+                </button>
+              </div>
             </div>
 
+            <div class="planner-search-actions__or" aria-hidden="true">หรือ</div>
+
+            <div class="planner-search-actions__group planner-search-actions__group--auto">
+              <span>ให้ระบบจัดแผนทริปให้</span>
+              <p>เลือกตามเงื่อนไข แล้วจัดลำดับเส้นทางอัตโนมัติ</p>
+              <button class="planner-primary-button" type="button" data-planner-auto>
+                จัดแผนทริปให้
+              </button>
+            </div>
+
+            <div class="planner-search-actions__reset">
+              <button class="planner-secondary-button planner-reset-button" type="button" data-planner-reset-filters>
+                รีเซ็ตเงื่อนไข
+              </button>
+            </div>
+          </div>
+
+          <div class="planner-route-start">
             <label class="planner-field planner-field--start">
               <span>เริ่มเดินทางจาก</span>
               <select data-planner-start>
@@ -127,27 +157,10 @@ const pageDescription =
               </select>
             </label>
 
-            <button class="planner-location-button" type="button" data-planner-location>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2m0-14-2 2M7 17l-2 2"></path>
-              </svg>
-              ค้นหาใกล้ฉัน
-            </button>
-
             <p class="planner-start-warning" role="status" aria-live="polite" data-planner-start-warning hidden></p>
           </div>
         </div>
 
-        <div class="planner-setup__actions">
-          <button class="planner-secondary-button planner-filter-button" type="button" data-planner-filter-search>
-            ค้นหาสถานที่
-          </button>
-          <button class="planner-primary-button" type="button" data-planner-auto>
-            จัดแผนอัตโนมัติ
-          </button>
-          <a href="#planner-pick" data-planner-filter-search>เลือกสถานที่เองจากรายการหรือแผนที่แทน</a>
-        </div>
         <p class="planner-location-status" role="status" aria-live="polite" data-planner-location-status></p>
       </section>
     </TempleSearchHero>
@@ -247,6 +260,19 @@ const pageDescription =
         ควรตรวจเส้นทางอีกครั้งก่อนออกเดินทาง
       </p>
     </section>
+
+    <div class="planner-dialog" data-planner-dialog aria-hidden="true" hidden>
+      <button class="planner-dialog__overlay" type="button" data-planner-dialog-close aria-label="ปิดข้อความ"></button>
+      <section class="planner-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="planner-dialog-title" aria-describedby="planner-dialog-message">
+        <p class="section-kicker" data-planner-dialog-kicker>ตรวจสอบก่อนจัดแผน</p>
+        <h2 id="planner-dialog-title" data-planner-dialog-title></h2>
+        <p id="planner-dialog-message" data-planner-dialog-message></p>
+        <div class="planner-dialog__actions">
+          <button class="planner-secondary-button" type="button" data-planner-dialog-cancel>ยกเลิก</button>
+          <button class="planner-primary-button" type="button" data-planner-dialog-confirm></button>
+        </div>
+      </section>
+    </div>
 
     <script is:inline type="application/json" id="templePlannerData" set:html={plannerPayload}></script>
   </main>

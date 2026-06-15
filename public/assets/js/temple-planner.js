@@ -21,12 +21,14 @@ function initializeTemplePlanner(planner, payload) {
     selectionMarkers: new Map(),
     routeMap: null,
     routeLayer: null,
+    dialogAction: null,
+    dialogTrigger: null,
   };
 
   planner._plannerState = { state, elements };
   restoreState(state, elements);
   bindControls(state, elements);
-  updateProvinceOptions(state, elements);
+  synchronizeFilterOptions(state, elements, "restore");
   updateStartWarning(state, elements);
   elements.pickSection.hidden = true;
   renderSelected(state, elements);
@@ -46,6 +48,7 @@ function collectElements(planner) {
     startWarning: planner.querySelector("[data-planner-start-warning]"),
     locationButton: planner.querySelector("[data-planner-location]"),
     locationStatus: planner.querySelector("[data-planner-location-status]"),
+    resetFilters: planner.querySelector("[data-planner-reset-filters]"),
     filterSearchButtons: [...planner.querySelectorAll("[data-planner-filter-search]")],
     autoButton: planner.querySelector("[data-planner-auto]"),
     pickerTabs: [...planner.querySelectorAll("[data-planner-picker-tab]")],
@@ -71,6 +74,14 @@ function collectElements(planner) {
     saveButton: planner.querySelector("[data-planner-save]"),
     googleLink: planner.querySelector("[data-planner-google]"),
     pickSection: planner.querySelector("#planner-pick"),
+    setup: planner.querySelector(".planner-setup"),
+    dialog: planner.querySelector("[data-planner-dialog]"),
+    dialogKicker: planner.querySelector("[data-planner-dialog-kicker]"),
+    dialogTitle: planner.querySelector("[data-planner-dialog-title]"),
+    dialogMessage: planner.querySelector("[data-planner-dialog-message]"),
+    dialogCancel: planner.querySelector("[data-planner-dialog-cancel]"),
+    dialogConfirm: planner.querySelector("[data-planner-dialog-confirm]"),
+    dialogCloseButtons: [...planner.querySelectorAll("[data-planner-dialog-close], [data-planner-dialog-cancel]")],
   };
 }
 
@@ -87,10 +98,15 @@ function bindControls(state, elements) {
     });
   });
 
-  [elements.region, elements.province, elements.purpose].forEach((control) => {
+  [
+    [elements.region, "region"],
+    [elements.province, "province"],
+    [elements.purpose, "purpose"],
+  ].forEach(([control, filterName]) => {
     control?.addEventListener("change", () => {
       state.visibleCount = 36;
-      if (control === elements.region) updateProvinceOptions(state, elements);
+      state.nearbyMode = false;
+      synchronizeFilterOptions(state, elements, filterName);
       updateStartWarning(state, elements);
       if (state.pickerReady) {
         renderPicker(state, elements);
@@ -158,13 +174,23 @@ function bindControls(state, elements) {
   });
 
   elements.locationButton?.addEventListener("click", () => requestCurrentLocation(state, elements));
+  elements.resetFilters?.addEventListener("click", () => resetSearchFilters(state, elements));
   elements.filterSearchButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
       event.preventDefault();
       showFilteredPlaces(state, elements);
     });
   });
-  elements.autoButton?.addEventListener("click", () => buildAutomaticPlan(state, elements));
+  elements.autoButton?.addEventListener("click", () => {
+    openPlannerDialog(state, elements, {
+      kicker: "ตรวจสอบก่อนจัดแผน",
+      title: "จัดแผนอัตโนมัติใหม่?",
+      message: "ระบบจะล้างสถานที่ที่เลือกไว้และแผนปัจจุบันทั้งหมด แล้วเลือกใหม่ตามเงื่อนไขที่กำหนด",
+      confirmText: "ล้างและจัดแผนใหม่",
+      trigger: elements.autoButton,
+      action: () => buildAutomaticPlan(state, elements),
+    });
+  });
   elements.buildButton?.addEventListener("click", () => buildSelectedPlan(state, elements));
   elements.clearSelection?.addEventListener("click", () => {
     state.selected = [];
@@ -186,6 +212,15 @@ function bindControls(state, elements) {
     }, 1600);
   });
   elements.timeline?.addEventListener("click", (event) => handleTimelineAction(event, state, elements));
+  elements.dialogCloseButtons.forEach((button) => button.addEventListener("click", () => closePlannerDialog(state, elements)));
+  elements.dialogConfirm?.addEventListener("click", () => {
+    const action = state.dialogAction;
+    closePlannerDialog(state, elements, { restoreFocus: false });
+    action?.();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !elements.dialog?.hidden) closePlannerDialog(state, elements);
+  });
   bindTimelineDrag(state, elements);
 }
 
@@ -331,18 +366,129 @@ function matchesSearch(item, query) {
   ).includes(query);
 }
 
-function updateProvinceOptions(state, elements) {
-  const current = elements.province.dataset.restoreValue || elements.province.value;
-  const region = elements.region.value;
-  const provinces = Array.from(
-    new Set(state.items.filter((item) => !region || item.region === region).map((item) => item.province)),
-  ).sort((left, right) => left.localeCompare(right, "th"));
+function synchronizeFilterOptions(state, elements, changedFilter) {
+  let region = elements.region.value;
+  let province = elements.province.value;
+  let purpose = elements.purpose.value;
 
-  elements.province.innerHTML =
-    '<option value="">ทุกจังหวัด</option>' +
-    provinces.map((province) => `<option value="${escapeHtml(province)}">${escapeHtml(province)}</option>`).join("");
-  elements.province.value = provinces.includes(current) ? current : "";
-  delete elements.province.dataset.restoreValue;
+  if (changedFilter === "region") {
+    if (!region || (province && !state.items.some((item) => item.region === region && item.province === province))) province = "";
+  }
+
+  if (province) {
+    const provinceItem = state.items.find(
+      (item) => item.province === province && (!purpose || item.blessings.includes(purpose)),
+    ) || state.items.find((item) => item.province === province);
+    region = provinceItem?.region || region;
+  }
+
+  const combinationExists = state.items.some(
+    (item) =>
+      (!region || item.region === region) &&
+      (!province || item.province === province) &&
+      (!purpose || item.blessings.includes(purpose)),
+  );
+  if (!combinationExists && changedFilter !== "purpose") purpose = "";
+  if (!combinationExists && changedFilter === "purpose") {
+    province = "";
+    if (!state.items.some((item) => (!region || item.region === region) && item.blessings.includes(purpose))) region = "";
+  }
+
+  const regions = uniqueThai(
+    state.items
+      .filter((item) => (!province || item.province === province) && (!purpose || item.blessings.includes(purpose)))
+      .map((item) => item.region),
+  );
+  if (region && !regions.includes(region)) region = "";
+
+  const provinces = uniqueThai(
+    state.items
+      .filter((item) => (!region || item.region === region) && (!purpose || item.blessings.includes(purpose)))
+      .map((item) => item.province),
+  );
+  if (province && !provinces.includes(province)) province = "";
+
+  const purposes = uniqueThai(
+    state.items
+      .filter((item) => (!region || item.region === region) && (!province || item.province === province))
+      .flatMap((item) => item.blessings),
+  );
+  if (purpose && !purposes.includes(purpose)) purpose = "";
+
+  replaceSelectOptions(elements.region, regions, "ทุกภาค", region);
+  replaceSelectOptions(elements.province, provinces, "ทุกจังหวัด", province);
+  replaceSelectOptions(elements.purpose, purposes, "ไหว้พระและเสริมสิริมงคลทั่วไป", purpose);
+}
+
+function uniqueThai(values) {
+  return Array.from(new Set(values.filter(Boolean))).sort((left, right) => left.localeCompare(right, "th"));
+}
+
+function replaceSelectOptions(select, values, emptyLabel, selectedValue) {
+  select.innerHTML =
+    `<option value="">${emptyLabel}</option>` +
+    values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
+  select.value = values.includes(selectedValue) ? selectedValue : "";
+}
+
+function resetSearchFilters(state, elements) {
+  elements.region.value = "";
+  elements.province.value = "";
+  elements.purpose.value = "";
+  elements.search.value = "";
+  elements.radius.value = "100";
+  state.currentLocation = null;
+  state.nearbyMode = false;
+  state.visibleCount = 36;
+  synchronizeFilterOptions(state, elements, "reset");
+  updateStartWarning(state, elements);
+  if (state.pickerReady) {
+    renderPicker(state, elements);
+    refreshSelectionMap(state, elements);
+  }
+  elements.locationStatus.textContent = "รีเซ็ตเงื่อนไขการค้นหาแล้ว";
+  persistState(state, elements);
+}
+
+function openPlannerDialog(state, elements, options) {
+  if (!elements.dialog) return;
+  state.dialogAction = options.action || null;
+  state.dialogTrigger = options.trigger || document.activeElement;
+  elements.dialogKicker.textContent = options.kicker || "แจ้งผลการค้นหา";
+  elements.dialogTitle.textContent = options.title || "ตรวจสอบเงื่อนไขอีกครั้ง";
+  elements.dialogMessage.textContent = options.message || "";
+  elements.dialogConfirm.textContent = options.confirmText || "ตกลง";
+  elements.dialogCancel.hidden = Boolean(options.hideCancel);
+  elements.dialog.hidden = false;
+  elements.dialog.setAttribute("aria-hidden", "false");
+  document.body.classList.add("has-planner-dialog");
+  elements.dialogConfirm.focus({ preventScroll: true });
+}
+
+function closePlannerDialog(state, elements, options = {}) {
+  if (!elements.dialog || elements.dialog.hidden) return;
+  elements.dialog.hidden = true;
+  elements.dialog.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("has-planner-dialog");
+  const trigger = state.dialogTrigger;
+  state.dialogAction = null;
+  state.dialogTrigger = null;
+  if (options.restoreFocus !== false) trigger?.focus?.({ preventScroll: true });
+}
+
+function showNoResultsDialog(state, elements, message) {
+  openPlannerDialog(state, elements, {
+    kicker: "ไม่พบผลลัพธ์",
+    title: "ไม่พบสถานที่ตามเงื่อนไข",
+    message: `${message} ลองเปลี่ยนตัวกรองหรือกดรีเซ็ตเงื่อนไขแล้วค้นหาใหม่`,
+    confirmText: "กลับไปค้นหาใหม่",
+    hideCancel: true,
+    trigger: document.activeElement,
+    action: () => {
+      elements.setup?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+      elements.resetFilters?.focus({ preventScroll: true });
+    },
+  });
 }
 
 function updateStartWarning(state, elements) {
@@ -390,6 +536,11 @@ function showFilteredPlaces(state, elements) {
   elements.locationStatus.textContent = count
     ? `พบ ${count.toLocaleString("th-TH")} สถานที่ตามตัวกรอง เลือกจากรายการหรือแผนที่ได้เลย`
     : "ไม่พบสถานที่ที่ตรงกับตัวกรอง";
+  if (!count) {
+    showNoResultsDialog(state, elements, "ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ที่ตรงกับภาค จังหวัด และจุดประสงค์ที่เลือก");
+    persistState(state, elements);
+    return;
+  }
   elements.pickSection?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
   persistState(state, elements);
 }
@@ -406,6 +557,11 @@ function showNearbyPlaces(state, elements) {
   elements.locationStatus.textContent = count
     ? `พบ ${count.toLocaleString("th-TH")} สถานที่ในรัศมี ${radiusKm.toLocaleString("th-TH")} กม. จากตำแหน่งปัจจุบัน`
     : `ไม่พบสถานที่ในรัศมี ${radiusKm.toLocaleString("th-TH")} กม. จากตำแหน่งปัจจุบัน`;
+  if (!count) {
+    showNoResultsDialog(state, elements, `ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ในรัศมี ${radiusKm.toLocaleString("th-TH")} กม. จากตำแหน่งปัจจุบัน`);
+    persistState(state, elements);
+    return;
+  }
   elements.pickSection?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
   persistState(state, elements);
 }
@@ -423,12 +579,23 @@ function buildAutomaticPlan(state, elements) {
   elements.pickSection.hidden = false;
   const target = getTargetCount(elements);
   const candidates = getAutomaticCandidates(state, elements);
-  const selectedItems = state.selected.map((id) => state.itemById.get(id)).filter(Boolean);
-  const selectedIds = new Set(selectedItems.map((item) => item.id));
+  state.selected = [];
+  state.plan = [];
+  elements.result.hidden = true;
+  renderSelected(state, elements);
+  const selectedIds = new Set();
   const anchor = getStartPoint(state, elements);
-  const chosen = [...selectedItems];
+  const chosen = [];
 
-  if (!chosen.length && candidates.length) {
+  if (!candidates.length) {
+    renderPicker(state, elements);
+    refreshSelectionMap(state, elements);
+    showNoResultsDialog(state, elements, "ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ที่ตรงกับภาค จังหวัด และจุดประสงค์ที่เลือก");
+    persistState(state, elements);
+    return;
+  }
+
+  if (!chosen.length) {
     chosen.push(pickFirstCandidate(candidates, anchor, elements.purpose.value));
     selectedIds.add(chosen[0].id);
   }
@@ -442,11 +609,6 @@ function buildAutomaticPlan(state, elements) {
     if (!next) break;
     chosen.push(next);
     selectedIds.add(next.id);
-  }
-
-  if (!chosen.length) {
-    elements.locationStatus.textContent = "ไม่พบสถานที่ที่ตรงกับพื้นที่และจุดประสงค์ที่เลือก";
-    return;
   }
 
   state.selected = chosen.map((item) => item.id);
@@ -469,9 +631,7 @@ function buildSelectedPlan(state, elements) {
 }
 
 function getAutomaticCandidates(state, elements) {
-  const filtered = getFilteredItems(state, { ...elements, search: { value: "" } });
-  if (filtered.length) return filtered;
-  return state.items;
+  return getFilteredItems(state, { ...elements, search: { value: "" } });
 }
 
 function pickFirstCandidate(candidates, anchor, purpose) {
@@ -991,7 +1151,7 @@ function restoreState(state, elements) {
     if (saved.region) elements.region.value = saved.region;
     if (saved.purpose) elements.purpose.value = saved.purpose;
     if (saved.start && state.itemById.has(saved.start)) elements.start.value = saved.start;
-    elements.province.dataset.restoreValue = saved.province || "";
+    if (saved.province) elements.province.value = saved.province;
     state.selected = (saved.selected || []).filter((id) => state.itemById.has(id)).slice(0, getTargetCount(elements));
     state.plan = (saved.plan || []).map((id) => state.itemById.get(id)).filter(Boolean);
   } catch {}
