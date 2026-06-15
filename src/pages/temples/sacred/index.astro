@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import TempleSearchHero from "../../../components/TempleSearchHero.astro";
+import TempleFilterChips from "../../../components/TempleFilterChips.astro";
 import TempleMapOverlay from "../../../components/TempleMapOverlay.astro";
 import TempleResponsiveImage from "../../../components/TempleResponsiveImage.astro";
 import sacredTemples from "../../../data/sacred-temples.json";
@@ -120,28 +121,17 @@ const itemListJsonLd = createItemListJsonLd({
             <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>{filterContent.clearButton}</button>
           </div>
         </form>
-        <div class="popular-temple-region-filter">
-          <span>{filterContent.regionLabel}</span>
-          <div class="popular-temple-region-tags" aria-label={filterContent.regionAriaLabel}>
-            <button type="button" class="is-active" data-popular-region-tag value="">{filterContent.allLabel}</button>
-            {popularRegions.map((region) => (
-              <button type="button" data-popular-region-tag value={region}>{region}</button>
-            ))}
-          </div>
-        </div>
-        <div class="popular-temple-province-filter" data-popular-province-filter hidden>
-          <span>{filterContent.provinceLabel}</span>
-          <div class="popular-temple-province-tags" aria-label={filterContent.provinceAriaLabel} data-popular-province-tags></div>
-        </div>
-        <div class="popular-temple-purpose-filter">
-          <span>{filterContent.purposeLabel}</span>
-          <div class="popular-temple-purpose-tags" aria-label={filterContent.purposeAriaLabel} data-popular-purpose-tags>
-            <button type="button" class="is-active" data-popular-purpose-tag value="">{filterContent.allLabel}</button>
-            {purposeTags.map((purpose) => (
-              <button type="button" data-popular-purpose-tag value={purpose}>{purpose}</button>
-            ))}
-          </div>
-        </div>
+        <TempleFilterChips
+          regions={popularRegions}
+          purposes={purposeTags}
+          allLabel={filterContent.allLabel}
+          regionLabel={filterContent.regionLabel}
+          provinceLabel={filterContent.provinceLabel}
+          purposeLabel={filterContent.purposeLabel}
+          regionAriaLabel={filterContent.regionAriaLabel}
+          provinceAriaLabel={filterContent.provinceAriaLabel}
+          purposeAriaLabel={filterContent.purposeAriaLabel}
+        />
       </section>
     </TempleSearchHero>
 

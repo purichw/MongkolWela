@@ -150,7 +150,9 @@ function initializePopularTempleGrid(grid) {
   const regionTags = Array.from(filterRoot?.querySelectorAll("[data-popular-region-tag]") || []);
   const provinceFilter = filterRoot?.querySelector("[data-popular-province-filter]");
   const provinceTagsRoot = filterRoot?.querySelector("[data-popular-province-tags]");
+  const provinceSummary = filterRoot?.querySelector("[data-temple-province-summary]");
   const purposeTags = Array.from(filterRoot?.querySelectorAll("[data-popular-purpose-tag]") || []);
+  const purposeSummary = filterRoot?.querySelector("[data-temple-purpose-summary]");
   const countNode = document.querySelector("[data-popular-temple-count]");
   const emptyNode = document.querySelector("[data-popular-temple-empty]");
   const sentinel = document.querySelector("[data-popular-temple-sentinel]");
@@ -161,8 +163,8 @@ function initializePopularTempleGrid(grid) {
   const originalCardOrder = new Map(cards.map((card, index) => [card, index]));
   let filteredCards = cards;
   let visibleCount = 0;
-  let activeRegion = "";
-  let activeProvince = "";
+  const activeRegions = new Set();
+  const activeProvinces = new Set();
   let activeNearby = false;
   let userLocation = null;
   let isRequestingLocation = false;
@@ -176,6 +178,7 @@ function initializePopularTempleGrid(grid) {
   emptyNode?.setAttribute("role", "status");
   nearbyButton?.setAttribute("aria-pressed", "false");
   updateRegionTags();
+  updateProvinceTags();
   updatePurposeTags();
 
   grid.addEventListener(
@@ -216,8 +219,8 @@ function initializePopularTempleGrid(grid) {
 
   filterClear?.addEventListener("click", () => {
     if (filterName) filterName.value = "";
-    activeRegion = "";
-    activeProvince = "";
+    activeRegions.clear();
+    activeProvinces.clear();
     activeNearby = false;
     activePurposes.clear();
     clearCardDistances();
@@ -230,8 +233,21 @@ function initializePopularTempleGrid(grid) {
 
   regionTags.forEach((tag) => {
     tag.addEventListener("click", () => {
-      activeRegion = tag.value || "";
-      activeProvince = "";
+      const value = tag.value || "";
+      if (!value) {
+        activeRegions.clear();
+        activeProvinces.clear();
+      } else if (activeRegions.has(value)) {
+        activeRegions.delete(value);
+      } else {
+        activeRegions.add(value);
+      }
+      const allowedProvinces = new Set(
+        cards.filter((card) => !activeRegions.size || activeRegions.has(card.dataset.region)).map((card) => card.dataset.province),
+      );
+      [...activeProvinces].forEach((province) => {
+        if (!allowedProvinces.has(province)) activeProvinces.delete(province);
+      });
       updateRegionTags();
       updateProvinceTags();
       applyPopularFilters();
@@ -312,8 +328,8 @@ function initializePopularTempleGrid(grid) {
     const query = normalize(filterName?.value || "");
     filteredCards = cards.filter((card) => {
       const matchesQuery = !query || normalize(getCardSearchText(card)).includes(query);
-      const matchesRegion = !activeRegion || card.dataset.region === activeRegion;
-      const matchesProvince = !activeProvince || card.dataset.province === activeProvince;
+      const matchesRegion = !activeRegions.size || activeRegions.has(card.dataset.region);
+      const matchesProvince = !activeProvinces.size || activeProvinces.has(card.dataset.province);
       const matchesPurpose = !activePurposes.size || splitDataTags(card.dataset.blessings).some((tag) => activePurposes.has(tag));
       return matchesQuery && matchesRegion && matchesProvince && matchesPurpose;
     });
@@ -323,8 +339,10 @@ function initializePopularTempleGrid(grid) {
     document.dispatchEvent(new CustomEvent("mw:filter-change", {
       detail: {
         scope: "temple_cards",
-        region: activeRegion || "all",
-        province: activeProvince || "all",
+        region: activeRegions.values().next().value || "all",
+        province: activeProvinces.values().next().value || "all",
+        regions: [...activeRegions],
+        provinces: [...activeProvinces],
         purposes: [...activePurposes],
         nearby: activeNearby,
         resultCount: filteredCards.length,
@@ -363,7 +381,8 @@ function initializePopularTempleGrid(grid) {
 
   function updateRegionTags() {
     regionTags.forEach((tag) => {
-      const isActive = (tag.value || "") === activeRegion;
+      const value = tag.value || "";
+      const isActive = value ? activeRegions.has(value) : activeRegions.size === 0;
       tag.classList.toggle("is-active", isActive);
       tag.setAttribute("aria-pressed", String(isActive));
     });
@@ -372,21 +391,21 @@ function initializePopularTempleGrid(grid) {
   function updateProvinceTags() {
     if (!provinceFilter || !provinceTagsRoot) return;
 
-    if (!activeRegion) {
-      provinceFilter.hidden = true;
-      provinceTagsRoot.innerHTML = "";
-      return;
-    }
-
     const provinces = uniqueSorted(
-      cards.filter((card) => card.dataset.region === activeRegion).map((card) => card.dataset.province),
+      cards
+        .filter((card) => !activeRegions.size || activeRegions.has(card.dataset.region))
+        .map((card) => card.dataset.province),
     );
 
-    provinceFilter.hidden = provinces.length === 0;
     provinceTagsRoot.innerHTML = "";
 
-    const allButton = createFilterTag("ทั้งหมด", "", !activeProvince);
-    provinceTagsRoot.append(allButton, ...provinces.map((province) => createFilterTag(province, province, activeProvince === province)));
+    const allButton = createFilterTag("ทั้งหมด", "", activeProvinces.size === 0);
+    provinceTagsRoot.append(allButton, ...provinces.map((province) => createFilterTag(province, province, activeProvinces.has(province))));
+    if (provinceSummary) {
+      provinceSummary.textContent = activeProvinces.size
+        ? `เลือกแล้ว ${activeProvinces.size.toLocaleString("th-TH")}`
+        : "ทั้งหมด";
+    }
   }
 
   function updatePurposeTags() {
@@ -396,6 +415,11 @@ function initializePopularTempleGrid(grid) {
       tag.classList.toggle("is-active", isActive);
       tag.setAttribute("aria-pressed", String(isActive));
     });
+    if (purposeSummary) {
+      purposeSummary.textContent = activePurposes.size
+        ? `เลือกแล้ว ${activePurposes.size.toLocaleString("th-TH")}`
+        : "ทั้งหมด";
+    }
   }
 
   function createFilterTag(label, value, isActive) {
@@ -407,7 +431,16 @@ function initializePopularTempleGrid(grid) {
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
     button.addEventListener("click", () => {
-      activeProvince = value;
+      if (!value) {
+        activeProvinces.clear();
+      } else if (activeProvinces.has(value)) {
+        activeProvinces.delete(value);
+      } else {
+        activeProvinces.add(value);
+        const matchingCard = cards.find((card) => card.dataset.province === value);
+        if (matchingCard?.dataset.region) activeRegions.add(matchingCard.dataset.region);
+      }
+      updateRegionTags();
       updateProvinceTags();
       applyPopularFilters();
     });

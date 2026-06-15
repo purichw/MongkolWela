@@ -15,6 +15,9 @@ function initializeTemplePlanner(planner, payload) {
     visibleCount: 36,
     currentLocation: null,
     pinnedStartId: "",
+    activeRegions: new Set(),
+    activeProvinces: new Set(),
+    activePurposes: new Set(),
     manualSelectionOrder: false,
     pickerReady: false,
     nearbyMode: false,
@@ -43,9 +46,12 @@ function collectElements(planner) {
     countInputs: [...planner.querySelectorAll('input[name="planner-count"]')],
     budget: planner.querySelector("[data-planner-budget]"),
     startTime: planner.querySelector("[data-planner-start-time]"),
-    region: planner.querySelector("[data-planner-region]"),
-    province: planner.querySelector("[data-planner-province]"),
-    purpose: planner.querySelector("[data-planner-purpose]"),
+    regionTags: [...planner.querySelectorAll("[data-planner-region-tag]")],
+    provinceFilter: planner.querySelector("[data-planner-province-filter]"),
+    provinceTags: planner.querySelector("[data-planner-province-tags]"),
+    provinceSummary: planner.querySelector("[data-temple-province-summary]"),
+    purposeTags: [...planner.querySelectorAll("[data-planner-purpose-tag]")],
+    purposeSummary: planner.querySelector("[data-temple-purpose-summary]"),
     start: planner.querySelector("[data-planner-start]"),
     radius: planner.querySelector("[data-planner-radius]"),
     startWarning: planner.querySelector("[data-planner-start-warning]"),
@@ -103,21 +109,52 @@ function bindControls(state, elements) {
     });
   });
 
-  [
-    [elements.region, "region"],
-    [elements.province, "province"],
-    [elements.purpose, "purpose"],
-  ].forEach(([control, filterName]) => {
-    control?.addEventListener("change", () => {
-      state.visibleCount = 36;
-      state.nearbyMode = false;
-      synchronizeFilterOptions(state, elements, filterName);
-      updateStartWarning(state, elements);
-      if (state.pickerReady) {
-        renderPicker(state, elements);
-        refreshSelectionMap(state, elements);
+  elements.regionTags.forEach((tag) => {
+    tag.addEventListener("click", () => {
+      const value = tag.value || "";
+      if (!value) {
+        state.activeRegions.clear();
+        state.activeProvinces.clear();
+      } else if (state.activeRegions.has(value)) {
+        state.activeRegions.delete(value);
+        state.activeProvinces.forEach((province) => {
+          const item = state.items.find((candidate) => candidate.province === province);
+          if (item?.region === value) state.activeProvinces.delete(province);
+        });
+      } else {
+        state.activeRegions.add(value);
       }
-      persistState(state, elements);
+      applyPlannerFilterChange(state, elements);
+    });
+  });
+
+  elements.provinceTags?.addEventListener("click", (event) => {
+    const tag = event.target.closest("[data-planner-province-tag]");
+    if (!tag) return;
+    const value = tag.value || "";
+    if (!value) {
+      state.activeProvinces.clear();
+    } else if (state.activeProvinces.has(value)) {
+      state.activeProvinces.delete(value);
+    } else {
+      state.activeProvinces.add(value);
+      const item = state.items.find((candidate) => candidate.province === value);
+      if (item?.region) state.activeRegions.add(item.region);
+    }
+    applyPlannerFilterChange(state, elements);
+  });
+
+  elements.purposeTags.forEach((tag) => {
+    tag.addEventListener("click", () => {
+      const value = tag.value || "";
+      if (!value) {
+        state.activePurposes.clear();
+      } else if (state.activePurposes.has(value)) {
+        state.activePurposes.delete(value);
+      } else {
+        state.activePurposes.add(value);
+      }
+      applyPlannerFilterChange(state, elements);
     });
   });
 
@@ -232,6 +269,18 @@ function bindControls(state, elements) {
     if (event.key === "Escape" && !elements.dialog?.hidden) closePlannerDialog(state, elements);
   });
   bindTimelineDrag(state, elements);
+}
+
+function applyPlannerFilterChange(state, elements) {
+  state.visibleCount = 36;
+  state.nearbyMode = false;
+  synchronizeFilterOptions(state, elements);
+  updateStartWarning(state, elements);
+  if (state.pickerReady) {
+    renderPicker(state, elements);
+    refreshSelectionMap(state, elements);
+  }
+  persistState(state, elements);
 }
 
 function activateTab(activeTab, tabs, panels, dataKey) {
@@ -475,13 +524,10 @@ function getFilteredItems(state, elements) {
       .sort((left, right) => haversineKm(state.currentLocation, left) - haversineKm(state.currentLocation, right));
   }
 
-  const region = elements.region?.value || "";
-  const province = elements.province?.value || "";
-  const purpose = elements.purpose?.value || "";
   return state.items.filter((item) => {
-    if (region && item.region !== region) return false;
-    if (province && item.province !== province) return false;
-    if (purpose && !item.blessings.includes(purpose)) return false;
+    if (state.activeRegions.size && !state.activeRegions.has(item.region)) return false;
+    if (state.activeProvinces.size && !state.activeProvinces.has(item.province)) return false;
+    if (state.activePurposes.size && !item.blessings.some((purpose) => state.activePurposes.has(purpose))) return false;
     return matchesSearch(item, query);
   });
 }
@@ -493,75 +539,71 @@ function matchesSearch(item, query) {
   ).includes(query);
 }
 
-function synchronizeFilterOptions(state, elements, changedFilter) {
-  let region = elements.region.value;
-  let province = elements.province.value;
-  let purpose = elements.purpose.value;
-
-  if (changedFilter === "region") {
-    if (!region || (province && !state.items.some((item) => item.region === region && item.province === province))) province = "";
-  }
-
-  if (province) {
-    const provinceItem = state.items.find(
-      (item) => item.province === province && (!purpose || item.blessings.includes(purpose)),
-    ) || state.items.find((item) => item.province === province);
-    region = provinceItem?.region || region;
-  }
-
-  const combinationExists = state.items.some(
-    (item) =>
-      (!region || item.region === region) &&
-      (!province || item.province === province) &&
-      (!purpose || item.blessings.includes(purpose)),
-  );
-  if (!combinationExists && changedFilter !== "purpose") purpose = "";
-  if (!combinationExists && changedFilter === "purpose") {
-    province = "";
-    if (!state.items.some((item) => (!region || item.region === region) && item.blessings.includes(purpose))) region = "";
-  }
-
-  const regions = uniqueThai(
+function synchronizeFilterOptions(state, elements) {
+  const matchesPurposes = (item) =>
+    !state.activePurposes.size || item.blessings.some((purpose) => state.activePurposes.has(purpose));
+  const availableRegions = new Set(
     state.items
-      .filter((item) => (!province || item.province === province) && (!purpose || item.blessings.includes(purpose)))
+      .filter((item) => (!state.activeProvinces.size || state.activeProvinces.has(item.province)) && matchesPurposes(item))
       .map((item) => item.region),
   );
-  if (region && !regions.includes(region)) region = "";
-
-  const provinces = uniqueThai(
+  const availableProvinces = new Set(
     state.items
-      .filter((item) => (!region || item.region === region) && (!purpose || item.blessings.includes(purpose)))
+      .filter((item) => (!state.activeRegions.size || state.activeRegions.has(item.region)) && matchesPurposes(item))
       .map((item) => item.province),
   );
-  if (province && !provinces.includes(province)) province = "";
-
-  const purposes = uniqueThai(
+  const availablePurposes = new Set(
     state.items
-      .filter((item) => (!region || item.region === region) && (!province || item.province === province))
+      .filter(
+        (item) =>
+          (!state.activeRegions.size || state.activeRegions.has(item.region)) &&
+          (!state.activeProvinces.size || state.activeProvinces.has(item.province)),
+      )
       .flatMap((item) => item.blessings),
   );
-  if (purpose && !purposes.includes(purpose)) purpose = "";
 
-  replaceSelectOptions(elements.region, regions, "ทุกภาค", region);
-  replaceSelectOptions(elements.province, provinces, "ทุกจังหวัด", province);
-  replaceSelectOptions(elements.purpose, purposes, "ทั้งหมด", purpose);
+  updatePlannerTagStates(elements.regionTags, state.activeRegions, availableRegions);
+  updatePlannerTagStates(elements.purposeTags, state.activePurposes, availablePurposes);
+  renderPlannerProvinceTags(state, elements, availableProvinces);
+  updateFilterSummary(elements.provinceSummary, state.activeProvinces.size);
+  updateFilterSummary(elements.purposeSummary, state.activePurposes.size);
 }
 
 function uniqueThai(values) {
   return Array.from(new Set(values.filter(Boolean))).sort((left, right) => left.localeCompare(right, "th"));
 }
 
-function replaceSelectOptions(select, values, emptyLabel, selectedValue) {
-  select.innerHTML =
-    `<option value="">${emptyLabel}</option>` +
-    values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
-  select.value = values.includes(selectedValue) ? selectedValue : "";
+function updatePlannerTagStates(tags, activeValues, availableValues) {
+  tags.forEach((tag) => {
+    const value = tag.value || "";
+    const isActive = value ? activeValues.has(value) : activeValues.size === 0;
+    tag.classList.toggle("is-active", isActive);
+    tag.setAttribute("aria-pressed", String(isActive));
+    tag.disabled = Boolean(value) && !isActive && !availableValues.has(value);
+  });
+}
+
+function renderPlannerProvinceTags(state, elements, availableProvinces) {
+  if (!elements.provinceTags) return;
+  const provinces = uniqueThai([...availableProvinces, ...state.activeProvinces]);
+  elements.provinceTags.innerHTML = [
+    `<button type="button" data-planner-province-tag value="" class="${state.activeProvinces.size ? "" : "is-active"}" aria-pressed="${String(!state.activeProvinces.size)}">ทั้งหมด</button>`,
+    ...provinces.map((province) => {
+      const isActive = state.activeProvinces.has(province);
+      return `<button type="button" data-planner-province-tag value="${escapeHtml(province)}" class="${isActive ? "is-active" : ""}" aria-pressed="${String(isActive)}">${escapeHtml(province)}</button>`;
+    }),
+  ].join("");
+}
+
+function updateFilterSummary(node, selectedCount) {
+  if (!node) return;
+  node.textContent = selectedCount ? `เลือกแล้ว ${selectedCount.toLocaleString("th-TH")}` : "ทั้งหมด";
 }
 
 function resetSearchFilters(state, elements) {
-  elements.region.value = "";
-  elements.province.value = "";
-  elements.purpose.value = "";
+  state.activeRegions.clear();
+  state.activeProvinces.clear();
+  state.activePurposes.clear();
   elements.search.value = "";
   elements.radius.value = "100";
   elements.start.value = "";
@@ -570,7 +612,7 @@ function resetSearchFilters(state, elements) {
   state.visibleCount = 36;
   applyPinnedStart(state, elements);
   const planSynced = synchronizePlanWithSelection(state, elements);
-  synchronizeFilterOptions(state, elements, "reset");
+  synchronizeFilterOptions(state, elements);
   updateStartWarning(state, elements);
   renderSelected(state, elements);
   if (planSynced) renderPlan(state, elements, { scroll: false });
@@ -633,7 +675,7 @@ function updateStartWarning(state, elements) {
   }
 
   const anchor = getStartPoint(state, elements);
-  const hasAreaFilter = Boolean(elements.region?.value || elements.province?.value);
+  const hasAreaFilter = Boolean(state.activeRegions.size || state.activeProvinces.size);
   const candidates = getFilteredItems(state, { ...elements, search: { value: "" } });
 
   if (!anchor || !hasAreaFilter || !candidates.length) {
@@ -646,8 +688,8 @@ function updateStartWarning(state, elements) {
     .map((item) => haversineKm(anchor, item))
     .filter(Number.isFinite)
     .sort((left, right) => left - right)[0];
-  const provinceMismatch = elements.province?.value && anchor.province && anchor.province !== elements.province.value;
-  const regionMismatch = elements.region?.value && anchor.region && anchor.region !== elements.region.value;
+  const provinceMismatch = state.activeProvinces.size && anchor.province && !state.activeProvinces.has(anchor.province);
+  const regionMismatch = state.activeRegions.size && anchor.region && !state.activeRegions.has(anchor.region);
   const isFar = nearestDistance > 120;
 
   if (!provinceMismatch && !regionMismatch && !isFar) {
@@ -740,7 +782,7 @@ function buildAutomaticPlan(state, elements) {
     chosen.push(pinnedStart);
     selectedIds.add(pinnedStart.id);
   } else if (!chosen.length) {
-    chosen.push(pickFirstCandidate(candidates, anchor, elements.purpose.value));
+    chosen.push(pickFirstCandidate(candidates, anchor, getPrimaryPurpose(state)));
     selectedIds.add(chosen[0].id);
   }
 
@@ -748,7 +790,7 @@ function buildAutomaticPlan(state, elements) {
     const current = chosen.at(-1) || anchor;
     const next = candidates
       .filter((item) => !selectedIds.has(item.id))
-      .map((item) => ({ item, score: automaticCandidateScore(current, item, elements.purpose.value) }))
+      .map((item) => ({ item, score: automaticCandidateScore(current, item, getPrimaryPurpose(state)) }))
       .sort((left, right) => left.score - right.score)[0]?.item;
     if (!next) break;
     chosen.push(next);
@@ -798,6 +840,10 @@ function automaticCandidateScore(current, item, purpose) {
   const purposeBonus = purpose && item.blessings.includes(purpose) ? -45 : 0;
   const rankPenalty = Math.min(item.globalRank, 200) * 0.45;
   return distancePenalty + rankPenalty + purposeBonus + leg.directKm * 0.2;
+}
+
+function getPrimaryPurpose(state) {
+  return state.activePurposes.values().next().value || "";
 }
 
 function optimizeOrder(items, anchor) {
@@ -1283,9 +1329,9 @@ function persistState(state, elements) {
         budget: elements.budget.value,
         startTime: elements.startTime.value,
         radius: elements.radius?.value,
-        region: elements.region.value,
-        province: elements.province.value,
-        purpose: elements.purpose.value,
+        regions: [...state.activeRegions],
+        provinces: [...state.activeProvinces],
+        purposes: [...state.activePurposes],
         start: elements.start.value,
       }),
     );
@@ -1300,10 +1346,10 @@ function restoreState(state, elements) {
     if (saved.budget) elements.budget.value = saved.budget;
     if (saved.startTime) elements.startTime.value = saved.startTime;
     if (saved.radius && elements.radius) elements.radius.value = saved.radius;
-    if (saved.region) elements.region.value = saved.region;
-    if (saved.purpose) elements.purpose.value = saved.purpose;
+    (saved.regions || (saved.region ? [saved.region] : [])).forEach((region) => state.activeRegions.add(region));
+    (saved.purposes || (saved.purpose ? [saved.purpose] : [])).forEach((purpose) => state.activePurposes.add(purpose));
     if (saved.start && state.itemById.has(saved.start)) elements.start.value = saved.start;
-    if (saved.province) elements.province.value = saved.province;
+    (saved.provinces || (saved.province ? [saved.province] : [])).forEach((province) => state.activeProvinces.add(province));
     state.selected = (saved.selected || []).filter((id) => state.itemById.has(id)).slice(0, getTargetCount(elements));
     state.plan = (saved.plan || []).map((id) => state.itemById.get(id)).filter(Boolean);
   } catch {}

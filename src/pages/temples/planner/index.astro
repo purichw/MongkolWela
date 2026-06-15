@@ -1,12 +1,13 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import TempleFilterChips from "../../../components/TempleFilterChips.astro";
 import TempleSearchHero from "../../../components/TempleSearchHero.astro";
 import templePageBanners from "../../../data/temple-page-banners.json";
 import { getTemplePlannerData } from "../../../data/temple-planner.js";
 
 const plannerData = getTemplePlannerData();
 const plannerPayload = JSON.stringify(plannerData).replace(/</g, "\\u003c");
-const extraStyles = ["/assets/css/temple-planner.css?feature=20260615-06"];
+const extraStyles = ["/assets/css/temple-planner.css?feature=20260615-07"];
 const extraScripts = ["/assets/js/temple-planner.js"];
 const pageTitle = "วางแผนไหว้พระ 9 วัด | มงคลเวลา";
 const pageDescription =
@@ -102,29 +103,23 @@ const pageDescription =
             <input type="time" value="08:00" data-planner-start-time />
           </label>
 
-          <label class="planner-field">
-            <span>ภาค</span>
-            <select data-planner-region>
-              <option value="">ทุกภาค</option>
-              {plannerData.filters.regions.map((region) => <option value={region}>{region}</option>)}
-            </select>
-          </label>
+          <div class="planner-filter-panel">
+            <label class="planner-field planner-filter-name">
+              <span>ชื่อวัด / สถานที่</span>
+              <input
+                type="search"
+                placeholder="ค้นหาชื่อ จังหวัด หรือพรที่ต้องการ"
+                autocomplete="off"
+                data-planner-search
+              />
+            </label>
 
-          <label class="planner-field">
-            <span>จังหวัด</span>
-            <select data-planner-province>
-              <option value="">ทุกจังหวัด</option>
-              {plannerData.filters.provinces.map((province) => <option value={province}>{province}</option>)}
-            </select>
-          </label>
-
-          <label class="planner-field">
-            <span>จุดประสงค์</span>
-            <select data-planner-purpose>
-              <option value="">ทั้งหมด</option>
-              {plannerData.filters.purposes.map((purpose) => <option value={purpose}>{purpose}</option>)}
-            </select>
-          </label>
+            <TempleFilterChips
+              mode="planner"
+              regions={plannerData.filters.regions}
+              purposes={plannerData.filters.purposes}
+            />
+          </div>
 
           <div class="planner-search-actions" aria-label="เลือกวิธีค้นหาและจัดแผน">
             <div class="planner-search-actions__group">
@@ -187,14 +182,6 @@ const pageDescription =
           <button type="button" role="tab" aria-selected="true" data-planner-picker-tab="list">รายการ</button>
           <button type="button" role="tab" aria-selected="false" data-planner-picker-tab="map">แผนที่</button>
         </div>
-        <label class="planner-search">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="m20 20-4-4"></path>
-          </svg>
-          <span class="sr-only">ค้นหาสถานที่</span>
-          <input type="search" placeholder="ค้นหาชื่อ จังหวัด หรือพรที่ต้องการ" data-planner-search />
-        </label>
       </div>
 
       <div class="planner-picker-panel" role="tabpanel" data-planner-picker-panel="list">

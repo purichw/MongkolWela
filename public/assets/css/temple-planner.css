@@ -122,6 +122,26 @@ body.has-planner-dialog {
   min-width: 0;
 }
 
+.planner-filter-panel {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 253, 247, 0.62);
+  border: 1px solid rgba(77, 56, 41, 0.14);
+  border-radius: 8px;
+}
+
+.planner-filter-name {
+  max-width: none;
+}
+
+.temple-filter-chips--planner .popular-temple-region-filter,
+.temple-filter-chips--planner .popular-temple-province-filter,
+.temple-filter-chips--planner .popular-temple-purpose-filter {
+  padding-top: 0;
+}
+
 .planner-search-actions {
   display: grid;
   grid-column: 1 / -1;
@@ -1127,7 +1147,7 @@ body.has-planner-dialog {
   .planner-setup__heading,
   .planner-section-head,
   .planner-result__toolbar,
-  .planner-pick__toolbar,
+.planner-pick__toolbar,
   .planner-pick__actions,
   .planner-setup__actions {
     align-items: stretch;
