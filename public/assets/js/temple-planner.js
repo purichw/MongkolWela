@@ -14,6 +14,8 @@ function initializeTemplePlanner(planner, payload) {
     plan: [],
     visibleCount: 36,
     currentLocation: null,
+    pickerReady: false,
+    nearbyMode: false,
     selectionMap: null,
     selectionCluster: null,
     selectionMarkers: new Map(),
@@ -26,13 +28,9 @@ function initializeTemplePlanner(planner, payload) {
   bindControls(state, elements);
   updateProvinceOptions(state, elements);
   updateStartWarning(state, elements);
-  renderPicker(state, elements);
+  elements.pickSection.hidden = true;
   renderSelected(state, elements);
   updateTargetCount(state, elements);
-
-  if (state.plan.length) {
-    renderPlan(state, elements, { scroll: false });
-  }
 }
 
 function collectElements(planner) {
@@ -44,9 +42,11 @@ function collectElements(planner) {
     province: planner.querySelector("[data-planner-province]"),
     purpose: planner.querySelector("[data-planner-purpose]"),
     start: planner.querySelector("[data-planner-start]"),
+    radius: planner.querySelector("[data-planner-radius]"),
     startWarning: planner.querySelector("[data-planner-start-warning]"),
     locationButton: planner.querySelector("[data-planner-location]"),
     locationStatus: planner.querySelector("[data-planner-location-status]"),
+    filterSearchButtons: [...planner.querySelectorAll("[data-planner-filter-search]")],
     autoButton: planner.querySelector("[data-planner-auto]"),
     pickerTabs: [...planner.querySelectorAll("[data-planner-picker-tab]")],
     pickerPanels: [...planner.querySelectorAll("[data-planner-picker-panel]")],
@@ -92,21 +92,31 @@ function bindControls(state, elements) {
       state.visibleCount = 36;
       if (control === elements.region) updateProvinceOptions(state, elements);
       updateStartWarning(state, elements);
-      renderPicker(state, elements);
-      refreshSelectionMap(state, elements);
+      if (state.pickerReady) {
+        renderPicker(state, elements);
+        refreshSelectionMap(state, elements);
+      }
       persistState(state, elements);
     });
   });
 
-  [elements.budget, elements.startTime].forEach((control) => {
+  [elements.budget, elements.startTime, elements.radius].forEach((control) => {
     control?.addEventListener("change", () => persistState(state, elements));
+  });
+
+  elements.radius?.addEventListener("change", () => {
+    if (!state.nearbyMode || !state.currentLocation || !state.pickerReady) return;
+    showNearbyPlaces(state, elements);
   });
 
   elements.start?.addEventListener("change", () => {
     state.currentLocation = null;
+    state.nearbyMode = false;
     updateStartWarning(state, elements);
-    renderPicker(state, elements);
-    refreshSelectionMap(state, elements);
+    if (state.pickerReady) {
+      renderPicker(state, elements);
+      refreshSelectionMap(state, elements);
+    }
     persistState(state, elements);
   });
 
@@ -148,6 +158,12 @@ function bindControls(state, elements) {
   });
 
   elements.locationButton?.addEventListener("click", () => requestCurrentLocation(state, elements));
+  elements.filterSearchButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      showFilteredPlaces(state, elements);
+    });
+  });
   elements.autoButton?.addEventListener("click", () => buildAutomaticPlan(state, elements));
   elements.buildButton?.addEventListener("click", () => buildSelectedPlan(state, elements));
   elements.clearSelection?.addEventListener("click", () => {
@@ -287,19 +303,32 @@ function toggleSelection(state, elements, id, force) {
 
 function getFilteredItems(state, elements) {
   const query = normalize(elements.search?.value);
+  if (state.nearbyMode && state.currentLocation) {
+    const radiusKm = getRadiusKm(elements);
+    return state.items
+      .filter((item) => {
+        if (haversineKm(state.currentLocation, item) > radiusKm) return false;
+        return matchesSearch(item, query);
+      })
+      .sort((left, right) => haversineKm(state.currentLocation, left) - haversineKm(state.currentLocation, right));
+  }
+
   const region = elements.region?.value || "";
   const province = elements.province?.value || "";
   const purpose = elements.purpose?.value || "";
-
   return state.items.filter((item) => {
     if (region && item.region !== region) return false;
     if (province && item.province !== province) return false;
     if (purpose && !item.blessings.includes(purpose)) return false;
-    if (!query) return true;
-    return normalize(
-      `${item.name} ${item.region} ${item.province} ${item.district} ${item.blessings.join(" ")} ${item.objectHero.join(" ")}`,
-    ).includes(query);
+    return matchesSearch(item, query);
   });
+}
+
+function matchesSearch(item, query) {
+  if (!query) return true;
+  return normalize(
+    `${item.name} ${item.region} ${item.province} ${item.district} ${item.blessings.join(" ")} ${item.objectHero.join(" ")}`,
+  ).includes(query);
 }
 
 function updateProvinceOptions(state, elements) {
@@ -350,11 +379,48 @@ function updateTargetCount(state, elements) {
   elements.targetCount.textContent = getTargetCount(elements).toLocaleString("th-TH");
 }
 
+function showFilteredPlaces(state, elements) {
+  state.pickerReady = true;
+  state.nearbyMode = false;
+  elements.pickSection.hidden = false;
+  state.visibleCount = 36;
+  renderPicker(state, elements);
+  refreshSelectionMap(state, elements);
+  const count = getFilteredItems(state, elements).length;
+  elements.locationStatus.textContent = count
+    ? `พบ ${count.toLocaleString("th-TH")} สถานที่ตามตัวกรอง เลือกจากรายการหรือแผนที่ได้เลย`
+    : "ไม่พบสถานที่ที่ตรงกับตัวกรอง";
+  elements.pickSection?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+  persistState(state, elements);
+}
+
+function showNearbyPlaces(state, elements) {
+  state.pickerReady = true;
+  state.nearbyMode = true;
+  elements.pickSection.hidden = false;
+  state.visibleCount = 36;
+  renderPicker(state, elements);
+  refreshSelectionMap(state, elements);
+  const radiusKm = getRadiusKm(elements);
+  const count = getFilteredItems(state, elements).length;
+  elements.locationStatus.textContent = count
+    ? `พบ ${count.toLocaleString("th-TH")} สถานที่ในรัศมี ${radiusKm.toLocaleString("th-TH")} กม. จากตำแหน่งปัจจุบัน`
+    : `ไม่พบสถานที่ในรัศมี ${radiusKm.toLocaleString("th-TH")} กม. จากตำแหน่งปัจจุบัน`;
+  elements.pickSection?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+  persistState(state, elements);
+}
+
+function getRadiusKm(elements) {
+  return Number(elements.radius?.value || 100);
+}
+
 function getTargetCount(elements) {
   return Number(elements.countInputs.find((input) => input.checked)?.value || 9);
 }
 
 function buildAutomaticPlan(state, elements) {
+  state.pickerReady = true;
+  elements.pickSection.hidden = false;
   const target = getTargetCount(elements);
   const candidates = getAutomaticCandidates(state, elements);
   const selectedItems = state.selected.map((id) => state.itemById.get(id)).filter(Boolean);
@@ -699,10 +765,8 @@ function requestCurrentLocation(state, elements) {
         longitude: position.coords.longitude,
       };
       elements.start.value = "";
-      elements.locationStatus.textContent = `ใช้ตำแหน่งปัจจุบันแล้ว ความแม่นยำประมาณ ${Math.round(position.coords.accuracy).toLocaleString("th-TH")} เมตร`;
       updateStartWarning(state, elements);
-      renderPicker(state, elements);
-      refreshSelectionMap(state, elements);
+      showNearbyPlaces(state, elements);
       elements.locationButton.disabled = false;
     },
     () => {
@@ -906,6 +970,7 @@ function persistState(state, elements) {
         count: getTargetCount(elements),
         budget: elements.budget.value,
         startTime: elements.startTime.value,
+        radius: elements.radius?.value,
         region: elements.region.value,
         province: elements.province.value,
         purpose: elements.purpose.value,
@@ -922,6 +987,7 @@ function restoreState(state, elements) {
     if (countInput) countInput.checked = true;
     if (saved.budget) elements.budget.value = saved.budget;
     if (saved.startTime) elements.startTime.value = saved.startTime;
+    if (saved.radius && elements.radius) elements.radius.value = saved.radius;
     if (saved.region) elements.region.value = saved.region;
     if (saved.purpose) elements.purpose.value = saved.purpose;
     if (saved.start && state.itemById.has(saved.start)) elements.start.value = saved.start;

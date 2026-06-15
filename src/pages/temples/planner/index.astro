@@ -6,7 +6,7 @@ import { getTemplePlannerData } from "../../../data/temple-planner.js";
 
 const plannerData = getTemplePlannerData();
 const plannerPayload = JSON.stringify(plannerData).replace(/</g, "\\u003c");
-const extraStyles = ["/assets/css/temple-planner.css?feature=20260612-03"];
+const extraStyles = ["/assets/css/temple-planner.css?feature=20260612-05"];
 const extraScripts = ["/assets/js/temple-planner.js"];
 const pageTitle = "วางแผนไหว้พระ 9 วัด | มงคลเวลา";
 const pageDescription =
@@ -105,8 +105,8 @@ const pageDescription =
 
           <div class="planner-route-start">
             <div class="planner-route-start__intro">
-              <h3>จุดเริ่มต้นเส้นทาง</h3>
-              <p>ไม่ใช่ตัวกรองสถานที่ ใช้เพื่อคำนวณว่าจะเริ่มจากวัดไหนและใช้เวลาไปจุดแรกเท่าไร</p>
+              <h3>จุดเริ่มต้นและค้นหาใกล้ฉัน</h3>
+              <p>เลือกจุดเริ่มต้นไว้คำนวณเส้นทาง หรือกดค้นหาใกล้ฉันเพื่อดูสถานที่ในรัศมี โดยไม่ใช้ภาค จังหวัด และจุดประสงค์</p>
             </div>
 
             <label class="planner-field planner-field--start">
@@ -117,12 +117,22 @@ const pageDescription =
               </select>
             </label>
 
+            <label class="planner-field planner-field--radius">
+              <span>รัศมีค้นหาใกล้ฉัน</span>
+              <select data-planner-radius>
+                <option value="50">ภายใน 50 กม.</option>
+                <option value="100" selected>ภายใน 100 กม.</option>
+                <option value="200">ภายใน 200 กม.</option>
+                <option value="500">ภายใน 500 กม.</option>
+              </select>
+            </label>
+
             <button class="planner-location-button" type="button" data-planner-location>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="3"></circle>
                 <path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2m0-14-2 2M7 17l-2 2"></path>
               </svg>
-              ใช้ตำแหน่งฉันเป็นจุดเริ่มต้น
+              ค้นหาใกล้ฉัน
             </button>
 
             <p class="planner-start-warning" role="status" aria-live="polite" data-planner-start-warning hidden></p>
@@ -130,16 +140,19 @@ const pageDescription =
         </div>
 
         <div class="planner-setup__actions">
-          <button class="planner-primary-button" type="button" data-planner-auto>
-            จัดแผนจากตัวกรองด้านบน
+          <button class="planner-secondary-button planner-filter-button" type="button" data-planner-filter-search>
+            ค้นหาสถานที่
           </button>
-          <a href="#planner-pick">เลือกสถานที่เองจากรายการหรือแผนที่แทน</a>
+          <button class="planner-primary-button" type="button" data-planner-auto>
+            จัดแผนอัตโนมัติ
+          </button>
+          <a href="#planner-pick" data-planner-filter-search>เลือกสถานที่เองจากรายการหรือแผนที่แทน</a>
         </div>
         <p class="planner-location-status" role="status" aria-live="polite" data-planner-location-status></p>
       </section>
     </TempleSearchHero>
 
-    <section class="planner-pick" id="planner-pick" aria-labelledby="planner-pick-title">
+    <section class="planner-pick" id="planner-pick" aria-labelledby="planner-pick-title" hidden>
       <div class="planner-section-head">
         <div>
           <p class="section-kicker">เลือกสถานที่เอง</p>
