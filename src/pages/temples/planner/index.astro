@@ -6,7 +6,7 @@ import { getTemplePlannerData } from "../../../data/temple-planner.js";
 
 const plannerData = getTemplePlannerData();
 const plannerPayload = JSON.stringify(plannerData).replace(/</g, "\\u003c");
-const extraStyles = ["/assets/css/temple-planner.css?feature=20260612-01"];
+const extraStyles = ["/assets/css/temple-planner.css?feature=20260612-03"];
 const extraScripts = ["/assets/js/temple-planner.js"];
 const pageTitle = "วางแผนไหว้พระ 9 วัด | มงคลเวลา";
 const pageDescription =
@@ -47,9 +47,9 @@ const pageDescription =
         <div class="planner-setup__heading">
           <div>
             <p class="section-kicker">ตั้งค่าทริป</p>
-            <h2 id="planner-setup-title">เริ่มจากเวลาและพื้นที่ที่สะดวก</h2>
+            <h2 id="planner-setup-title">เลือกเงื่อนไข แล้วให้ระบบจัดเส้นทาง</h2>
           </div>
-          <p>ระบบคำนวณจากพิกัดและกฎประมาณการ ไม่ใช่สภาพจราจรแบบเรียลไทม์</p>
+          <p>ภาค จังหวัด และจุดประสงค์ใช้คัดสถานที่ ส่วนจุดเริ่มต้นใช้คำนวณลำดับและเวลาเดินทาง</p>
         </div>
 
         <div class="planner-setup__grid">
@@ -103,28 +103,37 @@ const pageDescription =
             </select>
           </label>
 
-          <label class="planner-field planner-field--start">
-            <span>จุดเริ่มต้น</span>
-            <select data-planner-start>
-              <option value="">ให้ระบบเริ่มจากสถานที่แรก</option>
-              {plannerData.items.map((item) => <option value={item.id}>{item.name} · {item.province}</option>)}
-            </select>
-          </label>
+          <div class="planner-route-start">
+            <div class="planner-route-start__intro">
+              <h3>จุดเริ่มต้นเส้นทาง</h3>
+              <p>ไม่ใช่ตัวกรองสถานที่ ใช้เพื่อคำนวณว่าจะเริ่มจากวัดไหนและใช้เวลาไปจุดแรกเท่าไร</p>
+            </div>
 
-          <button class="planner-location-button" type="button" data-planner-location>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2m0-14-2 2M7 17l-2 2"></path>
-            </svg>
-            ใช้ตำแหน่งปัจจุบัน
-          </button>
+            <label class="planner-field planner-field--start">
+              <span>เริ่มเดินทางจาก</span>
+              <select data-planner-start>
+                <option value="">ไม่กำหนด ให้ระบบเริ่มจากสถานที่แรก</option>
+                {plannerData.items.map((item) => <option value={item.id}>{item.name} · {item.province}</option>)}
+              </select>
+            </label>
+
+            <button class="planner-location-button" type="button" data-planner-location>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2m0-14-2 2M7 17l-2 2"></path>
+              </svg>
+              ใช้ตำแหน่งฉันเป็นจุดเริ่มต้น
+            </button>
+
+            <p class="planner-start-warning" role="status" aria-live="polite" data-planner-start-warning hidden></p>
+          </div>
         </div>
 
         <div class="planner-setup__actions">
           <button class="planner-primary-button" type="button" data-planner-auto>
-            จัดแผนอัตโนมัติ
+            จัดแผนจากตัวกรองด้านบน
           </button>
-          <a href="#planner-pick">หรือเลือกสถานที่เองจากรายการและแผนที่</a>
+          <a href="#planner-pick">เลือกสถานที่เองจากรายการหรือแผนที่แทน</a>
         </div>
         <p class="planner-location-status" role="status" aria-live="polite" data-planner-location-status></p>
       </section>

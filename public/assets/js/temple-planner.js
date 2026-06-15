@@ -25,6 +25,7 @@ function initializeTemplePlanner(planner, payload) {
   restoreState(state, elements);
   bindControls(state, elements);
   updateProvinceOptions(state, elements);
+  updateStartWarning(state, elements);
   renderPicker(state, elements);
   renderSelected(state, elements);
   updateTargetCount(state, elements);
@@ -43,6 +44,7 @@ function collectElements(planner) {
     province: planner.querySelector("[data-planner-province]"),
     purpose: planner.querySelector("[data-planner-purpose]"),
     start: planner.querySelector("[data-planner-start]"),
+    startWarning: planner.querySelector("[data-planner-start-warning]"),
     locationButton: planner.querySelector("[data-planner-location]"),
     locationStatus: planner.querySelector("[data-planner-location-status]"),
     autoButton: planner.querySelector("[data-planner-auto]"),
@@ -89,14 +91,23 @@ function bindControls(state, elements) {
     control?.addEventListener("change", () => {
       state.visibleCount = 36;
       if (control === elements.region) updateProvinceOptions(state, elements);
+      updateStartWarning(state, elements);
       renderPicker(state, elements);
       refreshSelectionMap(state, elements);
       persistState(state, elements);
     });
   });
 
-  [elements.budget, elements.startTime, elements.start].forEach((control) => {
+  [elements.budget, elements.startTime].forEach((control) => {
     control?.addEventListener("change", () => persistState(state, elements));
+  });
+
+  elements.start?.addEventListener("change", () => {
+    state.currentLocation = null;
+    updateStartWarning(state, elements);
+    renderPicker(state, elements);
+    refreshSelectionMap(state, elements);
+    persistState(state, elements);
   });
 
   elements.search?.addEventListener("input", () => {
@@ -194,10 +205,15 @@ function renderPicker(state, elements) {
   const filtered = getFilteredItems(state, elements);
   const visible = filtered.slice(0, state.visibleCount);
   const selectedIds = new Set(state.selected);
+  const origin = getStartPoint(state, elements);
 
   elements.grid.innerHTML = visible
     .map((item) => {
       const selected = selectedIds.has(item.id);
+      const distance = origin ? haversineKm(origin, item) : null;
+      const distanceBadge = Number.isFinite(distance)
+        ? `<span class="planner-place-card__distance">${formatDistance(distance)}</span>`
+        : "";
       return `
         <article class="planner-place-card${selected ? " is-selected" : ""}">
           <figure>
@@ -206,6 +222,7 @@ function renderPicker(state, elements) {
               <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.imageAlt)}" loading="lazy" decoding="async">
             </picture>
             <span>${escapeHtml(item.region)}</span>
+            ${distanceBadge}
           </figure>
           <div class="planner-place-card__body">
             <div>
@@ -297,6 +314,36 @@ function updateProvinceOptions(state, elements) {
     provinces.map((province) => `<option value="${escapeHtml(province)}">${escapeHtml(province)}</option>`).join("");
   elements.province.value = provinces.includes(current) ? current : "";
   delete elements.province.dataset.restoreValue;
+}
+
+function updateStartWarning(state, elements) {
+  if (!elements.startWarning) return;
+  const anchor = getStartPoint(state, elements);
+  const hasAreaFilter = Boolean(elements.region?.value || elements.province?.value);
+  const candidates = getFilteredItems(state, { ...elements, search: { value: "" } });
+
+  if (!anchor || !hasAreaFilter || !candidates.length) {
+    elements.startWarning.hidden = true;
+    elements.startWarning.textContent = "";
+    return;
+  }
+
+  const nearestDistance = candidates
+    .map((item) => haversineKm(anchor, item))
+    .filter(Number.isFinite)
+    .sort((left, right) => left - right)[0];
+  const provinceMismatch = elements.province?.value && anchor.province && anchor.province !== elements.province.value;
+  const regionMismatch = elements.region?.value && anchor.region && anchor.region !== elements.region.value;
+  const isFar = nearestDistance > 120;
+
+  if (!provinceMismatch && !regionMismatch && !isFar) {
+    elements.startWarning.hidden = true;
+    elements.startWarning.textContent = "";
+    return;
+  }
+
+  elements.startWarning.hidden = false;
+  elements.startWarning.textContent = `จุดเริ่มต้นอยู่ห่างจากพื้นที่ที่เลือกประมาณ ${formatDistance(nearestDistance)} ระบบจะคำนวณเป็นการเดินทางไปจุดแรก ไม่ได้นับเป็นวัดในทริป`;
 }
 
 function updateTargetCount(state, elements) {
@@ -653,6 +700,9 @@ function requestCurrentLocation(state, elements) {
       };
       elements.start.value = "";
       elements.locationStatus.textContent = `ใช้ตำแหน่งปัจจุบันแล้ว ความแม่นยำประมาณ ${Math.round(position.coords.accuracy).toLocaleString("th-TH")} เมตร`;
+      updateStartWarning(state, elements);
+      renderPicker(state, elements);
+      refreshSelectionMap(state, elements);
       elements.locationButton.disabled = false;
     },
     () => {
@@ -666,10 +716,11 @@ function requestCurrentLocation(state, elements) {
 function refreshSelectionMap(state, elements) {
   if (!state.selectionMap || !state.selectionCluster) return;
   const filteredIds = new Set(getFilteredItems(state, elements).map((item) => item.id));
+  const origin = getStartPoint(state, elements);
   state.selectionCluster.clearLayers();
   state.selectionMarkers.forEach((marker, id) => {
     if (!filteredIds.has(id)) return;
-    updateSelectionMarker(marker, state.selected.indexOf(id));
+    updateSelectionMarker(marker, state.selected.indexOf(id), origin);
     state.selectionCluster.addLayer(marker);
   });
   if (state.selectionCluster.getLayers().length) {
@@ -691,12 +742,12 @@ async function ensureSelectionMap(state, elements) {
       icon: createSelectionIcon(state.selected.indexOf(item.id)),
     });
     marker._plannerItem = item;
-    marker.bindPopup(renderSelectionPopup(item, state.selected.includes(item.id)), { minWidth: 230, maxWidth: 280 });
+    marker.bindPopup(renderSelectionPopup(item, state.selected.includes(item.id), getStartPoint(state, elements)), { minWidth: 230, maxWidth: 280 });
     marker.on("popupopen", (event) => {
       const popup = event.popup.getElement();
       popup?.querySelector("[data-planner-map-toggle]")?.addEventListener("click", () => {
         toggleSelection(state, elements, item.id);
-        marker.setPopupContent(renderSelectionPopup(item, state.selected.includes(item.id)));
+        marker.setPopupContent(renderSelectionPopup(item, state.selected.includes(item.id), getStartPoint(state, elements)));
         marker.openPopup();
       });
     });
@@ -711,9 +762,9 @@ async function ensureSelectionMap(state, elements) {
   refreshSelectionMap(state, elements);
 }
 
-function updateSelectionMarker(marker, selectedIndex) {
+function updateSelectionMarker(marker, selectedIndex, origin) {
   marker.setIcon(createSelectionIcon(selectedIndex));
-  marker.setPopupContent(renderSelectionPopup(marker._plannerItem, selectedIndex >= 0));
+  marker.setPopupContent(renderSelectionPopup(marker._plannerItem, selectedIndex >= 0, origin));
 }
 
 function createSelectionIcon(selectedIndex) {
@@ -727,11 +778,14 @@ function createSelectionIcon(selectedIndex) {
   });
 }
 
-function renderSelectionPopup(item, selected) {
+function renderSelectionPopup(item, selected, origin) {
+  const distance = origin ? haversineKm(origin, item) : null;
+  const distanceText = Number.isFinite(distance) ? `<span class="planner-map-popup__distance">${formatDistance(distance)} จากจุดเริ่มต้น</span>` : "";
   return `
     <article class="planner-map-popup">
       <strong>${escapeHtml(item.name)}</strong>
       <span>${escapeHtml([item.province, item.district].filter(Boolean).join(" / "))}</span>
+      ${distanceText}
       <p>${escapeHtml(item.blessings.slice(0, 2).join(" · ") || "ไหว้พระและเสริมสิริมงคล")}</p>
       <button type="button" data-planner-map-toggle>${selected ? "นำออกจากทริป" : "เพิ่มในทริป"}</button>
     </article>`;

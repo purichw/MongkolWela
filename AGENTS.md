@@ -214,6 +214,21 @@ Tarot:
 
 Use proportional verification so small edits do not burn usage on broad suites.
 
+Quick CI is always required before commit/deploy:
+
+- `git diff --check`
+- `npm run check`
+- `npm run build`
+- `git status --short --branch`
+
+Workflow modes:
+
+- Quick patch: make only the requested change; do not commit, push, or deploy.
+- Batch mode: collect multiple requests, then test and deploy once.
+- Production mode: run full commit, push, deploy, and production smoke.
+- Skip Browser verification when the change is not behavior-critical.
+- Final summaries should stay short: files changed plus test results.
+
 During small iterative edits:
 
 - Do not run `npm run nfr`.
@@ -241,6 +256,17 @@ NFR:
 - Do not run NFR on every deploy.
 - Batch NFR into release/maintenance sweeps, such as before a large release, after CMS/SEO/data/config work, or about weekly.
 - Keep a checklist of deferred NFR/E2E coverage when intentionally batching those checks.
+
+## QA Defaults
+
+For every feature with new or changed behavior, infer QA coverage instead of waiting for the user to write test cases:
+
+1. Draft acceptance criteria from the request and repo context as itemized lists.
+2. Add or propose a QA matrix row covering feature, scenario, expected result, source of truth, test type, and priority.
+3. Recommend the automation level: static validation, focused script, Playwright E2E, visual snapshot, Browser spot-check, or production smoke.
+4. Ask only when a business rule or expected result cannot be safely inferred.
+
+When adding or changing automation, make sure the test would fail if the feature broke. Prefer fail-first validation for important behavior when it can be done safely.
 
 For frontend changes, verify at least one relevant desktop and mobile viewport.
 

@@ -46,6 +46,12 @@ Validation commands:
 
 The project uses proportional verification to conserve usage during frequent UI/data iteration.
 
+Quick CI is always required before commit/deploy: `git diff --check`, `npm run check`, `npm run build`, then `git status --short --branch`. This is the baseline safety gate even when broader NFR/E2E coverage is intentionally deferred.
+
+Workflow modes are explicit. Quick patch means make only the requested change without commit, push, or deploy. Batch mode means collect multiple requests, then test and deploy once. Production mode means complete commit, push, deploy, and production smoke. Browser verification may be skipped when the change is not behavior-critical. Final summaries should be brief: files changed plus test results.
+
+For every feature with new or changed behavior, agents should infer acceptance criteria as itemized lists, propose or update a QA matrix row, and recommend the right automation level before or alongside implementation. Ask the user only when the expected result depends on a business rule that cannot be safely inferred. Automation should be checked against the intended behavior, and important tests should fail when the protected behavior is deliberately broken in a safe local check.
+
 During small edits, prefer `git diff --check` and focused Browser spot-checks for only the touched page/flow. UI work should get a brief desktop and mobile pass. Do not run full E2E or `npm run nfr` during ordinary incremental edits.
 
 Before commit, run `npm run check` and `git status --short --branch`. If a one-page CSS/markup change has a clearly relevant targeted E2E test, run only that test; otherwise Browser verification is acceptable when it clearly covers the change.

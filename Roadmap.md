@@ -200,6 +200,29 @@ Scratch generator:
 
 Use proportional verification to conserve usage during normal iteration.
 
+Quick CI is always required before commit/deploy:
+
+- `git diff --check`
+- `npm run check`
+- `npm run build`
+- `git status --short --branch`
+
+Workflow modes:
+
+- Quick patch: make only the requested change; do not commit, push, or deploy.
+- Batch mode: collect multiple requests, then test and deploy once.
+- Production mode: run full commit, push, deploy, and production smoke.
+- Skip Browser verification when the change is not behavior-critical.
+- Keep final summaries short: files changed plus test results.
+
+For every feature with new or changed behavior:
+
+- Infer acceptance criteria from the request and repo context as itemized lists.
+- Add or propose a QA matrix row with feature, scenario, expected result, source of truth, test type, and priority.
+- Recommend whether coverage should be static validation, focused script, Playwright E2E, visual snapshot, Browser spot-check, or production smoke.
+- Ask the user only when the expected result depends on a business rule that cannot be safely inferred.
+- For important behavior, prefer safe fail-first validation so the automation proves it catches the protected failure.
+
 During small iterative edits:
 
 - Do not run `npm run nfr`.
