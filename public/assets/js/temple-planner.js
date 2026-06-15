@@ -15,6 +15,7 @@ function initializeTemplePlanner(planner, payload) {
     visibleCount: 36,
     currentLocation: null,
     pinnedStartId: "",
+    manualSelectionOrder: false,
     pickerReady: false,
     nearbyMode: false,
     selectionMap: null,
@@ -166,6 +167,7 @@ function bindControls(state, elements) {
     if (!button) return;
     toggleSelection(state, elements, button.dataset.plannerRemoveSelected, false);
   });
+  bindSelectedTrayDrag(state, elements);
 
   elements.pickerTabs.forEach((tab) => {
     tab.addEventListener("click", () => activateTab(tab, elements.pickerTabs, elements.pickerPanels, "plannerPickerTab"));
@@ -316,13 +318,78 @@ function renderSelected(state, elements) {
       const item = state.itemById.get(id);
       if (!item) return "";
       return `
-        <span class="planner-selected-chip">
+        <span class="planner-selected-chip" draggable="true" data-planner-selected-id="${escapeHtml(id)}">
           <b>${(index + 1).toLocaleString("th-TH")}</b>
           ${escapeHtml(item.name)}
-          <button type="button" data-planner-remove-selected="${escapeHtml(id)}" aria-label="นำ ${escapeHtml(item.name)} ออกจากทริป">×</button>
+          <button type="button" draggable="false" data-planner-remove-selected="${escapeHtml(id)}" aria-label="นำ ${escapeHtml(item.name)} ออกจากทริป">×</button>
         </span>`;
     })
     .join("");
+}
+
+function bindSelectedTrayDrag(state, elements) {
+  let draggedId = "";
+
+  elements.selectedTray?.addEventListener("dragstart", (event) => {
+    const chip = event.target.closest("[data-planner-selected-id]");
+    if (!chip || event.target.closest("button")) return;
+    draggedId = chip.dataset.plannerSelectedId;
+    chip.classList.add("is-dragging");
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", draggedId);
+  });
+
+  elements.selectedTray?.addEventListener("dragover", (event) => {
+    const chip = event.target.closest("[data-planner-selected-id]");
+    if (!chip || !draggedId || chip.dataset.plannerSelectedId === draggedId) return;
+    event.preventDefault();
+    chip.classList.add("is-drop-target");
+  });
+
+  elements.selectedTray?.addEventListener("dragleave", (event) => {
+    event.target.closest("[data-planner-selected-id]")?.classList.remove("is-drop-target");
+  });
+
+  elements.selectedTray?.addEventListener("drop", (event) => {
+    const chip = event.target.closest("[data-planner-selected-id]");
+    if (!chip || !draggedId) return;
+    event.preventDefault();
+    reorderSelectedPlace(state, elements, draggedId, chip.dataset.plannerSelectedId);
+  });
+
+  elements.selectedTray?.addEventListener("dragend", () => {
+    draggedId = "";
+    elements.selectedTray
+      .querySelectorAll(".planner-selected-chip")
+      .forEach((chip) => chip.classList.remove("is-dragging", "is-drop-target"));
+  });
+}
+
+function reorderSelectedPlace(state, elements, fromId, toId) {
+  const pinnedStart = getPinnedStartItem(state, elements);
+  if (pinnedStart?.id === fromId) {
+    elements.locationStatus.textContent = `${pinnedStart.name} ถูกกำหนดเป็นวัดแรกของทริปอยู่แล้ว`;
+    return;
+  }
+
+  const nextSelected = [...state.selected];
+  const fromIndex = nextSelected.indexOf(fromId);
+  let toIndex = nextSelected.indexOf(toId);
+  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
+
+  const [movedId] = nextSelected.splice(fromIndex, 1);
+  if (pinnedStart && toIndex === 0) toIndex = 1;
+  if (fromIndex < toIndex) toIndex -= 1;
+  nextSelected.splice(toIndex, 0, movedId);
+
+  state.selected = nextSelected;
+  state.manualSelectionOrder = true;
+  const planSynced = synchronizePlanWithSelection(state, elements);
+  renderSelected(state, elements);
+  renderPicker(state, elements);
+  refreshSelectionMap(state, elements);
+  if (planSynced) renderPlan(state, elements, { scroll: false });
+  else persistState(state, elements);
 }
 
 function toggleSelection(state, elements, id, force) {
@@ -359,15 +426,11 @@ function synchronizePlanWithSelection(state, elements) {
   }
   if (!state.plan.length && elements.result.hidden) return false;
 
-  const selectedIds = new Set(state.selected);
-  const retainedPlanItems = state.plan.filter((item) => selectedIds.has(item.id) && item.id !== pinnedStart?.id);
-  const retainedIds = new Set(retainedPlanItems.map((item) => item.id));
-  const addedItems = state.selected
-    .filter((id) => id !== pinnedStart?.id && !retainedIds.has(id))
+  const planItems = state.selected
     .map((id) => state.itemById.get(id))
     .filter(Boolean);
 
-  state.plan = [...(pinnedStart ? [pinnedStart] : []), ...retainedPlanItems, ...addedItems];
+  state.plan = planItems;
   state.selected = state.plan.map((item) => item.id);
 
   if (!state.plan.length) {
@@ -481,7 +544,7 @@ function synchronizeFilterOptions(state, elements, changedFilter) {
 
   replaceSelectOptions(elements.region, regions, "ทุกภาค", region);
   replaceSelectOptions(elements.province, provinces, "ทุกจังหวัด", province);
-  replaceSelectOptions(elements.purpose, purposes, "ไหว้พระและเสริมสิริมงคลทั่วไป", purpose);
+  replaceSelectOptions(elements.purpose, purposes, "ทั้งหมด", purpose);
 }
 
 function uniqueThai(values) {
@@ -651,6 +714,7 @@ function getTargetCount(elements) {
 }
 
 function buildAutomaticPlan(state, elements) {
+  state.manualSelectionOrder = false;
   state.pickerReady = true;
   elements.pickSection.hidden = false;
   const target = getTargetCount(elements);
@@ -693,6 +757,7 @@ function buildAutomaticPlan(state, elements) {
 
   state.selected = chosen.map((item) => item.id);
   state.plan = optimizeOrder(chosen, anchor);
+  state.selected = state.plan.map((item) => item.id);
   renderSelected(state, elements);
   renderPicker(state, elements);
   refreshSelectionMap(state, elements);
@@ -707,7 +772,9 @@ function buildSelectedPlan(state, elements) {
   }
   const anchor = getStartPoint(state, elements);
   const items = state.selected.map((id) => state.itemById.get(id)).filter(Boolean);
-  state.plan = optimizeOrder(items, anchor);
+  state.plan = state.manualSelectionOrder ? items : optimizeOrder(items, anchor);
+  state.selected = state.plan.map((item) => item.id);
+  renderSelected(state, elements);
   renderPlan(state, elements);
 }
 
