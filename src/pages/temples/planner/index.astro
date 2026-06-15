@@ -7,7 +7,7 @@ import { getTemplePlannerData } from "../../../data/temple-planner.js";
 
 const plannerData = getTemplePlannerData();
 const plannerPayload = JSON.stringify(plannerData).replace(/</g, "\\u003c");
-const extraStyles = ["/assets/css/temple-planner.css?feature=20260615-07"];
+const extraStyles = ["/assets/css/temple-planner.css?feature=20260615-08"];
 const extraScripts = ["/assets/js/temple-planner.js"];
 const pageTitle = "วางแผนไหว้พระ 9 วัด | มงคลเวลา";
 const pageDescription =
@@ -50,7 +50,7 @@ const pageDescription =
             <p class="section-kicker">จุดเริ่มต้นและค้นหาใกล้ฉัน</p>
             <h2 id="planner-setup-title">เลือกเงื่อนไข แล้วให้ระบบจัดเส้นทาง</h2>
           </div>
-          <p>ถ้าไม่กำหนดจุดเริ่ม ระบบจะเลือกวัดแรกจากจุดประสงค์ อันดับ และความนิยมในฐานข้อมูล</p>
+          <p>ส่วนนี้คือโจทย์สำหรับสร้างทริปใหม่ กดให้ระบบจัดทริปเมื่ออยากใช้เงื่อนไขชุดนี้</p>
         </div>
 
         <div class="planner-setup__grid">
@@ -151,11 +151,22 @@ const pageDescription =
 
             <div class="planner-search-actions__reset">
               <button class="planner-secondary-button planner-reset-button" type="button" data-planner-reset-filters>
-                รีเซ็ตเงื่อนไข
+                รีเซ็ตโจทย์ทริป
               </button>
             </div>
           </div>
 
+        </div>
+
+        <div class="planner-criteria-notice" data-planner-criteria-notice hidden>
+          <p>
+            <strong>เงื่อนไขด้านบนเปลี่ยนแล้ว</strong>
+            <span>ทริปที่แสดงอยู่ยังใช้โจทย์เดิม กดจัดทริปใหม่ถ้าต้องการใช้เงื่อนไขล่าสุด</span>
+          </p>
+          <div class="planner-criteria-notice__actions">
+            <button class="planner-primary-button" type="button" data-planner-criteria-rebuild>จัดทริปใหม่</button>
+            <button class="planner-secondary-button" type="button" data-planner-criteria-restore>คืนค่าโจทย์เดิม</button>
+          </div>
         </div>
 
         <p class="planner-location-status" role="status" aria-live="polite" data-planner-location-status></p>
@@ -172,6 +183,39 @@ const pageDescription =
           เลือกแล้ว <strong data-planner-selected-count>0</strong>/<span data-planner-target-count>9</span>
         </div>
       </div>
+
+      <div class="planner-picker-context" data-planner-picker-context>
+        <div>
+          <p class="section-kicker" data-planner-picker-kicker>รายการสำหรับเลือกเอง</p>
+          <h3 data-planner-picker-title>เลือกสถานที่เข้าทริป</h3>
+          <p data-planner-picker-description>
+            รายการนี้แยกจากโจทย์ด้านบน ใช้ค้นหาและปรับสถานที่ในทริปที่กำลังแก้
+          </p>
+          <div class="planner-picker-chips" data-planner-picker-chips></div>
+        </div>
+        <div class="planner-picker-context__controls">
+          <div class="planner-picker-mode" aria-label="โหมดรายการสถานที่">
+            <button type="button" class="is-active" data-planner-picker-mode="recommended">แนะนำก่อน</button>
+            <button type="button" data-planner-picker-mode="browse">ค้นเอง</button>
+          </div>
+          <label class="planner-search planner-search--picker">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m16 16 4 4"></path>
+            </svg>
+            <input
+              type="search"
+              placeholder="ค้นหาในรายการนี้"
+              autocomplete="off"
+              data-planner-picker-search
+            />
+          </label>
+          <button class="planner-secondary-button planner-picker-scope-button" type="button" data-planner-picker-toggle-scope>
+            ดูทั้งหมด
+          </button>
+        </div>
+      </div>
+      <p class="planner-picker-note" data-planner-picker-note></p>
 
       <div class="planner-selected-tray" data-planner-selected-tray>
         <p>ยังไม่ได้เลือกสถานที่ ระบบสามารถแนะนำให้ครบตามจำนวนได้</p>
@@ -215,9 +259,13 @@ const pageDescription =
           <p class="section-kicker">แผนการเดินทาง</p>
           <h2 id="planner-result-title">ทริปที่จัดให้</h2>
         </div>
-        <button class="planner-secondary-button" type="button" data-planner-edit>ปรับสถานที่เอง</button>
+        <div class="planner-result__head-actions">
+          <button class="planner-secondary-button" type="button" data-planner-edit>ปรับสถานที่เอง</button>
+          <button class="planner-secondary-button planner-clear-trip-button" type="button" data-planner-clear-trip>ล้างทริปนี้</button>
+        </div>
       </div>
 
+      <div class="planner-trip-source" data-planner-trip-source hidden></div>
       <div class="planner-summary" data-planner-summary></div>
       <div class="planner-warnings" data-planner-warnings hidden></div>
 

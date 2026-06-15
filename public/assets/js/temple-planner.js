@@ -21,6 +21,8 @@ function initializeTemplePlanner(planner, payload) {
     manualSelectionOrder: false,
     pickerReady: false,
     nearbyMode: false,
+    tripCriteria: null,
+    pickerContext: createPickerContext("browse"),
     selectionMap: null,
     selectionCluster: null,
     selectionMarkers: new Map(),
@@ -40,6 +42,8 @@ function initializeTemplePlanner(planner, payload) {
   elements.pickSection.hidden = true;
   renderSelected(state, elements);
   updateTargetCount(state, elements);
+  updateTripSource(state, elements);
+  updateCriteriaNotice(state, elements);
 }
 
 function collectElements(planner) {
@@ -59,11 +63,23 @@ function collectElements(planner) {
     locationButton: planner.querySelector("[data-planner-location]"),
     locationStatus: planner.querySelector("[data-planner-location-status]"),
     resetFilters: planner.querySelector("[data-planner-reset-filters]"),
+    criteriaNotice: planner.querySelector("[data-planner-criteria-notice]"),
+    criteriaRebuild: planner.querySelector("[data-planner-criteria-rebuild]"),
+    criteriaRestore: planner.querySelector("[data-planner-criteria-restore]"),
     filterSearchButtons: [...planner.querySelectorAll("[data-planner-filter-search]")],
     autoButton: planner.querySelector("[data-planner-auto]"),
     pickerTabs: [...planner.querySelectorAll("[data-planner-picker-tab]")],
     pickerPanels: [...planner.querySelectorAll("[data-planner-picker-panel]")],
     search: planner.querySelector("[data-planner-search]"),
+    pickerContext: planner.querySelector("[data-planner-picker-context]"),
+    pickerKicker: planner.querySelector("[data-planner-picker-kicker]"),
+    pickerTitle: planner.querySelector("[data-planner-picker-title]"),
+    pickerDescription: planner.querySelector("[data-planner-picker-description]"),
+    pickerChips: planner.querySelector("[data-planner-picker-chips]"),
+    pickerSearch: planner.querySelector("[data-planner-picker-search]"),
+    pickerModeButtons: [...planner.querySelectorAll("[data-planner-picker-mode]")],
+    pickerToggleScope: planner.querySelector("[data-planner-picker-toggle-scope]"),
+    pickerNote: planner.querySelector("[data-planner-picker-note]"),
     grid: planner.querySelector("[data-planner-place-grid]"),
     moreButton: planner.querySelector("[data-planner-more]"),
     empty: planner.querySelector("[data-planner-empty]"),
@@ -75,6 +91,8 @@ function collectElements(planner) {
     clearSelection: planner.querySelector("[data-planner-clear-selection]"),
     result: planner.querySelector("[data-planner-result]"),
     editButton: planner.querySelector("[data-planner-edit]"),
+    clearTrip: planner.querySelector("[data-planner-clear-trip]"),
+    tripSource: planner.querySelector("[data-planner-trip-source]"),
     summary: planner.querySelector("[data-planner-summary]"),
     warnings: planner.querySelector("[data-planner-warnings]"),
     resultTabs: [...planner.querySelectorAll("[data-planner-result-tab]")],
@@ -99,12 +117,13 @@ function bindControls(state, elements) {
   elements.countInputs.forEach((input) => {
     input.addEventListener("change", () => {
       const target = getTargetCount(elements);
-      if (state.selected.length > target) state.selected = state.selected.slice(0, target);
-      const planSynced = synchronizePlanWithSelection(state, elements);
+      if (!hasVisiblePlan(state, elements) && state.selected.length > target) state.selected = state.selected.slice(0, target);
+      const planSynced = hasVisiblePlan(state, elements) ? false : synchronizePlanWithSelection(state, elements);
       state.visibleCount = 36;
       renderSelected(state, elements);
       renderPicker(state, elements);
       updateTargetCount(state, elements);
+      updateCriteriaNotice(state, elements);
       if (planSynced) renderPlan(state, elements, { scroll: false });
       else persistState(state, elements);
     });
@@ -160,7 +179,10 @@ function bindControls(state, elements) {
   });
 
   [elements.budget, elements.startTime, elements.radius].forEach((control) => {
-    control?.addEventListener("change", () => persistState(state, elements));
+    control?.addEventListener("change", () => {
+      updateCriteriaNotice(state, elements);
+      persistState(state, elements);
+    });
   });
 
   elements.radius?.addEventListener("change", () => {
@@ -170,8 +192,9 @@ function bindControls(state, elements) {
 
   elements.start?.addEventListener("change", () => {
     state.currentLocation = null;
-    applyPinnedStart(state, elements);
-    const planSynced = synchronizePlanWithSelection(state, elements);
+    const hasPlan = hasVisiblePlan(state, elements);
+    if (!hasPlan) applyPinnedStart(state, elements);
+    const planSynced = hasPlan ? false : synchronizePlanWithSelection(state, elements);
     state.nearbyMode = false;
     updateStartWarning(state, elements);
     renderSelected(state, elements);
@@ -179,11 +202,39 @@ function bindControls(state, elements) {
       renderPicker(state, elements);
       refreshSelectionMap(state, elements);
     }
+    updateCriteriaNotice(state, elements);
     if (planSynced) renderPlan(state, elements, { scroll: false });
     else persistState(state, elements);
   });
 
   elements.search?.addEventListener("input", () => {
+    state.visibleCount = 36;
+    updateCriteriaNotice(state, elements);
+    if (!state.pickerReady || state.pickerContext.type === "browse") {
+      renderPicker(state, elements);
+      refreshSelectionMap(state, elements);
+    }
+    persistState(state, elements);
+  });
+
+  elements.pickerSearch?.addEventListener("input", () => {
+    state.visibleCount = 36;
+    state.pickerContext.query = elements.pickerSearch.value || "";
+    renderPicker(state, elements);
+    refreshSelectionMap(state, elements);
+  });
+
+  elements.pickerModeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      state.pickerContext.mode = button.dataset.plannerPickerMode || "recommended";
+      state.visibleCount = 36;
+      renderPicker(state, elements);
+      refreshSelectionMap(state, elements);
+    });
+  });
+
+  elements.pickerToggleScope?.addEventListener("click", () => {
+    state.pickerContext.useCriteria = !state.pickerContext.useCriteria;
     state.visibleCount = 36;
     renderPicker(state, elements);
     refreshSelectionMap(state, elements);
@@ -223,6 +274,20 @@ function bindControls(state, elements) {
 
   elements.locationButton?.addEventListener("click", () => requestCurrentLocation(state, elements));
   elements.resetFilters?.addEventListener("click", () => resetSearchFilters(state, elements));
+  elements.criteriaRebuild?.addEventListener("click", () => {
+    confirmAutomaticPlan(state, elements, elements.criteriaRebuild);
+  });
+  elements.criteriaRestore?.addEventListener("click", () => {
+    if (!state.tripCriteria) return;
+    applyCriteriaToControls(state, elements, state.tripCriteria);
+    synchronizeFilterOptions(state, elements);
+    updateStartWarning(state, elements);
+    updateCriteriaNotice(state, elements);
+    renderPicker(state, elements);
+    refreshSelectionMap(state, elements);
+    elements.locationStatus.textContent = "คืนค่าโจทย์เดิมของทริปแล้ว";
+    persistState(state, elements);
+  });
   elements.filterSearchButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
       event.preventDefault();
@@ -230,14 +295,7 @@ function bindControls(state, elements) {
     });
   });
   elements.autoButton?.addEventListener("click", () => {
-    openPlannerDialog(state, elements, {
-      kicker: "ตรวจสอบก่อนจัดแผน",
-      title: "จัดแผนอัตโนมัติใหม่?",
-      message: "ระบบจะล้างสถานที่ที่เลือกไว้และแผนปัจจุบันทั้งหมด แล้วเลือกใหม่ตามเงื่อนไขที่กำหนด",
-      confirmText: "ล้างและจัดแผนใหม่",
-      trigger: elements.autoButton,
-      action: () => buildAutomaticPlan(state, elements),
-    });
+    confirmAutomaticPlan(state, elements, elements.autoButton);
   });
   elements.buildButton?.addEventListener("click", () => buildSelectedPlan(state, elements));
   elements.clearSelection?.addEventListener("click", () => {
@@ -249,6 +307,7 @@ function bindControls(state, elements) {
     elements.result.hidden = true;
     persistState(state, elements);
   });
+  elements.clearTrip?.addEventListener("click", () => clearTrip(state, elements));
   elements.editButton?.addEventListener("click", () => {
     showManualEditMode(state, elements);
   });
@@ -277,6 +336,7 @@ function applyPlannerFilterChange(state, elements) {
   state.nearbyMode = false;
   synchronizeFilterOptions(state, elements);
   updateStartWarning(state, elements);
+  updateCriteriaNotice(state, elements);
   if (state.pickerReady) {
     renderPicker(state, elements);
     refreshSelectionMap(state, elements);
@@ -313,11 +373,12 @@ function initializeSelectionMap(planner, panels, value) {
 }
 
 function renderPicker(state, elements) {
-  const filtered = getFilteredItems(state, elements);
+  const filtered = getPickerItems(state, elements);
   const visible = filtered.slice(0, state.visibleCount);
   const selectedIds = new Set(state.selected);
   const origin = getStartPoint(state, elements);
 
+  renderPickerContext(state, elements, filtered.length);
   elements.grid.innerHTML = visible
     .map((item) => {
       const selected = selectedIds.has(item.id);
@@ -325,6 +386,7 @@ function renderPicker(state, elements) {
       const distanceBadge = Number.isFinite(distance)
         ? `<span class="planner-place-card__distance">${formatDistance(distance)}</span>`
         : "";
+      const recommendation = getPickerRecommendationText(state, elements, item);
       return `
         <article class="planner-place-card${selected ? " is-selected" : ""}">
           <figure>
@@ -341,6 +403,7 @@ function renderPicker(state, elements) {
               <p>${escapeHtml([item.province, item.district].filter(Boolean).join(" / "))}</p>
             </div>
             <p class="planner-place-card__blessing">${escapeHtml(item.blessings.slice(0, 2).join(" · ") || "ไหว้พระและเสริมสิริมงคล")}</p>
+            ${recommendation ? `<p class="planner-place-card__reason">${escapeHtml(recommendation)}</p>` : ""}
             <button
               type="button"
               class="${selected ? "planner-remove-button" : "planner-add-button"}"
@@ -514,23 +577,319 @@ function applyPinnedStart(state, elements) {
 }
 
 function getFilteredItems(state, elements) {
-  const query = normalize(elements.search?.value);
-  if (state.nearbyMode && state.currentLocation) {
-    const radiusKm = getRadiusKm(elements);
-    return state.items
-      .filter((item) => {
-        if (haversineKm(state.currentLocation, item) > radiusKm) return false;
-        return matchesSearch(item, query);
-      })
-      .sort((left, right) => haversineKm(state.currentLocation, left) - haversineKm(state.currentLocation, right));
+  return getItemsByCriteria(state, getDraftCriteria(state, elements));
+}
+
+function getPickerItems(state, elements) {
+  const context = state.pickerContext || createPickerContext("browse");
+  const criteria = context.useCriteria === false
+    ? createEmptyCriteria(elements)
+    : context.criteria || state.tripCriteria || getDraftCriteria(state, elements);
+  const query = normalize(elements.pickerSearch?.value || context.query || "");
+  const base = getItemsByCriteria(state, { ...criteria, query: "" }).filter((item) => matchesSearch(item, query));
+
+  if (context.type === "nearby" && state.currentLocation) {
+    return base.sort((left, right) => haversineKm(state.currentLocation, left) - haversineKm(state.currentLocation, right));
   }
 
+  if (context.mode === "browse") {
+    return base.sort((left, right) => {
+      const selectedDifference = Number(state.selected.includes(right.id)) - Number(state.selected.includes(left.id));
+      return selectedDifference || left.globalRank - right.globalRank || right.globalMentions - left.globalMentions;
+    });
+  }
+
+  if (context.type === "replace") {
+    return sortReplacementCandidates(state, context, base);
+  }
+
+  if (context.type === "trip") {
+    return sortTripEditCandidates(state, base);
+  }
+
+  return base;
+}
+
+function getItemsByCriteria(state, criteria) {
+  const query = normalize(criteria.query);
+  if (criteria.nearbyMode && criteria.currentLocation) {
+    const radiusKm = Number(criteria.radius || 100);
+    return state.items
+      .filter((item) => {
+        if (haversineKm(criteria.currentLocation, item) > radiusKm) return false;
+        return matchesSearch(item, query);
+      })
+      .sort((left, right) => haversineKm(criteria.currentLocation, left) - haversineKm(criteria.currentLocation, right));
+  }
+
+  const regions = new Set(criteria.regions || []);
+  const provinces = new Set(criteria.provinces || []);
+  const purposes = new Set(criteria.purposes || []);
   return state.items.filter((item) => {
-    if (state.activeRegions.size && !state.activeRegions.has(item.region)) return false;
-    if (state.activeProvinces.size && !state.activeProvinces.has(item.province)) return false;
-    if (state.activePurposes.size && !item.blessings.some((purpose) => state.activePurposes.has(purpose))) return false;
+    if (regions.size && !regions.has(item.region)) return false;
+    if (provinces.size && !provinces.has(item.province)) return false;
+    if (purposes.size && !item.blessings.some((purpose) => purposes.has(purpose))) return false;
     return matchesSearch(item, query);
   });
+}
+
+function createPickerContext(type = "browse", overrides = {}) {
+  return {
+    type,
+    mode: type === "browse" ? "browse" : "recommended",
+    useCriteria: true,
+    criteria: null,
+    query: "",
+    replaceIndex: null,
+    removedItemId: "",
+    previousId: "",
+    nextId: "",
+    ...overrides,
+  };
+}
+
+function createEmptyCriteria(elements) {
+  return {
+    count: getTargetCount(elements),
+    budget: elements.budget?.value || "600",
+    startTime: elements.startTime?.value || "08:00",
+    radius: elements.radius?.value || "100",
+    query: "",
+    start: "",
+    regions: [],
+    provinces: [],
+    purposes: [],
+    nearbyMode: false,
+    currentLocation: null,
+  };
+}
+
+function getDraftCriteria(state, elements) {
+  return {
+    count: getTargetCount(elements),
+    budget: elements.budget?.value || "600",
+    startTime: elements.startTime?.value || "08:00",
+    radius: elements.radius?.value || "100",
+    query: elements.search?.value || "",
+    start: elements.start?.value || "",
+    regions: [...state.activeRegions].sort(),
+    provinces: [...state.activeProvinces].sort(),
+    purposes: [...state.activePurposes].sort(),
+    nearbyMode: Boolean(state.nearbyMode && state.currentLocation),
+    currentLocation: state.currentLocation
+      ? {
+          id: "current-location",
+          name: "ตำแหน่งปัจจุบัน",
+          latitude: state.currentLocation.latitude,
+          longitude: state.currentLocation.longitude,
+        }
+      : null,
+  };
+}
+
+function criteriaKey(criteria) {
+  if (!criteria) return "";
+  return JSON.stringify({
+    count: Number(criteria.count || 9),
+    budget: String(criteria.budget || "600"),
+    startTime: String(criteria.startTime || "08:00"),
+    radius: String(criteria.radius || "100"),
+    query: normalize(criteria.query),
+    start: criteria.start || "",
+    regions: [...(criteria.regions || [])].sort(),
+    provinces: [...(criteria.provinces || [])].sort(),
+    purposes: [...(criteria.purposes || [])].sort(),
+    nearbyMode: Boolean(criteria.nearbyMode),
+    currentLocation: criteria.currentLocation
+      ? [
+          Number(criteria.currentLocation.latitude).toFixed(4),
+          Number(criteria.currentLocation.longitude).toFixed(4),
+        ]
+      : null,
+  });
+}
+
+function hasVisiblePlan(state, elements) {
+  return Boolean(state.plan.length || (elements.result && !elements.result.hidden));
+}
+
+function applyCriteriaToControls(state, elements, criteria) {
+  const countInput = elements.countInputs.find((input) => Number(input.value) === Number(criteria.count));
+  if (countInput) countInput.checked = true;
+  if (elements.budget) elements.budget.value = criteria.budget || "600";
+  if (elements.startTime) elements.startTime.value = criteria.startTime || "08:00";
+  if (elements.radius) elements.radius.value = criteria.radius || "100";
+  if (elements.search) elements.search.value = criteria.query || "";
+  if (elements.start) elements.start.value = criteria.start && state.itemById.has(criteria.start) ? criteria.start : "";
+  state.activeRegions = new Set(criteria.regions || []);
+  state.activeProvinces = new Set(criteria.provinces || []);
+  state.activePurposes = new Set(criteria.purposes || []);
+  state.currentLocation = criteria.currentLocation ? { ...criteria.currentLocation } : null;
+  state.nearbyMode = Boolean(criteria.nearbyMode && state.currentLocation);
+  state.pinnedStartId = elements.start?.value || "";
+}
+
+function updateCriteriaNotice(state, elements) {
+  if (!elements.criteriaNotice) return;
+  const show = Boolean(state.tripCriteria && !elements.result.hidden && criteriaKey(state.tripCriteria) !== criteriaKey(getDraftCriteria(state, elements)));
+  elements.criteriaNotice.hidden = !show;
+}
+
+function updateTripSource(state, elements) {
+  if (!elements.tripSource) return;
+  if (!state.tripCriteria || !state.plan.length) {
+    elements.tripSource.hidden = true;
+    elements.tripSource.innerHTML = "";
+    return;
+  }
+  const sourceLabel = state.tripCriteria.source === "manual" ? "ทริปนี้มาจากการเลือกเอง" : "ทริปนี้จัดจากโจทย์ด้านบน";
+  const chips = describeCriteria(state, elements, state.tripCriteria);
+  elements.tripSource.hidden = false;
+  elements.tripSource.innerHTML = `
+    <strong>${escapeHtml(sourceLabel)}</strong>
+    <div class="planner-trip-source__chips">
+      ${(chips.length ? chips : ["ไม่ได้จำกัดภาค จังหวัด หรือจุดประสงค์"]).map((chip) => `<span>${escapeHtml(chip)}</span>`).join("")}
+    </div>`;
+}
+
+function describeCriteria(state, elements, criteria) {
+  const chips = [];
+  chips.push(`${Number(criteria.count || getTargetCount(elements)).toLocaleString("th-TH")} แห่ง`);
+  if (criteria.start) {
+    const startItem = state.itemById.get(criteria.start);
+    if (startItem) chips.push(`เริ่มที่ ${startItem.name}`);
+  } else if (criteria.currentLocation) {
+    chips.push("เริ่มจากตำแหน่งปัจจุบัน");
+  } else {
+    chips.push("ระบบเลือกวัดแรก");
+  }
+  if (criteria.nearbyMode) {
+    chips.push(`ในรัศมี ${Number(criteria.radius || 100).toLocaleString("th-TH")} กม.`);
+    if (normalize(criteria.query)) chips.push(`คำค้น "${criteria.query}"`);
+    return chips;
+  }
+  if (criteria.regions?.length) chips.push(`ภาค ${criteria.regions.join(", ")}`);
+  if (criteria.provinces?.length) chips.push(`จังหวัด ${criteria.provinces.join(", ")}`);
+  if (criteria.purposes?.length) chips.push(`จุดประสงค์ ${criteria.purposes.slice(0, 3).join(", ")}${criteria.purposes.length > 3 ? "..." : ""}`);
+  if (normalize(criteria.query)) chips.push(`คำค้น "${criteria.query}"`);
+  return chips;
+}
+
+function renderPickerContext(state, elements, resultCount) {
+  const context = state.pickerContext || createPickerContext("browse");
+  elements.pickerModeButtons.forEach((button) => {
+    const active = button.dataset.plannerPickerMode === context.mode;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  if (elements.pickerSearch && elements.pickerSearch.value !== (context.query || "")) {
+    elements.pickerSearch.value = context.query || "";
+  }
+  if (elements.pickerToggleScope) {
+    elements.pickerToggleScope.textContent = context.useCriteria === false ? "กลับมาใช้โจทย์ทริป" : "ดูทั้งหมด";
+  }
+
+  const chips = context.useCriteria === false
+    ? ["ดูทุกสถานที่", "ค้นหาแยกจากโจทย์ทริป"]
+    : describeCriteria(state, elements, context.criteria || state.tripCriteria || getDraftCriteria(state, elements));
+  if (elements.pickerChips) {
+    elements.pickerChips.innerHTML = chips.map((chip) => `<span>${escapeHtml(chip)}</span>`).join("");
+  }
+  const scopeSuffix = context.useCriteria === false
+    ? " จากทุกสถานที่ กดกลับมาใช้โจทย์ทริปเพื่อดูรายการแนะนำชุดเดิม"
+    : "";
+
+  if (context.type === "replace") {
+    const ordinal = Number(context.replaceIndex) + 1;
+    elements.pickerKicker.textContent = "เปลี่ยนสถานที่ในทริป";
+    elements.pickerTitle.textContent = `เลือกสถานที่แทนจุดที่ ${ordinal.toLocaleString("th-TH")}`;
+    elements.pickerDescription.textContent = "แนะนำจากตำแหน่งก่อนหน้า/ถัดไป จุดประสงค์เดิม และอันดับในฐานข้อมูล";
+    elements.pickerNote.textContent = scopeSuffix
+      ? `พบ ${resultCount.toLocaleString("th-TH")} สถานที่${scopeSuffix}`
+      : `พบ ${resultCount.toLocaleString("th-TH")} สถานที่ เลือกเพิ่มแล้วกดจัดลำดับสถานที่ที่เลือก`;
+    return;
+  }
+
+  if (context.type === "trip") {
+    elements.pickerKicker.textContent = "ปรับทริปที่จัดไว้";
+    elements.pickerTitle.textContent = "เลือกเพิ่มหรือเปลี่ยนจากรายการแนะนำ";
+    elements.pickerDescription.textContent = "รายการจะแนะนำสถานที่ที่เข้ากับโจทย์เดิมและอยู่ใกล้ลำดับทริปปัจจุบันก่อน";
+    elements.pickerNote.textContent = scopeSuffix
+      ? `พบ ${resultCount.toLocaleString("th-TH")} สถานที่${scopeSuffix}`
+      : `พบ ${resultCount.toLocaleString("th-TH")} สถานที่ ถ้าอยากแหวกจากโจทย์เดิมให้กดดูทั้งหมด`;
+    return;
+  }
+
+  if (context.type === "nearby") {
+    elements.pickerKicker.textContent = "ค้นหาใกล้ฉัน";
+    elements.pickerTitle.textContent = "เลือกสถานที่ในรัศมีจากตำแหน่งปัจจุบัน";
+    elements.pickerDescription.textContent = "โหมดนี้ไม่ใช้ภาค จังหวัด และจุดประสงค์จากโจทย์ด้านบน";
+    elements.pickerNote.textContent = `พบ ${resultCount.toLocaleString("th-TH")} สถานที่ เรียงจากใกล้ไปไกล`;
+    return;
+  }
+
+  elements.pickerKicker.textContent = "ค้นหาด้วยตัวเอง";
+  elements.pickerTitle.textContent = "เลือกเองจากรายการหรือแผนที่";
+  elements.pickerDescription.textContent = "รายการนี้ใช้โจทย์ด้านบนเพื่อช่วยคัดสถานที่ แต่ยังไม่เปลี่ยนทริปจนกว่าจะกดจัดลำดับ";
+  elements.pickerNote.textContent = `พบ ${resultCount.toLocaleString("th-TH")} สถานที่ตามโจทย์ด้านบน`;
+}
+
+function sortTripEditCandidates(state, items) {
+  const selectedIds = new Set(state.selected);
+  const routeItems = state.plan.length ? state.plan : state.selected.map((id) => state.itemById.get(id)).filter(Boolean);
+  const purposes = getTripPurposes(state);
+  return [...items].sort((left, right) => {
+    const selectedDifference = Number(selectedIds.has(right.id)) - Number(selectedIds.has(left.id));
+    return selectedDifference || tripCandidateScore(state, left, routeItems, purposes) - tripCandidateScore(state, right, routeItems, purposes);
+  });
+}
+
+function tripCandidateScore(state, item, routeItems, purposes) {
+  const routeDistance = routeItems.length
+    ? Math.min(...routeItems.map((routeItem) => haversineKm(routeItem, item)).filter(Number.isFinite))
+    : item.globalRank;
+  const purposeBonus = item.blessings.some((purpose) => purposes.has(purpose)) ? -35 : 0;
+  const selectedBonus = state.selected.includes(item.id) ? -500 : 0;
+  return selectedBonus + routeDistance * 4 + Math.min(item.globalRank, 200) * 0.25 + purposeBonus;
+}
+
+function sortReplacementCandidates(state, context, items) {
+  const selectedIds = new Set(state.selected);
+  const previous = state.itemById.get(context.previousId);
+  const next = state.itemById.get(context.nextId);
+  const purposes = getTripPurposes(state);
+  return [...items]
+    .filter((item) => !selectedIds.has(item.id))
+    .sort((left, right) => replacementCandidateScore(left, previous, next, purposes) - replacementCandidateScore(right, previous, next, purposes));
+}
+
+function replacementCandidateScore(item, previous, next, purposes) {
+  const previousLeg = previous ? estimateLeg(previous, item).midpointMinutes : 0;
+  const nextLeg = next ? estimateLeg(item, next).midpointMinutes : 0;
+  const purposeBonus = item.blessings.some((purpose) => purposes.has(purpose)) ? -35 : 0;
+  return previousLeg + nextLeg + Math.min(item.globalRank, 200) * 0.25 + purposeBonus;
+}
+
+function getTripPurposes(state) {
+  const source = state.tripCriteria?.purposes?.length ? state.tripCriteria.purposes : [...state.activePurposes];
+  return new Set(source);
+}
+
+function getPickerRecommendationText(state, elements, item) {
+  const context = state.pickerContext || createPickerContext("browse");
+  if (context.mode === "browse") return "";
+  if (state.selected.includes(item.id)) return "อยู่ในทริปนี้แล้ว";
+  if (context.type === "replace") {
+    const previous = state.itemById.get(context.previousId);
+    const next = state.itemById.get(context.nextId);
+    const minutes = (previous ? estimateLeg(previous, item).midpointMinutes : 0) + (next ? estimateLeg(item, next).midpointMinutes : 0);
+    return `เหมาะเป็นจุดแทน · ระยะต่อเนื่องประมาณ ${formatMinutes(minutes)}`;
+  }
+  if (context.type === "trip" && state.plan.length) {
+    const nearest = Math.min(...state.plan.map((planItem) => haversineKm(planItem, item)).filter(Number.isFinite));
+    if (Number.isFinite(nearest)) return `ใกล้เส้นทางเดิมประมาณ ${formatDistance(nearest)}`;
+  }
+  return "";
 }
 
 function matchesSearch(item, query) {
@@ -602,6 +961,7 @@ function updateFilterSummary(node, selectedCount) {
 }
 
 function resetSearchFilters(state, elements) {
+  const hasPlan = hasVisiblePlan(state, elements);
   state.activeRegions.clear();
   state.activeProvinces.clear();
   state.activePurposes.clear();
@@ -611,10 +971,11 @@ function resetSearchFilters(state, elements) {
   state.currentLocation = null;
   state.nearbyMode = false;
   state.visibleCount = 36;
-  applyPinnedStart(state, elements);
-  const planSynced = synchronizePlanWithSelection(state, elements);
+  if (!hasPlan) applyPinnedStart(state, elements);
+  const planSynced = hasPlan ? false : synchronizePlanWithSelection(state, elements);
   synchronizeFilterOptions(state, elements);
   updateStartWarning(state, elements);
+  updateCriteriaNotice(state, elements);
   renderSelected(state, elements);
   if (planSynced) renderPlan(state, elements, { scroll: false });
   if (state.pickerReady) {
@@ -638,6 +999,22 @@ function openPlannerDialog(state, elements, options) {
   elements.dialog.setAttribute("aria-hidden", "false");
   document.body.classList.add("has-planner-dialog");
   elements.dialogConfirm.focus({ preventScroll: true });
+}
+
+function confirmAutomaticPlan(state, elements, trigger) {
+  const hasExistingTrip = state.selected.length || state.plan.length || !elements.result.hidden;
+  if (!hasExistingTrip) {
+    buildAutomaticPlan(state, elements);
+    return;
+  }
+  openPlannerDialog(state, elements, {
+    kicker: "ตรวจสอบก่อนจัดแผน",
+    title: "จัดแผนอัตโนมัติใหม่?",
+    message: "ระบบจะล้างสถานที่ที่เลือกไว้และแผนปัจจุบันทั้งหมด แล้วเลือกใหม่ตามโจทย์ด้านบน",
+    confirmText: "ล้างและจัดแผนใหม่",
+    trigger,
+    action: () => buildAutomaticPlan(state, elements),
+  });
 }
 
 function closePlannerDialog(state, elements, options = {}) {
@@ -664,6 +1041,26 @@ function showNoResultsDialog(state, elements, message) {
       elements.resetFilters?.focus({ preventScroll: true });
     },
   });
+}
+
+function clearTrip(state, elements) {
+  state.selected = [];
+  state.plan = [];
+  state.tripCriteria = null;
+  state.manualSelectionOrder = false;
+  state.pickerContext = createPickerContext("browse", { criteria: getDraftCriteria(state, elements), mode: "browse" });
+  elements.result.hidden = true;
+  elements.timeline.innerHTML = "";
+  elements.summary.innerHTML = "";
+  elements.warnings.hidden = true;
+  elements.warnings.innerHTML = "";
+  renderSelected(state, elements);
+  renderPicker(state, elements);
+  refreshSelectionMap(state, elements);
+  updateTripSource(state, elements);
+  updateCriteriaNotice(state, elements);
+  elements.locationStatus.textContent = "ล้างทริปนี้แล้ว โจทย์ด้านบนยังอยู่สำหรับจัดใหม่";
+  persistState(state, elements);
 }
 
 function updateStartWarning(state, elements) {
@@ -710,6 +1107,13 @@ function updateTargetCount(state, elements) {
 function showFilteredPlaces(state, elements) {
   state.pickerReady = true;
   state.nearbyMode = false;
+  state.pickerContext = createPickerContext("browse", {
+    criteria: getDraftCriteria(state, elements),
+    mode: "browse",
+    useCriteria: true,
+    query: "",
+  });
+  if (elements.pickerSearch) elements.pickerSearch.value = "";
   elements.pickSection.hidden = false;
   elements.result.hidden = true;
   state.visibleCount = 36;
@@ -731,6 +1135,13 @@ function showFilteredPlaces(state, elements) {
 function showNearbyPlaces(state, elements) {
   state.pickerReady = true;
   state.nearbyMode = true;
+  state.pickerContext = createPickerContext("nearby", {
+    criteria: getDraftCriteria(state, elements),
+    mode: "recommended",
+    useCriteria: true,
+    query: "",
+  });
+  if (elements.pickerSearch) elements.pickerSearch.value = "";
   elements.pickSection.hidden = false;
   elements.result.hidden = true;
   state.visibleCount = 36;
@@ -759,6 +1170,7 @@ function getTargetCount(elements) {
 }
 
 function buildAutomaticPlan(state, elements) {
+  const criteria = getDraftCriteria(state, elements);
   state.manualSelectionOrder = false;
   state.pickerReady = false;
   elements.pickSection.hidden = true;
@@ -801,12 +1213,24 @@ function buildAutomaticPlan(state, elements) {
   state.selected = chosen.map((item) => item.id);
   state.plan = optimizeOrder(chosen, anchor);
   state.selected = state.plan.map((item) => item.id);
+  state.tripCriteria = { ...criteria, source: "auto" };
   renderSelected(state, elements);
   renderPlan(state, elements);
 }
 
 function showManualEditMode(state, elements, options = {}) {
   state.pickerReady = true;
+  state.pickerContext = createPickerContext(options.type || "trip", {
+    criteria: state.tripCriteria || getDraftCriteria(state, elements),
+    mode: options.mode || "recommended",
+    useCriteria: true,
+    replaceIndex: options.replaceIndex,
+    removedItemId: options.removedItemId,
+    previousId: options.previousId,
+    nextId: options.nextId,
+    query: "",
+  });
+  if (elements.pickerSearch) elements.pickerSearch.value = "";
   elements.pickSection.hidden = false;
   elements.result.hidden = true;
   state.visibleCount = Math.max(state.visibleCount, 36);
@@ -819,21 +1243,30 @@ function showManualEditMode(state, elements, options = {}) {
 }
 
 function buildSelectedPlan(state, elements) {
-  applyPinnedStart(state, elements);
+  const criteria = state.pickerContext?.criteria || getDraftCriteria(state, elements);
+  enforcePinnedStartByCriteria(state, elements, criteria);
   if (!state.selected.length) {
     buildAutomaticPlan(state, elements);
     return;
   }
-  const anchor = getStartPoint(state, elements);
+  const anchor = getStartPointFromCriteria(state, criteria);
   const items = state.selected.map((id) => state.itemById.get(id)).filter(Boolean);
   state.plan = state.manualSelectionOrder ? items : optimizeOrder(items, anchor);
   state.selected = state.plan.map((item) => item.id);
+  state.tripCriteria = { ...criteria, source: "manual" };
   renderSelected(state, elements);
   renderPlan(state, elements);
 }
 
+function enforcePinnedStartByCriteria(state, elements, criteria) {
+  const pinnedStart = criteria.start ? state.itemById.get(criteria.start) : null;
+  if (!pinnedStart) return;
+  state.selected = [pinnedStart.id, ...state.selected.filter((id) => id !== pinnedStart.id)].slice(0, getTargetCount(elements));
+}
+
 function getAutomaticCandidates(state, elements) {
-  return getFilteredItems(state, { ...elements, search: { value: "" } });
+  const criteria = getDraftCriteria(state, elements);
+  return getItemsByCriteria(state, criteria);
 }
 
 function pickFirstCandidate(candidates, anchor, purpose) {
@@ -884,6 +1317,8 @@ function renderPlan(state, elements, options = {}) {
   if (!state.plan.length) return;
   const details = calculatePlan(state, elements);
   elements.result.hidden = false;
+  updateTripSource(state, elements);
+  updateCriteriaNotice(state, elements);
   elements.summary.innerHTML = renderSummary(details);
   renderWarnings(details, elements);
   elements.timeline.innerHTML = state.plan
@@ -898,8 +1333,9 @@ function renderPlan(state, elements, options = {}) {
 }
 
 function calculatePlan(state, elements) {
-  const startPoint = getStartPoint(state, elements);
-  const startMinutes = parseTime(elements.startTime.value || "08:00");
+  const criteria = state.tripCriteria || getDraftCriteria(state, elements);
+  const startPoint = getStartPointFromCriteria(state, criteria);
+  const startMinutes = parseTime(criteria.startTime || "08:00");
   const legs = [];
   let cursor = startMinutes;
   let previous = startPoint;
@@ -925,7 +1361,7 @@ function calculatePlan(state, elements) {
 
   const totalMinutes = totalTravel + totalVisit;
   const totalRoadKm = legs.reduce((sum, leg) => sum + leg.roadKm, 0);
-  const warnings = buildWarnings(legs, totalTravel, totalMinutes, Number(elements.budget.value || 600), state.plan.length);
+  const warnings = buildWarnings(legs, totalTravel, totalMinutes, Number(criteria.budget || 600), state.plan.length);
 
   return { startMinutes, endMinutes: cursor, stops, legs, totalTravel, totalVisit, totalMinutes, totalRoadKm, warnings };
 }
@@ -1021,7 +1457,14 @@ function handleTimelineAction(event, state, elements) {
   if (event.target.closest("[data-planner-replace]")) {
     const [removed] = state.plan.splice(index, 1);
     state.selected = state.plan.map((item) => item.id);
-    showManualEditMode(state, elements, { status: `นำ ${removed.name} ออกจากทริปแล้ว เลือกสถานที่ใหม่ได้เลย` });
+    showManualEditMode(state, elements, {
+      type: "replace",
+      replaceIndex: index,
+      removedItemId: removed.id,
+      previousId: state.plan[index - 1]?.id || "",
+      nextId: state.plan[index]?.id || "",
+      status: `นำ ${removed.name} ออกจากทริปแล้ว เลือกสถานที่ใหม่แทนจุดนี้ได้เลย`,
+    });
   }
 }
 
@@ -1110,6 +1553,12 @@ function getStartPoint(state, elements) {
   return getPinnedStartItem(state, elements);
 }
 
+function getStartPointFromCriteria(state, criteria) {
+  if (criteria?.currentLocation) return criteria.currentLocation;
+  if (criteria?.start) return state.itemById.get(criteria.start) || null;
+  return null;
+}
+
 function getPinnedStartItem(state, elements) {
   return state.itemById.get(elements.start?.value) || null;
 }
@@ -1145,7 +1594,7 @@ function requestCurrentLocation(state, elements) {
 
 function refreshSelectionMap(state, elements) {
   if (!state.selectionMap || !state.selectionCluster) return;
-  const filteredIds = new Set(getFilteredItems(state, elements).map((item) => item.id));
+  const filteredIds = new Set(getPickerItems(state, elements).map((item) => item.id));
   const origin = getStartPoint(state, elements);
   state.selectionCluster.clearLayers();
   state.selectionMarkers.forEach((marker, id) => {
@@ -1304,9 +1753,10 @@ function loadScript(src) {
 function buildGoogleMapsUrl(state, elements) {
   const plan = state.plan;
   if (!plan.length) return "#";
-  const origin = state.currentLocation || plan[0];
+  const criteria = state.tripCriteria || getDraftCriteria(state, elements);
+  const origin = criteria.currentLocation || plan[0];
   const destination = plan.at(-1);
-  const waypointItems = state.currentLocation ? plan.slice(0, -1) : plan.slice(1, -1);
+  const waypointItems = criteria.currentLocation ? plan.slice(0, -1) : plan.slice(1, -1);
   const url = new URL("https://www.google.com/maps/dir/");
   url.searchParams.set("api", "1");
   url.searchParams.set("origin", `${origin.latitude},${origin.longitude}`);
@@ -1340,6 +1790,7 @@ function persistState(state, elements) {
         provinces: [...state.activeProvinces],
         purposes: [...state.activePurposes],
         start: elements.start.value,
+        tripCriteria: state.tripCriteria,
       }),
     );
   } catch {}
@@ -1359,6 +1810,7 @@ function restoreState(state, elements) {
     (saved.provinces || (saved.province ? [saved.province] : [])).forEach((province) => state.activeProvinces.add(province));
     state.selected = (saved.selected || []).filter((id) => state.itemById.has(id)).slice(0, getTargetCount(elements));
     state.plan = (saved.plan || []).map((id) => state.itemById.get(id)).filter(Boolean);
+    if (saved.tripCriteria) state.tripCriteria = saved.tripCriteria;
   } catch {}
 }
 
