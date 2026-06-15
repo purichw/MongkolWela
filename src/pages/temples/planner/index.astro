@@ -6,7 +6,7 @@ import { getTemplePlannerData } from "../../../data/temple-planner.js";
 
 const plannerData = getTemplePlannerData();
 const plannerPayload = JSON.stringify(plannerData).replace(/</g, "\\u003c");
-const extraStyles = ["/assets/css/temple-planner.css?feature=20260615-03"];
+const extraStyles = ["/assets/css/temple-planner.css?feature=20260615-04"];
 const extraScripts = ["/assets/js/temple-planner.js"];
 const pageTitle = "วางแผนไหว้พระ 9 วัด | มงคลเวลา";
 const pageDescription =
@@ -49,10 +49,33 @@ const pageDescription =
             <p class="section-kicker">จุดเริ่มต้นและค้นหาใกล้ฉัน</p>
             <h2 id="planner-setup-title">เลือกเงื่อนไข แล้วให้ระบบจัดเส้นทาง</h2>
           </div>
-          <p>ภาค จังหวัด และจุดประสงค์ใช้คัดสถานที่ ส่วนจุดเริ่มต้นใช้คำนวณลำดับและเวลาเดินทาง</p>
+          <p>ถ้าไม่กำหนดจุดเริ่ม ระบบจะเลือกวัดแรกจากจุดประสงค์ อันดับ และความนิยมในฐานข้อมูล</p>
         </div>
 
         <div class="planner-setup__grid">
+          <div class="planner-route-start">
+            <label class="planner-field planner-field--start">
+              <span>เริ่มทริปจาก</span>
+              <select data-planner-start>
+                <option value="">ยังไม่กำหนด ให้ระบบเลือกวัดแรกที่เหมาะสม</option>
+                {plannerData.items.map((item) => <option value={item.id}>{item.name} · {item.province}</option>)}
+              </select>
+              <small>เลือกวัด = นับเป็นวัดแรกของทริป · ใช้ตำแหน่งปัจจุบัน = จุดออกตัวไปวัดแรก</small>
+            </label>
+
+            <label class="planner-field planner-field--radius">
+              <span>รัศมีค้นหาใกล้ฉัน</span>
+              <select data-planner-radius>
+                <option value="50">ภายใน 50 กม.</option>
+                <option value="100" selected>ภายใน 100 กม.</option>
+                <option value="200">ภายใน 200 กม.</option>
+                <option value="500">ภายใน 500 กม.</option>
+              </select>
+            </label>
+
+            <p class="planner-start-warning" role="status" aria-live="polite" data-planner-start-warning hidden></p>
+          </div>
+
           <fieldset class="planner-field planner-field--count">
             <legend>จำนวนสถานที่</legend>
             <div class="planner-segmented" data-planner-count>
@@ -138,27 +161,6 @@ const pageDescription =
             </div>
           </div>
 
-          <div class="planner-route-start">
-            <label class="planner-field planner-field--start">
-              <span>เริ่มเดินทางจาก</span>
-              <select data-planner-start>
-                <option value="">ไม่กำหนด ให้ระบบเริ่มจากสถานที่แรก</option>
-                {plannerData.items.map((item) => <option value={item.id}>{item.name} · {item.province}</option>)}
-              </select>
-            </label>
-
-            <label class="planner-field planner-field--radius">
-              <span>รัศมีค้นหาใกล้ฉัน</span>
-              <select data-planner-radius>
-                <option value="50">ภายใน 50 กม.</option>
-                <option value="100" selected>ภายใน 100 กม.</option>
-                <option value="200">ภายใน 200 กม.</option>
-                <option value="500">ภายใน 500 กม.</option>
-              </select>
-            </label>
-
-            <p class="planner-start-warning" role="status" aria-live="polite" data-planner-start-warning hidden></p>
-          </div>
         </div>
 
         <p class="planner-location-status" role="status" aria-live="polite" data-planner-location-status></p>

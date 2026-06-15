@@ -86,6 +86,13 @@ body.has-planner-dialog {
   font-weight: 900;
 }
 
+.planner-field small {
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
 .planner-field select,
 .planner-field input {
   width: 100%;
@@ -295,9 +302,8 @@ body.has-planner-dialog {
   grid-column: 1 / -1;
   grid-template-columns: minmax(0, 2fr) minmax(170px, 0.8fr);
   gap: 14px;
-  margin-top: 4px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(77, 56, 41, 0.16);
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(77, 56, 41, 0.16);
 }
 
 .planner-start-warning {

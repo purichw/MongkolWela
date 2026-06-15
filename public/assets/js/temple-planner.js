@@ -14,6 +14,7 @@ function initializeTemplePlanner(planner, payload) {
     plan: [],
     visibleCount: 36,
     currentLocation: null,
+    pinnedStartId: "",
     pickerReady: false,
     nearbyMode: false,
     selectionMap: null,
@@ -27,6 +28,7 @@ function initializeTemplePlanner(planner, payload) {
 
   planner._plannerState = { state, elements };
   restoreState(state, elements);
+  applyPinnedStart(state, elements);
   bindControls(state, elements);
   synchronizeFilterOptions(state, elements, "restore");
   updateStartWarning(state, elements);
@@ -90,11 +92,13 @@ function bindControls(state, elements) {
     input.addEventListener("change", () => {
       const target = getTargetCount(elements);
       if (state.selected.length > target) state.selected = state.selected.slice(0, target);
+      const planSynced = synchronizePlanWithSelection(state, elements);
       state.visibleCount = 36;
       renderSelected(state, elements);
       renderPicker(state, elements);
       updateTargetCount(state, elements);
-      persistState(state, elements);
+      if (planSynced) renderPlan(state, elements, { scroll: false });
+      else persistState(state, elements);
     });
   });
 
@@ -127,13 +131,17 @@ function bindControls(state, elements) {
 
   elements.start?.addEventListener("change", () => {
     state.currentLocation = null;
+    applyPinnedStart(state, elements);
+    const planSynced = synchronizePlanWithSelection(state, elements);
     state.nearbyMode = false;
     updateStartWarning(state, elements);
+    renderSelected(state, elements);
     if (state.pickerReady) {
       renderPicker(state, elements);
       refreshSelectionMap(state, elements);
     }
-    persistState(state, elements);
+    if (planSynced) renderPlan(state, elements, { scroll: false });
+    else persistState(state, elements);
   });
 
   elements.search?.addEventListener("input", () => {
@@ -321,7 +329,13 @@ function toggleSelection(state, elements, id, force) {
   if (!state.itemById.has(id)) return;
   const index = state.selected.indexOf(id);
   const shouldSelect = force ?? index === -1;
-  if (!shouldSelect && index !== -1) state.selected.splice(index, 1);
+  if (!shouldSelect && index !== -1) {
+    state.selected.splice(index, 1);
+    if (id === elements.start?.value) {
+      elements.start.value = "";
+      state.pinnedStartId = "";
+    }
+  }
   if (shouldSelect && index === -1) {
     const target = getTargetCount(elements);
     if (state.selected.length >= target) {
@@ -330,10 +344,60 @@ function toggleSelection(state, elements, id, force) {
     }
     state.selected.push(id);
   }
+  const planSynced = synchronizePlanWithSelection(state, elements);
   renderSelected(state, elements);
   renderPicker(state, elements);
   refreshSelectionMap(state, elements);
-  persistState(state, elements);
+  if (planSynced) renderPlan(state, elements, { scroll: false });
+  else persistState(state, elements);
+}
+
+function synchronizePlanWithSelection(state, elements) {
+  const pinnedStart = getPinnedStartItem(state, elements);
+  if (pinnedStart) {
+    state.selected = [pinnedStart.id, ...state.selected.filter((id) => id !== pinnedStart.id)].slice(0, getTargetCount(elements));
+  }
+  if (!state.plan.length && elements.result.hidden) return false;
+
+  const selectedIds = new Set(state.selected);
+  const retainedPlanItems = state.plan.filter((item) => selectedIds.has(item.id) && item.id !== pinnedStart?.id);
+  const retainedIds = new Set(retainedPlanItems.map((item) => item.id));
+  const addedItems = state.selected
+    .filter((id) => id !== pinnedStart?.id && !retainedIds.has(id))
+    .map((id) => state.itemById.get(id))
+    .filter(Boolean);
+
+  state.plan = [...(pinnedStart ? [pinnedStart] : []), ...retainedPlanItems, ...addedItems];
+  state.selected = state.plan.map((item) => item.id);
+
+  if (!state.plan.length) {
+    elements.result.hidden = true;
+    elements.timeline.innerHTML = "";
+    elements.summary.innerHTML = "";
+    elements.warnings.hidden = true;
+    elements.warnings.innerHTML = "";
+    return false;
+  }
+
+  return true;
+}
+
+function applyPinnedStart(state, elements) {
+  const previousStartId = state.pinnedStartId;
+  const nextStartId = elements.start?.value || "";
+  if (previousStartId && previousStartId !== nextStartId) {
+    state.selected = state.selected.filter((id) => id !== previousStartId);
+    state.plan = state.plan.filter((item) => item.id !== previousStartId);
+  }
+
+  state.pinnedStartId = nextStartId;
+  const pinnedStart = getPinnedStartItem(state, elements);
+  if (!pinnedStart) return;
+
+  state.selected = [pinnedStart.id, ...state.selected.filter((id) => id !== pinnedStart.id)].slice(0, getTargetCount(elements));
+  if (state.plan.length) {
+    state.plan = [pinnedStart, ...state.plan.filter((item) => item.id !== pinnedStart.id)];
+  }
 }
 
 function getFilteredItems(state, elements) {
@@ -437,11 +501,16 @@ function resetSearchFilters(state, elements) {
   elements.purpose.value = "";
   elements.search.value = "";
   elements.radius.value = "100";
+  elements.start.value = "";
   state.currentLocation = null;
   state.nearbyMode = false;
   state.visibleCount = 36;
+  applyPinnedStart(state, elements);
+  const planSynced = synchronizePlanWithSelection(state, elements);
   synchronizeFilterOptions(state, elements, "reset");
   updateStartWarning(state, elements);
+  renderSelected(state, elements);
+  if (planSynced) renderPlan(state, elements, { scroll: false });
   if (state.pickerReady) {
     renderPicker(state, elements);
     refreshSelectionMap(state, elements);
@@ -493,6 +562,13 @@ function showNoResultsDialog(state, elements, message) {
 
 function updateStartWarning(state, elements) {
   if (!elements.startWarning) return;
+  const pinnedStart = getPinnedStartItem(state, elements);
+  if (pinnedStart) {
+    elements.startWarning.hidden = false;
+    elements.startWarning.textContent = `${pinnedStart.name} จะถูกนับเป็นวัดแรกของทริป และระบบจะจัดสถานที่ถัดไปต่อจากจุดนี้`;
+    return;
+  }
+
   const anchor = getStartPoint(state, elements);
   const hasAreaFilter = Boolean(elements.region?.value || elements.province?.value);
   const candidates = getFilteredItems(state, { ...elements, search: { value: "" } });
@@ -579,6 +655,7 @@ function buildAutomaticPlan(state, elements) {
   elements.pickSection.hidden = false;
   const target = getTargetCount(elements);
   const candidates = getAutomaticCandidates(state, elements);
+  const pinnedStart = getPinnedStartItem(state, elements);
   state.selected = [];
   state.plan = [];
   elements.result.hidden = true;
@@ -587,7 +664,7 @@ function buildAutomaticPlan(state, elements) {
   const anchor = getStartPoint(state, elements);
   const chosen = [];
 
-  if (!candidates.length) {
+  if (!candidates.length && !pinnedStart) {
     renderPicker(state, elements);
     refreshSelectionMap(state, elements);
     showNoResultsDialog(state, elements, "ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ที่ตรงกับภาค จังหวัด และจุดประสงค์ที่เลือก");
@@ -595,7 +672,10 @@ function buildAutomaticPlan(state, elements) {
     return;
   }
 
-  if (!chosen.length) {
+  if (pinnedStart) {
+    chosen.push(pinnedStart);
+    selectedIds.add(pinnedStart.id);
+  } else if (!chosen.length) {
     chosen.push(pickFirstCandidate(candidates, anchor, elements.purpose.value));
     selectedIds.add(chosen[0].id);
   }
@@ -620,6 +700,7 @@ function buildAutomaticPlan(state, elements) {
 }
 
 function buildSelectedPlan(state, elements) {
+  applyPinnedStart(state, elements);
   if (!state.selected.length) {
     buildAutomaticPlan(state, elements);
     return;
@@ -906,7 +987,11 @@ function haversineKm(left, right) {
 
 function getStartPoint(state, elements) {
   if (state.currentLocation) return state.currentLocation;
-  return state.itemById.get(elements.start.value) || null;
+  return getPinnedStartItem(state, elements);
+}
+
+function getPinnedStartItem(state, elements) {
+  return state.itemById.get(elements.start?.value) || null;
 }
 
 function requestCurrentLocation(state, elements) {
@@ -925,12 +1010,13 @@ function requestCurrentLocation(state, elements) {
         longitude: position.coords.longitude,
       };
       elements.start.value = "";
+      applyPinnedStart(state, elements);
       updateStartWarning(state, elements);
       showNearbyPlaces(state, elements);
       elements.locationButton.disabled = false;
     },
     () => {
-      elements.locationStatus.textContent = "ไม่สามารถอ่านตำแหน่งได้ เลือกสถานที่เริ่มต้นจากรายการแทนได้";
+      elements.locationStatus.textContent = "ไม่สามารถใช้ตำแหน่งปัจจุบันได้ ระบบจะเริ่มจากวัดแรกในแผน หรือเลือกวัดให้เป็นจุดแรกของทริปได้";
       elements.locationButton.disabled = false;
     },
     { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
@@ -1098,10 +1184,9 @@ function loadScript(src) {
 function buildGoogleMapsUrl(state, elements) {
   const plan = state.plan;
   if (!plan.length) return "#";
-  const start = getStartPoint(state, elements);
-  const origin = start || plan[0];
+  const origin = state.currentLocation || plan[0];
   const destination = plan.at(-1);
-  const waypointItems = start ? plan.slice(0, -1) : plan.slice(1, -1);
+  const waypointItems = state.currentLocation ? plan.slice(0, -1) : plan.slice(1, -1);
   const url = new URL("https://www.google.com/maps/dir/");
   url.searchParams.set("api", "1");
   url.searchParams.set("origin", `${origin.latitude},${origin.longitude}`);
