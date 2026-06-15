@@ -165,21 +165,24 @@ function initializePopularTempleGrid(grid) {
   let visibleCount = 0;
   const activeRegions = new Set();
   const activeProvinces = new Set();
+  const appliedRegions = new Set();
+  const appliedProvinces = new Set();
+  const appliedPurposes = new Set();
   let activeNearby = false;
   let userLocation = null;
   let isRequestingLocation = false;
   let nearbyStatus = "";
   const activePurposes = new Set();
+  let appliedQuery = "";
 
   if (!cards.length) return;
 
+  initializeSmoothFilterAccordions(filterRoot);
   countNode?.setAttribute("role", "status");
   countNode?.setAttribute("aria-live", "polite");
   emptyNode?.setAttribute("role", "status");
   nearbyButton?.setAttribute("aria-pressed", "false");
-  updateRegionTags();
-  updateProvinceTags();
-  updatePurposeTags();
+  updateFacetOptions();
 
   grid.addEventListener(
     "error",
@@ -205,15 +208,13 @@ function initializePopularTempleGrid(grid) {
 
   filterForm?.addEventListener("submit", (event) => {
     event.preventDefault();
+    commitDraftFilters();
     applyPopularFilters();
+    scrollToPopularResults();
   });
 
   document.addEventListener("mw:temple-overrides-applied", () => {
-    updateProvinceTags();
-    applyPopularFilters();
-  });
-
-  filterName?.addEventListener("input", () => {
+    updateFacetOptions();
     applyPopularFilters();
   });
 
@@ -221,13 +222,15 @@ function initializePopularTempleGrid(grid) {
     if (filterName) filterName.value = "";
     activeRegions.clear();
     activeProvinces.clear();
+    appliedRegions.clear();
+    appliedProvinces.clear();
+    appliedPurposes.clear();
+    appliedQuery = "";
     activeNearby = false;
     activePurposes.clear();
     clearCardDistances();
     updateNearbyButton();
-    updateRegionTags();
-    updateProvinceTags();
-    updatePurposeTags();
+    updateFacetOptions();
     applyPopularFilters();
   });
 
@@ -248,9 +251,7 @@ function initializePopularTempleGrid(grid) {
       [...activeProvinces].forEach((province) => {
         if (!allowedProvinces.has(province)) activeProvinces.delete(province);
       });
-      updateRegionTags();
-      updateProvinceTags();
-      applyPopularFilters();
+      updateFacetOptions();
     });
   });
 
@@ -264,8 +265,7 @@ function initializePopularTempleGrid(grid) {
       } else {
         activePurposes.add(value);
       }
-      updatePurposeTags();
-      applyPopularFilters();
+      updateFacetOptions();
     });
   });
 
@@ -304,9 +304,11 @@ function initializePopularTempleGrid(grid) {
     }
 
     activeNearby = true;
+    commitDraftFilters();
     updateCardDistances();
     updateNearbyButton();
     applyPopularFilters();
+    scrollToPopularResults();
   });
 
   if (!sentinel || !("IntersectionObserver" in window)) {
@@ -325,12 +327,11 @@ function initializePopularTempleGrid(grid) {
   observer.observe(sentinel);
 
   function applyPopularFilters() {
-    const query = normalize(filterName?.value || "");
     filteredCards = cards.filter((card) => {
-      const matchesQuery = !query || normalize(getCardSearchText(card)).includes(query);
-      const matchesRegion = !activeRegions.size || activeRegions.has(card.dataset.region);
-      const matchesProvince = !activeProvinces.size || activeProvinces.has(card.dataset.province);
-      const matchesPurpose = !activePurposes.size || splitDataTags(card.dataset.blessings).some((tag) => activePurposes.has(tag));
+      const matchesQuery = !appliedQuery || normalize(getCardSearchText(card)).includes(appliedQuery);
+      const matchesRegion = !appliedRegions.size || appliedRegions.has(card.dataset.region);
+      const matchesProvince = !appliedProvinces.size || appliedProvinces.has(card.dataset.province);
+      const matchesPurpose = !appliedPurposes.size || splitDataTags(card.dataset.blessings).some((tag) => appliedPurposes.has(tag));
       return matchesQuery && matchesRegion && matchesProvince && matchesPurpose;
     });
     sortFilteredCards();
@@ -339,11 +340,11 @@ function initializePopularTempleGrid(grid) {
     document.dispatchEvent(new CustomEvent("mw:filter-change", {
       detail: {
         scope: "temple_cards",
-        region: activeRegions.values().next().value || "all",
-        province: activeProvinces.values().next().value || "all",
-        regions: [...activeRegions],
-        provinces: [...activeProvinces],
-        purposes: [...activePurposes],
+        region: appliedRegions.values().next().value || "all",
+        province: appliedProvinces.values().next().value || "all",
+        regions: [...appliedRegions],
+        provinces: [...appliedProvinces],
+        purposes: [...appliedPurposes],
         nearby: activeNearby,
         resultCount: filteredCards.length,
       },
@@ -379,23 +380,74 @@ function initializePopularTempleGrid(grid) {
     updateLoadMoreButton();
   }
 
-  function updateRegionTags() {
+  function commitDraftFilters() {
+    appliedQuery = normalize(filterName?.value || "");
+    replaceSet(appliedRegions, activeRegions);
+    replaceSet(appliedProvinces, activeProvinces);
+    replaceSet(appliedPurposes, activePurposes);
+  }
+
+  function replaceSet(target, source) {
+    target.clear();
+    source.forEach((value) => target.add(value));
+  }
+
+  function scrollToPopularResults() {
+    grid.closest(".temples-section")?.scrollIntoView({ block: "start", behavior: "smooth" });
+  }
+
+  function updateFacetOptions() {
+    const availableRegions = new Set(
+      cards
+        .filter(
+          (card) =>
+            (!activeProvinces.size || activeProvinces.has(card.dataset.province)) &&
+            matchesCardPurposes(card),
+        )
+        .map((card) => card.dataset.region),
+    );
+    const availableProvinces = new Set(
+      cards
+        .filter(
+          (card) =>
+            (!activeRegions.size || activeRegions.has(card.dataset.region)) &&
+            matchesCardPurposes(card),
+        )
+        .map((card) => card.dataset.province),
+    );
+    const availablePurposes = new Set(
+      cards
+        .filter(
+          (card) =>
+            (!activeRegions.size || activeRegions.has(card.dataset.region)) &&
+            (!activeProvinces.size || activeProvinces.has(card.dataset.province)),
+        )
+        .flatMap((card) => splitDataTags(card.dataset.blessings)),
+    );
+
+    updateRegionTags(availableRegions);
+    updateProvinceTags(availableProvinces);
+    updatePurposeTags(availablePurposes);
+  }
+
+  function matchesCardPurposes(card) {
+    return !activePurposes.size || splitDataTags(card.dataset.blessings).some((purpose) => activePurposes.has(purpose));
+  }
+
+  function updateRegionTags(availableRegions) {
     regionTags.forEach((tag) => {
       const value = tag.value || "";
       const isActive = value ? activeRegions.has(value) : activeRegions.size === 0;
       tag.classList.toggle("is-active", isActive);
       tag.setAttribute("aria-pressed", String(isActive));
+      tag.hidden = Boolean(value) && !isActive && !availableRegions.has(value);
     });
   }
 
-  function updateProvinceTags() {
+  function updateProvinceTags(availableProvinces) {
     if (!provinceFilter || !provinceTagsRoot) return;
 
-    const provinces = uniqueSorted(
-      cards
-        .filter((card) => !activeRegions.size || activeRegions.has(card.dataset.region))
-        .map((card) => card.dataset.province),
-    );
+    const provinces = uniqueSorted([...availableProvinces, ...activeProvinces]);
 
     provinceTagsRoot.innerHTML = "";
 
@@ -408,12 +460,13 @@ function initializePopularTempleGrid(grid) {
     }
   }
 
-  function updatePurposeTags() {
+  function updatePurposeTags(availablePurposes) {
     purposeTags.forEach((tag) => {
       const value = tag.value || "";
       const isActive = value ? activePurposes.has(value) : activePurposes.size === 0;
       tag.classList.toggle("is-active", isActive);
       tag.setAttribute("aria-pressed", String(isActive));
+      tag.hidden = Boolean(value) && !isActive && !availablePurposes.has(value);
     });
     if (purposeSummary) {
       purposeSummary.textContent = activePurposes.size
@@ -440,9 +493,7 @@ function initializePopularTempleGrid(grid) {
         const matchingCard = cards.find((card) => card.dataset.province === value);
         if (matchingCard?.dataset.region) activeRegions.add(matchingCard.dataset.region);
       }
-      updateRegionTags();
-      updateProvinceTags();
-      applyPopularFilters();
+      updateFacetOptions();
     });
     return button;
   }
@@ -1011,6 +1062,72 @@ function normalizeTempleName(value) {
 function readPositiveInteger(value, fallback) {
   const number = Number(value);
   return Number.isInteger(number) && number > 0 ? number : fallback;
+}
+
+function initializeSmoothFilterAccordions(scope = document) {
+  const accordions = scope?.querySelectorAll?.(".temple-province-accordion, .temple-purpose-accordion") || [];
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  accordions.forEach((details) => {
+    if (details.dataset.smoothAccordion === "true") return;
+
+    const summary = details.querySelector("summary");
+    const content = summary?.nextElementSibling;
+    if (!summary || !content) return;
+
+    details.dataset.smoothAccordion = "true";
+
+    if (reduceMotion || !details.animate) return;
+
+    let animation = null;
+    let closing = false;
+
+    summary.addEventListener("click", (event) => {
+      event.preventDefault();
+      details.style.overflow = "hidden";
+
+      if (closing || !details.open) {
+        openDetails();
+      } else {
+        closeDetails();
+      }
+    });
+
+    function openDetails() {
+      details.style.height = `${details.offsetHeight}px`;
+      details.open = true;
+      window.requestAnimationFrame(() => {
+        const startHeight = details.style.height;
+        const endHeight = `${summary.offsetHeight + content.offsetHeight}px`;
+        runAnimation(startHeight, endHeight, true);
+      });
+    }
+
+    function closeDetails() {
+      closing = true;
+      runAnimation(`${details.offsetHeight}px`, `${summary.offsetHeight}px`, false);
+    }
+
+    function runAnimation(startHeight, endHeight, shouldOpen) {
+      animation?.cancel();
+      animation = details.animate(
+        { height: [startHeight, endHeight] },
+        { duration: 240, easing: "cubic-bezier(0.2, 0, 0.2, 1)" },
+      );
+      animation.onfinish = () => finishAnimation(shouldOpen);
+      animation.oncancel = () => {
+        closing = false;
+      };
+    }
+
+    function finishAnimation(shouldOpen) {
+      details.open = shouldOpen;
+      animation = null;
+      closing = false;
+      details.style.height = "";
+      details.style.overflow = "";
+    }
+  });
 }
 
 function escapeHtml(value) {

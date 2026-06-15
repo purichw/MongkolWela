@@ -31,6 +31,7 @@ function initializeTemplePlanner(planner, payload) {
   };
 
   planner._plannerState = { state, elements };
+  initializeSmoothFilterAccordions(planner);
   restoreState(state, elements);
   applyPinnedStart(state, elements);
   bindControls(state, elements);
@@ -249,7 +250,7 @@ function bindControls(state, elements) {
     persistState(state, elements);
   });
   elements.editButton?.addEventListener("click", () => {
-    elements.pickSection?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+    showManualEditMode(state, elements);
   });
   elements.saveButton?.addEventListener("click", () => {
     persistState(state, elements);
@@ -579,7 +580,7 @@ function updatePlannerTagStates(tags, activeValues, availableValues) {
     const isActive = value ? activeValues.has(value) : activeValues.size === 0;
     tag.classList.toggle("is-active", isActive);
     tag.setAttribute("aria-pressed", String(isActive));
-    tag.disabled = Boolean(value) && !isActive && !availableValues.has(value);
+    tag.hidden = Boolean(value) && !isActive && !availableValues.has(value);
   });
 }
 
@@ -710,6 +711,7 @@ function showFilteredPlaces(state, elements) {
   state.pickerReady = true;
   state.nearbyMode = false;
   elements.pickSection.hidden = false;
+  elements.result.hidden = true;
   state.visibleCount = 36;
   renderPicker(state, elements);
   refreshSelectionMap(state, elements);
@@ -730,6 +732,7 @@ function showNearbyPlaces(state, elements) {
   state.pickerReady = true;
   state.nearbyMode = true;
   elements.pickSection.hidden = false;
+  elements.result.hidden = true;
   state.visibleCount = 36;
   renderPicker(state, elements);
   refreshSelectionMap(state, elements);
@@ -757,8 +760,8 @@ function getTargetCount(elements) {
 
 function buildAutomaticPlan(state, elements) {
   state.manualSelectionOrder = false;
-  state.pickerReady = true;
-  elements.pickSection.hidden = false;
+  state.pickerReady = false;
+  elements.pickSection.hidden = true;
   const target = getTargetCount(elements);
   const candidates = getAutomaticCandidates(state, elements);
   const pinnedStart = getPinnedStartItem(state, elements);
@@ -771,8 +774,6 @@ function buildAutomaticPlan(state, elements) {
   const chosen = [];
 
   if (!candidates.length && !pinnedStart) {
-    renderPicker(state, elements);
-    refreshSelectionMap(state, elements);
     showNoResultsDialog(state, elements, "ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ที่ตรงกับภาค จังหวัด และจุดประสงค์ที่เลือก");
     persistState(state, elements);
     return;
@@ -801,9 +802,20 @@ function buildAutomaticPlan(state, elements) {
   state.plan = optimizeOrder(chosen, anchor);
   state.selected = state.plan.map((item) => item.id);
   renderSelected(state, elements);
+  renderPlan(state, elements);
+}
+
+function showManualEditMode(state, elements, options = {}) {
+  state.pickerReady = true;
+  elements.pickSection.hidden = false;
+  elements.result.hidden = true;
+  state.visibleCount = Math.max(state.visibleCount, 36);
+  renderSelected(state, elements);
   renderPicker(state, elements);
   refreshSelectionMap(state, elements);
-  renderPlan(state, elements);
+  if (options.status) elements.locationStatus.textContent = options.status;
+  elements.pickSection?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+  persistState(state, elements);
 }
 
 function buildSelectedPlan(state, elements) {
@@ -1009,12 +1021,7 @@ function handleTimelineAction(event, state, elements) {
   if (event.target.closest("[data-planner-replace]")) {
     const [removed] = state.plan.splice(index, 1);
     state.selected = state.plan.map((item) => item.id);
-    renderSelected(state, elements);
-    renderPicker(state, elements);
-    refreshSelectionMap(state, elements);
-    elements.result.hidden = true;
-    elements.locationStatus.textContent = `นำ ${removed.name} ออกจากทริปแล้ว เลือกสถานที่ใหม่ได้เลย`;
-    elements.pickSection?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+    showManualEditMode(state, elements, { status: `นำ ${removed.name} ออกจากทริปแล้ว เลือกสถานที่ใหม่ได้เลย` });
   }
 }
 
@@ -1391,6 +1398,72 @@ function formatDistanceRange(leg) {
 
 function normalize(value) {
   return String(value || "").normalize("NFC").trim().toLocaleLowerCase("th");
+}
+
+function initializeSmoothFilterAccordions(scope = document) {
+  const accordions = scope?.querySelectorAll?.(".temple-province-accordion, .temple-purpose-accordion") || [];
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  accordions.forEach((details) => {
+    if (details.dataset.smoothAccordion === "true") return;
+
+    const summary = details.querySelector("summary");
+    const content = summary?.nextElementSibling;
+    if (!summary || !content) return;
+
+    details.dataset.smoothAccordion = "true";
+
+    if (reduceMotion || !details.animate) return;
+
+    let animation = null;
+    let closing = false;
+
+    summary.addEventListener("click", (event) => {
+      event.preventDefault();
+      details.style.overflow = "hidden";
+
+      if (closing || !details.open) {
+        openDetails();
+      } else {
+        closeDetails();
+      }
+    });
+
+    function openDetails() {
+      details.style.height = `${details.offsetHeight}px`;
+      details.open = true;
+      window.requestAnimationFrame(() => {
+        const startHeight = details.style.height;
+        const endHeight = `${summary.offsetHeight + content.offsetHeight}px`;
+        runAnimation(startHeight, endHeight, true);
+      });
+    }
+
+    function closeDetails() {
+      closing = true;
+      runAnimation(`${details.offsetHeight}px`, `${summary.offsetHeight}px`, false);
+    }
+
+    function runAnimation(startHeight, endHeight, shouldOpen) {
+      animation?.cancel();
+      animation = details.animate(
+        { height: [startHeight, endHeight] },
+        { duration: 240, easing: "cubic-bezier(0.2, 0, 0.2, 1)" },
+      );
+      animation.onfinish = () => finishAnimation(shouldOpen);
+      animation.oncancel = () => {
+        closing = false;
+      };
+    }
+
+    function finishAnimation(shouldOpen) {
+      details.open = shouldOpen;
+      animation = null;
+      closing = false;
+      details.style.height = "";
+      details.style.overflow = "";
+    }
+  });
 }
 
 function toRadians(value) {
