@@ -161,6 +161,7 @@ function initializePopularTempleGrid(grid) {
   const initialCount = readPositiveInteger(grid.dataset.initialCount, 9);
   const batchSize = readPositiveInteger(grid.dataset.batchSize, initialCount);
   const originalCardOrder = new Map(cards.map((card, index) => [card, index]));
+  const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
   let filteredCards = cards;
   let visibleCount = 0;
   const activeRegions = new Set();
@@ -321,7 +322,7 @@ function initializePopularTempleGrid(grid) {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       revealNext(batchSize);
     },
-    { rootMargin: "480px 0px" },
+    { rootMargin: "0px 0px 260px 0px" },
   );
 
   observer.observe(sentinel);
@@ -336,7 +337,7 @@ function initializePopularTempleGrid(grid) {
     });
     sortFilteredCards();
     visibleCount = Math.min(initialCount, filteredCards.length);
-    renderVisibleCards();
+    renderVisibleCards({ animateAll: true });
     document.dispatchEvent(new CustomEvent("mw:filter-change", {
       detail: {
         scope: "temple_cards",
@@ -353,21 +354,35 @@ function initializePopularTempleGrid(grid) {
 
   function revealNext(count) {
     visibleCount = Math.min(filteredCards.length, visibleCount + count);
-    renderVisibleCards();
+    renderVisibleCards({ animateAll: false });
   }
 
-  function renderVisibleCards() {
+  function renderVisibleCards({ animateAll = false } = {}) {
+    const previouslyVisible = new Set(cards.filter((card) => !card.hidden));
+
     filteredCards.forEach((card) => {
       grid.appendChild(card);
     });
 
     cards.forEach((card) => {
       card.hidden = true;
+      card.classList.remove("is-reveal-ready", "is-revealed");
+      card.style.removeProperty("--temple-card-reveal-delay");
     });
 
-    filteredCards.slice(0, visibleCount).forEach((card) => {
+    const visibleCards = filteredCards.slice(0, visibleCount);
+    const revealCards = [];
+
+    visibleCards.forEach((card) => {
       card.hidden = false;
+      if (animateAll || !previouslyVisible.has(card)) {
+        revealCards.push(card);
+      } else {
+        card.classList.add("is-revealed");
+      }
     });
+
+    queueCardReveal(revealCards);
 
     if (countNode) {
       countNode.textContent = `แสดง ${filteredCards.length.toLocaleString("th-TH")} จาก ${cards.length.toLocaleString("th-TH")} พิกัด${activeNearby ? " · เรียงตามใกล้ฉัน" : ""}${nearbyStatus ? ` · ${nearbyStatus}` : ""}`;
@@ -378,6 +393,56 @@ function initializePopularTempleGrid(grid) {
     }
 
     updateLoadMoreButton();
+  }
+
+  function queueCardReveal(revealCards) {
+    if (!revealCards.length) return;
+
+    if (prefersReducedMotion) {
+      revealCards.forEach((card) => {
+        card.classList.add("is-revealed");
+      });
+      return;
+    }
+
+    revealCards.forEach((card) => {
+      card.classList.add("is-reveal-ready");
+      card.classList.remove("is-revealed");
+    });
+
+    window.requestAnimationFrame(() => {
+      assignRevealDelays(revealCards);
+      window.requestAnimationFrame(() => {
+        revealCards.forEach((card) => {
+          card.classList.add("is-revealed");
+        });
+      });
+    });
+  }
+
+  function assignRevealDelays(revealCards) {
+    const sortedCards = [...revealCards].sort((a, b) => {
+      const aRect = a.getBoundingClientRect();
+      const bRect = b.getBoundingClientRect();
+      if (Math.abs(aRect.top - bRect.top) > 8) return aRect.top - bRect.top;
+      return aRect.left - bRect.left;
+    });
+    let rowTop = null;
+    let rowIndex = -1;
+    let columnIndex = 0;
+
+    sortedCards.forEach((card) => {
+      const rect = card.getBoundingClientRect();
+      if (rowTop === null || Math.abs(rect.top - rowTop) > 8) {
+        rowTop = rect.top;
+        rowIndex += 1;
+        columnIndex = 0;
+      }
+
+      const delay = rowIndex * 120 + columnIndex * 24;
+      card.style.setProperty("--temple-card-reveal-delay", `${delay}ms`);
+      columnIndex += 1;
+    });
   }
 
   function commitDraftFilters() {

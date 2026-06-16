@@ -723,6 +723,8 @@ body.has-planner-dialog {
 }
 
 .planner-place-card {
+  --planner-card-reveal-delay: 0ms;
+
   display: grid;
   grid-template-columns: 132px minmax(0, 1fr);
   min-height: 190px;
@@ -731,6 +733,21 @@ body.has-planner-dialog {
   border: 1px solid rgba(77, 56, 41, 0.16);
   border-radius: var(--radius);
   box-shadow: 0 12px 34px rgba(39, 29, 20, 0.1);
+}
+
+.planner-place-card.is-reveal-ready {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 560ms ease,
+    transform 680ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--planner-card-reveal-delay);
+  will-change: opacity, transform;
+}
+
+.planner-place-card.is-reveal-ready.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .planner-place-card.is-selected {
@@ -1251,6 +1268,14 @@ body.has-planner-dialog {
   color: var(--ink-soft);
   font-size: 0.82rem;
   line-height: 1.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .planner-place-card.is-reveal-ready {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 @media (max-width: 1080px) {

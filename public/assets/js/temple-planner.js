@@ -1,5 +1,6 @@
 const root = document.querySelector("[data-temple-planner]");
 const payloadNode = document.getElementById("templePlannerData");
+const PLANNER_PICKER_BATCH_SIZE = 12;
 
 if (root && payloadNode) initializeTemplePlanner(root, JSON.parse(payloadNode.textContent || "{}"));
 
@@ -12,7 +13,7 @@ function initializeTemplePlanner(planner, payload) {
     itemById,
     selected: [],
     plan: [],
-    visibleCount: 36,
+    visibleCount: PLANNER_PICKER_BATCH_SIZE,
     currentLocation: null,
     pinnedStartId: "",
     activeRegions: new Set(),
@@ -37,6 +38,7 @@ function initializeTemplePlanner(planner, payload) {
   restoreState(state, elements);
   applyPinnedStart(state, elements);
   bindControls(state, elements);
+  initializePlannerLazyLoading(state, elements);
   synchronizeFilterOptions(state, elements, "restore");
   updateStartWarning(state, elements);
   elements.pickSection.hidden = true;
@@ -119,7 +121,7 @@ function bindControls(state, elements) {
       const target = getTargetCount(elements);
       if (!hasVisiblePlan(state, elements) && state.selected.length > target) state.selected = state.selected.slice(0, target);
       const planSynced = hasVisiblePlan(state, elements) ? false : synchronizePlanWithSelection(state, elements);
-      state.visibleCount = 36;
+      resetPlannerVisibleCount(state);
       renderSelected(state, elements);
       renderPicker(state, elements);
       updateTargetCount(state, elements);
@@ -208,7 +210,7 @@ function bindControls(state, elements) {
   });
 
   elements.search?.addEventListener("input", () => {
-    state.visibleCount = 36;
+    resetPlannerVisibleCount(state);
     updateCriteriaNotice(state, elements);
     if (!state.pickerReady || state.pickerContext.type === "browse") {
       renderPicker(state, elements);
@@ -218,7 +220,7 @@ function bindControls(state, elements) {
   });
 
   elements.pickerSearch?.addEventListener("input", () => {
-    state.visibleCount = 36;
+    resetPlannerVisibleCount(state);
     state.pickerContext.query = elements.pickerSearch.value || "";
     renderPicker(state, elements);
     refreshSelectionMap(state, elements);
@@ -227,7 +229,7 @@ function bindControls(state, elements) {
   elements.pickerModeButtons.forEach((button) => {
     button.addEventListener("click", () => {
       state.pickerContext.mode = button.dataset.plannerPickerMode || "recommended";
-      state.visibleCount = 36;
+      resetPlannerVisibleCount(state);
       renderPicker(state, elements);
       refreshSelectionMap(state, elements);
     });
@@ -235,13 +237,13 @@ function bindControls(state, elements) {
 
   elements.pickerToggleScope?.addEventListener("click", () => {
     state.pickerContext.useCriteria = !state.pickerContext.useCriteria;
-    state.visibleCount = 36;
+    resetPlannerVisibleCount(state);
     renderPicker(state, elements);
     refreshSelectionMap(state, elements);
   });
 
   elements.moreButton?.addEventListener("click", () => {
-    state.visibleCount += 36;
+    revealMorePlannerPlaces(state, elements);
     renderPicker(state, elements);
   });
 
@@ -332,7 +334,7 @@ function bindControls(state, elements) {
 }
 
 function applyPlannerFilterChange(state, elements) {
-  state.visibleCount = 36;
+  resetPlannerVisibleCount(state);
   state.nearbyMode = false;
   synchronizeFilterOptions(state, elements);
   updateStartWarning(state, elements);
@@ -342,6 +344,38 @@ function applyPlannerFilterChange(state, elements) {
     refreshSelectionMap(state, elements);
   }
   persistState(state, elements);
+}
+
+function resetPlannerVisibleCount(state) {
+  state.visibleCount = PLANNER_PICKER_BATCH_SIZE;
+}
+
+function revealMorePlannerPlaces(state, elements) {
+  const total = getPickerItems(state, elements).length;
+  state.visibleCount = Math.min(total, state.visibleCount + PLANNER_PICKER_BATCH_SIZE);
+}
+
+function initializePlannerLazyLoading(state, elements) {
+  if (!elements.moreButton || !("IntersectionObserver" in window)) return;
+
+  let revealQueued = false;
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (revealQueued || !entries.some((entry) => entry.isIntersecting)) return;
+      if (!state.pickerReady || elements.pickSection?.hidden || elements.moreButton.hidden) return;
+
+      revealQueued = true;
+      window.requestAnimationFrame(() => {
+        revealMorePlannerPlaces(state, elements);
+        renderPicker(state, elements);
+        refreshSelectionMap(state, elements);
+        revealQueued = false;
+      });
+    },
+    { rootMargin: "0px 0px 260px 0px" },
+  );
+
+  observer.observe(elements.moreButton);
 }
 
 function activateTab(activeTab, tabs, panels, dataKey) {
@@ -377,6 +411,9 @@ function renderPicker(state, elements) {
   const visible = filtered.slice(0, state.visibleCount);
   const selectedIds = new Set(state.selected);
   const origin = getStartPoint(state, elements);
+  const previousVisibleIds = new Set(
+    [...elements.grid.querySelectorAll("[data-planner-place-card]")].map((card) => card.dataset.plannerPlaceCard),
+  );
 
   renderPickerContext(state, elements, filtered.length);
   elements.grid.innerHTML = visible
@@ -388,7 +425,7 @@ function renderPicker(state, elements) {
         : "";
       const recommendation = getPickerRecommendationText(state, elements, item);
       return `
-        <article class="planner-place-card${selected ? " is-selected" : ""}">
+        <article class="planner-place-card${selected ? " is-selected" : ""}" data-planner-place-card="${escapeHtml(item.id)}">
           <figure>
             <picture>
               ${item.imageMobileUrl && item.imageMobileUrl !== item.imageUrl ? `<source media="(max-width: 767px)" srcset="${escapeHtml(item.imageMobileUrl)}">` : ""}
@@ -415,8 +452,75 @@ function renderPicker(state, elements) {
     })
     .join("");
 
+  revealPlannerPlaceCards(elements, previousVisibleIds);
   elements.moreButton.hidden = filtered.length <= state.visibleCount;
   elements.empty.hidden = filtered.length > 0;
+}
+
+function revealPlannerPlaceCards(elements, previousVisibleIds) {
+  const cards = [...elements.grid.querySelectorAll("[data-planner-place-card]")];
+  const revealCards = [];
+
+  cards.forEach((card) => {
+    const wasVisible = previousVisibleIds.has(card.dataset.plannerPlaceCard);
+    if (wasVisible) {
+      card.classList.add("is-revealed");
+      return;
+    }
+    revealCards.push(card);
+  });
+
+  queuePlannerCardReveal(revealCards);
+}
+
+function queuePlannerCardReveal(revealCards) {
+  if (!revealCards.length) return;
+
+  if (prefersReducedMotion()) {
+    revealCards.forEach((card) => {
+      card.classList.add("is-revealed");
+    });
+    return;
+  }
+
+  revealCards.forEach((card) => {
+    card.classList.add("is-reveal-ready");
+    card.classList.remove("is-revealed");
+  });
+
+  window.requestAnimationFrame(() => {
+    assignPlannerRevealDelays(revealCards);
+    window.requestAnimationFrame(() => {
+      revealCards.forEach((card) => {
+        card.classList.add("is-revealed");
+      });
+    });
+  });
+}
+
+function assignPlannerRevealDelays(revealCards) {
+  const sortedCards = [...revealCards].sort((a, b) => {
+    const aRect = a.getBoundingClientRect();
+    const bRect = b.getBoundingClientRect();
+    if (Math.abs(aRect.top - bRect.top) > 8) return aRect.top - bRect.top;
+    return aRect.left - bRect.left;
+  });
+  let rowTop = null;
+  let rowIndex = -1;
+  let columnIndex = 0;
+
+  sortedCards.forEach((card) => {
+    const rect = card.getBoundingClientRect();
+    if (rowTop === null || Math.abs(rect.top - rowTop) > 8) {
+      rowTop = rect.top;
+      rowIndex += 1;
+      columnIndex = 0;
+    }
+
+    const delay = rowIndex * 120 + columnIndex * 24;
+    card.style.setProperty("--planner-card-reveal-delay", `${delay}ms`);
+    columnIndex += 1;
+  });
 }
 
 function renderSelected(state, elements) {
@@ -970,7 +1074,7 @@ function resetSearchFilters(state, elements) {
   elements.start.value = "";
   state.currentLocation = null;
   state.nearbyMode = false;
-  state.visibleCount = 36;
+  resetPlannerVisibleCount(state);
   if (!hasPlan) applyPinnedStart(state, elements);
   const planSynced = hasPlan ? false : synchronizePlanWithSelection(state, elements);
   synchronizeFilterOptions(state, elements);
@@ -1116,7 +1220,7 @@ function showFilteredPlaces(state, elements) {
   if (elements.pickerSearch) elements.pickerSearch.value = "";
   elements.pickSection.hidden = false;
   elements.result.hidden = true;
-  state.visibleCount = 36;
+  resetPlannerVisibleCount(state);
   renderPicker(state, elements);
   refreshSelectionMap(state, elements);
   const count = getFilteredItems(state, elements).length;
@@ -1144,7 +1248,7 @@ function showNearbyPlaces(state, elements) {
   if (elements.pickerSearch) elements.pickerSearch.value = "";
   elements.pickSection.hidden = false;
   elements.result.hidden = true;
-  state.visibleCount = 36;
+  resetPlannerVisibleCount(state);
   renderPicker(state, elements);
   refreshSelectionMap(state, elements);
   const radiusKm = getRadiusKm(elements);
@@ -1233,7 +1337,7 @@ function showManualEditMode(state, elements, options = {}) {
   if (elements.pickerSearch) elements.pickerSearch.value = "";
   elements.pickSection.hidden = false;
   elements.result.hidden = true;
-  state.visibleCount = Math.max(state.visibleCount, 36);
+  state.visibleCount = Math.max(state.visibleCount, PLANNER_PICKER_BATCH_SIZE);
   renderSelected(state, elements);
   renderPicker(state, elements);
   refreshSelectionMap(state, elements);
