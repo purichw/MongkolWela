@@ -138,16 +138,19 @@ function mergeOrderedById(contentItems = [], bundledItems = []) {
 
 function mergeWithBundledContent(content, bundledContent) {
   if (!content || !bundledContent || content === bundledContent) return content;
+  const bundledPages = Array.isArray(bundledContent.pages) ? bundledContent.pages : null;
+  const bundledTabs = Array.isArray(bundledContent.navigation?.tabs) ? bundledContent.navigation.tabs : null;
   const bundledUtility = Array.isArray(bundledContent.navigation?.utility)
     ? bundledContent.navigation.utility
     : null;
 
   return {
     ...content,
-    pages: mergeOrderedById(content.pages || [], bundledContent.pages || []),
+    pages: bundledPages || mergeOrderedById(content.pages || [], bundledContent.pages || []),
     navigation: {
       ...(content.navigation || {}),
-      tabs: mergeOrderedById(content.navigation?.tabs || [], bundledContent.navigation?.tabs || []),
+      ...(bundledContent.navigation || {}),
+      tabs: bundledTabs || mergeOrderedById(content.navigation?.tabs || [], bundledContent.navigation?.tabs || []),
       utility: bundledUtility || content.navigation?.utility || [],
     },
   };
