@@ -138,6 +138,9 @@ function mergeOrderedById(contentItems = [], bundledItems = []) {
 
 function mergeWithBundledContent(content, bundledContent) {
   if (!content || !bundledContent || content === bundledContent) return content;
+  const bundledUtility = Array.isArray(bundledContent.navigation?.utility)
+    ? bundledContent.navigation.utility
+    : null;
 
   return {
     ...content,
@@ -145,7 +148,7 @@ function mergeWithBundledContent(content, bundledContent) {
     navigation: {
       ...(content.navigation || {}),
       tabs: mergeOrderedById(content.navigation?.tabs || [], bundledContent.navigation?.tabs || []),
-      utility: mergeOrderedById(content.navigation?.utility || [], bundledContent.navigation?.utility || []),
+      utility: bundledUtility || content.navigation?.utility || [],
     },
   };
 }

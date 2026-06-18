@@ -45,6 +45,7 @@ function validateSource(label, content) {
   if (!content.schemaVersion) errors.push(`${label}: missing schemaVersion`);
   if (!Array.isArray(content.pages)) errors.push(`${label}: pages must be an array`);
   if (!Array.isArray(content.navigation?.tabs)) errors.push(`${label}: navigation.tabs must be an array`);
+  if (!Array.isArray(content.navigation?.utility)) errors.push(`${label}: navigation.utility must be an array`);
 
   const pages = content.pages || [];
   const pageIds = new Set();
@@ -90,11 +91,26 @@ function validateSource(label, content) {
       }
     });
   });
+
+  validateNavigationUtility(label, content.navigation?.utility || []);
 }
 
 function compareSources(leftLabel, left, rightLabel, right) {
   comparePages(leftLabel, left.pages || [], rightLabel, right.pages || []);
   compareNavigation(leftLabel, left.navigation?.tabs || [], rightLabel, right.navigation?.tabs || []);
+  compareUtilityNavigation(leftLabel, left.navigation?.utility || [], rightLabel, right.navigation?.utility || []);
+}
+
+function validateNavigationUtility(label, utilityItems) {
+  const itemIds = new Set();
+  utilityItems.forEach((item, itemIndex) => {
+    const itemRef = `${label}: navigation.utility[${itemIndex}]`;
+    if (!item.id) errors.push(`${itemRef}: missing id`);
+    if (item.id && itemIds.has(item.id)) errors.push(`${itemRef}: duplicate item id ${item.id}`);
+    if (item.id) itemIds.add(item.id);
+    if (!item.label) errors.push(`${itemRef}: missing label`);
+    if (!item.href) errors.push(`${itemRef}: missing href`);
+  });
 }
 
 function comparePages(leftLabel, leftPages, rightLabel, rightPages) {
@@ -142,6 +158,22 @@ function compareNavigation(leftLabel, leftTabs, rightLabel, rightTabs) {
     if (expectedTabId !== actualTabId) {
       errors.push(`${rightLabel}: tab order mismatch at index ${tabIndex}, expected ${expectedTabId}, got ${actualTabId}`);
     }
+  });
+}
+
+function compareUtilityNavigation(leftLabel, leftItems, rightLabel, rightItems) {
+  const leftById = byId(leftItems);
+  const rightById = byId(rightItems);
+  compareIdSets(`${leftLabel} navigation utility`, leftById, `${rightLabel} navigation utility`, rightById);
+  compareSequence(`${rightLabel} utility item order`, leftItems, rightItems);
+
+  leftItems.forEach((leftItem) => {
+    const rightItem = rightById.get(leftItem.id);
+    if (!rightItem) return;
+    const itemRef = `${rightLabel} utility item ${leftItem.id}`;
+    compareField(itemRef, "label", leftItem.label, rightItem.label);
+    compareField(itemRef, "href", leftItem.href, rightItem.href);
+    compareField(itemRef, "enabled", leftItem.enabled, rightItem.enabled);
   });
 }
 

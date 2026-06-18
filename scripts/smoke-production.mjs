@@ -84,6 +84,7 @@ async function checkCmsContent() {
 
   comparePages(liveContent.pages || [], content.pages || []);
   compareNavigation(liveContent.navigation?.tabs || [], content.navigation?.tabs || []);
+  compareUtilityNavigation(liveContent.navigation?.utility || [], content.navigation?.utility || []);
 }
 
 async function checkStatus(route) {
@@ -206,6 +207,34 @@ function compareNavigationItems(tabId, expectedItems, actualItems) {
     });
     if (Boolean(expectedItem.section) !== Boolean(actualItem.section)) {
       failures.push(`/api/admin/content nav item ${expectedItem.id}: section mismatch`);
+    }
+  });
+}
+
+function compareUtilityNavigation(expectedItems, actualItems) {
+  const expectedOrder = expectedItems.map((item) => item.id).join(",");
+  const actualOrder = actualItems.map((item) => item.id).join(",");
+  if (expectedOrder !== actualOrder) {
+    failures.push(`/api/admin/content navigation utility: item order mismatch`);
+  }
+
+  const expectedById = byId(expectedItems);
+  const actualById = byId(actualItems);
+  expectedById.forEach((expectedItem, id) => {
+    const actualItem = actualById.get(id);
+    if (!actualItem) {
+      failures.push(`/api/admin/content navigation utility: missing item ${id}`);
+      return;
+    }
+    ["label", "href", "enabled"].forEach((field) => {
+      if ((expectedItem[field] ?? null) !== (actualItem[field] ?? null)) {
+        failures.push(`/api/admin/content navigation utility item ${id}: ${field} mismatch`);
+      }
+    });
+  });
+  actualById.forEach((_actualItem, id) => {
+    if (!expectedById.has(id)) {
+      failures.push(`/api/admin/content navigation utility: unexpected item ${id}`);
     }
   });
 }
