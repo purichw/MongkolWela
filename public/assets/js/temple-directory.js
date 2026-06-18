@@ -155,7 +155,6 @@ function initializePopularTempleGrid(grid) {
   const purposeSummary = filterRoot?.querySelector("[data-temple-purpose-summary]");
   const countNode = document.querySelector("[data-popular-temple-count]");
   const emptyNode = document.querySelector("[data-popular-temple-empty]");
-  const sentinel = document.querySelector("[data-popular-temple-sentinel]");
   const loadMoreButton = document.querySelector("[data-popular-temple-more]");
   const placeholderSrc = grid.dataset.placeholderSrc;
   const initialCount = readPositiveInteger(grid.dataset.initialCount, 9);
@@ -312,20 +311,7 @@ function initializePopularTempleGrid(grid) {
     scrollToPopularResults();
   });
 
-  if (!sentinel || !("IntersectionObserver" in window)) {
-    updateLoadMoreButton();
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      revealNext(batchSize);
-    },
-    { rootMargin: "0px 0px 260px 0px" },
-  );
-
-  observer.observe(sentinel);
+  updateLoadMoreButton();
 
   function applyPopularFilters() {
     filteredCards = cards.filter((card) => {

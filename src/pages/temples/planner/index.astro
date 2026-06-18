@@ -7,7 +7,7 @@ import { getTemplePlannerData } from "../../../data/temple-planner.js";
 
 const plannerData = getTemplePlannerData();
 const plannerPayload = JSON.stringify(plannerData).replace(/</g, "\\u003c");
-const extraStyles = ["/assets/css/temple-planner.css?feature=20260618-03"];
+const extraStyles = ["/assets/css/temple-planner.css?feature=20260618-04"];
 const extraScripts = ["/assets/js/temple-planner.js"];
 const pageTitle = "วางแผนไหว้พระ 9 วัด | มงคลเวลา";
 const pageDescription =
@@ -97,7 +97,7 @@ const pageDescription =
             </div>
           </fieldset>
 
-          <label class="planner-field">
+          <label class="planner-field planner-field--budget">
             <span>เวลาที่มี</span>
             <select data-planner-budget>
               <option value="300">ครึ่งวัน · ประมาณ 5 ชั่วโมง</option>
@@ -106,17 +106,19 @@ const pageDescription =
             </select>
           </label>
 
-          <label class="planner-field">
-            <span>วันที่เริ่ม</span>
-            <input type="date" data-planner-start-date />
-            <small>เลือกได้ตั้งแต่วันนี้เป็นต้นไป ตามเวลาไทย (GMT+7)</small>
-          </label>
+          <div class="planner-date-time">
+            <label class="planner-field planner-field--date">
+              <span>วันที่เริ่ม</span>
+              <input type="date" data-planner-start-date />
+              <small>เลือกได้ตั้งแต่วันนี้เป็นต้นไป ตามเวลาไทย (GMT+7)</small>
+            </label>
 
-          <label class="planner-field">
-            <span>เวลาเริ่ม</span>
-            <input type="time" value="08:00" data-planner-start-time />
-            <small>ถ้าเป็นวันนี้ จะเลือกได้ตั้งแต่เวลาปัจจุบันขึ้นไป</small>
-          </label>
+            <label class="planner-field planner-field--time">
+              <span>เวลาเริ่ม</span>
+              <input type="time" value="08:00" data-planner-start-time />
+              <small>ถ้าเป็นวันนี้ จะเลือกได้ตั้งแต่เวลาปัจจุบันขึ้นไป</small>
+            </label>
+          </div>
 
           <div class="planner-filter-panel">
             <label class="planner-field planner-filter-name">

@@ -380,9 +380,11 @@
 }
 
 .temple-detail {
+  position: relative;
+  z-index: 1;
   width: min(var(--container), calc(100% - 40px));
   margin: 0 auto;
-  padding: 32px 0 92px;
+  padding: 44px 0 92px;
 }
 
 .temple-detail__back {
@@ -558,9 +560,9 @@
 .temple-detail-layout {
   position: relative;
   isolation: isolate;
-  z-index: 20;
+  z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
   gap: 34px;
   align-items: start;
   margin-top: 42px;
@@ -645,6 +647,7 @@
   gap: 16px;
   margin-top: 28px;
   padding: 22px;
+  overflow: hidden;
   background: rgba(255, 250, 240, 0.62);
   border: 1px solid rgba(194, 141, 53, 0.22);
   border-radius: var(--radius);
@@ -674,7 +677,7 @@
 
 .temple-detail-visit__grid {
   display: grid;
-  grid-template-columns: minmax(220px, 0.9fr) minmax(300px, 1.15fr) minmax(220px, 0.9fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
   gap: 12px;
   align-items: start;
 }
@@ -785,14 +788,24 @@
 }
 
 .temple-detail-visit-timetable {
+  display: block;
   width: 100%;
+  overflow-x: auto;
   border-collapse: collapse;
   color: var(--ink);
   font-size: 0.9rem;
   font-weight: 900;
 }
 
+.temple-detail-visit-timetable tbody {
+  display: grid;
+  min-width: 100%;
+}
+
 .temple-detail-visit-timetable tr {
+  display: grid;
+  grid-template-columns: minmax(88px, 0.65fr) minmax(110px, 1fr);
+  gap: 10px;
   border-top: 1px solid rgba(77, 56, 41, 0.1);
 }
 
@@ -809,7 +822,6 @@
 }
 
 .temple-detail-visit-timetable th {
-  width: 44%;
   color: var(--ink-soft);
   font-size: 0.82rem;
 }
@@ -882,7 +894,7 @@
 
 .temple-detail-transit-highlights {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
   gap: 10px;
 }
 
@@ -943,6 +955,7 @@
 .temple-detail-route {
   display: grid;
   gap: 14px;
+  min-width: 0;
   padding: 16px;
   background: rgba(255, 253, 246, 0.72);
   border: 1px solid rgba(77, 56, 41, 0.1);
@@ -1003,7 +1016,7 @@
 .temple-detail-route-timeline li {
   position: relative;
   display: grid;
-  grid-template-columns: 82px 22px minmax(0, 1fr);
+  grid-template-columns: minmax(58px, 82px) 22px minmax(0, 1fr);
   gap: 12px;
   min-height: 54px;
   padding-bottom: 16px;
@@ -1014,7 +1027,7 @@
   position: absolute;
   top: 21px;
   bottom: -1px;
-  left: calc(82px + 10px + 12px);
+  left: calc(min(82px, 22vw) + 10px + 12px);
   width: 2px;
   background: rgba(77, 56, 41, 0.16);
 }
@@ -1061,6 +1074,7 @@
 
 .temple-detail-route-lines span {
   width: auto;
+  min-width: 0;
   color: #6d4f2f;
   background: rgba(214, 173, 85, 0.14);
   border-color: rgba(214, 173, 85, 0.24);
@@ -1367,11 +1381,13 @@
   display: grid;
   align-self: start;
   gap: 18px;
+  min-width: 0;
   margin-top: 0;
   transform: none;
 }
 
 .temple-detail-map-card {
+  min-width: 0;
   overflow: hidden;
   background: rgba(255, 253, 246, 0.82);
   border: 1px solid var(--line);
@@ -1470,10 +1486,12 @@
 }
 
 .temple-detail-meta dd {
+  min-width: 0;
   margin: 0;
   color: var(--ink);
   font-weight: 900;
   line-height: 1.45;
+  overflow-wrap: break-word;
 }
 
 .temple-detail-meta a {
@@ -1731,6 +1749,22 @@
   font-family: "Noto Sans Thai", sans-serif;
   font-size: 1rem;
   font-weight: 900;
+}
+
+@media (max-width: 980px) {
+  .temple-detail-hero,
+  .temple-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .temple-detail-side {
+    order: -1;
+  }
+
+  .temple-detail-map-card__map,
+  .temple-detail-map-card__map .leaflet-container {
+    min-height: 280px;
+  }
 }
 
 @media (max-width: 760px) {

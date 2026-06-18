@@ -1,6 +1,6 @@
 const root = document.querySelector("[data-temple-planner]");
 const payloadNode = document.getElementById("templePlannerData");
-const PLANNER_PICKER_BATCH_SIZE = 12;
+const PLANNER_PICKER_BATCH_SIZE = 30;
 
 if (root && payloadNode) initializeTemplePlanner(root, JSON.parse(payloadNode.textContent || "{}"));
 
@@ -41,7 +41,6 @@ function initializeTemplePlanner(planner, payload) {
   enforcePlannerDateTimeBounds(elements, { snap: true });
   applyPinnedStart(state, elements);
   bindControls(state, elements);
-  initializePlannerLazyLoading(state, elements);
   synchronizeFilterOptions(state, elements, "restore");
   updateStartWarning(state, elements);
   elements.pickSection.hidden = true;
@@ -360,29 +359,6 @@ function resetPlannerVisibleCount(state) {
 function revealMorePlannerPlaces(state, elements) {
   const total = getPickerItems(state, elements).length;
   state.visibleCount = Math.min(total, state.visibleCount + PLANNER_PICKER_BATCH_SIZE);
-}
-
-function initializePlannerLazyLoading(state, elements) {
-  if (!elements.moreButton || !("IntersectionObserver" in window)) return;
-
-  let revealQueued = false;
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (revealQueued || !entries.some((entry) => entry.isIntersecting)) return;
-      if (!state.pickerReady || elements.pickSection?.hidden || elements.moreButton.hidden) return;
-
-      revealQueued = true;
-      window.requestAnimationFrame(() => {
-        revealMorePlannerPlaces(state, elements);
-        renderPicker(state, elements);
-        refreshSelectionMap(state, elements);
-        revealQueued = false;
-      });
-    },
-    { rootMargin: "0px 0px 260px 0px" },
-  );
-
-  observer.observe(elements.moreButton);
 }
 
 function initializePlannerHelp(planner) {

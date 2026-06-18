@@ -66,8 +66,9 @@ body.has-planner-dialog {
 
 .planner-setup__grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 14px;
+  align-items: start;
 }
 
 .planner-field {
@@ -104,32 +105,34 @@ body.has-planner-dialog {
 
 .planner-help button {
   display: grid;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   place-items: center;
-  color: rgba(77, 56, 41, 0.58);
-  background: transparent;
+  color: rgba(77, 56, 41, 0.66);
+  background: rgba(255, 253, 246, 0.72);
   border: 1px solid rgba(109, 79, 47, 0.18);
   border-radius: 50%;
   cursor: help;
-  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+  box-shadow: 0 8px 18px rgba(68, 48, 22, 0.08);
+  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
 }
 
 .planner-help button > span {
   display: block;
   font-family: Arial, sans-serif;
-  font-size: 0.72rem;
-  font-weight: 800;
+  font-size: 0.78rem;
+  font-weight: 900;
   line-height: 1;
   transform: translateY(-0.25px);
 }
 
 .planner-help button:hover,
 .planner-help button[aria-expanded="true"] {
-  color: rgba(77, 56, 41, 0.78);
-  background: rgba(214, 173, 85, 0.1);
-  border-color: rgba(214, 173, 85, 0.34);
+  color: #fffaf0;
+  background: var(--lacquer);
+  border-color: rgba(245, 217, 155, 0.48);
+  transform: translateY(-1px);
 }
 
 .planner-help button:focus-visible {
@@ -140,24 +143,38 @@ body.has-planner-dialog {
 .planner-help__panel {
   position: absolute;
   z-index: 1200;
-  top: calc(100% + 8px);
-  left: 0;
+  top: calc(100% + 14px);
+  left: 50%;
   display: none;
-  width: min(286px, calc(100vw - 48px));
-  padding: 12px 13px;
+  width: min(360px, calc(100vw - 48px));
+  padding: 18px 20px;
   color: var(--ink);
   background: rgba(255, 253, 246, 0.99);
-  border: 1px solid rgba(77, 56, 41, 0.16);
-  border-radius: 8px;
-  box-shadow: 0 18px 44px rgba(68, 48, 22, 0.16);
-  font-size: 0.72rem;
-  font-weight: 750;
-  line-height: 1.48;
+  border: 1px solid rgba(77, 56, 41, 0.14);
+  border-radius: 14px;
+  box-shadow: 0 22px 58px rgba(68, 48, 22, 0.2);
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.58;
+  transform: translateX(-50%);
 }
 
 .planner-search-actions__group--auto .planner-help__panel {
-  right: 0;
-  left: auto;
+  right: auto;
+  left: 50%;
+}
+
+.planner-help__panel::before {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  content: "";
+  background: rgba(255, 253, 246, 0.99);
+  border-top: 1px solid rgba(77, 56, 41, 0.14);
+  border-left: 1px solid rgba(77, 56, 41, 0.14);
+  transform: translateX(-50%) rotate(45deg);
 }
 
 .planner-help__panel strong,
@@ -166,14 +183,31 @@ body.has-planner-dialog {
 }
 
 .planner-help__panel strong {
-  margin-bottom: 7px;
+  margin-bottom: 10px;
   color: var(--ink);
-  font-size: 0.76rem;
+  font-size: 1rem;
   font-weight: 900;
 }
 
+.planner-help__panel span {
+  position: relative;
+  padding-left: 16px;
+  color: rgba(77, 56, 41, 0.72);
+}
+
+.planner-help__panel span::before {
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  content: "";
+  background: var(--jade);
+  border-radius: 50%;
+}
+
 .planner-help__panel span + span {
-  margin-top: 5px;
+  margin-top: 8px;
 }
 
 .planner-help.is-open .planner-help__panel {
@@ -185,7 +219,7 @@ body.has-planner-dialog {
     display: block;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(-5px);
+    transform: translate(-50%, -5px);
     visibility: hidden;
     transition: opacity 150ms ease, transform 150ms ease, visibility 150ms ease;
   }
@@ -195,7 +229,7 @@ body.has-planner-dialog {
   .planner-help.is-open .planner-help__panel {
     opacity: 1;
     pointer-events: auto;
-    transform: translateY(0);
+    transform: translate(-50%, 0);
     visibility: visible;
   }
 }
@@ -229,7 +263,18 @@ body.has-planner-dialog {
 }
 
 .planner-field--count {
-  grid-column: span 2;
+  grid-column: span 5;
+}
+
+.planner-field--budget {
+  grid-column: span 3;
+}
+
+.planner-date-time {
+  display: grid;
+  grid-column: span 4;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .planner-field--start {
@@ -1405,6 +1450,12 @@ body.has-planner-dialog {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .planner-field--count,
+  .planner-field--budget,
+  .planner-date-time {
+    grid-column: 1 / -1;
+  }
+
   .planner-search-actions {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1487,6 +1538,12 @@ body.has-planner-dialog {
     right: auto;
     left: 0;
     max-width: calc(100vw - 40px);
+    transform: none;
+  }
+
+  .planner-help__panel::before {
+    left: 14px;
+    transform: rotate(45deg);
   }
 
   .planner-setup__grid {
@@ -1495,6 +1552,10 @@ body.has-planner-dialog {
 
   .planner-field--count {
     grid-column: auto;
+  }
+
+  .planner-date-time {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .planner-route-start {
