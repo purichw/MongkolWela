@@ -415,33 +415,8 @@
       {
         "id": "calendar",
         "href": "calendar/",
-        "items": [
-          {
-            "id": "calendar-main",
-            "href": "calendar/",
-            "label": "ปฏิทินจันทรคติ",
-            "enabled": true
-          },
-          {
-            "id": "calendar-car",
-            "href": "calendar/",
-            "label": "ฤกษ์ออกรถ",
-            "enabled": true
-          },
-          {
-            "id": "calendar-wedding",
-            "href": "calendar/",
-            "label": "ฤกษ์แต่งงาน",
-            "enabled": true
-          },
-          {
-            "id": "calendar-buddhist",
-            "href": "calendar/",
-            "label": "วันพระ",
-            "enabled": true
-          }
-        ],
-        "label": "ฤกษ์และปฏิทิน",
+        "items": [],
+        "label": "วันพระ",
         "enabled": true
       },
       {

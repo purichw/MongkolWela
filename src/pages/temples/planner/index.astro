@@ -69,9 +69,9 @@ const pageDescription =
                   </button>
                   <span class="planner-help__panel" id="planner-start-help" role="tooltip" aria-hidden="true" data-planner-help-panel>
                     <strong>ระบบเลือกวัดแรกยังไง</strong>
-                    <span>เลือกวัดเอง = ล็อกเป็นลำดับที่ 1</span>
-                    <span>ไม่กำหนด = เลือกจากอันดับดีที่สุดในเงื่อนไข</span>
-                    <span>ถ้ามีพิกัดปัจจุบัน จะชั่งระยะทาง อันดับ และจุดประสงค์ร่วมกัน</span>
+                    <span><b>เลือกวัดเอง</b> = ล็อกเป็นลำดับที่ 1</span>
+                    <span><b>ไม่กำหนด</b> = เลือกจากอันดับดีที่สุดในเงื่อนไข</span>
+                    <span><b>มีพิกัดปัจจุบัน</b> = ชั่งระยะทาง อันดับ และจุดประสงค์ร่วมกัน</span>
                   </span>
                 </span>
               </span>
@@ -110,13 +110,11 @@ const pageDescription =
             <label class="planner-field planner-field--date">
               <span>วันที่เริ่ม</span>
               <input type="date" data-planner-start-date />
-              <small>เลือกได้ตั้งแต่วันนี้เป็นต้นไป ตามเวลาไทย (GMT+7)</small>
             </label>
 
             <label class="planner-field planner-field--time">
               <span>เวลาเริ่ม</span>
               <input type="time" value="08:00" data-planner-start-time />
-              <small>ถ้าเป็นวันนี้ จะเลือกได้ตั้งแต่เวลาปัจจุบันขึ้นไป</small>
             </label>
           </div>
 
@@ -183,9 +181,9 @@ const pageDescription =
                   </button>
                   <span class="planner-help__panel" id="planner-auto-help" role="tooltip" aria-hidden="true" data-planner-help-panel>
                     <strong>เกณฑ์จัดทริป</strong>
-                    <span>กรองตามโจทย์ก่อน</span>
-                    <span>เลือกวัดแรกจากจุดเริ่มต้น/อันดับ</span>
-                    <span>จุดถัดไปดูระยะทาง อันดับ และจุดประสงค์</span>
+                    <span><b>กรองตามโจทย์</b> ก่อน</span>
+                    <span><b>วัดแรก</b> ดูจากจุดเริ่มต้นหรืออันดับ</span>
+                    <span><b>จุดถัดไป</b> ดูระยะทาง อันดับ และจุดประสงค์</span>
                   </span>
                 </span>
               </span>
@@ -194,12 +192,12 @@ const pageDescription =
                 ให้ระบบจัดทริป
               </button>
             </div>
+          </div>
 
-            <div class="planner-search-actions__reset">
-              <button class="planner-secondary-button planner-reset-button" type="button" data-planner-reset-filters>
-                รีเซ็ตโจทย์ทริป
-              </button>
-            </div>
+          <div class="planner-reset-row">
+            <button class="planner-secondary-button planner-reset-button" type="button" data-planner-reset-filters>
+              รีเซ็ตโจทย์ทริป
+            </button>
           </div>
 
         </div>

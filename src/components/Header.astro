@@ -62,15 +62,17 @@ function resolveHref(href = "") {
       {(config.nav as NavItem[]).map((item: NavItem) => (
         <div class="nav-item">
           <a href={resolveHref(item.href)}>{item.label}</a>
-          <div class="mega-panel">
-            {(item.items || []).map((panelItem: NavItem) => (
-              panelItem.section ? (
-                <span class="mega-panel-section">{panelItem.label}</span>
-              ) : (
-                <a href={resolveHref(panelItem.href)}>{panelItem.label}</a>
-              )
-            ))}
-          </div>
+          {(item.items || []).length > 0 && (
+            <div class="mega-panel">
+              {(item.items || []).map((panelItem: NavItem) => (
+                panelItem.section ? (
+                  <span class="mega-panel-section">{panelItem.label}</span>
+                ) : (
+                  <a href={resolveHref(panelItem.href)}>{panelItem.label}</a>
+                )
+              ))}
+            </div>
+          )}
         </div>
       ))}
 

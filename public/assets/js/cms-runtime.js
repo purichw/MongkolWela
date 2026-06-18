@@ -84,15 +84,19 @@ function applyNavigation(content) {
       const children = (item.items || []).filter((child) => child.enabled !== false);
       return `<div class="nav-item">
         <a href="${escapeHtml(resolveHref(item.href))}">${escapeHtml(item.label)}</a>
-        <div class="mega-panel">
-          ${children
-            .map((child) =>
-              child.section
-                ? `<span class="mega-panel-section">${escapeHtml(child.label)}</span>`
-                : `<a href="${escapeHtml(resolveHref(child.href))}">${escapeHtml(child.label)}</a>`,
-            )
-            .join("")}
-        </div>
+        ${
+          children.length
+            ? `<div class="mega-panel">
+                ${children
+                  .map((child) =>
+                    child.section
+                      ? `<span class="mega-panel-section">${escapeHtml(child.label)}</span>`
+                      : `<a href="${escapeHtml(resolveHref(child.href))}">${escapeHtml(child.label)}</a>`,
+                  )
+                  .join("")}
+              </div>`
+            : ""
+        }
       </div>`;
     })
     .join("")}

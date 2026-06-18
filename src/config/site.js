@@ -37,15 +37,9 @@ export const siteConfig = {
         ],
       },
       {
-        label: "ฤกษ์และปฏิทิน",
+        label: "วันพระ",
         href: "calendar/",
-        items: [
-          { label: "ปฏิทินจันทรคติ", href: "calendar/" },
-          { label: "ฤกษ์ออกรถ", href: "calendar/" },
-          { label: "ฤกษ์แต่งงาน", href: "calendar/" },
-          { label: "วันพระ", href: "calendar/" },
-          { label: "ปฏิทินจีน", href: "#calendar" },
-        ],
+        items: [],
       },
       {
         label: "ชื่อและตัวเลข",
