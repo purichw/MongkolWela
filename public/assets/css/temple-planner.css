@@ -384,12 +384,13 @@ body.has-planner-dialog {
 }
 
 .planner-search-actions__group--auto {
-  align-content: start;
+  grid-template-rows: auto minmax(2.6em, auto) minmax(0, 1fr);
+  align-content: stretch;
 }
 
 .planner-search-actions__group--auto .planner-primary-button {
   align-self: end;
-  justify-self: start;
+  justify-self: center;
   width: min(100%, 340px);
   min-height: 46px;
   padding-inline: 16px;
