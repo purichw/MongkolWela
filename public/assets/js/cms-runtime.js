@@ -14,23 +14,34 @@ async function fetchJson(url) {
 }
 
 async function loadContent() {
+  let bundledContent = null;
+  try {
+    bundledContent = await fetchJson(CMS_FALLBACK_URL);
+  } catch {
+    bundledContent = null;
+  }
+
   try {
     const payload = await fetchJson(CMS_CONTENT_URL);
     if (payload.content) {
-      localStorage.setItem(CMS_STORAGE_KEY, JSON.stringify(payload.content));
-      return payload.content;
+      const content = {
+        ...payload.content,
+        navigation: bundledContent?.navigation || payload.content.navigation,
+      };
+      localStorage.setItem(CMS_STORAGE_KEY, JSON.stringify(content));
+      return content;
     }
   } catch {
     // Fall through to bundled/default content.
   }
-  try {
-    const content = await fetchJson(CMS_FALLBACK_URL);
-    localStorage.setItem(CMS_STORAGE_KEY, JSON.stringify(content));
-    return content;
-  } catch {
-    const cached = localStorage.getItem(CMS_STORAGE_KEY);
-    return cached ? JSON.parse(cached) : null;
+
+  if (bundledContent) {
+    localStorage.setItem(CMS_STORAGE_KEY, JSON.stringify(bundledContent));
+    return bundledContent;
   }
+
+  const cached = localStorage.getItem(CMS_STORAGE_KEY);
+  return cached ? JSON.parse(cached) : null;
 }
 
 function normalizeRoute(pathname = window.location.pathname) {
