@@ -85,7 +85,6 @@ export const siteConfig = {
     ],
     utilityNav: [
       { label: "ความรู้", href: "#learn" },
-      { label: "ปรึกษาหมอดู", href: "#consult" },
     ],
     pages: {
       home: {

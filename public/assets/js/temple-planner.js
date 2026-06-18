@@ -21,6 +21,7 @@ function initializeTemplePlanner(planner, payload) {
     activePurposes: new Set(),
     manualSelectionOrder: false,
     pickerReady: false,
+    hasPlannerAction: false,
     nearbyMode: false,
     tripCriteria: null,
     pickerContext: createPickerContext("browse"),
@@ -35,7 +36,9 @@ function initializeTemplePlanner(planner, payload) {
 
   planner._plannerState = { state, elements };
   initializeSmoothFilterAccordions(planner);
+  initializePlannerHelp(planner);
   restoreState(state, elements);
+  enforcePlannerDateTimeBounds(elements, { snap: true });
   applyPinnedStart(state, elements);
   bindControls(state, elements);
   initializePlannerLazyLoading(state, elements);
@@ -52,6 +55,7 @@ function collectElements(planner) {
   return {
     countInputs: [...planner.querySelectorAll('input[name="planner-count"]')],
     budget: planner.querySelector("[data-planner-budget]"),
+    startDate: planner.querySelector("[data-planner-start-date]"),
     startTime: planner.querySelector("[data-planner-start-time]"),
     regionTags: [...planner.querySelectorAll("[data-planner-region-tag]")],
     provinceFilter: planner.querySelector("[data-planner-province-filter]"),
@@ -180,8 +184,11 @@ function bindControls(state, elements) {
     });
   });
 
-  [elements.budget, elements.startTime, elements.radius].forEach((control) => {
+  [elements.budget, elements.startDate, elements.startTime, elements.radius].forEach((control) => {
     control?.addEventListener("change", () => {
+      if (control === elements.startDate || control === elements.startTime) {
+        enforcePlannerDateTimeBounds(elements, { snap: true });
+      }
       updateCriteriaNotice(state, elements);
       persistState(state, elements);
     });
@@ -376,6 +383,43 @@ function initializePlannerLazyLoading(state, elements) {
   );
 
   observer.observe(elements.moreButton);
+}
+
+function initializePlannerHelp(planner) {
+  const helps = [...planner.querySelectorAll("[data-planner-help]")];
+  if (!helps.length) return;
+
+  const closeHelp = (help) => {
+    help.classList.remove("is-open");
+    help.querySelector("[data-planner-help-toggle]")?.setAttribute("aria-expanded", "false");
+    help.querySelector("[data-planner-help-panel]")?.setAttribute("aria-hidden", "true");
+  };
+  const closeOthers = (activeHelp) => {
+    helps.forEach((help) => {
+      if (help !== activeHelp) closeHelp(help);
+    });
+  };
+
+  helps.forEach((help) => {
+    const button = help.querySelector("[data-planner-help-toggle]");
+    if (!button) return;
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const isOpen = help.classList.toggle("is-open");
+      button.setAttribute("aria-expanded", String(isOpen));
+      help.querySelector("[data-planner-help-panel]")?.setAttribute("aria-hidden", String(!isOpen));
+      if (isOpen) closeOthers(help);
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("[data-planner-help]")) return;
+    helps.forEach(closeHelp);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    helps.forEach(closeHelp);
+  });
 }
 
 function activateTab(activeTab, tabs, panels, dataKey) {
@@ -613,6 +657,7 @@ function toggleSelection(state, elements, id, force) {
   if (!state.itemById.has(id)) return;
   const index = state.selected.indexOf(id);
   const shouldSelect = force ?? index === -1;
+  const replacementContext = state.pickerContext?.type === "replace" ? state.pickerContext : null;
   if (!shouldSelect && index !== -1) {
     state.selected.splice(index, 1);
     if (id === elements.start?.value) {
@@ -626,7 +671,14 @@ function toggleSelection(state, elements, id, force) {
       elements.locationStatus.textContent = `เลือกได้สูงสุด ${target.toLocaleString("th-TH")} แห่งสำหรับทริปนี้`;
       return;
     }
-    state.selected.push(id);
+    if (replacementContext) {
+      const insertIndex = clampIndex(Number(replacementContext.replaceIndex), state.selected.length);
+      state.selected.splice(insertIndex, 0, id);
+      state.manualSelectionOrder = true;
+      elements.locationStatus.textContent = `เลือกสถานที่ใหม่แทนจุดที่ ${(insertIndex + 1).toLocaleString("th-TH")} แล้ว`;
+    } else {
+      state.selected.push(id);
+    }
   }
   const planSynced = synchronizePlanWithSelection(state, elements);
   renderSelected(state, elements);
@@ -717,10 +769,10 @@ function getPickerItems(state, elements) {
 function getItemsByCriteria(state, criteria) {
   const query = normalize(criteria.query);
   if (criteria.nearbyMode && criteria.currentLocation) {
-    const radiusKm = Number(criteria.radius || 100);
+    const radiusKm = getCriteriaRadiusKm(criteria);
     return state.items
       .filter((item) => {
-        if (haversineKm(criteria.currentLocation, item) > radiusKm) return false;
+        if (Number.isFinite(radiusKm) && haversineKm(criteria.currentLocation, item) > radiusKm) return false;
         return matchesSearch(item, query);
       })
       .sort((left, right) => haversineKm(criteria.currentLocation, left) - haversineKm(criteria.currentLocation, right));
@@ -752,12 +804,54 @@ function createPickerContext(type = "browse", overrides = {}) {
   };
 }
 
+function getThailandNow() {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Bangkok",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date()).reduce((values, part) => {
+    if (part.type !== "literal") values[part.type] = part.value;
+    return values;
+  }, {});
+
+  return {
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    time: `${parts.hour}:${parts.minute}`,
+  };
+}
+
+function enforcePlannerDateTimeBounds(elements, options = {}) {
+  if (!elements.startDate || !elements.startTime) return;
+  const now = getThailandNow();
+  const snap = options.snap !== false;
+
+  elements.startDate.min = now.date;
+  if (!elements.startDate.value || elements.startDate.value < now.date) {
+    if (snap) elements.startDate.value = now.date;
+  }
+
+  if (!elements.startTime.value) elements.startTime.value = "08:00";
+  if (elements.startDate.value === now.date) {
+    elements.startTime.min = now.time;
+    if (snap && parseTime(elements.startTime.value) < parseTime(now.time)) {
+      elements.startTime.value = now.time;
+    }
+  } else {
+    elements.startTime.removeAttribute("min");
+  }
+}
+
 function createEmptyCriteria(elements) {
   return {
     count: getTargetCount(elements),
     budget: elements.budget?.value || "600",
+    startDate: elements.startDate?.value || getThailandNow().date,
     startTime: elements.startTime?.value || "08:00",
-    radius: elements.radius?.value || "100",
+    radius: elements.radius?.value ?? "100",
     query: "",
     start: "",
     regions: [],
@@ -769,11 +863,13 @@ function createEmptyCriteria(elements) {
 }
 
 function getDraftCriteria(state, elements) {
+  enforcePlannerDateTimeBounds(elements, { snap: true });
   return {
     count: getTargetCount(elements),
     budget: elements.budget?.value || "600",
+    startDate: elements.startDate?.value || getThailandNow().date,
     startTime: elements.startTime?.value || "08:00",
-    radius: elements.radius?.value || "100",
+    radius: elements.radius?.value ?? "100",
     query: elements.search?.value || "",
     start: elements.start?.value || "",
     regions: [...state.activeRegions].sort(),
@@ -796,8 +892,9 @@ function criteriaKey(criteria) {
   return JSON.stringify({
     count: Number(criteria.count || 9),
     budget: String(criteria.budget || "600"),
+    startDate: String(criteria.startDate || getThailandNow().date),
     startTime: String(criteria.startTime || "08:00"),
-    radius: String(criteria.radius || "100"),
+    radius: String(criteria.radius ?? "100"),
     query: normalize(criteria.query),
     start: criteria.start || "",
     regions: [...(criteria.regions || [])].sort(),
@@ -821,8 +918,10 @@ function applyCriteriaToControls(state, elements, criteria) {
   const countInput = elements.countInputs.find((input) => Number(input.value) === Number(criteria.count));
   if (countInput) countInput.checked = true;
   if (elements.budget) elements.budget.value = criteria.budget || "600";
+  if (elements.startDate) elements.startDate.value = criteria.startDate || getThailandNow().date;
   if (elements.startTime) elements.startTime.value = criteria.startTime || "08:00";
-  if (elements.radius) elements.radius.value = criteria.radius || "100";
+  enforcePlannerDateTimeBounds(elements, { snap: true });
+  if (elements.radius) elements.radius.value = criteria.radius ?? "100";
   if (elements.search) elements.search.value = criteria.query || "";
   if (elements.start) elements.start.value = criteria.start && state.itemById.has(criteria.start) ? criteria.start : "";
   state.activeRegions = new Set(criteria.regions || []);
@@ -859,6 +958,7 @@ function updateTripSource(state, elements) {
 function describeCriteria(state, elements, criteria) {
   const chips = [];
   chips.push(`${Number(criteria.count || getTargetCount(elements)).toLocaleString("th-TH")} แห่ง`);
+  chips.push(`วันที่ ${formatCriteriaDate(criteria.startDate || getThailandNow().date)}`);
   if (criteria.start) {
     const startItem = state.itemById.get(criteria.start);
     if (startItem) chips.push(`เริ่มที่ ${startItem.name}`);
@@ -868,7 +968,8 @@ function describeCriteria(state, elements, criteria) {
     chips.push("ระบบเลือกวัดแรก");
   }
   if (criteria.nearbyMode) {
-    chips.push(`ในรัศมี ${Number(criteria.radius || 100).toLocaleString("th-TH")} กม.`);
+    const radiusKm = getCriteriaRadiusKm(criteria);
+    chips.push(Number.isFinite(radiusKm) ? `ในรัศมี ${radiusKm.toLocaleString("th-TH")} กม.` : "ไม่จำกัดรัศมี");
     if (normalize(criteria.query)) chips.push(`คำค้น "${criteria.query}"`);
     return chips;
   }
@@ -877,6 +978,18 @@ function describeCriteria(state, elements, criteria) {
   if (criteria.purposes?.length) chips.push(`จุดประสงค์ ${criteria.purposes.slice(0, 3).join(", ")}${criteria.purposes.length > 3 ? "..." : ""}`);
   if (normalize(criteria.query)) chips.push(`คำค้น "${criteria.query}"`);
   return chips;
+}
+
+function formatCriteriaDate(value) {
+  if (!value) return "วันนี้";
+  const date = new Date(`${value}T00:00:00+07:00`);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("th-TH", {
+    timeZone: "Asia/Bangkok",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
 }
 
 function renderPickerContext(state, elements, resultCount) {
@@ -1107,7 +1220,8 @@ function openPlannerDialog(state, elements, options) {
 
 function confirmAutomaticPlan(state, elements, trigger) {
   const hasExistingTrip = state.selected.length || state.plan.length || !elements.result.hidden;
-  if (!hasExistingTrip) {
+  if (!state.hasPlannerAction || !hasExistingTrip) {
+    state.hasPlannerAction = true;
     buildAutomaticPlan(state, elements);
     return;
   }
@@ -1209,6 +1323,7 @@ function updateTargetCount(state, elements) {
 }
 
 function showFilteredPlaces(state, elements) {
+  state.hasPlannerAction = true;
   state.pickerReady = true;
   state.nearbyMode = false;
   state.pickerContext = createPickerContext("browse", {
@@ -1237,6 +1352,7 @@ function showFilteredPlaces(state, elements) {
 }
 
 function showNearbyPlaces(state, elements) {
+  state.hasPlannerAction = true;
   state.pickerReady = true;
   state.nearbyMode = true;
   state.pickerContext = createPickerContext("nearby", {
@@ -1252,12 +1368,13 @@ function showNearbyPlaces(state, elements) {
   renderPicker(state, elements);
   refreshSelectionMap(state, elements);
   const radiusKm = getRadiusKm(elements);
+  const nearbyScope = formatNearbyScope(radiusKm);
   const count = getFilteredItems(state, elements).length;
   elements.locationStatus.textContent = count
-    ? `พบ ${count.toLocaleString("th-TH")} สถานที่ในรัศมี ${radiusKm.toLocaleString("th-TH")} กม. จากตำแหน่งปัจจุบัน`
-    : `ไม่พบสถานที่ในรัศมี ${radiusKm.toLocaleString("th-TH")} กม. จากตำแหน่งปัจจุบัน`;
+    ? `พบ ${count.toLocaleString("th-TH")} สถานที่${nearbyScope}`
+    : `ไม่พบสถานที่${nearbyScope}`;
   if (!count) {
-    showNoResultsDialog(state, elements, `ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ในรัศมี ${radiusKm.toLocaleString("th-TH")} กม. จากตำแหน่งปัจจุบัน`);
+    showNoResultsDialog(state, elements, `ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์${nearbyScope}`);
     persistState(state, elements);
     return;
   }
@@ -1266,7 +1383,20 @@ function showNearbyPlaces(state, elements) {
 }
 
 function getRadiusKm(elements) {
-  return Number(elements.radius?.value || 100);
+  return getCriteriaRadiusKm({ radius: elements.radius?.value ?? "100" });
+}
+
+function getCriteriaRadiusKm(criteria) {
+  const radius = criteria?.radius ?? "100";
+  if (radius === "") return Number.POSITIVE_INFINITY;
+  const radiusKm = Number(radius);
+  return Number.isFinite(radiusKm) && radiusKm > 0 ? radiusKm : 100;
+}
+
+function formatNearbyScope(radiusKm) {
+  return Number.isFinite(radiusKm)
+    ? `ในรัศมี ${radiusKm.toLocaleString("th-TH")} กม. จากตำแหน่งปัจจุบัน`
+    : "จากตำแหน่งปัจจุบันแบบไม่จำกัดรัศมี";
 }
 
 function getTargetCount(elements) {
@@ -1561,6 +1691,13 @@ function handleTimelineAction(event, state, elements) {
   if (event.target.closest("[data-planner-replace]")) {
     const [removed] = state.plan.splice(index, 1);
     state.selected = state.plan.map((item) => item.id);
+    if (removed.id === elements.start?.value) {
+      elements.start.value = "";
+      state.pinnedStartId = "";
+    }
+    if (state.tripCriteria?.start === removed.id) {
+      state.tripCriteria = { ...state.tripCriteria, start: "" };
+    }
     showManualEditMode(state, elements, {
       type: "replace",
       replaceIndex: index,
@@ -1570,6 +1707,11 @@ function handleTimelineAction(event, state, elements) {
       status: `นำ ${removed.name} ออกจากทริปแล้ว เลือกสถานที่ใหม่แทนจุดนี้ได้เลย`,
     });
   }
+}
+
+function clampIndex(value, max) {
+  if (!Number.isFinite(value)) return max;
+  return Math.min(Math.max(0, value), max);
 }
 
 function bindTimelineDrag(state, elements) {
@@ -1888,6 +2030,7 @@ function persistState(state, elements) {
         plan: state.plan.map((item) => item.id),
         count: getTargetCount(elements),
         budget: elements.budget.value,
+        startDate: elements.startDate?.value,
         startTime: elements.startTime.value,
         radius: elements.radius?.value,
         regions: [...state.activeRegions],
@@ -1906,8 +2049,9 @@ function restoreState(state, elements) {
     const countInput = elements.countInputs.find((input) => Number(input.value) === Number(saved.count));
     if (countInput) countInput.checked = true;
     if (saved.budget) elements.budget.value = saved.budget;
+    if (saved.startDate && elements.startDate) elements.startDate.value = saved.startDate;
     if (saved.startTime) elements.startTime.value = saved.startTime;
-    if (saved.radius && elements.radius) elements.radius.value = saved.radius;
+    if ("radius" in saved && elements.radius) elements.radius.value = saved.radius ?? "100";
     (saved.regions || (saved.region ? [saved.region] : [])).forEach((region) => state.activeRegions.add(region));
     (saved.purposes || (saved.purpose ? [saved.purpose] : [])).forEach((purpose) => state.activePurposes.add(purpose));
     if (saved.start && state.itemById.has(saved.start)) elements.start.value = saved.start;

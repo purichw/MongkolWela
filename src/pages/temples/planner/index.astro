@@ -7,7 +7,7 @@ import { getTemplePlannerData } from "../../../data/temple-planner.js";
 
 const plannerData = getTemplePlannerData();
 const plannerPayload = JSON.stringify(plannerData).replace(/</g, "\\u003c");
-const extraStyles = ["/assets/css/temple-planner.css?feature=20260616-01"];
+const extraStyles = ["/assets/css/temple-planner.css?feature=20260618-03"];
 const extraScripts = ["/assets/js/temple-planner.js"];
 const pageTitle = "วางแผนไหว้พระ 9 วัด | มงคลเวลา";
 const pageDescription =
@@ -50,28 +50,36 @@ const pageDescription =
             <p class="section-kicker">จุดเริ่มต้นและค้นหาใกล้ฉัน</p>
             <h2 id="planner-setup-title">เลือกเงื่อนไข แล้วให้ระบบจัดเส้นทาง</h2>
           </div>
-          <p>ส่วนนี้คือโจทย์สำหรับสร้างทริปใหม่ กดให้ระบบจัดทริปเมื่ออยากใช้เงื่อนไขชุดนี้</p>
         </div>
 
         <div class="planner-setup__grid">
           <div class="planner-route-start">
             <label class="planner-field planner-field--start">
-              <span>เริ่มทริปจาก</span>
+              <span class="planner-field-label-with-help">
+                เริ่มทริปจาก
+                <span class="planner-help" data-planner-help>
+                  <button
+                    type="button"
+                    aria-label="อธิบายเกณฑ์เริ่มทริป"
+                    aria-expanded="false"
+                    aria-describedby="planner-start-help"
+                    data-planner-help-toggle
+                  >
+                    <span>?</span>
+                  </button>
+                  <span class="planner-help__panel" id="planner-start-help" role="tooltip" aria-hidden="true" data-planner-help-panel>
+                    <strong>ระบบเลือกวัดแรกยังไง</strong>
+                    <span>เลือกวัดเอง = ล็อกเป็นลำดับที่ 1</span>
+                    <span>ไม่กำหนด = เลือกจากอันดับดีที่สุดในเงื่อนไข</span>
+                    <span>ถ้ามีพิกัดปัจจุบัน จะชั่งระยะทาง อันดับ และจุดประสงค์ร่วมกัน</span>
+                  </span>
+                </span>
+              </span>
               <select data-planner-start>
                 <option value="">ยังไม่กำหนด ให้ระบบเลือกวัดแรกที่เหมาะสม</option>
                 {plannerData.items.map((item) => <option value={item.id}>{item.name} · {item.province}</option>)}
               </select>
-              <small>เลือกวัด = นับเป็นวัดแรกของทริป · ใช้ตำแหน่งปัจจุบัน = จุดออกตัวไปวัดแรก</small>
-            </label>
-
-            <label class="planner-field planner-field--radius">
-              <span>รัศมีค้นหาใกล้ฉัน</span>
-              <select data-planner-radius>
-                <option value="50">ภายใน 50 กม.</option>
-                <option value="100" selected>ภายใน 100 กม.</option>
-                <option value="200">ภายใน 200 กม.</option>
-                <option value="500">ภายใน 500 กม.</option>
-              </select>
+              <small>ไม่กำหนด = เริ่มจากอันดับดีที่สุดในเงื่อนไขที่เลือก · ถ้ามีพิกัดปัจจุบัน ระบบจะชั่งระยะทาง อันดับ และจุดประสงค์ร่วมกัน</small>
             </label>
 
             <p class="planner-start-warning" role="status" aria-live="polite" data-planner-start-warning hidden></p>
@@ -99,8 +107,15 @@ const pageDescription =
           </label>
 
           <label class="planner-field">
+            <span>วันที่เริ่ม</span>
+            <input type="date" data-planner-start-date />
+            <small>เลือกได้ตั้งแต่วันนี้เป็นต้นไป ตามเวลาไทย (GMT+7)</small>
+          </label>
+
+          <label class="planner-field">
             <span>เวลาเริ่ม</span>
             <input type="time" value="08:00" data-planner-start-time />
+            <small>ถ้าเป็นวันนี้ จะเลือกได้ตั้งแต่เวลาปัจจุบันขึ้นไป</small>
           </label>
 
           <div class="planner-filter-panel">
@@ -125,6 +140,16 @@ const pageDescription =
             <div class="planner-search-actions__group">
               <span>ค้นหาด้วยตัวเอง</span>
               <p>ดูรายการหรือแผนที่ก่อน แล้วค่อยเลือกสถานที่เอง</p>
+              <label class="planner-field planner-field--nearby-radius">
+                <span>รัศมีค้นหาใกล้ฉัน</span>
+                <select data-planner-radius>
+                  <option value="">ไม่ระบุ</option>
+                  <option value="50">ภายใน 50 กม.</option>
+                  <option value="100" selected>ภายใน 100 กม.</option>
+                  <option value="200">ภายใน 200 กม.</option>
+                  <option value="500">ภายใน 500 กม.</option>
+                </select>
+              </label>
               <div class="planner-search-actions__buttons">
                 <button class="planner-secondary-button planner-filter-button" type="button" data-planner-filter-search>
                   เลือกเองจากรายการ
@@ -142,7 +167,26 @@ const pageDescription =
             <div class="planner-search-actions__or" aria-hidden="true">หรือ</div>
 
             <div class="planner-search-actions__group planner-search-actions__group--auto">
-              <span>ให้ระบบจัดแผนทริปให้</span>
+              <span class="planner-action-label-with-help">
+                ให้ระบบจัดแผนทริปให้
+                <span class="planner-help" data-planner-help>
+                  <button
+                    type="button"
+                    aria-label="อธิบายเกณฑ์จัดทริปอัตโนมัติ"
+                    aria-expanded="false"
+                    aria-describedby="planner-auto-help"
+                    data-planner-help-toggle
+                  >
+                    <span>?</span>
+                  </button>
+                  <span class="planner-help__panel" id="planner-auto-help" role="tooltip" aria-hidden="true" data-planner-help-panel>
+                    <strong>เกณฑ์จัดทริป</strong>
+                    <span>กรองตามโจทย์ก่อน</span>
+                    <span>เลือกวัดแรกจากจุดเริ่มต้น/อันดับ</span>
+                    <span>จุดถัดไปดูระยะทาง อันดับ และจุดประสงค์</span>
+                  </span>
+                </span>
+              </span>
               <p>เลือกตามเงื่อนไข แล้วจัดลำดับเส้นทางอัตโนมัติ</p>
               <button class="planner-primary-button" type="button" data-planner-auto>
                 ให้ระบบจัดทริป

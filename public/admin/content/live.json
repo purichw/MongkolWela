@@ -565,12 +565,6 @@
         "href": "#learn",
         "label": "ความรู้",
         "enabled": true
-      },
-      {
-        "id": "consult",
-        "href": "#consult",
-        "label": "ปรึกษาหมอดู",
-        "enabled": true
       }
     ]
   },

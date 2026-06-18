@@ -85,8 +85,7 @@
       }
     ],
     "utility": [
-      { "id": "learn", "label": "ความรู้", "href": "#learn", "enabled": true },
-      { "id": "consult", "label": "ปรึกษาหมอดู", "href": "#consult", "enabled": true }
+      { "id": "learn", "label": "ความรู้", "href": "#learn", "enabled": true }
     ]
   },
   "pages": [
