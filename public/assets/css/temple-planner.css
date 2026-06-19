@@ -145,7 +145,7 @@ body.has-planner-dialog {
 .planner-help__panel {
   position: absolute;
   z-index: 1200;
-  top: calc(100% + 14px);
+  bottom: calc(100% + 14px);
   left: 50%;
   display: none;
   width: min(360px, calc(100vw - 48px));
@@ -166,16 +166,26 @@ body.has-planner-dialog {
   left: 50%;
 }
 
+.planner-field-label-with-help .planner-help__panel {
+  left: 0;
+  transform: none;
+}
+
+.planner-field-label-with-help .planner-help__panel::before {
+  left: 14px;
+  transform: rotate(45deg);
+}
+
 .planner-help__panel::before {
   position: absolute;
-  top: -8px;
+  bottom: -8px;
   left: 50%;
   width: 16px;
   height: 16px;
   content: "";
   background: rgba(255, 253, 246, 0.99);
-  border-top: 1px solid rgba(77, 56, 41, 0.14);
-  border-left: 1px solid rgba(77, 56, 41, 0.14);
+  border-right: 1px solid rgba(77, 56, 41, 0.14);
+  border-bottom: 1px solid rgba(77, 56, 41, 0.14);
   transform: translateX(-50%) rotate(45deg);
 }
 
@@ -192,10 +202,9 @@ body.has-planner-dialog {
 }
 
 .planner-help__panel span {
-  display: grid;
-  grid-template-columns: 8px minmax(0, 1fr);
-  column-gap: 12px;
-  align-items: start;
+  position: relative;
+  display: block;
+  padding-left: 20px;
   color: rgba(77, 56, 41, 0.72);
 }
 
@@ -213,9 +222,11 @@ body.has-planner-dialog {
 }
 
 .planner-help__panel span::before {
+  position: absolute;
+  top: 0.64em;
+  left: 0;
   width: 7px;
   height: 7px;
-  margin-top: 0.64em;
   content: "";
   background: var(--jade);
   border-radius: 50%;
@@ -234,9 +245,13 @@ body.has-planner-dialog {
     display: block;
     opacity: 0;
     pointer-events: none;
-    transform: translate(-50%, -5px);
+    transform: translate(-50%, 5px);
     visibility: hidden;
     transition: opacity 150ms ease, transform 150ms ease, visibility 150ms ease;
+  }
+
+  .planner-field-label-with-help .planner-help__panel {
+    transform: translateY(5px);
   }
 
   .planner-help:hover .planner-help__panel,
@@ -246,6 +261,12 @@ body.has-planner-dialog {
     pointer-events: auto;
     transform: translate(-50%, 0);
     visibility: visible;
+  }
+
+  .planner-field-label-with-help .planner-help:hover .planner-help__panel,
+  .planner-field-label-with-help .planner-help:focus-within .planner-help__panel,
+  .planner-field-label-with-help .planner-help.is-open .planner-help__panel {
+    transform: translateY(0);
   }
 }
 
