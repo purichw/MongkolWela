@@ -74,6 +74,9 @@ const extraScripts = ["/assets/js/home-motion.js"];
   imageAlt="มงคลเวลา วัดดัง สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระเสริมมงคล"
   breadcrumbs={[{ label: "หน้าแรก", href: "/" }]}
 >
+  <script is:inline>
+    document.documentElement.classList.add("home-text-motion-pending");
+  </script>
   <main>
     <section class="hero home-aura-hero" aria-labelledby="hero-title">
       <div class="hero-carousel" data-carousel>

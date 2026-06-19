@@ -185,6 +185,15 @@ body[data-cms-page="home"] main::before {
   transform: rotate(-11deg) scaleX(calc(0.66 + var(--home-hero-progress, 0) * 0.26));
 }
 
+.home-text-motion-pending .home-aura-hero .eyebrow,
+.home-text-motion-pending .home-aura-hero h1,
+.home-text-motion-pending .home-aura-hero .hero-copy,
+.home-text-motion-pending .home-aura-hero .hero-search,
+.home-text-motion-pending .home-aura-hero .hero-links {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
 @keyframes home-fade-up {
   from {
     opacity: 0;
@@ -197,27 +206,27 @@ body[data-cms-page="home"] main::before {
   }
 }
 
-.home-aura-hero .eyebrow {
+.home-hero-text-ready .home-aura-hero .eyebrow {
   animation: home-fade-up 620ms ease both;
   animation-delay: 90ms;
 }
 
-.home-aura-hero h1 {
+.home-hero-text-ready .home-aura-hero h1 {
   animation: home-fade-up 720ms ease both;
   animation-delay: 180ms;
 }
 
-.home-aura-hero .hero-copy {
+.home-hero-text-ready .home-aura-hero .hero-copy {
   animation: home-fade-up 720ms ease both;
   animation-delay: 300ms;
 }
 
-.home-aura-hero .hero-search {
+.home-hero-text-ready .home-aura-hero .hero-search {
   animation: home-fade-up 720ms ease both;
   animation-delay: 420ms;
 }
 
-.home-aura-hero .hero-links {
+.home-hero-text-ready .home-aura-hero .hero-links {
   animation: home-fade-up 720ms ease both;
   animation-delay: 540ms;
 }
@@ -767,11 +776,20 @@ body[data-cms-page="home"] main::before {
     transform: none;
   }
 
-  .home-aura-hero .eyebrow,
-  .home-aura-hero h1,
-  .home-aura-hero .hero-copy,
-  .home-aura-hero .hero-search,
-  .home-aura-hero .hero-links {
+  .home-text-motion-pending .home-aura-hero .eyebrow,
+  .home-text-motion-pending .home-aura-hero h1,
+  .home-text-motion-pending .home-aura-hero .hero-copy,
+  .home-text-motion-pending .home-aura-hero .hero-search,
+  .home-text-motion-pending .home-aura-hero .hero-links {
+    opacity: 1;
+    transform: none;
+  }
+
+  .home-hero-text-ready .home-aura-hero .eyebrow,
+  .home-hero-text-ready .home-aura-hero h1,
+  .home-hero-text-ready .home-aura-hero .hero-copy,
+  .home-hero-text-ready .home-aura-hero .hero-search,
+  .home-hero-text-ready .home-aura-hero .hero-links {
     animation: none;
   }
 

@@ -16,31 +16,88 @@ const revealSelectors = [
   ".learn-strip > *",
 ];
 
-function setupHomeReveals() {
-  const targets = revealSelectors.flatMap((selector) => Array.from(document.querySelectorAll(selector)));
-  if (!targets.length) return;
+function setupHomeHeroTextMotion() {
+  const root = document.documentElement;
+  const hero = document.querySelector(".home-aura-hero");
+  if (!hero) return;
 
-  document.documentElement.classList.add("home-motion-ready");
+  const startTextMotion = () => {
+    if (root.classList.contains("home-hero-text-ready")) return;
+    root.classList.add("home-hero-text-ready");
+    root.classList.remove("home-text-motion-pending");
+  };
+
+  if (reduceMotionQuery.matches) {
+    root.classList.remove("home-text-motion-pending");
+    return;
+  }
+
+  const loaderIsActive = () => root.classList.contains("is-loading") || root.classList.contains("is-navigating");
+
+  if (!loaderIsActive()) {
+    window.requestAnimationFrame(startTextMotion);
+    return;
+  }
+
+  const observer = new MutationObserver(() => {
+    if (loaderIsActive()) return;
+    observer.disconnect();
+    window.setTimeout(startTextMotion, 80);
+  });
+
+  observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+}
+
+function revealTarget(target) {
+  target.classList.add("is-home-revealed");
+}
+
+function targetIsInRevealRange(target) {
+  const rect = target.getBoundingClientRect();
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+  return rect.top <= viewportHeight * 0.92 && rect.bottom >= viewportHeight * -0.08;
+}
+
+function setupHomeReveals() {
+  const targets = Array.from(new Set(
+    revealSelectors.flatMap((selector) => Array.from(document.querySelectorAll(selector))),
+  ));
+  if (!targets.length) return;
 
   targets.forEach((target, index) => {
     target.dataset.homeReveal = "true";
     target.style.setProperty("--home-reveal-delay", `${Math.min(index % 6, 5) * 70}ms`);
   });
 
+  document.documentElement.classList.add("home-motion-ready");
+
   if (reduceMotionQuery.matches || !("IntersectionObserver" in window)) {
-    targets.forEach((target) => target.classList.add("is-home-revealed"));
+    targets.forEach(revealTarget);
     return;
   }
+
+  const revealVisibleTargets = () => {
+    targets.forEach((target) => {
+      if (target.classList.contains("is-home-revealed")) return;
+      if (targetIsInRevealRange(target)) revealTarget(target);
+    });
+  };
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
-      entry.target.classList.add("is-home-revealed");
+      revealTarget(entry.target);
       observer.unobserve(entry.target);
     });
-  }, { rootMargin: "0px 0px -10% 0px", threshold: 0.08 });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.01 });
 
   targets.forEach((target) => observer.observe(target));
+
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(revealVisibleTargets);
+  });
+  window.addEventListener("load", revealVisibleTargets, { once: true });
+  window.addEventListener("pageshow", revealVisibleTargets);
 }
 
 function setupHomeScrollMotion() {
@@ -87,5 +144,6 @@ function setupHomeScrollMotion() {
   reduceMotionQuery.addEventListener?.("change", requestUpdate);
 }
 
+setupHomeHeroTextMotion();
 setupHomeReveals();
 setupHomeScrollMotion();
