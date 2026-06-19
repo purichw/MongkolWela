@@ -60,7 +60,7 @@ const {
   structuredData = [],
 } = Astro.props as Props;
 
-const assetVersion = "20260619-08";
+const assetVersion = "20260619-09";
 const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
 const pagePath = canonicalPath || Astro.url.pathname;
 const pageUrl = canonicalUrl(pagePath);
@@ -112,10 +112,12 @@ const jsonLd = toJsonLdGraph([
     <meta name="apple-mobile-web-app-title" content={SEO_SITE_NAME} />
     <script is:inline>
       try {
+        document.documentElement.classList.add("cms-navigation-pending");
         if (window.sessionStorage.getItem("mongkolwela.loader.v2.seen") !== "1") {
           document.documentElement.classList.add("is-loading");
         }
       } catch {
+        document.documentElement.classList.add("cms-navigation-pending");
         document.documentElement.classList.add("is-loading");
       }
     </script>

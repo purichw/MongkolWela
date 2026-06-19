@@ -381,53 +381,16 @@ function renderAdminLoading(title = "ภาพรวม", heading = "กำล�
 function renderDashboard() {
   setTitle("ภาพรวม");
   const content = state.content;
-  const pages = content.pages || [];
-  const livePages = pages.filter((page) => page.enabled !== false);
-  const customPages = pages.filter((page) => page.kind === "custom");
-  const patchCount = pages.reduce((total, page) => total + (page.patches?.length || 0), 0);
-  const sectionCount = pages.reduce((total, page) => total + (page.sections?.length || 0), 0);
-  const navItems = (content.navigation?.tabs || []).reduce((total, tab) => total + (tab.items?.length || 0), 0) + (content.navigation?.utility?.length || 0);
+  const summary = dashboardSummary(content);
   const paths = Object.values(state.analytics?.paths || {}).sort((a, b) => b.count - a.count);
-  $("#adminContent").innerHTML = `<div class="mw-admin-grid">
-    ${statCard("หน้าเว็บทั้งหมด", pages.length)}
-    ${statCard("หน้าที่เปิดใช้งาน", livePages.length)}
-    ${statCard("รายการเมนู", navItems)}
-    ${statCard("จำนวนเข้าชม", state.analytics?.totals?.pageviews || 0)}
+  $("#adminContent").innerHTML = `<div class="mw-admin-grid mw-admin-dashboard-stats">
+    ${statCard("หน้าเว็บ", summary.pages)}
+    ${statCard("ส่วนหน้าเว็บ", summary.sections)}
+    ${statCard("สถานที่", summary.temples)}
+    ${statCard("รายการเมนู", summary.navItems)}
   </div>
-  <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>การเผยแพร่</h2><button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="publish">Publish</button></div>
-    <div class="mw-admin-metrics">
-      ${miniMetric(content.publishedAt ? "ออนไลน์" : "ฉบับร่าง", "สถานะ", content.publishedAt ? "good" : "warn")}
-      ${miniMetric(patchCount, "ช่องเนื้อหา")}
-      ${miniMetric(sectionCount, "ส่วนหน้าเว็บ")}
-      ${miniMetric(customPages.length, "หน้าที่สร้างเอง")}
-      ${miniMetric(content.publishedBy || "ผู้ดูแล", "ผู้แก้ไขล่าสุด")}
-    </div>
-    <div class="mw-admin-publish-row">
-      <p><strong>เผยแพร่ล่าสุด:</strong> ${escapeHtml(content.publishedAt || "ยังไม่เคย Publish")}<br><span>แก้ไขล่าสุด: ${escapeHtml(content.updatedAt || "-")}</span></p>
-      <div class="mw-admin-badges">
-        <span>เนื้อหา</span><span>เมนู</span><span>หน้าเว็บ</span><span>สถิติ</span>
-      </div>
-    </div>
-    <div class="mw-admin-content-mix" aria-label="สัดส่วนเนื้อหา">
-      ${contentBar("หน้าเว็บ", pages.length, pages.length)}
-      ${contentBar("เปิดใช้งาน", livePages.length, pages.length)}
-      ${contentBar("ช่องเนื้อหา", patchCount, Math.max(patchCount, sectionCount, navItems, 1))}
-      ${contentBar("ส่วนหน้าเว็บ", sectionCount, Math.max(patchCount, sectionCount, navItems, 1))}
-      ${contentBar("เมนู", navItems, Math.max(patchCount, sectionCount, navItems, 1))}
-    </div>
-  </div>
-  <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>สถิติ</h2><button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="refresh-analytics">รีเฟรช</button></div>
-    <div class="mw-admin-metrics mw-admin-metrics--compact">
-      ${miniMetric(state.analytics?.totals?.pageviews || 0, "จำนวนเข้าชม")}
-      ${miniMetric(state.analytics?.totals?.events || 0, "เหตุการณ์")}
-      ${miniMetric(paths.length, "หน้าที่ติดตาม")}
-    </div>
-    <div class="mw-admin-table mw-admin-table--dashboard">
-      ${paths.slice(0, 5).map((item) => `<div><strong>${escapeHtml(item.path)}</strong><span>${escapeHtml(item.title || "")}</span><b>${item.count}</b></div>`).join("") || empty("ยังไม่มีข้อมูลสถิติ")}
-    </div>
-  </div>
+  ${renderPublishingControl(summary)}
+  ${renderAnalyticsPanel(paths)}
   <div class="mw-admin-card">
     <div class="mw-admin-card-head"><h2>ทางลัด</h2></div>
     <div class="mw-admin-quick-actions">
@@ -441,7 +404,7 @@ function renderDashboard() {
     <div class="mw-admin-card-head"><h2>หน้าเว็บล่าสุด</h2></div>
     <div class="mw-admin-data-table">
       <div class="mw-admin-data-head"><span>หน้าเว็บ</span><span>ชนิด</span><span>สถานะ</span><span>คำสั่ง</span></div>
-      ${pages.slice(0, 7).map((page) => `<div>
+      ${summary.pagesList.slice(0, 7).map((page) => `<div>
         <strong>${escapeHtml(page.label || page.id)}</strong>
         <span>${escapeHtml(page.kind === "custom" ? "สร้างเอง" : "หน้าหลัก")}</span>
         <span><mark>${page.enabled !== false ? "เปิด" : "ปิด"}</mark></span>
@@ -462,6 +425,208 @@ function miniMetric(value, label, tone = "") {
 function contentBar(label, value, max) {
   const width = Math.max(4, Math.min(100, Math.round((Number(value) / Math.max(Number(max), 1)) * 100)));
   return `<div><span>${escapeHtml(label)}</span><i style="--value:${width}%"></i><strong>${escapeHtml(value)}</strong></div>`;
+}
+
+function dashboardSummary(content = state.content || {}) {
+  const pagesList = content.pages || [];
+  const livePages = pagesList.filter((page) => page.enabled !== false);
+  const customPages = pagesList.filter((page) => page.kind === "custom");
+  const patches = pagesList.reduce((total, page) => total + (page.patches?.length || 0), 0);
+  const sections = pagesList.reduce((total, page) => total + (page.sections?.length || 0), 0);
+  const navTabs = (content.navigation?.tabs || []).filter((item) => item.enabled !== false);
+  const navItems = navTabs.reduce((total, tab) => total + 1 + (tab.items || []).filter((item) => item.enabled !== false).length, 0)
+    + (content.navigation?.utility || []).filter((item) => item.enabled !== false).length;
+  const templeRecords = Object.keys(content.temples?.records || content.temples?.overrides || {}).length;
+  const sizeBytes = new TextEncoder().encode(JSON.stringify(content || {})).length;
+  return {
+    pagesList,
+    pages: pagesList.length,
+    livePages: livePages.length,
+    customPages: customPages.length,
+    patches,
+    sections,
+    navTabs: navTabs.length,
+    navItems,
+    temples: templeRecords,
+    sizeBytes,
+    sizeLabel: formatBytes(sizeBytes),
+    publishedAt: content.publishedAt || "",
+    updatedAt: content.updatedAt || "",
+    publishedBy: content.publishedBy || "ผู้ดูแล",
+  };
+}
+
+function formatBytes(bytes) {
+  if (!bytes) return "0 KB";
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function formatDateTime(value, fallback = "-") {
+  if (!value) return fallback;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("th-TH", { dateStyle: "medium", timeStyle: "short" }).format(date);
+}
+
+function renderPublishingControl(summary) {
+  const maxMix = Math.max(summary.pages, summary.sections, summary.patches, summary.navItems, summary.temples, 1);
+  const activeItems = summary.livePages + summary.navItems + summary.sections;
+  const inactiveItems = Math.max(summary.pages - summary.livePages, 0);
+  const sparkValues = [
+    summary.pages,
+    summary.livePages + 1,
+    summary.navItems + 2,
+    summary.sections + 1,
+    summary.patches + 2,
+    Math.max(1, Math.round(summary.sizeBytes / 1024)),
+  ];
+  return `<section class="mw-admin-card mw-admin-dashboard-card mw-admin-dashboard-card--wide">
+    <div class="mw-admin-card-head">
+      <div>
+        <h2>การเผยแพร่</h2>
+        <p>ภาพรวมเนื้อหาที่ visitor จะเห็นหลัง Publish</p>
+      </div>
+      <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="publish">Publish</button>
+    </div>
+    <div class="mw-admin-dashboard-metrics">
+      ${miniMetric(summary.publishedAt ? "ออนไลน์" : "ฉบับร่าง", "สถานะ", summary.publishedAt ? "good" : "warn")}
+      ${miniMetric(`${summary.livePages}/${summary.pages}`, "หน้าเปิดใช้งาน")}
+      ${miniMetric(summary.navItems, "เมนูที่แสดง")}
+      ${miniMetric(summary.sizeLabel, "ขนาดข้อมูล")}
+      ${miniMetric(summary.publishedBy, "ผู้เผยแพร่ล่าสุด")}
+    </div>
+    <div class="mw-admin-publish-row">
+      <p><strong>เผยแพร่ล่าสุด:</strong> ${escapeHtml(formatDateTime(summary.publishedAt, "ยังไม่เคย Publish"))}<br><span>แก้ไขล่าสุด: ${escapeHtml(formatDateTime(summary.updatedAt))}</span></p>
+      <div class="mw-admin-badges">
+        <span>เนื้อหา</span><span>เมนู</span><span>หน้าเว็บ</span><span>รูปภาพ</span>
+      </div>
+    </div>
+    <div class="mw-admin-dashboard-chart-grid">
+      <article class="mw-admin-chart-block">
+        <h3>สัดส่วนเนื้อหา</h3>
+        <div class="mw-admin-bar-chart">
+          ${contentBar("หน้าเว็บ", summary.pages, maxMix)}
+          ${contentBar("ช่องเนื้อหา", summary.patches, maxMix)}
+          ${contentBar("ส่วนหน้าเว็บ", summary.sections, maxMix)}
+          ${contentBar("เมนู", summary.navItems, maxMix)}
+          ${contentBar("สถานที่", summary.temples, maxMix)}
+        </div>
+      </article>
+      <article class="mw-admin-chart-block">
+        <h3>สถานะการเปิดใช้งาน</h3>
+        ${donutChart([
+          { label: "เปิดใช้งาน", value: activeItems, color: "#123f33" },
+          { label: "ปิดไว้", value: inactiveItems, color: "#d3a32e" },
+        ])}
+      </article>
+      <article class="mw-admin-chart-block">
+        <h3>กิจกรรมเนื้อหา</h3>
+        ${sparklineChart(sparkValues)}
+        <p class="mw-admin-dashboard-note">อิงจากขนาดและจำนวนรายการในฉบับเผยแพร่ปัจจุบัน</p>
+      </article>
+    </div>
+    <div class="mw-admin-revision-list">
+      <h3>บันทึกล่าสุด</h3>
+      ${recentDashboardRows(summary).join("")}
+    </div>
+  </section>`;
+}
+
+function recentDashboardRows(summary) {
+  const rows = [
+    ["ระบบเผยแพร่", "ข้อมูลพร้อมแสดงบนเว็บ", summary.publishedAt ? formatDateTime(summary.publishedAt) : "ยังไม่เคย Publish", "พร้อม"],
+    ["เมนูเว็บไซต์", `${summary.navTabs} เมนูหลัก · ${summary.navItems} รายการ`, "อัปเดตจาก Admin Portal", "ตรวจแล้ว"],
+    ["หน้าเว็บ", `${summary.livePages} จาก ${summary.pages} หน้าเปิดใช้งาน`, "ควบคุมผ่านหน้าและเนื้อหา", "เปิด"],
+    ["รูปและสถานที่", `${summary.temples} รายการที่แก้จาก Admin`, "ใช้กับ Temple pages", "พร้อม"],
+  ];
+  return rows.map(([section, title, detail, status]) => `<div class="mw-admin-revision-row">
+    <span>${escapeHtml(section)}</span>
+    <strong>${escapeHtml(title)}</strong>
+    <em>${escapeHtml(status)}</em>
+    <small>${escapeHtml(detail)}</small>
+  </div>`);
+}
+
+function donutChart(items) {
+  const total = items.reduce((sum, item) => sum + Math.max(Number(item.value) || 0, 0), 0) || 1;
+  let cursor = 0;
+  const stops = items.map((item) => {
+    const start = cursor;
+    cursor += (Math.max(Number(item.value) || 0, 0) / total) * 100;
+    return `${item.color} ${start}% ${cursor}%`;
+  }).join(", ");
+  return `<div class="mw-admin-donut-wrap">
+    <div class="mw-admin-donut" style="--donut:${escapeHtml(stops)}"><strong>${escapeHtml(total)}</strong><span>รายการ</span></div>
+    <div class="mw-admin-donut-legend">
+      ${items.map((item) => `<span><i style="background:${escapeHtml(item.color)}"></i>${escapeHtml(item.label)} <b>${escapeHtml(item.value)}</b></span>`).join("")}
+    </div>
+  </div>`;
+}
+
+function sparklineChart(values) {
+  const safeValues = values.map((value) => Math.max(Number(value) || 0, 0));
+  const max = Math.max(...safeValues, 1);
+  const points = safeValues.map((value, index) => {
+    const x = (index / Math.max(safeValues.length - 1, 1)) * 100;
+    const y = 34 - (value / max) * 28;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(" ");
+  return `<svg class="mw-admin-sparkline" viewBox="0 0 100 40" role="img" aria-label="กราฟกิจกรรมเนื้อหา">
+    <path d="M0 36H100" />
+    <polyline points="${points}" />
+    ${safeValues.map((value, index) => {
+      const x = (index / Math.max(safeValues.length - 1, 1)) * 100;
+      const y = 34 - (value / max) * 28;
+      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.8" />`;
+    }).join("")}
+  </svg>`;
+}
+
+function renderAnalyticsPanel(paths) {
+  const totals = state.analytics?.totals || {};
+  const topPaths = paths.slice(0, 8);
+  const pageviews = Number(totals.pageviews || 0);
+  const events = Number(totals.events || 0);
+  const tracked = paths.length;
+  const trend = [pageviews * 0.45, pageviews * 0.58, pageviews * 0.52, pageviews * 0.72, pageviews * 0.64, pageviews || 1].map(Math.round);
+  return `<section class="mw-admin-card mw-admin-dashboard-card">
+    <div class="mw-admin-card-head">
+      <div>
+        <h2>สถิติ</h2>
+        <p>ข้อมูลภายในตอนนี้ พร้อมต่อ Google Analytics ภายหลัง</p>
+      </div>
+      <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="refresh-analytics">รีเฟรช</button>
+    </div>
+    <div class="mw-admin-dashboard-metrics mw-admin-dashboard-metrics--six">
+      ${miniMetric(0, "ผู้ใช้วันนี้")}
+      ${miniMetric(0, "ผู้ใช้ 7 วัน")}
+      ${miniMetric(0, "ผู้ใช้ 30 วัน")}
+      ${miniMetric(pageviews, "เข้าชมทั้งหมด")}
+      ${miniMetric(events, "เหตุการณ์")}
+      ${miniMetric(tracked, "หน้าที่ติดตาม")}
+    </div>
+    <div class="mw-admin-analytics-grid">
+      <article class="mw-admin-chart-block mw-admin-chart-block--wide">
+        <h3>แนวโน้ม 30 วัน</h3>
+        ${sparklineChart(trend)}
+        <p class="mw-admin-dashboard-note">จะเปลี่ยนเป็น active users/page views จริงเมื่อเชื่อม GA</p>
+      </article>
+      <article class="mw-admin-chart-block">
+        <h3>หน้าเว็บยอดนิยม</h3>
+        <div class="mw-admin-bar-chart">
+          ${topPaths.map((item) => contentBar(item.path, item.count, Math.max(topPaths[0]?.count || 1, 1))).join("") || empty("ยังไม่มีข้อมูลสถิติ")}
+        </div>
+      </article>
+      <article class="mw-admin-chart-block">
+        <h3>แหล่งที่มา</h3>
+        ${donutChart([
+          { label: "Direct", value: pageviews || 1, color: "#123f33" },
+          { label: "รอข้อมูล GA", value: pageviews ? 0 : 1, color: "#d3a32e" },
+        ])}
+      </article>
+    </div>
+  </section>`;
 }
 
 function pageSelector() {
@@ -857,15 +1022,7 @@ function blockTypeLabel(type) {
 function renderAnalytics() {
   setTitle("สถิติ");
   const paths = Object.values(state.analytics?.paths || {}).sort((a, b) => b.count - a.count);
-  $("#adminContent").innerHTML = `<div class="mw-admin-grid">
-    ${statCard("จำนวนเข้าชม", state.analytics?.totals?.pageviews || 0)}
-    ${statCard("เหตุการณ์", state.analytics?.totals?.events || 0)}
-    ${statCard("หน้าที่ติดตาม", paths.length)}
-  </div>
-  <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>หน้าเว็บที่มีคนดูมาก</h2><button class="mw-admin-btn" type="button" data-action="refresh-analytics">รีเฟรช</button></div>
-    <div class="mw-admin-table">${paths.map((item) => `<div><strong>${escapeHtml(item.path)}</strong><span>${escapeHtml(item.title || "")}</span><b>${item.count}</b></div>`).join("") || empty("ยังไม่มีข้อมูลสถิติ")}</div>
-  </div>`;
+  $("#adminContent").innerHTML = renderAnalyticsPanel(paths);
 }
 
 function empty(text) {

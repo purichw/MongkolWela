@@ -40,18 +40,6 @@
         "items": []
       },
       {
-        "id": "names",
-        "label": "ชื่อและตัวเลข",
-        "href": "#names",
-        "enabled": true,
-        "items": [
-          { "id": "baby-name", "label": "ตั้งชื่อลูก", "href": "#names", "enabled": true },
-          { "id": "name-reading", "label": "วิเคราะห์ชื่อ", "href": "#names", "enabled": true },
-          { "id": "phone-number", "label": "เบอร์โทรศัพท์", "href": "#names", "enabled": true },
-          { "id": "car-plate", "label": "ทะเบียนรถ", "href": "#names", "enabled": true }
-        ]
-      },
-      {
         "id": "rituals",
         "label": "บทสวดและพิธี",
         "href": "#rituals",

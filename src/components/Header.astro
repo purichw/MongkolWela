@@ -4,12 +4,6 @@ import BrandMark from "./icons/BrandMark.astro";
 import MenuIcon from "./icons/MenuIcon.astro";
 import SearchIcon from "./icons/SearchIcon.astro";
 
-type NavItem = {
-  label: string;
-  href?: string;
-  section?: boolean;
-  items?: NavItem[];
-};
 type TopbarItem = {
   label: string;
   href?: string;
@@ -58,28 +52,7 @@ function resolveHref(href = "") {
       <span class="sr-only">{config.openMenuLabel}</span>
     </button>
 
-    <div class="nav-menu" id="primary-menu" aria-label={config.navLabel}>
-      {(config.nav as NavItem[]).map((item: NavItem) => (
-        <div class="nav-item">
-          <a href={resolveHref(item.href)}>{item.label}</a>
-          {(item.items || []).length > 0 && (
-            <div class="mega-panel">
-              {(item.items || []).map((panelItem: NavItem) => (
-                panelItem.section ? (
-                  <span class="mega-panel-section">{panelItem.label}</span>
-                ) : (
-                  <a href={resolveHref(panelItem.href)}>{panelItem.label}</a>
-                )
-              ))}
-            </div>
-          )}
-        </div>
-      ))}
-
-      {(config.utilityNav as NavItem[]).map((item: NavItem) => (
-        <a class="plain-link" href={resolveHref(item.href)}>{item.label}</a>
-      ))}
-    </div>
+    <div class="nav-menu" id="primary-menu" aria-label={config.navLabel}></div>
 
     <div class="nav-actions">
       <button class="icon-button" type="button" aria-label={config.searchLabel}>

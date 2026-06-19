@@ -1,10 +1,14 @@
 const CMS_CONTENT_URL = "/api/admin/content";
 const CMS_FALLBACK_URL = "/admin/content/default.json";
-const CMS_STORAGE_KEY = "mongkolwela.cms.content";
 const CMS_CONSENT_KEY = "mongkolwela.pdpa.analytics";
 const CMS_EDITABLE_CONTRACT_VERSION = 2;
 
 let activeContent = null;
+
+function markCmsNavigationReady() {
+  document.documentElement.classList.remove("cms-navigation-pending");
+  document.documentElement.dataset.cmsNavReady = "true";
+}
 
 async function fetchJson(url) {
   const response = await fetch(`${url}${url.includes("?") ? "&" : "?"}ts=${Date.now()}`, {
@@ -33,20 +37,13 @@ async function loadContent() {
           ? payload.content.navigation || bundledContent?.navigation
           : bundledContent?.navigation || payload.content.navigation,
       };
-      localStorage.setItem(CMS_STORAGE_KEY, JSON.stringify(content));
       return content;
     }
   } catch {
     // Fall through to bundled/default content.
   }
 
-  if (bundledContent) {
-    localStorage.setItem(CMS_STORAGE_KEY, JSON.stringify(bundledContent));
-    return bundledContent;
-  }
-
-  const cached = localStorage.getItem(CMS_STORAGE_KEY);
-  return cached ? JSON.parse(cached) : null;
+  return bundledContent;
 }
 
 function normalizeRoute(pathname = window.location.pathname) {
@@ -635,22 +632,28 @@ function trackPageview(content) {
 }
 
 async function bootCmsRuntime() {
-  const content = await loadContent();
-  if (!content) return;
-  activeContent = content;
-  document.documentElement.dataset.cmsReady = "true";
-  applyNavigation(content);
-  applyTempleOverrides(content);
-  if (!renderCustomPage(content)) {
-    const page = pageForRoute(content);
-    if (!disablePage(page) && page) {
-      applySections(page);
-      (page.patches || []).forEach(applyPatch);
+  try {
+    const content = await loadContent();
+    if (!content) return;
+    activeContent = content;
+    document.documentElement.dataset.cmsReady = "true";
+    applyNavigation(content);
+    applyTempleOverrides(content);
+    if (!renderCustomPage(content)) {
+      const page = pageForRoute(content);
+      if (!disablePage(page) && page) {
+        applySections(page);
+        (page.patches || []).forEach(applyPatch);
+      }
     }
+    renderPdpaBanner(content);
+    trackPageview(content);
+    window.MongkolWelaCMS = { content: activeContent, reload: bootCmsRuntime };
+  } catch (error) {
+    console.warn("CMS runtime unavailable", error);
+  } finally {
+    markCmsNavigationReady();
   }
-  renderPdpaBanner(content);
-  trackPageview(content);
-  window.MongkolWelaCMS = { content: activeContent, reload: bootCmsRuntime };
 }
 
 bootCmsRuntime();

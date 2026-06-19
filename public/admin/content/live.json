@@ -420,38 +420,6 @@
         "enabled": true
       },
       {
-        "id": "names",
-        "href": "#names",
-        "items": [
-          {
-            "id": "baby-name",
-            "href": "#names",
-            "label": "ตั้งชื่อลูก",
-            "enabled": true
-          },
-          {
-            "id": "name-reading",
-            "href": "#names",
-            "label": "วิเคราะห์ชื่อ",
-            "enabled": true
-          },
-          {
-            "id": "phone-number",
-            "href": "#names",
-            "label": "เบอร์โทรศัพท์",
-            "enabled": true
-          },
-          {
-            "id": "car-plate",
-            "href": "#names",
-            "label": "ทะเบียนรถ",
-            "enabled": true
-          }
-        ],
-        "label": "ชื่อและตัวเลข",
-        "enabled": true
-      },
-      {
         "id": "rituals",
         "href": "#rituals",
         "items": [
