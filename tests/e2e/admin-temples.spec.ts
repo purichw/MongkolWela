@@ -76,7 +76,7 @@ test.describe("Temple Admin Portal", () => {
   test.beforeEach(async ({ page }) => {
     await mockAdminApis(page);
     await page.goto("/admin/", { waitUntil: "domcontentloaded" });
-    await page.getByRole("button", { name: "◇ Temples", exact: true }).click();
+    await page.getByRole("button", { name: /สถานที่ศักดิ์สิทธิ์/ }).click();
   });
 
   test("supports category navigation, live editing, search, and create", async ({ page }) => {
@@ -111,12 +111,12 @@ test.describe("Temple Admin Portal", () => {
     const imageField = page.locator(
       '.mw-admin-image-field[data-image-role="card"][data-image-viewport="desktop"]',
     );
-    await imageField.getByRole("button", { name: "Crop", exact: true }).click();
+    await imageField.getByRole("button", { name: "ครอปรูป", exact: true }).click();
 
-    const dialog = page.getByRole("dialog", { name: "Crop รูปหน้า Overview List · 16 : 10", exact: true });
+    const dialog = page.getByRole("dialog", { name: "ครอปรูป รูปการ์ดรายการ · 16 : 10", exact: true });
     await expect(dialog).toBeVisible();
     await expect(dialog.locator("[data-crop-selection]")).toBeVisible();
-    await expect(dialog.getByRole("button", { name: "Crop และบันทึก", exact: true })).toBeEnabled();
+    await expect(dialog.getByRole("button", { name: "ครอปและบันทึก", exact: true })).toBeEnabled();
   });
 
   test("keeps the temple list at the same scroll position after selecting an item", async ({ page }, testInfo) => {
@@ -151,7 +151,7 @@ test.describe("Temple Admin Portal", () => {
     await expect(imageField.getByText("โหลดรูปไม่ได้")).toBeVisible();
 
     await imageField.getByRole("textbox").fill("https://images.example.test/broken.jpg");
-    await imageField.getByRole("button", { name: "ใช้ URL", exact: true }).click();
+    await imageField.getByRole("button", { name: "ใช้ลิงก์", exact: true }).click();
     await expect(page.locator("#adminStatus")).toContainText("ยังไม่บันทึกรูป");
   });
 });

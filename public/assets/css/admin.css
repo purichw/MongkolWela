@@ -2153,7 +2153,7 @@
 }
 
 .admin-page .mw-admin-nav::before {
-  content: "Admin Portal";
+  content: "ระบบจัดการเว็บ";
   display: block;
   padding: 6px 8px 10px;
   color: rgba(255, 240, 194, 0.62);
@@ -2379,6 +2379,109 @@
   box-shadow: 0 28px 74px rgba(47, 33, 26, 0.16);
 }
 
+.admin-page .mw-admin-header {
+  min-height: 86px;
+  padding: 18px 22px;
+  border-color: rgba(200, 173, 123, 0.72);
+  background:
+    linear-gradient(135deg, rgba(255, 253, 248, 0.96), rgba(255, 246, 223, 0.9)),
+    var(--admin-surface);
+  box-shadow:
+    0 22px 60px rgba(59, 39, 22, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.admin-page .mw-admin-logo {
+  gap: 16px;
+}
+
+.admin-page .mw-admin-logo span {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  box-shadow:
+    inset 0 -3px 0 rgba(211, 163, 46, 0.32),
+    0 12px 26px rgba(104, 28, 24, 0.22);
+}
+
+.admin-page .mw-admin-logo strong {
+  font-size: clamp(1.45rem, 2vw, 2.05rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.admin-page .mw-admin-logo small {
+  margin-top: 5px;
+  color: #8b6f4e;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+}
+
+.admin-page .mw-admin-status {
+  min-width: 190px;
+  padding-inline: 18px;
+  border-color: rgba(18, 63, 51, 0.2);
+  background: linear-gradient(180deg, #eaf4ee, #dcece4);
+  color: var(--admin-jade);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.admin-page .mw-admin-confirm[hidden] {
+  display: none;
+}
+
+.admin-page .mw-admin-confirm {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(25, 15, 10, 0.38);
+  backdrop-filter: blur(8px);
+}
+
+.admin-page .mw-admin-confirm-panel {
+  width: min(430px, 100%);
+  padding: 26px;
+  border: 1px solid rgba(200, 173, 123, 0.78);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 253, 248, 0.98), rgba(255, 250, 242, 0.96)),
+    var(--admin-surface);
+  box-shadow: 0 28px 80px rgba(47, 33, 26, 0.28);
+}
+
+.admin-page .mw-admin-confirm-kicker {
+  margin: 0 0 8px;
+  color: #8b6f4e;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.admin-page .mw-admin-confirm-panel h2 {
+  margin: 0;
+  color: var(--admin-lacquer-dark);
+  font-size: 1.45rem;
+  line-height: 1.2;
+}
+
+.admin-page .mw-admin-confirm-panel p[data-confirm-detail] {
+  margin: 12px 0 22px;
+  color: var(--admin-ink-soft);
+  font-weight: 700;
+}
+
+.admin-page .mw-admin-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 @media (max-width: 1180px) {
   .admin-page .mw-admin-shell {
     grid-template-columns: 1fr;
@@ -2444,6 +2547,19 @@
 
   .admin-page .mw-admin-header-actions .mw-admin-btn-primary {
     grid-column: 1 / -1;
+  }
+
+  .admin-page .mw-admin-confirm {
+    padding: 14px;
+  }
+
+  .admin-page .mw-admin-confirm-panel {
+    padding: 22px;
+  }
+
+  .admin-page .mw-admin-confirm-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .admin-page .mw-admin-grid,

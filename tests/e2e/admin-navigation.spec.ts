@@ -95,7 +95,7 @@ test.describe("Admin Portal Navigation", () => {
   test.beforeEach(async ({ page }) => {
     await mockAdminApis(page);
     await page.goto("/admin/", { waitUntil: "domcontentloaded" });
-    await page.getByRole("button", { name: /Navigation/ }).click();
+    await page.getByRole("button", { name: /เมนูเว็บไซต์/ }).click();
   });
 
   test("edits tabs and items, publishes, and keeps the result after reload", async ({ page }) => {
@@ -104,13 +104,15 @@ test.describe("Admin Portal Navigation", () => {
     const firstItem = "รายการแรก";
     const secondItem = "รายการสอง";
 
-    await page.getByRole("button", { name: "เพิ่ม tab" }).click();
+    await page.getByRole("button", { name: "เพิ่มเมนูหลัก" }).click();
     await page.locator("[data-nav-tab]").last().locator("[data-nav-tab-field='label']").fill(tabLabel);
     await page.locator("[data-nav-tab]").last().locator("[data-nav-tab-field='href']").fill("/test-publish/");
 
-    await page.getByRole("button", { name: "เพิ่ม tab" }).click();
+    await page.getByRole("button", { name: "เพิ่มเมนูหลัก" }).click();
     await page.locator("[data-nav-tab]").last().locator("[data-nav-tab-field='label']").fill(deletedTabLabel);
     await page.locator("[data-nav-tab]").last().getByRole("button", { name: "ลบ" }).click();
+    await expect(page.getByRole("dialog", { name: "ยืนยันการลบ" })).toBeVisible();
+    await page.getByRole("button", { name: "ลบ", exact: true }).last().click();
     await expect(page.locator("[data-nav-tab]").filter({ hasText: deletedTabLabel })).toHaveCount(0);
 
     let tab = page.locator("[data-nav-tab]").filter({ hasText: tabLabel });
@@ -121,9 +123,9 @@ test.describe("Admin Portal Navigation", () => {
 
     tab = page.locator("[data-nav-tab]").filter({ hasText: tabLabel });
     await tab.locator("[data-nav-tab-enabled]").uncheck();
-    await tab.getByRole("button", { name: "เพิ่ม item" }).click();
+    await tab.getByRole("button", { name: "เพิ่มเมนูย่อย" }).click();
     tab = page.locator("[data-nav-tab]").filter({ hasText: tabLabel });
-    await tab.getByRole("button", { name: "เพิ่ม item" }).click();
+    await tab.getByRole("button", { name: "เพิ่มเมนูย่อย" }).click();
     tab = page.locator("[data-nav-tab]").filter({ hasText: tabLabel });
 
     await tab.locator("[data-nav-item]").nth(0).locator("[data-nav-item-field='label']").fill(firstItem);
@@ -138,15 +140,17 @@ test.describe("Admin Portal Navigation", () => {
     expect(await navItemLabels(tab)).toEqual([secondItem, firstItem]);
 
     await tab.locator("[data-nav-item]").nth(1).getByRole("button", { name: "ลบ" }).click();
+    await expect(page.getByRole("dialog", { name: "ยืนยันการลบ" })).toBeVisible();
+    await page.getByRole("button", { name: "ลบ", exact: true }).last().click();
     tab = page.locator("[data-nav-tab]").filter({ hasText: tabLabel });
     await expect(tab.locator("[data-nav-item-field='label']")).toHaveCount(1);
     expect(await navItemLabels(tab)).toEqual([secondItem]);
 
     await page.getByRole("button", { name: /Publish/ }).click();
-    await expect(page.locator("#adminStatus")).toContainText("Published");
+    await expect(page.locator("#adminStatus")).toContainText("เผยแพร่แล้ว");
 
     await page.reload({ waitUntil: "domcontentloaded" });
-    await page.getByRole("button", { name: /Navigation/ }).click();
+    await page.getByRole("button", { name: /เมนูเว็บไซต์/ }).click();
 
     tab = page.locator("[data-nav-tab]").filter({ hasText: tabLabel });
     await expect(tab).toHaveCount(1);

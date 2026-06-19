@@ -12,6 +12,7 @@ const state = {
   templeListScroll: {},
   draggingTempleKey: "",
   publishing: false,
+  pendingDeleteAction: null,
   secondaryReady: false,
   secondaryLoading: false,
   media: { provider: "", cloudinary: { enabled: false }, imagekit: { enabled: false } },
@@ -27,10 +28,22 @@ const TEMPLE_COLLECTIONS = [
 ];
 
 const TEMPLE_IMAGE_FIELDS = [
-  { role: "card", label: "รูปหน้า Overview List", ratio: 16 / 10, ratioLabel: "16 : 10" },
-  { role: "hero", label: "รูป Banner หน้ารายละเอียด", ratio: 16 / 10, ratioLabel: "16 : 10" },
-  { role: "map", label: "รูปใน Maps", ratio: 16 / 9, ratioLabel: "16 : 9" },
+  { role: "card", label: "รูปการ์ดรายการ", ratio: 16 / 10, ratioLabel: "16 : 10" },
+  { role: "hero", label: "รูปแบนเนอร์หน้ารายละเอียด", ratio: 16 / 10, ratioLabel: "16 : 10" },
+  { role: "map", label: "รูปแผนที่", ratio: 16 / 9, ratioLabel: "16 : 9" },
 ];
+
+const DELETE_ACTIONS = new Set([
+  "remove-page",
+  "remove-patch",
+  "remove-section",
+  "remove-nav-tab",
+  "remove-nav-item",
+  "remove-card",
+  "remove-block",
+  "delete-temple",
+  "clear-temple-image",
+]);
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -164,7 +177,7 @@ function icon(name) {
 async function boot() {
   renderAppShell();
   renderSideNav();
-  renderAdminLoading("Dashboard", "กำลังตรวจสอบสิทธิ์", "กำลังเตรียมข้อมูลสำหรับ Admin Portal");
+  renderAdminLoading("ภาพรวม", "กำลังตรวจสอบสิทธิ์", "กำลังเตรียมระบบจัดการเว็บ");
   try {
     state.secondaryReady = false;
     state.session = await api("/api/admin/session");
@@ -181,11 +194,11 @@ async function boot() {
 function renderAppShell() {
   $("#adminApp").innerHTML = `<div class="mw-admin-shell">
     <header class="mw-admin-header">
-      <a class="mw-admin-logo" href="/admin/"><span>MW</span><strong>มงคลเวลา</strong><small>Content Management</small></a>
+      <a class="mw-admin-logo" href="/admin/"><span>MW</span><strong>มงคลเวลา</strong><small>ระบบจัดการเนื้อหา</small></a>
       <div class="mw-admin-header-actions">
         <span id="adminStatus" class="mw-admin-status">พร้อมใช้งาน</span>
         <button class="mw-admin-btn" type="button" data-action="preview">เปิดเว็บ</button>
-        <button class="mw-admin-btn" type="button" data-action="save-draft">Save draft</button>
+        <button class="mw-admin-btn" type="button" data-action="save-draft">บันทึกฉบับร่าง</button>
         <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="publish">${icon("publish")} Publish</button>
       </div>
     </header>
@@ -200,10 +213,21 @@ function renderAppShell() {
     <nav class="mw-admin-nav" id="adminNav" aria-label="Admin navigation"></nav>
     <main class="mw-admin-main">
       <header class="mw-admin-top">
-        <div><p>Admin Portal</p><h1 id="adminTitle">Dashboard</h1></div>
+        <div><p>ระบบจัดการเว็บ</p><h1 id="adminTitle">ภาพรวม</h1></div>
       </header>
       <section id="adminContent" class="mw-admin-content"></section>
     </main>
+    <div id="adminConfirmDialog" class="mw-admin-confirm" data-confirm-overlay hidden>
+      <section class="mw-admin-confirm-panel" role="dialog" aria-modal="true" aria-labelledby="adminConfirmTitle">
+        <p class="mw-admin-confirm-kicker">ยืนยันก่อนทำรายการ</p>
+        <h2 id="adminConfirmTitle" data-confirm-title>ยืนยันการลบ</h2>
+        <p data-confirm-detail>ต้องการลบรายการนี้หรือไม่?</p>
+        <div class="mw-admin-confirm-actions">
+          <button class="mw-admin-btn" type="button" data-confirm-cancel>ยกเลิก</button>
+          <button class="mw-admin-btn mw-admin-btn-danger" type="button" data-confirm-accept>ลบ</button>
+        </div>
+      </section>
+    </div>
   </div>`;
   $("#adminApp").addEventListener("click", handleGlobalClick);
   $("#adminApp").addEventListener("input", handleInput);
@@ -224,13 +248,13 @@ function navButton(id, label, iconName) {
 
 function renderSideNav() {
   $("#adminNav").innerHTML = [
-    navButton("dashboard", "Dashboard", "dashboard"),
-    navButton("pages", "Pages & Content", "page"),
-    navButton("temples", "Temples", "component"),
-    navButton("sections", "Sections", "section"),
-    navButton("navigation", "Navigation", "nav"),
-    navButton("components", "Components", "component"),
-    navButton("analytics", "Analytics", "chart"),
+    navButton("dashboard", "ภาพรวม", "dashboard"),
+    navButton("pages", "หน้าและเนื้อหา", "page"),
+    navButton("temples", "สถานที่ศักดิ์สิทธิ์", "component"),
+    navButton("sections", "ส่วนหน้าเว็บ", "section"),
+    navButton("navigation", "เมนูเว็บไซต์", "nav"),
+    navButton("components", "ชิ้นส่วนเนื้อหา", "component"),
+    navButton("analytics", "สถิติ", "chart"),
     `<button class="mw-admin-nav-logout" type="button" data-action="logout"><span>↩</span><strong>ออกจากระบบ</strong></button>`,
   ].join("");
 }
@@ -239,10 +263,10 @@ function renderLogin() {
   $("#adminApp").innerHTML = `<main class="mw-admin-login">
     <form class="mw-admin-login-card" id="loginForm">
       <span class="mw-admin-login-mark">MW</span>
-      <h1>Admin Portal</h1>
-      <p>แก้ content, sections, pages, components และดู analytics ของมงคลเวลา</p>
+      <h1>ระบบจัดการเว็บ</h1>
+      <p>แก้หน้าเว็บ เนื้อหา เมนู รูปภาพ และดูสถิติของมงคลเวลา</p>
       <label>ชื่อผู้แก้ไข<input name="actor" autocomplete="username" value="Admin"></label>
-      <label>รหัสผ่าน<input name="password" type="password" autocomplete="current-password" placeholder="local dev: admin" required></label>
+      <label>รหัสผ่าน<input name="password" type="password" autocomplete="current-password" placeholder="รหัสผ่านผู้ดูแล" required></label>
       <button class="mw-admin-btn mw-admin-btn-primary" type="submit">เข้าสู่ระบบ</button>
       <small id="loginError"></small>
     </form>
@@ -317,11 +341,11 @@ async function loadSecondaryAdminData() {
 function renderAdmin() {
   renderSideNav();
   if (!state.content) {
-    renderAdminLoading("Dashboard", "กำลังโหลดข้อมูล", "กำลังเตรียมข้อมูลหลักสำหรับ Admin Portal");
+    renderAdminLoading("ภาพรวม", "กำลังโหลดข้อมูล", "กำลังเตรียมข้อมูลหลักสำหรับระบบจัดการเว็บ");
     return;
   }
   if (state.section === "temples" && !state.secondaryReady) {
-    renderAdminLoading("Temples", "กำลังโหลดข้อมูลวัด", "กำลังเตรียมรายการสถานที่ รูปภาพ และการตั้งค่าอัปโหลด");
+    renderAdminLoading("สถานที่ศักดิ์สิทธิ์", "กำลังโหลดข้อมูลวัด", "กำลังเตรียมรายการสถานที่ รูปภาพ และการตั้งค่าอัปโหลด");
     return;
   }
   const renderers = {
@@ -340,7 +364,7 @@ function setTitle(title) {
   $("#adminTitle").textContent = title;
 }
 
-function renderAdminLoading(title = "Dashboard", heading = "กำลังโหลดข้อมูล", detail = "กำลังเตรียมข้อมูลสำหรับ Admin Portal") {
+function renderAdminLoading(title = "ภาพรวม", heading = "กำลังโหลดข้อมูล", detail = "กำลังเตรียมข้อมูลสำหรับระบบจัดการเว็บ") {
   setTitle(title);
   $("#adminContent").innerHTML = `<div class="mw-admin-grid mw-admin-loading-grid" aria-hidden="true">
     ${Array.from({ length: 4 }, () => `<article class="mw-admin-stat mw-admin-skeleton-card"><i></i><span></span></article>`).join("")}
@@ -355,7 +379,7 @@ function renderAdminLoading(title = "Dashboard", heading = "กำลังโ�
 }
 
 function renderDashboard() {
-  setTitle("Dashboard");
+  setTitle("ภาพรวม");
   const content = state.content;
   const pages = content.pages || [];
   const livePages = pages.filter((page) => page.enabled !== false);
@@ -365,63 +389,63 @@ function renderDashboard() {
   const navItems = (content.navigation?.tabs || []).reduce((total, tab) => total + (tab.items?.length || 0), 0) + (content.navigation?.utility?.length || 0);
   const paths = Object.values(state.analytics?.paths || {}).sort((a, b) => b.count - a.count);
   $("#adminContent").innerHTML = `<div class="mw-admin-grid">
-    ${statCard("Pages", pages.length)}
-    ${statCard("Live pages", livePages.length)}
-    ${statCard("Nav items", navItems)}
-    ${statCard("Pageviews", state.analytics?.totals?.pageviews || 0)}
+    ${statCard("หน้าเว็บทั้งหมด", pages.length)}
+    ${statCard("หน้าที่เปิดใช้งาน", livePages.length)}
+    ${statCard("รายการเมนู", navItems)}
+    ${statCard("จำนวนเข้าชม", state.analytics?.totals?.pageviews || 0)}
   </div>
   <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>Publishing Control</h2><button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="publish">Publish</button></div>
+    <div class="mw-admin-card-head"><h2>การเผยแพร่</h2><button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="publish">Publish</button></div>
     <div class="mw-admin-metrics">
-      ${miniMetric(content.publishedAt ? "Online" : "Draft", "Status", content.publishedAt ? "good" : "warn")}
-      ${miniMetric(patchCount, "Editable fields")}
-      ${miniMetric(sectionCount, "Section controls")}
-      ${miniMetric(customPages.length, "Custom pages")}
-      ${miniMetric(content.publishedBy || "admin", "Last editor")}
+      ${miniMetric(content.publishedAt ? "ออนไลน์" : "ฉบับร่าง", "สถานะ", content.publishedAt ? "good" : "warn")}
+      ${miniMetric(patchCount, "ช่องเนื้อหา")}
+      ${miniMetric(sectionCount, "ส่วนหน้าเว็บ")}
+      ${miniMetric(customPages.length, "หน้าที่สร้างเอง")}
+      ${miniMetric(content.publishedBy || "ผู้ดูแล", "ผู้แก้ไขล่าสุด")}
     </div>
     <div class="mw-admin-publish-row">
-      <p><strong>Published:</strong> ${escapeHtml(content.publishedAt || "ยังไม่เคย publish")}<br><span>Updated: ${escapeHtml(content.updatedAt || "-")}</span></p>
+      <p><strong>เผยแพร่ล่าสุด:</strong> ${escapeHtml(content.publishedAt || "ยังไม่เคย Publish")}<br><span>แก้ไขล่าสุด: ${escapeHtml(content.updatedAt || "-")}</span></p>
       <div class="mw-admin-badges">
-        <span>content</span><span>navigation</span><span>pages</span><span>analytics</span>
+        <span>เนื้อหา</span><span>เมนู</span><span>หน้าเว็บ</span><span>สถิติ</span>
       </div>
     </div>
-    <div class="mw-admin-content-mix" aria-label="Content mix">
-      ${contentBar("Pages", pages.length, pages.length)}
-      ${contentBar("Live", livePages.length, pages.length)}
-      ${contentBar("Fields", patchCount, Math.max(patchCount, sectionCount, navItems, 1))}
-      ${contentBar("Sections", sectionCount, Math.max(patchCount, sectionCount, navItems, 1))}
-      ${contentBar("Nav", navItems, Math.max(patchCount, sectionCount, navItems, 1))}
+    <div class="mw-admin-content-mix" aria-label="สัดส่วนเนื้อหา">
+      ${contentBar("หน้าเว็บ", pages.length, pages.length)}
+      ${contentBar("เปิดใช้งาน", livePages.length, pages.length)}
+      ${contentBar("ช่องเนื้อหา", patchCount, Math.max(patchCount, sectionCount, navItems, 1))}
+      ${contentBar("ส่วนหน้าเว็บ", sectionCount, Math.max(patchCount, sectionCount, navItems, 1))}
+      ${contentBar("เมนู", navItems, Math.max(patchCount, sectionCount, navItems, 1))}
     </div>
   </div>
   <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>Analytics</h2><button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="refresh-analytics">Refresh</button></div>
+    <div class="mw-admin-card-head"><h2>สถิติ</h2><button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="refresh-analytics">รีเฟรช</button></div>
     <div class="mw-admin-metrics mw-admin-metrics--compact">
-      ${miniMetric(state.analytics?.totals?.pageviews || 0, "Pageviews")}
-      ${miniMetric(state.analytics?.totals?.events || 0, "Events")}
-      ${miniMetric(paths.length, "Tracked paths")}
+      ${miniMetric(state.analytics?.totals?.pageviews || 0, "จำนวนเข้าชม")}
+      ${miniMetric(state.analytics?.totals?.events || 0, "เหตุการณ์")}
+      ${miniMetric(paths.length, "หน้าที่ติดตาม")}
     </div>
     <div class="mw-admin-table mw-admin-table--dashboard">
-      ${paths.slice(0, 5).map((item) => `<div><strong>${escapeHtml(item.path)}</strong><span>${escapeHtml(item.title || "")}</span><b>${item.count}</b></div>`).join("") || empty("ยังไม่มีข้อมูล analytics")}
+      ${paths.slice(0, 5).map((item) => `<div><strong>${escapeHtml(item.path)}</strong><span>${escapeHtml(item.title || "")}</span><b>${item.count}</b></div>`).join("") || empty("ยังไม่มีข้อมูลสถิติ")}
     </div>
   </div>
   <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>Quick actions</h2></div>
+    <div class="mw-admin-card-head"><h2>ทางลัด</h2></div>
     <div class="mw-admin-quick-actions">
-      <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-section="pages">Manage pages</button>
-      <button class="mw-admin-btn" type="button" data-section="sections">Manage sections</button>
-      <button class="mw-admin-btn" type="button" data-section="navigation">Manage navigation</button>
-      <button class="mw-admin-btn" type="button" data-section="components">Manage components</button>
+      <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-section="pages">จัดการหน้าเว็บ</button>
+      <button class="mw-admin-btn" type="button" data-section="sections">จัดการส่วนหน้าเว็บ</button>
+      <button class="mw-admin-btn" type="button" data-section="navigation">จัดการเมนู</button>
+      <button class="mw-admin-btn" type="button" data-section="components">จัดการชิ้นส่วน</button>
     </div>
   </div>
   <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>Latest pages</h2></div>
+    <div class="mw-admin-card-head"><h2>หน้าเว็บล่าสุด</h2></div>
     <div class="mw-admin-data-table">
-      <div class="mw-admin-data-head"><span>Page</span><span>Type</span><span>Status</span><span>Action</span></div>
+      <div class="mw-admin-data-head"><span>หน้าเว็บ</span><span>ชนิด</span><span>สถานะ</span><span>คำสั่ง</span></div>
       ${pages.slice(0, 7).map((page) => `<div>
         <strong>${escapeHtml(page.label || page.id)}</strong>
-        <span>${escapeHtml(page.kind || "existing")}</span>
-        <span><mark>${page.enabled !== false ? "Live" : "Off"}</mark></span>
-        <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-section="pages" data-page-jump="${escapeHtml(page.id)}">Edit</button>
+        <span>${escapeHtml(page.kind === "custom" ? "สร้างเอง" : "หน้าหลัก")}</span>
+        <span><mark>${page.enabled !== false ? "เปิด" : "ปิด"}</mark></span>
+        <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-section="pages" data-page-jump="${escapeHtml(page.id)}">แก้ไข</button>
       </div>`).join("")}
     </div>
   </div>`;
@@ -452,21 +476,21 @@ function pageSelector() {
 }
 
 function renderPages() {
-  setTitle("Pages & Content");
+  setTitle("หน้าและเนื้อหา");
   const page = currentPage();
   $("#adminContent").innerHTML = `${pageToolbar(page)}
     <div class="mw-admin-card">
-      <h2>Page Settings</h2>
+      <h2>ตั้งค่าหน้าเว็บ</h2>
       <div class="mw-admin-form-grid">
         <label>ชื่อหน้า<input data-page-prop="label" value="${escapeHtml(page.label || "")}"></label>
-        <label>Route<input data-page-prop="route" value="${escapeHtml(page.route || "")}"></label>
-        <label>ชนิด<select data-page-prop="kind"><option value="existing" ${page.kind !== "custom" ? "selected" : ""}>Existing page</option><option value="custom" ${page.kind === "custom" ? "selected" : ""}>Custom page</option></select></label>
+        <label>เส้นทางหน้าเว็บ<input data-page-prop="route" value="${escapeHtml(page.route || "")}"></label>
+        <label>ชนิด<select data-page-prop="kind"><option value="existing" ${page.kind !== "custom" ? "selected" : ""}>หน้าหลัก</option><option value="custom" ${page.kind === "custom" ? "selected" : ""}>หน้าที่สร้างเอง</option></select></label>
         <label class="mw-admin-check"><input type="checkbox" data-page-enabled ${page.enabled !== false ? "checked" : ""}> เปิดใช้งาน</label>
       </div>
     </div>
     <div class="mw-admin-card">
-      <div class="mw-admin-card-head"><h2>Editable Fields</h2><div><button class="mw-admin-btn" type="button" data-action="scan-page">สแกนจากหน้าเว็บ</button><button class="mw-admin-btn" type="button" data-action="add-patch">เพิ่ม field</button></div></div>
-      <div class="mw-admin-list">${(page.patches || []).map(renderPatchEditor).join("") || empty("ยังไม่มี field")}</div>
+      <div class="mw-admin-card-head"><h2>ช่องเนื้อหาที่แก้ได้</h2><div><button class="mw-admin-btn" type="button" data-action="scan-page">สแกนจากหน้าเว็บ</button><button class="mw-admin-btn" type="button" data-action="add-patch">เพิ่มช่องเนื้อหา</button></div></div>
+      <div class="mw-admin-list">${(page.patches || []).map(renderPatchEditor).join("") || empty("ยังไม่มีช่องเนื้อหา")}</div>
     </div>
     ${page.kind === "custom" ? renderBlockEditor(page) : ""}`;
 }
@@ -474,9 +498,9 @@ function renderPages() {
 function pageToolbar(page) {
   return `<div class="mw-admin-toolbar">${pageSelector()}
     <button class="mw-admin-btn" type="button" data-action="add-page">เพิ่มหน้า</button>
-    <button class="mw-admin-btn" type="button" data-action="duplicate-page">Duplicate</button>
+    <button class="mw-admin-btn" type="button" data-action="duplicate-page">ทำสำเนา</button>
     <button class="mw-admin-btn mw-admin-btn-danger" type="button" data-action="remove-page">ลบหน้า</button>
-    <a class="mw-admin-btn" target="_blank" rel="noopener" href="${escapeHtml(page.route || "/")}">Preview</a>
+    <a class="mw-admin-btn" target="_blank" rel="noopener" href="${escapeHtml(page.route || "/")}">ดูหน้าเว็บ</a>
   </div>`;
 }
 
@@ -488,14 +512,14 @@ function renderPatchEditor(patch, index) {
       <div><button type="button" data-action="move-patch-up">ขึ้น</button><button type="button" data-action="move-patch-down">ลง</button><button type="button" data-action="remove-patch">ลบ</button></div>
     </div>
     <div class="mw-admin-form-grid">
-      <label>Label<input data-patch-field="label" value="${escapeHtml(patch.label || "")}"></label>
-      <label>CSS selector<input data-patch-field="selector" value="${escapeHtml(patch.selector || "")}"></label>
-      <label>ชนิด<select data-patch-field="kind"><option value="text" ${type === "text" ? "selected" : ""}>Text</option><option value="html" ${type === "html" ? "selected" : ""}>Rich HTML</option><option value="image" ${type === "image" ? "selected" : ""}>Image</option><option value="attr" ${type === "attr" ? "selected" : ""}>Attribute</option></select></label>
-      <label>Attribute<input data-patch-field="attr" value="${escapeHtml(patch.attr || "")}" placeholder="placeholder / href / aria-label"></label>
+      <label>ชื่อช่อง<input data-patch-field="label" value="${escapeHtml(patch.label || "")}"></label>
+      <label>ตัวชี้ตำแหน่ง<input data-patch-field="selector" value="${escapeHtml(patch.selector || "")}"></label>
+      <label>ชนิด<select data-patch-field="kind"><option value="text" ${type === "text" ? "selected" : ""}>ข้อความ</option><option value="html" ${type === "html" ? "selected" : ""}>ข้อความจัดรูปแบบ</option><option value="image" ${type === "image" ? "selected" : ""}>รูปภาพ</option><option value="attr" ${type === "attr" ? "selected" : ""}>คุณสมบัติ</option></select></label>
+      <label>คุณสมบัติ<input data-patch-field="attr" value="${escapeHtml(patch.attr || "")}" placeholder="placeholder / href / aria-label"></label>
     </div>
-    ${type === "html" ? `<label>Rich text<div class="mw-admin-rich" contenteditable="true" data-patch-rich="value">${patch.value || ""}</div></label>` : ""}
-    ${type !== "html" && type !== "image" ? `<label>Value<textarea data-patch-field="value">${escapeHtml(patch.value || "")}</textarea></label>` : ""}
-    ${type === "image" ? `<div class="mw-admin-form-grid"><label>Image URL<input data-patch-field="src" value="${escapeHtml(patch.src || "")}"></label><label>Alt<input data-patch-field="alt" value="${escapeHtml(patch.alt || "")}"></label></div>` : ""}
+    ${type === "html" ? `<label>ข้อความจัดรูปแบบ<div class="mw-admin-rich" contenteditable="true" data-patch-rich="value">${patch.value || ""}</div></label>` : ""}
+    ${type !== "html" && type !== "image" ? `<label>ค่า<textarea data-patch-field="value">${escapeHtml(patch.value || "")}</textarea></label>` : ""}
+    ${type === "image" ? `<div class="mw-admin-form-grid"><label>ลิงก์รูปภาพ<input data-patch-field="src" value="${escapeHtml(patch.src || "")}"></label><label>คำอธิบายรูป<input data-patch-field="alt" value="${escapeHtml(patch.alt || "")}"></label></div>` : ""}
   </article>`;
 }
 
@@ -553,7 +577,7 @@ function normalizeAdminSearch(value = "") {
 
 function renderTemples({ rememberScroll = true } = {}) {
   if (rememberScroll) rememberTempleListScroll();
-  setTitle("Temples");
+  setTitle("สถานที่ศักดิ์สิทธิ์");
   const collection = TEMPLE_COLLECTIONS.find((item) => item.key === state.templeCollectionFilter) || TEMPLE_COLLECTIONS[0];
   const visible = filteredTempleCatalog();
   const record = currentTempleRecord();
@@ -619,20 +643,21 @@ function renderTempleListItem(record) {
 function renderTempleEmptyState() {
   return `<div class="mw-admin-temple-empty">
     <strong>ยังไม่มีสถานที่ในหมวดนี้</strong>
-    <p>เริ่มสร้างสถานที่แรก แล้วเพิ่มรูปสำหรับหน้า Overview, Banner และ Maps ได้ทันที</p>
+    <p>เริ่มสร้างสถานที่แรก แล้วเพิ่มรูปสำหรับหน้ารายการ แบนเนอร์ และแผนที่ได้ทันที</p>
     <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="add-temple">+ เพิ่มสถานที่</button>
   </div>`;
 }
 
 function renderTempleEditor(record, edit) {
   const provider = state.media.provider
-    ? `อัปโหลดตรงไป ${state.media.provider === "cloudinary" ? "Cloudinary" : "ImageKit"}`
-    : "ยังไม่ได้ตั้งค่า Cloudinary หรือ ImageKit";
+    ? "พร้อมอัปโหลดรูปเข้าระบบ"
+    : "ยังไม่ได้ตั้งค่าระบบอัปโหลดรูป";
+  const templeLocation = [record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง";
   return `<div class="mw-admin-temple-editor-head">
     <div>
       <p data-temple-editor-rank>${escapeHtml(record.collectionLabel)} · #${escapeHtml(record.temple.rank || "-")}</p>
       <h2 data-temple-editor-name>${escapeHtml(templeValue(record, edit, "name") || "สถานที่ใหม่")}</h2>
-      <small>${escapeHtml(record.key)}</small>
+      <small>${escapeHtml(templeLocation)}</small>
     </div>
     <div>
       <a class="mw-admin-btn" target="_blank" rel="noopener" href="${escapeHtml(record.detailUrl)}">เปิดหน้าจริง</a>
@@ -652,7 +677,7 @@ function renderTempleEditor(record, edit) {
       <div><span>02</span><h3>รูปภาพ</h3></div>
       <p class="${state.media.provider ? "is-ready" : "is-warning"}">${escapeHtml(provider)}</p>
     </div>
-    <p class="mw-admin-temple-media-note">แต่ละตำแหน่งแยก Desktop และ Mobile เพื่อเลือกจุดครอปที่เหมาะกับหน้าจอจริง รูปใน Maps จะใช้รูป Overview เป็นค่าเริ่มต้นถ้ายังไม่ได้กำหนด</p>
+    <p class="mw-admin-temple-media-note">แต่ละตำแหน่งแยกเดสก์ท็อปและมือถือ เพื่อเลือกจุดครอปที่เหมาะกับหน้าจอจริง รูปแผนที่จะใช้รูปหน้ารายการเป็นค่าเริ่มต้นถ้ายังไม่ได้กำหนด</p>
     <div class="mw-admin-temple-image-groups">
       ${TEMPLE_IMAGE_FIELDS.map((field) => renderTempleImageGroup(record, edit, field)).join("")}
     </div>
@@ -661,10 +686,10 @@ function renderTempleEditor(record, edit) {
 
 function renderTempleImageGroup(record, edit, field) {
   return `<section class="mw-admin-temple-image-group">
-    <header><div><h4>${escapeHtml(field.label)}</h4><span>${escapeHtml(field.ratioLabel)}</span></div><small>${field.role === "card" ? "หน้า Cards" : field.role === "hero" ? "Banner หน้ารายละเอียด" : "Popup เมื่อเลือกหมุด"}</small></header>
+    <header><div><h4>${escapeHtml(field.label)}</h4><span>${escapeHtml(field.ratioLabel)}</span></div><small>${field.role === "card" ? "หน้ารายการ" : field.role === "hero" ? "หน้ารายละเอียด" : "เมื่อเลือกหมุดแผนที่"}</small></header>
     <div class="mw-admin-temple-image-variants">
-      ${renderTempleImageField(record, edit, field, "desktop", "Desktop / Tablet")}
-      ${renderTempleImageField(record, edit, field, "mobile", "Mobile")}
+      ${renderTempleImageField(record, edit, field, "desktop", "เดสก์ท็อปและแท็บเล็ต")}
+      ${renderTempleImageField(record, edit, field, "mobile", "มือถือ")}
     </div>
   </section>`;
 }
@@ -678,12 +703,12 @@ function renderTempleImageField(record, edit, field, viewport, label) {
       ${url ? `<img src="${escapeHtml(url)}" alt="" data-admin-temple-image>` : `<span>ยังไม่มีรูป</span>`}
     </div>
     <div class="mw-admin-image-url-row">
-      <input id="${inputId}" type="url" value="${escapeHtml(url)}" placeholder="Wikimedia, Cloudinary, ImageKit หรือ HTTPS URL" data-image-url>
-      <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="use-temple-image-url">ใช้ URL</button>
+      <input id="${inputId}" type="url" value="${escapeHtml(url)}" placeholder="วางลิงก์รูปภาพ HTTPS" data-image-url>
+      <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="use-temple-image-url">ใช้ลิงก์</button>
     </div>
     <div class="mw-admin-image-actions">
       <label class="mw-admin-btn mw-admin-btn-sm">อัปโหลด<input type="file" accept="image/*" data-temple-image-upload hidden></label>
-      <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="crop-temple-image" ${url ? "" : "disabled"}>Crop</button>
+      <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="crop-temple-image" ${url ? "" : "disabled"}>ครอปรูป</button>
       <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="reuse-temple-image">ใช้รูปเดิม</button>
       <button class="mw-admin-btn mw-admin-btn-sm mw-admin-btn-danger" type="button" data-action="clear-temple-image" ${url ? "" : "disabled"}>ลบรูป</button>
     </div>
@@ -714,13 +739,13 @@ function handleAdminImageError(event) {
 }
 
 function renderSections() {
-  setTitle("Sections");
+  setTitle("ส่วนหน้าเว็บ");
   const page = currentPage();
   $("#adminContent").innerHTML = `${pageToolbar(page)}
     <div class="mw-admin-card">
-      <div class="mw-admin-card-head"><h2>Section Controls</h2><button class="mw-admin-btn" type="button" data-action="add-section">เพิ่ม section control</button></div>
-      <p>ใช้ selector ของ section เดิม เพื่อ hide/reorder/duplicate โดย component render แบบเดิม</p>
-      <div class="mw-admin-list">${byOrder(page.sections).map(renderSectionEditor).join("") || empty("ยังไม่มี section control")}</div>
+      <div class="mw-admin-card-head"><h2>การจัดส่วนหน้าเว็บ</h2><button class="mw-admin-btn" type="button" data-action="add-section">เพิ่มส่วนหน้าเว็บ</button></div>
+      <p>ใช้ตัวชี้ตำแหน่งของส่วนเดิม เพื่อซ่อน จัดลำดับ หรือทำซ้ำ โดยไม่กระทบโครงสร้างหน้าเว็บ</p>
+      <div class="mw-admin-list">${byOrder(page.sections).map(renderSectionEditor).join("") || empty("ยังไม่มีส่วนหน้าเว็บ")}</div>
     </div>`;
 }
 
@@ -728,42 +753,42 @@ function renderSectionEditor(section, index) {
   const originalIndex = (currentPage().sections || []).indexOf(section);
   return `<article class="mw-admin-item" data-section-index="${originalIndex}">
     <div class="mw-admin-item-head">
-      <strong>${escapeHtml(section.label || section.id || "Section")}</strong>
+      <strong>${escapeHtml(section.label || section.id || "ส่วนหน้าเว็บ")}</strong>
       <div><button type="button" data-action="move-section-up">ขึ้น</button><button type="button" data-action="move-section-down">ลง</button><button type="button" data-action="remove-section">ลบ</button></div>
     </div>
     <div class="mw-admin-form-grid">
-      <label>Label<input data-section-field="label" value="${escapeHtml(section.label || "")}"></label>
-      <label>Selector<input data-section-field="selector" value="${escapeHtml(section.selector || "")}"></label>
-      <label>Order<input type="number" data-section-field="order" value="${escapeHtml(section.order ?? index * 10)}"></label>
-      <label>Duplicate count<input type="number" min="0" max="5" data-section-field="duplicateCount" value="${escapeHtml(section.duplicateCount || 0)}"></label>
+      <label>ชื่อส่วน<input data-section-field="label" value="${escapeHtml(section.label || "")}"></label>
+      <label>ตัวชี้ตำแหน่ง<input data-section-field="selector" value="${escapeHtml(section.selector || "")}"></label>
+      <label>ลำดับ<input type="number" data-section-field="order" value="${escapeHtml(section.order ?? index * 10)}"></label>
+      <label>จำนวนที่ทำซ้ำ<input type="number" min="0" max="5" data-section-field="duplicateCount" value="${escapeHtml(section.duplicateCount || 0)}"></label>
       <label class="mw-admin-check"><input type="checkbox" data-section-enabled ${section.enabled !== false ? "checked" : ""}> เปิดใช้งาน</label>
     </div>
   </article>`;
 }
 
 function renderNavigation() {
-  setTitle("Navigation");
+  setTitle("เมนูเว็บไซต์");
   const nav = ensureNavigation();
   $("#adminContent").innerHTML = `<div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>Navbar Tabs</h2><button class="mw-admin-btn" type="button" data-action="add-nav-tab">เพิ่ม tab</button></div>
+    <div class="mw-admin-card-head"><h2>เมนูหลัก</h2><button class="mw-admin-btn" type="button" data-action="add-nav-tab">เพิ่มเมนูหลัก</button></div>
     <div class="mw-admin-list">${(nav.tabs || []).map(renderNavTab).join("")}</div>
   </div>
   <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>Utility Links</h2><button class="mw-admin-btn" type="button" data-action="add-utility">เพิ่ม utility</button></div>
+    <div class="mw-admin-card-head"><h2>ลิงก์เสริม</h2><button class="mw-admin-btn" type="button" data-action="add-utility">เพิ่มลิงก์เสริม</button></div>
     <div class="mw-admin-list">${(nav.utility || []).map((item, index) => renderNavItem(item, index, "utility")).join("")}</div>
   </div>`;
 }
 
 function renderNavTab(tab, index) {
   return `<article class="mw-admin-item" data-nav-tab="${index}">
-    <div class="mw-admin-item-head"><strong>${escapeHtml(tab.label || "Tab")}</strong><div><button type="button" data-action="move-nav-tab-up" data-nav-tab-action-index="${index}">ขึ้น</button><button type="button" data-action="move-nav-tab-down" data-nav-tab-action-index="${index}">ลง</button><button type="button" data-action="remove-nav-tab" data-nav-tab-action-index="${index}">ลบ</button></div></div>
+    <div class="mw-admin-item-head"><strong>${escapeHtml(tab.label || "เมนูหลัก")}</strong><div><button type="button" data-action="move-nav-tab-up" data-nav-tab-action-index="${index}">ขึ้น</button><button type="button" data-action="move-nav-tab-down" data-nav-tab-action-index="${index}">ลง</button><button type="button" data-action="remove-nav-tab" data-nav-tab-action-index="${index}">ลบ</button></div></div>
     <div class="mw-admin-form-grid">
-      <label>Label<input data-nav-tab-field="label" value="${escapeHtml(tab.label || "")}"></label>
-      <label>Href<input data-nav-tab-field="href" value="${escapeHtml(tab.href || "")}"></label>
+      <label>ชื่อเมนู<input data-nav-tab-field="label" value="${escapeHtml(tab.label || "")}"></label>
+      <label>ลิงก์<input data-nav-tab-field="href" value="${escapeHtml(tab.href || "")}"></label>
       <label class="mw-admin-check"><input type="checkbox" data-nav-tab-enabled ${tab.enabled !== false ? "checked" : ""}> เปิดใช้งาน</label>
     </div>
     <div class="mw-admin-sublist">
-      <div class="mw-admin-card-head"><h3>Items</h3><button type="button" data-action="add-nav-item" data-nav-tab-action-index="${index}">เพิ่ม item</button></div>
+      <div class="mw-admin-card-head"><h3>เมนูย่อย</h3><button type="button" data-action="add-nav-item" data-nav-tab-action-index="${index}">เพิ่มเมนูย่อย</button></div>
       ${(tab.items || []).map((item, itemIndex) => renderNavItem(item, itemIndex, "tab", index)).join("")}
     </div>
   </article>`;
@@ -771,10 +796,10 @@ function renderNavTab(tab, index) {
 
 function renderNavItem(item, index, scope, tabIndex = -1) {
   return `<div class="mw-admin-nav-row" data-nav-scope="${scope}" data-nav-tab-index="${tabIndex}" data-nav-item="${index}">
-    <input data-nav-item-field="label" value="${escapeHtml(item.label || "")}" placeholder="Label">
-    <input data-nav-item-field="href" value="${escapeHtml(item.href || "")}" placeholder="Href">
-    <label><input type="checkbox" data-nav-item-section ${item.section ? "checked" : ""}> section</label>
-    <label><input type="checkbox" data-nav-item-enabled ${item.enabled !== false ? "checked" : ""}> on</label>
+    <input data-nav-item-field="label" value="${escapeHtml(item.label || "")}" placeholder="ชื่อเมนู">
+    <input data-nav-item-field="href" value="${escapeHtml(item.href || "")}" placeholder="ลิงก์">
+    <label><input type="checkbox" data-nav-item-section ${item.section ? "checked" : ""}> เป็นหัวข้อ</label>
+    <label><input type="checkbox" data-nav-item-enabled ${item.enabled !== false ? "checked" : ""}> เปิด</label>
     <button type="button" data-action="move-nav-item-up" data-nav-item-action-index="${index}">ขึ้น</button>
     <button type="button" data-action="move-nav-item-down" data-nav-item-action-index="${index}">ลง</button>
     <button type="button" data-action="remove-nav-item" data-nav-item-action-index="${index}">ลบ</button>
@@ -782,56 +807,64 @@ function renderNavItem(item, index, scope, tabIndex = -1) {
 }
 
 function renderComponents() {
-  setTitle("Components");
+  setTitle("ชิ้นส่วนเนื้อหา");
   const cards = state.content.components?.cards || [];
   $("#adminContent").innerHTML = `<div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>Reusable Cards</h2><button class="mw-admin-btn" type="button" data-action="add-card">เพิ่ม card</button></div>
-    <p>Phase 4 registry สำหรับ card/component ที่ custom pages หรือหน้าในอนาคตเรียกใช้ได้</p>
-    <div class="mw-admin-list">${cards.map(renderCardEditor).join("") || empty("ยังไม่มี card")}</div>
+    <div class="mw-admin-card-head"><h2>การ์ดที่นำกลับมาใช้ได้</h2><button class="mw-admin-btn" type="button" data-action="add-card">เพิ่มการ์ด</button></div>
+    <p>คลังชิ้นส่วนสำหรับหน้าเว็บที่สร้างเองหรือหน้าเว็บในอนาคต</p>
+    <div class="mw-admin-list">${cards.map(renderCardEditor).join("") || empty("ยังไม่มีการ์ด")}</div>
   </div>`;
 }
 
 function renderCardEditor(card, index) {
   return `<article class="mw-admin-item" data-card-index="${index}">
-    <div class="mw-admin-item-head"><strong>${escapeHtml(card.title || "Card")}</strong><button type="button" data-action="remove-card">ลบ</button></div>
+    <div class="mw-admin-item-head"><strong>${escapeHtml(card.title || "การ์ด")}</strong><button type="button" data-action="remove-card">ลบ</button></div>
     <div class="mw-admin-form-grid">
-      <label>Title<input data-card-field="title" value="${escapeHtml(card.title || "")}"></label>
-      <label>Image<input data-card-field="image" value="${escapeHtml(card.image || "")}"></label>
-      <label>Href<input data-card-field="href" value="${escapeHtml(card.href || "")}"></label>
+      <label>หัวข้อ<input data-card-field="title" value="${escapeHtml(card.title || "")}"></label>
+      <label>รูปภาพ<input data-card-field="image" value="${escapeHtml(card.image || "")}"></label>
+      <label>ลิงก์<input data-card-field="href" value="${escapeHtml(card.href || "")}"></label>
     </div>
-    <label>Body<textarea data-card-field="body">${escapeHtml(card.body || "")}</textarea></label>
+    <label>เนื้อหา<textarea data-card-field="body">${escapeHtml(card.body || "")}</textarea></label>
   </article>`;
 }
 
 function renderBlockEditor(page) {
   return `<div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>Custom Page Blocks</h2><div><button class="mw-admin-btn" type="button" data-action="add-rich-block">เพิ่ม Rich Text</button><button class="mw-admin-btn" type="button" data-action="add-hero-block">เพิ่ม Hero</button><button class="mw-admin-btn" type="button" data-action="add-cards-block">เพิ่ม Cards</button></div></div>
-    <div class="mw-admin-list">${(page.blocks || []).map(renderBlockItem).join("") || empty("ยังไม่มี block")}</div>
+    <div class="mw-admin-card-head"><h2>ชิ้นส่วนของหน้าเว็บที่สร้างเอง</h2><div><button class="mw-admin-btn" type="button" data-action="add-rich-block">เพิ่มข้อความจัดรูปแบบ</button><button class="mw-admin-btn" type="button" data-action="add-hero-block">เพิ่มแบนเนอร์</button><button class="mw-admin-btn" type="button" data-action="add-cards-block">เพิ่มการ์ด</button></div></div>
+    <div class="mw-admin-list">${(page.blocks || []).map(renderBlockItem).join("") || empty("ยังไม่มีชิ้นส่วน")}</div>
   </div>`;
 }
 
 function renderBlockItem(block, index) {
   const props = block.props || {};
   return `<article class="mw-admin-item" data-block-index="${index}">
-    <div class="mw-admin-item-head"><strong>${escapeHtml(block.type)}</strong><div><button type="button" data-action="move-block-up">ขึ้น</button><button type="button" data-action="move-block-down">ลง</button><button type="button" data-action="remove-block">ลบ</button></div></div>
-    <label class="mw-admin-check"><input type="checkbox" data-block-enabled ${block.enabled !== false ? "checked" : ""}> เปิดใช้งาน block</label>
-    ${block.type === "hero" ? `<div class="mw-admin-form-grid"><label>Eyebrow<input data-block-prop="eyebrow" value="${escapeHtml(props.eyebrow || "")}"></label><label>Title<input data-block-prop="title" value="${escapeHtml(props.title || "")}"></label><label>Image<input data-block-prop="image" value="${escapeHtml(props.image || "")}"></label><label>Button label<input data-block-prop="buttonLabel" value="${escapeHtml(props.buttonLabel || "")}"></label><label>Button href<input data-block-prop="buttonHref" value="${escapeHtml(props.buttonHref || "")}"></label></div><label>Body<textarea data-block-prop="body">${escapeHtml(props.body || "")}</textarea></label>` : ""}
-    ${block.type === "richText" ? `<label>Rich text<div class="mw-admin-rich" contenteditable="true" data-block-rich="html">${props.html || ""}</div></label>` : ""}
-    ${block.type === "cards" ? `<label>Cards JSON<textarea data-block-prop-json="cards">${escapeHtml(JSON.stringify(props.cards || [], null, 2))}</textarea></label>` : ""}
+    <div class="mw-admin-item-head"><strong>${escapeHtml(blockTypeLabel(block.type))}</strong><div><button type="button" data-action="move-block-up">ขึ้น</button><button type="button" data-action="move-block-down">ลง</button><button type="button" data-action="remove-block">ลบ</button></div></div>
+    <label class="mw-admin-check"><input type="checkbox" data-block-enabled ${block.enabled !== false ? "checked" : ""}> เปิดใช้งานชิ้นส่วน</label>
+    ${block.type === "hero" ? `<div class="mw-admin-form-grid"><label>ข้อความนำ<input data-block-prop="eyebrow" value="${escapeHtml(props.eyebrow || "")}"></label><label>หัวข้อ<input data-block-prop="title" value="${escapeHtml(props.title || "")}"></label><label>รูปภาพ<input data-block-prop="image" value="${escapeHtml(props.image || "")}"></label><label>ข้อความปุ่ม<input data-block-prop="buttonLabel" value="${escapeHtml(props.buttonLabel || "")}"></label><label>ลิงก์ปุ่ม<input data-block-prop="buttonHref" value="${escapeHtml(props.buttonHref || "")}"></label></div><label>เนื้อหา<textarea data-block-prop="body">${escapeHtml(props.body || "")}</textarea></label>` : ""}
+    ${block.type === "richText" ? `<label>ข้อความจัดรูปแบบ<div class="mw-admin-rich" contenteditable="true" data-block-rich="html">${props.html || ""}</div></label>` : ""}
+    ${block.type === "cards" ? `<label>ข้อมูลการ์ด<textarea data-block-prop-json="cards">${escapeHtml(JSON.stringify(props.cards || [], null, 2))}</textarea></label>` : ""}
   </article>`;
 }
 
+function blockTypeLabel(type) {
+  return {
+    hero: "แบนเนอร์",
+    richText: "ข้อความจัดรูปแบบ",
+    cards: "การ์ด",
+  }[type] || type || "ชิ้นส่วน";
+}
+
 function renderAnalytics() {
-  setTitle("Analytics");
+  setTitle("สถิติ");
   const paths = Object.values(state.analytics?.paths || {}).sort((a, b) => b.count - a.count);
   $("#adminContent").innerHTML = `<div class="mw-admin-grid">
-    ${statCard("Pageviews", state.analytics?.totals?.pageviews || 0)}
-    ${statCard("Events", state.analytics?.totals?.events || 0)}
-    ${statCard("Tracked paths", paths.length)}
+    ${statCard("จำนวนเข้าชม", state.analytics?.totals?.pageviews || 0)}
+    ${statCard("เหตุการณ์", state.analytics?.totals?.events || 0)}
+    ${statCard("หน้าที่ติดตาม", paths.length)}
   </div>
   <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>Top Pages</h2><button class="mw-admin-btn" type="button" data-action="refresh-analytics">Refresh</button></div>
-    <div class="mw-admin-table">${paths.map((item) => `<div><strong>${escapeHtml(item.path)}</strong><span>${escapeHtml(item.title || "")}</span><b>${item.count}</b></div>`).join("") || empty("ยังไม่มีข้อมูล analytics")}</div>
+    <div class="mw-admin-card-head"><h2>หน้าเว็บที่มีคนดูมาก</h2><button class="mw-admin-btn" type="button" data-action="refresh-analytics">รีเฟรช</button></div>
+    <div class="mw-admin-table">${paths.map((item) => `<div><strong>${escapeHtml(item.path)}</strong><span>${escapeHtml(item.title || "")}</span><b>${item.count}</b></div>`).join("") || empty("ยังไม่มีข้อมูลสถิติ")}</div>
   </div>`;
 }
 
@@ -956,6 +989,18 @@ function handleTempleReorderKeydown(event) {
 }
 
 function handleGlobalClick(event) {
+  const confirmAccept = event.target.closest("[data-confirm-accept]");
+  if (confirmAccept) {
+    runPendingDeleteAction();
+    return;
+  }
+
+  const confirmCancel = event.target.closest("[data-confirm-cancel]");
+  if (confirmCancel || event.target.matches("[data-confirm-overlay]")) {
+    closeDeleteConfirm();
+    return;
+  }
+
   const templeMove = event.target.closest("[data-temple-move-key]");
   if (templeMove) {
     moveTempleByOffset(templeMove.dataset.templeMoveKey, Number(templeMove.dataset.templeMoveOffset));
@@ -1034,7 +1079,55 @@ function handleGlobalClick(event) {
       renderAdmin();
     },
   };
+  if (DELETE_ACTIONS.has(action)) {
+    showDeleteConfirm(actionButton, actions[action]);
+    return;
+  }
   actions[action]?.(actionButton);
+}
+
+function deleteConfirmMessage(button) {
+  const label = button.textContent.trim() || "รายการนี้";
+  if (button.dataset.action === "clear-temple-image") {
+    return {
+      title: "ยืนยันการลบรูป",
+      detail: "ต้องการลบรูปนี้ออกจาก draft หรือไม่?",
+      confirmLabel: "ลบรูป",
+    };
+  }
+  return {
+    title: "ยืนยันการลบ",
+    detail: `ต้องการ${label}หรือไม่?`,
+    confirmLabel: "ลบ",
+  };
+}
+
+function showDeleteConfirm(button, callback) {
+  if (!callback) return;
+  state.pendingDeleteAction = { button, callback };
+  const dialog = $("#adminConfirmDialog");
+  if (!dialog) return;
+  const message = deleteConfirmMessage(button);
+  $("[data-confirm-title]", dialog).textContent = message.title;
+  $("[data-confirm-detail]", dialog).textContent = message.detail;
+  $("[data-confirm-accept]", dialog).textContent = message.confirmLabel;
+  dialog.hidden = false;
+  dialog.dataset.active = "true";
+  requestAnimationFrame(() => $("[data-confirm-cancel]", dialog)?.focus());
+}
+
+function closeDeleteConfirm() {
+  state.pendingDeleteAction = null;
+  const dialog = $("#adminConfirmDialog");
+  if (!dialog) return;
+  dialog.hidden = true;
+  dialog.dataset.active = "false";
+}
+
+function runPendingDeleteAction() {
+  const pending = state.pendingDeleteAction;
+  closeDeleteConfirm();
+  pending?.callback(pending.button);
 }
 
 function rememberTempleListScroll() {
@@ -1220,7 +1313,7 @@ async function publish() {
   setPublishControlsDisabled(true);
   try {
     setStatus("กำลัง publish...", "info");
-    setPublishProgress(8, "กำลังส่งข้อมูล", "กำลังบันทึก content ใหม่");
+    setPublishProgress(8, "กำลังส่งข้อมูล", "กำลังบันทึกข้อมูลใหม่");
     const payload = await api("/api/admin/content", {
       method: "POST",
       body: JSON.stringify({ content: state.content }),
@@ -1235,7 +1328,7 @@ async function publish() {
     state.content = verifiedContent;
     state.dirty = false;
     setPublishProgress(100, "หน้าเว็บอัปเดตแล้ว", "visitor จะเห็นข้อมูลเวอร์ชันล่าสุดเมื่อเปิดหรือรีโหลดหน้า");
-    setStatus(`Published (${payload.meta?.mode || "content"})`, "ok");
+    setStatus("เผยแพร่แล้ว", "ok");
     renderAdmin();
     setPublishControlsDisabled(true);
     setTimeout(() => {
@@ -1475,7 +1568,7 @@ function addNavItem(button) {
 }
 
 function addUtility() {
-  ensureNavigation().utility.push({ id: `utility-${Date.now()}`, label: "Utility", href: "/", enabled: true });
+  ensureNavigation().utility.push({ id: `utility-${Date.now()}`, label: "ลิงก์เสริม", href: "/", enabled: true });
   markDirty();
   renderNavigation();
 }
@@ -1530,7 +1623,7 @@ function moveNavItemDown(button) {
 
 function addCard() {
   state.content.components.cards ||= [];
-  state.content.components.cards.push({ id: `card-${Date.now()}`, title: "Card", body: "", image: "", href: "/" });
+  state.content.components.cards.push({ id: `card-${Date.now()}`, title: "การ์ด", body: "", image: "", href: "/" });
   markDirty();
   renderComponents();
 }
@@ -1646,14 +1739,14 @@ async function useTempleImageUrl(button) {
     return;
   }
   try {
-    setStatus(state.media.provider ? "กำลังตรวจสอบและนำรูปเข้า Media Library..." : "กำลังตรวจสอบ URL...", "info");
+    setStatus(state.media.provider ? "กำลังตรวจสอบและนำรูปเข้าระบบ..." : "กำลังตรวจสอบลิงก์รูปภาพ...", "info");
     await verifyImageLoads(sourceUrl);
     const result = state.media.provider ? await uploadAdminMedia(sourceUrl, templeImageFilename(field)) : sourceUrl;
     setTempleImage(field.role, field.viewport, result, {
       originalUrl: sourceUrl,
       provider: detectImageProvider(result),
     });
-    setStatus("เพิ่มรูปแล้ว กด Crop เพื่อปรับจุดภาพได้", "ok");
+    setStatus("เพิ่มรูปแล้ว กดครอปรูปเพื่อปรับจุดภาพได้", "ok");
     renderTemples();
   } catch (error) {
     field.root.classList.add("is-error");
@@ -1693,7 +1786,7 @@ function reuseTempleImage(button) {
     return;
   }
   setTempleImage(field.role, field.viewport, candidates[0], { provider: detectImageProvider(candidates[0]) });
-  setStatus("ใช้รูปเดิมแล้ว สามารถ Crop แยกสำหรับช่องนี้ได้", "ok");
+  setStatus("ใช้รูปเดิมแล้ว สามารถครอปแยกสำหรับช่องนี้ได้", "ok");
   renderTemples();
 }
 
@@ -1752,7 +1845,7 @@ async function uploadAdminMedia(fileValue, fileName) {
       body: form,
     });
     const payload = await response.json().catch(() => ({}));
-    if (!response.ok || !payload.secure_url) throw new Error(payload.error?.message || "Cloudinary upload failed");
+    if (!response.ok || !payload.secure_url) throw new Error("อัปโหลดรูปไม่สำเร็จ");
     return payload.secure_url;
   }
   if (state.media.provider === "imagekit" && state.media.imagekit?.enabled) {
@@ -1771,10 +1864,10 @@ async function uploadAdminMedia(fileValue, fileName) {
     form.append("token", auth.authentication.token);
     const response = await fetch("https://upload.imagekit.io/api/v1/files/upload", { method: "POST", body: form });
     const payload = await response.json().catch(() => ({}));
-    if (!response.ok || !payload.url) throw new Error(payload.message || "ImageKit upload failed");
+    if (!response.ok || !payload.url) throw new Error("อัปโหลดรูปไม่สำเร็จ");
     return payload.url;
   }
-  throw new Error("ยังไม่ได้ตั้งค่า Cloudinary หรือ ImageKit");
+  throw new Error("ยังไม่ได้ตั้งค่าระบบอัปโหลดรูป");
 }
 
 let templeCropState = null;
@@ -1789,21 +1882,21 @@ function openTempleCropper(src, field) {
   }
   const fieldLabel = TEMPLE_IMAGE_FIELDS.find((item) => item.role === field.role);
   overlay.innerHTML = `<div class="mw-admin-crop-modal" role="dialog" aria-modal="true" aria-labelledby="templeCropTitle">
-    <header><div><span>${escapeHtml(field.viewport === "mobile" ? "Mobile" : "Desktop / Tablet")}</span><h2 id="templeCropTitle">Crop ${escapeHtml(fieldLabel?.label || "รูปภาพ")} · ${escapeHtml(fieldLabel?.ratioLabel || "")}</h2></div><button type="button" data-crop-close aria-label="ปิด">×</button></header>
+    <header><div><span>${escapeHtml(field.viewport === "mobile" ? "มือถือ" : "เดสก์ท็อปและแท็บเล็ต")}</span><h2 id="templeCropTitle">ครอปรูป ${escapeHtml(fieldLabel?.label || "รูปภาพ")} · ${escapeHtml(fieldLabel?.ratioLabel || "")}</h2></div><button type="button" data-crop-close aria-label="ปิด">×</button></header>
     <div class="mw-admin-crop-stage">
       <div class="mw-admin-crop-wrap" data-crop-wrap>
         <img ${/^data:/iu.test(src) ? "" : 'crossorigin="anonymous"'} src="${escapeHtml(src)}" alt="" data-crop-image>
         <div class="mw-admin-crop-selection" data-crop-selection><i data-crop-handle="nw"></i><i data-crop-handle="ne"></i><i data-crop-handle="sw"></i><i data-crop-handle="se"></i></div>
       </div>
     </div>
-    <footer><p>ลากกรอบเพื่อเลือกภาพ ระบบจะบันทึกเป็น JPEG ตามสัดส่วนที่กำหนด</p><div><button class="mw-admin-btn" type="button" data-crop-close>ยกเลิก</button><button class="mw-admin-btn mw-admin-btn-primary" type="button" data-crop-apply>Crop และบันทึก</button></div></footer>
+    <footer><p>ลากกรอบเพื่อเลือกภาพ ระบบจะบันทึกเป็น JPEG ตามสัดส่วนที่กำหนด</p><div><button class="mw-admin-btn" type="button" data-crop-close>ยกเลิก</button><button class="mw-admin-btn mw-admin-btn-primary" type="button" data-crop-apply>ครอปและบันทึก</button></div></footer>
   </div>`;
   overlay.classList.add("is-open");
   overlay.querySelectorAll("[data-crop-close]").forEach((button) => button.addEventListener("click", closeTempleCropper));
   overlay.querySelector("[data-crop-apply]")?.addEventListener("click", applyTempleCrop);
   const image = overlay.querySelector("[data-crop-image]");
   image.addEventListener("load", () => initializeTempleCrop(field, src));
-  image.addEventListener("error", () => setStatus("โหลดรูปเพื่อ Crop ไม่สำเร็จ ลอง import เข้า Media Library ก่อน", "error"));
+  image.addEventListener("error", () => setStatus("โหลดรูปเพื่อครอปไม่สำเร็จ ลองอัปโหลดใหม่", "error"));
   if (image.complete && image.naturalWidth) initializeTempleCrop(field, src);
 }
 
@@ -1960,11 +2053,11 @@ async function applyTempleCrop() {
       height: outputHeight,
     });
     closeTempleCropper();
-    setStatus("Crop และบันทึกรูปแล้ว", "ok");
+    setStatus("ครอปและบันทึกรูปแล้ว", "ok");
     renderTemples();
   } catch (error) {
     button.disabled = false;
-    button.textContent = "Crop และบันทึก";
+    button.textContent = "ครอปและบันทึก";
     setStatus(`บันทึกรูปไม่สำเร็จ: ${error.message}`, "error");
   }
 }
@@ -1978,7 +2071,7 @@ function addBlock(type) {
   const page = currentPage();
   page.blocks ||= [];
   const defaults = {
-    hero: { eyebrow: "Section", title: "Hero title", body: "", image: "", buttonLabel: "", buttonHref: "/" },
+    hero: { eyebrow: "ข้อความนำ", title: "หัวข้อแบนเนอร์", body: "", image: "", buttonLabel: "", buttonHref: "/" },
     richText: { html: "<h2>หัวข้อใหม่</h2><p>เขียนเนื้อหาได้ที่นี่</p>" },
     cards: { cards: clone(state.content.components.cards || []) },
   };
