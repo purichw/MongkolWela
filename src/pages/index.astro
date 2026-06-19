@@ -58,7 +58,7 @@ const guideLinks = [
   { label: "ดูสถานที่สำหรับขอพร", href: "/temples/sacred/" },
 ];
 
-const extraScripts = [] as string[];
+const extraScripts = ["/assets/js/home-motion.js"];
 ---
 
 <BaseLayout
@@ -84,6 +84,12 @@ const extraScripts = [] as string[];
         ))}
       </div>
       <div class="hero-shade"></div>
+      <div class="home-hero-motion" aria-hidden="true">
+        <span class="home-orbit home-orbit-one"></span>
+        <span class="home-orbit home-orbit-two"></span>
+        <span class="home-ritual-line home-ritual-line-one"></span>
+        <span class="home-ritual-line home-ritual-line-two"></span>
+      </div>
       <div class="hero-content">
         <p class="eyebrow">วัดดัง • สถานที่ศักดิ์สิทธิ์ • เส้นทางเสริมมงคล</p>
         <h1 id="hero-title">มงคลเวลา</h1>
