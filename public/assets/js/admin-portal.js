@@ -2,6 +2,7 @@ const state = {
   content: null,
   selectedPageId: "home",
   section: "dashboard",
+  sidebarCollapsed: readStoredFlag("mongkolwela.admin.sidebarCollapsed"),
   dirty: false,
   session: null,
   analytics: null,
@@ -47,6 +48,22 @@ const DELETE_ACTIONS = new Set([
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+function readStoredFlag(key) {
+  try {
+    return window.localStorage.getItem(key) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function writeStoredFlag(key, value) {
+  try {
+    window.localStorage.setItem(key, value ? "1" : "0");
+  } catch {
+    // Storage can be unavailable in private or restricted contexts.
+  }
+}
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -192,7 +209,7 @@ async function boot() {
 }
 
 function renderAppShell() {
-  $("#adminApp").innerHTML = `<div class="mw-admin-shell">
+  $("#adminApp").innerHTML = `<div class="mw-admin-shell ${state.sidebarCollapsed ? "is-sidebar-collapsed" : ""}">
     <header class="mw-admin-header">
       <a class="mw-admin-logo" href="/admin/"><span>MW</span><strong>มงคลเวลา</strong><small>ระบบจัดการเนื้อหา</small></a>
       <div class="mw-admin-header-actions">
@@ -248,6 +265,7 @@ function navButton(id, label, iconName) {
 
 function renderSideNav() {
   $("#adminNav").innerHTML = [
+    `<button class="mw-admin-nav-toggle" type="button" data-action="toggle-sidebar" aria-expanded="${String(!state.sidebarCollapsed)}" title="${state.sidebarCollapsed ? "ขยายเมนู" : "พับเมนู"}"><span>${state.sidebarCollapsed ? "→" : "←"}</span><strong>${state.sidebarCollapsed ? "ขยายเมนู" : "พับเมนู"}</strong></button>`,
     navButton("dashboard", "ภาพรวม", "dashboard"),
     navButton("pages", "หน้าและเนื้อหา", "page"),
     navButton("temples", "สถานที่ศักดิ์สิทธิ์", "component"),
@@ -257,6 +275,26 @@ function renderSideNav() {
     navButton("analytics", "สถิติ", "chart"),
     `<button class="mw-admin-nav-logout" type="button" data-action="logout"><span>↩</span><strong>ออกจากระบบ</strong></button>`,
   ].join("");
+}
+
+function syncSidebarState() {
+  const shell = $(".mw-admin-shell");
+  if (!shell) return;
+  shell.classList.toggle("is-sidebar-collapsed", state.sidebarCollapsed);
+  const toggle = $(".mw-admin-nav-toggle");
+  if (!toggle) return;
+  toggle.setAttribute("aria-expanded", String(!state.sidebarCollapsed));
+  toggle.setAttribute("title", state.sidebarCollapsed ? "ขยายเมนู" : "พับเมนู");
+  const iconEl = toggle.querySelector("span");
+  const labelEl = toggle.querySelector("strong");
+  if (iconEl) iconEl.textContent = state.sidebarCollapsed ? "→" : "←";
+  if (labelEl) labelEl.textContent = state.sidebarCollapsed ? "ขยายเมนู" : "พับเมนู";
+}
+
+function toggleSidebar() {
+  state.sidebarCollapsed = !state.sidebarCollapsed;
+  writeStoredFlag("mongkolwela.admin.sidebarCollapsed", state.sidebarCollapsed);
+  syncSidebarState();
 }
 
 function renderLogin() {
@@ -1192,6 +1230,7 @@ function handleGlobalClick(event) {
   const action = actionButton.dataset.action;
   const actions = {
     "save-draft": saveDraft,
+    "toggle-sidebar": toggleSidebar,
     publish,
     logout,
     preview: () => window.open("/", "_blank", "noopener"),
