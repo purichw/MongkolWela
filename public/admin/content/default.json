@@ -92,18 +92,18 @@
       "kind": "existing",
       "patches": [
         { "id": "home-hero-title", "label": "Hero title", "selector": "#hero-title", "kind": "text", "value": "มงคลเวลา" },
-        { "id": "home-hero-copy", "label": "Hero copy", "selector": ".hero-copy", "kind": "html", "value": "ศูนย์รวมดูดวง ปฏิทินไทย นามมงคล เลขศาสตร์ ไพ่ยิปซี และบทสวด<br>สำหรับการตัดสินใจที่ต้องการทั้งเหตุผล จังหวะเวลา และความเป็นสิริมงคล" },
-        { "id": "home-hero-search-placeholder", "label": "Search placeholder", "selector": "#site-search", "kind": "attr", "attr": "placeholder", "value": "ค้นหา: ฤกษ์แต่งงาน, ตั้งชื่อ, ไพ่ยิปซี, ปฏิทินจีน" },
-        { "id": "home-hero-image-1", "label": "Hero image 1", "selector": ".hero-slide:nth-child(1) img", "kind": "image", "src": "/assets/images/hero-jtha-98.jpg", "alt": "" }
+        { "id": "home-hero-copy", "label": "Hero copy", "selector": ".hero-copy", "kind": "html", "value": "ค้นหาวัดและสถานที่ศักดิ์สิทธิ์สำหรับไหว้พระ ขอพร ทำบุญ และวางแผนเส้นทางมงคล<br>ให้เหมาะกับสิ่งที่อยากเสริมในชีวิต" },
+        { "id": "home-hero-search-placeholder", "label": "Search placeholder", "selector": "#site-search", "kind": "attr", "attr": "placeholder", "value": "ค้นหาวัด จังหวัด หรือพรที่อยากขอ เช่น โชคลาภ การงาน ความรัก" },
+        { "id": "home-hero-image-1", "label": "Hero image 1", "selector": ".hero-slide:nth-child(1) img", "kind": "image", "src": "/assets/images/hero-temple-red.jpg", "alt": "พระอุโบสถและบรรยากาศวัดไทยในแสงอบอุ่น" }
       ],
       "sections": [
         { "id": "hero", "label": "Hero", "selector": ".hero", "enabled": true, "order": 10 },
-        { "id": "today", "label": "วันนี้", "selector": "#today", "enabled": true, "order": 20 },
-        { "id": "horoscope", "label": "หมวดหลัก", "selector": "#horoscope", "enabled": true, "order": 30 },
-        { "id": "calendar", "label": "ปฏิทินมงคล", "selector": "#calendar", "enabled": true, "order": 40 },
-        { "id": "names", "label": "เครื่องมือยอดนิยม", "selector": "#names", "enabled": true, "order": 50 },
-        { "id": "rituals", "label": "ประเพณีและพิธี", "selector": "#rituals", "enabled": true, "order": 60 },
-        { "id": "learn", "label": "คลังความรู้", "selector": "#learn", "enabled": true, "order": 70 }
+        { "id": "intent", "label": "ความตั้งใจ", "selector": ".home-intent-panel", "enabled": true, "order": 20 },
+        { "id": "temple-routes", "label": "เส้นทางหลัก", "selector": "#temple-routes", "enabled": true, "order": 30 },
+        { "id": "map", "label": "พิกัดและแผนที่", "selector": "#map", "enabled": true, "order": 40 },
+        { "id": "directory", "label": "ค้นหาเร็ว", "selector": "#directory", "enabled": true, "order": 50 },
+        { "id": "guides", "label": "คู่มือก่อนเดินทาง", "selector": "#guides", "enabled": true, "order": 60 },
+        { "id": "supporting-tools", "label": "เครื่องมือเสริม", "selector": "#supporting-tools", "enabled": true, "order": 70 }
       ],
       "blocks": []
     },

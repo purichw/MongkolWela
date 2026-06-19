@@ -1,13 +1,69 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const mainContent = "<main>\n      <section class=\"hero\" aria-labelledby=\"hero-title\">\n        <div class=\"hero-carousel\" data-carousel>\n          <div class=\"hero-slide is-active\">\n            <img src=\"./assets/images/hero-jtha-98.jpg\" alt=\"\">\n          </div>\n          <div class=\"hero-slide\">\n            <img src=\"./assets/images/hero-jtha-83.jpg\" alt=\"\">\n          </div>\n          <div class=\"hero-slide\">\n            <img src=\"./assets/images/hero-jtha-80.jpg\" alt=\"\">\n          </div>\n          <div class=\"hero-slide\">\n            <img src=\"./assets/images/hero-temple-red.jpg\" alt=\"\">\n          </div>\n          <div class=\"hero-slide\">\n            <img src=\"./assets/images/hero-thai-astrology.jpg\" alt=\"\">\n          </div>\n        </div>\n        <div class=\"hero-shade\"></div>\n        <div class=\"hero-content\">\n          <p class=\"eyebrow\">ปฏิทินชีวิต • ฤกษ์งาม • คำพยากรณ์</p>\n          <h1 id=\"hero-title\">มงคลเวลา</h1>\n          <p class=\"hero-copy\">\n            ศูนย์รวมดูดวง ปฏิทินไทย นามมงคล เลขศาสตร์ ไพ่ยิปซี และบทสวด\n            สำหรับการตัดสินใจที่ต้องการทั้งเหตุผล จังหวะเวลา และความเป็นสิริมงคล\n          </p>\n\n          <form class=\"hero-search\" action=\"#\" role=\"search\">\n            <label class=\"sr-only\" for=\"site-search\">ค้นหา</label>\n            <svg viewBox=\"0 0 24 24\" aria-hidden=\"true\">\n              <path d=\"m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z\"></path>\n            </svg>\n            <input id=\"site-search\" name=\"q\" type=\"search\" placeholder=\"ค้นหา: ฤกษ์แต่งงาน, ตั้งชื่อ, ไพ่ยิปซี, ปฏิทินจีน\">\n            <button type=\"submit\">ค้นหา</button>\n          </form>\n\n          <div class=\"hero-links\" aria-label=\"ทางลัด\">\n            <a href=\"#today\">ดวงวันนี้</a>\n            <a href=\"#calendar\">ฤกษ์ประจำเดือน</a>\n            <a href=\"#names\">ตั้งชื่อมงคล</a>\n            <a href=\"#rituals\">บทสวดก่อนเดินทาง</a>\n          </div>\n        </div>\n        <div class=\"hero-controls\" aria-label=\"ภาพประกอบหน้าแรก\">\n          <button class=\"hero-arrow\" type=\"button\" data-carousel-prev aria-label=\"ภาพก่อนหน้า\">\n            <span aria-hidden=\"true\">‹</span>\n          </button>\n          <div class=\"hero-dots\" aria-label=\"เลือกภาพประกอบ\">\n            <button class=\"is-active\" type=\"button\" data-carousel-dot aria-label=\"ภาพที่ 1\" aria-pressed=\"true\"></button>\n            <button type=\"button\" data-carousel-dot aria-label=\"ภาพที่ 2\" aria-pressed=\"false\"></button>\n            <button type=\"button\" data-carousel-dot aria-label=\"ภาพที่ 3\" aria-pressed=\"false\"></button>\n            <button type=\"button\" data-carousel-dot aria-label=\"ภาพที่ 4\" aria-pressed=\"false\"></button>\n            <button type=\"button\" data-carousel-dot aria-label=\"ภาพที่ 5\" aria-pressed=\"false\"></button>\n          </div>\n          <button class=\"hero-arrow\" type=\"button\" data-carousel-next aria-label=\"ภาพถัดไป\">\n            <span aria-hidden=\"true\">›</span>\n          </button>\n        </div>\n      </section>\n\n      <section class=\"today-panel\" id=\"today\" aria-labelledby=\"today-title\">\n        <div>\n          <p class=\"section-kicker\">วันนี้</p>\n          <h2 id=\"today-title\">จังหวะมงคลประจำวัน</h2>\n        </div>\n        <div class=\"today-grid\">\n          <article>\n            <span>จันทรคติ</span>\n            <strong>ขึ้น ๕ ค่ำ</strong>\n            <p>เดือน ๗ ปีมะเมีย</p>\n          </article>\n          <article>\n            <span>สีส่งเสริม</span>\n            <strong>เขียวหยก</strong>\n            <p>งาน เจรจา เริ่มต้นสิ่งใหม่</p>\n          </article>\n          <article>\n            <span>ควรตั้งใจ</span>\n            <strong>สวดเมตตา</strong>\n            <p>ก่อนพบผู้ใหญ่หรือพูดคุยเรื่องสำคัญ</p>\n          </article>\n          <article>\n            <span>ฤกษ์เบื้องต้น</span>\n            <strong>09:19 - 10:36</strong>\n            <p>เหมาะกับงานเอกสารและคำขอ</p>\n          </article>\n        </div>\n      </section>\n\n      <section class=\"section-shell\" id=\"horoscope\">\n        <div class=\"section-heading\">\n          <p class=\"section-kicker\">หมวดหลัก</p>\n          <h2>เลือกตามสิ่งที่อยากรู้</h2>\n        </div>\n\n        <div class=\"category-grid\">\n          <a class=\"category-card\" href=\"./horoscope/thai-astrology/\">\n            <span class=\"category-symbol\">☉</span>\n            <strong>ดูดวงและโหราศาสตร์</strong>\n            <p>กราฟชีวิต เลข ๗ ตัว โหราศาสตร์ไทย ดวงจร ความรัก การงาน การเงิน</p>\n          </a>\n          <a class=\"category-card\" href=\"./calendar/\">\n            <span class=\"category-symbol\">☾</span>\n            <strong>ฤกษ์และปฏิทิน</strong>\n            <p>ปฏิทินไทย วันพระ ฤกษ์ออกรถ ฤกษ์แต่งงาน วันดี วันห้าม</p>\n          </a>\n          <a class=\"category-card\" href=\"#names\">\n            <span class=\"category-symbol\">๙</span>\n            <strong>ชื่อและตัวเลข</strong>\n            <p>ตั้งชื่อ วิเคราะห์ชื่อ เบอร์โทรศัพท์ ทะเบียนรถ เลขศาสตร์ชีวิต</p>\n          </a>\n          <a class=\"category-card\" href=\"./horoscope/seamsi/\">\n            <span class=\"category-symbol\">✦</span>\n            <strong>เสี่ยงทาย</strong>\n            <p>ไพ่ยิปซี เซียมซี ลูกเต๋า ทำนายฝัน เลขนำโชค</p>\n          </a>\n          <a class=\"category-card\" href=\"#rituals\">\n            <span class=\"category-symbol\">✺</span>\n            <strong>บทสวดและพิธี</strong>\n            <p>บทสวดมนต์ คาถาเมตตา สะเดาะเคราะห์ บูชาพระประจำวันเกิด</p>\n          </a>\n          <a class=\"category-card\" href=\"#learn\">\n            <span class=\"category-symbol\">北</span>\n            <strong>จีนและศาสตร์ตะวันออก</strong>\n            <p>ปฏิทินจีน ปีชง นักษัตร ธาตุ ฮวงจุ้ย และเทศกาลสำคัญ</p>\n          </a>\n        </div>\n      </section>\n\n      <section class=\"feature-band\" id=\"calendar\" aria-labelledby=\"calendar-title\">\n        <div class=\"feature-copy\">\n          <p class=\"section-kicker\">ปฏิทินมงคล</p>\n          <h2 id=\"calendar-title\">เริ่มจากวัน แล้วค่อยลงลึกถึงดวง</h2>\n          <p>\n            ตรวจวันไทย วันพระ ดิถี ฤกษ์ล่าง ฤกษ์บน และหมายเหตุสำคัญ\n            ก่อนเลือกช่วงเวลาสำหรับงานมงคล การเดินทาง การเจรจา หรือการเริ่มต้นเรื่องใหม่\n          </p>\n          <div class=\"feature-actions\">\n            <a class=\"primary-action\" href=\"./calendar/\">เปิดปฏิทินไทย</a>\n            <a class=\"secondary-action\" href=\"#\">ดูฤกษ์ประจำเดือน</a>\n          </div>\n        </div>\n        <div class=\"calendar-preview\" aria-label=\"ตัวอย่างปฏิทิน\">\n          <div class=\"calendar-title\">\n            <span>มิถุนายน 2569</span>\n            <strong>ศุกร์</strong>\n          </div>\n          <div class=\"calendar-days\">\n            <span>1</span><span>2</span><span>3</span><span>4</span><b>5</b><span>6</span><span>7</span>\n            <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>\n            <span>15</span><span>16</span><i>17</i><span>18</span><span>19</span><span>20</span><span>21</span>\n          </div>\n          <dl>\n            <div><dt>วันพระ</dt><dd>17 มิ.ย.</dd></div>\n            <div><dt>ฤกษ์เด่น</dt><dd>งานเจรจา</dd></div>\n            <div><dt>หลีกเลี่ยง</dt><dd>ลงนามเร่งด่วน</dd></div>\n          </dl>\n        </div>\n      </section>\n\n      <section class=\"section-shell\" id=\"names\">\n        <div class=\"section-heading\">\n          <p class=\"section-kicker\">เครื่องมือยอดนิยม</p>\n          <h2>งานที่ผู้ใช้กลับมาใช้ซ้ำ</h2>\n        </div>\n\n        <div class=\"tool-grid\">\n          <article class=\"tool-card\">\n            <span>01</span>\n            <h3>ตั้งชื่อมงคล</h3>\n            <p>ค้นหาชื่อจากวันเกิด เพศ นามสกุล ทักษา เลขศาสตร์ และความหมาย</p>\n            <a href=\"#\">เริ่มค้นหา</a>\n          </article>\n          <article class=\"tool-card\">\n            <span>02</span>\n            <h3>ดูไพ่ประจำวัน</h3>\n            <p>เลือกไพ่หนึ่งใบเพื่ออ่านคำแนะนำด้านใจ งาน เงิน และความสัมพันธ์</p>\n            <a href=\"./tarot/daily/\">เลือกไพ่</a>\n          </article>\n          <article class=\"tool-card\">\n            <span>03</span>\n            <h3>วิเคราะห์เบอร์</h3>\n            <p>อ่านผลรวม คู่เลขเด่น และความเหมาะสมกับเจ้าของเบอร์</p>\n            <a href=\"#\">ตรวจเลข</a>\n          </article>\n          <article class=\"tool-card\">\n            <span>04</span>\n            <h3>ทำนายฝัน</h3>\n            <p>ค้นหาความหมาย ลางบอกเหตุ และเลขนำโชคจากความฝัน</p>\n            <a href=\"#\">ค้นฝัน</a>\n          </article>\n        </div>\n      </section>\n\n      <section class=\"tradition-section\" id=\"rituals\" aria-labelledby=\"rituals-title\">\n        <img src=\"./assets/images/chinese-incense-card.jpg\" alt=\"ธูปวงแขวนในวัดจีน\">\n        <div>\n          <p class=\"section-kicker\">ประเพณีและพิธี</p>\n          <h2 id=\"rituals-title\">พื้นที่สำหรับบทสวด เคล็ดลาง และวัฒนธรรม</h2>\n          <p>\n            รวมบทสวด คาถา สีมงคล ปีชง เครื่องบูชา และธรรมเนียมไทยจีน\n            พร้อมคำอธิบายที่เคารพครูบาอาจารย์และเหมาะกับการนำไปปฏิบัติในชีวิตประจำวัน\n          </p>\n          <div class=\"ritual-list\">\n            <a href=\"#\">บทสวดทำวัตร</a>\n            <a href=\"#\">คาถาเมตตามหานิยม</a>\n            <a href=\"#\">สะเดาะเคราะห์ด้วยตนเอง</a>\n            <a href=\"#\">ปีชงและปฏิทินจีน</a>\n          </div>\n        </div>\n      </section>\n\n      <section class=\"learn-strip\" id=\"learn\">\n        <p>คลังความรู้</p>\n        <a href=\"./horoscope/thai-astrology/\">ลัคนาคืออะไร</a>\n        <a href=\"#\">การนับวันทางโหราศาสตร์</a>\n        <a href=\"#\">ฤกษ์บน ฤกษ์ล่าง</a>\n        <a href=\"#\">ทักษาและกาลกิณี</a>\n        <a href=\"#\">ปฏิทินจีนเบื้องต้น</a>\n      </section>\n    </main>";
+const heroSlides = [
+  { src: "/assets/images/hero-temple-red.jpg", alt: "พระอุโบสถและบรรยากาศวัดไทยในแสงอบอุ่น" },
+  { src: "/assets/images/hero-jtha-98.jpg", alt: "บรรยากาศสถานที่ศักดิ์สิทธิ์สำหรับไหว้พระ" },
+  { src: "/assets/images/hero-jtha-83.jpg", alt: "วัดและศาลเจ้าสำหรับขอพรเสริมมงคล" },
+  { src: "/assets/images/hero-jtha-80.jpg", alt: "พระพุทธรูปและพื้นที่สักการะในวัด" },
+  { src: "/assets/images/chinese-incense-card.jpg", alt: "ธูปวงแขวนในศาลเจ้าจีน" },
+];
+
+const intentLinks = [
+  { kicker: "โชคลาภ", label: "เสริมโชคลาภ", href: "/temples/sacred/" },
+  { kicker: "การงาน", label: "การงานราบรื่น", href: "/temples/sacred/" },
+  { kicker: "ความรัก", label: "ความรักและคู่ครอง", href: "/temples/sacred/" },
+  { kicker: "ครอบครัว", label: "สุขภาพและครอบครัว", href: "/temples/sacred/" },
+  { kicker: "เริ่มใหม่", label: "เริ่มต้นชีวิตใหม่", href: "/temples/popular/" },
+  { kicker: "แก้ชง", label: "แก้ชงและสะเดาะเคราะห์", href: "/temples/mu/" },
+];
+
+const routeCards = [
+  {
+    kicker: "จัดทริป",
+    title: "วางแผนไหว้พระ",
+    description: "เลือก 3, 5 หรือ 9 แห่ง แล้วให้ระบบช่วยเรียงลำดับเส้นทางจากสถานที่ที่มีข้อมูลพิกัด",
+    href: "/temples/planner/",
+  },
+  {
+    kicker: "วัดดัง",
+    title: "สายไหว้พระ 9 วัด",
+    description: "รวมวัดและสถานที่ยอดนิยมสำหรับทำบุญ ไหว้พระ และเดินทางเป็นเส้นทางมงคล",
+    href: "/temples/popular/",
+  },
+  {
+    kicker: "ขอพร",
+    title: "วัดศักดิ์สิทธิ์",
+    description: "ค้นหาสถานที่สำคัญตามจังหวัด ภูมิภาค และสิ่งที่อยากตั้งใจขอพร",
+    href: "/temples/sacred/",
+  },
+  {
+    kicker: "สายมู",
+    title: "สถานที่สายมู",
+    description: "เลือกดูสถานที่เด่นสำหรับเสริมดวง เสริมกำลังใจ และวางแผนไปไหว้แบบพอดี",
+    href: "/temples/mu/",
+  },
+];
+
+const directoryCards = [
+  { label: "วัดทั่วไทย", value: "ค้นหาตามจังหวัด อำเภอ ตำบล", href: "/temples/thailand/" },
+  { label: "แผนที่พิกัด", value: "ดูตำแหน่งวัดจากหน้ารายการ", href: "/temples/popular/" },
+  { label: "วันพระ", value: "เช็กวันสำคัญก่อนออกเดินทาง", href: "/calendar/" },
+];
+
+const guideLinks = [
+  { label: "เตรียมตัวก่อนไหว้พระ", href: "/temples/" },
+  { label: "เลือกเส้นทางให้เหมาะกับเวลา", href: "/temples/planner/" },
+  { label: "ค้นหาวัดจากพื้นที่", href: "/temples/thailand/" },
+  { label: "ดูสถานที่สำหรับขอพร", href: "/temples/sacred/" },
+];
+
 const extraScripts = [] as string[];
 ---
 
 <BaseLayout
-  title="มงคลเวลา | ดูดวง ปฏิทินไทย ฤกษ์มงคล ไพ่ยิปซี และวัดดัง"
-  description="มงคลเวลา รวมดูดวง ปฏิทินไทย ฤกษ์มงคล ไพ่ยิปซี กราฟชีวิต เซียมซี และพิกัดวัดดังสายมูสายไหว้พระ สำหรับผู้ใช้ไทย"
+  title="มงคลเวลา | วัดดัง สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระเสริมมงคล"
+  description="มงคลเวลา ช่วยค้นหาวัดดัง สถานที่ศักดิ์สิทธิ์ เส้นทางไหว้พระ 9 วัด สถานที่สายมู วัดทั่วไทย และตัวช่วยวางแผนไหว้พระเพื่อเสริมมงคลชีวิต"
   lang="th"
   locale="th"
   page="home"
@@ -15,8 +71,178 @@ const extraScripts = [] as string[];
   extraScripts={extraScripts}
   canonicalPath="/"
   image="/assets/images/hero-temple-red.jpg"
-  imageAlt="มงคลเวลา ดูดวง ปฏิทินไทย ฤกษ์มงคล และวัดดัง"
+  imageAlt="มงคลเวลา วัดดัง สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระเสริมมงคล"
   breadcrumbs={[{ label: "หน้าแรก", href: "/" }]}
 >
-  <Fragment set:html={mainContent} />
+  <main>
+    <section class="hero home-aura-hero" aria-labelledby="hero-title">
+      <div class="hero-carousel" data-carousel>
+        {heroSlides.map((slide, index) => (
+          <div class={`hero-slide${index === 0 ? " is-active" : ""}`}>
+            <img src={slide.src} alt={slide.alt} />
+          </div>
+        ))}
+      </div>
+      <div class="hero-shade"></div>
+      <div class="hero-content">
+        <p class="eyebrow">วัดดัง • สถานที่ศักดิ์สิทธิ์ • เส้นทางเสริมมงคล</p>
+        <h1 id="hero-title">มงคลเวลา</h1>
+        <p class="hero-copy">
+          ค้นหาวัดและสถานที่ศักดิ์สิทธิ์สำหรับไหว้พระ ขอพร ทำบุญ และวางแผนเส้นทางมงคล
+          ให้เหมาะกับสิ่งที่อยากเสริมในชีวิต
+        </p>
+
+        <form class="hero-search home-temple-search" action="/temples/sacred/" role="search">
+          <label class="sr-only" for="site-search">ค้นหาวัดหรือสถานที่ศักดิ์สิทธิ์</label>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
+          </svg>
+          <input
+            id="site-search"
+            name="q"
+            type="search"
+            placeholder="ค้นหาวัด จังหวัด หรือพรที่อยากขอ เช่น โชคลาภ การงาน ความรัก"
+          />
+          <button type="submit">ค้นหา</button>
+        </form>
+
+        <div class="hero-links" aria-label="ทางลัดหน้าแรก">
+          <a href="/temples/planner/">วางแผนไหว้พระ</a>
+          <a href="/temples/popular/">ไหว้พระ 9 วัด</a>
+          <a href="/temples/sacred/">วัดศักดิ์สิทธิ์</a>
+          <a href="/temples/thailand/">วัดทั่วไทย</a>
+        </div>
+      </div>
+      <div class="hero-controls" aria-label="ภาพประกอบหน้าแรก">
+        <button class="hero-arrow" type="button" data-carousel-prev aria-label="ภาพก่อนหน้า">
+          <span aria-hidden="true">‹</span>
+        </button>
+        <div class="hero-dots" aria-label="เลือกภาพประกอบ">
+          {heroSlides.map((_, index) => (
+            <button
+              class={index === 0 ? "is-active" : ""}
+              type="button"
+              data-carousel-dot
+              aria-label={`ภาพที่ ${index + 1}`}
+              aria-pressed={index === 0 ? "true" : "false"}
+            ></button>
+          ))}
+        </div>
+        <button class="hero-arrow" type="button" data-carousel-next aria-label="ภาพถัดไป">
+          <span aria-hidden="true">›</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="today-panel home-intent-panel" aria-labelledby="intent-title">
+      <div>
+        <p class="section-kicker">เริ่มจากความตั้งใจ</p>
+        <h2 id="intent-title">อยากเสริมเรื่องไหน</h2>
+      </div>
+      <div class="today-grid home-intent-grid">
+        {intentLinks.map((item) => (
+          <a href={item.href}>
+            <span>{item.kicker}</span>
+            <strong>{item.label}</strong>
+            <p>เลือกสถานที่และเส้นทางที่เกี่ยวข้อง</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-shell" id="temple-routes">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">เส้นทางหลัก</p>
+          <h2>เลือกวิธีออกเดินทาง</h2>
+        </div>
+        <a class="section-link" href="/temples/">ดูทั้งหมด</a>
+      </div>
+
+      <div class="category-grid home-route-grid">
+        {routeCards.map((card) => (
+          <a class="category-card home-route-card" href={card.href}>
+            <span class="category-symbol">{card.kicker}</span>
+            <strong>{card.title}</strong>
+            <p>{card.description}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="feature-band home-map-band" id="map" aria-labelledby="map-title">
+      <div class="feature-copy">
+        <p class="section-kicker">พิกัดและแผนที่</p>
+        <h2 id="map-title">หาเส้นทางไหว้พระจากพื้นที่จริง</h2>
+        <p>
+          เปิดดูรายการวัดพร้อมพิกัด ค้นหาจากจังหวัดหรือความตั้งใจ แล้วใช้ตัวช่วยวางแผนทริป
+          เพื่อจัดลำดับสถานที่ให้เดินทางต่อกันได้ง่ายขึ้น
+        </p>
+        <div class="feature-actions">
+          <a class="primary-action" href="/temples/planner/">เริ่มวางแผนทริป</a>
+          <a class="secondary-action" href="/temples/sacred/">ดูวัดศักดิ์สิทธิ์</a>
+        </div>
+      </div>
+      <div class="home-map-preview" aria-label="ตัวอย่างการค้นหาสถานที่มงคล">
+        <div class="home-map-glow" aria-hidden="true"></div>
+        <div class="home-map-card is-main">
+          <span>จุดหมาย</span>
+          <strong>เลือกวัดตามจังหวัดหรือพรที่ตั้งใจ</strong>
+          <p>ค้นหา แล้วเปิดรายละเอียดพร้อมพิกัดและข้อมูลเดินทาง</p>
+        </div>
+        <div class="home-map-card">
+          <span>ลำดับทริป</span>
+          <strong>3 • 5 • 9 แห่ง</strong>
+        </div>
+        <div class="home-map-card">
+          <span>แผนที่</span>
+          <strong>ดูพิกัดก่อนออกเดินทาง</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-shell" id="directory">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">ค้นหาเร็ว</p>
+          <h2>พื้นที่สำหรับคนจะไปไหว้จริง</h2>
+        </div>
+      </div>
+
+      <div class="tool-grid home-directory-grid">
+        {directoryCards.map((card) => (
+          <article class="tool-card">
+            <span>{card.label}</span>
+            <h3>{card.value}</h3>
+            <a href={card.href}>เปิดดู</a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="tradition-section home-guide-section" id="guides" aria-labelledby="guides-title">
+      <img src="/assets/images/chinese-incense-card.jpg" alt="ธูปวงแขวนในศาลเจ้าจีน" />
+      <div>
+        <p class="section-kicker">คู่มือก่อนเดินทาง</p>
+        <h2 id="guides-title">ไหว้พระแบบตั้งใจ สุภาพ และไม่เร่งร้อน</h2>
+        <p>
+          มงคลเวลาวางบทบาทเป็นผู้ช่วยค้นหาสถานที่และจัดเส้นทางก่อนออกเดินทาง
+          พร้อมคงข้อมูลให้กระชับ เคารพสถานที่ และตรวจสอบได้จากข้อมูลที่มีอยู่จริง
+        </p>
+        <div class="ritual-list">
+          {guideLinks.map((item) => (
+            <a href={item.href}>{item.label}</a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="learn-strip" id="supporting-tools" aria-label="เครื่องมือเสริม">
+      <p>เครื่องมือเสริม</p>
+      <a href="/calendar/">วันพระและปฏิทินไทย</a>
+      <a href="/horoscope/seamsi/">เซียมซี</a>
+      <a href="/tarot/daily/">ไพ่ประจำวัน</a>
+      <a href="/horoscope/palmistry/">ลายมือ</a>
+    </section>
+  </main>
 </BaseLayout>

@@ -29,7 +29,7 @@
           "id": "home-hero-copy",
           "kind": "html",
           "label": "Hero copy",
-          "value": "ศูนย์รวมดูดวง ปฏิทินไทย นามมงคล เลขศาสตร์ ไพ่ยิปซี และบทสวด<br>สำหรับการตัดสินใจที่ต้องการทั้งเหตุผล จังหวะเวลา และความเป็นสิริมงคล",
+          "value": "ค้นหาวัดและสถานที่ศักดิ์สิทธิ์สำหรับไหว้พระ ขอพร ทำบุญ และวางแผนเส้นทางมงคล<br>ให้เหมาะกับสิ่งที่อยากเสริมในชีวิต",
           "selector": ".hero-copy"
         },
         {
@@ -37,13 +37,13 @@
           "attr": "placeholder",
           "kind": "attr",
           "label": "Search placeholder",
-          "value": "ค้นหา: ฤกษ์แต่งงาน, ตั้งชื่อ, ไพ่ยิปซี, ปฏิทินจีน",
+          "value": "ค้นหาวัด จังหวัด หรือพรที่อยากขอ เช่น โชคลาภ การงาน ความรัก",
           "selector": "#site-search"
         },
         {
           "id": "home-hero-image-1",
-          "alt": "",
-          "src": "/assets/images/hero-jtha-98.jpg",
+          "alt": "พระอุโบสถและบรรยากาศวัดไทยในแสงอบอุ่น",
+          "src": "/assets/images/hero-temple-red.jpg",
           "kind": "image",
           "label": "Hero image 1",
           "selector": ".hero-slide:nth-child(1) img"
@@ -58,46 +58,46 @@
           "selector": ".hero"
         },
         {
-          "id": "today",
-          "label": "วันนี้",
+          "id": "intent",
+          "label": "ความตั้งใจ",
           "order": 20,
           "enabled": true,
-          "selector": "#today"
+          "selector": ".home-intent-panel"
         },
         {
-          "id": "horoscope",
-          "label": "หมวดหลัก",
+          "id": "temple-routes",
+          "label": "เส้นทางหลัก",
           "order": 30,
           "enabled": true,
-          "selector": "#horoscope"
+          "selector": "#temple-routes"
         },
         {
-          "id": "calendar",
-          "label": "ปฏิทินมงคล",
+          "id": "map",
+          "label": "พิกัดและแผนที่",
           "order": 40,
           "enabled": true,
-          "selector": "#calendar"
+          "selector": "#map"
         },
         {
-          "id": "names",
-          "label": "เครื่องมือยอดนิยม",
+          "id": "directory",
+          "label": "ค้นหาเร็ว",
           "order": 50,
           "enabled": true,
-          "selector": "#names"
+          "selector": "#directory"
         },
         {
-          "id": "rituals",
-          "label": "ประเพณีและพิธี",
+          "id": "guides",
+          "label": "คู่มือก่อนเดินทาง",
           "order": 60,
           "enabled": true,
-          "selector": "#rituals"
+          "selector": "#guides"
         },
         {
-          "id": "learn",
-          "label": "คลังความรู้",
+          "id": "supporting-tools",
+          "label": "เครื่องมือเสริม",
           "order": 70,
           "enabled": true,
-          "selector": "#learn"
+          "selector": "#supporting-tools"
         }
       ]
     },

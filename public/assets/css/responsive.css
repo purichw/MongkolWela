@@ -94,7 +94,7 @@
   }
 
   .category-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .category-card {
@@ -215,8 +215,8 @@
   }
 
   .hero {
-    min-height: 74vh;
-    padding: 72px 20px;
+    min-height: 78vh;
+    padding: 82px 20px;
   }
 
   .hero-slide img {
@@ -225,8 +225,8 @@
 
   .hero-shade {
     background:
-      linear-gradient(90deg, rgba(30, 24, 21, 0.88), rgba(46, 30, 21, 0.58)),
-      radial-gradient(circle at 20% 35%, rgba(194, 141, 53, 0.24), transparent 42%);
+      linear-gradient(90deg, rgba(30, 18, 10, 0.9), rgba(76, 34, 17, 0.62)),
+      linear-gradient(180deg, rgba(235, 186, 78, 0.18), rgba(26, 18, 14, 0.28));
   }
 
   .hero-search {

@@ -384,17 +384,73 @@ body.has-planner-dialog {
 }
 
 .planner-search-actions__group--auto {
-  grid-template-rows: auto minmax(2.6em, auto) minmax(0, 1fr);
-  align-content: stretch;
+  align-content: start;
+  gap: 11px;
+  padding: 18px;
+  color: #fff7e6;
+  background:
+    linear-gradient(135deg, rgba(142, 45, 36, 0.98), rgba(89, 29, 25, 0.94)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: auto, 34px 34px;
+  border: 1px solid rgba(234, 211, 160, 0.5);
+  border-radius: 8px;
+  box-shadow: 0 14px 34px rgba(142, 45, 36, 0.18);
+}
+
+.planner-search-actions__group--auto > .planner-action-label-with-help {
+  color: #fff5dc;
+  font-size: 1rem;
+}
+
+.planner-search-actions__group--auto > .planner-action-label-with-help::before {
+  display: inline-grid;
+  min-height: 26px;
+  padding: 4px 9px;
+  place-items: center;
+  color: #5a2118;
+  background: linear-gradient(135deg, #ffe4a3, #d8a246);
+  border-radius: 999px;
+  content: "แนะนำ";
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.planner-search-actions__group--auto p {
+  min-height: 0;
+  max-width: 460px;
+  color: rgba(255, 245, 222, 0.86);
+  font-size: 0.82rem;
 }
 
 .planner-search-actions__group--auto .planner-primary-button {
-  align-self: end;
+  align-self: start;
   justify-self: center;
-  width: min(100%, 340px);
+  width: min(100%, 360px);
   min-height: 46px;
+  margin-top: 6px;
+  color: #5a2118;
+  background: linear-gradient(135deg, #fff0bd, #e0ad4f);
+  border-color: rgba(255, 238, 190, 0.72);
   padding-inline: 16px;
-  box-shadow: 0 8px 18px rgba(142, 45, 36, 0.16);
+  box-shadow: 0 10px 24px rgba(39, 22, 14, 0.18);
+}
+
+.planner-search-actions__group--auto .planner-primary-button:hover,
+.planner-search-actions__group--auto .planner-primary-button:focus-visible {
+  color: #3d1710;
+  background: linear-gradient(135deg, #fff6d6, #efc66c);
+}
+
+.planner-search-actions__group--auto .planner-help button {
+  color: rgba(255, 245, 222, 0.88);
+  background: rgba(255, 250, 240, 0.12);
+  border-color: rgba(255, 238, 190, 0.42);
+}
+
+.planner-search-actions__group--auto .planner-help button:hover,
+.planner-search-actions__group--auto .planner-help button[aria-expanded="true"] {
+  color: #5a2118;
+  background: #ffe2a3;
 }
 
 .planner-reset-row {
