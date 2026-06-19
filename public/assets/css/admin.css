@@ -1523,6 +1523,7 @@
   border-radius: 50%;
 }
 
+.mw-admin-svg-chart,
 .mw-admin-sparkline {
   display: block;
   width: 100%;
@@ -1530,24 +1531,68 @@
   overflow: visible;
 }
 
+.mw-admin-svg-chart {
+  color: rgba(4, 10, 12, 0.48);
+  font-family: "Noto Sans Thai", system-ui, sans-serif;
+}
+
+.mw-admin-svg-chart--bars {
+  min-height: 210px;
+}
+
+.mw-admin-chart-gridline path,
+.mw-admin-chart-axis,
 .mw-admin-sparkline path {
   fill: none;
   stroke: rgba(4, 10, 12, 0.08);
   stroke-width: 1;
 }
 
+.mw-admin-chart-axis {
+  stroke: rgba(4, 10, 12, 0.16);
+}
+
+.mw-admin-svg-chart--bars rect {
+  fill: var(--bar, #9f2f27);
+  filter: drop-shadow(0 8px 10px rgba(92, 32, 26, 0.08));
+}
+
+.mw-admin-chart-value {
+  fill: #3d3027;
+  font-size: 14px;
+  font-weight: 900;
+  text-anchor: middle;
+}
+
+.mw-admin-chart-label {
+  fill: rgba(4, 10, 12, 0.52);
+  font-size: 10px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.mw-admin-svg-chart--line polygon {
+  fill: var(--line-fill, rgba(18, 63, 51, 0.12));
+}
+
+.mw-admin-svg-chart--line polyline,
 .mw-admin-sparkline polyline {
   fill: none;
-  stroke: #9f2f27;
+  stroke: var(--line, #9f2f27);
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 2.4;
 }
 
+.mw-admin-svg-chart--line circle,
 .mw-admin-sparkline circle {
-  fill: #d3a32e;
+  fill: var(--line, #9f2f27);
   stroke: #fffaf2;
-  stroke-width: 1;
+  stroke-width: 2;
+}
+
+.mw-admin-svg-chart--line .mw-admin-chart-label {
+  font-size: 9px;
 }
 
 .mw-admin-dashboard-note {

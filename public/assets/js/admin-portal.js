@@ -511,13 +511,21 @@ function renderPublishingControl(summary) {
   const maxMix = Math.max(summary.pages, summary.sections, summary.patches, summary.navItems, summary.temples, 1);
   const activeItems = summary.livePages + summary.navItems + summary.sections;
   const inactiveItems = Math.max(summary.pages - summary.livePages, 0);
-  const sparkValues = [
-    summary.pages,
-    summary.livePages + 1,
-    summary.navItems + 2,
-    summary.sections + 1,
-    summary.patches + 2,
-    Math.max(1, Math.round(summary.sizeBytes / 1024)),
+  const mixRows = [
+    { label: "หน้าเว็บ", value: summary.pages, color: "#2f6fb2" },
+    { label: "เปิด", value: summary.livePages, color: "#1a8f66" },
+    { label: "ช่อง", value: summary.patches, color: "#d88926" },
+    { label: "ส่วน", value: summary.sections, color: "#7c5cc4" },
+    { label: "เมนู", value: summary.navItems, color: "#9f2f27" },
+    { label: "สถานที่", value: summary.temples, color: "#6f7a82" },
+  ];
+  const activityRows = [
+    { label: "หน้า", value: summary.pages },
+    { label: "เปิด", value: summary.livePages },
+    { label: "เมนู", value: summary.navItems },
+    { label: "ส่วน", value: summary.sections },
+    { label: "ช่อง", value: summary.patches },
+    { label: "KB", value: Math.max(1, Math.round(summary.sizeBytes / 1024)) },
   ];
   return `<section class="mw-admin-card mw-admin-dashboard-card mw-admin-dashboard-card--wide">
     <div class="mw-admin-card-head">
@@ -541,15 +549,9 @@ function renderPublishingControl(summary) {
       </div>
     </div>
     <div class="mw-admin-dashboard-chart-grid">
-      <article class="mw-admin-chart-block">
+      <article class="mw-admin-chart-block mw-admin-chart-block--wide">
         <h3>สัดส่วนเนื้อหา</h3>
-        <div class="mw-admin-bar-chart">
-          ${contentBar("หน้าเว็บ", summary.pages, maxMix)}
-          ${contentBar("ช่องเนื้อหา", summary.patches, maxMix)}
-          ${contentBar("ส่วนหน้าเว็บ", summary.sections, maxMix)}
-          ${contentBar("เมนู", summary.navItems, maxMix)}
-          ${contentBar("สถานที่", summary.temples, maxMix)}
-        </div>
+        ${verticalBarChart(mixRows, maxMix)}
       </article>
       <article class="mw-admin-chart-block">
         <h3>สถานะการเปิดใช้งาน</h3>
@@ -560,8 +562,8 @@ function renderPublishingControl(summary) {
       </article>
       <article class="mw-admin-chart-block">
         <h3>กิจกรรมเนื้อหา</h3>
-        ${sparklineChart(sparkValues)}
-        <p class="mw-admin-dashboard-note">อิงจากขนาดและจำนวนรายการในฉบับเผยแพร่ปัจจุบัน</p>
+        ${lineAreaChart(activityRows, { color: "#9f2f27", fill: "rgba(159, 47, 39, 0.13)" })}
+        <p class="mw-admin-dashboard-note">อิงจากจำนวนรายการในฉบับเผยแพร่ปัจจุบัน</p>
       </article>
     </div>
     <div class="mw-admin-revision-list">
@@ -602,22 +604,69 @@ function donutChart(items) {
   </div>`;
 }
 
-function sparklineChart(values) {
-  const safeValues = values.map((value) => Math.max(Number(value) || 0, 0));
-  const max = Math.max(...safeValues, 1);
-  const points = safeValues.map((value, index) => {
-    const x = (index / Math.max(safeValues.length - 1, 1)) * 100;
-    const y = 34 - (value / max) * 28;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  }).join(" ");
-  return `<svg class="mw-admin-sparkline" viewBox="0 0 100 40" role="img" aria-label="กราฟกิจกรรมเนื้อหา">
-    <path d="M0 36H100" />
-    <polyline points="${points}" />
-    ${safeValues.map((value, index) => {
-      const x = (index / Math.max(safeValues.length - 1, 1)) * 100;
-      const y = 34 - (value / max) * 28;
-      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.8" />`;
-    }).join("")}
+function verticalBarChart(rows, maxValue = 1) {
+  const max = Math.max(Number(maxValue) || 1, ...rows.map((item) => Number(item.value) || 0), 1);
+  const chartHeight = 126;
+  const barWidth = 34;
+  const gap = 28;
+  const originY = 150;
+  const originX = 42;
+  const width = originX + rows.length * (barWidth + gap) + 16;
+  const grid = [0.25, 0.5, 0.75, 1].map((ratio) => {
+    const y = originY - chartHeight * ratio;
+    return `<path d="M${originX - 12} ${y.toFixed(1)}H${width - 16}" />`;
+  }).join("");
+  const bars = rows.map((item, index) => {
+    const value = Math.max(Number(item.value) || 0, 0);
+    const h = Math.max(3, (value / max) * chartHeight);
+    const x = originX + index * (barWidth + gap);
+    const y = originY - h;
+    return `<g>
+      <rect x="${x}" y="${y.toFixed(1)}" width="${barWidth}" height="${h.toFixed(1)}" rx="5" style="--bar:${escapeHtml(item.color || "#9f2f27")}"></rect>
+      <text class="mw-admin-chart-value" x="${x + barWidth / 2}" y="${Math.max(16, y - 8).toFixed(1)}">${escapeHtml(value)}</text>
+      <text class="mw-admin-chart-label" x="${x + barWidth / 2}" y="178">${escapeHtml(item.label)}</text>
+    </g>`;
+  }).join("");
+  return `<svg class="mw-admin-svg-chart mw-admin-svg-chart--bars" viewBox="0 0 ${width} 190" role="img" aria-label="กราฟสัดส่วนเนื้อหา">
+    <g class="mw-admin-chart-gridline">${grid}</g>
+    <path class="mw-admin-chart-axis" d="M${originX - 12} ${originY}H${width - 16}" />
+    ${bars}
+  </svg>`;
+}
+
+function lineAreaChart(rows, options = {}) {
+  const safeRows = rows.length ? rows : [{ label: "-", value: 0 }];
+  const lineColor = escapeHtml(options.color || "#123f33");
+  const fillColor = escapeHtml(options.fill || "rgba(18, 63, 51, 0.12)");
+  const values = safeRows.map((row) => Math.max(Number(row.value) || 0, 0));
+  const max = Math.max(...values, 1);
+  const width = 420;
+  const height = 188;
+  const left = 34;
+  const right = 14;
+  const top = 18;
+  const bottom = 42;
+  const chartWidth = width - left - right;
+  const chartHeight = height - top - bottom;
+  const points = safeRows.map((row, index) => {
+    const x = left + (index / Math.max(safeRows.length - 1, 1)) * chartWidth;
+    const y = top + chartHeight - ((Number(row.value) || 0) / max) * chartHeight;
+    return { x, y, row };
+  });
+  const line = points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ");
+  const area = `${left},${top + chartHeight} ${line} ${left + chartWidth},${top + chartHeight}`;
+  const grid = [0, 0.25, 0.5, 0.75, 1].map((ratio) => {
+    const y = top + chartHeight - chartHeight * ratio;
+    return `<path d="M${left} ${y.toFixed(1)}H${left + chartWidth}" />`;
+  }).join("");
+  const labels = points.map((point) => `<text class="mw-admin-chart-label" x="${point.x.toFixed(1)}" y="${height - 12}">${escapeHtml(point.row.label)}</text>`).join("");
+  const dots = points.map((point) => `<circle cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="3" />`).join("");
+  return `<svg class="mw-admin-svg-chart mw-admin-svg-chart--line" viewBox="0 0 ${width} ${height}" role="img" aria-label="กราฟแนวโน้ม" style="--line:${lineColor};--line-fill:${fillColor}">
+    <g class="mw-admin-chart-gridline">${grid}</g>
+    <polygon points="${area}" />
+    <polyline points="${line}" />
+    ${dots}
+    ${labels}
   </svg>`;
 }
 
@@ -627,7 +676,10 @@ function renderAnalyticsPanel(paths) {
   const pageviews = Number(totals.pageviews || 0);
   const events = Number(totals.events || 0);
   const tracked = paths.length;
-  const trend = [pageviews * 0.45, pageviews * 0.58, pageviews * 0.52, pageviews * 0.72, pageviews * 0.64, pageviews || 1].map(Math.round);
+  const trend = [0.45, 0.58, 0.52, 0.72, 0.64, 0.86, 1].map((ratio, index) => ({
+    label: `${index + 1}`,
+    value: Math.round((pageviews || 1) * ratio),
+  }));
   return `<section class="mw-admin-card mw-admin-dashboard-card">
     <div class="mw-admin-card-head">
       <div>
@@ -647,7 +699,7 @@ function renderAnalyticsPanel(paths) {
     <div class="mw-admin-analytics-grid">
       <article class="mw-admin-chart-block mw-admin-chart-block--wide">
         <h3>แนวโน้ม 30 วัน</h3>
-        ${sparklineChart(trend)}
+        ${lineAreaChart(trend, { color: "#2f6fb2", fill: "rgba(47, 111, 178, 0.12)" })}
         <p class="mw-admin-dashboard-note">จะเปลี่ยนเป็น active users/page views จริงเมื่อเชื่อม GA</p>
       </article>
       <article class="mw-admin-chart-block">
