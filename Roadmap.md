@@ -77,7 +77,7 @@ When adding a new feature page or menu item:
 3. Run `npm run db:seed:cms` when Supabase env is available, so production database content is not stale.
 4. After deploy, run `npm run cms:verify:production` or `npm run smoke:production`.
 
-This prevents `/api/admin/content` or `cms-runtime.js` from overwriting the rendered nav with an older Admin Portal copy. If `npm run db:seed:cms` cannot run because Supabase env values are missing or empty, the API/runtime bundled-navigation guard still keeps production user-facing nav aligned with the repo.
+This prevents `/api/admin/content` or `cms-runtime.js` from overwriting the rendered nav with an older Admin Portal copy. New Admin Portal publishes include the editable CMS contract and can intentionally update visitor navigation. If `npm run db:seed:cms` cannot run because Supabase env values are missing or empty, the API/runtime bundled-navigation guard still keeps production user-facing nav aligned with the repo until a current Admin publish is made.
 
 ## High-Priority Backlog
 

@@ -2,6 +2,7 @@ const CMS_CONTENT_URL = "/api/admin/content";
 const CMS_FALLBACK_URL = "/admin/content/default.json";
 const CMS_STORAGE_KEY = "mongkolwela.cms.content";
 const CMS_CONSENT_KEY = "mongkolwela.pdpa.analytics";
+const CMS_EDITABLE_CONTRACT_VERSION = 2;
 
 let activeContent = null;
 
@@ -24,9 +25,13 @@ async function loadContent() {
   try {
     const payload = await fetchJson(CMS_CONTENT_URL);
     if (payload.content) {
+      const acceptsEditableNavigation =
+        Number(payload.content.cmsContractVersion || 0) >= CMS_EDITABLE_CONTRACT_VERSION;
       const content = {
         ...payload.content,
-        navigation: bundledContent?.navigation || payload.content.navigation,
+        navigation: acceptsEditableNavigation
+          ? payload.content.navigation || bundledContent?.navigation
+          : bundledContent?.navigation || payload.content.navigation,
       };
       localStorage.setItem(CMS_STORAGE_KEY, JSON.stringify(content));
       return content;

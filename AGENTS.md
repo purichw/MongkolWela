@@ -27,7 +27,7 @@ Expected current clean-ish state may include:
 
 This is the Mongkol Wela Astro site.
 
-- Workspace: `/Users/point/hora-astro`
+- Workspace: `/Users/point/Library/Mobile Documents/com~apple~CloudDocs/Website Projects/hora-astro`
 - Production: `https://mongkolwela.vercel.app`
 - GitHub: `purichw/hora-astro`
 - Default branch: `main`
@@ -111,7 +111,7 @@ npm run smoke:production
 - After adding/removing/renaming pages or navigation items, run `npm run nfr:cms`.
 - If Supabase env is configured, run `npm run db:seed:cms` after page/nav changes so `cms_documents/live` does not serve stale content.
 - Production verification must include `npm run cms:verify:production` or `npm run smoke:production`; both catch stale `/api/admin/content` page/nav data.
-- Bundled page/navigation data is the deploy contract. `api/admin/_shared.js` and `public/assets/js/cms-runtime.js` prefer bundled navigation so stale CMS API content cannot overwrite the rendered header after hydration.
+- Bundled page/navigation data is the fallback deploy contract. Current Admin Portal publishes include `cmsContractVersion` and may intentionally override bundled navigation, while older CMS copies are still guarded so stale API content cannot overwrite the rendered header after hydration.
 
 ### Excel Workbooks
 

@@ -1,10 +1,18 @@
-import { publishLiveContent, readJsonBody, readLiveContent, requireAdmin, sendJson } from "./_shared.js";
+import {
+  CMS_EDITABLE_CONTRACT_VERSION,
+  publishLiveContent,
+  readJsonBody,
+  readLiveContent,
+  requireAdmin,
+  sendJson,
+} from "./_shared.js";
 
 function normalizeContent(content, actor) {
   const now = new Date().toISOString();
   return {
     ...content,
     schemaVersion: content.schemaVersion || 1,
+    cmsContractVersion: CMS_EDITABLE_CONTRACT_VERSION,
     updatedAt: now,
     publishedAt: now,
     publishedBy: actor || "admin",

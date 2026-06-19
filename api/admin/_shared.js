@@ -14,6 +14,7 @@ export const LOCAL_ANALYTICS_PATH = path.join(process.cwd(), "public/admin/conte
 
 export const COOKIE_NAME = "mw_admin_session";
 export const SESSION_TTL_MS = 1000 * 60 * 60 * 12;
+export const CMS_EDITABLE_CONTRACT_VERSION = 2;
 
 export function sendJson(res, status, payload, headers = {}) {
   res.statusCode = status;
@@ -138,13 +139,29 @@ function mergeOrderedById(contentItems = [], bundledItems = []) {
 
 export function mergeWithBundledContent(content, bundledContent) {
   if (!content || !bundledContent || content === bundledContent) return content;
+  const contentNavigation = content.navigation || {};
+  const bundledNavigation = bundledContent.navigation || {};
+
+  if (Number(content.cmsContractVersion) >= CMS_EDITABLE_CONTRACT_VERSION) {
+    return {
+      ...content,
+      pages: Array.isArray(content.pages) ? content.pages : bundledContent.pages || [],
+      navigation: {
+        ...bundledNavigation,
+        ...contentNavigation,
+        tabs: Array.isArray(contentNavigation.tabs) ? contentNavigation.tabs : bundledNavigation.tabs || [],
+        utility: Array.isArray(contentNavigation.utility)
+          ? contentNavigation.utility
+          : bundledNavigation.utility || [],
+      },
+    };
+  }
+
   const bundledPages = Array.isArray(bundledContent.pages) ? bundledContent.pages : null;
   const bundledTabs = Array.isArray(bundledContent.navigation?.tabs) ? bundledContent.navigation.tabs : null;
   const bundledUtility = Array.isArray(bundledContent.navigation?.utility)
     ? bundledContent.navigation.utility
     : null;
-  const contentNavigation = content.navigation || {};
-  const bundledNavigation = bundledContent.navigation || {};
 
   return {
     ...content,

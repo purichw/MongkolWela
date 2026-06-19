@@ -136,6 +136,14 @@ function currentPage() {
   return (state.content?.pages || []).find((page) => page.id === state.selectedPageId) || state.content?.pages?.[0];
 }
 
+function ensureNavigation() {
+  state.content ||= {};
+  state.content.navigation ||= {};
+  state.content.navigation.tabs ||= [];
+  state.content.navigation.utility ||= [];
+  return state.content.navigation;
+}
+
 function byOrder(items) {
   return [...(items || [])].sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
 }
@@ -177,6 +185,7 @@ function renderAppShell() {
       <div class="mw-admin-header-actions">
         <span id="adminStatus" class="mw-admin-status">พร้อมใช้งาน</span>
         <button class="mw-admin-btn" type="button" data-action="preview">เปิดเว็บ</button>
+        <button class="mw-admin-btn" type="button" data-action="save-draft">Save draft</button>
         <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="publish">${icon("publish")} Publish</button>
       </div>
     </header>
@@ -192,10 +201,6 @@ function renderAppShell() {
     <main class="mw-admin-main">
       <header class="mw-admin-top">
         <div><p>Admin Portal</p><h1 id="adminTitle">Dashboard</h1></div>
-        <div class="mw-admin-top-actions">
-          <button class="mw-admin-btn" type="button" data-action="save-draft">Save draft</button>
-          <button class="mw-admin-btn" type="button" data-action="logout">ออกจากระบบ</button>
-        </div>
       </header>
       <section id="adminContent" class="mw-admin-content"></section>
     </main>
@@ -226,6 +231,7 @@ function renderSideNav() {
     navButton("navigation", "Navigation", "nav"),
     navButton("components", "Components", "component"),
     navButton("analytics", "Analytics", "chart"),
+    `<button class="mw-admin-nav-logout" type="button" data-action="logout"><span>↩</span><strong>ออกจากระบบ</strong></button>`,
   ].join("");
 }
 
@@ -262,6 +268,7 @@ function renderLogin() {
 async function loadContent() {
   const payload = await api("/api/admin/content");
   state.content = payload.content;
+  ensureNavigation();
 }
 
 async function loadAnalytics() {
@@ -736,7 +743,7 @@ function renderSectionEditor(section, index) {
 
 function renderNavigation() {
   setTitle("Navigation");
-  const nav = state.content.navigation;
+  const nav = ensureNavigation();
   $("#adminContent").innerHTML = `<div class="mw-admin-card">
     <div class="mw-admin-card-head"><h2>Navbar Tabs</h2><button class="mw-admin-btn" type="button" data-action="add-nav-tab">เพิ่ม tab</button></div>
     <div class="mw-admin-list">${(nav.tabs || []).map(renderNavTab).join("")}</div>
@@ -749,14 +756,14 @@ function renderNavigation() {
 
 function renderNavTab(tab, index) {
   return `<article class="mw-admin-item" data-nav-tab="${index}">
-    <div class="mw-admin-item-head"><strong>${escapeHtml(tab.label || "Tab")}</strong><div><button type="button" data-action="move-nav-tab-up">ขึ้น</button><button type="button" data-action="move-nav-tab-down">ลง</button><button type="button" data-action="remove-nav-tab">ลบ</button></div></div>
+    <div class="mw-admin-item-head"><strong>${escapeHtml(tab.label || "Tab")}</strong><div><button type="button" data-action="move-nav-tab-up" data-nav-tab-action-index="${index}">ขึ้น</button><button type="button" data-action="move-nav-tab-down" data-nav-tab-action-index="${index}">ลง</button><button type="button" data-action="remove-nav-tab" data-nav-tab-action-index="${index}">ลบ</button></div></div>
     <div class="mw-admin-form-grid">
       <label>Label<input data-nav-tab-field="label" value="${escapeHtml(tab.label || "")}"></label>
       <label>Href<input data-nav-tab-field="href" value="${escapeHtml(tab.href || "")}"></label>
       <label class="mw-admin-check"><input type="checkbox" data-nav-tab-enabled ${tab.enabled !== false ? "checked" : ""}> เปิดใช้งาน</label>
     </div>
     <div class="mw-admin-sublist">
-      <div class="mw-admin-card-head"><h3>Items</h3><button type="button" data-action="add-nav-item">เพิ่ม item</button></div>
+      <div class="mw-admin-card-head"><h3>Items</h3><button type="button" data-action="add-nav-item" data-nav-tab-action-index="${index}">เพิ่ม item</button></div>
       ${(tab.items || []).map((item, itemIndex) => renderNavItem(item, itemIndex, "tab", index)).join("")}
     </div>
   </article>`;
@@ -768,9 +775,9 @@ function renderNavItem(item, index, scope, tabIndex = -1) {
     <input data-nav-item-field="href" value="${escapeHtml(item.href || "")}" placeholder="Href">
     <label><input type="checkbox" data-nav-item-section ${item.section ? "checked" : ""}> section</label>
     <label><input type="checkbox" data-nav-item-enabled ${item.enabled !== false ? "checked" : ""}> on</label>
-    <button type="button" data-action="move-nav-item-up">ขึ้น</button>
-    <button type="button" data-action="move-nav-item-down">ลง</button>
-    <button type="button" data-action="remove-nav-item">ลบ</button>
+    <button type="button" data-action="move-nav-item-up" data-nav-item-action-index="${index}">ขึ้น</button>
+    <button type="button" data-action="move-nav-item-down" data-nav-item-action-index="${index}">ลง</button>
+    <button type="button" data-action="remove-nav-item" data-nav-item-action-index="${index}">ลบ</button>
   </div>`;
 }
 
@@ -1075,13 +1082,16 @@ function handleInput(event) {
     markDirty();
     return;
   }
+  if (updateNavFromInput(target)) {
+    markDirty();
+    return;
+  }
   const page = currentPage();
   if (!page) return;
   if (target.matches("[data-page-prop]")) page[target.dataset.pageProp] = target.value;
   if (target.matches("[data-page-enabled]")) page.enabled = target.checked;
   updatePatchFromInput(target, page);
   updateSectionFromInput(target, page);
-  updateNavFromInput(target);
   updateCardFromInput(target);
   updateBlockFromInput(target, page);
   markDirty();
@@ -1144,20 +1154,32 @@ function updateSectionFromInput(target, page) {
 }
 
 function updateNavFromInput(target) {
+  const nav = ensureNavigation();
   const tabEl = target.closest("[data-nav-tab]");
   if (tabEl && target.matches("[data-nav-tab-field]")) {
-    state.content.navigation.tabs[Number(tabEl.dataset.navTab)][target.dataset.navTabField] = target.value;
+    const tab = nav.tabs[Number(tabEl.dataset.navTab)];
+    if (!tab) return true;
+    tab[target.dataset.navTabField] = target.value;
+    return true;
   }
   if (tabEl && target.matches("[data-nav-tab-enabled]")) {
-    state.content.navigation.tabs[Number(tabEl.dataset.navTab)].enabled = target.checked;
+    const tab = nav.tabs[Number(tabEl.dataset.navTab)];
+    if (!tab) return true;
+    tab.enabled = target.checked;
+    return true;
   }
   const row = target.closest("[data-nav-item]");
-  if (!row) return;
+  if (!row) return false;
   const item = navItemFromRow(row);
-  if (!item) return;
+  if (!item) return true;
   if (target.matches("[data-nav-item-field]")) item[target.dataset.navItemField] = target.value;
   if (target.matches("[data-nav-item-section]")) item.section = target.checked;
   if (target.matches("[data-nav-item-enabled]")) item.enabled = target.checked;
+  return Boolean(
+    target.matches("[data-nav-item-field]") ||
+      target.matches("[data-nav-item-section]") ||
+      target.matches("[data-nav-item-enabled]"),
+  );
 }
 
 function updateCardFromInput(target) {
@@ -1398,35 +1420,54 @@ function moveSectionDown(button) {
 }
 
 function addNavTab() {
-  state.content.navigation.tabs.push({ id: `tab-${Date.now()}`, label: "เมนูใหม่", href: "/", enabled: true, items: [] });
+  ensureNavigation().tabs.push({ id: `tab-${Date.now()}`, label: "เมนูใหม่", href: "/", enabled: true, items: [] });
   markDirty();
   renderNavigation();
 }
 
 function navTabIndex(button) {
-  return Number(button.closest("[data-nav-tab]")?.dataset.navTab);
+  const directIndex = Number(button.dataset.navTabActionIndex);
+  if (Number.isInteger(directIndex) && directIndex >= 0) return directIndex;
+  const closestIndex = Number(button.closest("[data-nav-tab]")?.dataset.navTab);
+  return Number.isInteger(closestIndex) && closestIndex >= 0 ? closestIndex : -1;
+}
+
+function navTabFromButton(button) {
+  const nav = ensureNavigation();
+  const index = navTabIndex(button);
+  return index >= 0 ? nav.tabs[index] : null;
 }
 
 function removeNavTab(button) {
-  state.content.navigation.tabs.splice(navTabIndex(button), 1);
+  const nav = ensureNavigation();
+  const index = navTabIndex(button);
+  if (index < 0 || !nav.tabs[index]) return;
+  nav.tabs.splice(index, 1);
   markDirty();
   renderNavigation();
 }
 
 function moveNavTabUp(button) {
-  moveArrayItem(state.content.navigation.tabs, navTabIndex(button), -1);
+  const nav = ensureNavigation();
+  const index = navTabIndex(button);
+  if (index < 0 || !nav.tabs[index]) return;
+  moveArrayItem(nav.tabs, index, -1);
   markDirty();
   renderNavigation();
 }
 
 function moveNavTabDown(button) {
-  moveArrayItem(state.content.navigation.tabs, navTabIndex(button), 1);
+  const nav = ensureNavigation();
+  const index = navTabIndex(button);
+  if (index < 0 || !nav.tabs[index]) return;
+  moveArrayItem(nav.tabs, index, 1);
   markDirty();
   renderNavigation();
 }
 
 function addNavItem(button) {
-  const tab = state.content.navigation.tabs[navTabIndex(button)];
+  const tab = navTabFromButton(button);
+  if (!tab) return;
   tab.items ||= [];
   tab.items.push({ id: `item-${Date.now()}`, label: "รายการใหม่", href: "/", enabled: true });
   markDirty();
@@ -1434,39 +1475,55 @@ function addNavItem(button) {
 }
 
 function addUtility() {
-  state.content.navigation.utility.push({ id: `utility-${Date.now()}`, label: "Utility", href: "/", enabled: true });
+  ensureNavigation().utility.push({ id: `utility-${Date.now()}`, label: "Utility", href: "/", enabled: true });
   markDirty();
   renderNavigation();
 }
 
 function navItemFromRow(row) {
+  const nav = ensureNavigation();
   const index = Number(row.dataset.navItem);
-  if (row.dataset.navScope === "utility") return state.content.navigation.utility[index];
-  return state.content.navigation.tabs[Number(row.dataset.navTabIndex)]?.items?.[index];
+  if (!Number.isInteger(index) || index < 0) return null;
+  if (row.dataset.navScope === "utility") return nav.utility[index];
+  return nav.tabs[Number(row.dataset.navTabIndex)]?.items?.[index] || null;
 }
 
 function navItemArrayFromRow(row) {
-  if (row.dataset.navScope === "utility") return state.content.navigation.utility;
-  return state.content.navigation.tabs[Number(row.dataset.navTabIndex)]?.items || [];
+  const nav = ensureNavigation();
+  if (!row) return null;
+  if (row.dataset.navScope === "utility") return nav.utility;
+  const tab = nav.tabs[Number(row.dataset.navTabIndex)];
+  if (!tab) return null;
+  tab.items ||= [];
+  return tab.items;
 }
 
 function removeNavItem(button) {
   const row = button.closest("[data-nav-item]");
-  navItemArrayFromRow(row).splice(Number(row.dataset.navItem), 1);
+  const items = navItemArrayFromRow(row);
+  const index = Number(row?.dataset.navItem);
+  if (!items || !Number.isInteger(index) || !items[index]) return;
+  items.splice(index, 1);
   markDirty();
   renderNavigation();
 }
 
 function moveNavItemUp(button) {
   const row = button.closest("[data-nav-item]");
-  moveArrayItem(navItemArrayFromRow(row), Number(row.dataset.navItem), -1);
+  const items = navItemArrayFromRow(row);
+  const index = Number(row?.dataset.navItem);
+  if (!items || !Number.isInteger(index) || !items[index]) return;
+  moveArrayItem(items, index, -1);
   markDirty();
   renderNavigation();
 }
 
 function moveNavItemDown(button) {
   const row = button.closest("[data-nav-item]");
-  moveArrayItem(navItemArrayFromRow(row), Number(row.dataset.navItem), 1);
+  const items = navItemArrayFromRow(row);
+  const index = Number(row?.dataset.navItem);
+  if (!items || !Number.isInteger(index) || !items[index]) return;
+  moveArrayItem(items, index, 1);
   markDirty();
   renderNavigation();
 }

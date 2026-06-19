@@ -2097,9 +2097,6 @@
 
 .admin-page .mw-admin-header {
   grid-column: 1 / -1;
-  position: sticky;
-  top: 12px;
-  z-index: 40;
   min-height: 72px;
   padding: 12px 14px;
   border-color: rgba(200, 173, 123, 0.52);
@@ -2118,7 +2115,11 @@
 }
 
 .admin-page .mw-admin-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .admin-page .mw-admin-status {
@@ -2136,11 +2137,11 @@
 
 .admin-page .mw-admin-nav {
   position: sticky;
-  top: 104px;
+  top: 28px;
   align-self: start;
   display: grid;
   gap: 7px;
-  max-height: calc(100vh - 128px);
+  max-height: calc(100vh - 56px);
   overflow: auto;
   padding: 12px;
   border: 1px solid rgba(200, 173, 123, 0.5);
@@ -2172,6 +2173,12 @@
   padding: 10px 11px;
   color: rgba(255, 250, 242, 0.74);
   font-size: 0.84rem;
+}
+
+.admin-page .mw-admin-nav-logout {
+  margin-top: 10px;
+  border-top: 1px solid rgba(255, 250, 242, 0.12) !important;
+  padding-top: 14px !important;
 }
 
 .admin-page .mw-admin-nav button span,
@@ -2207,9 +2214,6 @@
 }
 
 .admin-page .mw-admin-top {
-  position: sticky;
-  top: 104px;
-  z-index: 30;
   margin-bottom: 16px;
   padding: 14px 16px;
   border: 1px solid rgba(223, 208, 187, 0.78);
@@ -2418,8 +2422,7 @@
     flex-direction: column;
   }
 
-  .admin-page .mw-admin-header-actions,
-  .admin-page .mw-admin-top-actions {
+  .admin-page .mw-admin-header-actions {
     display: grid;
     width: 100%;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2434,10 +2437,13 @@
     min-width: 100%;
   }
 
-  .admin-page .mw-admin-header-actions .mw-admin-btn,
-  .admin-page .mw-admin-top-actions .mw-admin-btn {
+  .admin-page .mw-admin-header-actions .mw-admin-btn {
     width: 100%;
     min-height: 42px;
+  }
+
+  .admin-page .mw-admin-header-actions .mw-admin-btn-primary {
+    grid-column: 1 / -1;
   }
 
   .admin-page .mw-admin-grid,

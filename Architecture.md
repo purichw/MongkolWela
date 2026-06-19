@@ -33,7 +33,7 @@ Admin Portal content has three deploy-time surfaces:
 - `public/admin/content/default.json`: bundled fallback that must match `live.json` for page registry and navigation.
 - `/api/admin/content`: production API used by `cms-runtime.js` and Admin Portal.
 
-Production may read `/api/admin/content` from Supabase first. To avoid stale database content hiding new features, `readLiveContent()` uses the bundled `live.json` page registry and navigation as the deploy contract, even when older API/database content exists. `cms-runtime.js` also prefers bundled navigation so browser hydration cannot restore stale Admin Portal nav. The deploy contract is that `live.json`, `default.json`, production `/api/admin/content`, and the hydrated header expose the same page registry and navigation.
+Production may read `/api/admin/content` from Supabase first. To avoid stale database content hiding new features, `readLiveContent()` uses the bundled `live.json` page registry and navigation as the fallback deploy contract when the stored CMS copy does not include the current editable contract. New Admin Portal publishes include `cmsContractVersion` and are allowed to override bundled navigation for visitors. `cms-runtime.js` follows the same rule, so old data cannot restore stale nav after hydration while fresh Admin publishes remain visible.
 
 Validation commands:
 

@@ -8,6 +8,7 @@ const defaultSiteUrl = "https://mongkolwela.vercel.app";
 const siteUrl = normalizeBaseUrl(process.env.MONGKOLWELA_PRODUCTION_URL || defaultSiteUrl);
 const failures = [];
 const liveContent = JSON.parse(fs.readFileSync(path.join(rootDir, "public/admin/content/live.json"), "utf8"));
+const CMS_EDITABLE_CONTRACT_VERSION = 2;
 
 const statusRoutes = unique([
   "/",
@@ -82,9 +83,24 @@ async function checkCmsContent() {
     return;
   }
 
+  if (Number(content.cmsContractVersion || 0) >= CMS_EDITABLE_CONTRACT_VERSION) {
+    validateEditableCmsContent(content);
+    return;
+  }
+
   comparePages(liveContent.pages || [], content.pages || []);
   compareNavigation(liveContent.navigation?.tabs || [], content.navigation?.tabs || []);
   compareUtilityNavigation(liveContent.navigation?.utility || [], content.navigation?.utility || []);
+}
+
+function validateEditableCmsContent(content) {
+  if (!Array.isArray(content.pages)) failures.push("/api/admin/content: pages must be an array");
+  if (!Array.isArray(content.navigation?.tabs)) {
+    failures.push("/api/admin/content: navigation.tabs must be an array");
+  }
+  if (!Array.isArray(content.navigation?.utility)) {
+    failures.push("/api/admin/content: navigation.utility must be an array");
+  }
 }
 
 async function checkStatus(route) {
