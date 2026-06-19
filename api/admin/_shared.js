@@ -136,23 +136,49 @@ function mergeOrderedById(contentItems = [], bundledItems = []) {
   return merged;
 }
 
-function mergeWithBundledContent(content, bundledContent) {
+function contentTimestamp(content) {
+  const timestamp = Date.parse(content?.publishedAt || content?.updatedAt || "");
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
+export function shouldUseBundledContract(content, bundledContent) {
+  const contentTime = contentTimestamp(content);
+  const bundledTime = contentTimestamp(bundledContent);
+  if (!contentTime || !bundledTime) return true;
+  return contentTime < bundledTime;
+}
+
+export function mergeWithBundledContent(content, bundledContent) {
   if (!content || !bundledContent || content === bundledContent) return content;
+  const useBundledContract = shouldUseBundledContract(content, bundledContent);
   const bundledPages = Array.isArray(bundledContent.pages) ? bundledContent.pages : null;
   const bundledTabs = Array.isArray(bundledContent.navigation?.tabs) ? bundledContent.navigation.tabs : null;
   const bundledUtility = Array.isArray(bundledContent.navigation?.utility)
     ? bundledContent.navigation.utility
     : null;
+  const contentNavigation = content.navigation || {};
+  const bundledNavigation = bundledContent.navigation || {};
 
   return {
     ...content,
-    pages: bundledPages || mergeOrderedById(content.pages || [], bundledContent.pages || []),
-    navigation: {
-      ...(content.navigation || {}),
-      ...(bundledContent.navigation || {}),
-      tabs: bundledTabs || mergeOrderedById(content.navigation?.tabs || [], bundledContent.navigation?.tabs || []),
-      utility: bundledUtility || content.navigation?.utility || [],
-    },
+    pages: useBundledContract
+      ? bundledPages || mergeOrderedById(content.pages || [], bundledContent.pages || [])
+      : Array.isArray(content.pages)
+        ? content.pages
+        : bundledPages || [],
+    navigation: useBundledContract
+      ? {
+          ...contentNavigation,
+          ...bundledNavigation,
+          tabs: bundledTabs || mergeOrderedById(contentNavigation.tabs || [], bundledNavigation.tabs || []),
+          utility: bundledUtility || contentNavigation.utility || [],
+        }
+      : {
+          ...bundledNavigation,
+          ...contentNavigation,
+          tabs: Array.isArray(contentNavigation.tabs) ? contentNavigation.tabs : bundledTabs || [],
+          utility: Array.isArray(contentNavigation.utility) ? contentNavigation.utility : bundledUtility || [],
+        },
   };
 }
 

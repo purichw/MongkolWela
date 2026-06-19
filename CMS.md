@@ -4,14 +4,14 @@
 
 `public/admin/content/default.json` must stay in sync with `live.json` for page registry and navigation. It is the bundled fallback when the live API is unavailable.
 
-Production `/api/admin/content` may read from Supabase first, but it must expose the same page registry and navigation as `live.json`. After adding, removing, or renaming a page or navigation item:
+Production `/api/admin/content` may read from Supabase first, but it must expose the same page registry and navigation as `live.json`. The API shared reader and `cms-runtime.js` intentionally prefer bundled page/navigation data so stale Supabase CMS content cannot restore old nav after hydration. After adding, removing, or renaming a page or navigation item:
 
 1. Update both `public/admin/content/live.json` and `public/admin/content/default.json`.
 2. Run `npm run nfr:cms`.
 3. If Supabase is configured, run `npm run db:seed:cms` to write `live.json` into `cms_documents/live`.
 4. After deployment, run `npm run cms:verify:production` or `npm run smoke:production`.
 
-Do not rely on stale database content to define navigation. Database content is a published copy; the repo JSON files define the deployable contract.
+Do not rely on stale database content to define navigation. Database content is a published copy; the repo JSON files define the deployable contract. Production smoke must pass `/api/admin/content` against `live.json`, and a browser hydration spot-check is recommended for header navigation changes.
 
 ## Admin Media
 

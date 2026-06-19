@@ -1,6 +1,6 @@
 # Roadmap
 
-Last updated: 2026-06-12
+Last updated: 2026-06-19
 
 ## Current Status
 
@@ -11,10 +11,11 @@ Production is live at:
 Latest known code state:
 
 - Branch: `main`
-- Latest production commit: `9e88f31 Bust confidence tooltip CSS cache`.
-- The current release includes the confidence power bar, visitor-facing level definitions, responsive `!` explanation control, and CSS cache bust for the confidence tooltip fix.
-- Admin Portal temple ranking can now be changed through drag-and-drop plus compact manual up/down controls on the selected sidebar item.
-- The worktree may contain unrelated user changes and generated test artifacts; inspect status and stage only intended files.
+- Latest production commit: `4392f7b Keep CMS API navigation aligned with bundled content`.
+- Latest pushed commits include `e24d601 Prefer bundled navigation in CMS runtime` and `4392f7b Keep CMS API navigation aligned with bundled content`.
+- The current production release fixes the header calendar navigation so the top-level nav item is `วันพระ` linking to `/calendar/`, with no `ฤกษ์และปฏิทิน` submenu after browser hydration.
+- `/api/admin/content` now aligns page registry and navigation with bundled `live.json`/`default.json` even when the Supabase CMS copy is stale.
+- The worktree should be clean after the latest deploy; inspect status and stage only intended files.
 
 ## Recently Completed
 
@@ -44,19 +45,25 @@ Latest known code state:
 - Added detailed Thai-first Major Arcana interpretations with restrained Western context.
 - Added the Palmistry and Tarot pages to the code-owned Admin Portal page registry/navigation.
 - Added Admin Portal drag-and-drop temple ranking plus compact manual up/down controls for the selected sidebar item.
+- Added `/temples/planner/` for trip planning with auto trip generation, manual selection, nearby search, radius controls, route estimates, draggable selected-place chips, replace/reorder controls, and trip-condition filtering.
+- Refined planner UX so search/filter criteria are applied explicitly, auto trip actions warn only after a trip/list exists, and manual selection remains separate from generated trip criteria.
+- Added staggered reveal animation and manual `ดูเพิ่ม` behavior for temple card lists while keeping page performance predictable.
+- Cleaned the calendar navigation: `วันพระ` is now the direct top-level nav link to `/calendar/`; stale `ฤกษ์และปฏิทิน` menu items are no longer restored by CMS hydration.
 - Deployed latest changes to production.
 
 ## Current Working Set
 
-No confidence-indicator implementation remains pending after the current release.
-Keep unrelated Admin Portal/Tarot changes, visual snapshots, `.claude/`, Playwright reports, `public/images/hand.png`, and test artifacts out of unrelated commits unless explicitly requested.
+No temple planner or calendar-nav implementation remains pending after the current release.
+Keep unrelated Admin Portal/Tarot changes, visual snapshots, `.claude/`, Playwright reports, `public/images/hand.png`, `outputs/`, and test artifacts out of unrelated commits unless explicitly requested.
 
-Checks already completed for the confidence refinement:
+Checks already completed for the latest production release:
 
+- `git diff --check`
 - `npm run check`
+- `npm run nfr:cms`
 - `npm run build`
-- Targeted desktop and mobile browser verification
-- Tooltip open/close behavior, Escape handling, no horizontal overflow, and no console errors
+- `npm run smoke:production`
+- Production browser verification after hydration: `วันพระ` links to `/calendar/` and has no submenu; stale `ฤกษ์และปฏิทิน` tab is absent.
 
 ## CMS Content Guardrail
 
@@ -70,7 +77,7 @@ When adding a new feature page or menu item:
 3. Run `npm run db:seed:cms` when Supabase env is available, so production database content is not stale.
 4. After deploy, run `npm run cms:verify:production` or `npm run smoke:production`.
 
-This prevents `/api/admin/content` from overwriting the rendered nav with an older Admin Portal copy.
+This prevents `/api/admin/content` or `cms-runtime.js` from overwriting the rendered nav with an older Admin Portal copy. If `npm run db:seed:cms` cannot run because Supabase env values are missing or empty, the API/runtime bundled-navigation guard still keeps production user-facing nav aligned with the repo.
 
 ## High-Priority Backlog
 
