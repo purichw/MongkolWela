@@ -155,6 +155,11 @@ async function fetchRoute(route) {
     const response = await fetch(new URL(route, siteUrl), {
       redirect: "manual",
       headers: {
+        accept: route.endsWith(".json") || route.startsWith("/api/") ? "application/json,text/plain,*/*" : "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "accept-language": "th-TH,th;q=0.9,en-US;q=0.6,en;q=0.5",
+        "sec-fetch-dest": route.startsWith("/api/") || route.endsWith(".json") ? "empty" : "document",
+        "sec-fetch-mode": route.startsWith("/api/") || route.endsWith(".json") ? "cors" : "navigate",
+        "sec-fetch-site": "same-origin",
         "user-agent": "mongkolwela-production-smoke/1.0",
       },
     });

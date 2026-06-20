@@ -18,6 +18,8 @@
     "nfr:temple-cms": "node scripts/validate-temple-cms.mjs",
     "nfr:vercel": "node scripts/validate-vercel-config.mjs",
     "nfr": "npm run nfr:data && npm run nfr:visit-info && npm run nfr:performance && npm run nfr:seo && npm run nfr:cms && npm run nfr:temple-cms && npm run nfr:vercel",
+    "security:firewall": "node scripts/apply-vercel-firewall.mjs",
+    "security:firewall:publish": "node scripts/apply-vercel-firewall.mjs --publish",
     "smoke:production": "node scripts/smoke-production.mjs",
     "cms:verify:production": "node scripts/validate-cms-content.mjs --production",
     "db:seed": "node scripts/seed-supabase.mjs",
