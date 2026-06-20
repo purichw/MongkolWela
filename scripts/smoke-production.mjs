@@ -45,6 +45,24 @@ const cacheChecks = [
   },
 ];
 
+const headerChecks = [
+  {
+    path: "/assets/data/temples-thailand.json",
+    header: "x-robots-tag",
+    expected: "noindex, nofollow, noarchive, nosnippet",
+  },
+  {
+    path: "/assets/data/temples-thailand.json",
+    header: "access-control-allow-origin",
+    expected: "https://mongkolwela.vercel.app",
+  },
+  {
+    path: "/llms.txt",
+    header: "x-robots-tag",
+    expected: "noindex, nofollow, noarchive, nosnippet",
+  },
+];
+
 await main();
 
 async function main() {
@@ -53,6 +71,7 @@ async function main() {
   await Promise.all(statusRoutes.map(checkStatus));
   await checkSecurityHeaders("/");
   await Promise.all(cacheChecks.map(checkCacheHeader));
+  await Promise.all(headerChecks.map(checkResponseHeader));
   await checkCmsContent();
 
   if (failures.length) {
@@ -63,6 +82,16 @@ async function main() {
 
   console.log(`Production smoke passed across ${statusRoutes.length} routes.`);
   process.exit(0);
+}
+
+async function checkResponseHeader({ path, header, expected }) {
+  const response = await fetchRoute(path);
+  if (!response) return;
+
+  const actual = normalizeHeader(response.headers.get(header));
+  if (actual !== normalizeHeader(expected)) {
+    failures.push(`${path}: ${header} expected "${expected}", got "${actual || "(missing)"}"`);
+  }
 }
 
 async function checkCmsContent() {

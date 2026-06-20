@@ -74,6 +74,11 @@ function validateHeaders(headers) {
   requireCache(headers, "/sitemap.xml", "public, max-age=3600, stale-while-revalidate=86400");
   requireCache(headers, "/robots.txt", "public, max-age=3600, stale-while-revalidate=86400");
   requireCache(headers, "/llms.txt", "public, max-age=3600, stale-while-revalidate=86400");
+  requireHeader(getHeaderMap(headers, "/assets/data/(.*)"), "X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
+  requireHeader(getHeaderMap(headers, "/api/admin/(.*)"), "X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
+  requireHeader(getHeaderMap(headers, "/llms.txt"), "X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
+  requireHeader(getHeaderMap(headers, "/assets/data/(.*)"), "Access-Control-Allow-Origin", "https://mongkolwela.vercel.app");
+  requireHeader(getHeaderMap(headers, "/assets/data/(.*)"), "Vary", "Origin");
 
   const dataHeaderIndex = headers.findIndex((entry) => entry.source === "/assets/data/(.*)");
   const assetsHeaderIndex = headers.findIndex((entry) => entry.source === "/assets/(.*)");
