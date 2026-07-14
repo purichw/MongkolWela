@@ -8,9 +8,9 @@ export const siteConfig = {
     searchLabel: "ค้นหา",
     footer: {
       title: "มงคลเวลา",
-      description: "ดูดวง ฤกษ์ ปฏิทินมงคล บทสวด และความรู้โหราศาสตร์ไทยจีน",
-      contact: "ติดต่อครูโหร",
-      rituals: "บทสวดและพิธี",
+      description: "ค้นหาวัดดัง สถานที่ศักดิ์สิทธิ์ วันพระ และเส้นทางไหว้พระเสริมมงคลสำหรับผู้ใช้ไทย",
+      contact: "ติดต่อมงคลเวลา",
+      rituals: "คู่มือก่อนเดินทาง",
       credits: "เครดิตรูปภาพ",
       imageCredits:
         "เครดิตภาพ: ภาพจิตรกรรมหน้าแรกจากเจ้าของโปรเจกต์ และภาพธูปขดในวัดหมั่นโหมวโดย Aethelfirth, CC BY-SA 4.0",
@@ -20,7 +20,7 @@ export const siteConfig = {
         topbar: [
           { label: "วันนี้", href: "#today", realtime: "lunarToday" },
           { label: "วันที่วันนี้", realtime: "solarToday" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
         footerVariant: "home",
       },
@@ -28,116 +28,116 @@ export const siteConfig = {
         topbar: [
           { label: "ปฏิทินไทย", href: "calendar/" },
           { label: "วันพระ ดิถี ฤกษ์มงคล และรายละเอียดรายวัน" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       calendarDay: {
         topbar: [
           { label: "ปฏิทินไทย", href: "calendar/" },
           { label: "อ่านรายละเอียดวันก่อนเลือกฤกษ์" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       lifeGraph: {
         topbar: [
           { label: "วันนี้เหมาะกับการตั้งจิตและวางแผน", href: "#today" },
           { label: "กราฟชีวิตเป็นแนวทางพิจารณาจังหวะ ไม่ใช่ข้อสรุปตายตัว" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       seamsi: {
         topbar: [
           { label: "ตั้งจิตก่อนเสี่ยงเซียมซี", href: "horoscope/seamsi/#seamsi-oracle" },
           { label: "ถามเฉพาะเรื่องสำคัญด้วยใจสงบและเคารพคำทำนาย" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       thaiAstrology: {
         topbar: [
           { label: "ผูกดวงโหราศาสตร์ไทย", href: "horoscope/thai-astrology/#thai-astrology-tool" },
           { label: "อ่านลัคนา ภพ ดาวกำเนิด และดวงจรแบบเข้าใจง่าย" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       palmistry: {
         topbar: [
           { label: "อ่านลายมือ", href: "horoscope/palmistry/#palmistry-tool" },
           { label: "เลือกเส้นที่เห็นชัด แล้วอ่านผลจาก rulebook ที่มีแหล่งอ้างอิง" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       tarotMeanings: {
         topbar: [
           { label: "ความหมายไพ่ยิปซี 78 ใบ", href: "tarot/meanings/" },
           { label: "เปิดดูหน้าไพ่และอ่านความหมายแบบไทย พร้อมมุม Western พอดีโทน" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       tarotDaily: {
         topbar: [
           { label: "วันนี้เหมาะกับการตั้งจิตและถามไพ่", href: "tarot/daily/#daily-tarot" },
           { label: "เลือกไพ่ได้วันละครั้งเพื่อรักษาความหมายของคำทำนาย" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       tarotMonthly: {
         topbar: [
           { label: "ไพ่ยิปซีรายเดือน", href: "tarot/monthly/" },
           { label: "เลือกไพ่ 10 ใบเพื่ออ่านภาพรวมเดือนแบบ Celtic Cross" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       tarotLuck: {
         topbar: [
           { label: "ไพ่ยิปซีโชคลาภ เสี่ยงโชค", href: "tarot/luck/" },
           { label: "เลือกไพ่ 1 ใบเพื่ออ่านจังหวะโชคและการเสี่ยงอย่างมีสติ" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       tarotLove: {
         topbar: [
           { label: "ไพ่ยิปซีความรัก", href: "tarot/love/" },
           { label: "เลือกไพ่ 1 ใบเพื่ออ่านจังหวะหัวใจ คนโสด คนคุย และคู่ครอง" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       tarotMoney: {
         topbar: [
           { label: "ไพ่ยิปซีการเงิน", href: "tarot/money/" },
           { label: "เลือกไพ่ 1 ใบเพื่ออ่านสภาพคล่อง รายจ่าย และข้อควรระวัง" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       tarotCareer: {
         topbar: [
           { label: "ไพ่ยิปซีการงาน", href: "tarot/career/" },
           { label: "เลือกไพ่ 1 ใบเพื่ออ่านจังหวะงาน อาชีพ ธุรกิจ และโอกาสใหม่" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       tarotResult: {
         topbar: [
           { label: "กลับไปจับไพ่รายวัน", href: "tarot/daily/" },
           { label: "รับคำทำนายด้วยสติ แล้วใช้เป็นแนวทางประกอบการตัดสินใจ" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
         footerLinks: [
           { label: "จับไพ่ใหม่", href: "tarot/daily/" },
-          { label: "ติดต่อครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       temples: {
         topbar: [
           { label: "วัดดังเสริมมงคล", href: "temples/" },
           { label: "รวมเส้นทางไหว้พระและวัดเด่นสำหรับเสริมมงคล" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       templesPopular: {
         topbar: [
           { label: "สายไหว้พระ 9 วัด", href: "temples/popular/" },
           { label: "รวมเส้นทางไหว้พระและวัดเด่นสำหรับเสริมมงคล" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       templesPlanner: {
@@ -151,21 +151,21 @@ export const siteConfig = {
         topbar: [
           { label: "สายมู", href: "temples/mu/" },
           { label: "รวมพิกัดขอพร การงาน การเงิน ความรัก สุขภาพ และโชคลาภ" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       templesSacred: {
         topbar: [
           { label: "วัดศักดิ์สิทธิ์", href: "temples/sacred/" },
           { label: "รวมวัดและสถานที่ศักดิ์สิทธิ์สำหรับไหว้พระ ทำบุญ และขอพร" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
       templesThailand: {
         topbar: [
           { label: "วัดทั่วประเทศไทย", href: "temples/thailand/" },
           { label: "ค้นหาจากทะเบียนวัดทั่วประเทศ" },
-          { label: "ปรึกษาครูโหร", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "#consult" },
         ],
       },
     },

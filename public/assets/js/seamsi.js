@@ -29,7 +29,7 @@ const t = {
   caution: "ข้อควรระวัง",
   blessing: "มงคลประจำใบ",
   reset: "เสี่ยงใหม่",
-  consult: "ปรึกษาครูโหร",
+  consult: "ติดต่อมงคลเวลา",
   personalize: (advice, category) => `${advice} สำหรับเรื่อง${category} ให้ยึดเจตนาที่สงบและไม่ถามซ้ำเพียงเพื่อเอาคำตอบที่ถูกใจ`,
 };
 

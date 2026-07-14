@@ -333,180 +333,180 @@
   "navigation": {
     "tabs": [
       {
-        "id": "horoscope",
-        "href": "#horoscope",
-        "items": [
-          {
-            "id": "life-graph",
-            "href": "horoscope/life-graph/",
-            "label": "กราฟชีวิต",
-            "enabled": true
-          },
-          {
-            "id": "tarot-section",
-            "label": "ดูดวงไพ่ยิปซี",
-            "section": true,
-            "enabled": true
-          },
-          {
-            "id": "tarot-meanings",
-            "href": "tarot/meanings/",
-            "label": "ความหมายไพ่ยิปซี 78 ใบ",
-            "enabled": true
-          },
-          {
-            "id": "tarot-daily",
-            "href": "tarot/daily/",
-            "label": "ไพ่ยิปซีรายวัน",
-            "enabled": true
-          },
-          {
-            "id": "tarot-monthly",
-            "href": "tarot/monthly/",
-            "label": "ไพ่ยิปซีรายเดือน",
-            "enabled": true
-          },
-          {
-            "id": "tarot-love",
-            "href": "tarot/love/",
-            "label": "ไพ่ยิปซีความรัก",
-            "enabled": true
-          },
-          {
-            "id": "tarot-money",
-            "href": "tarot/money/",
-            "label": "ไพ่ยิปซีการเงิน",
-            "enabled": true
-          },
-          {
-            "id": "tarot-career",
-            "href": "tarot/career/",
-            "label": "ไพ่ยิปซีการงาน อาชีพ",
-            "enabled": true
-          },
-          {
-            "id": "tarot-luck",
-            "href": "tarot/luck/",
-            "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค",
-            "enabled": true
-          },
-          {
-            "id": "palmistry",
-            "href": "horoscope/palmistry/",
-            "label": "อ่านลายมือ",
-            "enabled": true
-          },
-          {
-            "id": "thai-astrology",
-            "href": "horoscope/thai-astrology/",
-            "label": "โหราศาสตร์ไทย",
-            "enabled": true
-          },
-          {
-            "id": "seamsi",
-            "href": "horoscope/seamsi/",
-            "label": "เสี่ยงเซียมซี",
-            "enabled": true
-          }
-        ],
-        "label": "ดูดวง",
-        "enabled": true
-      },
-      {
-        "id": "calendar",
-        "href": "calendar/",
-        "items": [],
-        "label": "วันพระ",
-        "enabled": true
-      },
-      {
-        "id": "rituals",
-        "href": "#rituals",
-        "items": [
-          {
-            "id": "chants",
-            "href": "#rituals",
-            "label": "บทสวดมนต์",
-            "enabled": true
-          },
-          {
-            "id": "metta",
-            "href": "#rituals",
-            "label": "คาถาเมตตา",
-            "enabled": true
-          },
-          {
-            "id": "ritual-cleansing",
-            "href": "#rituals",
-            "label": "สะเดาะเคราะห์",
-            "enabled": true
-          },
-          {
-            "id": "lucky-colors",
-            "href": "#rituals",
-            "label": "สีมงคล",
-            "enabled": true
-          }
-        ],
-        "label": "บทสวดและพิธี",
-        "enabled": true
-      },
-      {
         "id": "temples",
+        "label": "วัดดังเสริมมงคล",
         "href": "temples/",
+        "enabled": true,
         "items": [
           {
             "id": "temple-planner",
-            "href": "temples/planner/",
             "label": "วางแผนไหว้พระ",
+            "href": "temples/planner/",
             "enabled": true
           },
           {
             "id": "temple-featured-section",
             "label": "วัดเด่นวัดดัง",
-            "enabled": true,
-            "section": true
+            "section": true,
+            "enabled": true
           },
           {
             "id": "popular-temples",
-            "href": "temples/popular/",
             "label": "สายไหว้พระ 9 วัด",
+            "href": "temples/popular/",
             "enabled": true
           },
           {
             "id": "mu-temples",
-            "href": "temples/mu/",
             "label": "สายมู",
+            "href": "temples/mu/",
             "enabled": true
           },
           {
             "id": "sacred-temples",
-            "href": "temples/sacred/",
             "label": "วัดศักดิ์สิทธิ์",
+            "href": "temples/sacred/",
             "enabled": true
           },
           {
             "id": "temple-all-section",
             "label": "วัดทั่วประเทศไทย",
-            "enabled": true,
-            "section": true
+            "section": true,
+            "enabled": true
           },
           {
             "id": "all-temples",
-            "href": "temples/thailand/",
             "label": "ค้นหาวัดทั่วประเทศไทย",
+            "href": "temples/thailand/",
             "enabled": true
           }
-        ],
-        "label": "วัดดังเสริมมงคล",
-        "enabled": true
+        ]
+      },
+      {
+        "id": "calendar",
+        "label": "วันพระ",
+        "href": "calendar/",
+        "enabled": true,
+        "items": []
+      },
+      {
+        "id": "rituals",
+        "label": "คู่มือและพิธี",
+        "href": "#guides",
+        "enabled": true,
+        "items": [
+          {
+            "id": "chants",
+            "label": "เตรียมตัวก่อนไหว้พระ",
+            "href": "#guides",
+            "enabled": true
+          },
+          {
+            "id": "metta",
+            "label": "เลือกเส้นทางให้เหมาะกับเวลา",
+            "href": "temples/planner/",
+            "enabled": true
+          },
+          {
+            "id": "ritual-cleansing",
+            "label": "แก้ชงและสะเดาะเคราะห์",
+            "href": "temples/mu/",
+            "enabled": true
+          },
+          {
+            "id": "lucky-colors",
+            "label": "วันพระและปฏิทินไทย",
+            "href": "calendar/",
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "id": "horoscope",
+        "label": "เครื่องมือเสริม",
+        "href": "#supporting-tools",
+        "enabled": true,
+        "items": [
+          {
+            "id": "life-graph",
+            "label": "กราฟชีวิต",
+            "href": "horoscope/life-graph/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-section",
+            "label": "ไพ่ยิปซี",
+            "section": true,
+            "enabled": true
+          },
+          {
+            "id": "tarot-meanings",
+            "label": "ความหมายไพ่ยิปซี 78 ใบ",
+            "href": "tarot/meanings/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-daily",
+            "label": "ไพ่ยิปซีรายวัน",
+            "href": "tarot/daily/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-monthly",
+            "label": "ไพ่ยิปซีรายเดือน",
+            "href": "tarot/monthly/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-love",
+            "label": "ไพ่ยิปซีความรัก",
+            "href": "tarot/love/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-money",
+            "label": "ไพ่ยิปซีการเงิน",
+            "href": "tarot/money/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-career",
+            "label": "ไพ่ยิปซีการงาน อาชีพ",
+            "href": "tarot/career/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-luck",
+            "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค",
+            "href": "tarot/luck/",
+            "enabled": true
+          },
+          {
+            "id": "palmistry",
+            "label": "อ่านลายมือ",
+            "href": "horoscope/palmistry/",
+            "enabled": true
+          },
+          {
+            "id": "thai-astrology",
+            "label": "โหราศาสตร์ไทย",
+            "href": "horoscope/thai-astrology/",
+            "enabled": true
+          },
+          {
+            "id": "seamsi",
+            "label": "เสี่ยงเซียมซี",
+            "href": "horoscope/seamsi/",
+            "enabled": true
+          }
+        ]
       }
     ],
     "utility": [
       {
         "id": "learn",
-        "href": "#learn",
-        "label": "ความรู้",
+        "label": "คู่มือก่อนเดินทาง",
+        "href": "#guides",
         "enabled": true
       }
     ]

@@ -5,7 +5,7 @@ export const SEO_DEFAULT_IMAGE_WIDTH = 1200;
 export const SEO_DEFAULT_IMAGE_HEIGHT = 630;
 
 const SITE_DESCRIPTION =
-  "มงคลเวลา รวมดูดวง ปฏิทินไทย ฤกษ์มงคล ไพ่ยิปซี และพิกัดวัดดังสายมูสายไหว้พระ พร้อมข้อมูลวัดทั่วประเทศไทยสำหรับผู้ใช้ไทย";
+  "มงคลเวลา รวมวัดดัง สถานที่ศักดิ์สิทธิ์ เส้นทางไหว้พระ ปฏิทินวันพระ และเครื่องมือมงคลสำหรับวางแผนเสริมใจให้ชีวิต";
 
 export function absoluteUrl(path = "/") {
   if (!path) return SEO_SITE_URL;
