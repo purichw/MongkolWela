@@ -189,6 +189,8 @@ const visitSources = visitInfo.sources as VisitInfoSource[];
 const mapQuery = hasPlusCode ? plusCode : hasCoordinates ? `${latitude},${longitude}` : "";
 const mapHref = mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : "";
 const mapLabel = hasPlusCode ? plusCode : hasCoordinates ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : "";
+const coordinateLabel = hasCoordinates ? `${latitude.toFixed(4)}, ${longitude.toFixed(4)}` : mapLabel;
+const addressText = String(temple.coordinateAddress || "").trim();
 const summaryText = blessingItems.length
   ? `${temple.name} เหมาะสำหรับ${blessingItems.slice(0, 3).join(" · ")}`
   : `${temple.name} หนึ่งในพิกัดแนะนำของ${collectionLabel} ใน${temple.province}`;
@@ -327,7 +329,7 @@ const templeJsonLd = createTempleJsonLd({
           fetchpriority="high"
           fallbackSrc={placeholderImage}
         />
-        <figcaption>{sourceLabel}</figcaption>
+        <figcaption title={sourceLabel}>อันดับ {temple.rank.toString().padStart(2, "0")} · {collectionLabel}</figcaption>
       </figure>
       <div class="temple-detail-hero__copy">
         <p class="section-kicker">{collectionLabel} · อันดับ #{temple.rank.toString().padStart(2, "0")}</p>
@@ -373,12 +375,71 @@ const templeJsonLd = createTempleJsonLd({
         <section class="temple-detail-visit" aria-labelledby="temple-detail-visit-title">
           <div class="temple-detail-visit__head">
             <h3 id="temple-detail-visit-title">ข้อมูลเข้าชมและติดต่อ</h3>
-            <p>
-              {hasVisibleVisitInfo
-                ? `มีข้อมูล ${visitInfo.visibleSections.length}/3 ส่วน: ยืนยันแล้ว ${visitInfo.verifiedSectionCount} · อ้างอิง ${visitSources.length} แหล่ง`
-                : "ยังไม่มีข้อมูลค่าเข้าชม เวลาเปิด-ปิด หรือช่องทางติดต่อที่ยืนยันได้ตามเกณฑ์ของมงคลเวลา"}
-            </p>
           </div>
+
+          {(travelConfidence || travelDetail.updatedAt) && (
+            <div class="temple-detail-confidence">
+              {travelConfidence && (
+                <div class="temple-detail-confidence__score" data-confidence-tone={travelConfidence.tone}>
+                  <div class="temple-detail-confidence__label">
+                    <span>ความมั่นใจข้อมูล:</span>
+                    <strong>{travelConfidence.label}</strong>
+                  </div>
+                  <div class="temple-detail-confidence__bar-row">
+                    <div
+                      class="temple-detail-confidence__bar"
+                      role="progressbar"
+                      aria-label={`ความมั่นใจข้อมูล ${travelConfidence.label}`}
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      aria-valuenow={travelConfidence.value}
+                    >
+                      <span style={`--confidence-value: ${travelConfidence.value}%;`}></span>
+                    </div>
+                    <div class="temple-detail-confidence__help" data-confidence-help>
+                      <button
+                        type="button"
+                        aria-label="ดูคำอธิบายระดับความมั่นใจ"
+                        aria-expanded="false"
+                        aria-controls="temple-confidence-help"
+                        data-confidence-help-toggle
+                      >
+                        <span aria-hidden="true">?</span>
+                      </button>
+                      <div
+                        class="temple-detail-confidence__help-panel"
+                        id="temple-confidence-help"
+                        aria-hidden="true"
+                        data-confidence-help-panel
+                      >
+                        <strong>ระดับความมั่นใจหมายถึงอะไร</strong>
+                        <ul>
+                          <li data-confidence-tone="high">
+                            <i aria-hidden="true"></i>
+                            <span><b>สีเขียว · ยืนยันได้ดี</b>ชื่อสถานที่ พิกัด และข้อมูลการเดินทางตรงกันจากหลายแหล่ง</span>
+                          </li>
+                          <li data-confidence-tone="medium">
+                            <i aria-hidden="true"></i>
+                            <span><b>สีทอง · ใช้เป็นแนวทาง</b>ข้อมูลส่วนใหญ่ตรงกัน แต่บางรายละเอียดอาจต้องตรวจสอบเพิ่ม</span>
+                          </li>
+                          <li data-confidence-tone="low">
+                            <i aria-hidden="true"></i>
+                            <span><b>สีน้ำตาลอ่อน · ควรตรวจซ้ำ</b>แหล่งข้อมูลยังไม่เพียงพอหรือมีรายละเอียดไม่ตรงกัน</span>
+                          </li>
+                        </ul>
+                        <p>เวลาเปิดและเส้นทางอาจเปลี่ยนแปลง ควรตรวจสอบก่อนเดินทาง</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {travelDetail.updatedAt && <small>อัปเดต {travelDetail.updatedAt}</small>}
+            </div>
+          )}
+
+          <p class="temple-detail-visit__address">
+            ที่อยู่: {addressText || [temple.name, temple.district, temple.province].filter(Boolean).join(" ")}
+          </p>
 
           <div class="temple-detail-visit__grid">
             {visitSections.map((section) => (
@@ -422,6 +483,7 @@ const templeJsonLd = createTempleJsonLd({
           {visitSources.length > 0 ? (
             <details class="temple-detail-visit-sources">
               <summary>แหล่งข้อมูลที่ใช้ยืนยัน</summary>
+              <p>{visitInfo.notice}</p>
               <ul>
                 {visitSources.map((source) => (
                   <li>
@@ -445,7 +507,7 @@ const templeJsonLd = createTempleJsonLd({
             {travelView.recommendations.length > 0 && (
               <div class="temple-detail-transit-highlights" aria-label="ทางเลือกแนะนำ">
                 {travelView.recommendations.map((item) => (
-                  <article>
+                  <article class={`temple-detail-transit-highlights__item temple-detail-transit-highlights__item--${item.route.mode}`}>
                     <span>{item.label}</span>
                     <strong>{item.route.stop}</strong>
                     <small>
@@ -460,49 +522,31 @@ const templeJsonLd = createTempleJsonLd({
 
             {travelView.sections.length > 0 ? (
               <div class="temple-detail-transit__list">
-                {travelView.sections.map((item, index) => (
-                  <details open={index === 0}>
+                {travelView.sections.map((item) => (
+                  <details open>
                     <summary>{item.label}</summary>
                     <div class="temple-detail-route-list">
                       {item.routes.map((route, routeIndex) => {
                         const routeTokens = splitTravelTokens(route.routeText);
                         const visibleRouteTokens = routeTokens.slice(0, 5);
                         const hiddenRouteTokens = routeTokens.slice(5);
+                        const routeNote = [
+                          getRouteIntro(route),
+                          route.isTransfer ? "มีเรือข้ามฟาก" : "",
+                        ].filter(Boolean).join(" · ");
 
                         return (
                           <article class={`temple-detail-route temple-detail-route--${route.mode}`}>
                             <div class="temple-detail-route__summary">
-                              <span>{route.shortLabel}</span>
+                              <span class="temple-route-distance">{route.distanceText || (routeIndex === 0 ? "ใกล้สุด" : `ทางเลือก ${routeIndex + 1}`)}</span>
+                              <span class="temple-route-node" aria-hidden="true"></span>
                               <div>
                                 <strong>{route.stop}</strong>
-                                <small>
-                                  {route.distanceText ? `${route.distanceText}` : "จุดจอดแนะนำ"}
-                                  {route.isTransfer ? " · มีเรือข้ามฟาก" : ""}
-                                </small>
-                              </div>
-                            </div>
-
-                            <ol class="temple-detail-route-timeline" aria-label={`เส้นทาง ${route.stop} ไป ${temple.name}`}>
-                              <li>
-                                <span class="temple-route-time">{routeIndex === 0 ? "เริ่ม" : `ทางเลือก ${routeIndex + 1}`}</span>
-                                <span class="temple-route-node" aria-hidden="true"></span>
-                                <div>
-                                  <strong>{route.stop}</strong>
-                                  <small>{getRouteIntro(route)}</small>
-                                </div>
-                              </li>
-                              {route.routeText && (
-                                <li>
-                                  <span class="temple-route-time">{route.shortLabel}</span>
-                                  <span class="temple-route-node" aria-hidden="true"></span>
-                                  <div>
-                                    <strong>เลือกสาย/เส้นทางที่ผ่านจุดจอดนี้</strong>
+                                <small>{routeNote || getWalkLabel(route)}</small>
+                                {(route.routeText || hiddenRouteTokens.length > 0) && (
+                                  <>
                                     <div class="temple-detail-route-lines" aria-label="สายหรือเส้นทางที่ผ่าน">
-                                      {visibleRouteTokens.length > 0 ? (
-                                        visibleRouteTokens.map((token) => <span>{token}</span>)
-                                      ) : (
-                                        <span>{route.routeText}</span>
-                                      )}
+                                      {visibleRouteTokens.length > 0 ? visibleRouteTokens.map((token) => <span>{token}</span>) : <span>{route.routeText}</span>}
                                     </div>
                                     {hiddenRouteTokens.length > 0 && (
                                       <details class="temple-detail-route-more">
@@ -512,28 +556,10 @@ const templeJsonLd = createTempleJsonLd({
                                         </div>
                                       </details>
                                     )}
-                                  </div>
-                                </li>
-                              )}
-                              {route.operatorText && (
-                                <li>
-                                  <span class="temple-route-time">ผู้ให้บริการ</span>
-                                  <span class="temple-route-node" aria-hidden="true"></span>
-                                  <div>
-                                    <strong>{route.operatorText}</strong>
-                                    <small>{route.typeText || route.shortLabel}</small>
-                                  </div>
-                                </li>
-                              )}
-                              <li>
-                                <span class="temple-route-time">{route.distanceText ? getWalkLabel(route) : "ถึงจุดหมาย"}</span>
-                                <span class="temple-route-node" aria-hidden="true"></span>
-                                <div>
-                                  <strong>{temple.name}</strong>
-                                  <small>{[temple.province, temple.district].filter(Boolean).join(" / ")}</small>
-                                </div>
-                              </li>
-                            </ol>
+                                  </>
+                                )}
+                              </div>
+                            </div>
                           </article>
                         );
                       })}
@@ -543,65 +569,6 @@ const templeJsonLd = createTempleJsonLd({
               </div>
             ) : (
               travelDetail.summary && <p class="temple-detail-transit__fallback">{travelDetail.summary}</p>
-            )}
-            {(travelConfidence || travelDetail.updatedAt) && (
-              <div class="temple-detail-confidence">
-                {travelConfidence && (
-                  <div class="temple-detail-confidence__score" data-confidence-tone={travelConfidence.tone}>
-                    <div class="temple-detail-confidence__label">
-                      <span>ความมั่นใจข้อมูล</span>
-                      <strong>{travelConfidence.label}</strong>
-                    </div>
-                    <div class="temple-detail-confidence__bar-row">
-                      <div
-                        class="temple-detail-confidence__bar"
-                        role="progressbar"
-                        aria-label={`ความมั่นใจข้อมูล ${travelConfidence.label}`}
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                        aria-valuenow={travelConfidence.value}
-                      >
-                        <span style={`--confidence-value: ${travelConfidence.value}%;`}></span>
-                      </div>
-                      <div class="temple-detail-confidence__help" data-confidence-help>
-                        <button
-                          type="button"
-                          aria-label="ดูคำอธิบายระดับความมั่นใจ"
-                          aria-expanded="false"
-                          aria-controls="temple-confidence-help"
-                          data-confidence-help-toggle
-                        >
-                          <span aria-hidden="true">!</span>
-                        </button>
-                        <div
-                          class="temple-detail-confidence__help-panel"
-                          id="temple-confidence-help"
-                          aria-hidden="true"
-                          data-confidence-help-panel
-                        >
-                          <strong>ระดับความมั่นใจหมายถึงอะไร</strong>
-                          <ul>
-                            <li data-confidence-tone="high">
-                              <i aria-hidden="true"></i>
-                              <span><b>สีเขียว · ยืนยันได้ดี</b>ชื่อสถานที่ พิกัด และข้อมูลการเดินทางตรงกันจากหลายแหล่ง</span>
-                            </li>
-                            <li data-confidence-tone="medium">
-                              <i aria-hidden="true"></i>
-                              <span><b>สีทอง · ใช้เป็นแนวทาง</b>ข้อมูลส่วนใหญ่ตรงกัน แต่บางรายละเอียดอาจต้องตรวจสอบเพิ่ม</span>
-                            </li>
-                            <li data-confidence-tone="low">
-                              <i aria-hidden="true"></i>
-                              <span><b>สีน้ำตาลอ่อน · ควรตรวจซ้ำ</b>แหล่งข้อมูลยังไม่เพียงพอหรือมีรายละเอียดไม่ตรงกัน</span>
-                            </li>
-                          </ul>
-                          <p>เวลาเปิดและเส้นทางอาจเปลี่ยนแปลง ควรตรวจสอบก่อนเดินทาง</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {travelDetail.updatedAt && <small>อัปเดต {travelDetail.updatedAt}</small>}
-              </div>
             )}
           </section>
         )}
@@ -625,11 +592,6 @@ const templeJsonLd = createTempleJsonLd({
               >
                 <span>ดูแผนที่</span>
               </div>
-              <div class="temple-detail-map-card__body">
-                <h2>พิกัดและการเดินทาง</h2>
-                <p>{locationText}</p>
-                <a href={mapHref} target="_blank" rel="noopener">เปิดใน Google Maps</a>
-              </div>
             </>
           ) : (
             <div class="temple-detail-map-card__body">
@@ -640,28 +602,31 @@ const templeJsonLd = createTempleJsonLd({
           )}
         </section>
 
-        <dl class="temple-detail-meta">
-          <div>
-            <dt>จังหวัด</dt>
-            <dd>{temple.province}</dd>
-          </div>
-          <div>
-            <dt>อำเภอ / เขต</dt>
-            <dd>{temple.district || "-"}</dd>
-          </div>
-          <div>
-            <dt>ภาค</dt>
-            <dd>{temple.region}</dd>
-          </div>
-          {displayedTravelModeItems.length > 0 && (
+        <section class="temple-detail-meta-card">
+          <p class="temple-detail-meta-card__label">พิกัดและการเดินทาง</p>
+          <p class="temple-detail-meta-card__coords">{coordinateLabel || locationText}</p>
+          {mapHref && <a href={mapHref} target="_blank" rel="noopener">เปิดใน Google Maps →</a>}
+          <dl class="temple-detail-meta">
             <div>
-              <dt>การเดินทาง</dt>
-              <dd class="temple-detail-travel-list">
-                {displayedTravelModeItems.slice(0, 8).map((item) => <span>{item}</span>)}
-              </dd>
+              <dt>จังหวัด</dt>
+              <dd>{temple.province}</dd>
             </div>
-          )}
-        </dl>
+            <div>
+              <dt>เขต / อำเภอ</dt>
+              <dd>{temple.district || "-"}</dd>
+            </div>
+            <div>
+              <dt>ประเภท</dt>
+              <dd>{temple.placeType || "วัดและสถานที่ศักดิ์สิทธิ์"}</dd>
+            </div>
+            {displayedTravelModeItems.length > 0 && (
+              <div>
+                <dt>การเดินทาง</dt>
+                <dd>{displayedTravelModeItems.slice(0, 5).join(" · ")}</dd>
+              </div>
+            )}
+          </dl>
+        </section>
       </aside>
     </section>
 

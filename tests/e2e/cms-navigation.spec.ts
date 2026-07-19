@@ -19,7 +19,7 @@ const cmsContent = {
   ],
 };
 
-test("visitor navigation waits for CMS content and does not flash stale static labels", async ({ page }) => {
+test("visitor navigation shows bundled fallback immediately and replaces it with CMS content", async ({ page }) => {
   await page.addInitScript(() => {
     window.localStorage.setItem(
       "mongkolwela.cms.content",
@@ -51,13 +51,17 @@ test("visitor navigation waits for CMS content and does not flash stale static l
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   const menu = page.locator("#primary-menu");
+  const fallbackLink = menu.locator("a").filter({ hasText: /^วัดดังเสริมมงคล$/ });
+  const staleDraftLink = menu.locator("a").filter({ hasText: /^ชื่อและตัวเลข$/ });
   await expect(page.locator("html")).toHaveClass(/cms-navigation-pending/);
-  await expect(menu.locator(":scope > *")).toHaveCount(0);
+  await expect(menu.locator(":scope > *")).not.toHaveCount(0);
+  await expect(fallbackLink).toHaveCount(1);
+  await expect(staleDraftLink).toHaveCount(0);
 
   await expect(page.locator("html")).not.toHaveClass(/cms-navigation-pending/);
   if ((page.viewportSize()?.width || 0) <= 720) {
     await page.getByRole("button", { name: "เปิดเมนู" }).click();
   }
   await expect(menu.getByRole("link", { name: "วันพระ", exact: true })).toBeVisible();
-  await expect(menu.getByRole("link", { name: "บทสวดและพิธี", exact: true })).toHaveCount(0);
+  await expect(menu.getByRole("link", { name: "วัดดังเสริมมงคล", exact: true })).toHaveCount(0);
 });

@@ -3,11 +3,20 @@ import { siteConfig } from "../config/site.js";
 import BrandMark from "./icons/BrandMark.astro";
 import MenuIcon from "./icons/MenuIcon.astro";
 import SearchIcon from "./icons/SearchIcon.astro";
+import defaultContent from "../../public/admin/content/default.json";
 
 type TopbarItem = {
   label: string;
   href?: string;
   realtime?: "lunarToday" | "solarToday";
+};
+
+type NavItem = {
+  label: string;
+  href?: string;
+  enabled?: boolean;
+  section?: boolean;
+  items?: NavItem[];
 };
 
 const { locale = "th", page = "home" } = Astro.props as {
@@ -17,6 +26,10 @@ const { locale = "th", page = "home" } = Astro.props as {
 const config = siteConfig[locale] || siteConfig.th;
 const pages = config.pages as Record<string, { topbar?: TopbarItem[]; footerVariant?: string }>;
 const pageConfig = pages[page] || pages.home;
+const navigation = (defaultContent as { navigation?: { tabs?: NavItem[]; utility?: NavItem[] } }).navigation || {};
+const navTabs = (navigation.tabs || []).filter((item) => item.enabled !== false);
+const navUtility = (navigation.utility || []).filter((item) => item.enabled !== false);
+const enabledChildren = (item: NavItem) => (item.items || []).filter((child) => child.enabled !== false);
 
 function resolveHref(href = "") {
   if (!href) return "/";
@@ -52,7 +65,27 @@ function resolveHref(href = "") {
       <span class="sr-only">{config.openMenuLabel}</span>
     </button>
 
-    <div class="nav-menu" id="primary-menu" aria-label={config.navLabel}></div>
+    <div class="nav-menu" id="primary-menu" aria-label={config.navLabel}>
+      {navTabs.map((item) => (
+        <div class="nav-item">
+          <a href={resolveHref(item.href)}>{item.label}</a>
+          {enabledChildren(item).length > 0 && (
+            <div class="mega-panel">
+              {enabledChildren(item).map((child) =>
+                child.section ? (
+                  <span class="mega-panel-section">{child.label}</span>
+                ) : (
+                  <a href={resolveHref(child.href)}>{child.label}</a>
+                )
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+      {navUtility.map((item) => (
+        <a class="plain-link" href={resolveHref(item.href)}>{item.label}</a>
+      ))}
+    </div>
 
     <div class="nav-actions">
       <button class="icon-button" type="button" aria-label={config.searchLabel}>

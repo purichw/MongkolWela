@@ -382,19 +382,21 @@
 .temple-detail {
   position: relative;
   z-index: 1;
-  width: min(var(--container), calc(100% - 40px));
+  width: min(var(--container), 100%);
   margin: 0 auto;
-  padding: 44px 0 92px;
+  padding: 28px 24px 72px;
+  font-family: "IBM Plex Sans Thai", var(--font-thai);
 }
 
 .temple-detail__back {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 22px;
+  gap: 16px;
+  margin-bottom: 18px;
   color: var(--ink-soft);
-  font-weight: 800;
+  font-size: 0.88rem;
+  font-weight: 600;
 }
 
 .temple-detail__back a {
@@ -407,6 +409,7 @@
   align-items: center;
   gap: 6px;
   color: var(--lacquer);
+  font-weight: 700;
 }
 
 .temple-detail__back > a span {
@@ -428,16 +431,15 @@
 
 .temple-detail-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.78fr);
-  gap: 30px;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.82fr);
+  gap: 0;
   align-items: stretch;
-  padding: 24px;
-  background:
-    linear-gradient(135deg, rgba(255, 252, 243, 0.94), rgba(245, 236, 216, 0.82)),
-    radial-gradient(circle at 82% 18%, rgba(194, 141, 53, 0.16), transparent 34%);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: 0 24px 70px rgba(57, 37, 22, 0.12);
+  padding: 0;
+  overflow: hidden;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 18px 46px rgba(39, 29, 20, 0.12);
 }
 
 .temple-detail-hero__media {
@@ -445,8 +447,9 @@
   position: relative;
   overflow: hidden;
   background: #d9c9aa;
-  border-radius: calc(var(--radius) - 4px);
-  min-height: 440px;
+  border-radius: 15px 0 0 15px;
+  height: 352px;
+  min-height: 352px;
 }
 
 .temple-detail-hero__media::after {
@@ -461,23 +464,28 @@
 .temple-detail-hero__media img {
   width: 100%;
   height: 100%;
-  min-height: inherit;
+  min-height: 0;
   object-fit: cover;
   display: block;
 }
 
+.temple-detail-hero__media .temple-responsive-picture {
+  display: block;
+  height: 100%;
+}
+
 .temple-detail-hero__media figcaption {
   position: absolute;
-  right: 14px;
-  bottom: 14px;
+  top: 12px;
+  left: 12px;
   z-index: 2;
-  padding: 4px 9px;
-  color: #fff9e8;
-  background: rgba(34, 22, 15, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 5px 11px;
+  color: #f4cf78;
+  background: rgba(24, 14, 9, 0.68);
+  border: 1px solid rgba(244, 207, 120, 0.26);
   border-radius: 999px;
   font-size: 0.74rem;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1;
 }
 
@@ -486,22 +494,24 @@
   flex-direction: column;
   justify-content: center;
   min-width: 0;
+  padding: 26px 26px 22px;
 }
 
 .temple-detail-hero h1 {
   margin: 2px 0 0;
-  font-size: clamp(2.4rem, 5vw, 5rem);
-  font-weight: 900;
-  line-height: 1.05;
+  color: #7b271f;
+  font-size: clamp(2rem, 3.6vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.08;
   letter-spacing: 0;
 }
 
 .temple-detail-hero__copy > p:not(.section-kicker) {
-  margin: 14px 0 0;
+  margin: 13px 0 0;
   color: var(--ink-soft);
-  font-size: 1.08rem;
-  font-weight: 800;
-  line-height: 1.75;
+  font-size: 0.98rem;
+  font-weight: 500;
+  line-height: 1.68;
 }
 
 .temple-detail-tags,
@@ -512,43 +522,68 @@
 }
 
 .temple-detail-tags {
-  margin-top: 22px;
+  gap: 8px;
+  margin-top: 17px;
 }
 
 .temple-detail-tags span,
 .temple-detail-chip-group span {
   display: inline-flex;
   align-items: center;
-  min-height: 38px;
-  padding: 7px 14px;
-  border: 1px solid rgba(143, 45, 37, 0.18);
+  min-height: 31px;
+  padding: 5px 12px;
+  border: 1px solid rgba(194, 141, 53, 0.24);
   border-radius: 999px;
-  background: rgba(255, 253, 246, 0.74);
-  color: var(--ink);
-  font-weight: 900;
+  background: rgba(194, 141, 53, 0.11);
+  color: #8a5a17;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.temple-detail-tags span:first-child {
+  color: #276a52;
+  background: rgba(39, 106, 82, 0.12);
+  border-color: rgba(39, 106, 82, 0.22);
+}
+
+.temple-detail-tags span:nth-child(3) {
+  color: #8e2d24;
+  background: rgba(142, 45, 36, 0.09);
+  border-color: rgba(142, 45, 36, 0.18);
 }
 
 .temple-detail-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 28px;
+  gap: 10px;
+  margin-top: 24px;
 }
 
 .temple-detail-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 0 22px;
+  min-height: 42px;
+  padding: 0 16px;
   border: 1px solid rgba(77, 56, 41, 0.18);
-  border-radius: 999px;
-  background: rgba(255, 253, 246, 0.74);
+  border-radius: 9px;
+  background: #fffdf7;
   color: var(--ink);
   font: inherit;
-  font-weight: 900;
+  font-size: 0.9rem;
+  font-weight: 700;
   text-decoration: none;
   cursor: pointer;
+  box-shadow: 0 8px 18px rgba(39, 29, 20, 0.06);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.temple-detail-action:hover,
+.temple-detail-action:focus-visible {
+  border-color: rgba(142, 45, 36, 0.28);
+  box-shadow: 0 12px 24px rgba(39, 29, 20, 0.1);
+  transform: translateY(-1px);
 }
 
 .temple-detail-action--primary {
@@ -562,10 +597,10 @@
   isolation: isolate;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-  gap: 34px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: 28px;
   align-items: start;
-  margin-top: 42px;
+  margin-top: 32px;
   scroll-margin-top: 112px;
 }
 
@@ -576,7 +611,7 @@
 }
 
 .temple-detail-story {
-  padding-top: 6px;
+  padding-top: 0;
 }
 
 .temple-detail-story h2,
@@ -584,41 +619,43 @@
 .temple-detail-map-card h2 {
   margin: 0;
   color: var(--ink);
-  font-size: clamp(1.7rem, 3vw, 2.8rem);
-  font-weight: 900;
-  line-height: 1.15;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
   letter-spacing: 0;
 }
 
 .temple-detail-story > p:not(.section-kicker) {
-  max-width: 760px;
-  margin: 16px 0 0;
+  max-width: 74ch;
+  margin: 12px 0 0;
   color: var(--ink-soft);
-  font-size: 1.08rem;
-  font-weight: 700;
-  line-height: 1.85;
+  font-size: 0.98rem;
+  font-weight: 500;
+  line-height: 1.75;
 }
 
 .temple-detail-chip-group {
-  margin-top: 22px;
+  gap: 8px;
+  margin-top: 14px;
 }
 
 .temple-detail-notes {
-  margin-top: 34px;
-  padding-top: 26px;
+  margin-top: 24px;
+  padding-top: 18px;
   border-top: 1px dashed rgba(77, 56, 41, 0.24);
 }
 
 .temple-detail-notes h3 {
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   color: var(--lacquer);
-  font-size: 1.15rem;
-  font-weight: 900;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .temple-detail-notes ul {
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -626,31 +663,32 @@
 
 .temple-detail-notes li {
   display: grid;
-  grid-template-columns: 10px minmax(0, 1fr);
-  gap: 14px;
+  grid-template-columns: 7px minmax(0, 1fr);
+  gap: 8px;
   align-items: center;
   color: var(--ink);
-  font-weight: 800;
+  font-size: 0.88rem;
+  font-weight: 500;
   line-height: 1.55;
 }
 
 .temple-detail-notes li::before {
   content: "";
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: #d6ad55;
+  background: var(--gold);
 }
 
 .temple-detail-visit {
   display: grid;
-  gap: 16px;
-  margin-top: 28px;
-  padding: 22px;
-  overflow: hidden;
-  background: rgba(255, 250, 240, 0.62);
-  border: 1px solid rgba(194, 141, 53, 0.22);
-  border-radius: var(--radius);
+  gap: 14px;
+  margin-top: 30px;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
 }
 
 .temple-detail-visit__head {
@@ -660,36 +698,52 @@
 
 .temple-detail-visit h3 {
   margin: 0;
-  color: var(--lacquer);
-  font-size: 1.22rem;
-  font-weight: 900;
+  color: var(--ink);
+  font-size: 1.35rem;
+  font-weight: 700;
   line-height: 1.35;
 }
 
 .temple-detail-visit__head p,
-.temple-detail-visit__notice {
+.temple-detail-visit__notice,
+.temple-detail-visit__address {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 0.94rem;
-  font-weight: 800;
+  font-size: 0.9rem;
+  font-weight: 500;
   line-height: 1.65;
+}
+
+.temple-detail-visit__address {
+  color: #6c5c4e;
 }
 
 .temple-detail-visit__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   align-items: start;
 }
 
 .temple-detail-visit-card {
   display: grid;
-  gap: 10px;
+  gap: 9px;
   min-width: 0;
-  padding: 18px;
-  background: rgba(255, 253, 246, 0.78);
-  border: 1px solid rgba(77, 56, 41, 0.12);
-  border-radius: calc(var(--radius) - 2px);
+  padding: 16px;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.14);
+  border-radius: 9px;
+  box-shadow: 0 8px 18px rgba(39, 29, 20, 0.04);
+}
+
+.temple-detail-visit-card--admission {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  min-height: 46px;
+  padding: 10px 14px;
 }
 
 .temple-detail-visit-card--hours {
@@ -735,14 +789,19 @@
 .temple-detail-visit-card__label {
   color: var(--lacquer);
   font-size: 0.84rem;
-  font-weight: 900;
+  font-weight: 700;
+}
+
+.temple-detail-visit-card--admission .temple-detail-visit-card__label {
+  color: #8a7355;
+  flex: 0 0 auto;
 }
 
 .temple-detail-visit__grid p {
   margin: 0;
   color: var(--ink);
-  font-size: 1.03rem;
-  font-weight: 900;
+  font-size: 0.92rem;
+  font-weight: 600;
   line-height: 1.55;
 }
 
@@ -752,16 +811,29 @@
   margin: 0;
 }
 
+.temple-detail-visit-card--admission dl {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
 .temple-detail-visit__grid dl div {
   display: grid;
   gap: 3px;
   align-items: start;
 }
 
+.temple-detail-visit-card--admission dl div {
+  display: inline-flex;
+  gap: 7px;
+  align-items: baseline;
+}
+
 .temple-detail-visit__grid dt {
   color: var(--ink-soft);
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 600;
 }
 
 .temple-detail-visit__grid dd {
@@ -772,8 +844,13 @@
   word-break: normal;
   line-break: auto;
   font-size: 0.86rem;
-  font-weight: 800;
+  font-weight: 500;
   line-height: 1.45;
+}
+
+.temple-detail-visit-card--admission dd {
+  color: var(--jade);
+  font-weight: 700;
 }
 
 .temple-detail-visit__grid dd a {
@@ -794,7 +871,7 @@
   border-collapse: collapse;
   color: var(--ink);
   font-size: 0.9rem;
-  font-weight: 900;
+  font-weight: 500;
 }
 
 .temple-detail-visit-timetable tbody {
@@ -804,7 +881,7 @@
 
 .temple-detail-visit-timetable tr {
   display: grid;
-  grid-template-columns: minmax(88px, 0.65fr) minmax(110px, 1fr);
+  grid-template-columns: minmax(78px, 0.65fr) minmax(96px, 1fr);
   gap: 10px;
   border-top: 1px solid rgba(77, 56, 41, 0.1);
 }
@@ -834,23 +911,36 @@
 }
 
 .temple-detail-visit-sources {
+  padding: 0;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.14);
+  border-radius: 9px;
   color: var(--ink-soft);
   font-size: 0.9rem;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .temple-detail-visit-sources summary {
-  width: fit-content;
-  color: var(--jade);
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 14px;
+  color: var(--ink);
   cursor: pointer;
-  font-weight: 900;
+  font-weight: 600;
+}
+
+.temple-detail-visit-sources p {
+  margin: 0;
+  padding: 0 14px 8px;
+  color: #8a7355;
+  font-size: 0.82rem;
 }
 
 .temple-detail-visit-sources ul {
   display: grid;
   gap: 6px;
-  margin: 10px 0 0;
-  padding-left: 18px;
+  margin: 0;
+  padding: 0 14px 14px 30px;
 }
 
 .temple-detail-visit-sources a {
@@ -859,10 +949,10 @@
 
 .temple-detail-transit {
   display: grid;
-  gap: 18px;
-  margin-top: 34px;
-  padding-top: 26px;
-  border-top: 1px dashed rgba(77, 56, 41, 0.24);
+  gap: 14px;
+  margin-top: 30px;
+  padding-top: 0;
+  border-top: 0;
 }
 
 .temple-detail-transit h3 {
@@ -870,9 +960,9 @@
 }
 
 .temple-detail-transit h3 {
-  color: var(--lacquer);
-  font-size: 1.15rem;
-  font-weight: 900;
+  color: var(--ink);
+  font-size: 1.35rem;
+  font-weight: 700;
 }
 
 .temple-detail-transit__head {
@@ -884,9 +974,9 @@
 .temple-detail-transit__fallback {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 0.98rem;
-  font-weight: 750;
-  line-height: 1.75;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.65;
   overflow-wrap: break-word;
   word-break: normal;
   line-break: auto;
@@ -894,104 +984,147 @@
 
 .temple-detail-transit-highlights {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
 
 .temple-detail-transit-highlights article {
   display: grid;
-  gap: 5px;
+  gap: 4px;
   min-width: 0;
-  padding: 14px;
-  background: rgba(255, 253, 246, 0.76);
-  border: 1px solid rgba(143, 45, 37, 0.12);
-  border-radius: 10px;
+  padding: 14px 13px;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.14);
+  border-left: 3px solid var(--gold);
+  border-radius: 9px;
+  box-shadow: 0 8px 18px rgba(39, 29, 20, 0.04);
+}
+
+.temple-detail-transit-highlights__item--boat {
+  border-left-color: var(--jade);
+}
+
+.temple-detail-transit-highlights__item--rail {
+  border-left-color: var(--lacquer);
+}
+
+.temple-detail-transit-highlights__item--bus {
+  border-left-color: var(--gold);
+}
+
+.temple-detail-transit-highlights__item--van {
+  border-left-color: #8a5a17;
 }
 
 .temple-detail-transit-highlights span {
-  color: var(--lacquer);
+  color: #276a52;
   font-size: 0.78rem;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .temple-detail-transit-highlights strong {
   color: var(--ink);
-  font-size: 1rem;
-  font-weight: 900;
+  font-size: 0.94rem;
+  font-weight: 700;
   line-height: 1.35;
 }
 
 .temple-detail-transit-highlights small {
   color: var(--ink-soft);
-  font-size: 0.86rem;
-  font-weight: 800;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.78rem;
+  font-weight: 500;
   line-height: 1.45;
 }
 
 .temple-detail-transit__list {
   display: grid;
-  gap: 4px;
+  gap: 12px;
 }
 
 .temple-detail-transit details {
   padding: 0;
-  border-top: 1px solid rgba(77, 56, 41, 0.12);
+  overflow: hidden;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.14);
+  border-radius: 9px;
+  box-shadow: 0 8px 18px rgba(39, 29, 20, 0.04);
 }
 
 .temple-detail-transit summary {
-  padding: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 54px;
+  padding: 13px 16px;
   color: var(--ink);
   cursor: pointer;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1.35;
+  border-bottom: 1px solid rgba(77, 56, 41, 0.08);
 }
 
 .temple-detail-route-list {
   display: grid;
-  gap: 10px;
-  padding-bottom: 16px;
+  gap: 0;
+  padding: 0 16px;
 }
 
 .temple-detail-route {
   display: grid;
-  gap: 14px;
+  gap: 0;
   min-width: 0;
-  padding: 16px;
-  background: rgba(255, 253, 246, 0.72);
-  border: 1px solid rgba(77, 56, 41, 0.1);
-  border-radius: 12px;
+  padding: 14px 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px dashed rgba(77, 56, 41, 0.14);
+  border-radius: 0;
+}
+
+.temple-detail-route:first-child {
+  border-top: 0;
 }
 
 .temple-detail-route__summary {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 12px;
-  align-items: center;
+  grid-template-columns: minmax(58px, 76px) 18px minmax(0, 1fr);
+  gap: 11px;
+  align-items: start;
 }
 
-.temple-detail-route__summary > span,
+.temple-route-distance,
 .temple-detail-route-lines span {
   display: inline-flex;
   align-items: center;
   width: max-content;
   max-width: 100%;
-  min-height: 26px;
-  padding: 3px 9px;
+  min-height: 24px;
+  padding: 2px 8px;
   color: var(--lacquer);
-  background: rgba(143, 45, 37, 0.08);
-  border: 1px solid rgba(143, 45, 37, 0.12);
+  background: rgba(142, 45, 36, 0.06);
+  border: 0;
   border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 900;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
   line-height: 1.25;
+}
+
+.temple-route-distance {
+  justify-self: end;
+  margin-top: 1px;
+  padding: 0;
+  background: transparent;
+  color: var(--lacquer);
+  text-align: right;
 }
 
 .temple-detail-route__summary strong,
 .temple-detail-route-timeline strong {
   min-width: 0;
   color: var(--ink);
-  font-size: 1rem;
-  font-weight: 900;
+  font-size: 0.94rem;
+  font-weight: 700;
   line-height: 1.38;
 }
 
@@ -1000,8 +1133,8 @@
   display: block;
   margin-top: 3px;
   color: var(--ink-soft);
-  font-size: 0.86rem;
-  font-weight: 900;
+  font-size: 0.82rem;
+  font-weight: 500;
   line-height: 1.45;
 }
 
@@ -1047,13 +1180,14 @@
   z-index: 1;
   display: block;
   justify-self: center;
-  width: 16px;
-  height: 16px;
-  margin-top: 2px;
-  background: #fffdf6;
-  border: 4px solid var(--lacquer);
-  border-radius: 999px;
-  box-shadow: 0 0 0 4px rgba(143, 45, 37, 0.08);
+  width: 10px;
+  height: 10px;
+  margin-top: 0.45em;
+  background: var(--gold);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: none;
+  transform: rotate(45deg);
 }
 
 .temple-detail-route-timeline li:last-child .temple-route-node {
@@ -1069,116 +1203,130 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 9px;
+  margin-top: 7px;
 }
 
 .temple-detail-route-lines span {
   width: auto;
   min-width: 0;
   color: #6d4f2f;
-  background: rgba(214, 173, 85, 0.14);
-  border-color: rgba(214, 173, 85, 0.24);
+  background: rgba(194, 141, 53, 0.12);
+  border: 1px solid rgba(194, 141, 53, 0.26);
   overflow-wrap: break-word;
   word-break: normal;
   line-break: auto;
 }
 
 .temple-detail-transit .temple-detail-route-more {
-  margin-top: 8px;
+  margin-top: 6px;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
   border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .temple-detail-transit .temple-detail-route-more summary {
   display: inline-flex;
   width: auto;
-  padding: 6px 0;
+  min-height: auto;
+  padding: 4px 0;
+  border-bottom: 0;
   color: var(--lacquer);
   font-size: 0.86rem;
-  font-weight: 900;
+  font-weight: 700;
 }
 
-.temple-detail-route--rail .temple-route-node,
-.temple-detail-route--rail .temple-detail-route__summary > span {
-  border-color: #c59b2d;
+.temple-detail-route--rail .temple-route-node {
+  background: #c59b2d;
 }
 
-.temple-detail-route--rail .temple-detail-route__summary > span {
+.temple-detail-route--rail .temple-route-distance {
   color: #725416;
-  background: rgba(214, 173, 85, 0.16);
 }
 
-.temple-detail-route--bus .temple-route-node,
-.temple-detail-route--bus .temple-detail-route__summary > span {
-  border-color: var(--lacquer);
+.temple-detail-route--bus .temple-route-node {
+  background: var(--lacquer);
 }
 
-.temple-detail-route--boat .temple-route-node,
-.temple-detail-route--boat .temple-detail-route__summary > span {
-  border-color: #287075;
+.temple-detail-route--boat .temple-route-node {
+  background: #287075;
 }
 
-.temple-detail-route--boat .temple-detail-route__summary > span {
+.temple-detail-route--boat .temple-route-distance {
   color: #1d5b5f;
-  background: rgba(40, 112, 117, 0.11);
 }
 
-.temple-detail-route--van .temple-route-node,
-.temple-detail-route--van .temple-detail-route__summary > span {
-  border-color: #8f6c2f;
+.temple-detail-route--van .temple-route-node {
+  background: #8f6c2f;
 }
 
-.temple-detail-route--walk .temple-route-node,
-.temple-detail-route--walk .temple-detail-route__summary > span {
-  border-color: rgba(77, 56, 41, 0.5);
+.temple-detail-route--walk .temple-route-node {
+  background: rgba(77, 56, 41, 0.5);
 }
 
 .temple-detail-confidence {
-  display: grid;
-  gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
 }
 
 .temple-detail-confidence__score {
-  --confidence-fill: #d6ad55;
-  --confidence-glow: rgba(214, 173, 85, 0.24);
+  --confidence-fill: #c28d35;
+  --confidence-glow: rgba(194, 141, 53, 0.22);
   display: grid;
-  gap: 8px;
-  max-width: 420px;
+  grid-template-columns: auto minmax(160px, 1fr);
+  gap: 12px;
+  align-items: center;
+  flex: 1 1 420px;
+  min-height: 46px;
+  padding: 9px 12px;
+  background: #f3fbf5;
+  border: 1px solid rgba(39, 106, 82, 0.22);
+  border-radius: 9px;
 }
 
 .temple-detail-confidence__score[data-confidence-tone="low"] {
-  --confidence-fill: #b88963;
-  --confidence-glow: rgba(184, 137, 99, 0.2);
+  --confidence-fill: #9b8578;
+  --confidence-glow: rgba(155, 133, 120, 0.2);
+  background: #fbf7f3;
+  border-color: rgba(155, 133, 120, 0.24);
 }
 
 .temple-detail-confidence__score[data-confidence-tone="medium"] {
-  --confidence-fill: #d6ad55;
-  --confidence-glow: rgba(214, 173, 85, 0.24);
+  --confidence-fill: #c28d35;
+  --confidence-glow: rgba(194, 141, 53, 0.24);
+  background: #fff8ea;
+  border-color: rgba(194, 141, 53, 0.24);
 }
 
 .temple-detail-confidence__score[data-confidence-tone="high"] {
-  --confidence-fill: #2f5548;
-  --confidence-glow: rgba(47, 85, 72, 0.22);
+  --confidence-fill: #276a52;
+  --confidence-glow: rgba(39, 106, 82, 0.22);
 }
 
 .temple-detail-confidence__label {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px 8px;
+  gap: 4px 6px;
   align-items: baseline;
   justify-content: flex-start;
+  white-space: nowrap;
 }
 
 .temple-detail-confidence__label span {
-  color: rgba(77, 56, 41, 0.62);
-  font-size: 0.82rem;
-  font-weight: 900;
+  color: var(--jade-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
   line-height: 1.4;
 }
 
 .temple-detail-confidence__label strong {
   color: var(--confidence-fill);
-  font-size: 0.95rem;
-  font-weight: 900;
+  font-size: 0.86rem;
+  font-weight: 700;
   line-height: 1.35;
 }
 
@@ -1186,18 +1334,16 @@
   position: relative;
   z-index: 700;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 26px;
-  gap: 9px;
+  grid-template-columns: minmax(0, 1fr) 24px;
+  gap: 8px;
   align-items: center;
 }
 
 .temple-detail-confidence__bar {
   position: relative;
-  height: 8px;
+  height: 7px;
   overflow: hidden;
-  background:
-    linear-gradient(90deg, rgba(184, 137, 99, 0.18), rgba(214, 173, 85, 0.18), rgba(47, 85, 72, 0.16)),
-    rgba(255, 253, 246, 0.78);
+  background: rgba(39, 106, 82, 0.13);
   border-radius: 999px;
 }
 
@@ -1213,14 +1359,14 @@
 .temple-detail-confidence__help {
   position: relative;
   z-index: 701;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 
 .temple-detail-confidence__help button {
   display: flex;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   align-items: center;
   justify-content: center;
@@ -1234,11 +1380,11 @@
 
 .temple-detail-confidence__help button > span {
   display: block;
-  font-family: Arial, sans-serif;
+  font-family: "IBM Plex Sans Thai", Arial, sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
   line-height: 1;
-  transform: translateY(-0.25px);
+  transform: translateY(-0.5px);
 }
 
 .temple-detail-confidence__help button:hover,
@@ -1266,6 +1412,12 @@
   border: 1px solid rgba(77, 56, 41, 0.16);
   border-radius: 8px;
   box-shadow: 0 18px 44px rgba(68, 48, 22, 0.16);
+}
+
+.temple-detail-confidence > small {
+  color: #8a7355;
+  font-size: 0.78rem;
+  font-weight: 500;
 }
 
 .temple-detail-confidence__help.is-open .temple-detail-confidence__help-panel {
@@ -1376,11 +1528,12 @@
 }
 
 .temple-detail-side {
-  position: static;
-  top: auto;
-  display: grid;
+  position: sticky;
+  top: 88px;
+  display: flex;
+  flex-direction: column;
   align-self: start;
-  gap: 18px;
+  gap: 14px;
   min-width: 0;
   margin-top: 0;
   transform: none;
@@ -1389,17 +1542,17 @@
 .temple-detail-map-card {
   min-width: 0;
   overflow: hidden;
-  background: rgba(255, 253, 246, 0.82);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: 0 18px 48px rgba(57, 37, 22, 0.1);
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.16);
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(90, 56, 20, 0.12);
 }
 
 .temple-detail-map-card__map {
   position: relative;
   display: block;
   width: 100%;
-  min-height: 224px;
+  min-height: 190px;
   padding: 0;
   overflow: hidden;
   border: 0;
@@ -1419,27 +1572,28 @@
 
 .temple-detail-map-card__map .leaflet-container {
   width: 100%;
-  min-height: 224px;
+  min-height: 190px;
 }
 
 .temple-detail-map-card__map > span {
   position: absolute;
-  inset: auto 14px 14px auto;
+  inset: auto auto 11px 11px;
   z-index: 402;
-  padding: 7px 14px;
-  color: #fff8ea;
-  background: rgba(34, 22, 15, 0.74);
+  padding: 5px 11px;
+  color: var(--lacquer);
+  background: rgba(255, 252, 244, 0.92);
   border-radius: 999px;
-  font-weight: 900;
+  font-size: 0.74rem;
+  font-weight: 700;
   pointer-events: none;
 }
 
 .temple-detail-map-card__body {
-  padding: 20px;
+  padding: 18px;
 }
 
 .temple-detail-map-card h2 {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
 }
 
 .temple-detail-map-card p {
@@ -1453,26 +1607,68 @@
   display: inline-flex;
   margin-top: 16px;
   color: var(--lacquer);
-  font-weight: 900;
+  font-weight: 700;
   text-decoration: none;
+}
+
+.temple-detail-meta-card {
+  padding: 18px;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.16);
+  border-radius: 14px;
+}
+
+.temple-detail-meta-card__label {
+  margin: 0 0 4px;
+  color: #8a7355;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.temple-detail-meta-card__coords {
+  margin: 0 0 12px;
+  color: var(--ink-soft);
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.temple-detail-meta-card > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  margin-bottom: 14px;
+  padding: 0 16px;
+  color: #fffaf0;
+  background: var(--jade-dark);
+  border-radius: 9px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.temple-detail-meta-card > a:hover,
+.temple-detail-meta-card > a:focus-visible {
+  background: #0d2c26;
 }
 
 .temple-detail-meta {
   display: grid;
   gap: 0;
   margin: 0;
-  padding: 2px 20px;
-  background: rgba(255, 253, 246, 0.72);
-  border: 1px solid rgba(77, 56, 41, 0.12);
-  border-radius: var(--radius);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
 }
 
 .temple-detail-meta div {
   display: grid;
-  grid-template-columns: 112px 1fr;
-  gap: 14px;
-  padding: 15px 0;
-  border-bottom: 1px solid rgba(77, 56, 41, 0.08);
+  grid-template-columns: 104px 1fr;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(77, 56, 41, 0.12);
+  border-bottom: 0;
 }
 
 .temple-detail-meta div:last-child {
@@ -1480,16 +1676,17 @@
 }
 
 .temple-detail-meta dt {
-  color: var(--ink-soft);
-  font-size: 0.82rem;
-  font-weight: 900;
+  color: #8a7355;
+  font-size: 0.86rem;
+  font-weight: 500;
 }
 
 .temple-detail-meta dd {
   min-width: 0;
   margin: 0;
-  color: var(--ink);
-  font-weight: 900;
+  color: #3f362f;
+  font-size: 0.9rem;
+  font-weight: 600;
   line-height: 1.45;
   overflow-wrap: break-word;
 }
@@ -1519,68 +1716,79 @@
 }
 
 .temple-detail-related {
-  margin-top: 56px;
-  padding-top: 36px;
+  margin-top: 44px;
+  padding-top: 0;
   position: relative;
   z-index: 1;
-  border-top: 1px dashed rgba(77, 56, 41, 0.26);
+  border-top: 0;
 }
 
 .temple-detail-related__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-  margin-top: 20px;
+  gap: 14px;
+  margin-top: 16px;
 }
 
 .temple-detail-related-card {
   position: relative;
-  display: grid;
-  grid-template-rows: auto auto auto;
-  gap: 8px;
+  display: block;
+  overflow: hidden;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.16);
+  border-radius: 14px;
+  box-shadow: 0 10px 26px rgba(39, 29, 20, 0.07);
   color: inherit;
   text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
 .temple-detail-related-card img {
   width: 100%;
   aspect-ratio: 16 / 10;
   object-fit: cover;
-  border: 1px solid var(--line);
-  border-radius: calc(var(--radius) - 8px);
-  box-shadow: 0 12px 28px rgba(57, 37, 22, 0.1);
-  transition: transform 0.24s ease, box-shadow 0.24s ease;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  transition: none;
 }
 
-.temple-detail-related-card:hover img {
+.temple-detail-related-card:hover,
+.temple-detail-related-card:focus-visible {
   transform: translateY(-3px);
-  box-shadow: 0 18px 38px rgba(57, 37, 22, 0.16);
+  box-shadow: 0 16px 36px rgba(49, 34, 23, 0.13);
 }
 
 .temple-detail-related-card span {
   position: absolute;
-  left: 12px;
-  top: 12px;
-  padding: 5px 10px;
-  color: #fff9ea;
-  background: var(--lacquer);
-  border: 1px solid rgba(244, 213, 134, 0.5);
+  left: 9px;
+  top: 9px;
+  padding: 3px 10px;
+  color: #f4cf78;
+  background: rgba(24, 14, 9, 0.64);
+  border: 0;
   border-radius: 999px;
-  font-weight: 900;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
 }
 
 .temple-detail-related-card strong {
-  margin-top: 4px;
+  display: block;
+  margin: 0;
+  padding: 13px 15px 0;
   color: var(--ink);
-  font-size: 1.08rem;
-  font-weight: 900;
+  font-size: 1.06rem;
+  font-weight: 700;
   line-height: 1.25;
 }
 
 .temple-detail-related-card small {
+  display: block;
+  padding: 4px 15px 15px;
   color: var(--ink-soft);
-  font-size: 0.92rem;
-  font-weight: 800;
+  font-size: 0.82rem;
+  font-weight: 500;
 }
 
 .temple-detail-toast {
@@ -1629,7 +1837,7 @@
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 34px;
+  padding: 24px;
 }
 
 .temple-detail-map-modal.is-open {
@@ -1639,24 +1847,24 @@
 .temple-detail-map-modal__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(18, 13, 9, 0.68);
+  background: rgba(20, 10, 6, 0.62);
   border: 0;
   cursor: pointer;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(4px);
 }
 
 .temple-detail-map-modal__panel {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-rows: auto minmax(360px, 1fr) auto;
-  width: min(1180px, 100%);
-  height: min(760px, calc(100vh - 68px));
+  grid-template-rows: auto 360px auto;
+  width: min(720px, 100%);
+  height: auto;
   overflow: hidden;
   background: #fffdf6;
-  border: 1px solid rgba(244, 213, 134, 0.44);
-  border-radius: 18px;
-  box-shadow: 0 34px 90px rgba(20, 12, 8, 0.36);
+  border: 1px solid rgba(77, 56, 41, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5);
 }
 
 .temple-detail-map-modal__head,
@@ -1669,31 +1877,31 @@
 }
 
 .temple-detail-map-modal__head {
-  min-height: 72px;
-  padding: 16px 22px 15px 26px;
+  min-height: 66px;
+  padding: 15px 20px;
   border-bottom: 1px solid rgba(77, 56, 41, 0.12);
 }
 
 .temple-detail-map-modal__head h2 {
   margin: 0;
   color: var(--ink);
-  font-size: clamp(1.2rem, 2vw, 1.7rem);
-  font-weight: 900;
+  font-size: 1.08rem;
+  font-weight: 700;
   line-height: 1.25;
 }
 
 .temple-detail-map-modal__head button {
   display: grid;
   flex: 0 0 auto;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   place-items: center;
   color: rgba(77, 56, 41, 0.62);
-  background: transparent;
-  border: 0;
+  background: #fff8ea;
+  border: 1px solid rgba(77, 56, 41, 0.2);
   border-radius: 999px;
   cursor: pointer;
-  font-size: 2.2rem;
+  font-size: 1.4rem;
   font-weight: 300;
   line-height: 1;
 }
@@ -1726,16 +1934,23 @@
 }
 
 .temple-detail-map-modal__foot {
-  min-height: 58px;
-  padding: 12px 26px;
+  min-height: 60px;
+  padding: 15px 20px;
   border-top: 1px solid rgba(77, 56, 41, 0.12);
   color: var(--ink-soft);
-  font-weight: 800;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .temple-detail-map-modal__foot a {
-  color: var(--lacquer);
-  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 16px;
+  color: #fffaf0;
+  background: var(--jade-dark);
+  border-radius: 9px;
+  font-weight: 700;
   text-decoration: none;
 }
 
@@ -1746,9 +1961,9 @@
 .temple-detail-map-modal__popup .leaflet-popup-content {
   margin: 10px 14px;
   color: var(--ink);
-  font-family: "Noto Sans Thai", sans-serif;
+  font-family: "IBM Plex Sans Thai", var(--font-thai);
   font-size: 1rem;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 @media (max-width: 980px) {
@@ -1757,13 +1972,18 @@
     grid-template-columns: 1fr;
   }
 
+  .temple-detail-hero__media {
+    border-radius: 15px 15px 0 0;
+  }
+
   .temple-detail-side {
     order: -1;
+    position: static;
   }
 
   .temple-detail-map-card__map,
   .temple-detail-map-card__map .leaflet-container {
-    min-height: 280px;
+    min-height: 190px;
   }
 }
 
@@ -1795,8 +2015,8 @@
   }
 
   .temple-detail {
-    width: min(100% - 28px, var(--container));
-    padding-top: 34px;
+    width: 100%;
+    padding: 24px 24px 64px;
   }
 
   .temple-detail__back {
@@ -1810,11 +2030,17 @@
 
   .temple-detail-hero {
     grid-template-columns: 1fr;
-    padding: 16px;
+    padding: 0;
+    gap: 0;
   }
 
   .temple-detail-hero__media {
-    min-height: 310px;
+    height: 352px;
+    min-height: 352px;
+  }
+
+  .temple-detail-hero__copy {
+    padding: 22px 20px 20px;
   }
 
   .temple-detail-layout {
@@ -1830,9 +2056,18 @@
     grid-template-columns: 1fr;
   }
 
-  .temple-detail-route__summary {
+  .temple-detail-visit-card--admission {
+    display: grid;
+  }
+
+  .temple-detail-confidence__score {
     grid-template-columns: 1fr;
-    gap: 6px;
+    gap: 8px;
+  }
+
+  .temple-detail-route__summary {
+    grid-template-columns: 62px 18px minmax(0, 1fr);
+    gap: 9px;
   }
 
   .temple-detail-route-timeline li {
@@ -1853,8 +2088,8 @@
   }
 
   .temple-detail-map-modal__panel {
-    grid-template-rows: auto minmax(380px, 1fr) auto;
-    height: min(760px, calc(100dvh - 24px));
+    grid-template-rows: auto minmax(320px, 1fr) auto;
+    height: min(720px, calc(100dvh - 24px));
     border-radius: 14px;
   }
 
@@ -1886,5 +2121,40 @@
   .temple-detail-meta div {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+}
+
+.temples-popular-directory-page .temple-map-float-button {
+  right: 22px;
+  bottom: 22px;
+  z-index: 40;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  color: #fffaf0;
+  background: var(--jade-dark);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+  font-weight: 700;
+}
+
+.temples-popular-directory-page .temple-map-float-button svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+.temples-popular-directory-page .temple-map-float-button:hover,
+.temples-popular-directory-page .temple-map-float-button:focus-visible {
+  background: #0d2c26;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.32);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 720px) {
+  .temples-popular-directory-page .temple-map-float-button {
+    right: 16px;
+    bottom: 16px;
   }
 }

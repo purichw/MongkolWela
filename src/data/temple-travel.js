@@ -167,7 +167,7 @@ function getRecommendedTravelRoutes(routes) {
   addRoute("รถเมล์", routes.find((route) => route.mode === "bus"));
   addRoute("รถตู้", routes.find((route) => route.mode === "van"));
 
-  return items.slice(0, 3);
+  return items.slice(0, 4);
 }
 
 function routeKey(route) {
