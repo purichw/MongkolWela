@@ -1,6 +1,6 @@
 const root = document.querySelector("[data-temple-planner]");
 const payloadNode = document.getElementById("templePlannerData");
-const PLANNER_PICKER_BATCH_SIZE = 30;
+const PLANNER_PICKER_BATCH_SIZE = 12;
 
 if (root && payloadNode) initializeTemplePlanner(root, JSON.parse(payloadNode.textContent || "{}"));
 
@@ -20,11 +20,11 @@ function initializeTemplePlanner(planner, payload) {
     activeProvinces: new Set(),
     activePurposes: new Set(),
     manualSelectionOrder: false,
-    pickerReady: false,
+    pickerReady: true,
     hasPlannerAction: false,
     nearbyMode: false,
     tripCriteria: null,
-    pickerContext: createPickerContext("browse"),
+    pickerContext: createPickerContext("browse", { mode: "recommended" }),
     selectionMap: null,
     selectionCluster: null,
     selectionMarkers: new Map(),
@@ -43,11 +43,14 @@ function initializeTemplePlanner(planner, payload) {
   bindControls(state, elements);
   synchronizeFilterOptions(state, elements, "restore");
   updateStartWarning(state, elements);
-  elements.pickSection.hidden = true;
+  state.pickerContext.criteria = getDraftCriteria(state, elements);
+  elements.pickSection.hidden = false;
   renderSelected(state, elements);
   updateTargetCount(state, elements);
+  renderPicker(state, elements);
   updateTripSource(state, elements);
   updateCriteriaNotice(state, elements);
+  elements.locationStatus.textContent = `พบ ${getFilteredItems(state, elements).length.toLocaleString("th-TH")} สถานที่ตามโจทย์ด้านบน`;
 }
 
 function collectElements(planner) {
@@ -466,7 +469,7 @@ function renderPicker(state, elements) {
               class="${selected ? "planner-remove-button" : "planner-add-button"}"
               data-planner-toggle-place="${escapeHtml(item.id)}"
               aria-pressed="${selected}"
-            >${selected ? "นำออก" : "เพิ่มในทริป"}</button>
+            >${selected ? "✓ อยู่ในทริป" : "เพิ่มในทริป"}</button>
           </div>
         </article>`;
     })
@@ -545,6 +548,7 @@ function assignPlannerRevealDelays(revealCards) {
 
 function renderSelected(state, elements) {
   elements.selectedCount.textContent = state.selected.length.toLocaleString("th-TH");
+  elements.selectedTray.classList.toggle("is-empty", !state.selected.length);
   if (!state.selected.length) {
     elements.selectedTray.innerHTML = "<p>ยังไม่ได้เลือกสถานที่ ระบบสามารถแนะนำให้ครบตามจำนวนได้</p>";
     return;
@@ -631,6 +635,7 @@ function reorderSelectedPlace(state, elements, fromId, toId) {
 
 function toggleSelection(state, elements, id, force) {
   if (!state.itemById.has(id)) return;
+  state.hasPlannerAction = true;
   const index = state.selected.indexOf(id);
   const shouldSelect = force ?? index === -1;
   const replacementContext = state.pickerContext?.type === "replace" ? state.pickerContext : null;
@@ -810,7 +815,7 @@ function enforcePlannerDateTimeBounds(elements, options = {}) {
     if (snap) elements.startDate.value = now.date;
   }
 
-  if (!elements.startTime.value) elements.startTime.value = "08:00";
+  if (!elements.startTime.value) elements.startTime.value = "09:00";
   if (elements.startDate.value === now.date) {
     elements.startTime.min = now.time;
     if (snap && parseTime(elements.startTime.value) < parseTime(now.time)) {
@@ -824,9 +829,9 @@ function enforcePlannerDateTimeBounds(elements, options = {}) {
 function createEmptyCriteria(elements) {
   return {
     count: getTargetCount(elements),
-    budget: elements.budget?.value || "600",
+    budget: elements.budget?.value || "300",
     startDate: elements.startDate?.value || getThailandNow().date,
-    startTime: elements.startTime?.value || "08:00",
+    startTime: elements.startTime?.value || "09:00",
     radius: elements.radius?.value ?? "100",
     query: "",
     start: "",
@@ -842,9 +847,9 @@ function getDraftCriteria(state, elements) {
   enforcePlannerDateTimeBounds(elements, { snap: true });
   return {
     count: getTargetCount(elements),
-    budget: elements.budget?.value || "600",
+    budget: elements.budget?.value || "300",
     startDate: elements.startDate?.value || getThailandNow().date,
-    startTime: elements.startTime?.value || "08:00",
+    startTime: elements.startTime?.value || "09:00",
     radius: elements.radius?.value ?? "100",
     query: elements.search?.value || "",
     start: elements.start?.value || "",
@@ -867,9 +872,9 @@ function criteriaKey(criteria) {
   if (!criteria) return "";
   return JSON.stringify({
     count: Number(criteria.count || 9),
-    budget: String(criteria.budget || "600"),
+    budget: String(criteria.budget || "300"),
     startDate: String(criteria.startDate || getThailandNow().date),
-    startTime: String(criteria.startTime || "08:00"),
+    startTime: String(criteria.startTime || "09:00"),
     radius: String(criteria.radius ?? "100"),
     query: normalize(criteria.query),
     start: criteria.start || "",
@@ -893,9 +898,9 @@ function hasVisiblePlan(state, elements) {
 function applyCriteriaToControls(state, elements, criteria) {
   const countInput = elements.countInputs.find((input) => Number(input.value) === Number(criteria.count));
   if (countInput) countInput.checked = true;
-  if (elements.budget) elements.budget.value = criteria.budget || "600";
+  if (elements.budget) elements.budget.value = criteria.budget || "300";
   if (elements.startDate) elements.startDate.value = criteria.startDate || getThailandNow().date;
-  if (elements.startTime) elements.startTime.value = criteria.startTime || "08:00";
+  if (elements.startTime) elements.startTime.value = criteria.startTime || "09:00";
   enforcePlannerDateTimeBounds(elements, { snap: true });
   if (elements.radius) elements.radius.value = criteria.radius ?? "100";
   if (elements.search) elements.search.value = criteria.query || "";
@@ -1545,7 +1550,7 @@ function renderPlan(state, elements, options = {}) {
 function calculatePlan(state, elements) {
   const criteria = state.tripCriteria || getDraftCriteria(state, elements);
   const startPoint = getStartPointFromCriteria(state, criteria);
-  const startMinutes = parseTime(criteria.startTime || "08:00");
+  const startMinutes = parseTime(criteria.startTime || "09:00");
   const legs = [];
   let cursor = startMinutes;
   let previous = startPoint;
@@ -1571,7 +1576,7 @@ function calculatePlan(state, elements) {
 
   const totalMinutes = totalTravel + totalVisit;
   const totalRoadKm = legs.reduce((sum, leg) => sum + leg.roadKm, 0);
-  const warnings = buildWarnings(legs, totalTravel, totalMinutes, Number(criteria.budget || 600), state.plan.length);
+  const warnings = buildWarnings(legs, totalTravel, totalMinutes, Number(criteria.budget || 300), state.plan.length);
 
   return { startMinutes, endMinutes: cursor, stops, legs, totalTravel, totalVisit, totalMinutes, totalRoadKm, warnings };
 }

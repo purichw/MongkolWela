@@ -7,11 +7,11 @@ import { getTemplePlannerData } from "../../../data/temple-planner.js";
 
 const plannerData = getTemplePlannerData();
 const plannerPayload = JSON.stringify(plannerData).replace(/</g, "\\u003c");
-const extraStyles = ["/assets/css/temple-planner.css?feature=20260619-02"];
+const extraStyles = ["/assets/css/temple-planner.css?feature=20260719-01"];
 const extraScripts = ["/assets/js/temple-planner.js"];
-const pageTitle = "วางแผนไหว้พระ 9 วัด | มงคลเวลา";
+const pageTitle = "วางแผนไหว้พระ ๙ วัด | มงคลเวลา";
 const pageDescription =
-  "ตัวช่วยเลือกและจัดแผนไหว้พระ 3 5 หรือ 9 แห่งจากรายการและแผนที่ พร้อมประมาณระยะทาง เวลาเดินทาง และลำดับทริปแบบไม่ใช้ข้อมูลจราจรจริง";
+  "ตัวช่วยเลือกและจัดแผนไหว้พระ ๓ ๕ หรือ ๙ แห่งจากรายการและแผนที่ พร้อมประมาณระยะทาง เวลาเดินทาง และลำดับทริปแบบไม่ใช้ข้อมูลจราจรจริง";
 ---
 
 <BaseLayout
@@ -42,7 +42,7 @@ const pageDescription =
       ]}
       kicker="ตัวช่วยวางแผนการเดินทาง"
       title="วางแผนไหว้พระ"
-      description="เลือก 3, 5 หรือ 9 แห่ง แล้วให้ระบบช่วยจัดลำดับที่เดินทางต่อกันได้ พร้อมเวลาประมาณการสำหรับรถยนต์และแท็กซี่"
+      description="เลือก ๓, ๕ หรือ ๙ แห่ง แล้วให้ระบบช่วยจัดลำดับที่เดินทางต่อกันได้ พร้อมเวลาประมาณการสำหรับรถยนต์และแท็กซี่"
     >
       <section slot="panel" class="planner-setup" aria-labelledby="planner-setup-title">
         <div class="planner-setup__heading">
@@ -88,10 +88,14 @@ const pageDescription =
           <fieldset class="planner-field planner-field--count">
             <legend>จำนวนสถานที่</legend>
             <div class="planner-segmented" data-planner-count>
-              {[3, 5, 9].map((count) => (
+              {[
+                { count: 3, label: "๓ แห่ง" },
+                { count: 5, label: "๕ แห่ง" },
+                { count: 9, label: "๙ แห่ง" },
+              ].map(({ count, label }) => (
                 <label>
                   <input type="radio" name="planner-count" value={count} checked={count === 9} />
-                  <span>{count} แห่ง</span>
+                  <span>{label}</span>
                 </label>
               ))}
             </div>
@@ -100,8 +104,8 @@ const pageDescription =
           <label class="planner-field planner-field--budget">
             <span>เวลาที่มี</span>
             <select data-planner-budget>
-              <option value="300">ครึ่งวัน · ประมาณ 5 ชั่วโมง</option>
-              <option value="600" selected>เต็มวัน · ประมาณ 10 ชั่วโมง</option>
+              <option value="300" selected>ครึ่งวัน · ประมาณ 5 ชั่วโมง</option>
+              <option value="600">เต็มวัน · ประมาณ 10 ชั่วโมง</option>
               <option value="720">เต็มวันแบบสบาย · ประมาณ 12 ชั่วโมง</option>
             </select>
           </label>
@@ -114,7 +118,7 @@ const pageDescription =
 
             <label class="planner-field planner-field--time">
               <span>เวลาเริ่ม</span>
-              <input type="time" value="08:00" data-planner-start-time />
+              <input type="time" value="09:00" data-planner-start-time />
             </label>
           </div>
 
