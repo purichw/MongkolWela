@@ -159,6 +159,7 @@ function initializePopularTempleGrid(grid) {
   const placeholderSrc = grid.dataset.placeholderSrc;
   const initialCount = readPositiveInteger(grid.dataset.initialCount, 9);
   const batchSize = readPositiveInteger(grid.dataset.batchSize, initialCount);
+  const useVisibleFilteredCount = grid.dataset.countMode === "visible-filtered";
   const originalCardOrder = new Map(cards.map((card, index) => [card, index]));
   const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
   let filteredCards = cards;
@@ -371,7 +372,9 @@ function initializePopularTempleGrid(grid) {
     queueCardReveal(revealCards);
 
     if (countNode) {
-      countNode.textContent = `แสดง ${filteredCards.length.toLocaleString("th-TH")} จาก ${cards.length.toLocaleString("th-TH")} พิกัด${activeNearby ? " · เรียงตามใกล้ฉัน" : ""}${nearbyStatus ? ` · ${nearbyStatus}` : ""}`;
+      const shownCount = useVisibleFilteredCount ? visibleCards.length : filteredCards.length;
+      const totalCount = useVisibleFilteredCount ? filteredCards.length : cards.length;
+      countNode.textContent = `แสดง ${shownCount.toLocaleString("th-TH")} จาก ${totalCount.toLocaleString("th-TH")} พิกัด${activeNearby ? " · เรียงตามใกล้ฉัน" : ""}${nearbyStatus ? ` · ${nearbyStatus}` : ""}`;
     }
 
     if (emptyNode) {

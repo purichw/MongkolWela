@@ -3,16 +3,15 @@ const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
 const revealSelectors = [
-  ".home-intent-panel > div:first-child",
-  ".home-intent-grid > a",
-  "#temple-routes .section-heading",
-  ".home-route-card",
-  ".home-map-band .feature-copy",
-  ".home-map-preview",
-  "#directory .section-heading",
-  ".home-directory-grid .tool-card",
-  ".home-guide-section > img",
-  ".home-guide-section > div",
+  ".home-stat-ticker span",
+  ".home-intent-heading",
+  ".home-intent-card",
+  ".home-planner-copy",
+  ".home-sample-plan",
+  ".home-collection-heading",
+  ".home-collection-card",
+  ".home-guide-media",
+  ".home-guide-copy",
   ".learn-strip > *",
 ];
 
@@ -66,7 +65,7 @@ function setupHomeReveals() {
 
   targets.forEach((target, index) => {
     target.dataset.homeReveal = "true";
-    target.style.setProperty("--home-reveal-delay", `${Math.min(index % 6, 5) * 70}ms`);
+    target.style.setProperty("--home-reveal-delay", `${Math.min(index % 5, 4) * 55}ms`);
   });
 
   document.documentElement.classList.add("home-motion-ready");
@@ -89,7 +88,7 @@ function setupHomeReveals() {
       revealTarget(entry.target);
       observer.unobserve(entry.target);
     });
-  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.01 });
+  }, { rootMargin: "12% 0px -6% 0px", threshold: 0 });
 
   targets.forEach((target) => observer.observe(target));
 
@@ -103,7 +102,7 @@ function setupHomeReveals() {
 function setupHomeScrollMotion() {
   const root = document.documentElement;
   const hero = document.querySelector(".home-aura-hero");
-  const mapBand = document.querySelector(".home-map-band");
+  const plannerBand = document.querySelector(".home-planner-spotlight");
   let ticking = false;
 
   const update = () => {
@@ -112,7 +111,7 @@ function setupHomeScrollMotion() {
     if (reduceMotionQuery.matches) {
       root.style.setProperty("--home-page-progress", "0");
       hero?.style.setProperty("--home-hero-progress", "0");
-      mapBand?.style.setProperty("--home-map-progress", "0");
+      plannerBand?.style.setProperty("--home-planner-progress", "0");
       return;
     }
 
@@ -124,11 +123,11 @@ function setupHomeScrollMotion() {
       hero.style.setProperty("--home-hero-progress", heroProgress.toFixed(3));
     }
 
-    if (mapBand) {
-      const rect = mapBand.getBoundingClientRect();
+    if (plannerBand) {
+      const rect = plannerBand.getBoundingClientRect();
       const distance = Math.max(1, window.innerHeight + rect.height);
-      const mapProgress = clamp((window.innerHeight - rect.top) / distance);
-      mapBand.style.setProperty("--home-map-progress", mapProgress.toFixed(3));
+      const plannerProgress = clamp((window.innerHeight - rect.top) / distance);
+      plannerBand.style.setProperty("--home-planner-progress", plannerProgress.toFixed(3));
     }
   };
 

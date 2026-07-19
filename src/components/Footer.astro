@@ -17,6 +17,8 @@ const { locale = "th", page = "home" } = Astro.props as {
 const config = siteConfig[locale] || siteConfig.th;
 const pages = config.pages as Record<string, PageConfig>;
 const pageConfig = pages[page] || pages.home;
+const isPopularDirectory = page === "templesPopular";
+const isHomePage = page === "home";
 
 function resolveHref(href = "") {
   if (!href) return "/";
@@ -35,17 +37,51 @@ const footerLinks = pageConfig.footerLinks || [
 ];
 ---
 
-<footer class="site-footer" id="consult">
-  <div>
-    <strong>{config.footer.title}</strong>
-    <p>{config.footer.description}</p>
-  </div>
-  <div class="footer-links">
-    {footerLinks.map((item: FooterLink) => (
-      <a href={resolveHref(item.href)}>{item.label}</a>
-    ))}
-  </div>
-  {pageConfig.footerVariant === "home" && (
+{isPopularDirectory ? (
+  <footer class="site-footer site-footer--popular-directory" id="consult">
+    <div class="site-footer-popular-brand">
+      <span aria-hidden="true">๙</span>
+      <strong>{config.footer.title}</strong>
+    </div>
+    <p>ค้นหาวัดดัง สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระเสริมมงคลสำหรับผู้ใช้ไทย</p>
+  </footer>
+) : isHomePage ? (
+  <footer class="site-footer site-footer--home-v2" id="consult">
+    <div class="site-footer-home-grid">
+      <div class="site-footer-home-brand">
+        <span aria-hidden="true">๙</span>
+        <strong>{config.footer.title}</strong>
+        <p>คู่มือเดินทางสายมงคล ค้นหาวัดดัง และพาคุณวางความตั้งใจไปสู่สถานที่จริงได้ง่ายขึ้น</p>
+      </div>
+      <nav aria-label="เส้นทางวัด">
+        <strong>เส้นทางวัด</strong>
+        <a href="/temples/planner/">วางแผนไหว้พระ</a>
+        <a href="/temples/popular/">สายไหว้พระ ๙ วัด</a>
+        <a href="/temples/sacred/">วัดศักดิ์สิทธิ์</a>
+        <a href="/temples/thailand/">วัดทั่วประเทศไทย</a>
+      </nav>
+      <nav aria-label="เครื่องมือเสริม">
+        <strong>เครื่องมือ</strong>
+        <a href="/calendar/">ปฏิทินวันพระ</a>
+        <a href="/horoscope/seamsi/">เซียมซี</a>
+        <a href="/tarot/daily/">ไพ่ประจำวัน</a>
+      </nav>
+    </div>
     <p class="credits">{config.footer.imageCredits}</p>
-  )}
-</footer>
+  </footer>
+) : (
+  <footer class="site-footer" id="consult">
+    <div>
+      <strong>{config.footer.title}</strong>
+      <p>{config.footer.description}</p>
+    </div>
+    <div class="footer-links">
+      {footerLinks.map((item: FooterLink) => (
+        <a href={resolveHref(item.href)}>{item.label}</a>
+      ))}
+    </div>
+    {pageConfig.footerVariant === "home" && (
+      <p class="credits">{config.footer.imageCredits}</p>
+    )}
+  </footer>
+)}

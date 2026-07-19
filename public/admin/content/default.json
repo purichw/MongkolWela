@@ -79,17 +79,15 @@
       "enabled": true,
       "kind": "existing",
       "patches": [
-        { "id": "home-hero-title", "label": "Hero title", "selector": "#hero-title", "kind": "text", "value": "มงคลเวลา" },
-        { "id": "home-hero-copy", "label": "Hero copy", "selector": ".hero-copy", "kind": "html", "value": "ค้นหาวัดและสถานที่ศักดิ์สิทธิ์สำหรับไหว้พระ ขอพร ทำบุญ และวางแผนเส้นทางมงคล<br>ให้เหมาะกับสิ่งที่อยากเสริมในชีวิต" },
         { "id": "home-hero-search-placeholder", "label": "Search placeholder", "selector": "#site-search", "kind": "attr", "attr": "placeholder", "value": "ค้นหาวัด จังหวัด หรือพรที่อยากขอ เช่น โชคลาภ การงาน ความรัก" },
         { "id": "home-hero-image-1", "label": "Hero image 1", "selector": ".hero-slide:nth-child(1) img", "kind": "image", "src": "/assets/images/hero-temple-red.jpg", "alt": "พระอุโบสถและบรรยากาศวัดไทยในแสงอบอุ่น" }
       ],
       "sections": [
         { "id": "hero", "label": "Hero", "selector": ".hero", "enabled": true, "order": 10 },
-        { "id": "intent", "label": "ความตั้งใจ", "selector": ".home-intent-panel", "enabled": true, "order": 20 },
-        { "id": "temple-routes", "label": "เส้นทางหลัก", "selector": "#temple-routes", "enabled": true, "order": 30 },
-        { "id": "map", "label": "พิกัดและแผนที่", "selector": "#map", "enabled": true, "order": 40 },
-        { "id": "directory", "label": "ค้นหาเร็ว", "selector": "#directory", "enabled": true, "order": 50 },
+        { "id": "stats", "label": "แถบสถิติ", "selector": ".home-stat-ticker", "enabled": true, "order": 15 },
+        { "id": "intent", "label": "ความตั้งใจ", "selector": ".home-intent-section", "enabled": true, "order": 20 },
+        { "id": "temple-routes", "label": "ตัวช่วยจัดทริป", "selector": "#temple-routes", "enabled": true, "order": 30 },
+        { "id": "collections", "label": "สามสาย", "selector": "#collections", "enabled": true, "order": 40 },
         { "id": "guides", "label": "คู่มือก่อนเดินทาง", "selector": "#guides", "enabled": true, "order": 60 },
         { "id": "supporting-tools", "label": "เครื่องมือเสริม", "selector": "#supporting-tools", "enabled": true, "order": 70 }
       ],

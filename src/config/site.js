@@ -18,9 +18,9 @@ export const siteConfig = {
     pages: {
       home: {
         topbar: [
-          { label: "วันนี้", href: "#today", realtime: "lunarToday" },
+          { label: "คู่มือเดินทางสายมงคล", href: "#guides" },
           { label: "วันที่วันนี้", realtime: "solarToday" },
-          { label: "ติดต่อมงคลเวลา", href: "#consult" },
+          { label: "ติดต่อ", href: "#consult" },
         ],
         footerVariant: "home",
       },

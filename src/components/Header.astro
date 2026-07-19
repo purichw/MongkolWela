@@ -26,10 +26,21 @@ const { locale = "th", page = "home" } = Astro.props as {
 const config = siteConfig[locale] || siteConfig.th;
 const pages = config.pages as Record<string, { topbar?: TopbarItem[]; footerVariant?: string }>;
 const pageConfig = pages[page] || pages.home;
+const isPopularDirectory = page === "templesPopular";
+const isHomePage = page === "home";
 const navigation = (defaultContent as { navigation?: { tabs?: NavItem[]; utility?: NavItem[] } }).navigation || {};
 const navTabs = (navigation.tabs || []).filter((item) => item.enabled !== false);
 const navUtility = (navigation.utility || []).filter((item) => item.enabled !== false);
 const enabledChildren = (item: NavItem) => (item.items || []).filter((child) => child.enabled !== false);
+const homePlannerTab: NavItem = { label: "วางแผนไหว้พระ", href: "temples/planner/", enabled: true, items: [] };
+const homeNavTabs = [
+  navTabs.find((item) => item.href === "temples/"),
+  homePlannerTab,
+  navTabs.find((item) => item.href === "calendar/"),
+  navTabs.find((item) => item.href === "#supporting-tools"),
+].filter(Boolean) as NavItem[];
+const visibleNavTabs = isHomePage ? homeNavTabs : navTabs;
+const visibleNavUtility = isHomePage ? [] : navUtility;
 
 function resolveHref(href = "") {
   if (!href) return "/";
@@ -41,19 +52,21 @@ function resolveHref(href = "") {
 ---
 
 <header class="site-header">
-  <div class="topbar">
-    {(pageConfig.topbar || pages.home.topbar || []).map((item: TopbarItem) =>
-      item.href ? (
-        <a href={resolveHref(item.href)} data-topbar-realtime={item.realtime}>{item.label}</a>
-      ) : (
-        <span data-topbar-realtime={item.realtime}>{item.label}</span>
-      )
-    )}
-  </div>
+  {!isPopularDirectory && (
+    <div class="topbar">
+      {(pageConfig.topbar || pages.home.topbar || []).map((item: TopbarItem) =>
+        item.href ? (
+          <a href={resolveHref(item.href)} data-topbar-realtime={item.realtime}>{item.label}</a>
+        ) : (
+          <span data-topbar-realtime={item.realtime}>{item.label}</span>
+        )
+      )}
+    </div>
+  )}
 
-  <nav class="navbar" aria-label={config.navLabel}>
+  <nav class={`navbar${isPopularDirectory ? " navbar--popular-directory" : ""}${isHomePage ? " navbar--home-v2" : ""}`} aria-label={config.navLabel}>
     <a class="brand" href="/" aria-label={config.brandLabel}>
-      <BrandMark />
+      {isPopularDirectory ? <span class="brand-mark brand-mark--popular-directory" aria-hidden="true">๙</span> : <BrandMark />}
       <span>
         <strong>{config.brandName}</strong>
         <small>{config.brandSubtitle}</small>
@@ -65,32 +78,46 @@ function resolveHref(href = "") {
       <span class="sr-only">{config.openMenuLabel}</span>
     </button>
 
-    <div class="nav-menu" id="primary-menu" aria-label={config.navLabel}>
-      {navTabs.map((item) => (
-        <div class="nav-item">
-          <a href={resolveHref(item.href)}>{item.label}</a>
-          {enabledChildren(item).length > 0 && (
-            <div class="mega-panel">
-              {enabledChildren(item).map((child) =>
-                child.section ? (
-                  <span class="mega-panel-section">{child.label}</span>
-                ) : (
-                  <a href={resolveHref(child.href)}>{child.label}</a>
-                )
+    {isPopularDirectory ? (
+      <div class="nav-menu-static" id="primary-menu" aria-label={config.navLabel}>
+        <a href="/temples/">วัดดังเสริมมงคล</a>
+        <a href="/calendar/">วันพระ</a>
+        <a href="/temples/">← กลับ</a>
+      </div>
+    ) : (
+      <>
+        <div class="nav-menu" id="primary-menu" aria-label={config.navLabel} data-nav-mode={isHomePage ? "home-v2" : "default"}>
+          {visibleNavTabs.map((item) => (
+            <div class="nav-item">
+              <a href={resolveHref(item.href)}>{item.label}</a>
+              {enabledChildren(item).length > 0 && (
+                <div class="mega-panel">
+                  {enabledChildren(item).map((child) =>
+                    child.section ? (
+                      <span class="mega-panel-section">{child.label}</span>
+                    ) : (
+                      <a href={resolveHref(child.href)}>{child.label}</a>
+                    )
+                  )}
+                </div>
               )}
             </div>
+          ))}
+          {visibleNavUtility.map((item) => (
+            <a class="plain-link" href={resolveHref(item.href)}>{item.label}</a>
+          ))}
+        </div>
+
+        <div class="nav-actions">
+          {isHomePage ? (
+            <a class="nav-cta-home" href="/temples/planner/">วางแผนทริป</a>
+          ) : (
+            <button class="icon-button" type="button" aria-label={config.searchLabel}>
+              <SearchIcon />
+            </button>
           )}
         </div>
-      ))}
-      {navUtility.map((item) => (
-        <a class="plain-link" href={resolveHref(item.href)}>{item.label}</a>
-      ))}
-    </div>
-
-    <div class="nav-actions">
-      <button class="icon-button" type="button" aria-label={config.searchLabel}>
-        <SearchIcon />
-      </button>
-    </div>
+      </>
+    )}
   </nav>
 </header>

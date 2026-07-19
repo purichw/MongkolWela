@@ -71,10 +71,10 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
     return a.localeCompare(b, "th");
   },
 );
-const pageTitle = "สายไหว้พระ 9 วัด | มงคลเวลา";
-const pageDescription = "รวมเส้นทางไหว้พระ 9 วัด วัดดังทั่วไทย และพิกัดทำบุญพร้อมตัวกรองภาค จังหวัด จุดประสงค์ แผนที่ และรายละเอียดการเดินทาง";
+const pageTitle = "สายไหว้พระ ๙ วัด | มงคลเวลา";
+const pageDescription = "รวมเส้นทางไหว้พระ ๙ วัด วัดดังทั่วไทย และพิกัดทำบุญพร้อมตัวกรองภาค จังหวัด จุดประสงค์ แผนที่ และรายละเอียดการเดินทาง";
 const itemListJsonLd = createItemListJsonLd({
-  name: "สายไหว้พระ 9 วัดยอดนิยม",
+  name: "สายไหว้พระ ๙ วัดยอดนิยม",
   description: pageDescription,
   url: "/temples/popular/",
   items: rankedTemples.slice(0, 8).map((temple) => ({
@@ -90,7 +90,7 @@ const itemListJsonLd = createItemListJsonLd({
   lang="th"
   locale="th"
   page="templesPopular"
-  bodyClass="temples-hub-page"
+  bodyClass="temples-hub-page temples-popular-directory-page"
   extraScripts={extraScripts}
   canonicalPath="/temples/popular/"
   image="/assets/images/hero-temple-red.jpg"
@@ -98,7 +98,7 @@ const itemListJsonLd = createItemListJsonLd({
   breadcrumbs={[
     { label: "หน้าแรก", href: "/" },
     { label: "วัดดังเสริมมงคล", href: "/temples/" },
-    { label: "สายไหว้พระ 9 วัด", href: "/temples/popular/" },
+    { label: "สายไหว้พระ ๙ วัด", href: "/temples/popular/" },
   ]}
   structuredData={itemListJsonLd}
 >
@@ -116,11 +116,11 @@ const itemListJsonLd = createItemListJsonLd({
       breadcrumbs={[
         { label: "หน้าแรก", href: "../../" },
         { label: "วัดดังเสริมมงคล", href: "../" },
-        { label: "สายไหว้พระ 9 วัด" },
+        { label: "สายไหว้พระ ๙ วัด" },
       ]}
-      kicker="สายไหว้พระ 9 วัด"
-      title="สายไหว้พระ 9 วัด"
-      description="รวมทางลัดสำหรับค้นหาเส้นทางไหว้พระ วัดเด่น และฐานข้อมูลวัดทั่วประเทศไทย เพื่อช่วยวางแผนทำบุญ ไหว้พระ และเลือกสถานที่เสริมมงคลให้เหมาะกับจังหวะชีวิต"
+      kicker="สายไหว้พระ ๙ วัด"
+      title="สายไหว้พระ ๙ วัด"
+      description="รวมวัดดังทั่วประเทศไทยสำหรับวางแผนเส้นทางไหว้พระ ทำบุญ และเลือกสถานที่เสริมมงคลให้เหมาะกับจังหวะชีวิต"
     >
       <section
         slot="panel"
@@ -131,18 +131,23 @@ const itemListJsonLd = createItemListJsonLd({
         <form class="popular-temple-filter-form" data-popular-temple-filter-form>
           <label class="temple-field popular-temple-filter-name">
             <span>ชื่อวัด</span>
-            <input
-              type="search"
-              name="name"
-              placeholder="ค้นหาในสายไหว้พระ 9 วัด"
-              autocomplete="off"
-              data-popular-temple-filter-name
-            />
+            <span class="popular-temple-filter-input-shell">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
+              </svg>
+              <input
+                type="search"
+                name="name"
+                placeholder="ค้นหาในสายไหว้พระ ๙ วัด"
+                autocomplete="off"
+                data-popular-temple-filter-name
+              />
+            </span>
           </label>
 
           <div class="popular-temple-filter-actions">
             <button class="temple-search-button" type="submit">ค้นหา</button>
-            <button class="temple-nearby-button" type="button" data-popular-temple-nearby>พิกัดใกล้ฉัน</button>
+            <button class="temple-nearby-button" type="button" data-popular-temple-nearby><span aria-hidden="true">📍</span> พิกัดใกล้ฉัน</button>
             <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>เคลียร์ข้อมูล</button>
           </div>
         </form>
@@ -153,7 +158,7 @@ const itemListJsonLd = createItemListJsonLd({
     <section class="temples-section temples-popular-section">
       <div class="temples-section-head">
         <div>
-          <p class="section-kicker">อันดับยอดนิยม</p>
+          <p class="section-kicker">วัดดังทั่วไทย</p>
           <h2>วัดดังทั่วไทย</h2>
         </div>
         <p class="popular-temple-count" data-popular-temple-count></p>
@@ -165,6 +170,7 @@ const itemListJsonLd = createItemListJsonLd({
         data-popular-temple-grid
         data-initial-count="30"
         data-batch-size="30"
+        data-count-mode="visible-filtered"
         data-placeholder-src={templePlaceholderImage}
       >
         {rankedTemples.map((temple) => {

@@ -60,6 +60,16 @@ function resolveHref(href = "") {
   return `/${href}`;
 }
 
+function homeNavigationTabs(tabs) {
+  const plannerTab = { label: "วางแผนไหว้พระ", href: "temples/planner/", items: [], enabled: true };
+  return [
+    tabs.find((item) => item.href === "temples/"),
+    plannerTab,
+    tabs.find((item) => item.href === "calendar/"),
+    tabs.find((item) => item.href === "#supporting-tools"),
+  ].filter(Boolean);
+}
+
 function pageForRoute(content, route = normalizeRoute()) {
   return (content?.pages || []).find((page) => normalizeRoute(page.route) === route) || null;
 }
@@ -90,8 +100,10 @@ function safeHtml(value = "") {
 function applyNavigation(content) {
   const navMenu = document.querySelector(".nav-menu");
   if (!navMenu || !content?.navigation) return;
-  const tabs = (content.navigation.tabs || []).filter((item) => item.enabled !== false);
-  const utility = (content.navigation.utility || []).filter((item) => item.enabled !== false);
+  const allTabs = (content.navigation.tabs || []).filter((item) => item.enabled !== false);
+  const isHomeMode = navMenu.dataset.navMode === "home-v2";
+  const tabs = isHomeMode ? homeNavigationTabs(allTabs) : allTabs;
+  const utility = isHomeMode ? [] : (content.navigation.utility || []).filter((item) => item.enabled !== false);
   navMenu.innerHTML = `${tabs
     .map((item) => {
       const children = (item.items || []).filter((child) => child.enabled !== false);
@@ -120,6 +132,8 @@ function applyNavigation(content) {
 
 function applyPatch(patch) {
   if (!patch?.selector || patch.enabled === false) return;
+  const isHomeV2 = document.body.classList.contains("home-v2-page");
+  if (isHomeV2 && ["#hero-title", ".hero-copy"].includes(patch.selector)) return;
   document.querySelectorAll(patch.selector).forEach((node) => {
     if (patch.kind === "image") {
       if ("src" in node && patch.src) node.setAttribute("src", patch.src);
@@ -149,6 +163,7 @@ function applySections(page) {
     section.node.style.display = isDisabled ? "none" : "";
     section.node.dataset.cmsSectionId = section.id || "";
   });
+  if (document.querySelector("[data-cms-preserve-section-order]")) return;
   const byParent = new Map();
   found.forEach((section) => {
     const parent = section.node.parentElement;

@@ -1071,3 +1071,682 @@
     text-align: left;
   }
 }
+
+.temples-popular-directory-page {
+  background: #fbf6eb;
+}
+
+.temples-popular-directory-page .site-header {
+  background: rgba(251, 246, 235, 0.92);
+  border-bottom: 1px solid rgba(77, 56, 41, 0.16);
+  backdrop-filter: blur(18px);
+}
+
+.temples-popular-directory-page .navbar--popular-directory {
+  display: grid;
+  grid-template-columns: minmax(190px, auto) minmax(0, 1fr);
+  width: min(var(--container), 100%);
+  min-height: 65px;
+  padding: 0 24px;
+}
+
+.temples-popular-directory-page .navbar--popular-directory .brand {
+  gap: 11px;
+  min-width: 0;
+}
+
+.temples-popular-directory-page .brand-mark--popular-directory {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  color: #ead3a0;
+  background: radial-gradient(circle at 34% 28%, #c84f3c, #591d19);
+  border: 1px solid rgba(255, 236, 188, 0.35);
+  border-radius: 11px;
+  box-shadow: 0 8px 22px rgba(89, 29, 25, 0.24);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.temples-popular-directory-page .navbar--popular-directory .brand strong {
+  color: var(--lacquer);
+  font-size: 1.06rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.temples-popular-directory-page .navbar--popular-directory .brand small {
+  margin-top: 1px;
+  color: #8a7355;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.temples-popular-directory-page .navbar--popular-directory .nav-toggle {
+  justify-self: end;
+}
+
+.temples-popular-directory-page .nav-menu-static {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+  min-width: 0;
+}
+
+.temples-popular-directory-page .nav-menu-static a {
+  color: #4a3d33;
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.temples-popular-directory-page .nav-menu-static a:last-child {
+  color: var(--lacquer);
+  font-weight: 700;
+}
+
+.temples-popular-directory-page .temple-page-hero {
+  min-height: 0;
+  padding: 17px 0 37px;
+  background: #1a0f0a;
+}
+
+.temples-popular-directory-page .temple-page-hero.has-panel {
+  min-height: 0;
+  padding-bottom: 37px;
+}
+
+.temples-popular-directory-page .temple-page-hero-image {
+  object-position: var(--temple-hero-focus, center 40%);
+  filter: brightness(0.44) saturate(1.04);
+  transform: none;
+}
+
+.temples-popular-directory-page .temple-page-hero-shade {
+  background: linear-gradient(90deg, rgba(20, 10, 6, 0.9), rgba(30, 16, 9, 0.6) 60%, rgba(18, 61, 52, 0.5));
+}
+
+.temples-popular-directory-page .temple-page-hero-content {
+  width: min(var(--container), 100%);
+  padding: 0 24px;
+}
+
+.temples-popular-directory-page .temple-breadcrumb {
+  margin: 0 0 14px;
+  color: #e8cfa0;
+  font-size: 0.84rem;
+  font-weight: 500;
+}
+
+.temples-popular-directory-page .temple-page-hero .temple-breadcrumb a,
+.temples-popular-directory-page .temple-page-hero .temple-breadcrumb span {
+  color: #e8cfa0;
+}
+
+.temples-popular-directory-page .temple-page-hero .temple-breadcrumb span:last-child {
+  color: #f4cf78;
+  font-weight: 600;
+}
+
+.temples-popular-directory-page .temple-page-hero .section-kicker {
+  margin: 0 0 8px;
+  color: #f4cf78;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-shadow: none;
+  text-transform: none;
+}
+
+.temples-popular-directory-page .temple-page-hero h1 {
+  max-width: none;
+  font-size: clamp(2.4rem, 5.4vw, 4rem);
+  font-weight: 700;
+  line-height: 1.04;
+  text-shadow: none;
+}
+
+.temples-popular-directory-page .temple-page-hero-copy > p:last-child {
+  max-width: 600px;
+  margin-top: 14px;
+  color: #f0dcb4;
+  font-size: clamp(1rem, 1.5vw, 1.16rem);
+  font-weight: 500;
+  line-height: 1.58;
+  text-shadow: none;
+}
+
+.temples-popular-directory-page .temple-page-hero-panel {
+  margin-top: 22px;
+}
+
+.temples-popular-directory-page .temple-page-hero .temple-search-panel {
+  padding: 18px;
+  background: rgba(255, 251, 240, 0.97);
+  border: 1px solid rgba(255, 224, 148, 0.7);
+  border-radius: 14px;
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.3);
+  backdrop-filter: none;
+}
+
+.temples-popular-directory-page .popular-temple-filter {
+  gap: 14px;
+}
+
+.temples-popular-directory-page .popular-temple-filter-form {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.temples-popular-directory-page .temple-field {
+  gap: 8px;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.temples-popular-directory-page .popular-temple-filter-input-shell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 14px;
+  background: #fff;
+  border: 1px solid rgba(77, 56, 41, 0.2);
+  border-radius: 9px;
+}
+
+.temples-popular-directory-page .popular-temple-filter-input-shell svg {
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: #8a7355;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.temples-popular-directory-page .popular-temple-filter-input-shell input {
+  min-height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 0.96rem;
+}
+
+.temples-popular-directory-page .popular-temple-filter-input-shell:focus-within {
+  border-color: rgba(194, 141, 53, 0.72);
+  box-shadow: 0 0 0 3px rgba(194, 141, 53, 0.16);
+}
+
+.temples-popular-directory-page .popular-temple-filter-actions {
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+.temples-popular-directory-page .popular-temple-filter-actions .temple-search-button,
+.temples-popular-directory-page .popular-temple-filter-actions .temple-clear-button,
+.temples-popular-directory-page .popular-temple-filter-actions .temple-nearby-button {
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 9px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  box-shadow: none;
+}
+
+.temples-popular-directory-page .popular-temple-filter-actions .temple-search-button {
+  padding: 0 22px;
+  background: var(--lacquer);
+  border-color: transparent;
+}
+
+.temples-popular-directory-page .popular-temple-filter-actions .temple-clear-button {
+  color: var(--ink-soft);
+  background: #f2e7cf;
+  border-color: rgba(77, 56, 41, 0.16);
+}
+
+.temples-popular-directory-page .popular-temple-filter-actions .temple-nearby-button {
+  color: var(--ink);
+  background: #fffdf7;
+  border-color: rgba(77, 56, 41, 0.16);
+}
+
+.temples-popular-directory-page .popular-temple-filter-actions .temple-nearby-button.is-active {
+  color: #fffaf0;
+  background: var(--jade);
+}
+
+.temples-popular-directory-page .temple-filter-chips {
+  gap: 12px;
+}
+
+.temples-popular-directory-page .popular-temple-region-filter,
+.temples-popular-directory-page .popular-temple-province-filter,
+.temples-popular-directory-page .popular-temple-purpose-filter {
+  gap: 8px;
+  padding-top: 0;
+}
+
+.temples-popular-directory-page .popular-temple-region-filter > span,
+.temples-popular-directory-page .popular-temple-province-filter > span,
+.temples-popular-directory-page .popular-temple-purpose-filter > span {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.temples-popular-directory-page .popular-temple-region-tags,
+.temples-popular-directory-page .popular-temple-province-tags,
+.temples-popular-directory-page .popular-temple-purpose-tags {
+  gap: 7px;
+}
+
+.temples-popular-directory-page .popular-temple-region-tags button,
+.temples-popular-directory-page .popular-temple-province-tags button,
+.temples-popular-directory-page .popular-temple-purpose-tags button {
+  min-height: 35px;
+  padding: 7px 14px;
+  color: #4a3d33;
+  background: #fff;
+  border: 1px solid rgba(77, 56, 41, 0.16);
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.temples-popular-directory-page .popular-temple-region-tags button.is-active,
+.temples-popular-directory-page .popular-temple-province-tags button.is-active,
+.temples-popular-directory-page .popular-temple-purpose-tags button.is-active {
+  color: #fffaf0;
+  background: var(--lacquer);
+  border-color: var(--lacquer);
+}
+
+.temples-popular-directory-page .temple-province-accordion,
+.temples-popular-directory-page .temple-purpose-accordion {
+  overflow: hidden;
+  border: 1px solid rgba(77, 56, 41, 0.16);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.temples-popular-directory-page .temple-province-accordion summary,
+.temples-popular-directory-page .temple-purpose-accordion summary {
+  min-height: 41px;
+  padding: 0 14px;
+  color: #4a3d33;
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.temples-popular-directory-page .temple-province-accordion summary::after,
+.temples-popular-directory-page .temple-purpose-accordion summary::after {
+  content: "⌄";
+  width: auto;
+  height: auto;
+  color: #8a7355;
+  border: 0;
+  border-radius: 0;
+  font-size: 0.92rem;
+}
+
+.temples-popular-directory-page .temple-province-accordion[open] summary::after,
+.temples-popular-directory-page .temple-purpose-accordion[open] summary::after {
+  content: "⌃";
+}
+
+.temples-popular-directory-page .temple-province-accordion summary small,
+.temples-popular-directory-page .temple-purpose-accordion summary small {
+  color: #8a7355;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.temples-popular-directory-page .temple-province-accordion .popular-temple-province-tags,
+.temples-popular-directory-page .temple-purpose-accordion .popular-temple-purpose-tags {
+  padding: 0 14px 14px;
+}
+
+.temples-popular-directory-page .temples-section {
+  width: min(var(--container), 100%);
+  padding: 34px 24px 0;
+  border-top: 0;
+}
+
+.temples-popular-directory-page .temples-popular-section::before {
+  display: none;
+}
+
+.temples-popular-directory-page .temples-section-head {
+  align-items: baseline;
+  margin-bottom: 20px;
+}
+
+.temples-popular-directory-page .temples-section .section-kicker {
+  margin: 0 0 3px;
+  color: var(--lacquer);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: none;
+}
+
+.temples-popular-directory-page .temples-section h2 {
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  font-weight: 700;
+  line-height: 1.58;
+}
+
+.temples-popular-directory-page .popular-temple-count {
+  color: #8a7355;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.86rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.temples-popular-directory-page .popular-temple-grid {
+  gap: 22px;
+}
+
+.temples-popular-directory-page .popular-temple-card {
+  display: flex;
+  flex-direction: column;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.16);
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(39, 29, 20, 0.08);
+}
+
+.temples-popular-directory-page .popular-temple-card[hidden] {
+  display: none;
+}
+
+.temples-popular-directory-page .popular-temple-card::after {
+  display: none;
+}
+
+.temples-popular-directory-page .popular-temple-card figure {
+  aspect-ratio: 16 / 10;
+  border-radius: 0;
+}
+
+.temples-popular-directory-page .popular-temple-card img {
+  transform: none;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.temples-popular-directory-page .popular-temple-card:hover img,
+.temples-popular-directory-page .popular-temple-card:focus-visible img {
+  filter: saturate(1.05) contrast(1.02);
+  transform: scale(1.025);
+}
+
+.temples-popular-directory-page .popular-temple-card figcaption {
+  top: 10px;
+  left: 10px;
+  min-width: 0;
+  padding: 4px 11px;
+  color: #f4cf78;
+  background: rgba(24, 14, 9, 0.66);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: none;
+  backdrop-filter: blur(4px);
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.74rem;
+  font-weight: 500;
+}
+
+.temples-popular-directory-page .popular-temple-distance {
+  top: 10px;
+  right: 10px;
+  padding: 4px 11px;
+  color: #fff;
+  background: rgba(39, 106, 82, 0.9);
+  border: 0;
+  box-shadow: none;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.74rem;
+  font-weight: 500;
+}
+
+.temples-popular-directory-page .popular-temple-card-body {
+  flex: 1;
+  gap: 0;
+  padding: 14px 16px 20px;
+}
+
+.temples-popular-directory-page .popular-temple-card-body span {
+  margin-bottom: 9px;
+  padding: 3px 10px;
+  color: var(--region-ink);
+  border: 1px solid var(--region-border);
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.temples-popular-directory-page .popular-temple-card[data-region="ภาคกลาง"] .popular-temple-card-body span {
+  --region-ink: var(--lacquer);
+  --region-bg: rgba(142, 45, 36, 0.08);
+  --region-border: rgba(142, 45, 36, 0.18);
+}
+
+.temples-popular-directory-page .popular-temple-card[data-region="ภาคเหนือ"] .popular-temple-card-body span {
+  --region-ink: var(--jade);
+  --region-bg: rgba(39, 106, 82, 0.1);
+  --region-border: rgba(39, 106, 82, 0.2);
+}
+
+.temples-popular-directory-page .popular-temple-card[data-region="ภาคตะวันออกเฉียงเหนือ"] .popular-temple-card-body span {
+  --region-ink: #b0691c;
+  --region-bg: rgba(176, 105, 28, 0.1);
+  --region-border: rgba(176, 105, 28, 0.22);
+}
+
+.temples-popular-directory-page .popular-temple-card[data-region="ภาคตะวันออก"] .popular-temple-card-body span,
+.temples-popular-directory-page .popular-temple-card[data-region="ภาคตะวันตก"] .popular-temple-card-body span,
+.temples-popular-directory-page .popular-temple-card[data-region="ภาคใต้"] .popular-temple-card-body span {
+  --region-ink: #8a5a17;
+  --region-bg: rgba(194, 141, 53, 0.12);
+  --region-border: rgba(194, 141, 53, 0.24);
+}
+
+.temples-popular-directory-page .popular-temple-card h3 {
+  margin: 0 0 3px;
+  color: var(--lacquer);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.temples-popular-directory-page .popular-temple-card p {
+  color: #8a7355;
+  font-size: 0.84rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.temples-popular-directory-page .popular-temple-load-more {
+  min-width: 0;
+  min-height: 48px;
+  margin-top: 28px;
+  padding: 0 32px;
+  color: #fffaf0;
+  background: var(--lacquer);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: none;
+  font-weight: 700;
+}
+
+.temples-popular-directory-page .popular-temple-empty {
+  padding: 56px 24px;
+  background: #fffdf7;
+  border: 1px dashed rgba(194, 141, 53, 0.5);
+  border-radius: 16px;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.temples-popular-directory-page .site-footer--popular-directory {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: none;
+  margin: 72px 0 0;
+  padding: 30px max(24px, calc((100vw - var(--container)) / 2 + 24px));
+  color: #e6d3ab;
+  background: #1a0f0a;
+  border-top: 0;
+}
+
+.temples-popular-directory-page .site-footer-popular-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.temples-popular-directory-page .site-footer-popular-brand span {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  color: #ead3a0;
+  background: radial-gradient(circle at 34% 28%, #c84f3c, #591d19);
+  border-radius: 11px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.temples-popular-directory-page .site-footer--popular-directory strong {
+  color: #fff5df;
+  font-size: 1.14rem;
+  font-weight: 700;
+}
+
+.temples-popular-directory-page .site-footer--popular-directory p {
+  justify-self: end;
+  margin: 0;
+  color: #8a7355;
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .temples-popular-directory-page .popular-temple-filter-form {
+    grid-template-columns: 1fr;
+  }
+
+  .temples-popular-directory-page .popular-temple-filter-actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 720px) {
+  .temples-popular-directory-page .navbar--popular-directory {
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 68px;
+    padding: 0 18px;
+  }
+
+  .temples-popular-directory-page .navbar--popular-directory .brand {
+    max-width: calc(100vw - 96px);
+  }
+
+  .temples-popular-directory-page .navbar--popular-directory .brand small {
+    display: none;
+  }
+
+  .temples-popular-directory-page .navbar--popular-directory .nav-toggle {
+    display: grid;
+  }
+
+  .temples-popular-directory-page .nav-menu-static {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 14px;
+    right: 14px;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+    background: #fffaf0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .temples-popular-directory-page .nav-menu-static.is-open {
+    display: flex;
+  }
+
+  .temples-popular-directory-page .nav-menu-static a {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .temples-popular-directory-page .temple-page-hero,
+  .temples-popular-directory-page .temple-page-hero.has-panel {
+    padding: 24px 0 32px;
+  }
+
+  .temples-popular-directory-page .temple-page-hero-content,
+  .temples-popular-directory-page .temples-section {
+    width: 100%;
+    padding-inline: 14px;
+  }
+
+  .temples-popular-directory-page .temple-page-hero h1 {
+    font-size: clamp(2.2rem, 12vw, 3rem);
+  }
+
+  .temples-popular-directory-page .temple-page-hero-copy > p:last-child {
+    font-size: 0.98rem;
+  }
+
+  .temples-popular-directory-page .temple-page-hero .temple-search-panel {
+    padding: 14px;
+  }
+
+  .temples-popular-directory-page .popular-temple-filter-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .temples-popular-directory-page .popular-temple-filter-actions .temple-search-button,
+  .temples-popular-directory-page .popular-temple-filter-actions .temple-clear-button,
+  .temples-popular-directory-page .popular-temple-filter-actions .temple-nearby-button {
+    width: 100%;
+  }
+
+  .temples-popular-directory-page .temples-section-head {
+    align-items: flex-start;
+  }
+
+  .temples-popular-directory-page .site-footer--popular-directory {
+    grid-template-columns: 1fr;
+    margin-top: 56px;
+    padding: 28px 20px;
+  }
+
+  .temples-popular-directory-page .site-footer--popular-directory p {
+    justify-self: start;
+    text-align: left;
+  }
+}
