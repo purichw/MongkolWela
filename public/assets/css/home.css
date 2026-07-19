@@ -972,6 +972,7 @@ body[data-cms-page="home"] .hero h1 {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+  object-position: center 62%;
   border-radius: 18px;
   box-shadow: var(--home-shadow);
 }

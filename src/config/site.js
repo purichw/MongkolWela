@@ -13,7 +13,7 @@ export const siteConfig = {
       rituals: "คู่มือก่อนเดินทาง",
       credits: "เครดิตรูปภาพ",
       imageCredits:
-        "เครดิตภาพ: ภาพจิตรกรรมหน้าแรกจากเจ้าของโปรเจกต์ และภาพธูปขดในวัดหมั่นโหมวโดย Aethelfirth, CC BY-SA 4.0",
+        "เครดิตภาพ: ภาพจิตรกรรมหน้าแรกจากเจ้าของโปรเจกต์, ภาพธูปขดในวัดหมั่นโหมวโดย Aethelfirth, CC BY-SA 4.0, และภาพวัดไทยในส่วนคู่มือโดย Nomadic Julien, Unsplash",
     },
     pages: {
       home: {
