@@ -60,9 +60,10 @@ test.describe("Mongkol Wela smoke regression", () => {
 
     const mapPayload = await page.locator('script[id^="templeMapData-"]').textContent();
     const firstMapTemple = JSON.parse(mapPayload || "{}").items?.[0];
-    const matchingCardImage = page.locator(
-      `[data-popular-temple-card][href="${firstMapTemple.detailUrl}"] picture img`,
-    );
+    const matchingCardImage = page
+      .locator("[data-popular-temple-card]")
+      .filter({ has: page.locator(`[data-popular-temple-detail][href="${firstMapTemple.detailUrl}"]`) })
+      .locator("picture img");
     await expect(matchingCardImage).toHaveAttribute("src", /^https?:\/\//);
   });
 
@@ -141,6 +142,6 @@ test.describe("Mongkol Wela smoke regression", () => {
     await expect(page).toHaveURL(/404\.html/);
     await expect(page.getByRole("heading", { name: /เส้นทางนี้ไม่มีอยู่ในมงคลเวลาแล้ว/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /กลับหน้าแรก/ })).toBeVisible();
-    await expect(page.getByRole("link", { name: "วัดทั่วประเทศไทย", exact: true })).toBeVisible();
+    await expect(page.locator("main").getByRole("link", { name: "วัดทั่วประเทศไทย", exact: true })).toBeVisible();
   });
 });

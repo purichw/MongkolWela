@@ -230,18 +230,23 @@ function bindTempleMarkerHover(marker, state) {
 
 function collectTempleCardData() {
   return new Map(
-    [...document.querySelectorAll("[data-popular-temple-card]")].map((card) => [
-      card.getAttribute("href") || "",
-      {
-        name: card.dataset.name || "",
-        region: card.dataset.region || "",
-        province: card.dataset.province || "",
-        district: card.dataset.district || "",
-        imageAlt: card.querySelector("picture img")?.getAttribute("alt") || card.dataset.name || "",
-        desktop: card.querySelector("picture img")?.getAttribute("src") || "",
-        mobile: card.querySelector("picture source")?.getAttribute("srcset") || "",
-      },
-    ]),
+    [...document.querySelectorAll("[data-popular-temple-card]")]
+      .map((card) => {
+        const detailUrl = card.getAttribute("href") || card.querySelector("[data-popular-temple-detail]")?.getAttribute("href") || "";
+        return [
+          detailUrl,
+          {
+            name: card.dataset.name || "",
+            region: card.dataset.region || "",
+            province: card.dataset.province || "",
+            district: card.dataset.district || "",
+            imageAlt: card.querySelector("picture img")?.getAttribute("alt") || card.dataset.name || "",
+            desktop: card.querySelector("picture img")?.getAttribute("src") || "",
+            mobile: card.querySelector("picture source")?.getAttribute("srcset") || "",
+          },
+        ];
+      })
+      .filter(([detailUrl]) => detailUrl),
   );
 }
 

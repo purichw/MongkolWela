@@ -140,7 +140,7 @@ if (popularTempleGrid) {
 }
 
 function initializePopularTempleGrid(grid) {
-  const cards = Array.from(grid.querySelectorAll("[data-popular-temple-card]"));
+  let cards = Array.from(grid.querySelectorAll("[data-popular-temple-card]"));
   const filterRoot = document.querySelector("[data-popular-temple-filter]");
   const filterForm = filterRoot?.querySelector("[data-popular-temple-filter-form]");
   const filterName = filterRoot?.querySelector("[data-popular-temple-filter-name]");
@@ -160,7 +160,7 @@ function initializePopularTempleGrid(grid) {
   const initialCount = readPositiveInteger(grid.dataset.initialCount, 9);
   const batchSize = readPositiveInteger(grid.dataset.batchSize, initialCount);
   const useVisibleFilteredCount = grid.dataset.countMode === "visible-filtered";
-  const originalCardOrder = new Map(cards.map((card, index) => [card, index]));
+  let originalCardOrder = new Map(cards.map((card, index) => [card, index]));
   const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
   let filteredCards = cards;
   let visibleCount = 0;
@@ -175,6 +175,8 @@ function initializePopularTempleGrid(grid) {
   let nearbyStatus = "";
   const activePurposes = new Set();
   let appliedQuery = "";
+  let hasLoadedCollectionData = false;
+  let collectionDataLoad = null;
 
   if (!cards.length) return;
 
@@ -208,8 +210,9 @@ function initializePopularTempleGrid(grid) {
 
   applyPopularFilters();
 
-  filterForm?.addEventListener("submit", (event) => {
+  filterForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
+    await loadCollectionCards({ applyFilters: false });
     commitDraftFilters();
     applyPopularFilters();
     scrollToPopularResults();
@@ -271,12 +274,14 @@ function initializePopularTempleGrid(grid) {
     });
   });
 
-  loadMoreButton?.addEventListener("click", () => {
+  loadMoreButton?.addEventListener("click", async () => {
+    await loadCollectionCards({ applyFilters: false });
     revealNext(batchSize);
   });
 
   nearbyButton?.addEventListener("click", async () => {
     if (isRequestingLocation) return;
+    await loadCollectionCards({ applyFilters: false });
 
     if (activeNearby) {
       activeNearby = false;
@@ -314,6 +319,7 @@ function initializePopularTempleGrid(grid) {
   });
 
   updateLoadMoreButton();
+  loadCollectionCards({ applyFilters: true });
 
   function applyPopularFilters() {
     filteredCards = cards.filter((card) => {
@@ -567,6 +573,122 @@ function initializePopularTempleGrid(grid) {
   function updateLoadMoreButton() {
     if (!loadMoreButton) return;
     loadMoreButton.hidden = visibleCount >= filteredCards.length;
+  }
+
+  async function loadCollectionCards({ applyFilters = true } = {}) {
+    if (hasLoadedCollectionData) return true;
+    const dataSrc = grid.dataset.collectionDataSrc;
+    if (!dataSrc) return false;
+
+    if (!collectionDataLoad) {
+      collectionDataLoad = fetch(`${dataSrc}${dataSrc.includes("?") ? "&" : "?"}ts=${Date.now()}`, {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      }).then((response) => {
+        if (!response.ok) throw new Error(`Collection data failed: ${response.status}`);
+        return response.json();
+      });
+    }
+
+    try {
+      const payload = await collectionDataLoad;
+      hydrateCollectionCards(Array.isArray(payload?.items) ? payload.items : []);
+      hasLoadedCollectionData = true;
+      window.MongkolWelaCMS?.applyTempleOverrides?.();
+      if (activeNearby) updateCardDistances();
+      updateFacetOptions();
+      if (applyFilters) applyPopularFilters();
+      else renderVisibleCards();
+      return true;
+    } catch (error) {
+      console.warn("โหลดข้อมูลพิกัดเพิ่มเติมไม่สำเร็จ", error);
+      collectionDataLoad = null;
+      return false;
+    }
+  }
+
+  function hydrateCollectionCards(items) {
+    if (!items.length) return;
+
+    const existingKeys = new Set(cards.map((card) => card.dataset.cardKey || `${grid.dataset.collection}:${card.dataset.rank}`));
+    const fragment = document.createDocumentFragment();
+
+    items.forEach((item) => {
+      const key = String(item.key || `${item.collection || grid.dataset.collection}:${item.rank || ""}`);
+      if (!key || existingKeys.has(key)) return;
+      const card = createPopularTempleCard(item);
+      card.hidden = true;
+      fragment.appendChild(card);
+      existingKeys.add(key);
+    });
+
+    if (fragment.childNodes.length) grid.appendChild(fragment);
+    cards = Array.from(grid.querySelectorAll("[data-popular-temple-card]"));
+    filteredCards = cards;
+    originalCardOrder = new Map(cards.map((card, index) => [card, index]));
+    repairBrokenCardImages();
+  }
+
+  function createPopularTempleCard(item) {
+    const hasTempleImage = Boolean(item.hasTempleImage) && item.imageUrl && item.imageUrl !== placeholderSrc;
+    const imageUrl = hasTempleImage ? String(item.imageUrl) : placeholderSrc;
+    const mobileSrc = String(item.imageMobileUrl || imageUrl);
+    const confidence = item.confidence || { key: "check", label: "ควรเช็ก" };
+    const card = document.createElement("article");
+    card.className = `popular-temple-card temple-collection-v2-card${hasTempleImage ? "" : " is-placeholder"}`;
+    card.dataset.rank = String(item.rank || "");
+    card.dataset.name = String(item.name || "");
+    card.dataset.region = String(item.region || "");
+    card.dataset.province = String(item.province || "");
+    card.dataset.district = String(item.district || "");
+    card.dataset.blessings = String(item.blessings || "");
+    card.dataset.placeType = String(item.placeType || "");
+    card.dataset.searchText = String(item.searchText || "");
+    card.dataset.latitude = String(item.latitude ?? "");
+    card.dataset.longitude = String(item.longitude ?? "");
+    card.dataset.cardKey = String(item.key || `${item.collection || grid.dataset.collection}:${item.rank || ""}`);
+    card.setAttribute("data-popular-temple-card", "");
+    if (!hasTempleImage) card.setAttribute("data-image-placeholder", "true");
+
+    card.innerHTML = `
+      <figure>
+        <picture class="temple-responsive-picture">
+          ${mobileSrc && mobileSrc !== imageUrl ? `<source media="(max-width: 767px)" srcset="${escapeHtml(mobileSrc)}" data-temple-mobile-source>` : ""}
+          <img
+            src="${escapeHtml(imageUrl)}"
+            alt="${escapeHtml(item.imageAlt || `${item.name || ""} ${item.province || ""}`)}"
+            loading="lazy"
+            decoding="async"
+            data-fallback-src="${escapeHtml(placeholderSrc || "")}"
+            data-temple-desktop-image
+          />
+        </picture>
+        <figcaption>${Number(item.rank || 0).toLocaleString("th-TH-u-nu-thai")}</figcaption>
+        <span class="temple-collection-v2-confidence is-${escapeHtml(confidence.key || "check")}">
+          <span aria-hidden="true"></span>
+          ${escapeHtml(confidence.label || "ควรเช็ก")}
+        </span>
+        <span class="popular-temple-distance" data-popular-temple-distance hidden></span>
+      </figure>
+      <div class="popular-temple-card-body">
+        <span>${escapeHtml(item.province || "")}</span>
+        <h3>${escapeHtml(item.name || "")}</h3>
+        <p>${escapeHtml(`${item.province || ""}${item.district ? ` / ${item.district}` : ""}`)}</p>
+        <strong>${escapeHtml(item.intent || item.placeType || "สิริมงคล")}</strong>
+        <div class="temple-collection-v2-card-meta">
+          <small>ข้อมูลชุดปัจจุบัน</small>
+          <a href="#consult">แจ้งข้อมูลผิด</a>
+        </div>
+        <div class="temple-collection-v2-card-actions">
+          <a class="temple-collection-v2-card-plan" href="${escapeHtml(item.plannerUrl || "/temples/planner/")}">+ เพิ่มลงทริป</a>
+          <a class="temple-collection-v2-card-detail" href="${escapeHtml(item.detailUrl || "#")}" data-popular-temple-detail>รายละเอียด →</a>
+        </div>
+      </div>
+    `;
+    return card;
   }
 
   function sortFilteredCards() {

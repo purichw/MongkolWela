@@ -1,10 +1,8 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import TempleSearchHero from "../../../components/TempleSearchHero.astro";
-import { getTemplePlannerData } from "../../../data/temple-planner.js";
 
-const plannerData = getTemplePlannerData();
-const plannerPayload = JSON.stringify(plannerData).replace(/</g, "\\u003c");
+const plannerDataSrc = "/assets/data/temple-planner.json";
 const extraStyles = ["/assets/css/temple-planner.css?feature=20260729-02"];
 const extraScripts = ["/assets/js/temple-planner.js?feature=20260729-02"];
 const pageTitle = "วางแผนไหว้พระ | มงคลเวลา";
@@ -51,7 +49,12 @@ const plannerPurposes = [
     { label: "วางแผนไหว้พระ", href: "/temples/planner/" },
   ]}
 >
-  <main class="temple-planner" data-temple-planner data-planner-default-purpose="การงาน">
+  <main
+    class="temple-planner"
+    data-temple-planner
+    data-planner-data-src={plannerDataSrc}
+    data-planner-default-purpose="การงาน"
+  >
     <TempleSearchHero
       banner={plannerBanner}
       breadcrumbs={[
@@ -89,10 +92,7 @@ const plannerPurposes = [
               <option value="200">ภายใน 200 กม.</option>
               <option value="500">ภายใน 500 กม.</option>
             </select>
-            <select data-planner-start>
-              <option value="">ให้ระบบเลือกวัดแรก</option>
-              {plannerData.items.map((item) => <option value={item.id}>{item.name} · {item.province}</option>)}
-            </select>
+            <input type="hidden" data-planner-start />
             <input type="search" data-planner-search />
           </div>
 
@@ -151,9 +151,7 @@ const plannerPurposes = [
               autocomplete="off"
               data-planner-origin-text
             />
-            <datalist id="planner-start-suggestions">
-              {plannerData.items.slice(0, 80).map((item) => <option value={item.name}>{item.province}</option>)}
-            </datalist>
+            <datalist id="planner-start-suggestions"></datalist>
           </label>
 
           <div class="planner-search-actions" aria-label="เลือกวิธีค้นหาและจัดแผน">
@@ -363,6 +361,5 @@ const plannerPurposes = [
       </section>
     </div>
 
-    <script is:inline type="application/json" id="templePlannerData" set:html={plannerPayload}></script>
   </main>
 </BaseLayout>

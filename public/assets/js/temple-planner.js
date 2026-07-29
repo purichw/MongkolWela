@@ -2,7 +2,38 @@ const root = document.querySelector("[data-temple-planner]");
 const payloadNode = document.getElementById("templePlannerData");
 const PLANNER_PICKER_BATCH_SIZE = 12;
 
-if (root && payloadNode) initializeTemplePlanner(root, JSON.parse(payloadNode.textContent || "{}"));
+if (root) {
+  root.setAttribute("aria-busy", "true");
+  loadTemplePlannerPayload(root)
+    .then((payload) => initializeTemplePlanner(root, payload))
+    .catch((error) => showPlannerLoadError(root, error))
+    .finally(() => {
+      root.removeAttribute("aria-busy");
+    });
+}
+
+async function loadTemplePlannerPayload(planner) {
+  if (payloadNode?.textContent) return JSON.parse(payloadNode.textContent || "{}");
+  const dataSrc = planner.dataset.plannerDataSrc;
+  if (!dataSrc) throw new Error("Planner data source is missing.");
+
+  const response = await fetch(`${dataSrc}${dataSrc.includes("?") ? "&" : "?"}ts=${Date.now()}`, {
+    cache: "no-store",
+    headers: {
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+    },
+  });
+  if (!response.ok) throw new Error(`Planner data failed: ${response.status}`);
+  return response.json();
+}
+
+function showPlannerLoadError(planner, error) {
+  console.warn("โหลดข้อมูลวางแผนไหว้พระไม่สำเร็จ", error);
+  planner.dataset.plannerLoadError = "true";
+  const status = planner.querySelector("[data-planner-location-status]");
+  if (status) status.textContent = "โหลดข้อมูลสถานที่ไม่สำเร็จ กรุณารีเฟรชแล้วลองใหม่";
+}
 
 function initializeTemplePlanner(planner, payload) {
   const items = Array.isArray(payload.items) ? payload.items : [];
@@ -35,6 +66,7 @@ function initializeTemplePlanner(planner, payload) {
   };
 
   planner._plannerState = { state, elements };
+  populatePlannerStartSuggestions(state, elements);
   initializeSmoothFilterAccordions(planner);
   initializePlannerHelp(planner);
   const restored = restoreState(state, elements);
@@ -76,6 +108,7 @@ function collectElements(planner) {
     area: planner.querySelector("[data-planner-area]"),
     areaHint: planner.querySelector("[data-planner-area-hint-display]"),
     originText: planner.querySelector("[data-planner-origin-text]"),
+    startSuggestions: planner.querySelector("#planner-start-suggestions"),
     defaultPurpose: planner.dataset.plannerDefaultPurpose || "",
     start: planner.querySelector("[data-planner-start]"),
     radius: planner.querySelector("[data-planner-radius]"),
@@ -131,6 +164,14 @@ function collectElements(planner) {
     dialogConfirm: planner.querySelector("[data-planner-dialog-confirm]"),
     dialogCloseButtons: [...planner.querySelectorAll("[data-planner-dialog-close], [data-planner-dialog-cancel]")],
   };
+}
+
+function populatePlannerStartSuggestions(state, elements) {
+  if (!elements.startSuggestions) return;
+  elements.startSuggestions.innerHTML = state.items
+    .slice(0, 80)
+    .map((item) => `<option value="${escapeHtml(item.name)}">${escapeHtml(item.province)}</option>`)
+    .join("");
 }
 
 function applyPlannerDefaults(state, elements, restored = {}) {

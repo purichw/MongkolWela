@@ -109,6 +109,9 @@ const confidenceFor = (temple: TempleCard, hasTempleImage: boolean) => {
 };
 const plannerHrefFor = (temple: TempleCard) =>
   `/temples/planner/?start=${encodeURIComponent(temple.name)}&province=${encodeURIComponent(temple.province)}`;
+const collectionDataSrc = `/assets/data/temple-collections/${collection}.json`;
+const initialTemples = rankedTemples.slice(0, initialCount);
+const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
 ---
 
 <BaseLayout
@@ -259,12 +262,14 @@ const plannerHrefFor = (temple: TempleCard) =>
         class="popular-temple-grid temple-collection-v2-grid"
         aria-label={meta.gridLabel}
         data-popular-temple-grid
+        data-collection={collection}
+        data-collection-data-src={collectionDataSrc}
         data-initial-count={initialCount}
         data-batch-size={batchSize}
         data-count-mode="visible-filtered"
         data-placeholder-src={templePlaceholderImage}
       >
-        {rankedTemples.map((temple) => {
+        {initialTemples.map((temple) => {
           const hasTempleImage = Boolean(temple.imageUrl) && temple.imageUrl !== templePlaceholderImage;
           const imageUrl = hasTempleImage ? String(temple.imageUrl) : templePlaceholderImage;
           const imageAlt = temple.imageAlt || `${temple.name} ${temple.province}`;
@@ -285,6 +290,7 @@ const plannerHrefFor = (temple: TempleCard) =>
               data-search-text={`${temple.name} ${temple.region} ${temple.province} ${temple.district || ""} ${temple.blessings || ""} ${temple.objectHero || ""}`}
               data-latitude={temple.latitude}
               data-longitude={temple.longitude}
+              data-card-key={cardKeyFor(temple)}
               data-popular-temple-card
               data-image-placeholder={hasTempleImage ? undefined : "true"}
             >

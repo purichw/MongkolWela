@@ -41,12 +41,16 @@ const mapItems = temples
         : "";
     return {
       rank: temple.rank,
+      name: temple.name,
+      region: temple.region,
+      province: temple.province,
+      district: temple.district || "",
       latitude: Number(temple.latitude),
       longitude: Number(temple.longitude),
       detailUrl: getTempleDetailUrl(collection, temple),
+      imageAlt: temple.imageAlt || `${temple.name} ${temple.province}`,
       ...(mapImage ? { imageUrl: mapImage } : {}),
       ...(mapMobileImage ? { imageMobileUrl: mapMobileImage } : {}),
-      ...(mapImage || mapMobileImage ? { imageAlt: temple.imageAlt || `${temple.name} ${temple.province}` } : {}),
     };
   });
 const payload = JSON.stringify({

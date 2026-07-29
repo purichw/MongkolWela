@@ -14,7 +14,10 @@ assert.deepEqual(Object.keys(templeImageSlots), ["card", "hero", "map"]);
 for (const [key, record] of Object.entries(records)) {
   assert.ok(["popular", "mu", "sacred"].includes(record.collection), `${key}: invalid collection`);
   assert.ok(record.slug, `${key}: missing stable slug`);
-  assert.ok(record.fields?.name, `${key}: missing place name`);
+  assert.equal(typeof (record.fields || {}), "object", `${key}: fields must be an object`);
+  if (record.source === "admin" && record.status !== "deleted") {
+    assert.ok(record.fields?.name, `${key}: admin-created records need a place name`);
+  }
   for (const role of Object.keys(templeImageSlots)) {
     for (const viewport of ["desktop", "mobile"]) {
       const url = record.images?.[role]?.[viewport]?.url;

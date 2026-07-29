@@ -699,6 +699,11 @@ async function bootCmsRuntime() {
     const content = await loadContent();
     if (!content) return;
     activeContent = content;
+    window.MongkolWelaCMS = {
+      content: activeContent,
+      reload: bootCmsRuntime,
+      applyTempleOverrides: () => applyTempleOverrides(activeContent),
+    };
     document.documentElement.dataset.cmsReady = "true";
     applyNavigation(content);
     applyTempleOverrides(content);
@@ -711,7 +716,7 @@ async function bootCmsRuntime() {
     }
     renderPdpaBanner(content);
     trackPageview(content);
-    window.MongkolWelaCMS = { content: activeContent, reload: bootCmsRuntime };
+    document.dispatchEvent(new CustomEvent("mw:cms-content-ready", { detail: { content: activeContent } }));
   } catch (error) {
     console.warn("CMS runtime unavailable", error);
   } finally {
