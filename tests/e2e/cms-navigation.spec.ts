@@ -1,6 +1,22 @@
 import { expect, test } from "@playwright/test";
 
-const cmsContent = {
+const liveCmsContent = {
+  schemaVersion: 1,
+  site: {
+    name: "มงคลเวลา",
+    locale: "th",
+    pdpa: { analyticsConsentRequired: false },
+  },
+  navigation: {
+    tabs: [{ id: "calendar", label: "วันพระ", href: "calendar/", enabled: true, items: [] }],
+    utility: [],
+  },
+  pages: [
+    { id: "home", label: "หน้าแรก", route: "/", enabled: true, kind: "existing", patches: [], sections: [], blocks: [] },
+  ],
+};
+
+const fallbackCmsContent = {
   schemaVersion: 1,
   cmsContractVersion: 2,
   site: {
@@ -9,9 +25,7 @@ const cmsContent = {
     pdpa: { analyticsConsentRequired: false },
   },
   navigation: {
-    tabs: [
-      { id: "calendar", label: "วันพระ", href: "calendar/", enabled: true, items: [] },
-    ],
+    tabs: [{ id: "fallback-calendar", label: "เมนูสำรอง", href: "calendar/", enabled: true, items: [] }],
     utility: [],
   },
   pages: [
@@ -19,7 +33,9 @@ const cmsContent = {
   ],
 };
 
-test("visitor navigation shows bundled fallback immediately and replaces it with CMS content", async ({ page }) => {
+test("visitor runtime ignores stale local drafts and does not fetch fallback when live API is usable", async ({ page }) => {
+  let fallbackRequests = 0;
+
   await page.addInitScript(() => {
     window.localStorage.setItem(
       "mongkolwela.cms.content",
@@ -36,12 +52,17 @@ test("visitor navigation shows bundled fallback immediately and replaces it with
   });
 
   await page.route("**/api/admin/content?*", async (route) => {
-    await new Promise((resolve) => setTimeout(resolve, 350));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ ok: true, content: cmsContent }),
+      body: JSON.stringify({ ok: true, content: liveCmsContent }),
     });
+  });
+
+  await page.route("**/admin/content/default.json?*", (route) => {
+    fallbackRequests += 1;
+    route.fulfill({ status: 500, body: "fallback should not be requested while live content is usable" });
   });
 
   await page.route("**/api/admin/analytics", (route) => {
@@ -51,17 +72,51 @@ test("visitor navigation shows bundled fallback immediately and replaces it with
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   const menu = page.locator("#primary-menu");
-  const fallbackLink = menu.locator("a").filter({ hasText: /^วัดดังเสริมมงคล$/ });
-  const staleDraftLink = menu.locator("a").filter({ hasText: /^ชื่อและตัวเลข$/ });
   await expect(page.locator("html")).toHaveClass(/cms-navigation-pending/);
   await expect(menu.locator(":scope > *")).not.toHaveCount(0);
-  await expect(fallbackLink).toHaveCount(1);
-  await expect(staleDraftLink).toHaveCount(0);
+  await expect(menu.locator("a").filter({ hasText: /^ชื่อและตัวเลข$/ })).toHaveCount(0);
+  expect(fallbackRequests).toBe(0);
 
   await expect(page.locator("html")).not.toHaveClass(/cms-navigation-pending/);
   if ((page.viewportSize()?.width || 0) <= 720) {
     await page.getByRole("button", { name: "เปิดเมนู" }).click();
   }
+
   await expect(menu.getByRole("link", { name: "วันพระ", exact: true })).toBeVisible();
   await expect(menu.getByRole("link", { name: "วัดดังเสริมมงคล", exact: true })).toHaveCount(0);
+  await expect(menu.getByRole("link", { name: "วางแผนไหว้พระ", exact: true })).toHaveCount(0);
+  expect(fallbackRequests).toBe(0);
+});
+
+test("visitor runtime fetches bundled fallback only when live API is unavailable", async ({ page }) => {
+  let fallbackRequests = 0;
+
+  await page.route("**/api/admin/content?*", (route) => {
+    route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false }) });
+  });
+
+  await page.route("**/admin/content/default.json?*", (route) => {
+    fallbackRequests += 1;
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(fallbackCmsContent),
+    });
+  });
+
+  await page.route("**/api/admin/analytics", (route) => {
+    route.fulfill({ status: 204, body: "" });
+  });
+
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("html")).not.toHaveClass(/cms-navigation-pending/);
+  await expect(page.locator("html")).toHaveAttribute("data-cms-fallback", "true");
+
+  const menu = page.locator("#primary-menu");
+  if ((page.viewportSize()?.width || 0) <= 720) {
+    await page.getByRole("button", { name: "เปิดเมนู" }).click();
+  }
+
+  await expect(menu.getByRole("link", { name: "เมนูสำรอง", exact: true })).toBeVisible();
+  expect(fallbackRequests).toBe(1);
 });

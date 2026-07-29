@@ -1,5 +1,5 @@
 ---
-const assetVersion = "20260619-10";
+const assetVersion = "20260729-admin-01";
 ---
 
 <!doctype html>
@@ -20,25 +20,26 @@ const assetVersion = "20260619-10";
   <body class="admin-page">
     <div id="adminApp" data-admin-app>
       <div class="mw-admin-shell">
-        <header class="mw-admin-header">
-          <a class="mw-admin-logo" href="/admin/"><span>MW</span><strong>มงคลเวลา</strong><small>ระบบจัดการเนื้อหา</small></a>
-          <div class="mw-admin-header-actions">
-            <span class="mw-admin-status">กำลังโหลด</span>
-            <button class="mw-admin-btn" type="button" disabled>เปิดเว็บ</button>
-            <button class="mw-admin-btn" type="button" disabled>บันทึกฉบับร่าง</button>
-            <button class="mw-admin-btn mw-admin-btn-primary" type="button" disabled>✓ Publish</button>
-          </div>
-        </header>
-        <nav class="mw-admin-nav" aria-label="Admin navigation">
+        <aside class="mw-admin-sidebar">
+          <header class="mw-admin-header">
+            <a class="mw-admin-logo" href="/admin/"><span>๙</span><div><strong>มงคลเวลา</strong><small>ADMIN CONSOLE</small></div></a>
+          </header>
+          <nav class="mw-admin-nav" aria-label="Admin navigation">
           <span class="mw-admin-ghost is-active">⌁ <strong>ภาพรวม</strong></span>
-          <span class="mw-admin-ghost">▤ <strong>หน้าและเนื้อหา</strong></span>
-          <span class="mw-admin-ghost">◇ <strong>สถานที่ศักดิ์สิทธิ์</strong></span>
-          <span class="mw-admin-ghost">↕ <strong>ส่วนหน้าเว็บ</strong></span>
-          <span class="mw-admin-ghost mw-admin-nav-logout">↩ <strong>ออกจากระบบ</strong></span>
-        </nav>
+          <span class="mw-admin-ghost">▦ <strong>สถิติการใช้งาน</strong></span>
+          <span class="mw-admin-ghost">⌂ <strong>หน้าแรก</strong></span>
+          <span class="mw-admin-ghost">≣ <strong>เมนูนำทาง</strong></span>
+          <span class="mw-admin-ghost">๙ <strong>วัดและสถานที่</strong></span>
+          </nav>
+          <div class="mw-admin-sidebar-foot">
+            <button class="mw-admin-btn" type="button" disabled>↗ เปิดหน้าเว็บผู้ใช้</button>
+            <div class="mw-admin-profile"><span>ก</span><div><strong>กมล (แอดมิน)</strong><small>ผู้ดูแลระบบ</small></div></div>
+            <div class="mw-admin-header-actions"><span class="mw-admin-status">กำลังโหลด</span></div>
+          </div>
+        </aside>
         <main class="mw-admin-main">
           <header class="mw-admin-top">
-            <div><p>ระบบจัดการเว็บ</p><h1>ภาพรวม</h1></div>
+            <div><p>ภาพรวมระบบ</p><h1>แดชบอร์ด</h1></div>
           </header>
           <section class="mw-admin-content">
             <div class="mw-admin-grid mw-admin-loading-grid" aria-hidden="true">

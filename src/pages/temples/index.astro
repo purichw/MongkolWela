@@ -1,8 +1,57 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import TempleSearchHero from "../../components/TempleSearchHero.astro";
-import templePageBanners from "../../data/temple-page-banners.json";
+import popularTemples from "../../data/popular-temples.json";
+import sacredTemples from "../../data/sacred-temples.json";
+import muTemples from "../../data/mu-temples.json";
 import { templeHubContent } from "../../data/temple-directory-content.js";
+
+const formatThaiNumber = (value: number) => value.toLocaleString("th-TH-u-nu-thai");
+const thailandTempleCount = 44705;
+
+const collectionCards = [
+  {
+    variant: "popular",
+    kicker: "Popular · เส้นทาง",
+    title: "สายไหว้พระ ๙ วัด",
+    description: "วัดดังที่คนรู้จัก จัดเรียงตามความนิยม จัดเป็นเส้นทางไหว้พระต่อเนื่องได้ในคลิกเดียว",
+    href: "/temples/popular/",
+    count: `${formatThaiNumber(popularTemples.length)} สถานที่`,
+    linkLabel: "ดูคอลเลกชัน",
+  },
+  {
+    variant: "sacred",
+    kicker: "Sacred · ศรัทธา",
+    title: "วัดศักดิ์สิทธิ์",
+    description: "สงบและน่าเชื่อถือ เลือกจากจังหวัด ภูมิภาค และเรื่องที่ตั้งใจขอพร พร้อมพิกัดและข้อมูลประกอบ",
+    href: "/temples/sacred/",
+    count: `${formatThaiNumber(sacredTemples.length)} สถานที่`,
+    linkLabel: "ดูคอลเลกชัน",
+  },
+  {
+    variant: "mu",
+    kicker: "Mu · กำลังใจ",
+    title: "สายมู",
+    description: "เข้าถึงง่าย ไม่ฉูดฉาด รวมสถานที่เสริมดวง แก้ชง และเสริมกำลังใจ เลือกไปแบบพอดีตัว",
+    href: "/temples/mu/",
+    count: `${formatThaiNumber(muTemples.length)} สถานที่`,
+    linkLabel: "ดูคอลเลกชัน",
+  },
+];
+
+const intentLinks = [
+  { no: "๑", label: "เสริมโชคลาภ เงินทอง", href: "/temples/sacred/?name=โชคลาภ" },
+  { no: "๒", label: "การงาน ความก้าวหน้า", href: "/temples/sacred/?name=การงาน" },
+  { no: "๓", label: "ความรัก เนื้อคู่", href: "/temples/sacred/?name=ความรัก" },
+  { no: "๔", label: "สุขภาพ และครอบครัว", href: "/temples/sacred/?name=สุขภาพ" },
+  { no: "๕", label: "เริ่มต้นชีวิตใหม่", href: "/temples/popular/?name=เริ่มต้น" },
+  { no: "๖", label: "แก้ชง สะเดาะเคราะห์", href: "/temples/mu/?name=แก้ชง" },
+];
+
+const supportingLinks = [
+  { label: "วันพระและปฏิทินไทย", href: "/calendar/" },
+  { label: "เซียมซี", href: "/horoscope/seamsi/" },
+  { label: "ไพ่ประจำวัน", href: "/tarot/daily/" },
+];
 ---
 
 <BaseLayout
@@ -11,7 +60,7 @@ import { templeHubContent } from "../../data/temple-directory-content.js";
   lang="th"
   locale="th"
   page="temples"
-  bodyClass="temples-hub-page"
+  bodyClass="temples-hub-page temples-hub-v2-page"
   canonicalPath="/temples/"
   image="/assets/images/hero-temple-red.jpg"
   imageAlt="วัดดังเสริมมงคล สายมู สายไหว้พระ และวัดทั่วประเทศไทย"
@@ -20,26 +69,120 @@ import { templeHubContent } from "../../data/temple-directory-content.js";
     { label: "วัดดังเสริมมงคล", href: "/temples/" },
   ]}
 >
-  <main class="temples-hub">
-    <TempleSearchHero
-      banner={templePageBanners.hub}
-      breadcrumbs={templeHubContent.breadcrumbs}
-      kicker={templeHubContent.kicker}
-      title={templeHubContent.heading}
-      description={templeHubContent.intro}
-    />
+  <main class="temples-hub temple-hub-v2" data-cms-preserve-section-order>
+    <section class="temple-hub-v2-hero" aria-labelledby="temple-page-title">
+      <img
+        class="temple-hub-v2-hero-image"
+        src="/assets/images/hero-temple-red.jpg"
+        alt=""
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
+      <div class="temple-hub-v2-hero-shade" aria-hidden="true"></div>
+      <div class="temple-hub-v2-hero-content">
+        <nav class="temple-breadcrumb temple-hub-v2-breadcrumb" aria-label="breadcrumb">
+          <a href="/">หน้าแรก</a>
+          <span>/</span>
+          <span>วัดดังเสริมมงคล</span>
+        </nav>
+        <p class="section-kicker">Temple Guide · ศูนย์รวมเส้นทางไหว้พระ</p>
+        <h1 id="temple-page-title">{templeHubContent.heading}</h1>
+        <p>
+          เลือกเส้นทางที่ใช่ จากวัดยอดนิยม วัดศักดิ์สิทธิ์ และสายมู
+          หรือค้นหาวัดทั่วประเทศไทยด้วยพิกัดจริง แล้วให้ตัวช่วยจัดลำดับทริปให้
+        </p>
 
-    <section class="temples-section">
-      <h2>{templeHubContent.sectionTitle}</h2>
-      <div class="temples-feature-grid" aria-label={templeHubContent.cardsLabel}>
-        {templeHubContent.cards.map((card) => (
-          <a class={`temples-feature-card${card.tone === "primary" ? " is-primary" : ""}`} href={card.href}>
-            <span>{card.kicker}</span>
+        <form class="temple-hub-v2-search" action="/temples/sacred/" method="get" role="search">
+          <label class="sr-only" for="temple-hub-search">ค้นหาวัด จังหวัด หรือพรที่อยากขอ</label>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
+          </svg>
+          <input id="temple-hub-search" type="search" name="name" placeholder="ค้นหาวัด จังหวัด หรือพรที่อยากขอ" autocomplete="off" />
+          <button type="submit">ค้นหา</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="temple-hub-v2-section temple-hub-v2-collections" id="collections" aria-labelledby="temple-collections-title">
+      <div class="temple-hub-v2-section-head">
+        <span>๐๑</span>
+        <div>
+          <p>เลือกแนวทาง</p>
+          <h2 id="temple-collections-title">สามสาย สามบุคลิก</h2>
+        </div>
+      </div>
+
+      <div class="temple-hub-v2-card-grid" aria-label={templeHubContent.cardsLabel}>
+        {collectionCards.map((card) => (
+          <a class={`temple-hub-v2-card temple-hub-v2-card--${card.variant}`} href={card.href}>
+            {card.variant === "popular" && <span class="temple-hub-v2-watermark" aria-hidden="true">๙</span>}
+            <span class="temple-hub-v2-card-kicker">{card.kicker}</span>
             <strong>{card.title}</strong>
             <p>{card.description}</p>
+            <small>{card.count}</small>
+            <span class="temple-hub-v2-card-link">{card.linkLabel} →</span>
           </a>
         ))}
       </div>
+    </section>
+
+    <section class="temple-hub-v2-section temple-hub-v2-tools" aria-label="ตัวช่วยวัดดังเสริมมงคล">
+      <a class="temple-hub-v2-tool-card temple-hub-v2-tool-card--planner" href="/temples/planner/">
+        <div>
+          <span>Planner · ตัวช่วย</span>
+          <strong>วางแผนไหว้พระอัตโนมัติ</strong>
+          <p>เลือก ๓ / ๕ / ๙ แห่ง แล้วให้ระบบจัดลำดับเส้นทางที่เดินทางต่อเนื่องและใช้เวลาน้อยที่สุด</p>
+        </div>
+        <b>เริ่มวางแผน →</b>
+      </a>
+      <a class="temple-hub-v2-tool-card temple-hub-v2-tool-card--database" href="/temples/thailand/">
+        <div>
+          <span>Database · ทั่วไทย</span>
+          <strong>ค้นหาวัดทั่วประเทศไทย</strong>
+          <p>{formatThaiNumber(thailandTempleCount)} วัด ค้นหาตามภาค จังหวัด อำเภอ ตำบล พร้อมพิกัดสำหรับนำทาง</p>
+        </div>
+        <b>เปิดฐานข้อมูล →</b>
+      </a>
+    </section>
+
+    <section class="temple-hub-v2-section temple-hub-v2-intents" id="intent" aria-labelledby="temple-intent-title">
+      <div class="temple-hub-v2-section-head">
+        <span>๐๒</span>
+        <div>
+          <p>เริ่มจากความตั้งใจ</p>
+          <h2 id="temple-intent-title">อยากเสริมเรื่องไหน</h2>
+        </div>
+      </div>
+
+      <div class="temple-hub-v2-intent-list" aria-label="เลือกตามความตั้งใจ">
+        {intentLinks.map((item) => (
+          <a href={item.href}>
+            <span>{item.no}</span>
+            {item.label}
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <aside class="temple-hub-v2-confidence" aria-label="ข้อมูลประกอบการเดินทาง">
+      <div>
+        <p>ข้อมูลตรงไปตรงมา</p>
+        <strong>บอกตรงเมื่อบางข้อมูลควรตรวจสอบ</strong>
+        <span>ทุกสถานที่มีระดับความมั่นใจของข้อมูลกำกับ เพื่อให้วางแผนไหว้พระได้อย่างสบายใจและเคารพสถานที่</span>
+      </div>
+      <ul>
+        <li><span class="is-high"></span>ข้อมูลมั่นใจสูง</li>
+        <li><span class="is-medium"></span>ปานกลาง</li>
+        <li><span class="is-check"></span>ควรตรวจสอบก่อนไป</li>
+      </ul>
+    </aside>
+
+    <section class="temple-hub-v2-supporting" id="supporting-tools" aria-label="เครื่องมือเสริม">
+      <p>เครื่องมือเสริม</p>
+      {supportingLinks.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
     </section>
   </main>
 </BaseLayout>

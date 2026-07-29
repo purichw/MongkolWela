@@ -60,7 +60,7 @@ const {
   structuredData = [],
 } = Astro.props as Props;
 
-const assetVersion = "20260719-04";
+const assetVersion = "20260729-05";
 const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
 const pagePath = canonicalPath || Astro.url.pathname;
 const pageUrl = canonicalUrl(pagePath);
@@ -126,7 +126,7 @@ const jsonLd = toJsonLdGraph([
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/site.webmanifest" />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&family=Prompt:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href={versionedAsset("/styles.css")} />

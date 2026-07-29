@@ -10,6 +10,7 @@ const revealSelectors = [
   ".home-sample-plan",
   ".home-collection-heading",
   ".home-collection-card",
+  ".home-database-panel",
   ".home-guide-media",
   ".home-guide-copy",
   ".learn-strip > *",
@@ -82,6 +83,16 @@ function setupHomeReveals() {
     });
   };
 
+  let revealTicking = false;
+  const requestRevealVisibleTargets = () => {
+    if (revealTicking) return;
+    revealTicking = true;
+    window.requestAnimationFrame(() => {
+      revealTicking = false;
+      revealVisibleTargets();
+    });
+  };
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
@@ -95,8 +106,11 @@ function setupHomeReveals() {
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(revealVisibleTargets);
   });
+  window.setTimeout(revealVisibleTargets, 350);
   window.addEventListener("load", revealVisibleTargets, { once: true });
   window.addEventListener("pageshow", revealVisibleTargets);
+  window.addEventListener("scroll", requestRevealVisibleTargets, { passive: true });
+  window.addEventListener("resize", requestRevealVisibleTargets);
 }
 
 function setupHomeScrollMotion() {

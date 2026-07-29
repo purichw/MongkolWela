@@ -37,20 +37,28 @@ function initializeTemplePlanner(planner, payload) {
   planner._plannerState = { state, elements };
   initializeSmoothFilterAccordions(planner);
   initializePlannerHelp(planner);
-  restoreState(state, elements);
+  const restored = restoreState(state, elements);
+  applyPlannerSearchParams(state, elements);
+  applyPlannerDefaults(state, elements, restored);
   enforcePlannerDateTimeBounds(elements, { snap: true });
   applyPinnedStart(state, elements);
   bindControls(state, elements);
   synchronizeFilterOptions(state, elements, "restore");
+  syncPlannerAreaHint(elements);
+  syncOriginTextFromPinnedStart(state, elements);
   updateStartWarning(state, elements);
   state.pickerContext.criteria = getDraftCriteria(state, elements);
-  elements.pickSection.hidden = false;
+  elements.pickSection.hidden = true;
   renderSelected(state, elements);
   updateTargetCount(state, elements);
   renderPicker(state, elements);
-  updateTripSource(state, elements);
-  updateCriteriaNotice(state, elements);
-  elements.locationStatus.textContent = `พบ ${getFilteredItems(state, elements).length.toLocaleString("th-TH")} สถานที่ตามโจทย์ด้านบน`;
+  if (state.plan.length) {
+    renderPlan(state, elements, { scroll: false });
+  } else {
+    updateTripSource(state, elements);
+    updateCriteriaNotice(state, elements);
+  }
+  elements.locationStatus.textContent = "";
 }
 
 function collectElements(planner) {
@@ -65,6 +73,10 @@ function collectElements(planner) {
     provinceSummary: planner.querySelector("[data-temple-province-summary]"),
     purposeTags: [...planner.querySelectorAll("[data-planner-purpose-tag]")],
     purposeSummary: planner.querySelector("[data-temple-purpose-summary]"),
+    area: planner.querySelector("[data-planner-area]"),
+    areaHint: planner.querySelector("[data-planner-area-hint-display]"),
+    originText: planner.querySelector("[data-planner-origin-text]"),
+    defaultPurpose: planner.dataset.plannerDefaultPurpose || "",
     start: planner.querySelector("[data-planner-start]"),
     radius: planner.querySelector("[data-planner-radius]"),
     startWarning: planner.querySelector("[data-planner-start-warning]"),
@@ -119,6 +131,74 @@ function collectElements(planner) {
     dialogConfirm: planner.querySelector("[data-planner-dialog-confirm]"),
     dialogCloseButtons: [...planner.querySelectorAll("[data-planner-dialog-close], [data-planner-dialog-cancel]")],
   };
+}
+
+function applyPlannerDefaults(state, elements, restored = {}) {
+  const hasSavedArea = Boolean(restored.region || restored.regions?.length || restored.province || restored.provinces?.length);
+  if (elements.area) {
+    if (hasSavedArea) syncAreaControlFromState(state, elements);
+    else applyAreaFilterFromControl(state, elements);
+    syncPlannerAreaHint(elements);
+  }
+
+  const hasSavedPurpose = Boolean(restored.purpose || restored.purposes?.length);
+  if (!hasSavedPurpose && !state.activePurposes.size && elements.defaultPurpose) {
+    state.activePurposes.add(elements.defaultPurpose);
+  }
+}
+
+function parsePlannerAreaValue(value = "") {
+  if (!value) return { regions: [], provinces: [] };
+  const [type, raw = ""] = String(value).split(":");
+  const values = raw.split("|").map((item) => item.trim()).filter(Boolean);
+  if (type === "region") return { regions: values, provinces: [] };
+  if (type === "province" || type === "provinces") return { regions: [], provinces: values };
+  return { regions: [], provinces: [] };
+}
+
+function applyAreaFilterFromControl(state, elements) {
+  if (!elements.area) return;
+  const { regions, provinces } = parsePlannerAreaValue(elements.area.value);
+  state.activeRegions = new Set(regions);
+  state.activeProvinces = new Set(provinces);
+  syncPlannerAreaHint(elements);
+}
+
+function syncAreaControlFromState(state, elements) {
+  if (!elements.area) return;
+  const regionKey = [...state.activeRegions].sort().join("|");
+  const provinceKey = [...state.activeProvinces].sort().join("|");
+  const match = [...elements.area.options].find((option) => {
+    const parsed = parsePlannerAreaValue(option.value);
+    return parsed.regions.sort().join("|") === regionKey && parsed.provinces.sort().join("|") === provinceKey;
+  });
+  elements.area.value = match?.value || "";
+  syncPlannerAreaHint(elements);
+}
+
+function syncPlannerAreaHint(elements) {
+  if (!elements.area || !elements.areaHint) return;
+  const selected = elements.area.selectedOptions?.[0];
+  elements.areaHint.textContent = selected?.dataset.plannerAreaHint || selected?.getAttribute("data-planner-area-hint") || "เลือกจังหวัดหรือย่านที่จะเดินทาง";
+}
+
+function syncOriginTextFromPinnedStart(state, elements) {
+  if (!elements.originText) return;
+  const pinnedStart = getPinnedStartItem(state, elements);
+  if (pinnedStart && !elements.originText.value) elements.originText.value = pinnedStart.name;
+}
+
+function syncPinnedStartFromOriginText(state, elements) {
+  if (!elements.originText || !elements.start) return;
+  const query = normalize(elements.originText.value);
+  const match = query
+    ? state.items.find((item) => normalize(item.name) === query)
+      || state.items.find((item) => normalize(item.name).includes(query) || query.includes(normalize(item.name)))
+    : null;
+  elements.start.value = match?.id || "";
+  state.currentLocation = null;
+  applyPinnedStart(state, elements);
+  updateStartWarning(state, elements);
 }
 
 function bindControls(state, elements) {
@@ -184,6 +264,17 @@ function bindControls(state, elements) {
       }
       applyPlannerFilterChange(state, elements);
     });
+  });
+
+  elements.area?.addEventListener("change", () => {
+    applyAreaFilterFromControl(state, elements);
+    applyPlannerFilterChange(state, elements);
+  });
+
+  elements.originText?.addEventListener("input", () => {
+    syncPinnedStartFromOriginText(state, elements);
+    updateCriteriaNotice(state, elements);
+    persistState(state, elements);
   });
 
   [elements.budget, elements.startDate, elements.startTime, elements.radius].forEach((control) => {
@@ -816,7 +907,8 @@ function enforcePlannerDateTimeBounds(elements, options = {}) {
   }
 
   if (!elements.startTime.value) elements.startTime.value = "09:00";
-  if (elements.startDate.value === now.date) {
+  const shouldEnforceTimeMinimum = !elements.startDate.closest("[hidden]") && elements.startDate.value === now.date;
+  if (shouldEnforceTimeMinimum) {
     elements.startTime.min = now.time;
     if (snap && parseTime(elements.startTime.value) < parseTime(now.time)) {
       elements.startTime.value = now.time;
@@ -911,6 +1003,8 @@ function applyCriteriaToControls(state, elements, criteria) {
   state.currentLocation = criteria.currentLocation ? { ...criteria.currentLocation } : null;
   state.nearbyMode = Boolean(criteria.nearbyMode && state.currentLocation);
   state.pinnedStartId = elements.start?.value || "";
+  syncAreaControlFromState(state, elements);
+  syncOriginTextFromPinnedStart(state, elements);
 }
 
 function updateCriteriaNotice(state, elements) {
@@ -1160,12 +1254,19 @@ function updateFilterSummary(node, selectedCount) {
 
 function resetSearchFilters(state, elements) {
   const hasPlan = hasVisiblePlan(state, elements);
-  state.activeRegions.clear();
-  state.activeProvinces.clear();
+  if (elements.area) {
+    elements.area.value = elements.area.dataset.plannerAreaDefault || "province:กรุงเทพมหานคร";
+    applyAreaFilterFromControl(state, elements);
+  } else {
+    state.activeRegions.clear();
+    state.activeProvinces.clear();
+  }
   state.activePurposes.clear();
+  if (elements.defaultPurpose) state.activePurposes.add(elements.defaultPurpose);
   elements.search.value = "";
   elements.radius.value = "100";
   elements.start.value = "";
+  if (elements.originText) elements.originText.value = "";
   state.currentLocation = null;
   state.nearbyMode = false;
   resetPlannerVisibleCount(state);
@@ -2018,6 +2119,7 @@ function persistState(state, elements) {
         provinces: [...state.activeProvinces],
         purposes: [...state.activePurposes],
         start: elements.start.value,
+        originText: elements.originText?.value || "",
         tripCriteria: state.tripCriteria,
       }),
     );
@@ -2036,11 +2138,56 @@ function restoreState(state, elements) {
     (saved.regions || (saved.region ? [saved.region] : [])).forEach((region) => state.activeRegions.add(region));
     (saved.purposes || (saved.purpose ? [saved.purpose] : [])).forEach((purpose) => state.activePurposes.add(purpose));
     if (saved.start && state.itemById.has(saved.start)) elements.start.value = saved.start;
+    if (saved.originText && elements.originText) elements.originText.value = saved.originText;
     (saved.provinces || (saved.province ? [saved.province] : [])).forEach((province) => state.activeProvinces.add(province));
     state.selected = (saved.selected || []).filter((id) => state.itemById.has(id)).slice(0, getTargetCount(elements));
     state.plan = (saved.plan || []).map((id) => state.itemById.get(id)).filter(Boolean);
     if (saved.tripCriteria) state.tripCriteria = saved.tripCriteria;
+    return saved;
+  } catch {
+    return {};
+  }
+}
+
+function applyPlannerSearchParams(state, elements) {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const startQuery = params.get("start") || params.get("temple") || "";
+    const provinceQuery = params.get("province") || "";
+    const searchQuery = params.get("name") || params.get("q") || "";
+    if (!startQuery && !searchQuery) return;
+
+    const matchedStart = startQuery ? findPlannerItemByQuery(state, startQuery, provinceQuery) : null;
+    if (matchedStart && elements.start) {
+      elements.start.value = matchedStart.id;
+      if (elements.originText) elements.originText.value = matchedStart.name;
+      state.selected = [matchedStart.id, ...state.selected.filter((id) => id !== matchedStart.id)].slice(0, getTargetCount(elements));
+      state.plan = [];
+      state.tripCriteria = null;
+    }
+
+    if (elements.search) elements.search.value = searchQuery || startQuery;
+    state.pickerContext = createPickerContext("browse", { mode: "recommended" });
   } catch {}
+}
+
+function findPlannerItemByQuery(state, name, province = "") {
+  const normalizedName = normalizePlannerLookup(name);
+  const normalizedProvince = normalizePlannerLookup(province);
+  if (!normalizedName) return null;
+
+  return state.items.find((item) => {
+    const nameMatches = normalizePlannerLookup(item.name) === normalizedName;
+    const provinceMatches = !normalizedProvince || normalizePlannerLookup(item.province) === normalizedProvince;
+    return nameMatches && provinceMatches;
+  }) || state.items.find((item) => normalizePlannerLookup(item.name) === normalizedName) || null;
+}
+
+function normalizePlannerLookup(value) {
+  return String(value || "")
+    .normalize("NFC")
+    .replace(/\s+/g, "")
+    .toLocaleLowerCase("th");
 }
 
 function parseTime(value) {

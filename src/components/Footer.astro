@@ -19,6 +19,10 @@ const pages = config.pages as Record<string, PageConfig>;
 const pageConfig = pages[page] || pages.home;
 const isPopularDirectory = page === "templesPopular";
 const isHomePage = page === "home";
+const isTempleHubPage = page === "temples";
+const isTemplePlannerPage = page === "templesPlanner";
+const isTempleCollectionPage = ["templesPopular", "templesSacred", "templesMu"].includes(page);
+const isTempleV2Page = isTempleHubPage || isTempleCollectionPage || isTemplePlannerPage;
 
 function resolveHref(href = "") {
   if (!href) return "/";
@@ -37,7 +41,7 @@ const footerLinks = pageConfig.footerLinks || [
 ];
 ---
 
-{isPopularDirectory ? (
+{isPopularDirectory && !isTempleCollectionPage ? (
   <footer class="site-footer site-footer--popular-directory" id="consult">
     <div class="site-footer-popular-brand">
       <span aria-hidden="true">๙</span>
@@ -68,6 +72,30 @@ const footerLinks = pageConfig.footerLinks || [
       </nav>
     </div>
     <p class="credits">{config.footer.imageCredits}</p>
+  </footer>
+) : isTempleV2Page ? (
+  <footer class="site-footer site-footer--temple-hub-v2" id="consult">
+    <div class="site-footer-temple-hub-grid">
+      <div class="site-footer-temple-hub-brand">
+        <span aria-hidden="true">๙</span>
+        <strong>{config.footer.title}</strong>
+        <p>คู่มือเดินทางสายมงคลที่อบอุ่น น่าเชื่อถือ และพาคุณจากความตั้งใจไปสู่สถานที่จริงได้เร็วที่สุด</p>
+      </div>
+      <nav aria-label="เส้นทางวัด">
+        <strong>เส้นทางวัด</strong>
+        <a href="/temples/planner/">วางแผนไหว้พระ</a>
+        <a href="/temples/popular/">สายไหว้พระ ๙ วัด</a>
+        <a href="/temples/sacred/">วัดศักดิ์สิทธิ์</a>
+        <a href="/temples/mu/">สายมู</a>
+      </nav>
+      <nav aria-label="เครื่องมือ">
+        <strong>เครื่องมือ</strong>
+        <a href="/calendar/">ปฏิทินวันพระ</a>
+        <a href="/temples/thailand/">วัดทั่วประเทศไทย</a>
+        <a href="#consult">ติดต่อมงคลเวลา</a>
+      </nav>
+    </div>
+    <p class="credits">ข้อมูลวัดอ้างอิงจากทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ · ควรตรวจสอบเวลาเปิด-ปิดก่อนเดินทาง</p>
   </footer>
 ) : (
   <footer class="site-footer" id="consult">

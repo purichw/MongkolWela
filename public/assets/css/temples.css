@@ -1072,6 +1072,2203 @@
   }
 }
 
+.temples-hub-v2-page {
+  padding-bottom: 0;
+}
+
+body[data-cms-page="temples"] {
+  --temple-hub-container: min(1180px, calc(100% - 48px));
+  --temple-hub-card: #fffdf7;
+  --temple-hub-paper: #fbf6eb;
+  --temple-hub-paper-deep: #f7edd6;
+  --temple-hub-dark: #1a0f0a;
+  --temple-hub-line: rgba(194, 141, 53, 0.34);
+  --temple-hub-shadow: 0 20px 44px rgba(49, 34, 23, 0.12);
+
+  color: #251d1a;
+  background: linear-gradient(180deg, var(--temple-hub-paper) 0%, var(--temple-hub-paper-deep) 100%);
+  font-family: "IBM Plex Sans Thai", var(--font-thai);
+}
+
+body[data-cms-page="temples"] .site-header {
+  background: rgba(251, 246, 235, 0.94);
+  border-bottom: 1px solid rgba(194, 141, 53, 0.32);
+  box-shadow: none;
+  backdrop-filter: blur(18px);
+}
+
+body[data-cms-page="temples"] .topbar {
+  justify-content: space-between;
+  gap: 22px;
+  min-height: 32px;
+  padding: 6px 26px;
+  color: #f0e2c4;
+  background: #123d34;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+body[data-cms-page="temples"] .topbar a:first-child {
+  margin-right: auto;
+}
+
+body[data-cms-page="temples"] .topbar a,
+body[data-cms-page="temples"] .topbar span {
+  color: inherit;
+  white-space: nowrap;
+}
+
+body[data-cms-page="temples"] .topbar a:not(:first-child) {
+  color: #ead3a0;
+}
+
+body[data-cms-page="temples"] .navbar--temple-hub-v2 {
+  grid-template-columns: minmax(190px, auto) minmax(0, 1fr) auto;
+  gap: 18px;
+  min-height: 74px;
+  padding: 0 26px;
+}
+
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .brand {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 178px;
+}
+
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .brand-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .brand strong {
+  color: #251d1a;
+  font-size: 1.14rem;
+  font-weight: 800;
+}
+
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .brand small {
+  color: #8a7355;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+}
+
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .nav-menu {
+  grid-column: 2;
+  grid-row: 1;
+  justify-content: flex-start;
+  gap: 4px;
+}
+
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .nav-actions {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+}
+
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .nav-item > a,
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .plain-link {
+  min-height: 42px;
+  padding: 0 12px;
+  color: #4a3d33;
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .nav-item > a.is-current,
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .nav-item > a:hover,
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .nav-item > a:focus-visible,
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .plain-link:hover,
+body[data-cms-page="temples"] .navbar--temple-hub-v2 .plain-link:focus-visible {
+  color: #8e2d24;
+}
+
+.nav-cta-temple-hub {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 18px;
+  color: #fffaf0;
+  background: #8e2d24;
+  border-radius: 999px;
+  box-shadow: 0 12px 28px rgba(142, 45, 36, 0.2);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.nav-cta-temple-hub:hover,
+.nav-cta-temple-hub:focus-visible {
+  color: #fffaf0;
+  background: #591d19;
+}
+
+.temple-hub-v2 {
+  background: linear-gradient(180deg, #fbf6eb 0%, #f7edd6 100%);
+}
+
+.temple-hub-v2-hero {
+  position: relative;
+  min-height: 432px;
+  overflow: hidden;
+  color: #fff8e8;
+  background: #1a0f0a;
+  isolation: isolate;
+}
+
+.temple-hub-v2-hero-image,
+.temple-hub-v2-hero-shade {
+  position: absolute;
+  inset: 0;
+}
+
+.temple-hub-v2-hero-image {
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 58% center;
+  filter: saturate(1.04) contrast(1.04);
+  transform: scale(1.01);
+}
+
+.temple-hub-v2-hero-shade {
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(20, 10, 6, 0.92), rgba(35, 16, 8, 0.74) 46%, rgba(18, 61, 52, 0.34)),
+    linear-gradient(180deg, rgba(24, 12, 7, 0.18), rgba(24, 12, 7, 0.22));
+}
+
+.temple-hub-v2-hero-content {
+  width: var(--temple-hub-container);
+  margin: 0 auto;
+  padding: 46px 0 60px;
+}
+
+.temple-hub-v2-breadcrumb {
+  margin-bottom: 18px;
+  color: rgba(255, 248, 232, 0.72);
+  font-size: 0.82rem;
+}
+
+.temple-hub-v2-breadcrumb a {
+  color: #ead3a0;
+}
+
+.temple-hub-v2-hero .section-kicker {
+  margin: 0 0 10px;
+  color: #f4cf78;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.temple-hub-v2-hero h1 {
+  max-width: 780px;
+  margin: 0;
+  color: #fff8e8;
+  font-size: clamp(3.5rem, 5.8vw, 4.9rem);
+  font-weight: 900;
+  line-height: 1.02;
+  text-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+}
+
+.temple-hub-v2-hero-content > p:last-of-type {
+  max-width: 680px;
+  margin: 18px 0 0;
+  color: rgba(255, 241, 207, 0.92);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.78;
+}
+
+.temple-hub-v2-search {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  width: min(600px, 100%);
+  min-height: 62px;
+  margin-top: 30px;
+  padding: 8px 8px 8px 18px;
+  color: #251d1a;
+  background: rgba(255, 251, 240, 0.98);
+  border: 1px solid rgba(255, 224, 148, 0.7);
+  border-radius: 12px;
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.34);
+}
+
+.temple-hub-v2-search svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.temple-hub-v2-search input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  color: #251d1a;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.temple-hub-v2-search input::placeholder {
+  color: #8a7a6f;
+}
+
+.temple-hub-v2-search button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 22px;
+  color: #fffaf0;
+  cursor: pointer;
+  background: #8e2d24;
+  border: 0;
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+.temple-hub-v2-search button:hover,
+.temple-hub-v2-search button:focus-visible {
+  background: #591d19;
+}
+
+.temple-hub-v2-section {
+  width: var(--temple-hub-container);
+  margin: 0 auto;
+}
+
+.temple-hub-v2-collections {
+  padding: 78px 0 24px;
+}
+
+.temple-hub-v2-section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 34px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(194, 141, 53, 0.4);
+}
+
+.temple-hub-v2-section-head > span {
+  color: #8e2d24;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.temple-hub-v2-section-head p {
+  margin: 0 0 4px;
+  color: #8a7355;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.temple-hub-v2-section-head h2 {
+  margin: 0;
+  color: #251d1a;
+  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.temple-hub-v2-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.temple-hub-v2-card {
+  position: relative;
+  display: flex;
+  min-height: 320px;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 26px;
+  color: #251d1a;
+  background: #fffdf7;
+  border: 1px solid rgba(194, 141, 53, 0.3);
+  border-radius: 16px;
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.temple-hub-v2-card:hover,
+.temple-hub-v2-card:focus-visible {
+  color: #251d1a;
+  border-color: rgba(194, 141, 53, 0.48);
+  box-shadow: var(--temple-hub-shadow);
+  transform: translateY(-3px);
+}
+
+.temple-hub-v2-card--popular {
+  color: #fff2d0;
+  background: linear-gradient(150deg, #7a2620, #8e2d24 55%, #591d19);
+  border-color: transparent;
+  box-shadow: 0 20px 44px rgba(89, 29, 25, 0.28);
+}
+
+.temple-hub-v2-card--popular:hover,
+.temple-hub-v2-card--popular:focus-visible {
+  color: #fff2d0;
+}
+
+.temple-hub-v2-card--mu {
+  color: #5a3410;
+  background: linear-gradient(160deg, #fff6ea, #f3e7cf);
+  border-color: rgba(176, 105, 28, 0.3);
+}
+
+.temple-hub-v2-watermark {
+  position: absolute;
+  right: 8px;
+  bottom: -30px;
+  color: rgba(255, 236, 184, 0.12);
+  font-size: 12rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.temple-hub-v2-card-kicker {
+  position: relative;
+  z-index: 1;
+  color: #1c6a4f;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.temple-hub-v2-card--popular .temple-hub-v2-card-kicker,
+.temple-hub-v2-card--popular .temple-hub-v2-card-link {
+  color: #f4cf78;
+}
+
+.temple-hub-v2-card--mu .temple-hub-v2-card-kicker,
+.temple-hub-v2-card--mu .temple-hub-v2-card-link {
+  color: #b0691c;
+}
+
+.temple-hub-v2-card strong {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin: 16px 0 10px;
+  color: inherit;
+  font-size: 1.55rem;
+  font-weight: 900;
+  line-height: 1.22;
+}
+
+.temple-hub-v2-card p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #5d514a;
+  font-size: 0.96rem;
+  font-weight: 600;
+  line-height: 1.68;
+}
+
+.temple-hub-v2-card--popular p {
+  color: #f0d5b8;
+}
+
+.temple-hub-v2-card--mu p {
+  color: #5d4a34;
+}
+
+.temple-hub-v2-card small {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding-top: 20px;
+  color: #8a7355;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.temple-hub-v2-card--popular small {
+  color: #ffe2a7;
+}
+
+.temple-hub-v2-card-link {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  color: #1c6a4f;
+  font-weight: 900;
+}
+
+.temple-hub-v2-tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 44px 0 24px;
+}
+
+.temple-hub-v2-tool-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  min-height: 188px;
+  padding: 28px;
+  border-radius: 16px;
+  text-decoration: none;
+}
+
+.temple-hub-v2-tool-card div {
+  flex: 1 1 220px;
+}
+
+.temple-hub-v2-tool-card span,
+.temple-hub-v2-tool-card b {
+  font-weight: 900;
+}
+
+.temple-hub-v2-tool-card span {
+  display: block;
+  color: #c28d35;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.temple-hub-v2-tool-card strong {
+  display: block;
+  margin: 12px 0 8px;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.temple-hub-v2-tool-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.68;
+}
+
+.temple-hub-v2-tool-card b {
+  display: inline-flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+}
+
+.temple-hub-v2-tool-card--planner {
+  color: #fff7e6;
+  background: radial-gradient(circle at 15% 0%, #2a1710, #1a0f0a 65%);
+}
+
+.temple-hub-v2-tool-card--planner:hover,
+.temple-hub-v2-tool-card--planner:focus-visible {
+  color: #fff7e6;
+}
+
+.temple-hub-v2-tool-card--planner strong {
+  color: #fff5df;
+}
+
+.temple-hub-v2-tool-card--planner p {
+  color: #e6d3ab;
+}
+
+.temple-hub-v2-tool-card--planner b {
+  color: #3a1710;
+  background: linear-gradient(135deg, #f9df97, #e7b64a);
+}
+
+.temple-hub-v2-tool-card--database {
+  color: #251d1a;
+  background: #fffdf7;
+  border: 1px solid rgba(194, 141, 53, 0.3);
+}
+
+.temple-hub-v2-tool-card--database span {
+  color: #276a52;
+}
+
+.temple-hub-v2-tool-card--database p {
+  color: #5d514a;
+}
+
+.temple-hub-v2-tool-card--database b {
+  color: #fffaf0;
+  background: #123d34;
+}
+
+.temple-hub-v2-intents {
+  padding: 44px 0 24px;
+}
+
+.temple-hub-v2-intent-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.temple-hub-v2-intent-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 12px 18px;
+  color: #4a3d33;
+  background: #fffdf7;
+  border: 1px solid rgba(194, 141, 53, 0.34);
+  border-radius: 999px;
+  box-shadow: 0 10px 20px rgba(49, 34, 23, 0.04);
+  font-weight: 900;
+}
+
+.temple-hub-v2-intent-list a:hover,
+.temple-hub-v2-intent-list a:focus-visible {
+  color: #8e2d24;
+  background: #fbeecd;
+}
+
+.temple-hub-v2-intent-list span {
+  color: #276a52;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.temple-hub-v2-confidence {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 22px;
+  width: var(--temple-hub-container);
+  margin: 44px auto 0;
+  padding: 30px;
+  color: #f6e6c6;
+  background: #1c1512;
+  border-radius: 18px;
+}
+
+.temple-hub-v2-confidence > div {
+  flex: 1 1 300px;
+}
+
+.temple-hub-v2-confidence p {
+  margin: 0 0 6px;
+  color: #c28d35;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.temple-hub-v2-confidence strong {
+  display: block;
+  color: #fff5df;
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.temple-hub-v2-confidence div > span {
+  display: block;
+  margin-top: 10px;
+  color: #e6d3ab;
+  font-weight: 600;
+}
+
+.temple-hub-v2-confidence ul {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.temple-hub-v2-confidence li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #e6d3ab;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.temple-hub-v2-confidence li span {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.temple-hub-v2-confidence .is-high {
+  background: #276a52;
+}
+
+.temple-hub-v2-confidence .is-medium {
+  background: #c28d35;
+}
+
+.temple-hub-v2-confidence .is-check {
+  background: #9b8578;
+}
+
+.temple-hub-v2-supporting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  width: var(--temple-hub-container);
+  margin: 40px auto 0;
+  padding: 22px 26px;
+  background: #fffdf7;
+  border: 1px dashed rgba(194, 141, 53, 0.5);
+  border-radius: 14px;
+}
+
+.temple-hub-v2-supporting p {
+  margin: 0 14px 0 0;
+  color: #8a7355;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.temple-hub-v2-supporting a {
+  color: #5d514a;
+  border-bottom: 1px solid rgba(194, 141, 53, 0.5);
+  font-weight: 700;
+}
+
+.temple-hub-v2-supporting a:hover,
+.temple-hub-v2-supporting a:focus-visible {
+  color: #8e2d24;
+}
+
+body[data-cms-page="temples"] .site-footer--temple-hub-v2 {
+  width: 100%;
+  max-width: none;
+  margin: 72px 0 0;
+  color: #e6d3ab;
+  background: #1a0f0a;
+  border-top: 0;
+}
+
+.site-footer-temple-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  width: var(--temple-hub-container);
+  margin: 0 auto;
+  padding: 56px 0 28px;
+}
+
+.site-footer-temple-hub-brand span {
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  margin-right: 12px;
+  place-items: center;
+  color: #ead3a0;
+  background: radial-gradient(circle at 34% 28%, #c84f3c, #591d19);
+  border-radius: 12px;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.site-footer-temple-hub-brand strong {
+  color: #fff5df;
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.site-footer-temple-hub-brand p {
+  max-width: 340px;
+  margin: 16px 0 0;
+  color: #c9b48c;
+  font-weight: 600;
+}
+
+.site-footer--temple-hub-v2 nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.site-footer--temple-hub-v2 nav strong {
+  margin-bottom: 4px;
+  color: #c28d35;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.site-footer--temple-hub-v2 nav a {
+  color: #e6d3ab;
+  font-weight: 700;
+}
+
+.site-footer--temple-hub-v2 nav a:hover,
+.site-footer--temple-hub-v2 nav a:focus-visible {
+  color: #f4cf78;
+}
+
+.site-footer--temple-hub-v2 .credits {
+  width: var(--temple-hub-container);
+  max-width: none;
+  margin: 0 auto;
+  padding: 18px 0;
+  color: #8a7355;
+  border-top: 1px solid rgba(240, 196, 106, 0.2);
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 900px) {
+  .temple-hub-v2-card-grid,
+  .temple-hub-v2-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .temple-hub-v2-card {
+    min-height: 260px;
+  }
+}
+
+@media (max-width: 720px) {
+  body[data-cms-page="temples"] {
+    --temple-hub-container: min(100% - 32px, 1180px);
+  }
+
+  body[data-cms-page="temples"] .topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    justify-content: stretch;
+    min-height: 28px;
+    padding: 4px 16px;
+    gap: 10px;
+    overflow: hidden;
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+  }
+
+  body[data-cms-page="temples"] .topbar a:first-child {
+    min-width: 0;
+    margin-right: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  body[data-cms-page="temples"] .topbar span {
+    grid-column: auto;
+    order: initial;
+    color: inherit;
+  }
+
+  body[data-cms-page="temples"] .topbar a:last-child {
+    text-align: right;
+  }
+
+  body[data-cms-page="temples"] .navbar--temple-hub-v2 {
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 68px;
+    padding: 0 16px;
+  }
+
+  body[data-cms-page="temples"] .navbar--temple-hub-v2 .brand {
+    min-width: 0;
+    max-width: calc(100vw - 96px);
+  }
+
+  body[data-cms-page="temples"] .navbar--temple-hub-v2 .brand small,
+  body[data-cms-page="temples"] .navbar--temple-hub-v2 .nav-actions {
+    display: none;
+  }
+
+  body[data-cms-page="temples"] .navbar--temple-hub-v2 .nav-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 14px;
+    right: 14px;
+    display: none;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 0;
+    padding: 12px;
+    background: #fffaf0;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    max-height: calc(100vh - 140px);
+    overflow: auto;
+  }
+
+  body[data-cms-page="temples"] .navbar--temple-hub-v2 .nav-menu.is-open {
+    display: flex;
+  }
+
+  body[data-cms-page="temples"] .navbar--temple-hub-v2 .nav-item,
+  body[data-cms-page="temples"] .navbar--temple-hub-v2 .plain-link {
+    width: 100%;
+  }
+
+  body[data-cms-page="temples"] .navbar--temple-hub-v2 .nav-item > a,
+  body[data-cms-page="temples"] .navbar--temple-hub-v2 .plain-link {
+    justify-content: space-between;
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .temple-hub-v2-hero {
+    min-height: 415px;
+  }
+
+  .temple-hub-v2-hero-content {
+    padding: 40px 0 42px;
+  }
+
+  .temple-hub-v2-hero .section-kicker {
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+  }
+
+  .temple-hub-v2-hero h1 {
+    font-size: clamp(2.65rem, 13vw, 3.25rem);
+  }
+
+  .temple-hub-v2-hero-content > p:last-of-type {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .temple-hub-v2-search {
+    gap: 8px;
+    min-height: 58px;
+    margin-top: 24px;
+    padding: 7px 7px 7px 14px;
+  }
+
+  .temple-hub-v2-search input {
+    font-size: 0.9rem;
+  }
+
+  .temple-hub-v2-search button {
+    min-height: 42px;
+    padding: 0 16px;
+  }
+
+  .temple-hub-v2-collections {
+    padding-top: 56px;
+  }
+
+  .temple-hub-v2-section-head {
+    margin-bottom: 24px;
+  }
+
+  .temple-hub-v2-section-head h2 {
+    font-size: clamp(1.85rem, 10vw, 2.45rem);
+  }
+
+  .temple-hub-v2-card,
+  .temple-hub-v2-tool-card,
+  .temple-hub-v2-confidence {
+    border-radius: 14px;
+  }
+
+  .temple-hub-v2-card,
+  .temple-hub-v2-tool-card {
+    padding: 22px;
+  }
+
+  .temple-hub-v2-tool-card b {
+    width: 100%;
+  }
+
+  .temple-hub-v2-intent-list a {
+    width: 100%;
+  }
+
+  .temple-hub-v2-confidence {
+    padding: 24px;
+  }
+
+  .temple-hub-v2-confidence ul {
+    flex-basis: 100%;
+  }
+
+  .temple-hub-v2-supporting {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .temple-hub-v2-supporting p {
+    margin-right: 0;
+  }
+
+  .site-footer-temple-hub-grid {
+    grid-template-columns: 1fr;
+    padding: 42px 0 24px;
+  }
+}
+
+.temples-collection-v2-page {
+  --temple-hub-container: min(1180px, calc(100% - 48px));
+  --temple-hub-card: #fffdf7;
+  --temple-hub-paper: #fbf6eb;
+  --temple-hub-paper-deep: #f7edd6;
+  --temple-hub-dark: #1a0f0a;
+  --temple-hub-line: rgba(194, 141, 53, 0.34);
+  --temple-hub-shadow: 0 20px 44px rgba(49, 34, 23, 0.12);
+
+  padding-bottom: 0;
+  color: #251d1a;
+  background: linear-gradient(180deg, var(--temple-hub-paper) 0%, var(--temple-hub-paper-deep) 100%);
+  font-family: "IBM Plex Sans Thai", var(--font-thai);
+}
+
+body.temples-collection-v2-page .site-header {
+  background: rgba(251, 246, 235, 0.94);
+  border-bottom: 1px solid rgba(194, 141, 53, 0.32);
+  box-shadow: none;
+  backdrop-filter: blur(18px);
+}
+
+body.temples-collection-v2-page .topbar {
+  justify-content: space-between;
+  gap: 22px;
+  min-height: 32px;
+  padding: 6px 26px;
+  color: #f0e2c4;
+  background: #123d34;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+body.temples-collection-v2-page .topbar a:first-child {
+  margin-right: auto;
+}
+
+body.temples-collection-v2-page .topbar a,
+body.temples-collection-v2-page .topbar span {
+  color: inherit;
+  white-space: nowrap;
+}
+
+body.temples-collection-v2-page .topbar a:not(:first-child) {
+  color: #ead3a0;
+}
+
+body.temples-collection-v2-page .navbar--temple-hub-v2 {
+  grid-template-columns: minmax(190px, auto) minmax(0, 1fr) auto;
+  gap: 18px;
+  min-height: 74px;
+  padding: 0 26px;
+}
+
+body.temples-collection-v2-page .navbar--temple-hub-v2 .brand {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 178px;
+}
+
+body.temples-collection-v2-page .navbar--temple-hub-v2 .brand-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+body.temples-collection-v2-page .navbar--temple-hub-v2 .brand strong {
+  color: #251d1a;
+  font-size: 1.14rem;
+  font-weight: 800;
+}
+
+body.temples-collection-v2-page .navbar--temple-hub-v2 .brand small {
+  color: #8a7355;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+}
+
+body.temples-collection-v2-page .navbar--temple-hub-v2 .nav-menu {
+  grid-column: 2;
+  grid-row: 1;
+  justify-content: flex-start;
+  gap: 4px;
+}
+
+body.temples-collection-v2-page .navbar--temple-hub-v2 .nav-actions {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+}
+
+body.temples-collection-v2-page .navbar--temple-hub-v2 .nav-item > a,
+body.temples-collection-v2-page .navbar--temple-hub-v2 .plain-link {
+  min-height: 42px;
+  padding: 0 12px;
+  color: #4a3d33;
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+body.temples-collection-v2-page .navbar--temple-hub-v2 .nav-item > a.is-current,
+body.temples-collection-v2-page .navbar--temple-hub-v2 .nav-item > a:hover,
+body.temples-collection-v2-page .navbar--temple-hub-v2 .nav-item > a:focus-visible,
+body.temples-collection-v2-page .navbar--temple-hub-v2 .plain-link:hover,
+body.temples-collection-v2-page .navbar--temple-hub-v2 .plain-link:focus-visible {
+  color: var(--collection-accent, #8e2d24);
+}
+
+.temples-collection-v2 {
+  background: linear-gradient(180deg, #fbf6eb 0%, #f7edd6 100%);
+}
+
+.temple-collection-v2-hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff8e8;
+  background: var(--collection-hero-bg, radial-gradient(circle at 18% 0%, #7a2620, #3d130f 70%));
+  isolation: isolate;
+}
+
+.temple-collection-v2-hero::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  background:
+    radial-gradient(circle at 76% 16%, rgba(240, 196, 106, 0.12), transparent 34%),
+    linear-gradient(90deg, rgba(26, 15, 10, 0.36), rgba(18, 61, 52, 0.22)),
+    repeating-linear-gradient(90deg, rgba(255, 245, 223, 0.035) 0 1px, transparent 1px 96px);
+}
+
+.temple-collection-v2-hero__inner {
+  width: var(--temple-hub-container);
+  margin: 0 auto;
+  padding: 52px 0 64px;
+}
+
+.temple-collection-v2-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+  color: rgba(255, 248, 232, 0.72);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.temple-collection-v2-breadcrumb a {
+  color: #ead3a0;
+}
+
+.temple-collection-v2-tabs {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  padding: 5px;
+  background: rgba(36, 15, 10, 0.34);
+  border: 1px solid rgba(244, 207, 120, 0.34);
+  border-radius: 999px;
+}
+
+.temple-collection-v2-tabs a {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  color: #f4cf78;
+  border-radius: 999px;
+  font-weight: 900;
+}
+
+.temple-collection-v2-tabs a.is-active {
+  color: #3b1b0f;
+  background: linear-gradient(135deg, #f9df97, #e7b64a);
+}
+
+.temple-collection-v2-hero .section-kicker {
+  margin: 0 0 10px;
+  color: #f4cf78;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.temple-collection-v2-hero h1 {
+  max-width: 780px;
+  margin: 0;
+  color: #fff8e8;
+  font-size: clamp(3.3rem, 6.6vw, 5.15rem);
+  font-weight: 900;
+  line-height: 1.04;
+}
+
+.temple-collection-v2-hero__inner > p:not(.section-kicker) {
+  max-width: 720px;
+  margin: 18px 0 0;
+  color: rgba(255, 241, 207, 0.94);
+  font-size: 1.06rem;
+  font-weight: 700;
+  line-height: 1.75;
+}
+
+.temple-collection-v2-hero__inner .temple-collection-v2-total {
+  margin-top: 22px;
+  color: #f4cf78;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.temple-collection-v2-filter {
+  position: relative;
+  z-index: 2;
+  background: rgba(251, 246, 235, 0.96);
+  border-bottom: 1px solid rgba(194, 141, 53, 0.36);
+}
+
+.temple-collection-v2-filter__inner {
+  display: grid;
+  gap: 14px;
+  width: var(--temple-hub-container);
+  margin: 0 auto;
+  padding: 18px 0;
+}
+
+.temple-collection-v2-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin: 0;
+}
+
+.temple-collection-v2-search .temple-field {
+  display: grid;
+  gap: 7px;
+  color: #5d514a;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.temple-collection-v2-search .popular-temple-filter-input-shell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 14px;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.18);
+  border-radius: 10px;
+}
+
+.temple-collection-v2-search .popular-temple-filter-input-shell svg {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: #8a7355;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.2;
+}
+
+.temple-collection-v2-search input {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0;
+  color: #251d1a;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.temple-collection-v2-search input::placeholder {
+  color: #8a7a6f;
+}
+
+.temple-collection-v2-search .popular-temple-filter-input-shell:focus-within {
+  border-color: rgba(194, 141, 53, 0.72);
+  box-shadow: 0 0 0 3px rgba(194, 141, 53, 0.16);
+}
+
+.temple-collection-v2-search .popular-temple-filter-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+.temple-collection-v2-search .temple-search-button,
+.temple-collection-v2-search .temple-clear-button,
+.temple-collection-v2-search .temple-nearby-button {
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 10px;
+  box-shadow: none;
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.temple-collection-v2-search .temple-search-button {
+  color: #fffaf0;
+  background: var(--collection-accent, #8e2d24);
+  border-color: transparent;
+}
+
+.temple-collection-v2-search .temple-nearby-button {
+  color: #251d1a;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.18);
+}
+
+.temple-collection-v2-search .temple-nearby-button.is-active {
+  color: #fffaf0;
+  background: #123d34;
+}
+
+.temple-collection-v2-search .temple-clear-button {
+  color: #5d514a;
+  background: #f2e7cf;
+  border: 1px solid rgba(77, 56, 41, 0.14);
+}
+
+.temple-collection-v2-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.temple-collection-v2-filter-row .temple-filter-chips {
+  flex: 1 1 auto;
+  gap: 10px;
+}
+
+.temple-collection-v2-filter-row .popular-temple-region-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+}
+
+.temple-collection-v2-filter-row .popular-temple-region-filter > span {
+  color: #8a7355;
+  font-size: 0.84rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.temple-collection-v2-filter-row .popular-temple-region-tags,
+.temple-collection-v2-filter-row .popular-temple-province-tags,
+.temple-collection-v2-filter-row .popular-temple-purpose-tags {
+  gap: 8px;
+}
+
+.temple-collection-v2-filter-row .popular-temple-region-tags button,
+.temple-collection-v2-filter-row .popular-temple-province-tags button,
+.temple-collection-v2-filter-row .popular-temple-purpose-tags button {
+  min-height: 38px;
+  padding: 8px 15px;
+  color: #4a3d33;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.16);
+  box-shadow: 0 8px 18px rgba(49, 34, 23, 0.04);
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.temple-collection-v2-filter-row .popular-temple-region-tags button.is-active,
+.temple-collection-v2-filter-row .popular-temple-province-tags button.is-active,
+.temple-collection-v2-filter-row .popular-temple-purpose-tags button.is-active {
+  color: #fffaf0;
+  background: var(--collection-accent, #8e2d24);
+  border-color: var(--collection-accent, #8e2d24);
+}
+
+.temple-collection-v2-filter-row .temple-province-accordion,
+.temple-collection-v2-filter-row .temple-purpose-accordion {
+  flex-basis: 100%;
+  overflow: hidden;
+  margin-top: 0;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.14);
+  border-radius: 10px;
+}
+
+.temple-collection-v2-filter-row .temple-province-accordion summary,
+.temple-collection-v2-filter-row .temple-purpose-accordion summary {
+  min-height: 42px;
+  padding: 0 14px;
+  color: #4a3d33;
+  background: #fffdf7;
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.temple-collection-v2-filter-row .temple-province-accordion summary::after,
+.temple-collection-v2-filter-row .temple-purpose-accordion summary::after {
+  content: "⌄";
+  width: auto;
+  height: auto;
+  color: #8a7355;
+  border: 0;
+}
+
+.temple-collection-v2-filter-row .temple-province-accordion[open] summary::after,
+.temple-collection-v2-filter-row .temple-purpose-accordion[open] summary::after {
+  content: "⌃";
+}
+
+.temple-collection-v2-filter-row .temple-province-accordion summary small,
+.temple-collection-v2-filter-row .temple-purpose-accordion summary small {
+  color: #8a7355;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.temple-collection-v2-filter-row .temple-province-accordion .popular-temple-province-tags,
+.temple-collection-v2-filter-row .temple-purpose-accordion .popular-temple-purpose-tags {
+  padding: 0 14px 14px;
+}
+
+.temple-collection-v2-filter-planner {
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  color: #5a3410;
+  background: #f7e8c6;
+  border: 1px solid rgba(194, 141, 53, 0.44);
+  border-radius: 999px;
+  font-weight: 900;
+}
+
+.temple-collection-v2-filter-planner:hover,
+.temple-collection-v2-filter-planner:focus-visible {
+  color: #3a1710;
+  background: #f4cf78;
+}
+
+.temple-collection-v2-advanced-filter {
+  overflow: hidden;
+  background: rgba(255, 253, 247, 0.72);
+  border: 1px solid rgba(194, 141, 53, 0.2);
+  border-radius: 12px;
+}
+
+.temple-collection-v2-advanced-filter > summary {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 16px;
+  color: #5d514a;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 900;
+}
+
+.temple-collection-v2-advanced-filter > summary::-webkit-details-marker {
+  display: none;
+}
+
+.temple-collection-v2-advanced-filter > summary::after {
+  color: #8a7355;
+  content: "⌄";
+  font-weight: 900;
+}
+
+.temple-collection-v2-advanced-filter[open] > summary::after {
+  content: "⌃";
+}
+
+.temple-collection-v2-advanced-filter > summary small {
+  margin-left: auto;
+  color: #8a7355;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.temple-collection-v2-advanced-filter .temple-collection-v2-search {
+  padding: 14px 16px 0;
+}
+
+.temple-collection-v2-advanced-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 14px 16px 16px;
+}
+
+.temple-collection-v2-advanced-grid .temple-province-accordion,
+.temple-collection-v2-advanced-grid .temple-purpose-accordion {
+  overflow: hidden;
+  margin: 0;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.14);
+  border-radius: 10px;
+}
+
+.temple-collection-v2-advanced-grid .temple-province-accordion summary,
+.temple-collection-v2-advanced-grid .temple-purpose-accordion summary {
+  min-height: 42px;
+  padding: 0 14px;
+  color: #4a3d33;
+  background: #fffdf7;
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.temple-collection-v2-advanced-grid .temple-province-accordion summary::after,
+.temple-collection-v2-advanced-grid .temple-purpose-accordion summary::after {
+  content: "⌄";
+  width: auto;
+  height: auto;
+  color: #8a7355;
+  border: 0;
+}
+
+.temple-collection-v2-advanced-grid .temple-province-accordion[open] summary::after,
+.temple-collection-v2-advanced-grid .temple-purpose-accordion[open] summary::after {
+  content: "⌃";
+}
+
+.temple-collection-v2-advanced-grid .temple-province-accordion summary small,
+.temple-collection-v2-advanced-grid .temple-purpose-accordion summary small {
+  color: #8a7355;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.temple-collection-v2-advanced-grid .temple-province-accordion .popular-temple-province-tags,
+.temple-collection-v2-advanced-grid .temple-purpose-accordion .popular-temple-purpose-tags {
+  padding: 0 14px 14px;
+}
+
+.temple-nearby-status {
+  margin: 8px 0 0;
+  color: #8a7355;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.temple-collection-v2-results {
+  width: var(--temple-hub-container);
+  padding: 34px 0 0;
+  border-top: 0;
+}
+
+.temple-collection-v2-results::before,
+.temple-collection-v2-results .temples-popular-section::before {
+  display: none;
+}
+
+.temple-collection-v2-results-head {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.temple-collection-v2-results .popular-temple-count {
+  margin: 0;
+  color: #8a7355;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.temple-collection-v2-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.temple-collection-v2-card {
+  position: relative;
+  display: flex;
+  min-height: 362px;
+  flex-direction: column;
+  overflow: hidden;
+  color: #251d1a;
+  background: #fffdf7;
+  border: 1px solid rgba(77, 56, 41, 0.14);
+  border-radius: 12px;
+  box-shadow: 0 16px 34px rgba(49, 34, 23, 0.09);
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.temple-collection-v2-card[hidden] {
+  display: none;
+}
+
+.temple-collection-v2-card::after {
+  display: none;
+}
+
+.temple-collection-v2-card:hover,
+.temple-collection-v2-card:focus-within {
+  border-color: rgba(194, 141, 53, 0.42);
+  box-shadow: 0 22px 44px rgba(49, 34, 23, 0.14);
+  transform: translateY(-2px);
+}
+
+.temple-collection-v2-card figure {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+  margin: 0;
+  background: #f6e8c8;
+  border-radius: 0;
+}
+
+.temple-collection-v2-card figure::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: none;
+  place-items: center;
+  color: #a08b70;
+  content: "รอภาพจริง";
+  background: repeating-linear-gradient(45deg, #f3dfac 0 12px, #f8edcc 12px 24px);
+  font-weight: 800;
+}
+
+.temple-collection-v2-card.is-placeholder figure::before {
+  display: grid;
+}
+
+.temple-collection-v2-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: none;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.temple-collection-v2-card.is-placeholder img {
+  opacity: 0;
+}
+
+.temple-collection-v2-card:hover img,
+.temple-collection-v2-card:focus-within img {
+  filter: saturate(1.05) contrast(1.02);
+  transform: scale(1.025);
+}
+
+.temple-collection-v2-card figcaption {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  color: #fff3d6;
+  background: var(--collection-accent, #8e2d24);
+  border: 1px solid rgba(255, 236, 188, 0.35);
+  border-radius: 50%;
+  box-shadow: 0 8px 18px rgba(49, 34, 23, 0.2);
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.temple-collection-v2-confidence,
+.temple-collection-v2-card .popular-temple-distance {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 10px;
+  color: #fffaf0;
+  background: rgba(37, 29, 26, 0.68);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  backdrop-filter: blur(6px);
+}
+
+.temple-collection-v2-card .popular-temple-distance {
+  top: auto;
+  bottom: 12px;
+  background: rgba(18, 61, 52, 0.9);
+}
+
+.temple-collection-v2-confidence > span {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.temple-collection-v2-confidence.is-high > span,
+.temple-collection-v2-legend .is-high {
+  background: #276a52;
+}
+
+.temple-collection-v2-confidence.is-medium > span,
+.temple-collection-v2-legend .is-medium {
+  background: #c28d35;
+}
+
+.temple-collection-v2-confidence.is-check > span,
+.temple-collection-v2-legend .is-check {
+  background: #9b8578;
+}
+
+.temple-collection-v2-card .popular-temple-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0;
+  padding: 16px 18px 18px;
+}
+
+.temple-collection-v2-card .popular-temple-card-body > span {
+  margin: 0 0 8px;
+  padding: 0;
+  color: #276a52;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.temple-collection-v2-card h3 {
+  margin: 0 0 6px;
+  color: #251d1a;
+  font-size: 1.14rem;
+  font-weight: 900;
+  line-height: 1.28;
+}
+
+.temple-collection-v2-card p {
+  margin: 0;
+  color: #8a7355;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.temple-collection-v2-card strong {
+  align-self: flex-start;
+  margin-top: 12px;
+  padding: 5px 11px;
+  color: var(--collection-accent, #8e2d24);
+  background: rgba(142, 45, 36, 0.08);
+  border: 1px solid rgba(142, 45, 36, 0.18);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.temples-collection-v2-page--sacred .temple-collection-v2-card strong {
+  color: #1c6a4f;
+  background: rgba(28, 106, 79, 0.08);
+  border-color: rgba(28, 106, 79, 0.18);
+}
+
+.temples-collection-v2-page--mu .temple-collection-v2-card strong {
+  color: #b0691c;
+  background: rgba(176, 105, 28, 0.1);
+  border-color: rgba(176, 105, 28, 0.2);
+}
+
+.temple-collection-v2-card-meta,
+.temple-collection-v2-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.temple-collection-v2-card-meta {
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.temple-collection-v2-card-meta small,
+.temple-collection-v2-card-meta a {
+  color: #8a7355;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.temple-collection-v2-card-meta a {
+  color: var(--collection-accent, #8e2d24);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.temple-collection-v2-card-actions {
+  margin-top: 12px;
+}
+
+.temple-collection-v2-card-plan,
+.temple-collection-v2-card-detail {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.temple-collection-v2-card-plan {
+  flex: 1 1 auto;
+  color: var(--collection-accent, #8e2d24);
+  border: 1px solid var(--collection-accent, #8e2d24);
+}
+
+.temple-collection-v2-card-plan:hover,
+.temple-collection-v2-card-plan:focus-visible {
+  color: #fffaf0;
+  background: var(--collection-accent, #8e2d24);
+}
+
+.temple-collection-v2-card-detail {
+  flex: 0 0 auto;
+  color: var(--collection-accent, #8e2d24);
+}
+
+.temple-collection-v2-card-detail:hover,
+.temple-collection-v2-card-detail:focus-visible {
+  color: #591d19;
+}
+
+.temple-collection-v2-results .popular-temple-load-more {
+  display: flex;
+  min-width: 112px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin: 32px auto 0;
+  padding: 0 26px;
+  color: #fffaf0;
+  background: var(--collection-accent, #8e2d24);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 12px 24px rgba(142, 45, 36, 0.18);
+  font-weight: 900;
+}
+
+.temple-collection-v2-results .popular-temple-load-more[hidden] {
+  display: none;
+}
+
+.temple-collection-v2-results .popular-temple-empty {
+  margin: 24px 0 0;
+  padding: 42px 24px;
+  color: #5d514a;
+  background: #fffdf7;
+  border: 1px dashed rgba(194, 141, 53, 0.5);
+  border-radius: 14px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.temple-collection-v2-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 28px;
+  padding: 16px 18px;
+  color: #8a7355;
+  background: rgba(255, 253, 247, 0.9);
+  border: 1px solid rgba(194, 141, 53, 0.24);
+  border-radius: 12px;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.temple-collection-v2-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.temple-collection-v2-legend i {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.temple-collection-v2-planner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  margin-top: 64px;
+  padding: 34px;
+  color: #fff4dc;
+  background: radial-gradient(circle at 15% 0%, #2a1710, #1a0f0a 68%);
+  border-radius: 16px;
+}
+
+.temple-collection-v2-planner p {
+  margin: 0 0 8px;
+  color: #c28d35;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.temple-collection-v2-planner h2 {
+  max-width: 680px;
+  margin: 0;
+  color: #fff8e8;
+  font-size: clamp(1.7rem, 3vw, 2.15rem);
+  font-weight: 900;
+  line-height: 1.22;
+}
+
+.temple-collection-v2-planner span {
+  display: block;
+  max-width: 780px;
+  margin-top: 10px;
+  color: #e6d3ab;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.temple-collection-v2-planner a {
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 28px;
+  color: #3a1710;
+  background: linear-gradient(135deg, #f9df97, #e7b64a);
+  border-radius: 999px;
+  font-weight: 900;
+}
+
+.temple-collection-v2-planner a:hover,
+.temple-collection-v2-planner a:focus-visible {
+  color: #3a1710;
+  background: #f4cf78;
+}
+
+.temple-collection-v2-supporting {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 44px;
+  padding: 22px 26px;
+  background: #fffdf7;
+  border: 1px dashed rgba(194, 141, 53, 0.5);
+  border-radius: 14px;
+}
+
+.temple-collection-v2-supporting span {
+  color: #8a7355;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.temple-collection-v2-supporting a {
+  color: #5d514a;
+  border-bottom: 1px solid rgba(194, 141, 53, 0.5);
+  font-weight: 800;
+}
+
+.temple-collection-v2-supporting a:hover,
+.temple-collection-v2-supporting a:focus-visible {
+  color: var(--collection-accent, #8e2d24);
+}
+
+body.temples-collection-v2-page .site-footer--temple-hub-v2 {
+  width: 100%;
+  max-width: none;
+  margin: 72px 0 0;
+  color: #e6d3ab;
+  background: #1a0f0a;
+  border-top: 0;
+}
+
+@media (max-width: 1100px) {
+  .temple-collection-v2-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .temple-collection-v2-search {
+    grid-template-columns: 1fr;
+  }
+
+  .temple-collection-v2-search .popular-temple-filter-actions {
+    flex-wrap: wrap;
+  }
+
+  .temple-collection-v2-filter-row {
+    flex-direction: column;
+  }
+
+  .temple-collection-v2-filter-planner {
+    width: 100%;
+  }
+
+  .temple-collection-v2-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .temple-collection-v2-planner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 720px) {
+  .temples-collection-v2-page {
+    --temple-hub-container: min(100% - 32px, 1180px);
+  }
+
+  body.temples-collection-v2-page .topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    justify-content: stretch;
+    min-height: 28px;
+    padding: 4px 16px;
+    gap: 10px;
+    overflow: hidden;
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+  }
+
+  body.temples-collection-v2-page .topbar a:first-child {
+    min-width: 0;
+    margin-right: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  body.temples-collection-v2-page .topbar a:last-child {
+    text-align: right;
+  }
+
+  body.temples-collection-v2-page .navbar--temple-hub-v2 {
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 68px;
+    padding: 0 16px;
+  }
+
+  body.temples-collection-v2-page .navbar--temple-hub-v2 .brand {
+    min-width: 0;
+    max-width: calc(100vw - 96px);
+  }
+
+  body.temples-collection-v2-page .navbar--temple-hub-v2 .brand small,
+  body.temples-collection-v2-page .navbar--temple-hub-v2 .nav-actions {
+    display: none;
+  }
+
+  body.temples-collection-v2-page .navbar--temple-hub-v2 .nav-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 14px;
+    right: 14px;
+    display: none;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 0;
+    padding: 12px;
+    background: #fffaf0;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    max-height: calc(100vh - 140px);
+    overflow: auto;
+  }
+
+  body.temples-collection-v2-page .navbar--temple-hub-v2 .nav-menu.is-open {
+    display: flex;
+  }
+
+  body.temples-collection-v2-page .navbar--temple-hub-v2 .nav-item,
+  body.temples-collection-v2-page .navbar--temple-hub-v2 .plain-link {
+    width: 100%;
+  }
+
+  body.temples-collection-v2-page .navbar--temple-hub-v2 .nav-item > a,
+  body.temples-collection-v2-page .navbar--temple-hub-v2 .plain-link {
+    justify-content: space-between;
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .temple-collection-v2-hero__inner {
+    padding: 38px 0 46px;
+  }
+
+  .temple-collection-v2-tabs {
+    width: 100%;
+  }
+
+  .temple-collection-v2-tabs a {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 10px;
+    font-size: 0.9rem;
+  }
+
+  .temple-collection-v2-hero h1 {
+    font-size: clamp(2.55rem, 13vw, 3.25rem);
+  }
+
+  .temple-collection-v2-hero__inner > p:not(.section-kicker) {
+    font-size: 0.96rem;
+    line-height: 1.7;
+  }
+
+  .temple-collection-v2-search .popular-temple-filter-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .temple-collection-v2-advanced-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .temple-collection-v2-search .temple-search-button,
+  .temple-collection-v2-search .temple-clear-button,
+  .temple-collection-v2-search .temple-nearby-button {
+    width: 100%;
+  }
+
+  .temple-collection-v2-filter-row .popular-temple-region-filter {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .temple-collection-v2-filter-row .popular-temple-region-tags,
+  .temple-collection-v2-filter-row .popular-temple-province-tags,
+  .temple-collection-v2-filter-row .popular-temple-purpose-tags {
+    width: 100%;
+  }
+
+  .temple-collection-v2-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .temple-collection-v2-card {
+    min-height: 362px;
+  }
+
+  .temple-collection-v2-card figure {
+    height: 182px;
+  }
+
+  .temple-collection-v2-card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .temple-collection-v2-card-detail {
+    justify-content: flex-start;
+  }
+
+  .temple-collection-v2-legend {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .temple-collection-v2-planner {
+    margin-top: 46px;
+    padding: 24px;
+    border-radius: 14px;
+  }
+
+  .temple-collection-v2-planner h2 {
+    font-size: 1.55rem;
+  }
+
+  .temple-collection-v2-planner a {
+    width: 100%;
+  }
+
+  .temple-collection-v2-supporting {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 20px;
+  }
+}
+
 .temples-popular-directory-page {
   background: #fbf6eb;
 }

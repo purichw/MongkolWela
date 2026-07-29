@@ -3,7 +3,8 @@ import { siteConfig } from "../config/site.js";
 import BrandMark from "./icons/BrandMark.astro";
 import MenuIcon from "./icons/MenuIcon.astro";
 import SearchIcon from "./icons/SearchIcon.astro";
-import defaultContent from "../../public/admin/content/default.json";
+import liveContent from "../../public/admin/content/live.json" with { type: "json" };
+import defaultContent from "../../public/admin/content/default.json" with { type: "json" };
 
 type TopbarItem = {
   label: string;
@@ -12,6 +13,7 @@ type TopbarItem = {
 };
 
 type NavItem = {
+  id?: string;
   label: string;
   href?: string;
   enabled?: boolean;
@@ -28,19 +30,42 @@ const pages = config.pages as Record<string, { topbar?: TopbarItem[]; footerVari
 const pageConfig = pages[page] || pages.home;
 const isPopularDirectory = page === "templesPopular";
 const isHomePage = page === "home";
-const navigation = (defaultContent as { navigation?: { tabs?: NavItem[]; utility?: NavItem[] } }).navigation || {};
+const isTempleHubPage = page === "temples";
+const isTemplePlannerPage = page === "templesPlanner";
+const isTempleCollectionPage = ["templesPopular", "templesSacred", "templesMu"].includes(page);
+const isTempleV2Page = isTempleHubPage || isTempleCollectionPage || isTemplePlannerPage;
+const liveNavigation = (liveContent as { navigation?: { tabs?: NavItem[]; utility?: NavItem[] } }).navigation;
+const defaultNavigation = (defaultContent as { navigation?: { tabs?: NavItem[]; utility?: NavItem[] } }).navigation;
+const navigation =
+  Array.isArray(liveNavigation?.tabs) && Array.isArray(liveNavigation?.utility)
+    ? liveNavigation
+    : defaultNavigation || {};
 const navTabs = (navigation.tabs || []).filter((item) => item.enabled !== false);
 const navUtility = (navigation.utility || []).filter((item) => item.enabled !== false);
-const enabledChildren = (item: NavItem) => (item.items || []).filter((child) => child.enabled !== false);
-const homePlannerTab: NavItem = { label: "วางแผนไหว้พระ", href: "temples/planner/", enabled: true, items: [] };
+const enabledChildren = (item?: NavItem) => (item?.items || []).filter((child) => child.enabled !== false);
+const normalizeNavHref = (href = "") => String(href || "").replace(/^\/+/u, "").replace(/\/?$/u, "/");
+function findNavItemByHref(items: NavItem[] = [], href = ""): NavItem | undefined {
+  const expectedHref = normalizeNavHref(href);
+  for (const item of items) {
+    if (!item || item.enabled === false) continue;
+    if (!item.section && normalizeNavHref(item.href) === expectedHref) return item;
+    const childMatch = findNavItemByHref(item.items || [], href);
+    if (childMatch) return childMatch;
+  }
+  return undefined;
+}
+const templeNavTab = navTabs.find((item) => item.href === "temples/");
+const calendarNavTab = navTabs.find((item) => item.href === "calendar/");
+const homePlannerTab = findNavItemByHref(navTabs, "temples/planner/");
+const templeSearchTab = findNavItemByHref(navTabs, "temples/thailand/");
 const homeNavTabs = [
-  navTabs.find((item) => item.href === "temples/"),
+  templeNavTab,
   homePlannerTab,
-  navTabs.find((item) => item.href === "calendar/"),
+  calendarNavTab,
   navTabs.find((item) => item.href === "#supporting-tools"),
 ].filter(Boolean) as NavItem[];
-const visibleNavTabs = isHomePage ? homeNavTabs : navTabs;
-const visibleNavUtility = isHomePage ? [] : navUtility;
+const visibleNavTabs = isHomePage || (isTempleV2Page && !isTemplePlannerPage) ? homeNavTabs : navTabs;
+const visibleNavUtility = isHomePage || isTempleV2Page ? [] : navUtility;
 
 function resolveHref(href = "") {
   if (!href) return "/";
@@ -49,10 +74,14 @@ function resolveHref(href = "") {
   if (href.startsWith("/")) return href;
   return `/${href}`;
 }
+
+function isCurrentNavItem(item: NavItem) {
+  return isTempleV2Page && item.href === "temples/";
+}
 ---
 
 <header class="site-header">
-  {!isPopularDirectory && (
+  {(!isPopularDirectory || isTempleCollectionPage) && (
     <div class="topbar">
       {(pageConfig.topbar || pages.home.topbar || []).map((item: TopbarItem) =>
         item.href ? (
@@ -64,9 +93,12 @@ function resolveHref(href = "") {
     </div>
   )}
 
-  <nav class={`navbar${isPopularDirectory ? " navbar--popular-directory" : ""}${isHomePage ? " navbar--home-v2" : ""}`} aria-label={config.navLabel}>
+  <nav
+    class={`navbar${isPopularDirectory && !isTempleCollectionPage ? " navbar--popular-directory" : ""}${isHomePage ? " navbar--home-v2" : ""}${isTempleV2Page ? " navbar--temple-hub-v2" : ""}`}
+    aria-label={config.navLabel}
+  >
     <a class="brand" href="/" aria-label={config.brandLabel}>
-      {isPopularDirectory ? <span class="brand-mark brand-mark--popular-directory" aria-hidden="true">๙</span> : <BrandMark />}
+      {isPopularDirectory && !isTempleCollectionPage ? <span class="brand-mark brand-mark--popular-directory" aria-hidden="true">๙</span> : <BrandMark />}
       <span>
         <strong>{config.brandName}</strong>
         <small>{config.brandSubtitle}</small>
@@ -78,19 +110,24 @@ function resolveHref(href = "") {
       <span class="sr-only">{config.openMenuLabel}</span>
     </button>
 
-    {isPopularDirectory ? (
+    {isPopularDirectory && !isTempleCollectionPage ? (
       <div class="nav-menu-static" id="primary-menu" aria-label={config.navLabel}>
-        <a href="/temples/">วัดดังเสริมมงคล</a>
-        <a href="/calendar/">วันพระ</a>
-        <a href="/temples/">← กลับ</a>
+        {templeNavTab && <a href={resolveHref(templeNavTab.href)}>{templeNavTab.label}</a>}
+        {calendarNavTab && <a href={resolveHref(calendarNavTab.href)}>{calendarNavTab.label}</a>}
+        <a href={resolveHref(templeNavTab?.href || "temples/")}>← กลับ</a>
       </div>
     ) : (
       <>
-        <div class="nav-menu" id="primary-menu" aria-label={config.navLabel} data-nav-mode={isHomePage ? "home-v2" : "default"}>
+        <div
+          class="nav-menu"
+          id="primary-menu"
+          aria-label={config.navLabel}
+          data-nav-mode={isHomePage ? "home-v2" : isTempleV2Page ? "temple-hub-v2" : "default"}
+        >
           {visibleNavTabs.map((item) => (
             <div class="nav-item">
-              <a href={resolveHref(item.href)}>{item.label}</a>
-              {enabledChildren(item).length > 0 && (
+              <a class={isCurrentNavItem(item) ? "is-current" : undefined} href={resolveHref(item.href)}>{item.label}</a>
+              {!isHomePage && !isTempleV2Page && enabledChildren(item).length > 0 && (
                 <div class="mega-panel">
                   {enabledChildren(item).map((child) =>
                     child.section ? (
@@ -109,13 +146,15 @@ function resolveHref(href = "") {
         </div>
 
         <div class="nav-actions">
-          {isHomePage ? (
-            <a class="nav-cta-home" href="/temples/planner/">วางแผนทริป</a>
-          ) : (
+          {isHomePage && homePlannerTab ? (
+            <a class="nav-cta-home" href={resolveHref(homePlannerTab.href)}>{homePlannerTab.label}</a>
+          ) : isTempleV2Page && templeSearchTab ? (
+            <a class="nav-cta-temple-hub" href={resolveHref(templeSearchTab.href)}>{templeSearchTab.label}</a>
+          ) : !isHomePage && !isTempleV2Page ? (
             <button class="icon-button" type="button" aria-label={config.searchLabel}>
               <SearchIcon />
             </button>
-          )}
+          ) : null}
         </div>
       </>
     )}

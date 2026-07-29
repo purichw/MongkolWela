@@ -1,16 +1,10 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
-import TempleSearchHero from "../../../components/TempleSearchHero.astro";
-import TempleFilterChips from "../../../components/TempleFilterChips.astro";
-import TempleMapOverlay from "../../../components/TempleMapOverlay.astro";
-import TempleResponsiveImage from "../../../components/TempleResponsiveImage.astro";
+import TempleCollectionView from "../../../components/TempleCollectionView.astro";
 import popularTemples from "../../../data/popular-temples.json";
-import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data/temple-images.js";
+import { applyTempleImageOverrides } from "../../../data/temple-images.js";
 import { getTempleDetailUrl } from "../../../data/temple-slugs.js";
-import templePageBanners from "../../../data/temple-page-banners.json";
 import { createItemListJsonLd } from "../../../lib/seo.js";
 
-const extraScripts = ["/assets/js/temple-directory.js", "/assets/js/temple-map.js"];
 type TempleCard = {
   rank: number;
   name: string;
@@ -27,6 +21,9 @@ type TempleCard = {
   objectHero?: string;
   latitude?: number;
   longitude?: number;
+  travelDetail?: {
+    confidence?: string;
+  };
 };
 const rankedTemples = (applyTempleImageOverrides("popular", [...popularTemples]) as TempleCard[]).sort(
   (a: TempleCard, b: TempleCard) => a.rank - b.rank,
@@ -73,6 +70,29 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
 );
 const pageTitle = "สายไหว้พระ ๙ วัด | มงคลเวลา";
 const pageDescription = "รวมเส้นทางไหว้พระ ๙ วัด วัดดังทั่วไทย และพิกัดทำบุญพร้อมตัวกรองภาค จังหวัด จุดประสงค์ แผนที่ และรายละเอียดการเดินทาง";
+const breadcrumbs = [
+  { label: "หน้าแรก", href: "/" },
+  { label: "วัดดังเสริมมงคล", href: "/temples/" },
+  { label: "สายไหว้พระ ๙ วัด", href: "/temples/popular/" },
+];
+const collectionMeta = {
+  key: "popular",
+  label: "สายไหว้พระ ๙ วัด",
+  shortLabel: "๙ วัด",
+  kicker: "POPULAR · เส้นทางยอดนิยม",
+  title: "สายไหว้พระ ๙ วัด",
+  description: "วัดดังที่คนรู้จัก จัดเรียงตามความนิยม พร้อมจัดเป็นเส้นทางไหว้พระต่อเนื่องได้ในคลิกเดียว",
+  intro: "รวมวัดดังทั่วประเทศไทยสำหรับวางแผนเส้นทางไหว้พระ ทำบุญ และเลือกสถานที่เสริมมงคลให้เหมาะกับจังหวะชีวิต",
+  accent: "#8e2d24",
+  heroBg: "radial-gradient(circle at 18% 0%, #7a2620, #3d130f 70%)",
+  mapTitle: "สายไหว้พระ 9 วัด",
+  mapSearchPlaceholder: "ค้นหาวัดในแผนที่",
+  searchLabel: "ค้นหาพิกัดวัดยอดนิยม",
+  searchPlaceholder: "ค้นหาในสายไหว้พระ ๙ วัด",
+  gridLabel: "พิกัดไหว้พระยอดนิยม",
+  emptyText: "ไม่พบสายไหว้พระ 9 วัดที่ตรงกับคำค้นหา",
+  imageAlt: "สายไหว้พระ 9 วัดและวัดดังทั่วไทย",
+} as const;
 const itemListJsonLd = createItemListJsonLd({
   name: "สายไหว้พระ ๙ วัดยอดนิยม",
   description: pageDescription,
@@ -84,141 +104,16 @@ const itemListJsonLd = createItemListJsonLd({
 });
 ---
 
-<BaseLayout
-  title={pageTitle}
-  description={pageDescription}
-  lang="th"
-  locale="th"
-  page="templesPopular"
-  bodyClass="temples-hub-page temples-popular-directory-page"
-  extraScripts={extraScripts}
+<TempleCollectionView
+  collection="popular"
+  pageKey="templesPopular"
+  pageTitle={pageTitle}
+  pageDescription={pageDescription}
   canonicalPath="/temples/popular/"
-  image="/assets/images/hero-temple-red.jpg"
-  imageAlt="สายไหว้พระ 9 วัดและวัดดังทั่วไทย"
-  breadcrumbs={[
-    { label: "หน้าแรก", href: "/" },
-    { label: "วัดดังเสริมมงคล", href: "/temples/" },
-    { label: "สายไหว้พระ ๙ วัด", href: "/temples/popular/" },
-  ]}
+  breadcrumbs={breadcrumbs}
+  meta={collectionMeta}
+  rankedTemples={rankedTemples}
+  regions={popularRegions}
+  purposes={purposeTags}
   structuredData={itemListJsonLd}
->
-  <main class="temples-hub">
-    <TempleMapOverlay
-      collection="popular"
-      title="สายไหว้พระ 9 วัด"
-      searchPlaceholder="ค้นหาวัดในแผนที่"
-      temples={rankedTemples}
-      placeholderImage={templePlaceholderImage}
-    />
-
-    <TempleSearchHero
-      banner={templePageBanners.popular}
-      breadcrumbs={[
-        { label: "หน้าแรก", href: "../../" },
-        { label: "วัดดังเสริมมงคล", href: "../" },
-        { label: "สายไหว้พระ ๙ วัด" },
-      ]}
-      kicker="สายไหว้พระ ๙ วัด"
-      title="สายไหว้พระ ๙ วัด"
-      description="รวมวัดดังทั่วประเทศไทยสำหรับวางแผนเส้นทางไหว้พระ ทำบุญ และเลือกสถานที่เสริมมงคลให้เหมาะกับจังหวะชีวิต"
-    >
-      <section
-        slot="panel"
-        class="temple-search-panel temple-quick-search popular-temple-filter"
-        aria-label="ค้นหาพิกัดวัดยอดนิยม"
-        data-popular-temple-filter
-      >
-        <form class="popular-temple-filter-form" data-popular-temple-filter-form>
-          <label class="temple-field popular-temple-filter-name">
-            <span>ชื่อวัด</span>
-            <span class="popular-temple-filter-input-shell">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
-              </svg>
-              <input
-                type="search"
-                name="name"
-                placeholder="ค้นหาในสายไหว้พระ ๙ วัด"
-                autocomplete="off"
-                data-popular-temple-filter-name
-              />
-            </span>
-          </label>
-
-          <div class="popular-temple-filter-actions">
-            <button class="temple-search-button" type="submit">ค้นหา</button>
-            <button class="temple-nearby-button" type="button" data-popular-temple-nearby><span aria-hidden="true">📍</span> พิกัดใกล้ฉัน</button>
-            <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>เคลียร์ข้อมูล</button>
-          </div>
-        </form>
-        <TempleFilterChips regions={popularRegions} purposes={purposeTags} />
-      </section>
-    </TempleSearchHero>
-
-    <section class="temples-section temples-popular-section">
-      <div class="temples-section-head">
-        <div>
-          <p class="section-kicker">วัดดังทั่วไทย</p>
-          <h2>วัดดังทั่วไทย</h2>
-        </div>
-        <p class="popular-temple-count" data-popular-temple-count></p>
-      </div>
-
-      <div
-        class="popular-temple-grid"
-        aria-label="พิกัดไหว้พระยอดนิยม"
-        data-popular-temple-grid
-        data-initial-count="30"
-        data-batch-size="30"
-        data-count-mode="visible-filtered"
-        data-placeholder-src={templePlaceholderImage}
-      >
-        {rankedTemples.map((temple) => {
-          const hasTempleImage = Boolean(temple.imageUrl) && temple.imageUrl !== templePlaceholderImage;
-          const imageUrl = hasTempleImage ? String(temple.imageUrl) : templePlaceholderImage;
-          const imageAlt = temple.imageAlt || `${temple.name} ${temple.province}`;
-
-          return (
-            <a
-              class={`popular-temple-card${hasTempleImage ? "" : " is-placeholder"}`}
-              href={getTempleDetailUrl("popular", temple)}
-              data-rank={temple.rank}
-              data-name={temple.name}
-              data-region={temple.region}
-              data-province={temple.province}
-              data-district={temple.district}
-              data-blessings={temple.blessings ?? ""}
-              data-latitude={temple.latitude}
-              data-longitude={temple.longitude}
-              data-popular-temple-card
-              data-image-placeholder={hasTempleImage ? undefined : "true"}
-            >
-              <figure>
-                <TempleResponsiveImage
-                  desktopSrc={imageUrl}
-                  mobileSrc={temple.imageMobileUrl || imageUrl}
-                  alt={imageAlt}
-                  loading="lazy"
-                  decoding="async"
-                  fallbackSrc={templePlaceholderImage}
-                />
-                <figcaption>#{temple.rank.toString().padStart(2, "0")}</figcaption>
-                <span class="popular-temple-distance" data-popular-temple-distance hidden></span>
-              </figure>
-              <div class="popular-temple-card-body">
-                <span>{temple.region}</span>
-                <h3>{temple.name}</h3>
-                <p>{temple.province}{temple.district ? ` / ${temple.district}` : ""}</p>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-      <p class="popular-temple-empty" data-popular-temple-empty hidden>ไม่พบสายไหว้พระ 9 วัดที่ตรงกับคำค้นหา</p>
-      <button class="popular-temple-load-more" type="button" data-popular-temple-more hidden>
-        ดูเพิ่ม
-      </button>
-      <div class="popular-temple-sentinel" data-popular-temple-sentinel aria-hidden="true"></div>
-    </section>
-  </main>
-</BaseLayout>
+/>

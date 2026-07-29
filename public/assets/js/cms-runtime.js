@@ -13,37 +13,53 @@ function markCmsNavigationReady() {
 async function fetchJson(url) {
   const response = await fetch(`${url}${url.includes("?") ? "&" : "?"}ts=${Date.now()}`, {
     cache: "no-store",
+    headers: {
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+    },
   });
   if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
   return response.json();
 }
 
-async function loadContent() {
-  let bundledContent = null;
-  try {
-    bundledContent = await fetchJson(CMS_FALLBACK_URL);
-  } catch {
-    bundledContent = null;
-  }
+function normalizeCmsContent(content) {
+  if (!content || typeof content !== "object") return null;
+  if (!Array.isArray(content.pages)) return null;
+  if (!Array.isArray(content.navigation?.tabs)) return null;
+  if (!Array.isArray(content.navigation?.utility)) return null;
+  const contractVersion = Number(content.cmsContractVersion || CMS_EDITABLE_CONTRACT_VERSION);
+  return {
+    ...content,
+    schemaVersion: content.schemaVersion || 1,
+    cmsContractVersion: Number.isFinite(contractVersion) ? contractVersion : CMS_EDITABLE_CONTRACT_VERSION,
+    navigation: {
+      ...content.navigation,
+      tabs: content.navigation.tabs,
+      utility: content.navigation.utility,
+    },
+  };
+}
 
+async function loadFallbackContent() {
+  const content = normalizeCmsContent(await fetchJson(CMS_FALLBACK_URL));
+  if (!content) throw new Error("Bundled CMS fallback is invalid");
+  document.documentElement.dataset.cmsFallback = "true";
+  return content;
+}
+
+async function loadContent() {
   try {
     const payload = await fetchJson(CMS_CONTENT_URL);
-    if (payload.content) {
-      const acceptsEditableNavigation =
-        Number(payload.content.cmsContractVersion || 0) >= CMS_EDITABLE_CONTRACT_VERSION;
-      const content = {
-        ...payload.content,
-        navigation: acceptsEditableNavigation
-          ? payload.content.navigation || bundledContent?.navigation
-          : bundledContent?.navigation || payload.content.navigation,
-      };
+    const content = normalizeCmsContent(payload.content);
+    if (content) {
+      delete document.documentElement.dataset.cmsFallback;
       return content;
     }
-  } catch {
-    // Fall through to bundled/default content.
+    throw new Error("Live CMS payload is invalid");
+  } catch (error) {
+    console.warn("Live CMS content unavailable; using bundled fallback", error);
+    return loadFallbackContent();
   }
-
-  return bundledContent;
 }
 
 function normalizeRoute(pathname = window.location.pathname) {
@@ -60,10 +76,26 @@ function resolveHref(href = "") {
   return `/${href}`;
 }
 
+function hrefMatches(value = "", expected = "") {
+  const normalize = (href) => String(href || "").replace(/^\/+/u, "").replace(/\/?$/u, "/");
+  return normalize(value) === normalize(expected);
+}
+
+function findNavigationItemByHref(items = [], href = "") {
+  for (const item of items || []) {
+    if (!item || item.enabled === false) continue;
+    if (!item.section && hrefMatches(item.href, href)) return item;
+    const childMatch = findNavigationItemByHref(item.items || [], href);
+    if (childMatch) return childMatch;
+  }
+  return null;
+}
+
 function homeNavigationTabs(tabs) {
-  const plannerTab = { label: "วางแผนไหว้พระ", href: "temples/planner/", items: [], enabled: true };
+  const templeTab = tabs.find((item) => item.href === "temples/");
+  const plannerTab = findNavigationItemByHref(tabs, "temples/planner/");
   return [
-    tabs.find((item) => item.href === "temples/"),
+    templeTab,
     plannerTab,
     tabs.find((item) => item.href === "calendar/"),
     tabs.find((item) => item.href === "#supporting-tools"),
@@ -99,41 +131,56 @@ function safeHtml(value = "") {
 
 function applyNavigation(content) {
   const navMenu = document.querySelector(".nav-menu");
-  if (!navMenu || !content?.navigation) return;
+  const staticNavMenu = document.querySelector(".nav-menu-static");
+  if ((!navMenu && !staticNavMenu) || !content?.navigation) return;
   const allTabs = (content.navigation.tabs || []).filter((item) => item.enabled !== false);
-  const isHomeMode = navMenu.dataset.navMode === "home-v2";
-  const tabs = isHomeMode ? homeNavigationTabs(allTabs) : allTabs;
-  const utility = isHomeMode ? [] : (content.navigation.utility || []).filter((item) => item.enabled !== false);
-  navMenu.innerHTML = `${tabs
-    .map((item) => {
-      const children = (item.items || []).filter((child) => child.enabled !== false);
-      return `<div class="nav-item">
-        <a href="${escapeHtml(resolveHref(item.href))}">${escapeHtml(item.label)}</a>
-        ${
-          children.length
-            ? `<div class="mega-panel">
-                ${children
-                  .map((child) =>
-                    child.section
-                      ? `<span class="mega-panel-section">${escapeHtml(child.label)}</span>`
-                      : `<a href="${escapeHtml(resolveHref(child.href))}">${escapeHtml(child.label)}</a>`,
-                  )
-                  .join("")}
-              </div>`
-            : ""
-        }
-      </div>`;
-    })
-    .join("")}
-    ${utility
-      .map((item) => `<a class="plain-link" href="${escapeHtml(resolveHref(item.href))}">${escapeHtml(item.label)}</a>`)
-      .join("")}`;
+
+  if (navMenu) {
+    const navMode = navMenu.dataset.navMode || "default";
+    const isFocusedTempleNav = navMode === "home-v2" || navMode === "temple-hub-v2";
+    const isPlannerRoute = navMode === "temple-hub-v2" && normalizeRoute() === "/temples/planner/";
+    const tabs = isFocusedTempleNav ? (isPlannerRoute ? allTabs : homeNavigationTabs(allTabs)) : allTabs;
+    const utility = isFocusedTempleNav ? [] : (content.navigation.utility || []).filter((item) => item.enabled !== false);
+    navMenu.innerHTML = `${tabs
+      .map((item) => {
+        const children = navMode === "temple-hub-v2" ? [] : (item.items || []).filter((child) => child.enabled !== false);
+        const currentClass = navMode === "temple-hub-v2" && item.href === "temples/" ? ` class="is-current"` : "";
+        return `<div class="nav-item">
+          <a${currentClass} href="${escapeHtml(resolveHref(item.href))}">${escapeHtml(item.label)}</a>
+          ${
+            children.length
+              ? `<div class="mega-panel">
+                  ${children
+                    .map((child) =>
+                      child.section
+                        ? `<span class="mega-panel-section">${escapeHtml(child.label)}</span>`
+                        : `<a href="${escapeHtml(resolveHref(child.href))}">${escapeHtml(child.label)}</a>`,
+                    )
+                    .join("")}
+                </div>`
+              : ""
+          }
+        </div>`;
+      })
+      .join("")}
+      ${utility
+        .map((item) => `<a class="plain-link" href="${escapeHtml(resolveHref(item.href))}">${escapeHtml(item.label)}</a>`)
+        .join("")}`;
+  }
+
+  if (staticNavMenu) {
+    const templeTab = allTabs.find((item) => item.href === "temples/");
+    const calendarTab = allTabs.find((item) => item.href === "calendar/");
+    staticNavMenu.innerHTML = [
+      templeTab ? `<a href="${escapeHtml(resolveHref(templeTab.href))}">${escapeHtml(templeTab.label)}</a>` : "",
+      calendarTab ? `<a href="${escapeHtml(resolveHref(calendarTab.href))}">${escapeHtml(calendarTab.label)}</a>` : "",
+      `<a href="${escapeHtml(resolveHref(templeTab?.href || "temples/"))}">← กลับ</a>`,
+    ].join("");
+  }
 }
 
 function applyPatch(patch) {
   if (!patch?.selector || patch.enabled === false) return;
-  const isHomeV2 = document.body.classList.contains("home-v2-page");
-  if (isHomeV2 && ["#hero-title", ".hero-copy"].includes(patch.selector)) return;
   document.querySelectorAll(patch.selector).forEach((node) => {
     if (patch.kind === "image") {
       if ("src" in node && patch.src) node.setAttribute("src", patch.src);
@@ -302,7 +349,8 @@ function metaValue(index, root = document) {
 
 function applyTempleCardOverrides(content) {
   document.querySelectorAll("[data-popular-temple-card]").forEach((card) => {
-    const override = getTempleOverride(content, templeKeyFromHref(card.getAttribute("href")));
+    const detailHref = card.getAttribute("href") || card.querySelector("[data-popular-temple-detail]")?.getAttribute("href");
+    const override = getTempleOverride(content, templeKeyFromHref(detailHref));
     if (!override) return;
     const fields = override.fields || {};
     const name = fieldValue(override, "name", card.dataset.name || "");
@@ -321,7 +369,7 @@ function applyTempleCardOverrides(content) {
     card.dataset.latitude = String(latitude);
     card.dataset.longitude = String(longitude);
     card.dataset.searchText = `${name} ${region} ${province} ${district} ${blessings}`;
-    setText(".popular-temple-card-body span", region, card);
+    setText(".popular-temple-card-body span", card.classList.contains("temple-collection-v2-card") ? province : region, card);
     setText(".popular-temple-card-body h3", name, card);
     setText(".popular-temple-card-body p", `${province}${district ? ` / ${district}` : ""}`, card);
 

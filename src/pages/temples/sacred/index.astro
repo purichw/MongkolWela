@@ -1,19 +1,12 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
-import TempleSearchHero from "../../../components/TempleSearchHero.astro";
-import TempleFilterChips from "../../../components/TempleFilterChips.astro";
-import TempleMapOverlay from "../../../components/TempleMapOverlay.astro";
-import TempleResponsiveImage from "../../../components/TempleResponsiveImage.astro";
+import TempleCollectionView from "../../../components/TempleCollectionView.astro";
 import sacredTemples from "../../../data/sacred-temples.json";
-import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data/temple-images.js";
+import { applyTempleImageOverrides } from "../../../data/temple-images.js";
 import { getTempleDetailUrl } from "../../../data/temple-slugs.js";
-import templePageBanners from "../../../data/temple-page-banners.json";
 import { templeDirectoryCommon, templeDirectoryPages } from "../../../data/temple-directory-content.js";
 import { createItemListJsonLd } from "../../../lib/seo.js";
 
-const extraScripts = ["/assets/js/temple-directory.js", "/assets/js/temple-map.js"];
 const pageContent = templeDirectoryPages.sacred;
-const filterContent = templeDirectoryCommon.filters;
 const regionOrder = templeDirectoryCommon.regionOrder;
 const purposeOrder = templeDirectoryCommon.purposeOrder;
 type TempleCard = {
@@ -32,6 +25,9 @@ type TempleCard = {
   objectHero?: string;
   latitude?: number;
   longitude?: number;
+  travelDetail?: {
+    confidence?: string;
+  };
 };
 const rankedTemples = (applyTempleImageOverrides("sacred", [...sacredTemples]) as TempleCard[]).sort(
   (a: TempleCard, b: TempleCard) => a.rank - b.rank,
@@ -52,6 +48,29 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
     return a.localeCompare(b, "th");
   },
 );
+const breadcrumbs = [
+  { label: "หน้าแรก", href: "/" },
+  { label: "วัดดังเสริมมงคล", href: "/temples/" },
+  { label: pageContent.heading, href: pageContent.collectionHref },
+];
+const collectionMeta = {
+  key: "sacred",
+  label: pageContent.heading,
+  shortLabel: "ศักดิ์สิทธิ์",
+  kicker: "SACRED · ศรัทธา",
+  title: pageContent.heading,
+  description: "สถานที่ศักดิ์สิทธิ์ เลือกจากจังหวัด ภูมิภาค และเรื่องที่ตั้งใจขอพร พร้อมพิกัดและข้อมูลประกอบ",
+  intro: pageContent.intro,
+  accent: "#1c6a4f",
+  heroBg: "radial-gradient(circle at 18% 0%, #1c6a4f, #123d34 70%)",
+  mapTitle: pageContent.mapTitle,
+  mapSearchPlaceholder: pageContent.mapSearchPlaceholder,
+  searchLabel: pageContent.filterLabel,
+  searchPlaceholder: pageContent.searchPlaceholder,
+  gridLabel: pageContent.gridLabel,
+  emptyText: pageContent.emptyText,
+  imageAlt: "วัดศักดิ์สิทธิ์และสถานที่สำคัญทั่วไทย",
+} as const;
 const itemListJsonLd = createItemListJsonLd({
   name: pageContent.heading,
   description: pageContent.description,
@@ -63,141 +82,16 @@ const itemListJsonLd = createItemListJsonLd({
 });
 ---
 
-<BaseLayout
-  title={pageContent.title}
-  description={pageContent.description}
-  lang="th"
-  locale="th"
-  page={pageContent.pageKey}
-  bodyClass="temples-hub-page"
-  extraScripts={extraScripts}
+<TempleCollectionView
+  collection="sacred"
+  pageKey={pageContent.pageKey}
+  pageTitle={pageContent.title}
+  pageDescription={pageContent.description}
   canonicalPath={pageContent.collectionHref}
-  image="/assets/images/hero-temple-red.jpg"
-  imageAlt="วัดศักดิ์สิทธิ์และสถานที่สำคัญทั่วไทย"
-  breadcrumbs={[
-    { label: "หน้าแรก", href: "/" },
-    { label: "วัดดังเสริมมงคล", href: "/temples/" },
-    { label: pageContent.heading, href: pageContent.collectionHref },
-  ]}
+  breadcrumbs={breadcrumbs}
+  meta={collectionMeta}
+  rankedTemples={rankedTemples}
+  regions={popularRegions}
+  purposes={purposeTags}
   structuredData={itemListJsonLd}
->
-  <main class="temples-hub">
-    <TempleMapOverlay
-      collection="sacred"
-      title={pageContent.mapTitle}
-      searchPlaceholder={pageContent.mapSearchPlaceholder}
-      temples={rankedTemples}
-      placeholderImage={templePlaceholderImage}
-    />
-
-    <TempleSearchHero
-      banner={templePageBanners.sacred}
-      breadcrumbs={pageContent.breadcrumbs}
-      kicker={pageContent.kicker}
-      title={pageContent.heading}
-      description={pageContent.intro}
-    >
-      <section
-        slot="panel"
-        class="temple-search-panel temple-quick-search popular-temple-filter"
-        aria-label={pageContent.filterLabel}
-        data-popular-temple-filter
-      >
-        <form class="popular-temple-filter-form" data-popular-temple-filter-form>
-          <label class="temple-field popular-temple-filter-name">
-            <span>{filterContent.nameLabel}</span>
-            <input
-              type="search"
-              name="name"
-              placeholder={pageContent.searchPlaceholder}
-              autocomplete="off"
-              data-popular-temple-filter-name
-            />
-          </label>
-
-          <div class="popular-temple-filter-actions">
-            <button class="temple-search-button" type="submit">{filterContent.searchButton}</button>
-            <button class="temple-nearby-button" type="button" data-popular-temple-nearby>พิกัดใกล้ฉัน</button>
-            <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>{filterContent.clearButton}</button>
-          </div>
-        </form>
-        <TempleFilterChips
-          regions={popularRegions}
-          purposes={purposeTags}
-          allLabel={filterContent.allLabel}
-          regionLabel={filterContent.regionLabel}
-          provinceLabel={filterContent.provinceLabel}
-          purposeLabel={filterContent.purposeLabel}
-          regionAriaLabel={filterContent.regionAriaLabel}
-          provinceAriaLabel={filterContent.provinceAriaLabel}
-          purposeAriaLabel={filterContent.purposeAriaLabel}
-        />
-      </section>
-    </TempleSearchHero>
-
-    <section class="temples-section temples-popular-section">
-      <div class="temples-section-head">
-        <div>
-          <p class="section-kicker">{pageContent.sectionKicker}</p>
-          <h2>{pageContent.sectionHeading}</h2>
-        </div>
-        <p class="popular-temple-count" data-popular-temple-count></p>
-      </div>
-
-      <div
-        class="popular-temple-grid"
-        aria-label={pageContent.gridLabel}
-        data-popular-temple-grid
-        data-initial-count="30"
-        data-batch-size="30"
-        data-placeholder-src={templePlaceholderImage}
-      >
-        {rankedTemples.map((temple) => {
-          const hasTempleImage = Boolean(temple.imageUrl) && temple.imageUrl !== templePlaceholderImage;
-          const imageUrl = hasTempleImage ? String(temple.imageUrl) : templePlaceholderImage;
-          const imageAlt = temple.imageAlt || `${temple.name} ${temple.province}`;
-
-          return (
-            <a
-              class={`popular-temple-card${hasTempleImage ? "" : " is-placeholder"}`}
-              href={getTempleDetailUrl("sacred", temple)}
-              data-rank={temple.rank}
-              data-name={temple.name}
-              data-region={temple.region}
-              data-province={temple.province}
-              data-district={temple.district}
-              data-blessings={temple.blessings ?? ""}
-              data-latitude={temple.latitude}
-              data-longitude={temple.longitude}
-              data-popular-temple-card
-              data-image-placeholder={hasTempleImage ? undefined : "true"}
-            >
-              <figure>
-                <TempleResponsiveImage
-                  desktopSrc={imageUrl}
-                  mobileSrc={temple.imageMobileUrl || imageUrl}
-                  alt={imageAlt}
-                  loading="lazy"
-                  decoding="async"
-                  fallbackSrc={templePlaceholderImage}
-                />
-                <figcaption>#{temple.rank.toString().padStart(2, "0")}</figcaption>
-                <span class="popular-temple-distance" data-popular-temple-distance hidden></span>
-              </figure>
-              <div class="popular-temple-card-body">
-                <span>{temple.region}</span>
-                <h3>{temple.name}</h3>
-                <p>{temple.province}{temple.district ? ` / ${temple.district}` : ""}</p>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-      <p class="popular-temple-empty" data-popular-temple-empty hidden>{pageContent.emptyText}</p>
-      <button class="popular-temple-load-more" type="button" data-popular-temple-more hidden>
-        {filterContent.loadMoreLabel}
-      </button>
-      <div class="popular-temple-sentinel" data-popular-temple-sentinel aria-hidden="true"></div>
-    </section>
-  </main>
-</BaseLayout>
+/>

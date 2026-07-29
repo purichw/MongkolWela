@@ -184,6 +184,7 @@ function initializePopularTempleGrid(grid) {
   emptyNode?.setAttribute("role", "status");
   nearbyButton?.setAttribute("aria-pressed", "false");
   updateFacetOptions();
+  applyInitialCollectionSearchParams();
 
   grid.addEventListener(
     "error",
@@ -439,6 +440,17 @@ function initializePopularTempleGrid(grid) {
     replaceSet(appliedRegions, activeRegions);
     replaceSet(appliedProvinces, activeProvinces);
     replaceSet(appliedPurposes, activePurposes);
+  }
+
+  function applyInitialCollectionSearchParams() {
+    if (!filterName) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get("name") || params.get("q");
+    if (!query) return;
+
+    filterName.value = query;
+    appliedQuery = normalize(query);
   }
 
   function replaceSet(target, source) {

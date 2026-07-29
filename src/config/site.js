@@ -128,37 +128,37 @@ export const siteConfig = {
       },
       temples: {
         topbar: [
-          { label: "วัดดังเสริมมงคล", href: "temples/" },
-          { label: "รวมเส้นทางไหว้พระและวัดเด่นสำหรับเสริมมงคล" },
-          { label: "ติดต่อมงคลเวลา", href: "#consult" },
+          { label: "คู่มือเดินทางสายมงคล", href: "temples/" },
+          { label: "วันที่วันนี้", realtime: "solarToday" },
+          { label: "ติดต่อ", href: "#consult" },
         ],
       },
       templesPopular: {
         topbar: [
-          { label: "สายไหว้พระ 9 วัด", href: "temples/popular/" },
-          { label: "รวมเส้นทางไหว้พระและวัดเด่นสำหรับเสริมมงคล" },
-          { label: "ติดต่อมงคลเวลา", href: "#consult" },
+          { label: "คู่มือเดินทางสายมงคล", href: "temples/" },
+          { label: "วันที่วันนี้", realtime: "solarToday" },
+          { label: "ติดต่อ", href: "#consult" },
         ],
       },
       templesPlanner: {
         topbar: [
-          { label: "วางแผนไหว้พระ", href: "temples/planner/" },
-          { label: "เลือก 3, 5 หรือ 9 แห่ง พร้อมเวลาประมาณการสำหรับรถยนต์และแท็กซี่" },
-          { label: "ดูวัดดังเสริมมงคล", href: "temples/" },
+          { label: "คู่มือเดินทางสายมงคล", href: "temples/" },
+          { label: "วันที่วันนี้", realtime: "solarToday" },
+          { label: "ติดต่อ", href: "#consult" },
         ],
       },
       templesMu: {
         topbar: [
-          { label: "สายมู", href: "temples/mu/" },
-          { label: "รวมพิกัดขอพร การงาน การเงิน ความรัก สุขภาพ และโชคลาภ" },
-          { label: "ติดต่อมงคลเวลา", href: "#consult" },
+          { label: "คู่มือเดินทางสายมงคล", href: "temples/" },
+          { label: "วันที่วันนี้", realtime: "solarToday" },
+          { label: "ติดต่อ", href: "#consult" },
         ],
       },
       templesSacred: {
         topbar: [
-          { label: "วัดศักดิ์สิทธิ์", href: "temples/sacred/" },
-          { label: "รวมวัดและสถานที่ศักดิ์สิทธิ์สำหรับไหว้พระ ทำบุญ และขอพร" },
-          { label: "ติดต่อมงคลเวลา", href: "#consult" },
+          { label: "คู่มือเดินทางสายมงคล", href: "temples/" },
+          { label: "วันที่วันนี้", realtime: "solarToday" },
+          { label: "ติดต่อ", href: "#consult" },
         ],
       },
       templesThailand: {

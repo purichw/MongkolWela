@@ -84,21 +84,28 @@ test.describe("Temple Admin Portal", () => {
       "aria-selected",
       "true",
     );
+    await page.locator('[data-edit-temple="popular:001"]').click();
     await expect(page.getByLabel("ชื่อสถานที่", { exact: true })).toHaveValue("วัดระฆังโฆสิตาราม");
     await expect(page.locator("[data-image-role][data-image-viewport]")).toHaveCount(6);
 
     await page.getByLabel("ชื่อสถานที่", { exact: true }).fill("วัดทดสอบระบบ Admin");
     await expect(page.locator("[data-temple-editor-name]")).toHaveText("วัดทดสอบระบบ Admin");
-    await expect(page.locator("[data-temple-list-title]")).toContainText("วัดทดสอบระบบ Admin");
+    await expect(page.locator('[data-temple-row="popular:001"] [data-temple-table-title]')).toContainText(
+      "วัดทดสอบระบบ Admin",
+    );
+    await page.getByRole("button", { name: "บันทึก", exact: true }).click();
 
     await page.getByRole("tab", { name: "วัดศักดิ์สิทธิ์ 50", exact: true }).click();
-    await page.getByRole("searchbox", { name: "ค้นหา", exact: true }).fill("โสธร");
-    await expect(page.locator("[data-select-temple]")).toHaveCount(1);
+    await page.locator("[data-temple-search]").fill("โสธร");
+    await expect(page.locator("[data-temple-row]")).toHaveCount(1);
+    await page.locator('[data-edit-temple="sacred:001"]').click();
     await expect(page.getByLabel("ชื่อสถานที่", { exact: true })).toHaveValue("วัดโสธรวราราม");
+    await page.getByRole("button", { name: "บันทึก", exact: true }).click();
 
-    await page.getByRole("button", { name: "+ เพิ่มสถานที่", exact: true }).click();
-    await expect(page.getByLabel("ชื่อสถานที่", { exact: true })).toHaveValue("สถานที่ใหม่");
-    await expect(page.getByRole("button", { name: "ลบสถานที่", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "+ เพิ่มวัด", exact: true }).click();
+    const createDrawer = page.getByRole("dialog", { name: /ข้อมูลวัด\/สถานที่/ });
+    await expect(createDrawer).toBeVisible();
+    await expect(createDrawer.getByLabel("ชื่อสถานที่", { exact: true })).toHaveValue("สถานที่ใหม่");
 
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -108,6 +115,7 @@ test.describe("Temple Admin Portal", () => {
 
   test("opens a fixed-ratio crop editor for an existing image", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "chromium-desktop", "crop interaction is covered once");
+    await page.locator('[data-edit-temple="popular:001"]').click();
     const imageField = page.locator(
       '.mw-admin-image-field[data-image-role="card"][data-image-viewport="desktop"]',
     );
@@ -119,20 +127,17 @@ test.describe("Temple Admin Portal", () => {
     await expect(dialog.getByRole("button", { name: "ครอปและบันทึก", exact: true })).toBeEnabled();
   });
 
-  test("keeps the temple list at the same scroll position after selecting an item", async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name.includes("mobile"), "desktop sidebar has an independent scroll container");
+  test("opens a row deep in the table without disturbing page scroll", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name.includes("mobile"), "desktop table scrolling is covered once");
     await page.getByRole("tab", { name: "วัดศักดิ์สิทธิ์ 50", exact: true }).click();
-    const list = page.locator(".mw-admin-temple-list-scroll");
-    const item = page.locator('[data-select-temple="sacred:042"]');
+    const item = page.locator('[data-temple-row="sacred:042"]');
     await item.scrollIntoViewIfNeeded();
-    const before = await list.evaluate((element) => element.scrollTop);
+    const before = await page.evaluate(() => window.scrollY);
     expect(before).toBeGreaterThan(0);
 
-    await item.click();
+    await item.locator('[data-edit-temple="sacred:042"]').click();
     await expect(page.getByLabel("ชื่อสถานที่", { exact: true })).toHaveValue("วัดทดสอบ 42");
-    await expect
-      .poll(async () => Math.abs((await list.evaluate((element) => element.scrollTop)) - before))
-      .toBeLessThanOrEqual(2);
+    await expect.poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - before)).toBeLessThanOrEqual(2);
   });
 
   test("shows a clear fallback and rejects a broken image URL", async ({ page }, testInfo) => {
@@ -140,6 +145,7 @@ test.describe("Temple Admin Portal", () => {
     await page.route("https://images.example.test/broken.jpg", (route) =>
       route.fulfill({ status: 404, contentType: "text/plain", body: "Not found" }),
     );
+    await page.locator('[data-edit-temple="popular:001"]').click();
 
     const imageField = page.locator(
       '.mw-admin-image-field[data-image-role="card"][data-image-viewport="desktop"]',

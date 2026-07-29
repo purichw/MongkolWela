@@ -7,6 +7,7 @@ const defaultPath = path.join(rootDir, "public/admin/content/default.json");
 const livePath = path.join(rootDir, "public/admin/content/live.json");
 const productionUrl = normalizeBaseUrl(process.env.MONGKOLWELA_PRODUCTION_URL || "https://mongkolwela.vercel.app");
 const checkProduction = process.argv.includes("--production");
+const CMS_EDITABLE_CONTRACT_VERSION = 2;
 const errors = [];
 
 const defaultContent = readJson(defaultPath, "default.json");
@@ -20,7 +21,9 @@ if (checkProduction) {
   const apiContent = await readProductionContent();
   if (apiContent) {
     validateSource("/api/admin/content", apiContent);
-    compareSources("live.json", liveContent, "/api/admin/content", apiContent);
+    if (Number(apiContent.cmsContractVersion || 0) < CMS_EDITABLE_CONTRACT_VERSION) {
+      compareSources("live.json", liveContent, "/api/admin/content", apiContent);
+    }
   }
 }
 
@@ -43,6 +46,9 @@ function validateSource(label, content) {
   }
 
   if (!content.schemaVersion) errors.push(`${label}: missing schemaVersion`);
+  if (Number(content.cmsContractVersion || 0) < CMS_EDITABLE_CONTRACT_VERSION) {
+    errors.push(`${label}: cmsContractVersion must be at least ${CMS_EDITABLE_CONTRACT_VERSION}`);
+  }
   if (!Array.isArray(content.pages)) errors.push(`${label}: pages must be an array`);
   if (!Array.isArray(content.navigation?.tabs)) errors.push(`${label}: navigation.tabs must be an array`);
   if (!Array.isArray(content.navigation?.utility)) errors.push(`${label}: navigation.utility must be an array`);

@@ -146,7 +146,7 @@ test.describe("Admin Portal Navigation", () => {
     await expect(tab.locator("[data-nav-item-field='label']")).toHaveCount(1);
     expect(await navItemLabels(tab)).toEqual([secondItem]);
 
-    await page.getByRole("button", { name: /Publish/ }).click();
+    await page.locator('[data-action="publish"]').click();
     await expect(page.locator("#adminStatus")).toContainText("เผยแพร่แล้ว");
 
     await page.reload({ waitUntil: "domcontentloaded" });

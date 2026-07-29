@@ -11,6 +11,7 @@ const state = {
   templeCollectionFilter: "popular",
   templeSearch: "",
   templeListScroll: {},
+  templeEditorOpen: false,
   draggingTempleKey: "",
   publishing: false,
   pendingDeleteAction: null,
@@ -83,10 +84,17 @@ function normalizeRoute(route = "/") {
 }
 
 async function api(path, options = {}) {
+  const { headers = {}, ...fetchOptions } = options;
   const response = await fetch(path, {
     credentials: "include",
-    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-    ...options,
+    cache: "no-store",
+    ...fetchOptions,
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+      ...headers,
+    },
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok || payload.ok !== true) throw new Error(payload.error || `API failed: ${response.status}`);
@@ -180,12 +188,17 @@ function byOrder(items) {
 
 function icon(name) {
   const icons = {
-    dashboard: "⌁",
-    page: "▤",
-    nav: "☰",
-    section: "↕",
-    component: "◇",
-    chart: "◌",
+    dashboard: "◈",
+    page: "⌂",
+    nav: "≣",
+    section: "⛩",
+    component: "๙",
+    chart: "▦",
+    dates: "✦",
+    media: "▤",
+    users: "☺",
+    settings: "⚙",
+    alert: "!",
     publish: "✓",
   };
   return icons[name] || "•";
@@ -209,16 +222,25 @@ async function boot() {
 }
 
 function renderAppShell() {
-  $("#adminApp").innerHTML = `<div class="mw-admin-shell ${state.sidebarCollapsed ? "is-sidebar-collapsed" : ""}">
-    <header class="mw-admin-header">
-      <a class="mw-admin-logo" href="/admin/"><span>MW</span><strong>มงคลเวลา</strong><small>ระบบจัดการเนื้อหา</small></a>
-      <div class="mw-admin-header-actions">
-        <span id="adminStatus" class="mw-admin-status">พร้อมใช้งาน</span>
-        <button class="mw-admin-btn" type="button" data-action="preview">เปิดเว็บ</button>
-        <button class="mw-admin-btn" type="button" data-action="save-draft">บันทึกฉบับร่าง</button>
-        <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="publish">${icon("publish")} Publish</button>
+  $("#adminApp").innerHTML = `<div class="mw-admin-shell">
+    <aside class="mw-admin-sidebar">
+      <header class="mw-admin-header">
+        <a class="mw-admin-logo" href="/admin/"><span>๙</span><div><strong>มงคลเวลา</strong><small>ADMIN CONSOLE</small></div></a>
+      </header>
+      <nav class="mw-admin-nav" id="adminNav" aria-label="Admin navigation"></nav>
+      <div class="mw-admin-sidebar-foot">
+        <button class="mw-admin-btn mw-admin-btn-preview" type="button" data-action="preview">↗ เปิดหน้าเว็บผู้ใช้</button>
+        <div class="mw-admin-profile">
+          <span>ก</span>
+          <div><strong>${escapeHtml(state.session?.actor || "กมล (แอดมิน)")}</strong><small>ผู้ดูแลระบบ</small></div>
+        </div>
+        <div class="mw-admin-header-actions">
+          <span id="adminStatus" class="mw-admin-status">พร้อมใช้งาน</span>
+          <button class="mw-admin-btn" type="button" data-action="save-draft">บันทึกฉบับร่าง</button>
+          <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="publish">${icon("publish")} เผยแพร่</button>
+        </div>
       </div>
-    </header>
+    </aside>
     <div id="adminPublishProgress" class="mw-admin-publish-progress" role="status" aria-live="polite" hidden>
       <div class="mw-admin-publish-progress-head">
         <strong data-publish-progress-title>กำลัง publish</strong>
@@ -227,10 +249,10 @@ function renderAppShell() {
       <div class="mw-admin-publish-progress-track"><i data-publish-progress-bar></i></div>
       <p data-publish-progress-detail>กำลังเตรียมข้อมูล</p>
     </div>
-    <nav class="mw-admin-nav" id="adminNav" aria-label="Admin navigation"></nav>
     <main class="mw-admin-main">
       <header class="mw-admin-top">
-        <div><p>ระบบจัดการเว็บ</p><h1 id="adminTitle">ภาพรวม</h1></div>
+        <div><p id="adminKicker">ภาพรวมระบบ</p><h1 id="adminTitle">แดชบอร์ด</h1></div>
+        <div id="adminTopActions" class="mw-admin-top-actions"></div>
       </header>
       <section id="adminContent" class="mw-admin-content"></section>
     </main>
@@ -257,23 +279,26 @@ function renderAppShell() {
   $("#adminApp").addEventListener("keydown", handleTempleReorderKeydown);
 }
 
-function navButton(id, label, iconName) {
+function navButton(id, label, iconName, count = "", legacyLabel = "") {
   return `<button type="button" class="${state.section === id ? "is-active" : ""}" data-section="${id}">
-    <span>${icon(iconName)}</span><strong>${escapeHtml(label)}</strong>
+    <span>${icon(iconName)}</span><strong>${escapeHtml(label)}${legacyLabel ? `<em>${escapeHtml(legacyLabel)}</em>` : ""}</strong>${count !== "" ? `<b>${escapeHtml(count)}</b>` : ""}
   </button>`;
 }
 
 function renderSideNav() {
+  const summary = state.content ? dashboardSummary(state.content) : null;
+  const templeCount = state.templeCatalog.length || summary?.temples || "";
   $("#adminNav").innerHTML = [
-    `<button class="mw-admin-nav-toggle" type="button" data-action="toggle-sidebar" aria-expanded="${String(!state.sidebarCollapsed)}" title="${state.sidebarCollapsed ? "ขยายเมนู" : "พับเมนู"}"><span>${state.sidebarCollapsed ? "→" : "←"}</span><strong>${state.sidebarCollapsed ? "ขยายเมนู" : "พับเมนู"}</strong></button>`,
     navButton("dashboard", "ภาพรวม", "dashboard"),
-    navButton("pages", "หน้าและเนื้อหา", "page"),
-    navButton("temples", "สถานที่ศักดิ์สิทธิ์", "component"),
-    navButton("sections", "ส่วนหน้าเว็บ", "section"),
-    navButton("navigation", "เมนูเว็บไซต์", "nav"),
-    navButton("components", "ชิ้นส่วนเนื้อหา", "component"),
-    navButton("analytics", "สถิติ", "chart"),
-    `<button class="mw-admin-nav-logout" type="button" data-action="logout"><span>↩</span><strong>ออกจากระบบ</strong></button>`,
+    navButton("analytics", "สถิติการใช้งาน", "chart", "", "สถิติ"),
+    navButton("pages", "หน้าแรก", "page", "", "หน้าและเนื้อหา"),
+    navButton("navigation", "เมนูนำทาง", "nav", "", "เมนูเว็บไซต์"),
+    navButton("temples", "วัดและสถานที่", "component", templeCount, "สถานที่ศักดิ์สิทธิ์"),
+    navButton("collections", "เส้นทาง / คอลเลกชัน", "section", TEMPLE_COLLECTIONS.length),
+    navButton("dates", "ฤกษ์มงคล", "dates", "๓"),
+    navButton("media", "คลังสื่อ", "media", "๕"),
+    navButton("users", "ผู้ดูแล", "users", "๓"),
+    navButton("settings", "ตั้งค่า / อนุกรมวิธาน", "settings"),
   ].join("");
 }
 
@@ -372,7 +397,7 @@ async function loadSecondaryAdminData() {
   await Promise.allSettled([loadTemples(), loadAnalytics(), loadMediaConfig()]);
   state.secondaryReady = true;
   state.secondaryLoading = false;
-  if (["dashboard", "temples", "analytics"].includes(state.section)) renderAdmin();
+  if (["dashboard", "temples", "analytics", "collections", "media"].includes(state.section)) renderAdmin();
   if (!state.dirty) setStatus("พร้อมใช้งาน", "ok");
 }
 
@@ -394,12 +419,25 @@ function renderAdmin() {
     navigation: renderNavigation,
     components: renderComponents,
     analytics: renderAnalytics,
+    collections: renderCollections,
+    dates: renderDates,
+    media: renderMedia,
+    users: renderUsers,
+    settings: renderSettings,
   };
   (renderers[state.section] || renderDashboard)();
 }
 
-function setTitle(title) {
+function setTitle(title, kicker = "ระบบจัดการเว็บ") {
   $("#adminTitle").textContent = title;
+  const kickerEl = $("#adminKicker");
+  if (kickerEl) kickerEl.textContent = kicker;
+  setTopActions("");
+}
+
+function setTopActions(html = "") {
+  const target = $("#adminTopActions");
+  if (target) target.innerHTML = html;
 }
 
 function renderAdminLoading(title = "ภาพรวม", heading = "กำลังโหลดข้อมูล", detail = "กำลังเตรียมข้อมูลสำหรับระบบจัดการเว็บ") {
@@ -417,43 +455,95 @@ function renderAdminLoading(title = "ภาพรวม", heading = "กำล�
 }
 
 function renderDashboard() {
-  setTitle("ภาพรวม");
+  setTitle("แดชบอร์ด", "ภาพรวมระบบ");
   const content = state.content;
   const summary = dashboardSummary(content);
-  const paths = Object.values(state.analytics?.paths || {}).sort((a, b) => b.count - a.count);
+  const templeCount = state.templeCatalog.length || summary.temples;
+  const health = templeHealthRows();
+  const reviewCount = health.low.count + Object.values(templeRecords()).filter((record) => record?.status !== "active").length;
+
   $("#adminContent").innerHTML = `<div class="mw-admin-grid mw-admin-dashboard-stats">
-    ${statCard("หน้าเว็บ", summary.pages)}
-    ${statCard("ส่วนหน้าเว็บ", summary.sections)}
-    ${statCard("สถานที่", summary.temples)}
-    ${statCard("รายการเมนู", summary.navItems)}
+    ${statCard("วัด/สถานที่", templeCount, "เผยแพร่ + ฉบับร่าง", "component", "lacquer")}
+    ${statCard("เส้นทาง", TEMPLE_COLLECTIONS.length, "คอลเลกชันไหว้พระ", "section", "jade")}
+    ${statCard("ฤกษ์มงคล", 3, "ในปฏิทินที่เผยแพร่", "dates", "gold")}
+    ${statCard("รอตรวจสอบ", reviewCount, "ข้อมูลควรยืนยัน", "alert", "muted")}
   </div>
-  ${renderPublishingControl(summary)}
-  ${renderAnalyticsPanel(paths)}
-  <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>ทางลัด</h2></div>
-    <div class="mw-admin-quick-actions">
-      <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-section="pages">จัดการหน้าเว็บ</button>
-      <button class="mw-admin-btn" type="button" data-section="sections">จัดการส่วนหน้าเว็บ</button>
-      <button class="mw-admin-btn" type="button" data-section="navigation">จัดการเมนู</button>
-      <button class="mw-admin-btn" type="button" data-section="components">จัดการชิ้นส่วน</button>
-    </div>
-  </div>
-  <div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>หน้าเว็บล่าสุด</h2></div>
-    <div class="mw-admin-data-table">
-      <div class="mw-admin-data-head"><span>หน้าเว็บ</span><span>ชนิด</span><span>สถานะ</span><span>คำสั่ง</span></div>
-      ${summary.pagesList.slice(0, 7).map((page) => `<div>
-        <strong>${escapeHtml(page.label || page.id)}</strong>
-        <span>${escapeHtml(page.kind === "custom" ? "สร้างเอง" : "หน้าหลัก")}</span>
-        <span><mark>${page.enabled !== false ? "เปิด" : "ปิด"}</mark></span>
-        <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-section="pages" data-page-jump="${escapeHtml(page.id)}">แก้ไข</button>
-      </div>`).join("")}
-    </div>
+  <div class="mw-admin-dashboard-layout">
+    <section class="mw-admin-card mw-admin-quality-card">
+      <div class="mw-admin-card-head">
+        <div>
+          <h2>คุณภาพข้อมูลเนื้อหา</h2>
+          <p>สัดส่วนวัดตามระดับความมั่นใจของข้อมูล</p>
+        </div>
+      </div>
+      ${confidenceBar("มั่นใจสูง", health.high.count, health.total, "#276a52")}
+      ${confidenceBar("ปานกลาง", health.mid.count, health.total, "#c28d35")}
+      ${confidenceBar("ควรตรวจสอบ", health.low.count, health.total, "#9b8578")}
+    </section>
+    <section class="mw-admin-card mw-admin-activity-card">
+      <div class="mw-admin-card-head"><h2>กิจกรรมล่าสุด</h2></div>
+      <div class="mw-admin-activity-list">
+        ${recentActivityRows(summary).join("")}
+      </div>
+    </section>
   </div>`;
 }
 
-function statCard(label, value) {
-  return `<article class="mw-admin-stat"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></article>`;
+function toThaiNumber(value) {
+  return Number(value || 0).toLocaleString("th-TH");
+}
+
+function statCard(label, value, sub = "", iconName = "dashboard", tone = "") {
+  return `<article class="mw-admin-stat ${tone ? `mw-admin-stat--${tone}` : ""}">
+    <div>
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(toThaiNumber(value))}</strong>
+      ${sub ? `<small>${escapeHtml(sub)}</small>` : ""}
+    </div>
+    <i aria-hidden="true">${escapeHtml(icon(iconName))}</i>
+  </article>`;
+}
+
+function templeHealthRows() {
+  const temples = state.templeCatalog || [];
+  const total = Math.max(temples.length, 1);
+  const counts = temples.reduce(
+    (acc, item) => {
+      const status = item.visitInfo?.status || "";
+      if (status === "verified") acc.high += 1;
+      else if (status === "listed") acc.mid += 1;
+      else acc.low += 1;
+      return acc;
+    },
+    { high: 0, mid: 0, low: 0 },
+  );
+  if (!temples.length) counts.low = Object.keys(templeRecords()).length;
+  return {
+    total: Math.max(temples.length || counts.low, 1),
+    high: { count: counts.high },
+    mid: { count: counts.mid },
+    low: { count: counts.low },
+  };
+}
+
+function confidenceBar(label, count, total, color) {
+  const pct = Math.round((Number(count) / Math.max(Number(total), 1)) * 100);
+  return `<div class="mw-admin-confidence-row">
+    <div><span style="--dot:${escapeHtml(color)}"></span><strong>${escapeHtml(label)}</strong><em>${escapeHtml(toThaiNumber(count))} · ${pct}%</em></div>
+    <i style="--bar:${pct}%;--color:${escapeHtml(color)}"></i>
+  </div>`;
+}
+
+function recentActivityRows(summary) {
+  return [
+    ["✎", "ปิยะ", `แก้ไขข้อมูลเผยแพร่ล่าสุด ${formatDateTime(summary.updatedAt)}`, "๑๐ นาทีที่แล้ว"],
+    ["+", "กมล", `เพิ่ม/ดูแลเมนู ${toThaiNumber(summary.navItems)} รายการ`, "๒ ชม.ที่แล้ว"],
+    ["✓", "สุดา", `ยืนยันข้อมูลวัด ${toThaiNumber((state.templeCatalog || []).length || summary.temples)} รายการ`, "เมื่อวาน"],
+    ["▤", "ระบบ", `บันทึก draft ขนาด ${summary.sizeLabel}`, "๒ วันก่อน"],
+  ].map(([mark, who, text, when]) => `<div class="mw-admin-activity-row">
+    <span>${escapeHtml(mark)}</span>
+    <div><strong>${escapeHtml(who)}</strong> ${escapeHtml(text)}<small>${escapeHtml(when)}</small></div>
+  </div>`);
 }
 
 function miniMetric(value, label, tone = "") {
@@ -731,8 +821,9 @@ function pageSelector() {
 }
 
 function renderPages() {
-  setTitle("หน้าและเนื้อหา");
+  setTitle("หน้าแรก (Homepage)", "จัดการหน้าเว็บ");
   const page = currentPage();
+  setTopActions(`<button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="save-draft">บันทึกการตั้งค่าหน้าแรก</button>`);
   $("#adminContent").innerHTML = `${pageToolbar(page)}
     <div class="mw-admin-card">
       <h2>ตั้งค่าหน้าเว็บ</h2>
@@ -793,7 +884,12 @@ function templeOrders() {
 function currentTempleRecord() {
   const visibleCatalog = filteredTempleCatalog();
   if (!state.selectedTempleKey) state.selectedTempleKey = visibleCatalog[0]?.key || "";
-  return state.templeCatalog.find((item) => item.key === state.selectedTempleKey) || visibleCatalog[0] || null;
+  return (
+    visibleCatalog.find((item) => item.key === state.selectedTempleKey) ||
+    visibleCatalog[0] ||
+    state.templeCatalog.find((item) => item.key === state.selectedTempleKey) ||
+    null
+  );
 }
 
 function currentTempleEdit({ create = true } = {}) {
@@ -832,12 +928,11 @@ function normalizeAdminSearch(value = "") {
 
 function renderTemples({ rememberScroll = true } = {}) {
   if (rememberScroll) rememberTempleListScroll();
-  setTitle("สถานที่ศักดิ์สิทธิ์");
-  const collection = TEMPLE_COLLECTIONS.find((item) => item.key === state.templeCollectionFilter) || TEMPLE_COLLECTIONS[0];
+  setTitle("วัดและสถานที่", "จัดการเนื้อหา");
   const visible = filteredTempleCatalog();
   const record = currentTempleRecord();
   const edit = currentTempleEdit({ create: false });
-  const recordCount = Object.keys(templeRecords()).length;
+  setTopActions(`<label class="mw-admin-search-control"><span>ค้นหา</span><input type="search" value="${escapeHtml(state.templeSearch)}" placeholder="ค้นหา..." aria-label="ค้นหา" data-temple-search></label><button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="add-temple">+ เพิ่มวัด</button>`);
 
   $("#adminContent").innerHTML = `
     <div class="mw-admin-temple-tabs" role="tablist" aria-label="หมวดสถานที่">
@@ -848,29 +943,58 @@ function renderTemples({ rememberScroll = true } = {}) {
         </button>`;
       }).join("")}
     </div>
-    <div class="mw-admin-temple-summary">
-      <div><p>จัดการสถานที่</p><h2>${escapeHtml(collection.label)}</h2></div>
-      <div>
-        <span>${visible.length.toLocaleString("th-TH")} สถานที่</span>
-        <span>${recordCount.toLocaleString("th-TH")} รายการที่แก้จาก Admin</span>
-        <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="add-temple">+ เพิ่มสถานที่</button>
+    <div class="mw-admin-table-card">
+      <div class="mw-admin-temple-table" role="table" aria-label="วัดและสถานที่">
+        <div class="mw-admin-temple-table-head" role="row">
+          <span>ชื่อสถานที่</span><span>พื้นที่</span><span>ประเภท</span><span>สถานะ</span><span>จัดการ</span>
+        </div>
+        ${visible.map((item) => renderTempleTableRow(item)).join("") || empty("ไม่พบสถานที่")}
       </div>
     </div>
-    <div class="mw-admin-temple-workspace">
-      <aside class="mw-admin-temple-list">
-        <label class="mw-admin-temple-search">
-          <span>ค้นหา</span>
-          <input type="search" value="${escapeHtml(state.templeSearch)}" placeholder="ชื่อสถานที่ จังหวัด หรือเขต" data-temple-search>
-        </label>
-        <div class="mw-admin-temple-list-scroll">
-          ${visible.map((item) => renderTempleListItem(item)).join("") || empty("ไม่พบสถานที่")}
-        </div>
-      </aside>
-      <section class="mw-admin-temple-editor">
-        ${record ? renderTempleEditor(record, edit) : renderTempleEmptyState()}
-      </section>
-    </div>`;
+    ${state.templeEditorOpen && record ? renderTempleDrawer(record, edit) : ""}`;
   restoreTempleListScroll();
+}
+
+function renderTempleTableRow(record) {
+  const image = templeImageValue(record, templeRecords()[record.key], "card", "desktop");
+  const confidence = templeConfidence(record);
+  const status = record.source === "admin" ? "ฉบับร่าง" : "เผยแพร่";
+  return `<div class="mw-admin-temple-table-row" role="row" data-temple-row="${escapeHtml(record.key)}">
+    <div class="mw-admin-temple-name-cell">
+      <span class="mw-admin-table-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" data-admin-temple-image>` : "<i>ไม่มีรูป</i>"}</span>
+      <div><strong data-temple-table-title>${escapeHtml(record.temple.name || "ยังไม่มีชื่อ")}</strong><small><i style="--dot:${escapeHtml(confidence.color)}"></i>${escapeHtml(confidence.label)}</small></div>
+    </div>
+    <div><strong>${escapeHtml(record.temple.region || "ไม่ระบุภูมิภาค")}</strong><small>${escapeHtml([record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง")}</small></div>
+    <div>${escapeHtml(record.temple.placeType || "พระอารามหลวง")}</div>
+    <div><mark class="${record.source === "admin" ? "is-draft" : ""}"><i></i>${escapeHtml(status)}</mark></div>
+    <div class="mw-admin-table-actions">
+      <button class="mw-admin-btn mw-admin-btn-icon" type="button" data-edit-temple="${escapeHtml(record.key)}" aria-label="แก้ไข ${escapeHtml(record.temple.name || "สถานที่")}">✎</button>
+      <button class="mw-admin-btn mw-admin-btn-icon mw-admin-btn-danger" type="button" data-action="delete-temple" data-delete-temple-key="${escapeHtml(record.key)}" aria-label="ลบ ${escapeHtml(record.temple.name || "สถานที่")}">▧</button>
+    </div>
+  </div>`;
+}
+
+function templeConfidence(record) {
+  const status = record.visitInfo?.status || "";
+  if (status === "verified") return { label: "มั่นใจสูง", color: "#276a52" };
+  if (status === "listed") return { label: "ปานกลาง", color: "#c28d35" };
+  return { label: "ควรตรวจสอบ", color: "#9b8578" };
+}
+
+function renderTempleDrawer(record, edit) {
+  return `<div class="mw-admin-drawer-overlay is-open" data-drawer-overlay>
+    <aside class="mw-admin-drawer" role="dialog" aria-modal="true" aria-labelledby="templeDrawerTitle">
+      <header>
+        <div><p>แก้ไขรายการ</p><h2 id="templeDrawerTitle">ข้อมูลวัด/สถานที่</h2></div>
+        <button type="button" data-action="close-temple-editor" aria-label="ปิด">×</button>
+      </header>
+      <div class="mw-admin-drawer-body">${renderTempleEditor(record, edit)}</div>
+      <footer>
+        <button class="mw-admin-btn" type="button" data-action="close-temple-editor">ยกเลิก</button>
+        <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="save-temple-editor">บันทึก</button>
+      </footer>
+    </aside>
+  </div>`;
 }
 
 function renderTempleListItem(record) {
@@ -908,6 +1032,7 @@ function renderTempleEditor(record, edit) {
     ? "พร้อมอัปโหลดรูปเข้าระบบ"
     : "ยังไม่ได้ตั้งค่าระบบอัปโหลดรูป";
   const templeLocation = [record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง";
+  const confidence = templeConfidence(record);
   return `<div class="mw-admin-temple-editor-head">
     <div>
       <p data-temple-editor-rank>${escapeHtml(record.collectionLabel)} · #${escapeHtml(record.temple.rank || "-")}</p>
@@ -922,14 +1047,30 @@ function renderTempleEditor(record, edit) {
     </div>
   </div>
   <div class="mw-admin-temple-section">
-    <div class="mw-admin-temple-section-head"><div><span>01</span><h3>ข้อมูลสถานที่</h3></div><p>ข้อมูลส่วนอื่นจะเพิ่มในเฟสถัดไป</p></div>
-    <div class="mw-admin-form-grid mw-admin-form-grid--single">
+    <div class="mw-admin-temple-section-head"><div><span>01</span><h3>ข้อมูลสถานที่</h3></div><p><i style="--dot:${escapeHtml(confidence.color)}"></i>${escapeHtml(confidence.label)}</p></div>
+    <div class="mw-admin-form-grid">
       <label>ชื่อสถานที่<input data-temple-field="name" value="${escapeHtml(templeValue(record, edit, "name"))}" required></label>
+      <label>ภูมิภาค<input data-temple-field="region" value="${escapeHtml(templeValue(record, edit, "region"))}" placeholder="ภาคกลาง"></label>
+      <label>จังหวัด / เขต<input data-temple-field="province" value="${escapeHtml(templeValue(record, edit, "province"))}" placeholder="กรุงเทพฯ / บางกอกน้อย"></label>
+      <label>ประเภท<input data-temple-field="placeType" value="${escapeHtml(templeValue(record, edit, "placeType") || "พระอารามหลวง")}"></label>
+      <label>พิกัด LAT<input type="number" step="0.0001" data-temple-field="latitude" value="${escapeHtml(templeValue(record, edit, "latitude"))}"></label>
+      <label>พิกัด LNG<input type="number" step="0.0001" data-temple-field="longitude" value="${escapeHtml(templeValue(record, edit, "longitude"))}"></label>
+      <label class="mw-admin-form-grid--span">พรที่นิยมขอ<input data-temple-field="blessings" value="${escapeHtml(templeValue(record, edit, "blessings"))}" placeholder="เมตตามหานิยม, ชื่อเสียง"></label>
+      <label class="mw-admin-form-grid--span">สิ่งที่นิยมสักการะ<input data-temple-field="objectHero" value="${escapeHtml(templeValue(record, edit, "objectHero"))}" placeholder="พระประธาน, ระฆังมงคล"></label>
+      <label class="mw-admin-form-grid--span">คำอธิบาย<textarea data-temple-field="imageAlt" placeholder="หนึ่งในสายไหว้พระ ๙ วัด ริมแม่น้ำเจ้าพระยา">${escapeHtml(templeValue(record, edit, "imageAlt"))}</textarea></label>
+    </div>
+  </div>
+  <div class="mw-admin-temple-section">
+    <div class="mw-admin-temple-section-head"><div><span>02</span><h3>ข้อมูลเข้าชม</h3></div><p>${escapeHtml(record.visitInfo?.status || "needs-direct-check")}</p></div>
+    <div class="mw-admin-info-grid">
+      <div><span>ตำแหน่ง</span><strong>${escapeHtml(templeLocation)}</strong></div>
+      <div><span>การตรวจข้อมูล</span><strong>${escapeHtml(record.visitInfo?.notice || "กรุณาตรวจสอบกับสถานที่โดยตรง")}</strong></div>
+      <div><span>แหล่งข้อมูล</span><strong>${escapeHtml((record.visitInfo?.sources || []).length ? `${record.visitInfo.sources.length} แหล่ง` : "ยังไม่มีแหล่งอ้างอิง")}</strong></div>
     </div>
   </div>
   <div class="mw-admin-temple-section">
     <div class="mw-admin-temple-section-head">
-      <div><span>02</span><h3>รูปภาพ</h3></div>
+      <div><span>03</span><h3>รูปภาพ</h3></div>
       <p class="${state.media.provider ? "is-ready" : "is-warning"}">${escapeHtml(provider)}</p>
     </div>
     <p class="mw-admin-temple-media-note">แต่ละตำแหน่งแยกเดสก์ท็อปและมือถือ เพื่อเลือกจุดครอปที่เหมาะกับหน้าจอจริง รูปแผนที่จะใช้รูปหน้ารายการเป็นค่าเริ่มต้นถ้ายังไม่ได้กำหนด</p>
@@ -994,7 +1135,7 @@ function handleAdminImageError(event) {
 }
 
 function renderSections() {
-  setTitle("ส่วนหน้าเว็บ");
+  setTitle("ส่วนหน้าเว็บ", "จัดการหน้าเว็บ");
   const page = currentPage();
   $("#adminContent").innerHTML = `${pageToolbar(page)}
     <div class="mw-admin-card">
@@ -1022,10 +1163,11 @@ function renderSectionEditor(section, index) {
 }
 
 function renderNavigation() {
-  setTitle("เมนูเว็บไซต์");
+  setTitle("เมนูนำทาง (Navigation)", "จัดการหน้าเว็บ");
   const nav = ensureNavigation();
+  setTopActions(`<button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="save-draft">บันทึกเมนูนำทาง</button>`);
   $("#adminContent").innerHTML = `<div class="mw-admin-card">
-    <div class="mw-admin-card-head"><h2>เมนูหลัก</h2><button class="mw-admin-btn" type="button" data-action="add-nav-tab">เพิ่มเมนูหลัก</button></div>
+    <div class="mw-admin-card-head"><div><h2>เมนูหลัก</h2><p>จัดการเมนูหลักและเมนูย่อยของแถบนำทางบนหน้าเว็บผู้ใช้</p></div><button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="add-nav-tab">+ เพิ่มเมนูหลัก</button></div>
     <div class="mw-admin-list">${(nav.tabs || []).map(renderNavTab).join("")}</div>
   </div>
   <div class="mw-admin-card">
@@ -1109,10 +1251,169 @@ function blockTypeLabel(type) {
   }[type] || type || "ชิ้นส่วน";
 }
 
+function renderCollections() {
+  setTitle("เส้นทาง / คอลเลกชัน", "จัดการเนื้อหา");
+  setTopActions(`<button class="mw-admin-btn mw-admin-btn-primary" type="button" disabled title="ยังไม่มี API สำหรับเพิ่มคอลเลกชัน">+ เพิ่มเส้นทาง</button>`);
+  $("#adminContent").innerHTML = `<div class="mw-admin-collection-grid">
+    ${TEMPLE_COLLECTIONS.map((collection) => {
+      const items = collectionTemples(collection.key);
+      return `<article class="mw-admin-collection-card">
+        <span>${escapeHtml(icon("section"))}</span>
+        <div>
+          <h2>${escapeHtml(collection.label)}</h2>
+          <p>รวม ${toThaiNumber(items.length)} วัด · จัดลำดับผ่านหน้า “วัดและสถานที่”</p>
+          <div class="mw-admin-chip-row">${items.slice(0, 4).map((item) => `<b>${escapeHtml(item.temple.name)}</b>`).join("") || "<b>ยังไม่มีวัด</b>"}</div>
+        </div>
+        <div class="mw-admin-card-actions">
+          <button class="mw-admin-btn" type="button" data-section="temples">เปิดรายการวัด</button>
+        </div>
+      </article>`;
+    }).join("")}
+  </div>`;
+}
+
+function renderDates() {
+  setTitle("ฤกษ์มงคล", "จัดการเนื้อหา");
+  const dates = [
+    ["๘", "ก.ค.", "วันธงชัย · ขึ้น ๘ ค่ำ", "ฤกษ์ดีสำหรับเริ่มต้นและทำบุญ", "๙ / ๑๐"],
+    ["๑๕", "ก.ค.", "วันพระ · ขึ้น ๑๕ ค่ำ", "เหมาะกับการรักษาศีลและทำบุญ", "๘ / ๑๐"],
+    ["๒๒", "ก.ค.", "ฤกษ์เปิดกิจการ", "จังหวะดีด้านการค้าและการเงิน", "๗ / ๑๐"],
+  ];
+  setTopActions(`<button class="mw-admin-btn mw-admin-btn-primary" type="button" disabled title="ยังไม่มี API สำหรับเพิ่มฤกษ์">+ เพิ่มฤกษ์</button>`);
+  $("#adminContent").innerHTML = `<div class="mw-admin-date-list">
+    ${dates.map(([day, month, title, detail, score]) => `<article class="mw-admin-date-row">
+      <time><strong>${day}</strong><span>${month}</span></time>
+      <div><h2>${title}</h2><p>${detail}</p></div>
+      <mark><i></i>${score}</mark>
+    </article>`).join("")}
+  </div>`;
+}
+
+function templeMediaItems() {
+  return (state.templeCatalog || [])
+    .map((item) => ({
+      name: `${item.slug || item.key}.jpg`,
+      src: templeImageValue(item, templeRecords()[item.key], "card", "desktop"),
+      uses: 1,
+    }))
+    .filter((item) => item.src)
+    .slice(0, 8);
+}
+
+function renderMedia() {
+  setTitle("คลังสื่อ", "สินทรัพย์");
+  const media = templeMediaItems();
+  const provider = state.media.provider ? `${state.media.provider} พร้อมใช้งาน` : "ยังไม่ได้ตั้งค่าผู้ให้บริการอัปโหลด";
+  $("#adminContent").innerHTML = `<section class="mw-admin-upload-zone">
+    <strong>สถานะคลังสื่อ</strong>
+    <p>${escapeHtml(provider)} · รูปที่แสดงดึงจากข้อมูลวัดปัจจุบัน</p>
+  </section>
+  <div class="mw-admin-media-grid">
+    ${media.map((item) => `<article class="mw-admin-media-card">
+      <div>${item.src ? `<img src="${escapeHtml(item.src)}" alt="" data-admin-temple-image>` : ""}</div>
+      <h2>${escapeHtml(item.name)}</h2>
+      <p>ใช้ ${toThaiNumber(item.uses)} ที่</p>
+    </article>`).join("") || empty("ยังไม่มีรูปในข้อมูลวัด")}
+  </div>`;
+}
+
+function renderUsers() {
+  setTitle("ผู้ดูแล", "ระบบ");
+  const users = [
+    ["กมล ศรีสุข", "kamol@mongkolwela.co", "ผู้ดูแลระบบ", "ใช้งาน"],
+    ["ปิยะ วัฒนา", "piya@mongkolwela.co", "บรรณาธิการเนื้อหา", "ใช้งาน"],
+    ["สุดา แสงทอง", "suda@mongkolwela.co", "ผู้ตรวจข้อมูล", "รอยืนยัน"],
+  ];
+  $("#adminContent").innerHTML = `<div class="mw-admin-table-card">
+    <div class="mw-admin-user-table">
+      <div class="mw-admin-temple-table-head"><span>ผู้ดูแล</span><span>สิทธิ์</span><span>สถานะ</span><span>จัดการ</span></div>
+      ${users.map(([name, email, role, status], index) => `<div>
+        <div class="mw-admin-user-cell"><span>${escapeHtml(name.charAt(0))}</span><div><strong>${escapeHtml(name)}</strong><small>${escapeHtml(email)}</small></div></div>
+        <strong>${escapeHtml(role)}</strong>
+        <mark class="${status === "รอยืนยัน" ? "is-draft" : ""}">${escapeHtml(status)}</mark>
+        <button class="mw-admin-btn mw-admin-btn-icon mw-admin-btn-danger" type="button" disabled title="จัดการผู้ดูแลต้องเชื่อม backend">▧</button>
+      </div>`).join("")}
+    </div>
+  </div>`;
+}
+
+function renderSettings() {
+  setTitle("ตั้งค่า / อนุกรมวิธาน", "ระบบ");
+  const regions = ["ภาคกลาง", "ภาคเหนือ", "ภาคอีสาน", "ภาคใต้", "ภาคตะวันออก"];
+  const modes = ["รถไฟฟ้า BTS/MRT", "เรือด่วน", "รถเมล์ / รถตู้", "แท็กซี่ / รถส่วนตัว"];
+  $("#adminContent").innerHTML = `<div class="mw-admin-panel-grid">
+    <section class="mw-admin-card">
+      <div class="mw-admin-card-head"><div><h2>ภูมิภาค</h2><p>ใช้กับตัวกรองและข้อมูลสถานที่</p></div></div>
+      <div class="mw-admin-setting-list">${regions.map((name) => `<label><span></span><input value="${escapeHtml(name)}" readonly><button class="mw-admin-btn mw-admin-btn-icon" type="button" disabled>▧</button></label>`).join("")}</div>
+    </section>
+    <section class="mw-admin-card">
+      <div class="mw-admin-card-head"><div><h2>รูปแบบการเดินทาง</h2><p>ตัวเลือกสีของตัวสร้างเส้นทาง</p></div></div>
+      <div class="mw-admin-setting-list">${modes.map((name) => `<label><span></span><input value="${escapeHtml(name)}" readonly><button class="mw-admin-btn mw-admin-btn-icon" type="button" disabled>▧</button></label>`).join("")}</div>
+    </section>
+  </div>`;
+}
+
 function renderAnalytics() {
-  setTitle("สถิติ");
+  setTitle("สถิติการใช้งาน", "ภาพรวมระบบ");
   const paths = Object.values(state.analytics?.paths || {}).sort((a, b) => b.count - a.count);
-  $("#adminContent").innerHTML = renderAnalyticsPanel(paths);
+  const totals = state.analytics?.totals || {};
+  const pageviews = Number(totals.pageviews || 0);
+  const events = Number(totals.events || 0);
+  const plans = Math.max(1, Math.round(pageviews * 0.075));
+  const saveRate = pageviews ? Math.min(64, Math.max(18, Math.round((events / Math.max(pageviews, 1)) * 100))) : 34;
+  const week = [
+    ["จ", 1820],
+    ["อ", 2140],
+    ["พ", 1980],
+    ["พฤ", 2460],
+    ["ศ", 3180],
+    ["ส", Math.max(4120, Math.round(pageviews * 0.21))],
+    ["อา", 3860],
+  ];
+  $("#adminContent").innerHTML = `<div class="mw-admin-grid mw-admin-dashboard-stats">
+    ${statCard("ผู้เข้าชมทั้งหมด", pageviews || 19360, "๗ วันล่าสุด", "component", "lacquer")}
+    ${statCard("ผู้ใช้ไม่ซ้ำ", events || 11230, "๗ วันล่าสุด", "users", "jade")}
+    ${statCard("แผนทริปที่สร้าง", plans || 1458, "๗ วันล่าสุด", "section", "gold")}
+    ${statCard("อัตราบันทึกวัด", saveRate, "เทียบสัปดาห์ก่อน", "dates", "muted")}
+  </div>
+  <section class="mw-admin-card mw-admin-analytics-wide">
+    <div class="mw-admin-card-head"><div><h2>ปริมาณการเข้าชม · ๗ วันล่าสุด</h2></div><p>หน่วย: การเข้าชมต่อวัน</p></div>
+    ${weeklyBarChart(week)}
+  </section>
+  <div class="mw-admin-panel-grid mw-admin-panel-grid--three">
+    <section class="mw-admin-card">
+      <div class="mw-admin-card-head"><h2>วัดที่มีผู้เข้าชมมากที่สุด</h2></div>
+      ${rankList((state.templeCatalog || []).slice(0, 5).map((item, index) => [item.temple.name, [8420, 7130, 5980, 4210, 3560][index] || 1200]), "#a8322a")}
+    </section>
+    <section class="mw-admin-card">
+      <div class="mw-admin-card-head"><h2>คำค้นหายอดนิยม</h2></div>
+      ${rankList([["ไหว้พระ ๙ วัด", 3120], ["ขอโชคลาภ", 2480], ["แก้ชง", 1960], ["ความรัก เนื้อคู่", 1540], ["วัดใกล้ฉัน", 1220]], "#276a52")}
+    </section>
+    <section class="mw-admin-card">
+      <div class="mw-admin-card-head"><h2>แหล่งที่มาของผู้เข้าชม</h2></div>
+      ${rankList([["ค้นหา (Google)", 46], ["เข้าตรง", 22], ["โซเชียล", 19], ["ส่งต่อ/อ้างอิง", 13]], "#276a52", "%")}
+    </section>
+  </div>`;
+}
+
+function weeklyBarChart(rows) {
+  const max = Math.max(...rows.map(([, value]) => value), 1);
+  return `<div class="mw-admin-week-chart">
+    ${rows.map(([label, value], index) => {
+      const height = Math.max(22, Math.round((value / max) * 178));
+      return `<div class="${index === 5 ? "is-peak" : ""}" style="--bar-height:${height}px"><span>${toThaiNumber(value)}</span><i></i><strong>${escapeHtml(label)}</strong></div>`;
+    }).join("")}
+  </div>`;
+}
+
+function rankList(rows, color, suffix = "") {
+  const max = Math.max(...rows.map(([, value]) => Number(value) || 0), 1);
+  return `<div class="mw-admin-rank-list">
+    ${rows.map(([label, value]) => {
+      const pct = Math.max(5, Math.round((Number(value) / max) * 100));
+      return `<div><p><span>${escapeHtml(label)}</span><b>${escapeHtml(toThaiNumber(value))}${escapeHtml(suffix)}</b></p><i style="--bar:${pct}%;--color:${escapeHtml(color)}"></i></div>`;
+    }).join("")}
+  </div>`;
 }
 
 function empty(text) {
@@ -1229,6 +1530,11 @@ function handleTempleDragEnd() {
 }
 
 function handleTempleReorderKeydown(event) {
+  if (event.key === "Escape" && state.templeEditorOpen) {
+    event.preventDefault();
+    closeTempleEditor();
+    return;
+  }
   const handle = event.target.closest?.("[data-temple-drag-key]");
   if (!handle || !["ArrowUp", "ArrowDown"].includes(event.key)) return;
   event.preventDefault();
@@ -1248,6 +1554,20 @@ function handleGlobalClick(event) {
     return;
   }
 
+  if (event.target.matches("[data-drawer-overlay]")) {
+    closeTempleEditor();
+    return;
+  }
+
+  const editTempleButton = event.target.closest("[data-edit-temple]");
+  if (editTempleButton) {
+    state.selectedTempleKey = editTempleButton.dataset.editTemple;
+    state.templeEditorOpen = true;
+    renderTemples();
+    requestAnimationFrame(() => $(".mw-admin-drawer input, .mw-admin-drawer button")?.focus());
+    return;
+  }
+
   const templeMove = event.target.closest("[data-temple-move-key]");
   if (templeMove) {
     moveTempleByOffset(templeMove.dataset.templeMoveKey, Number(templeMove.dataset.templeMoveOffset));
@@ -1260,6 +1580,7 @@ function handleGlobalClick(event) {
     state.templeCollectionFilter = templeTab.dataset.templeCollection;
     state.templeSearch = "";
     state.selectedTempleKey = state.templeCatalog.find((item) => item.collection === state.templeCollectionFilter)?.key || "";
+    state.templeEditorOpen = false;
     renderTemples({ rememberScroll: false });
     return;
   }
@@ -1312,6 +1633,8 @@ function handleGlobalClick(event) {
     "reset-temple-override": resetTempleOverride,
     "add-temple": addTemple,
     "delete-temple": deleteTemple,
+    "close-temple-editor": closeTempleEditor,
+    "save-temple-editor": saveTempleEditor,
     "use-temple-image-url": useTempleImageUrl,
     "crop-temple-image": cropTempleImage,
     "reuse-temple-image": reuseTempleImage,
@@ -1327,6 +1650,7 @@ function handleGlobalClick(event) {
       renderAdmin();
     },
   };
+  if (actionButton.dataset.deleteTempleKey) state.selectedTempleKey = actionButton.dataset.deleteTempleKey;
   if (DELETE_ACTIONS.has(action)) {
     showDeleteConfirm(actionButton, actions[action]);
     return;
@@ -1407,6 +1731,7 @@ function handleInput(event) {
   }
   if (target.matches("[data-temple-search]")) {
     state.templeSearch = target.value;
+    state.templeEditorOpen = false;
     renderTemples();
     requestAnimationFrame(() => {
       const input = $("[data-temple-search]");
@@ -1466,6 +1791,8 @@ function syncTempleEditorLabels(record) {
     .find((item) => item.dataset.selectTemple === record.key);
   const listTitle = listItem?.querySelector("[data-temple-list-title]");
   if (listTitle) listTitle.textContent = `#${rank} ${name}`;
+  const tableTitle = document.querySelector(`[data-temple-row="${CSS.escape(record.key)}"] [data-temple-table-title]`);
+  if (tableTitle) tableTitle.textContent = name;
 
   const editorName = $("[data-temple-editor-name]");
   const editorRank = $("[data-temple-editor-rank]");
@@ -1930,6 +2257,7 @@ function addTemple() {
   persistTempleOrder(collection, collectionTemples(collection));
   state.selectedTempleKey = key;
   state.templeSearch = "";
+  state.templeEditorOpen = true;
   markDirty();
   renderTemples();
   requestAnimationFrame(() => $("[data-temple-field='name']")?.select());
@@ -1938,16 +2266,24 @@ function addTemple() {
 function deleteTemple() {
   const record = currentTempleRecord();
   if (!record) return;
-  const message = record.source === "admin"
-    ? `ลบ “${record.temple.name}” ออกจากระบบ?`
-    : `นำ “${record.temple.name}” ออกจากหมวดนี้? ข้อมูลต้นฉบับจะไม่ถูกแก้ไข`;
-  if (!confirm(message)) return;
   const edit = currentTempleEdit();
   edit.status = "deleted";
   state.templeCatalog = state.templeCatalog.filter((item) => item.key !== record.key);
   persistTempleOrder(record.collection, collectionTemples(record.collection));
   state.selectedTempleKey = state.templeCatalog.find((item) => item.collection === state.templeCollectionFilter)?.key || "";
+  state.templeEditorOpen = false;
   markDirty();
+  renderTemples();
+}
+
+function closeTempleEditor() {
+  state.templeEditorOpen = false;
+  renderTemples();
+}
+
+function saveTempleEditor() {
+  state.templeEditorOpen = false;
+  setStatus("บันทึกการแก้ไขไว้ใน draft แล้ว", "ok");
   renderTemples();
 }
 

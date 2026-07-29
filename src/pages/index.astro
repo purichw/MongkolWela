@@ -87,7 +87,7 @@ const collectionCards = [
     variant: "popular",
     kicker: "Popular · เดินทาง",
     title: "สายไหว้พระ ๙ วัด",
-    description: "วัดดังที่คนรู้จัก จัดมาเป็นเส้นทางต่อเนื่อง เหมาะกับวันหยุดหรือทริปไหว้ครบ",
+    description: "วัดดังที่คนรู้จัก จัดมาเป็นเส้นทางต่อเนื่อง เหมาะกับวันหยุดที่อยากไปให้ครบ",
     href: "/temples/popular/",
     linkLabel: "จัดเป็นเส้นทาง",
   },
@@ -112,6 +112,7 @@ const collectionCards = [
 const guideLinks = [
   { label: "เตรียมตัวก่อนไหว้พระ", href: "/temples/" },
   { label: "เลือกเส้นทางให้เหมาะกับเวลา", href: "/temples/planner/" },
+  { label: "ค้นหาวัดจากพื้นที่", href: "/temples/thailand/" },
   { label: "ดูสถานที่ใกล้ขอพร", href: "/temples/sacred/" },
 ];
 
@@ -119,6 +120,7 @@ const supportingLinks = [
   { label: "วันพระและปฏิทินไทย", href: "/calendar/" },
   { label: "เซียมซี", href: "/horoscope/seamsi/" },
   { label: "ไพ่ประจำวัน", href: "/tarot/daily/" },
+  { label: "ลายมือ", href: "/horoscope/palmistry/" },
 ];
 
 const extraScripts = ["/assets/js/home-motion.js"];
@@ -160,11 +162,7 @@ const extraScripts = ["/assets/js/home-motion.js"];
       <div class="hero-content home-hero-shell">
         <div class="home-hero-copy">
           <p class="eyebrow">วัดดัง · สถานที่ศักดิ์สิทธิ์ · เส้นทางมงคล</p>
-          <h1 id="hero-title">
-            <span>วางแผนไหว้</span>
-            <span>พระ</span>
-            <mark>ให้ตรงกับใจ</mark>
-          </h1>
+          <h1 id="hero-title"><span>วางแผนไหว้</span><span>พระ</span><mark>ให้ตรงกับใจ</mark></h1>
           <p class="hero-copy">
             บอกเราแค่สิ่งที่อยากเสริม หรือจังหวัดที่อยากไป มงคลเวลาหาวัดจริง
             จัดลำดับเส้นทาง และบอกพิกัดให้พร้อมออกเดินทาง
@@ -268,7 +266,7 @@ const extraScripts = ["/assets/js/home-motion.js"];
         <article class="home-sample-plan" aria-label="ตัวอย่างแผนไหว้พระ">
           <header>
             <p>ตัวอย่างทริป · Sample plan</p>
-            <strong>ไหว้พระเริ่มเช้า ๓ วัด · กรุงเทพฯ</strong>
+            <strong>ไหว้พระริมน้ำ ๓ วัด · กรุงเทพฯ</strong>
             <span>รวม ๑๑ กม.</span>
           </header>
           <ol>
@@ -310,13 +308,28 @@ const extraScripts = ["/assets/js/home-motion.js"];
           </a>
         ))}
       </div>
+
+      <aside class="home-database-panel" aria-label="ฐานข้อมูลวัดทั่วประเทศไทย">
+        <div>
+          <p>ฐานข้อมูลวัดทั่วประเทศไทย</p>
+          <strong>๔๔,๗๐๕ วัด พร้อมค้นหา</strong>
+          <div aria-label="ตัวกรองฐานข้อมูลวัด">
+            <span>ภาค</span>
+            <span>จังหวัด</span>
+            <span>อำเภอ / ตำบล</span>
+            <span>นิกาย</span>
+            <span>รหัสไปรษณีย์</span>
+          </div>
+        </div>
+        <a href="/temples/thailand/">เปิดฐานข้อมูล</a>
+      </aside>
     </section>
 
     <section class="home-section home-guide-section" id="guides" aria-labelledby="guides-title">
       <figure class="home-guide-media">
         <img
-          src="/assets/images/temple-guide-visit-prep.jpg"
-          alt="ผู้เดินทางเดินในลานวัดไทยก่อนเข้าไหว้พระ"
+          src="/assets/images/chinese-incense-card.jpg"
+          alt="ธูปวงแขวนในศาลเจ้าจีน"
           loading="lazy"
           decoding="async"
         />

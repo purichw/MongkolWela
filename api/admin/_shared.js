@@ -109,68 +109,20 @@ async function readBundledLiveContent() {
   }
 }
 
-function mergeOrderedById(contentItems = [], bundledItems = []) {
-  const existingById = new Map(contentItems.filter((item) => item?.id).map((item) => [item.id, item]));
-  const bundledIds = new Set(bundledItems.filter((item) => item?.id).map((item) => item.id));
-  const usedIds = new Set();
-  const merged = [];
-
-  bundledItems.forEach((bundledItem) => {
-    const existingItem = bundledItem?.id ? existingById.get(bundledItem.id) : null;
-    if (!existingItem) {
-      merged.push(bundledItem);
-      return;
-    }
-    usedIds.add(existingItem.id);
-    merged.push({
-      ...existingItem,
-      ...(Array.isArray(existingItem.items) || Array.isArray(bundledItem.items)
-        ? { items: mergeOrderedById(existingItem.items || [], bundledItem.items || []) }
-        : {}),
-    });
-  });
-
-  contentItems.forEach((item) => {
-    if (!item?.id || (!usedIds.has(item.id) && !bundledIds.has(item.id))) merged.push(item);
-  });
-
-  return merged;
-}
-
-export function mergeWithBundledContent(content, bundledContent) {
-  if (!content || !bundledContent || content === bundledContent) return content;
-  const contentNavigation = content.navigation || {};
-  const bundledNavigation = bundledContent.navigation || {};
-
-  if (Number(content.cmsContractVersion) >= CMS_EDITABLE_CONTRACT_VERSION) {
-    return {
-      ...content,
-      pages: Array.isArray(content.pages) ? content.pages : bundledContent.pages || [],
-      navigation: {
-        ...bundledNavigation,
-        ...contentNavigation,
-        tabs: Array.isArray(contentNavigation.tabs) ? contentNavigation.tabs : bundledNavigation.tabs || [],
-        utility: Array.isArray(contentNavigation.utility)
-          ? contentNavigation.utility
-          : bundledNavigation.utility || [],
-      },
-    };
-  }
-
-  const bundledPages = Array.isArray(bundledContent.pages) ? bundledContent.pages : null;
-  const bundledTabs = Array.isArray(bundledContent.navigation?.tabs) ? bundledContent.navigation.tabs : null;
-  const bundledUtility = Array.isArray(bundledContent.navigation?.utility)
-    ? bundledContent.navigation.utility
-    : null;
-
+export function normalizeCmsContent(content) {
+  if (!content || typeof content !== "object") return null;
+  if (!Array.isArray(content.pages)) return null;
+  if (!Array.isArray(content.navigation?.tabs)) return null;
+  if (!Array.isArray(content.navigation?.utility)) return null;
+  const contractVersion = Number(content.cmsContractVersion || CMS_EDITABLE_CONTRACT_VERSION);
   return {
     ...content,
-    pages: bundledPages || mergeOrderedById(content.pages || [], bundledContent.pages || []),
+    schemaVersion: content.schemaVersion || 1,
+    cmsContractVersion: Number.isFinite(contractVersion) ? contractVersion : CMS_EDITABLE_CONTRACT_VERSION,
     navigation: {
-      ...contentNavigation,
-      ...bundledNavigation,
-      tabs: bundledTabs || mergeOrderedById(contentNavigation.tabs || [], bundledNavigation.tabs || []),
-      utility: bundledUtility || contentNavigation.utility || [],
+      ...content.navigation,
+      tabs: content.navigation.tabs,
+      utility: content.navigation.utility,
     },
   };
 }
@@ -188,21 +140,23 @@ export function githubContentConfig() {
 export async function readGithubContent() {
   const config = githubContentConfig();
   const rawUrl = `https://raw.githubusercontent.com/${config.owner}/${config.repo}/${config.branch}/${config.path}`;
-  const response = await fetch(`${rawUrl}?ts=${Date.now()}`, { cache: "no-store" });
+  const response = await fetch(`${rawUrl}?ts=${Date.now()}`, {
+    cache: "no-store",
+    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+  });
   if (!response.ok) return null;
   return response.json();
 }
 
 export async function readLiveContent() {
-  const bundled = await readBundledLiveContent();
   const sources = isProductionRuntime()
-    ? [readDatabaseContent, readGithubContent, async () => bundled, readDefaultContent]
-    : [async () => bundled, readDatabaseContent, readGithubContent, readDefaultContent];
+    ? [readDatabaseContent, readGithubContent, readBundledLiveContent, readDefaultContent]
+    : [readBundledLiveContent, readDatabaseContent, readGithubContent, readDefaultContent];
 
   for (const readSource of sources) {
     try {
-      const content = await readSource();
-      if (content) return mergeWithBundledContent(content, bundled);
+      const content = normalizeCmsContent(await readSource());
+      if (content) return content;
     } catch {
       // Try the next source.
     }

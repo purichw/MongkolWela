@@ -1,0 +1,355 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TempleMapOverlay from "./TempleMapOverlay.astro";
+import TempleResponsiveImage from "./TempleResponsiveImage.astro";
+import { templePlaceholderImage } from "../data/temple-images.js";
+import { getTempleDetailUrl } from "../data/temple-slugs.js";
+
+type TempleCard = {
+  rank: number;
+  name: string;
+  region: string;
+  province: string;
+  district?: string;
+  imageUrl?: string;
+  imageMobileUrl?: string;
+  imageAlt?: string;
+  placeType?: string;
+  blessings?: string;
+  objectHero?: string;
+  latitude?: number;
+  longitude?: number;
+  travelDetail?: {
+    confidence?: string;
+  };
+};
+
+type CollectionMeta = {
+  key: "popular" | "sacred" | "mu";
+  label: string;
+  shortLabel: string;
+  kicker: string;
+  title: string;
+  description: string;
+  intro: string;
+  accent: string;
+  heroBg: string;
+  mapTitle: string;
+  mapSearchPlaceholder: string;
+  searchLabel: string;
+  searchPlaceholder: string;
+  gridLabel: string;
+  emptyText: string;
+  imageAlt: string;
+};
+
+type Breadcrumb = {
+  label: string;
+  href?: string;
+};
+
+const {
+  collection,
+  pageKey,
+  pageTitle,
+  pageDescription,
+  canonicalPath,
+  breadcrumbs,
+  meta,
+  rankedTemples,
+  regions,
+  purposes,
+  structuredData,
+  initialCount = 8,
+  batchSize = 8,
+} = Astro.props as {
+  collection: "popular" | "sacred" | "mu";
+  pageKey: string;
+  pageTitle: string;
+  pageDescription: string;
+  canonicalPath: string;
+  breadcrumbs: Breadcrumb[];
+  meta: CollectionMeta;
+  rankedTemples: TempleCard[];
+  regions: string[];
+  purposes: string[];
+  structuredData: Record<string, unknown> | Record<string, unknown>[];
+  initialCount?: number;
+  batchSize?: number;
+};
+
+const extraScripts = ["/assets/js/temple-directory.js", "/assets/js/temple-map.js"];
+const collectionTabs = [
+  { key: "popular", label: "๙ วัด", href: "/temples/popular/" },
+  { key: "sacred", label: "ศักดิ์สิทธิ์", href: "/temples/sacred/" },
+  { key: "mu", label: "สายมู", href: "/temples/mu/" },
+];
+const supportingLinks = [
+  { label: "บูชาสายมูตามองค์", href: "/temples/mu/" },
+  { label: "คู่มือไหว้พระ", href: "/temples/" },
+  { label: "สายไหว้พระ ๙ วัด", href: "/temples/popular/" },
+  { label: "วัดศักดิ์สิทธิ์", href: "/temples/sacred/" },
+  { label: "สายมู", href: "/temples/mu/" },
+  { label: "วัดทั่วประเทศไทย", href: "/temples/thailand/" },
+];
+const thaiNumber = (value: number) => value.toLocaleString("th-TH-u-nu-thai");
+const splitTags = (value?: string) =>
+  String(value || "")
+    .split(";")
+    .map((item) => item.trim())
+    .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
+const confidenceFor = (temple: TempleCard, hasTempleImage: boolean) => {
+  const value = String(temple.travelDetail?.confidence || "").toLowerCase();
+  if (value === "high") return { key: "high", label: "มั่นใจสูง" };
+  if (value === "medium") return { key: "medium", label: "ปานกลาง" };
+  if (Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude)) && hasTempleImage) {
+    return { key: "medium", label: "ปานกลาง" };
+  }
+  return { key: "check", label: "ควรเช็ก" };
+};
+const plannerHrefFor = (temple: TempleCard) =>
+  `/temples/planner/?start=${encodeURIComponent(temple.name)}&province=${encodeURIComponent(temple.province)}`;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  lang="th"
+  locale="th"
+  page={pageKey}
+  bodyClass={`temples-hub-page temples-collection-v2-page temples-collection-v2-page--${collection}`}
+  extraScripts={extraScripts}
+  canonicalPath={canonicalPath}
+  image="/assets/images/hero-temple-red.jpg"
+  imageAlt={meta.imageAlt}
+  breadcrumbs={breadcrumbs}
+  structuredData={structuredData}
+>
+  <main
+    class="temples-collection-v2"
+    style={`--collection-accent: ${meta.accent}; --collection-hero-bg: ${meta.heroBg};`}
+  >
+    <TempleMapOverlay
+      collection={collection}
+      title={meta.mapTitle}
+      searchPlaceholder={meta.mapSearchPlaceholder}
+      temples={rankedTemples}
+      placeholderImage={templePlaceholderImage}
+    />
+
+    <section class="temple-collection-v2-hero" aria-labelledby="temple-collection-title">
+      <div class="temple-collection-v2-hero__inner">
+        <nav class="temple-collection-v2-breadcrumb" aria-label="breadcrumb">
+          {breadcrumbs.map((item, index) => (
+            <>
+              {item.href ? <a href={item.href}>{item.label}</a> : <span>{item.label}</span>}
+              {index < breadcrumbs.length - 1 && <span aria-hidden="true">/</span>}
+            </>
+          ))}
+        </nav>
+
+        <div class="temple-collection-v2-tabs" aria-label="หมวดวัด">
+          {collectionTabs.map((tab) => (
+            <a class={tab.key === collection ? "is-active" : undefined} href={tab.href}>{tab.label}</a>
+          ))}
+        </div>
+
+        <p class="section-kicker">{meta.kicker}</p>
+        <h1 id="temple-collection-title">{meta.title}</h1>
+        <p>{meta.description}</p>
+        <p class="temple-collection-v2-total">
+          พบ {thaiNumber(rankedTemples.length)} สถานที่ในหมวดนี้ · แสดงชุดเด่นก่อน แล้วค่อยดูเพิ่ม
+        </p>
+      </div>
+    </section>
+
+    <section
+      class="temple-collection-v2-filter"
+      aria-label={meta.searchLabel}
+      data-popular-temple-filter
+    >
+      <div class="temple-collection-v2-filter__inner">
+        <div class="temple-collection-v2-filter-row">
+          <div class="popular-temple-region-filter">
+            <span>กรองพื้นที่</span>
+            <div class="popular-temple-region-tags" aria-label="กรองตามภาค">
+              <button type="button" class="is-active" data-popular-region-tag value="">ทั้งหมด</button>
+              {regions.map((region) => (
+                <button type="button" data-popular-region-tag value={region}>{region}</button>
+              ))}
+            </div>
+          </div>
+          <a class="temple-collection-v2-filter-planner" href="/temples/planner/">วางแผนทริป →</a>
+        </div>
+
+        <details class="temple-collection-v2-advanced-filter">
+          <summary>
+            <span>ค้นหา / จังหวัด / จุดประสงค์</span>
+            <small>เปิดตัวกรอง</small>
+          </summary>
+
+          <form class="popular-temple-filter-form temple-collection-v2-search" data-popular-temple-filter-form>
+            <label class="temple-field popular-temple-filter-name">
+              <span>ชื่อวัด</span>
+              <span class="popular-temple-filter-input-shell">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
+                </svg>
+                <input
+                  type="search"
+                  name="name"
+                  placeholder={meta.searchPlaceholder}
+                  autocomplete="off"
+                  data-popular-temple-filter-name
+                />
+              </span>
+            </label>
+
+            <div class="popular-temple-filter-actions">
+              <button class="temple-search-button" type="submit">ค้นหา</button>
+              <button class="temple-nearby-button" type="button" data-popular-temple-nearby>พิกัดใกล้ฉัน</button>
+              <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>เคลียร์ข้อมูล</button>
+            </div>
+          </form>
+
+          <div class="temple-collection-v2-advanced-grid">
+            <details
+              class="popular-temple-province-filter temple-province-accordion"
+              data-popular-province-filter
+            >
+              <summary>
+                <span>จังหวัด</span>
+                <small data-temple-province-summary>ทั้งหมด</small>
+              </summary>
+              <div
+                class="popular-temple-province-tags"
+                aria-label="กรองตามจังหวัด"
+                data-popular-province-tags
+              ></div>
+            </details>
+
+            <details class="popular-temple-purpose-filter temple-purpose-accordion">
+              <summary>
+                <span>จุดประสงค์</span>
+                <small data-temple-purpose-summary>ทั้งหมด</small>
+              </summary>
+              <div
+                class="popular-temple-purpose-tags"
+                aria-label="กรองตามจุดประสงค์"
+                data-popular-purpose-tags
+              >
+                <button type="button" class="is-active" data-popular-purpose-tag value="">ทั้งหมด</button>
+                {purposes.map((purpose) => (
+                  <button type="button" data-popular-purpose-tag value={purpose}>{purpose}</button>
+                ))}
+              </div>
+            </details>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="temples-section temple-collection-v2-results">
+      <div class="temple-collection-v2-results-head">
+        <h2 class="sr-only">{meta.gridLabel}</h2>
+        <p class="popular-temple-count" data-popular-temple-count></p>
+      </div>
+
+      <div
+        class="popular-temple-grid temple-collection-v2-grid"
+        aria-label={meta.gridLabel}
+        data-popular-temple-grid
+        data-initial-count={initialCount}
+        data-batch-size={batchSize}
+        data-count-mode="visible-filtered"
+        data-placeholder-src={templePlaceholderImage}
+      >
+        {rankedTemples.map((temple) => {
+          const hasTempleImage = Boolean(temple.imageUrl) && temple.imageUrl !== templePlaceholderImage;
+          const imageUrl = hasTempleImage ? String(temple.imageUrl) : templePlaceholderImage;
+          const imageAlt = temple.imageAlt || `${temple.name} ${temple.province}`;
+          const intent = splitTags(temple.blessings)[0] || splitTags(temple.objectHero)[0] || temple.placeType || "สิริมงคล";
+          const confidence = confidenceFor(temple, hasTempleImage);
+          const detailHref = getTempleDetailUrl(collection, temple);
+
+          return (
+            <article
+              class={`popular-temple-card temple-collection-v2-card${hasTempleImage ? "" : " is-placeholder"}`}
+              data-rank={temple.rank}
+              data-name={temple.name}
+              data-region={temple.region}
+              data-province={temple.province}
+              data-district={temple.district}
+              data-blessings={temple.blessings ?? ""}
+              data-place-type={temple.placeType ?? ""}
+              data-search-text={`${temple.name} ${temple.region} ${temple.province} ${temple.district || ""} ${temple.blessings || ""} ${temple.objectHero || ""}`}
+              data-latitude={temple.latitude}
+              data-longitude={temple.longitude}
+              data-popular-temple-card
+              data-image-placeholder={hasTempleImage ? undefined : "true"}
+            >
+              <figure>
+                <TempleResponsiveImage
+                  desktopSrc={imageUrl}
+                  mobileSrc={temple.imageMobileUrl || imageUrl}
+                  alt={imageAlt}
+                  loading="lazy"
+                  decoding="async"
+                  fallbackSrc={templePlaceholderImage}
+                />
+                <figcaption>{thaiNumber(temple.rank)}</figcaption>
+                <span class={`temple-collection-v2-confidence is-${confidence.key}`}>
+                  <span aria-hidden="true"></span>
+                  {confidence.label}
+                </span>
+                <span class="popular-temple-distance" data-popular-temple-distance hidden></span>
+              </figure>
+              <div class="popular-temple-card-body">
+                <span>{temple.province}</span>
+                <h3>{temple.name}</h3>
+                <p>{temple.province}{temple.district ? ` / ${temple.district}` : ""}</p>
+                <strong>{intent}</strong>
+                <div class="temple-collection-v2-card-meta">
+                  <small>ข้อมูลชุดปัจจุบัน</small>
+                  <a href="#consult">แจ้งข้อมูลผิด</a>
+                </div>
+                <div class="temple-collection-v2-card-actions">
+                  <a class="temple-collection-v2-card-plan" href={plannerHrefFor(temple)}>+ เพิ่มลงทริป</a>
+                  <a class="temple-collection-v2-card-detail" href={detailHref} data-popular-temple-detail>รายละเอียด →</a>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <p class="popular-temple-empty" data-popular-temple-empty hidden>{meta.emptyText}</p>
+      <button class="popular-temple-load-more" type="button" data-popular-temple-more hidden>
+        ดูเพิ่ม
+      </button>
+
+      <div class="temple-collection-v2-legend" aria-label="คำอธิบายระดับข้อมูล">
+        <span><i class="is-high"></i> ข้อมูลมั่นใจสูง</span>
+        <span><i class="is-medium"></i> ปานกลาง</span>
+        <span><i class="is-check"></i> ควรตรวจสอบก่อนไป</span>
+        <span>เลือกสถานที่แล้วกด “วางแผนทริป” เพื่อจัดลำดับเส้นทางให้อัตโนมัติ</span>
+      </div>
+
+      <aside class="temple-collection-v2-planner" aria-label="วางแผนทริปจากสถานที่ที่เลือก">
+        <div>
+          <p>พร้อมออกเดินทาง</p>
+          <h2>ให้ระบบจัดลำดับเส้นทางจากสถานที่ที่เลือก</h2>
+          <span>เพิ่มวัดจากหน้าค้นหา แล้วเปิดตัวช่วยวางแผนเพื่อจัดเส้นทางที่เดินทางต่อเนื่องและใช้เวลาน้อยที่สุด</span>
+        </div>
+        <a href="/temples/planner/">เริ่มวางแผนทริป →</a>
+      </aside>
+
+      <nav class="temple-collection-v2-supporting" aria-label="หมวดอื่น">
+        <span>หมวดอื่น</span>
+        {supportingLinks.map((item) => <a href={item.href}>{item.label}</a>)}
+      </nav>
+
+      <div class="popular-temple-sentinel" data-popular-temple-sentinel aria-hidden="true"></div>
+    </section>
+  </main>
+</BaseLayout>
