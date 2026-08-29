@@ -211,7 +211,14 @@ async function readProductionContent() {
   try {
     const response = await fetch(url, {
       cache: "no-store",
-      headers: { "user-agent": "mongkolwela-cms-validation/1.0" },
+      headers: {
+        accept: "application/json,text/plain,*/*",
+        "accept-language": "th-TH,th;q=0.9,en-US;q=0.6,en;q=0.5",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "mongkolwela-production-smoke/1.0",
+      },
     });
     if (!response.ok) {
       errors.push(`/api/admin/content: expected 2xx status, got ${response.status}`);
