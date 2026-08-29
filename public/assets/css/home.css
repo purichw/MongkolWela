@@ -224,7 +224,6 @@ body[data-cms-page="home"] main::before {
 .home-section-heading p,
 .home-planner-copy > p:first-child,
 .home-sample-plan header p,
-.home-guide-copy > p:first-child,
 .home-intent-card span,
 .home-collection-card > span {
   margin: 0;
@@ -528,8 +527,7 @@ body[data-cms-page="home"] .hero h1 {
 }
 
 .home-section-heading h2,
-.home-planner-copy h2,
-.home-guide-copy h2 {
+.home-planner-copy h2 {
   margin: 12px 0 0;
   color: #251d1a;
   font-size: clamp(2.25rem, 3.2vw, 2.9rem);
@@ -600,8 +598,7 @@ body[data-cms-page="home"] .hero h1 {
 
 .home-intent-card p,
 .home-collection-card p,
-.home-planner-copy > p:not(:first-child),
-.home-guide-copy > p:not(:first-child) {
+.home-planner-copy > p:not(:first-child) {
   margin: 0;
   color: #5d514a;
   line-height: 1.72;
@@ -944,71 +941,6 @@ body[data-cms-page="home"] .hero h1 {
   outline: 0;
 }
 
-.home-guide-section {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  align-items: center;
-  gap: clamp(44px, 8vw, 96px);
-  padding-top: 28px;
-}
-
-.home-guide-media {
-  position: relative;
-  margin: 0;
-}
-
-.home-guide-media img {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  object-position: center;
-  border-radius: 18px;
-  box-shadow: var(--home-shadow);
-}
-
-.home-guide-media figcaption {
-  position: absolute;
-  left: 18px;
-  bottom: 16px;
-  padding: 8px 12px;
-  color: #f8e7bf;
-  background: rgba(42, 23, 16, 0.72);
-  border: 1px solid rgba(234, 211, 160, 0.32);
-  border-radius: 999px;
-  font-size: 0.82rem;
-  font-weight: 700;
-}
-
-.home-guide-copy > p:first-child {
-  color: #8a7355;
-}
-
-.ritual-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 24px;
-}
-
-.ritual-list a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 36px;
-  padding: 0 14px;
-  color: #123d34;
-  background: rgba(255, 253, 247, 0.78);
-  border: 1px solid rgba(39, 106, 82, 0.2);
-  border-radius: 999px;
-  font-weight: 800;
-}
-
-.ritual-list a:hover,
-.ritual-list a:focus-visible {
-  color: #8e2d24;
-  border-color: rgba(142, 45, 36, 0.28);
-  outline: 0;
-}
-
 .learn-strip {
   display: flex;
   flex-wrap: wrap;
@@ -1234,8 +1166,7 @@ body[data-cms-page="home"] .hero h1 {
 
 @media (min-width: 721px) and (max-width: 1080px) {
   .home-hero-shell,
-  .home-planner-inner,
-  .home-guide-section {
+  .home-planner-inner {
     grid-template-columns: 1fr;
   }
 
@@ -1365,8 +1296,7 @@ body[data-cms-page="home"] .hero h1 {
   }
 
   .home-section-heading h2,
-  .home-planner-copy h2,
-  .home-guide-copy h2 {
+  .home-planner-copy h2 {
     font-size: clamp(2.1rem, 10vw, 2.9rem);
   }
 
@@ -1379,7 +1309,6 @@ body[data-cms-page="home"] .hero h1 {
   .home-intent-grid,
   .home-collection-grid,
   .home-planner-inner,
-  .home-guide-section,
   .site-footer-home-grid {
     grid-template-columns: 1fr;
   }
@@ -1412,11 +1341,6 @@ body[data-cms-page="home"] .hero h1 {
   .home-sample-plan img {
     width: 48px;
     height: 48px;
-  }
-
-  .home-guide-section {
-    gap: 28px;
-    padding-top: 20px;
   }
 
   .home-database-panel {

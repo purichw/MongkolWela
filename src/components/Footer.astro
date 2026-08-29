@@ -34,10 +34,6 @@ function resolveHref(href = "") {
 
 const footerLinks = pageConfig.footerLinks || [
   { label: config.footer.contact, href: "#consult" },
-  {
-    label: pageConfig.footerVariant === "home" ? config.footer.credits : config.footer.rituals,
-    href: pageConfig.footerVariant === "home" ? "#" : "#guides",
-  },
 ];
 ---
 

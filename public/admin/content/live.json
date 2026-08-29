@@ -88,13 +88,6 @@
           "selector": "#directory"
         },
         {
-          "id": "guides",
-          "label": "คู่มือก่อนเดินทาง",
-          "order": 60,
-          "enabled": true,
-          "selector": "#guides"
-        },
-        {
           "id": "supporting-tools",
           "label": "เครื่องมือเสริม",
           "order": 70,
@@ -392,38 +385,6 @@
         "items": []
       },
       {
-        "id": "rituals",
-        "label": "คู่มือและพิธี",
-        "href": "#guides",
-        "enabled": true,
-        "items": [
-          {
-            "id": "chants",
-            "label": "เตรียมตัวก่อนไหว้พระ",
-            "href": "#guides",
-            "enabled": true
-          },
-          {
-            "id": "metta",
-            "label": "เลือกเส้นทางให้เหมาะกับเวลา",
-            "href": "temples/planner/",
-            "enabled": true
-          },
-          {
-            "id": "ritual-cleansing",
-            "label": "แก้ชงและสะเดาะเคราะห์",
-            "href": "temples/mu/",
-            "enabled": true
-          },
-          {
-            "id": "lucky-colors",
-            "label": "วันพระและปฏิทินไทย",
-            "href": "calendar/",
-            "enabled": true
-          }
-        ]
-      },
-      {
         "id": "horoscope",
         "label": "เครื่องมือเสริม",
         "href": "#supporting-tools",
@@ -504,14 +465,7 @@
         ]
       }
     ],
-    "utility": [
-      {
-        "id": "learn",
-        "label": "คู่มือก่อนเดินทาง",
-        "href": "#guides",
-        "enabled": true
-      }
-    ]
+    "utility": []
   },
   "publishedAt": "2026-06-12T08:57:30.931Z",
   "publishedBy": "Admin",

@@ -109,13 +109,6 @@ const collectionCards = [
   },
 ];
 
-const guideLinks = [
-  { label: "เตรียมตัวก่อนไหว้พระ", href: "/temples/" },
-  { label: "เลือกเส้นทางให้เหมาะกับเวลา", href: "/temples/planner/" },
-  { label: "ค้นหาวัดจากพื้นที่", href: "/temples/thailand/" },
-  { label: "ดูสถานที่ใกล้ขอพร", href: "/temples/sacred/" },
-];
-
 const supportingLinks = [
   { label: "วันพระและปฏิทินไทย", href: "/calendar/" },
   { label: "เซียมซี", href: "/horoscope/seamsi/" },
@@ -323,31 +316,6 @@ const extraScripts = ["/assets/js/home-motion.js"];
         </div>
         <a href="/temples/thailand/">เปิดฐานข้อมูล</a>
       </aside>
-    </section>
-
-    <section class="home-section home-guide-section" id="guides" aria-labelledby="guides-title">
-      <figure class="home-guide-media">
-        <img
-          src="/assets/images/chinese-incense-card.jpg"
-          alt="ธูปวงแขวนในศาลเจ้าจีน"
-          loading="lazy"
-          decoding="async"
-        />
-        <figcaption>๐๔ · เตรียมตัวก่อนไป</figcaption>
-      </figure>
-      <div class="home-guide-copy">
-        <p>คู่มือก่อนเดินทาง</p>
-        <h2 id="guides-title">ไหว้พระแบบตั้งใจ สุภาพ และไม่เร่งร้อน</h2>
-        <p>
-          มงคลเวลาวางบทบาทเป็นผู้ช่วยค้นหาสถานที่และจัดเส้นทางก่อนออกเดินทาง
-          คงข้อมูลให้กระชับ เคารพสถานที่ และบอกตรง ๆ เมื่อบางข้อมูลควรตรวจสอบซ้ำ
-        </p>
-        <div class="ritual-list">
-          {guideLinks.map((item) => (
-            <a href={item.href}>{item.label}</a>
-          ))}
-        </div>
-      </div>
     </section>
 
     <section class="learn-strip" id="supporting-tools" aria-label="เครื่องมือเสริม">
