@@ -21,8 +21,8 @@
         "items": [
           { "id": "temple-planner", "label": "วางแผนไหว้พระ", "href": "temples/planner/", "enabled": true },
           { "id": "temple-featured-section", "label": "วัดเด่นวัดดัง", "section": true, "enabled": true },
-          { "id": "popular-temples", "label": "สายไหว้พระ 9 วัด", "href": "temples/popular/", "enabled": true },
-          { "id": "mu-temples", "label": "สายมู", "href": "temples/mu/", "enabled": true },
+          { "id": "popular-temples", "label": "วัดดัง", "href": "temples/popular/", "enabled": true },
+          { "id": "mu-temples", "label": "สถานที่มู", "href": "temples/mu/", "enabled": true },
           { "id": "sacred-temples", "label": "วัดศักดิ์สิทธิ์", "href": "temples/sacred/", "enabled": true },
           { "id": "temple-all-section", "label": "วัดทั่วประเทศไทย", "section": true, "enabled": true },
           { "id": "all-temples", "label": "ค้นหาวัดทั่วประเทศไทย", "href": "temples/thailand/", "enabled": true }

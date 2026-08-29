@@ -4,7 +4,8 @@ This file is for coding agents working in this repository.
 
 ## First Steps
 
-Before every coding task:
+At the start of a new repo session, a broad feature, a risky change, or any
+task where ownership is unclear:
 
 1. Read `AGENTS.md`.
 2. Read `Architecture.md`.
@@ -21,13 +22,18 @@ Expected current clean-ish state may include:
 ?? outputs/
 ```
 
+For tiny follow-ups after the project context is already loaded, keep the
+preflight proportional: read this file, run `git status --short --branch`, then
+read only the owner files and nearby selectors/data needed for the requested
+change.
+
 `outputs/` is a local artifact directory from previous work. Do not add, delete, or modify it unless the user explicitly asks.
 
 ## Project
 
 This is the Mongkol Wela Astro site.
 
-- Workspace: `/Users/point/Library/Mobile Documents/com~apple~CloudDocs/Website Projects/hora-astro`
+- Workspace: `/Users/point/Website Projects/hora-astro`
 - Production: `https://mongkolwela.vercel.app`
 - GitHub: `purichw/hora-astro`
 - Default branch: `main`
@@ -106,12 +112,20 @@ npm run smoke:production
 
 ### Admin Portal CMS Content
 
-- `public/admin/content/live.json` is the code-owned source of truth for deployable Admin Portal content.
-- Keep `public/admin/content/default.json` in sync with `live.json` for pages and navigation.
+- Runtime precedence: valid current Admin Portal/API content is the live source
+  for visitors and must not be overridden by bundled fallback JSON, cache, or
+  older stale CMS copies.
+- `public/admin/content/live.json` is the code-owned deployable fallback and seed
+  copy for published Admin Portal content.
+- Keep `public/admin/content/default.json` in sync with `live.json` for pages and
+  navigation fallback.
 - After adding/removing/renaming pages or navigation items, run `npm run nfr:cms`.
 - If Supabase env is configured, run `npm run db:seed:cms` after page/nav changes so `cms_documents/live` does not serve stale content.
 - Production verification must include `npm run cms:verify:production` or `npm run smoke:production`; both catch stale `/api/admin/content` page/nav data.
-- Bundled page/navigation data is the fallback deploy contract. Current Admin Portal publishes include `cmsContractVersion` and may intentionally override bundled navigation, while older CMS copies are still guarded so stale API content cannot overwrite the rendered header after hydration.
+- Bundled page/navigation data is the fallback deploy contract. Current Admin
+  Portal publishes include `cmsContractVersion` and may intentionally override
+  bundled navigation, while older CMS copies are still guarded so stale API
+  content cannot overwrite the rendered header after hydration.
 
 ### Excel Workbooks
 
@@ -235,7 +249,11 @@ During small iterative edits:
 - Do not run `npm run nfr`.
 - Do not run full E2E.
 - Run `git diff --check`.
-- For UI edits, use a short Browser spot-check on only the touched page/flow at desktop and mobile sizes.
+- For tiny copy/CSS/selector/spacing/typography edits, use one relevant
+  Browser/computed-style/snapshot spot-check when the change is visible.
+- Add desktop plus mobile Browser coverage only when the edit touches responsive
+  layout, shared navigation, touch behavior, text wrapping, or when preparing to
+  commit/deploy.
 
 Before commit:
 
@@ -269,7 +287,9 @@ For every feature with new or changed behavior, infer QA coverage instead of wai
 
 When adding or changing automation, make sure the test would fail if the feature broke. Prefer fail-first validation for important behavior when it can be done safely.
 
-For frontend changes, verify at least one relevant desktop and mobile viewport.
+For frontend behavior, layout, or responsive changes, verify at least one
+relevant desktop and mobile viewport. For micro visual edits with no responsive
+risk, one targeted viewport or computed-style check is enough before continuing.
 
 Keep verification proportional to the change:
 

@@ -91,15 +91,11 @@ function findNavigationItemByHref(items = [], href = "") {
   return null;
 }
 
-function homeNavigationTabs(tabs) {
-  const templeTab = tabs.find((item) => item.href === "temples/");
-  const plannerTab = findNavigationItemByHref(tabs, "temples/planner/");
-  return [
-    templeTab,
-    plannerTab,
-    tabs.find((item) => item.href === "calendar/"),
-    tabs.find((item) => item.href === "#supporting-tools"),
-  ].filter(Boolean);
+function currentSharedNavHref(route = normalizeRoute()) {
+  if (route.startsWith("/temples/")) return "temples/";
+  if (route.startsWith("/calendar/")) return "calendar/";
+  if (route.startsWith("/horoscope/") || route.startsWith("/tarot/")) return "#supporting-tools";
+  return "";
 }
 
 function pageForRoute(content, route = normalizeRoute()) {
@@ -137,14 +133,17 @@ function applyNavigation(content) {
 
   if (navMenu) {
     const navMode = navMenu.dataset.navMode || "default";
-    const isFocusedTempleNav = navMode === "home-v2" || navMode === "temple-hub-v2";
-    const isPlannerRoute = navMode === "temple-hub-v2" && normalizeRoute() === "/temples/planner/";
-    const tabs = isFocusedTempleNav ? (isPlannerRoute ? allTabs : homeNavigationTabs(allTabs)) : allTabs;
-    const utility = isFocusedTempleNav ? [] : (content.navigation.utility || []).filter((item) => item.enabled !== false);
+    const isSharedSiteNav = navMode === "shared-site";
+    const tabs = allTabs;
+    const utility = isSharedSiteNav ? [] : (content.navigation.utility || []).filter((item) => item.enabled !== false);
+    const currentSharedHref = isSharedSiteNav ? currentSharedNavHref() : "";
     navMenu.innerHTML = `${tabs
       .map((item) => {
-        const children = navMode === "temple-hub-v2" ? [] : (item.items || []).filter((child) => child.enabled !== false);
-        const currentClass = navMode === "temple-hub-v2" && item.href === "temples/" ? ` class="is-current"` : "";
+        const children = (item.items || []).filter((child) => child.enabled !== false);
+        const currentClass =
+          isSharedSiteNav && currentSharedHref && hrefMatches(item.href, currentSharedHref)
+            ? ` class="is-current" aria-current="page"`
+            : "";
         return `<div class="nav-item">
           <a${currentClass} href="${escapeHtml(resolveHref(item.href))}">${escapeHtml(item.label)}</a>
           ${
@@ -166,6 +165,15 @@ function applyNavigation(content) {
       ${utility
         .map((item) => `<a class="plain-link" href="${escapeHtml(resolveHref(item.href))}">${escapeHtml(item.label)}</a>`)
         .join("")}`;
+  }
+
+  const plannerCta = document.querySelector('[data-nav-cta="temple-planner"]');
+  if (plannerCta) {
+    const plannerTab = findNavigationItemByHref(allTabs, "temples/planner/");
+    if (plannerTab) {
+      plannerCta.textContent = plannerTab.label;
+      plannerCta.setAttribute("href", resolveHref(plannerTab.href));
+    }
   }
 
   if (staticNavMenu) {

@@ -354,13 +354,13 @@
           },
           {
             "id": "popular-temples",
-            "label": "สายไหว้พระ 9 วัด",
+            "label": "วัดดัง",
             "href": "temples/popular/",
             "enabled": true
           },
           {
             "id": "mu-temples",
-            "label": "สายมู",
+            "label": "สถานที่มู",
             "href": "temples/mu/",
             "enabled": true
           },

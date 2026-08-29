@@ -2,25 +2,50 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(251, 246, 235, 0.92);
+  --header-display-font: "Prompt", "IBM Plex Sans Thai", var(--font-thai);
+  --header-utility-font: "IBM Plex Sans Thai", var(--font-thai);
+  background: rgba(251, 246, 235, 0.96);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(18px);
 }
 
 .topbar {
   display: flex;
-  justify-content: center;
-  gap: 22px;
-  min-height: 34px;
-  padding: 6px 20px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 32px;
+  padding: 5px 28px;
   color: #f7ead2;
-  background: var(--jade-dark);
-  font-size: 0.82rem;
+  background: #0d4439;
+  font-family: var(--header-utility-font);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.25;
+  text-transform: none;
+}
+
+.topbar > :first-child {
+  margin-right: auto;
 }
 
 .topbar a {
   color: var(--gold-soft);
   font-weight: 700;
+}
+
+.topbar a,
+.topbar span {
+  white-space: nowrap;
+}
+
+.topbar .topbar__item--feature {
+  color: #f7ead2;
+  font-family: var(--font-thai);
+  font-size: inherit;
+  font-weight: 500;
+  line-height: inherit;
 }
 
 .navbar {
@@ -32,6 +57,14 @@
   max-width: none;
   min-height: 76px;
   margin: 0 auto;
+  padding: 0 26px;
+}
+
+.navbar--shared-site {
+  grid-template-columns: minmax(190px, auto) minmax(0, 1fr) auto;
+  grid-template-areas: "brand menu actions";
+  gap: 18px;
+  min-height: 74px;
   padding: 0 26px;
 }
 
@@ -62,6 +95,25 @@
   box-shadow: 0 8px 22px rgba(89, 29, 25, 0.24);
 }
 
+.navbar--shared-site .brand {
+  grid-area: brand;
+  min-width: 178px;
+}
+
+.navbar--shared-site .brand-mark {
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  background: radial-gradient(circle at 34% 28%, #c84f3c, #591d19);
+  border-radius: 12px;
+  filter: drop-shadow(0 8px 22px rgba(89, 29, 25, 0.24));
+  box-shadow: none;
+}
+
+.navbar--shared-site .brand-mark circle {
+  display: none;
+}
+
 .brand strong {
   display: block;
   overflow: hidden;
@@ -84,13 +136,34 @@
   white-space: nowrap;
 }
 
+.navbar--shared-site .brand strong {
+  color: #251d1a;
+  font-family: var(--header-display-font);
+  font-size: 1.14rem;
+  font-weight: 800;
+}
+
+.navbar--shared-site .brand small {
+  color: #8a7355;
+  font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+}
+
 .nav-menu {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 6px;
+  gap: clamp(28px, 3.2vw, 56px);
   min-width: 0;
-  padding: 0 6px;
+  padding: 0 12px;
+}
+
+.navbar--shared-site .nav-menu {
+  grid-area: menu;
+  justify-content: flex-start;
+  gap: clamp(30px, 3vw, 58px);
+  padding: 0 clamp(8px, 1.2vw, 20px);
 }
 
 .nav-menu::-webkit-scrollbar {
@@ -113,6 +186,24 @@
   font-size: 0.94rem;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.navbar--shared-site .nav-item > a,
+.navbar--shared-site .plain-link {
+  min-height: 42px;
+  padding: 0 2px;
+  color: #4a3d33;
+  font-family: var(--header-display-font);
+  font-size: 0.94rem;
+  font-weight: 800;
+}
+
+.navbar--shared-site .nav-item > a.is-current,
+.navbar--shared-site .nav-item > a:hover,
+.navbar--shared-site .nav-item > a:focus-visible,
+.navbar--shared-site .plain-link:hover,
+.navbar--shared-site .plain-link:focus-visible {
+  color: #8e2d24;
 }
 
 .nav-item > a:hover,
@@ -181,6 +272,35 @@
   align-items: center;
   flex: 0 0 auto;
   gap: 10px;
+}
+
+.navbar--shared-site .nav-actions {
+  grid-area: actions;
+  justify-self: end;
+}
+
+.nav-cta-site {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 22px;
+  color: #fffaf0;
+  background: #8e2d24;
+  border: 1px solid rgba(89, 29, 25, 0.12);
+  border-radius: 999px;
+  box-shadow: 0 12px 28px rgba(142, 45, 36, 0.2);
+  font-family: var(--header-display-font);
+  font-size: 0.92rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.nav-cta-site:hover,
+.nav-cta-site:focus-visible {
+  color: #fffaf0;
+  background: #591d19;
+  outline: 0;
 }
 
 .icon-button,

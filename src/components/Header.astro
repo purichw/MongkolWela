@@ -2,15 +2,9 @@
 import { siteConfig } from "../config/site.js";
 import BrandMark from "./icons/BrandMark.astro";
 import MenuIcon from "./icons/MenuIcon.astro";
-import SearchIcon from "./icons/SearchIcon.astro";
+import Topbar from "./Topbar.astro";
 import liveContent from "../../public/admin/content/live.json" with { type: "json" };
 import defaultContent from "../../public/admin/content/default.json" with { type: "json" };
-
-type TopbarItem = {
-  label: string;
-  href?: string;
-  realtime?: "lunarToday" | "solarToday";
-};
 
 type NavItem = {
   id?: string;
@@ -26,14 +20,6 @@ const { locale = "th", page = "home" } = Astro.props as {
   page?: string;
 };
 const config = siteConfig[locale] || siteConfig.th;
-const pages = config.pages as Record<string, { topbar?: TopbarItem[]; footerVariant?: string }>;
-const pageConfig = pages[page] || pages.home;
-const isPopularDirectory = page === "templesPopular";
-const isHomePage = page === "home";
-const isTempleHubPage = page === "temples";
-const isTemplePlannerPage = page === "templesPlanner";
-const isTempleCollectionPage = ["templesPopular", "templesSacred", "templesMu"].includes(page);
-const isTempleV2Page = isTempleHubPage || isTempleCollectionPage || isTemplePlannerPage;
 const liveNavigation = (liveContent as { navigation?: { tabs?: NavItem[]; utility?: NavItem[] } }).navigation;
 const defaultNavigation = (defaultContent as { navigation?: { tabs?: NavItem[]; utility?: NavItem[] } }).navigation;
 const navigation =
@@ -41,7 +27,6 @@ const navigation =
     ? liveNavigation
     : defaultNavigation || {};
 const navTabs = (navigation.tabs || []).filter((item) => item.enabled !== false);
-const navUtility = (navigation.utility || []).filter((item) => item.enabled !== false);
 const enabledChildren = (item?: NavItem) => (item?.items || []).filter((child) => child.enabled !== false);
 const normalizeNavHref = (href = "") => String(href || "").replace(/^\/+/u, "").replace(/\/?$/u, "/");
 function findNavItemByHref(items: NavItem[] = [], href = ""): NavItem | undefined {
@@ -54,18 +39,8 @@ function findNavItemByHref(items: NavItem[] = [], href = ""): NavItem | undefine
   }
   return undefined;
 }
-const templeNavTab = navTabs.find((item) => item.href === "temples/");
-const calendarNavTab = navTabs.find((item) => item.href === "calendar/");
 const homePlannerTab = findNavItemByHref(navTabs, "temples/planner/");
-const templeSearchTab = findNavItemByHref(navTabs, "temples/thailand/");
-const homeNavTabs = [
-  templeNavTab,
-  homePlannerTab,
-  calendarNavTab,
-  navTabs.find((item) => item.href === "#supporting-tools"),
-].filter(Boolean) as NavItem[];
-const visibleNavTabs = isHomePage || (isTempleV2Page && !isTemplePlannerPage) ? homeNavTabs : navTabs;
-const visibleNavUtility = isHomePage || isTempleV2Page ? [] : navUtility;
+const visibleNavTabs = navTabs;
 
 function resolveHref(href = "") {
   if (!href) return "/";
@@ -76,29 +51,37 @@ function resolveHref(href = "") {
 }
 
 function isCurrentNavItem(item: NavItem) {
-  return isTempleV2Page && item.href === "temples/";
+  const href = normalizeNavHref(item.href);
+  if (page.startsWith("temples")) return href === normalizeNavHref("temples/");
+  if (page.startsWith("calendar")) return href === normalizeNavHref("calendar/");
+  if (
+    [
+      "lifeGraph",
+      "seamsi",
+      "thaiAstrology",
+      "palmistry",
+      "tarotMeanings",
+      "tarotDaily",
+      "tarotMonthly",
+      "tarotLuck",
+      "tarotResult",
+    ].includes(page)
+  ) {
+    return item.href === "#supporting-tools";
+  }
+  return false;
 }
 ---
 
 <header class="site-header">
-  {(!isPopularDirectory || isTempleCollectionPage) && (
-    <div class="topbar">
-      {(pageConfig.topbar || pages.home.topbar || []).map((item: TopbarItem) =>
-        item.href ? (
-          <a href={resolveHref(item.href)} data-topbar-realtime={item.realtime}>{item.label}</a>
-        ) : (
-          <span data-topbar-realtime={item.realtime}>{item.label}</span>
-        )
-      )}
-    </div>
-  )}
+  <Topbar items={config.topbar} />
 
   <nav
-    class={`navbar${isPopularDirectory && !isTempleCollectionPage ? " navbar--popular-directory" : ""}${isHomePage ? " navbar--home-v2" : ""}${isTempleV2Page ? " navbar--temple-hub-v2" : ""}`}
+    class="navbar navbar--shared-site"
     aria-label={config.navLabel}
   >
     <a class="brand" href="/" aria-label={config.brandLabel}>
-      {isPopularDirectory && !isTempleCollectionPage ? <span class="brand-mark brand-mark--popular-directory" aria-hidden="true">๙</span> : <BrandMark />}
+      <BrandMark />
       <span>
         <strong>{config.brandName}</strong>
         <small>{config.brandSubtitle}</small>
@@ -110,53 +93,42 @@ function isCurrentNavItem(item: NavItem) {
       <span class="sr-only">{config.openMenuLabel}</span>
     </button>
 
-    {isPopularDirectory && !isTempleCollectionPage ? (
-      <div class="nav-menu-static" id="primary-menu" aria-label={config.navLabel}>
-        {templeNavTab && <a href={resolveHref(templeNavTab.href)}>{templeNavTab.label}</a>}
-        {calendarNavTab && <a href={resolveHref(calendarNavTab.href)}>{calendarNavTab.label}</a>}
-        <a href={resolveHref(templeNavTab?.href || "temples/")}>← กลับ</a>
-      </div>
-    ) : (
-      <>
-        <div
-          class="nav-menu"
-          id="primary-menu"
-          aria-label={config.navLabel}
-          data-nav-mode={isHomePage ? "home-v2" : isTempleV2Page ? "temple-hub-v2" : "default"}
-        >
-          {visibleNavTabs.map((item) => (
-            <div class="nav-item">
-              <a class={isCurrentNavItem(item) ? "is-current" : undefined} href={resolveHref(item.href)}>{item.label}</a>
-              {!isHomePage && !isTempleV2Page && enabledChildren(item).length > 0 && (
-                <div class="mega-panel">
-                  {enabledChildren(item).map((child) =>
-                    child.section ? (
-                      <span class="mega-panel-section">{child.label}</span>
-                    ) : (
-                      <a href={resolveHref(child.href)}>{child.label}</a>
-                    )
-                  )}
-                </div>
+    <div
+      class="nav-menu"
+      id="primary-menu"
+      aria-label={config.navLabel}
+      data-nav-mode="shared-site"
+    >
+      {visibleNavTabs.map((item) => (
+        <div class="nav-item">
+          <a
+            class={isCurrentNavItem(item) ? "is-current" : undefined}
+            aria-current={isCurrentNavItem(item) ? "page" : undefined}
+            href={resolveHref(item.href)}
+          >
+            {item.label}
+          </a>
+          {enabledChildren(item).length > 0 && (
+            <div class="mega-panel">
+              {enabledChildren(item).map((child) =>
+                child.section ? (
+                  <span class="mega-panel-section">{child.label}</span>
+                ) : (
+                  <a href={resolveHref(child.href)}>{child.label}</a>
+                )
               )}
             </div>
-          ))}
-          {visibleNavUtility.map((item) => (
-            <a class="plain-link" href={resolveHref(item.href)}>{item.label}</a>
-          ))}
+          )}
         </div>
+      ))}
+    </div>
 
-        <div class="nav-actions">
-          {isHomePage && homePlannerTab ? (
-            <a class="nav-cta-home" href={resolveHref(homePlannerTab.href)}>{homePlannerTab.label}</a>
-          ) : isTempleV2Page && templeSearchTab ? (
-            <a class="nav-cta-temple-hub" href={resolveHref(templeSearchTab.href)}>{templeSearchTab.label}</a>
-          ) : !isHomePage && !isTempleV2Page ? (
-            <button class="icon-button" type="button" aria-label={config.searchLabel}>
-              <SearchIcon />
-            </button>
-          ) : null}
-        </div>
-      </>
-    )}
+    <div class="nav-actions">
+      {homePlannerTab && (
+        <a class="nav-cta-site" data-nav-cta="temple-planner" href={resolveHref(homePlannerTab.href)}>
+          {homePlannerTab.label}
+        </a>
+      )}
+    </div>
   </nav>
 </header>

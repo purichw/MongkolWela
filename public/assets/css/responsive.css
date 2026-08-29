@@ -17,7 +17,7 @@
   .nav-menu {
     grid-area: menu;
     flex-wrap: wrap;
-    gap: 4px 8px;
+    gap: 6px 18px;
     padding: 0;
     overflow: visible;
   }
@@ -118,6 +118,31 @@
   }
 }
 
+@media (min-width: 721px) and (max-width: 960px) {
+  .topbar {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 4px 16px;
+    min-height: auto;
+    padding: 6px 18px;
+    line-height: 1.35;
+  }
+
+  .topbar > :first-child {
+    flex-basis: 100%;
+    margin-right: 0;
+  }
+
+  .topbar a,
+  .topbar span {
+    white-space: normal;
+  }
+
+  .topbar a:last-child {
+    margin-left: auto;
+  }
+}
+
 @media (max-width: 720px) {
   .topbar {
     display: grid;
@@ -133,6 +158,11 @@
     line-height: 1.35;
   }
 
+  .topbar a,
+  .topbar span {
+    white-space: normal;
+  }
+
   .topbar span {
     grid-column: 1 / -1;
     order: 2;
@@ -145,6 +175,7 @@
 
   .navbar {
     grid-template-columns: auto auto;
+    grid-template-areas: "brand actions";
     justify-content: space-between;
     min-height: 68px;
     padding: 0 18px;
@@ -173,6 +204,7 @@
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: stretch;
+    gap: 0;
     padding: 12px;
     background: #fffaf0;
     border: 1px solid var(--line);
