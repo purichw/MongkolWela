@@ -41,7 +41,7 @@ const rules = [
       },
       {
         conditions: [
-          { type: "path", op: "eq", value: "/assets/data/temples-thailand.json" },
+          { type: "path", op: "pre", value: "/assets/data/temples-thailand" },
           { type: "header", op: "ex", key: "sec-fetch-site", neg: true },
         ],
       },

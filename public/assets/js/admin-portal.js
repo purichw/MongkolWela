@@ -25,7 +25,7 @@ const PUBLISH_VERIFY_INTERVAL_MS = 600;
 
 const TEMPLE_COLLECTIONS = [
   { key: "popular", label: "สายไหว้พระ 9 วัด" },
-  { key: "mu", label: "สายมู" },
+  { key: "mu", label: "สถานที่มงคล" },
   { key: "sacred", label: "วัดศักดิ์สิทธิ์" },
 ];
 
@@ -1400,7 +1400,7 @@ function renderAnalytics() {
   $("#adminContent").innerHTML = `<div class="mw-admin-grid mw-admin-dashboard-stats">
     ${statCard("ผู้เข้าชมทั้งหมด", pageviews || 19360, "๗ วันล่าสุด", "component", "lacquer")}
     ${statCard("ผู้ใช้ไม่ซ้ำ", events || 11230, "๗ วันล่าสุด", "users", "jade")}
-    ${statCard("แผนทริปที่สร้าง", plans || 1458, "๗ วันล่าสุด", "section", "gold")}
+    ${statCard("แผนเดินทางที่สร้าง", plans || 1458, "๗ วันล่าสุด", "section", "gold")}
     ${statCard("อัตราบันทึกวัด", saveRate, "เทียบสัปดาห์ก่อน", "dates", "muted")}
   </div>
   <section class="mw-admin-card mw-admin-analytics-wide">

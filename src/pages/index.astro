@@ -4,7 +4,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 const heroSlides = [
   { src: "/assets/images/hero-temple-red.jpg", alt: "จิตรกรรมฝาผนังวัดไทยในโทนแดงทอง" },
   { src: "/assets/images/hero-jtha-98.jpg", alt: "บรรยากาศสถานที่ศักดิ์สิทธิ์สำหรับไหว้พระ" },
-  { src: "/assets/images/hero-jtha-83.jpg", alt: "วัดและศาลเจ้าสำหรับขอพรเสริมมงคล" },
+  { src: "/assets/images/hero-jtha-83.jpg", alt: "วัดและศาลเจ้าสำหรับประกอบพิธีมงคล" },
   { src: "/assets/images/hero-jtha-80.jpg", alt: "พระพุทธรูปและพื้นที่สักการะในวัด" },
   { src: "/assets/images/chinese-incense-card.jpg", alt: "ธูปวงแขวนในศาลเจ้าจีน" },
 ];
@@ -14,42 +14,42 @@ const intentLinks = [
     no: "๐๑",
     kicker: "โชคลาภ",
     label: "เสริมโชคลาภ เงินทอง",
-    description: "องค์เทพและวัดที่คนศรัทธานิยมไปขอเรื่องการเงิน หมุนเวียน และโชคลาภ",
+    description: "วัดและสถานที่ศักดิ์สิทธิ์ที่ผู้ศรัทธานิยมไปสักการะเรื่องการเงิน การค้า และโชคลาภ",
     href: "/temples/sacred/?q=โชคลาภ",
   },
   {
     no: "๐๒",
     kicker: "การงาน",
     label: "การงาน ความก้าวหน้า",
-    description: "สายขอพรเรื่องหน้าที่การงาน ตำแหน่ง และการสอบหรือสัมภาษณ์ครั้งสำคัญ",
+    description: "สถานที่สำหรับสักการะเพื่อเสริมกำลังใจด้านหน้าที่การงาน ตำแหน่ง และการสอบหรือสัมภาษณ์สำคัญ",
     href: "/temples/sacred/?q=การงาน",
   },
   {
     no: "๐๓",
     kicker: "ความรัก",
     label: "ความรัก เนื้อคู่",
-    description: "สถานที่ขอพรเรื่องความรัก คู่ครอง และความสัมพันธ์ที่มั่นคงยืนยาว",
+    description: "สถานที่ที่นิยมสักการะเรื่องความรัก คู่ครอง และความสัมพันธ์ที่มั่นคง",
     href: "/temples/sacred/?q=ความรัก",
   },
   {
     no: "๐๔",
     kicker: "ครอบครัว",
     label: "สุขภาพ และครอบครัว",
-    description: "ขอพรเรื่องสุขภาพ ความคุ้มครอง และความสงบสุขของคนที่บ้าน",
+    description: "สถานที่สำหรับตั้งจิตอธิษฐานเรื่องสุขภาพ ความคุ้มครอง และความสงบสุขของครอบครัว",
     href: "/temples/sacred/?q=สุขภาพ",
   },
   {
     no: "๐๕",
     kicker: "เริ่มใหม่",
     label: "เริ่มต้นชีวิตใหม่",
-    description: "เหมาะกับช่วงเปลี่ยนงาน ย้ายบ้าน หรืออยากตั้งต้นชีวิตอีกครั้ง",
+    description: "เหมาะกับช่วงเปลี่ยนงาน ย้ายบ้าน หรือช่วงเวลาที่ต้องการตั้งต้นอย่างมีสติ",
     href: "/temples/popular/?q=เริ่มต้น",
   },
   {
     no: "๐๖",
     kicker: "แก้ชง",
     label: "แก้ชง สะเดาะเคราะห์",
-    description: "สำหรับปีชงหรือช่วงติดขัด ไปทำบุญ สะเดาะเคราะห์ และเสริมกำลังใจ",
+    description: "สำหรับปีชงหรือช่วงที่ต้องการทำบุญ สะเดาะเคราะห์ และเสริมกำลังใจอย่างเหมาะสม",
     href: "/temples/mu/?q=แก้ชง",
   },
 ];
@@ -57,27 +57,27 @@ const intentLinks = [
 const tickerItems = [
   "๙ เส้นทางไหว้พระยอดนิยม",
   "๔๔,๗๐๔ วัดทั่วไทยพร้อมค้นหา",
-  "พิกัดพร้อมนำทางจริง",
-  "จัดทริป ๓ / ๕ / ๙ แห่ง",
+  "พิกัดสำหรับตรวจสอบเส้นทาง",
+  "วางแผน ๓ / ๕ / ๙ แห่ง",
 ];
 
 const planStops = [
   {
     time: "09:00",
     title: "วัดพระเชตุพนฯ (วัดโพธิ์)",
-    detail: "พระนคร · ทำบุญ ขอพรสุขภาพ",
+    detail: "พระนคร · สุขภาพและความสงบ",
     image: "/assets/images/hero-jtha-80.jpg",
   },
   {
     time: "10:15",
     title: "วัดอรุณราชวราราม",
-    detail: "บางกอกใหญ่ · ขอพรการงาน",
+    detail: "บางกอกใหญ่ · การงานและความก้าวหน้า",
     image: "/assets/images/hero-jtha-98.jpg",
   },
   {
     time: "11:20",
     title: "วัดกัลยาณมิตรฯ",
-    detail: "ธนบุรี · ขอพรเดินทางปลอดภัย",
+    detail: "ธนบุรี · การเดินทางปลอดภัย",
     image: "/assets/images/temple-placeholder-auspicious.png",
   },
 ];
@@ -85,25 +85,25 @@ const planStops = [
 const collectionCards = [
   {
     variant: "popular",
-    kicker: "Popular · เดินทาง",
+    kicker: "เส้นทาง · ยอดนิยม",
     title: "สายไหว้พระ ๙ วัด",
-    description: "วัดดังที่คนรู้จัก จัดมาเป็นเส้นทางต่อเนื่อง เหมาะกับวันหยุดที่อยากไปให้ครบ",
+    description: "วัดยอดนิยมที่จัดเป็นเส้นทางต่อเนื่อง เหมาะสำหรับวางแผนเดินทางภายในวันเดียว",
     href: "/temples/popular/",
     linkLabel: "จัดเป็นเส้นทาง",
   },
   {
     variant: "sacred",
-    kicker: "Sacred · ศรัทธา",
+    kicker: "ศรัทธา · ข้อมูลประกอบ",
     title: "วัดศักดิ์สิทธิ์",
-    description: "สถานที่เชื่อถือ เลือกจากจังหวัด ภูมิภาค และเรื่องที่ตั้งใจขอพร พร้อมพิกัดและข้อมูลประกอบ",
+    description: "สถานที่สำคัญที่เลือกได้ตามจังหวัด ภูมิภาค และวัตถุประสงค์ด้านมงคล พร้อมพิกัดและข้อมูลประกอบ",
     href: "/temples/sacred/",
     linkLabel: "ค้นหาตามความตั้งใจ",
   },
   {
     variant: "mu",
-    kicker: "Mu · กำลังใจ",
-    title: "สถานที่สายมู",
-    description: "เข้าถึงง่าย ไม่ฉูดฉาด รวมสถานที่เสริมดวง แก้ชง และเสริมกำลังใจ เลือกไปแบบพอดีตัว",
+    kicker: "มงคล · กำลังใจ",
+    title: "สถานที่มงคล",
+    description: "รวมสถานที่สำหรับสักการะ เสริมสิริมงคล แก้ชง และตั้งจิตอธิษฐาน โดยนำเสนออย่างพอดีและเคารพสถานที่",
     href: "/temples/mu/",
     linkLabel: "ดูสถานที่เด่น",
   },
@@ -111,17 +111,17 @@ const collectionCards = [
 
 const supportingLinks = [
   { label: "วันพระและปฏิทินไทย", href: "/calendar/" },
-  { label: "เซียมซี", href: "/horoscope/seamsi/" },
-  { label: "ไพ่ประจำวัน", href: "/tarot/daily/" },
-  { label: "ลายมือ", href: "/horoscope/palmistry/" },
+  { label: "คำเซียมซี", href: "/horoscope/seamsi/" },
+  { label: "ไพ่ยิปซีรายวัน", href: "/tarot/daily/" },
+  { label: "อ่านลายมือ", href: "/horoscope/palmistry/" },
 ];
 
 const extraScripts = ["/assets/js/home-motion.js"];
 ---
 
 <BaseLayout
-  title="มงคลเวลา | วัดดัง สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระเสริมมงคล"
-  description="มงคลเวลา ช่วยค้นหาวัดดัง สถานที่ศักดิ์สิทธิ์ เส้นทางไหว้พระ 9 วัด สถานที่สายมู วัดทั่วไทย และตัวช่วยวางแผนไหว้พระเพื่อเสริมมงคลชีวิต"
+  title="มงคลเวลา | วางแผนไหว้พระ วัดศักดิ์สิทธิ์ และข้อมูลมงคล"
+  description="มงคลเวลาเป็นคู่มือค้นหาวัด สถานที่ศักดิ์สิทธิ์ เส้นทางไหว้พระ 9 วัด วัดทั่วไทย และเครื่องมือวางแผนเดินทางมงคลสำหรับผู้ใช้ไทย"
   lang="th"
   locale="th"
   page="home"
@@ -129,7 +129,7 @@ const extraScripts = ["/assets/js/home-motion.js"];
   extraScripts={extraScripts}
   canonicalPath="/"
   image="/assets/images/hero-temple-red.jpg"
-  imageAlt="มงคลเวลา วัดดัง สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระเสริมมงคล"
+  imageAlt="มงคลเวลา วัด สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระ"
   breadcrumbs={[{ label: "หน้าแรก", href: "/" }]}
 >
   <script is:inline>
@@ -154,11 +154,11 @@ const extraScripts = ["/assets/js/home-motion.js"];
 
       <div class="hero-content home-hero-shell">
         <div class="home-hero-copy">
-          <p class="eyebrow">วัดดัง · สถานที่ศักดิ์สิทธิ์ · เส้นทางมงคล</p>
-          <h1 id="hero-title"><span>วางแผนไหว้</span><span>พระ</span><mark>ให้ตรงกับใจ</mark></h1>
+          <p class="eyebrow">วัด · สถานที่ศักดิ์สิทธิ์ · เส้นทางมงคล</p>
+          <h1 id="hero-title"><span>วางแผนไหว้</span><span>พระ</span><mark>อย่างรอบคอบ</mark></h1>
           <p class="hero-copy">
-            บอกเราแค่สิ่งที่อยากเสริม หรือจังหวัดที่อยากไป มงคลเวลาหาวัดจริง
-            จัดลำดับเส้นทาง และบอกพิกัดให้พร้อมออกเดินทาง
+            กำหนดจังหวัด วัตถุประสงค์ และเวลาที่เดินทางได้ เพื่อค้นหาสถานที่จริง
+            จัดลำดับเส้นทาง และแสดงข้อมูลสำหรับตรวจสอบก่อนเดินทาง
           </p>
 
           <form class="hero-search home-temple-search" action="/temples/sacred/" role="search">
@@ -170,26 +170,26 @@ const extraScripts = ["/assets/js/home-motion.js"];
               id="site-search"
               name="q"
               type="search"
-              placeholder="ค้นหาวัด จังหวัด หรือพร เช่น โชคลาภ การงาน ความรัก"
+              placeholder="ค้นหาวัด จังหวัด หรือวัตถุประสงค์"
             />
             <button type="submit">ค้นหา</button>
           </form>
 
           <div class="hero-links" aria-label="ทางลัดหน้าแรก">
-            <a class="is-primary" href="/temples/planner/">เริ่มวางแผนไหว้พระ</a>
-            <a href="/temples/popular/">ไหว้พระ ๙ วัด</a>
-            <a href="/temples/thailand/">วัดทั่วไทย</a>
+            <a class="is-primary" href="/temples/planner/">วางแผนไหว้พระ</a>
+            <a href="/temples/popular/">เส้นทาง ๙ วัด</a>
+            <a href="/temples/thailand/">วัดทั่วประเทศไทย</a>
           </div>
         </div>
 
         <aside class="home-today-card" id="today" aria-label="ฤกษ์วันนี้">
-          <p>ฤกษ์วันนี้ · Today</p>
+          <p>ข้อมูลประจำวัน</p>
           <strong data-topbar-realtime="solarToday">วันอาทิตย์ที่ 19 กรกฎาคม 2569</strong>
           <span>
-            เป็นวันดีสำหรับ<strong>เริ่มสิ่งใหม่และทำบุญ</strong>
-            เหมาะกับการไปกราบขอพรเรื่องการงานและโชคลาภ
+            ใช้ประกอบการวางแผน<strong>ทำบุญและเริ่มสิ่งใหม่</strong>
+            พร้อมตรวจสอบวันพระและรายละเอียดประจำวัน
           </span>
-          <a href="/calendar/">ดูปฏิทินวันพระ</a>
+          <a href="/calendar/">เปิดปฏิทินไทย</a>
         </aside>
       </div>
 
@@ -224,8 +224,8 @@ const extraScripts = ["/assets/js/home-motion.js"];
 
     <section class="home-section home-intent-section" id="intent" aria-labelledby="intent-title">
       <div class="home-section-heading home-intent-heading">
-        <p><span>๐๑</span> เริ่มจากความตั้งใจ</p>
-        <h2 id="intent-title">อยากเสริมเรื่องไหน เริ่มตรงนี้</h2>
+        <p><span>๐๑</span> วัตถุประสงค์ด้านมงคล</p>
+        <h2 id="intent-title">เลือกเรื่องที่ต้องการวางแผน</h2>
       </div>
 
       <div class="home-intent-grid">
@@ -242,23 +242,23 @@ const extraScripts = ["/assets/js/home-motion.js"];
     <section class="home-planner-spotlight" id="temple-routes" aria-labelledby="planner-title">
       <div class="home-planner-inner">
         <div class="home-planner-copy">
-          <p><span>๐๒</span> ตัวช่วยของเรา</p>
-          <h2 id="planner-title">บอกแค่ความตั้งใจ ที่เหลือเราจัดเส้นทางให้</h2>
+          <p><span>๐๒</span> เครื่องมือวางแผน</p>
+          <h2 id="planner-title">กำหนดเงื่อนไข แล้วจัดลำดับเส้นทาง</h2>
           <p>
-            เลือกจำนวนวัด พื้นที่ เวลา และสิ่งที่อยากเสริม ระบบจะเรียงลำดับให้เดินทางต่อเนื่อง
-            และใช้ข้อมูลพิกัดจริงกับคำอธิบายที่ตรวจสอบได้ก่อนออกเดินทาง
+            เลือกจำนวนสถานที่ พื้นที่ เวลา และวัตถุประสงค์ด้านมงคล ระบบจะเรียงลำดับให้เดินทางต่อเนื่อง
+            โดยใช้พิกัดจริงและข้อมูลประกอบที่ควรตรวจสอบก่อนออกเดินทาง
           </p>
-          <div class="home-planner-tags" aria-label="ตัวเลือกหลักในการจัดทริป">
+          <div class="home-planner-tags" aria-label="ตัวเลือกหลักในการวางแผน">
             <span>จำนวน ๓/๕/๙</span>
             <span>พื้นที่ · จังหวัด</span>
-            <span>พรที่ตั้งใจ</span>
+            <span>วัตถุประสงค์มงคล</span>
           </div>
-          <a class="primary-action" href="/temples/planner/">เริ่มวางแผนของคุณ</a>
+          <a class="primary-action" href="/temples/planner/">เริ่มวางแผนไหว้พระ</a>
         </div>
 
         <article class="home-sample-plan" aria-label="ตัวอย่างแผนไหว้พระ">
           <header>
-            <p>ตัวอย่างทริป · Sample plan</p>
+            <p>ตัวอย่างแผนเดินทาง</p>
             <strong>ไหว้พระริมน้ำ ๓ วัด · กรุงเทพฯ</strong>
             <span>รวม ๑๑ กม.</span>
           </header>
@@ -276,7 +276,7 @@ const extraScripts = ["/assets/js/home-motion.js"];
             ))}
           </ol>
           <p class="home-plan-note">
-            ทำไมเรียงแบบนี้: เริ่มจากจุดศูนย์กลางเมืองแล้วไล่ตามเวลาเปิดและระยะเดินทางโดยประมาณ
+            เกณฑ์การจัดลำดับ: เริ่มจากจุดศูนย์กลางเมือง แล้วพิจารณาเวลาเปิดและระยะเดินทางโดยประมาณ
           </p>
         </article>
       </div>
@@ -284,10 +284,10 @@ const extraScripts = ["/assets/js/home-motion.js"];
 
     <section class="home-section home-collections-section" id="collections" aria-labelledby="collections-title">
       <div class="home-section-heading home-collection-heading">
-        <p><span>๐๓</span> เลือกแบบการออกบุญ</p>
+        <p><span>๐๓</span> หมวดการค้นหา</p>
         <div>
-          <h2 id="collections-title">สามสาย สามบุคลิก</h2>
-          <a class="section-link" href="/temples/">ดูทั้งหมด</a>
+          <h2 id="collections-title">เลือกจากหมวดหลัก</h2>
+          <a class="section-link" href="/temples/">ดูทุกหมวด</a>
         </div>
       </div>
 

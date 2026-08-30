@@ -61,4 +61,9 @@ The all-Thailand temple directory source attribution is:
 
 ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ
 
+The all-Thailand directory serves a lightweight `/assets/data/temples-thailand-index.json`
+for filters and first-page preview, then loads the full
+`/assets/data/temples-thailand.json` only when a full search/table result is
+needed.
+
 Do not add, delete, or modify `outputs/` unless a task explicitly asks for it.

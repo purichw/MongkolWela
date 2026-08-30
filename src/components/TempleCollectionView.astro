@@ -82,14 +82,13 @@ const extraScripts = ["/assets/js/temple-directory.js", "/assets/js/temple-map.j
 const collectionTabs = [
   { key: "popular", label: "๙ วัด", href: "/temples/popular/" },
   { key: "sacred", label: "ศักดิ์สิทธิ์", href: "/temples/sacred/" },
-  { key: "mu", label: "สายมู", href: "/temples/mu/" },
+  { key: "mu", label: "มงคล", href: "/temples/mu/" },
 ];
 const supportingLinks = [
-  { label: "บูชาสายมูตามองค์", href: "/temples/mu/" },
-  { label: "คู่มือไหว้พระ", href: "/temples/" },
+  { label: "สถานที่มงคล", href: "/temples/mu/" },
+  { label: "คู่มือวางแผนไหว้พระ", href: "/temples/" },
   { label: "สายไหว้พระ ๙ วัด", href: "/temples/popular/" },
   { label: "วัดศักดิ์สิทธิ์", href: "/temples/sacred/" },
-  { label: "สายมู", href: "/temples/mu/" },
   { label: "วัดทั่วประเทศไทย", href: "/temples/thailand/" },
 ];
 const thaiNumber = (value: number) => value.toLocaleString("th-TH-u-nu-thai");
@@ -105,7 +104,7 @@ const confidenceFor = (temple: TempleCard, hasTempleImage: boolean) => {
   if (Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude)) && hasTempleImage) {
     return { key: "medium", label: "ปานกลาง" };
   }
-  return { key: "check", label: "ควรเช็ก" };
+  return { key: "check", label: "ควรตรวจสอบ" };
 };
 const plannerHrefFor = (temple: TempleCard) =>
   `/temples/planner/?start=${encodeURIComponent(temple.name)}&province=${encodeURIComponent(temple.province)}`;
@@ -161,7 +160,7 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
         <h1 id="temple-collection-title">{meta.title}</h1>
         <p>{meta.description}</p>
         <p class="temple-collection-v2-total">
-          พบ {thaiNumber(rankedTemples.length)} สถานที่ในหมวดนี้ · แสดงชุดเด่นก่อน แล้วค่อยดูเพิ่ม
+          พบ {thaiNumber(rankedTemples.length)} สถานที่ในหมวดนี้ · แสดงรายการเด่นก่อน แล้วค่อยแสดงเพิ่มเติม
         </p>
       </div>
     </section>
@@ -182,13 +181,13 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
               ))}
             </div>
           </div>
-          <a class="temple-collection-v2-filter-planner" href="/temples/planner/">วางแผนทริป →</a>
+          <a class="temple-collection-v2-filter-planner" href="/temples/planner/">วางแผนเส้นทาง</a>
         </div>
 
         <details class="temple-collection-v2-advanced-filter">
           <summary>
-            <span>ค้นหา / จังหวัด / จุดประสงค์</span>
-            <small>เปิดตัวกรอง</small>
+            <span>ค้นหา / จังหวัด / วัตถุประสงค์</span>
+            <small>ตัวกรองเพิ่มเติม</small>
           </summary>
 
           <form class="popular-temple-filter-form temple-collection-v2-search" data-popular-temple-filter-form>
@@ -210,8 +209,8 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
 
             <div class="popular-temple-filter-actions">
               <button class="temple-search-button" type="submit">ค้นหา</button>
-              <button class="temple-nearby-button" type="button" data-popular-temple-nearby>พิกัดใกล้ฉัน</button>
-              <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>เคลียร์ข้อมูล</button>
+              <button class="temple-nearby-button" type="button" data-popular-temple-nearby>ใกล้ตำแหน่งปัจจุบัน</button>
+              <button class="temple-clear-button" type="button" data-popular-temple-filter-clear>ล้างตัวกรอง</button>
             </div>
           </form>
 
@@ -233,12 +232,12 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
 
             <details class="popular-temple-purpose-filter temple-purpose-accordion">
               <summary>
-                <span>จุดประสงค์</span>
+                <span>วัตถุประสงค์</span>
                 <small data-temple-purpose-summary>ทั้งหมด</small>
               </summary>
               <div
                 class="popular-temple-purpose-tags"
-                aria-label="กรองตามจุดประสงค์"
+                aria-label="กรองตามวัตถุประสงค์"
                 data-popular-purpose-tags
               >
                 <button type="button" class="is-active" data-popular-purpose-tag value="">ทั้งหมด</button>
@@ -317,11 +316,11 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
                 <strong>{intent}</strong>
                 <div class="temple-collection-v2-card-meta">
                   <small>ข้อมูลชุดปัจจุบัน</small>
-                  <a href="#consult">แจ้งข้อมูลผิด</a>
+                  <a href="#consult">แจ้งแก้ไขข้อมูล</a>
                 </div>
                 <div class="temple-collection-v2-card-actions">
-                  <a class="temple-collection-v2-card-plan" href={plannerHrefFor(temple)}>+ เพิ่มลงทริป</a>
-                  <a class="temple-collection-v2-card-detail" href={detailHref} data-popular-temple-detail>รายละเอียด →</a>
+                  <a class="temple-collection-v2-card-plan" href={plannerHrefFor(temple)}>เพิ่มลงแผน</a>
+                  <a class="temple-collection-v2-card-detail" href={detailHref} data-popular-temple-detail>รายละเอียด</a>
                 </div>
               </div>
             </article>
@@ -331,23 +330,23 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
 
       <p class="popular-temple-empty" data-popular-temple-empty hidden>{meta.emptyText}</p>
       <button class="popular-temple-load-more" type="button" data-popular-temple-more hidden>
-        ดูเพิ่ม
+        แสดงเพิ่มเติม
       </button>
 
       <div class="temple-collection-v2-legend" aria-label="คำอธิบายระดับข้อมูล">
         <span><i class="is-high"></i> ข้อมูลมั่นใจสูง</span>
         <span><i class="is-medium"></i> ปานกลาง</span>
         <span><i class="is-check"></i> ควรตรวจสอบก่อนไป</span>
-        <span>เลือกสถานที่แล้วกด “วางแผนทริป” เพื่อจัดลำดับเส้นทางให้อัตโนมัติ</span>
+        <span>เลือกสถานที่แล้วใช้ “วางแผนเส้นทาง” เพื่อจัดลำดับการเดินทาง</span>
       </div>
 
-      <aside class="temple-collection-v2-planner" aria-label="วางแผนทริปจากสถานที่ที่เลือก">
+      <aside class="temple-collection-v2-planner" aria-label="วางแผนเส้นทางจากสถานที่ที่เลือก">
         <div>
-          <p>พร้อมออกเดินทาง</p>
-          <h2>ให้ระบบจัดลำดับเส้นทางจากสถานที่ที่เลือก</h2>
-          <span>เพิ่มวัดจากหน้าค้นหา แล้วเปิดตัวช่วยวางแผนเพื่อจัดเส้นทางที่เดินทางต่อเนื่องและใช้เวลาน้อยที่สุด</span>
+          <p>วางแผนการเดินทาง</p>
+          <h2>จัดลำดับเส้นทางจากสถานที่ที่เลือก</h2>
+          <span>เพิ่มวัดจากหน้าค้นหา แล้วเปิดเครื่องมือวางแผนเพื่อจัดเส้นทางที่ต่อเนื่องตามพิกัดและเวลาเปิดของสถานที่</span>
         </div>
-        <a href="/temples/planner/">เริ่มวางแผนทริป →</a>
+        <a href="/temples/planner/">วางแผนเส้นทาง</a>
       </aside>
 
       <nav class="temple-collection-v2-supporting" aria-label="หมวดอื่น">

@@ -43,6 +43,10 @@ const cacheChecks = [
     path: "/assets/data/temples-thailand.json",
     expected: "public, max-age=3600, stale-while-revalidate=86400",
   },
+  {
+    path: "/assets/data/temples-thailand-index.json",
+    expected: "public, max-age=3600, stale-while-revalidate=86400",
+  },
 ];
 
 const headerChecks = [
@@ -53,6 +57,16 @@ const headerChecks = [
   },
   {
     path: "/assets/data/temples-thailand.json",
+    header: "access-control-allow-origin",
+    expected: "https://mongkolwela.vercel.app",
+  },
+  {
+    path: "/assets/data/temples-thailand-index.json",
+    header: "x-robots-tag",
+    expected: "noindex, nofollow, noarchive, nosnippet",
+  },
+  {
+    path: "/assets/data/temples-thailand-index.json",
     header: "access-control-allow-origin",
     expected: "https://mongkolwela.vercel.app",
   },

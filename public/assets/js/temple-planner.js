@@ -428,7 +428,7 @@ function bindControls(state, elements) {
     updateCriteriaNotice(state, elements);
     renderPicker(state, elements);
     refreshSelectionMap(state, elements);
-    elements.locationStatus.textContent = "คืนค่าโจทย์เดิมของทริปแล้ว";
+    elements.locationStatus.textContent = "คืนค่าเงื่อนไขเดิมของแผนแล้ว";
     persistState(state, elements);
   });
   elements.filterSearchButtons.forEach((button) => {
@@ -601,7 +601,7 @@ function renderPicker(state, elements) {
               class="${selected ? "planner-remove-button" : "planner-add-button"}"
               data-planner-toggle-place="${escapeHtml(item.id)}"
               aria-pressed="${selected}"
-            >${selected ? "✓ อยู่ในทริป" : "เพิ่มในทริป"}</button>
+            >${selected ? "อยู่ในแผน" : "เพิ่มลงแผน"}</button>
           </div>
         </article>`;
     })
@@ -682,7 +682,7 @@ function renderSelected(state, elements) {
   elements.selectedCount.textContent = state.selected.length.toLocaleString("th-TH");
   elements.selectedTray.classList.toggle("is-empty", !state.selected.length);
   if (!state.selected.length) {
-    elements.selectedTray.innerHTML = "<p>ยังไม่ได้เลือกสถานที่ ระบบสามารถแนะนำให้ครบตามจำนวนได้</p>";
+    elements.selectedTray.innerHTML = "<p>ยังไม่ได้เลือกสถานที่ ระบบสามารถแนะนำให้ครบตามจำนวนที่กำหนดได้</p>";
     return;
   }
 
@@ -694,7 +694,7 @@ function renderSelected(state, elements) {
         <span class="planner-selected-chip" draggable="true" data-planner-selected-id="${escapeHtml(id)}">
           <b>${(index + 1).toLocaleString("th-TH")}</b>
           ${escapeHtml(item.name)}
-          <button type="button" draggable="false" data-planner-remove-selected="${escapeHtml(id)}" aria-label="นำ ${escapeHtml(item.name)} ออกจากทริป">×</button>
+          <button type="button" draggable="false" data-planner-remove-selected="${escapeHtml(id)}" aria-label="นำ ${escapeHtml(item.name)} ออกจากแผน">×</button>
         </span>`;
     })
     .join("");
@@ -741,7 +741,7 @@ function bindSelectedTrayDrag(state, elements) {
 function reorderSelectedPlace(state, elements, fromId, toId) {
   const pinnedStart = getPinnedStartItem(state, elements);
   if (pinnedStart?.id === fromId) {
-    elements.locationStatus.textContent = `${pinnedStart.name} ถูกกำหนดเป็นวัดแรกของทริปอยู่แล้ว`;
+    elements.locationStatus.textContent = `${pinnedStart.name} ถูกกำหนดเป็นสถานที่แรกของแผนอยู่แล้ว`;
     return;
   }
 
@@ -781,7 +781,7 @@ function toggleSelection(state, elements, id, force) {
   if (shouldSelect && index === -1) {
     const target = getTargetCount(elements);
     if (state.selected.length >= target) {
-      elements.locationStatus.textContent = `เลือกได้สูงสุด ${target.toLocaleString("th-TH")} แห่งสำหรับทริปนี้`;
+      elements.locationStatus.textContent = `เลือกได้สูงสุด ${target.toLocaleString("th-TH")} แห่งสำหรับแผนนี้`;
       return;
     }
     if (replacementContext) {
@@ -1061,13 +1061,13 @@ function updateTripSource(state, elements) {
     elements.tripSource.innerHTML = "";
     return;
   }
-  const sourceLabel = state.tripCriteria.source === "manual" ? "ทริปนี้มาจากการเลือกเอง" : "ทริปนี้จัดจากโจทย์ด้านบน";
+  const sourceLabel = state.tripCriteria.source === "manual" ? "แผนนี้มาจากการเลือกด้วยตนเอง" : "แผนนี้จัดจากเงื่อนไขด้านบน";
   const chips = describeCriteria(state, elements, state.tripCriteria);
   elements.tripSource.hidden = false;
   elements.tripSource.innerHTML = `
     <strong>${escapeHtml(sourceLabel)}</strong>
     <div class="planner-trip-source__chips">
-      ${(chips.length ? chips : ["ไม่ได้จำกัดภาค จังหวัด หรือจุดประสงค์"]).map((chip) => `<span>${escapeHtml(chip)}</span>`).join("")}
+      ${(chips.length ? chips : ["ไม่ได้จำกัดภาค จังหวัด หรือวัตถุประสงค์"]).map((chip) => `<span>${escapeHtml(chip)}</span>`).join("")}
     </div>`;
 }
 
@@ -1091,7 +1091,7 @@ function describeCriteria(state, elements, criteria) {
   }
   if (criteria.regions?.length) chips.push(`ภาค ${criteria.regions.join(", ")}`);
   if (criteria.provinces?.length) chips.push(`จังหวัด ${criteria.provinces.join(", ")}`);
-  if (criteria.purposes?.length) chips.push(`จุดประสงค์ ${criteria.purposes.slice(0, 3).join(", ")}${criteria.purposes.length > 3 ? "..." : ""}`);
+  if (criteria.purposes?.length) chips.push(`วัตถุประสงค์ ${criteria.purposes.slice(0, 3).join(", ")}${criteria.purposes.length > 3 ? "..." : ""}`);
   if (normalize(criteria.query)) chips.push(`คำค้น "${criteria.query}"`);
   return chips;
 }
@@ -1119,24 +1119,24 @@ function renderPickerContext(state, elements, resultCount) {
     elements.pickerSearch.value = context.query || "";
   }
   if (elements.pickerToggleScope) {
-    elements.pickerToggleScope.textContent = context.useCriteria === false ? "กลับมาใช้โจทย์ทริป" : "ดูทั้งหมด";
+    elements.pickerToggleScope.textContent = context.useCriteria === false ? "กลับมาใช้เงื่อนไขแผน" : "แสดงทั้งหมด";
   }
 
   const chips = context.useCriteria === false
-    ? ["ดูทุกสถานที่", "ค้นหาแยกจากโจทย์ทริป"]
+    ? ["แสดงทุกสถานที่", "ค้นหาแยกจากเงื่อนไขแผน"]
     : describeCriteria(state, elements, context.criteria || state.tripCriteria || getDraftCriteria(state, elements));
   if (elements.pickerChips) {
     elements.pickerChips.innerHTML = chips.map((chip) => `<span>${escapeHtml(chip)}</span>`).join("");
   }
   const scopeSuffix = context.useCriteria === false
-    ? " จากทุกสถานที่ กดกลับมาใช้โจทย์ทริปเพื่อดูรายการแนะนำชุดเดิม"
+    ? " จากทุกสถานที่ กดกลับมาใช้เงื่อนไขแผนเพื่อดูรายการแนะนำชุดเดิม"
     : "";
 
   if (context.type === "replace") {
     const ordinal = Number(context.replaceIndex) + 1;
-    elements.pickerKicker.textContent = "เปลี่ยนสถานที่ในทริป";
+    elements.pickerKicker.textContent = "เปลี่ยนสถานที่ในแผน";
     elements.pickerTitle.textContent = `เลือกสถานที่แทนจุดที่ ${ordinal.toLocaleString("th-TH")}`;
-    elements.pickerDescription.textContent = "แนะนำจากตำแหน่งก่อนหน้า/ถัดไป จุดประสงค์เดิม และอันดับในฐานข้อมูล";
+    elements.pickerDescription.textContent = "แนะนำจากตำแหน่งก่อนหน้า/ถัดไป วัตถุประสงค์เดิม และอันดับในฐานข้อมูล";
     elements.pickerNote.textContent = scopeSuffix
       ? `พบ ${resultCount.toLocaleString("th-TH")} สถานที่${scopeSuffix}`
       : `พบ ${resultCount.toLocaleString("th-TH")} สถานที่ เลือกเพิ่มแล้วกดจัดลำดับสถานที่ที่เลือก`;
@@ -1144,27 +1144,27 @@ function renderPickerContext(state, elements, resultCount) {
   }
 
   if (context.type === "trip") {
-    elements.pickerKicker.textContent = "ปรับทริปที่จัดไว้";
+    elements.pickerKicker.textContent = "ปรับแผนที่จัดไว้";
     elements.pickerTitle.textContent = "เลือกเพิ่มหรือเปลี่ยนจากรายการแนะนำ";
-    elements.pickerDescription.textContent = "รายการจะแนะนำสถานที่ที่เข้ากับโจทย์เดิมและอยู่ใกล้ลำดับทริปปัจจุบันก่อน";
+    elements.pickerDescription.textContent = "รายการจะแนะนำสถานที่ที่เข้ากับเงื่อนไขเดิมและอยู่ใกล้ลำดับแผนปัจจุบันก่อน";
     elements.pickerNote.textContent = scopeSuffix
       ? `พบ ${resultCount.toLocaleString("th-TH")} สถานที่${scopeSuffix}`
-      : `พบ ${resultCount.toLocaleString("th-TH")} สถานที่ ถ้าอยากแหวกจากโจทย์เดิมให้กดดูทั้งหมด`;
+      : `พบ ${resultCount.toLocaleString("th-TH")} สถานที่ หากต้องการดูนอกเงื่อนไขเดิมให้กดแสดงทั้งหมด`;
     return;
   }
 
   if (context.type === "nearby") {
-    elements.pickerKicker.textContent = "ค้นหาใกล้ฉัน";
+    elements.pickerKicker.textContent = "ใกล้ตำแหน่งปัจจุบัน";
     elements.pickerTitle.textContent = "เลือกสถานที่ในรัศมีจากตำแหน่งปัจจุบัน";
-    elements.pickerDescription.textContent = "โหมดนี้ไม่ใช้ภาค จังหวัด และจุดประสงค์จากโจทย์ด้านบน";
+    elements.pickerDescription.textContent = "โหมดนี้ไม่ใช้ภาค จังหวัด และวัตถุประสงค์จากเงื่อนไขด้านบน";
     elements.pickerNote.textContent = `พบ ${resultCount.toLocaleString("th-TH")} สถานที่ เรียงจากใกล้ไปไกล`;
     return;
   }
 
-  elements.pickerKicker.textContent = "ค้นหาด้วยตัวเอง";
-  elements.pickerTitle.textContent = "เลือกเองจากรายการหรือแผนที่";
-  elements.pickerDescription.textContent = "รายการนี้ใช้โจทย์ด้านบนเพื่อช่วยคัดสถานที่ แต่ยังไม่เปลี่ยนทริปจนกว่าจะกดจัดลำดับ";
-  elements.pickerNote.textContent = `พบ ${resultCount.toLocaleString("th-TH")} สถานที่ตามโจทย์ด้านบน`;
+  elements.pickerKicker.textContent = "ค้นหาด้วยตนเอง";
+  elements.pickerTitle.textContent = "เลือกจากรายการหรือแผนที่";
+  elements.pickerDescription.textContent = "รายการนี้ใช้เงื่อนไขด้านบนเพื่อช่วยคัดสถานที่ แต่ยังไม่เปลี่ยนแผนจนกว่าจะกดจัดลำดับ";
+  elements.pickerNote.textContent = `พบ ${resultCount.toLocaleString("th-TH")} สถานที่ตามเงื่อนไขด้านบน`;
 }
 
 function sortTripEditCandidates(state, items) {
@@ -1211,7 +1211,7 @@ function getTripPurposes(state) {
 function getPickerRecommendationText(state, elements, item) {
   const context = state.pickerContext || createPickerContext("browse");
   if (context.mode === "browse") return "";
-  if (state.selected.includes(item.id)) return "อยู่ในทริปนี้แล้ว";
+  if (state.selected.includes(item.id)) return "อยู่ในแผนนี้แล้ว";
   if (context.type === "replace") {
     const previous = state.itemById.get(context.previousId);
     const next = state.itemById.get(context.nextId);
@@ -1350,8 +1350,8 @@ function confirmAutomaticPlan(state, elements, trigger) {
   }
   openPlannerDialog(state, elements, {
     kicker: "ตรวจสอบก่อนจัดแผน",
-    title: "จัดแผนอัตโนมัติใหม่?",
-    message: "ระบบจะล้างสถานที่ที่เลือกไว้และแผนปัจจุบันทั้งหมด แล้วเลือกใหม่ตามโจทย์ด้านบน",
+    title: "จัดแผนใหม่อัตโนมัติ?",
+    message: "ระบบจะล้างสถานที่ที่เลือกไว้และแผนปัจจุบันทั้งหมด แล้วเลือกใหม่ตามเงื่อนไขด้านบน",
     confirmText: "ล้างและจัดแผนใหม่",
     trigger,
     action: () => buildAutomaticPlan(state, elements),
@@ -1400,7 +1400,7 @@ function clearTrip(state, elements) {
   refreshSelectionMap(state, elements);
   updateTripSource(state, elements);
   updateCriteriaNotice(state, elements);
-  elements.locationStatus.textContent = "ล้างทริปนี้แล้ว โจทย์ด้านบนยังอยู่สำหรับจัดใหม่";
+  elements.locationStatus.textContent = "ล้างแผนนี้แล้ว เงื่อนไขด้านบนยังใช้สำหรับจัดใหม่ได้";
   persistState(state, elements);
 }
 
@@ -1409,7 +1409,7 @@ function updateStartWarning(state, elements) {
   const pinnedStart = getPinnedStartItem(state, elements);
   if (pinnedStart) {
     elements.startWarning.hidden = false;
-    elements.startWarning.textContent = `${pinnedStart.name} จะถูกนับเป็นวัดแรกของทริป และระบบจะจัดสถานที่ถัดไปต่อจากจุดนี้`;
+    elements.startWarning.textContent = `${pinnedStart.name} จะถูกนับเป็นสถานที่แรกของแผน และระบบจะจัดสถานที่ถัดไปต่อจากจุดนี้`;
     return;
   }
 
@@ -1438,7 +1438,7 @@ function updateStartWarning(state, elements) {
   }
 
   elements.startWarning.hidden = false;
-  elements.startWarning.textContent = `จุดเริ่มต้นอยู่ห่างจากพื้นที่ที่เลือกประมาณ ${formatDistance(nearestDistance)} ระบบจะคำนวณเป็นการเดินทางไปจุดแรก ไม่ได้นับเป็นวัดในทริป`;
+  elements.startWarning.textContent = `จุดเริ่มต้นอยู่ห่างจากพื้นที่ที่เลือกประมาณ ${formatDistance(nearestDistance)} ระบบจะคำนวณเป็นการเดินทางไปจุดแรก ไม่นับเป็นสถานที่ในแผน`;
 }
 
 function updateTargetCount(state, elements) {
@@ -1466,7 +1466,7 @@ function showFilteredPlaces(state, elements) {
     ? `พบ ${count.toLocaleString("th-TH")} สถานที่ตามตัวกรอง เลือกจากรายการหรือแผนที่ได้เลย`
     : "ไม่พบสถานที่ที่ตรงกับตัวกรอง";
   if (!count) {
-    showNoResultsDialog(state, elements, "ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ที่ตรงกับภาค จังหวัด และจุดประสงค์ที่เลือก");
+    showNoResultsDialog(state, elements, "ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ที่ตรงกับภาค จังหวัด และวัตถุประสงค์ที่เลือก");
     persistState(state, elements);
     return;
   }
@@ -1543,7 +1543,7 @@ function buildAutomaticPlan(state, elements) {
   const chosen = [];
 
   if (!candidates.length && !pinnedStart) {
-    showNoResultsDialog(state, elements, "ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ที่ตรงกับภาค จังหวัด และจุดประสงค์ที่เลือก");
+    showNoResultsDialog(state, elements, "ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ที่ตรงกับภาค จังหวัด และวัตถุประสงค์ที่เลือก");
     persistState(state, elements);
     return;
   }
@@ -1728,7 +1728,7 @@ function renderSummary(details) {
     ["จำนวนสถานที่", `${details.stops.length.toLocaleString("th-TH")} แห่ง`],
     ["ระยะทางประมาณ", formatDistance(details.totalRoadKm)],
     ["เวลาเดินทาง", formatMinutes(details.totalTravel)],
-    ["เวลารวมทั้งทริป", `${formatMinutes(details.totalMinutes)} · ถึงประมาณ ${formatClock(details.endMinutes)}`],
+    ["เวลารวมทั้งแผน", `${formatMinutes(details.totalMinutes)} · ถึงประมาณ ${formatClock(details.endMinutes)}`],
   ]
     .map(([label, value]) => `<div><span>${label}</span><strong>${value}</strong></div>`)
     .join("");
@@ -1827,7 +1827,7 @@ function handleTimelineAction(event, state, elements) {
       removedItemId: removed.id,
       previousId: state.plan[index - 1]?.id || "",
       nextId: state.plan[index]?.id || "",
-      status: `นำ ${removed.name} ออกจากทริปแล้ว เลือกสถานที่ใหม่แทนจุดนี้ได้เลย`,
+      status: `นำ ${removed.name} ออกจากแผนแล้ว เลือกสถานที่ใหม่แทนจุดนี้ได้`,
     });
   }
 }
@@ -1954,7 +1954,7 @@ function requestCurrentLocation(state, elements) {
       elements.locationButton.disabled = false;
     },
     () => {
-      elements.locationStatus.textContent = "ไม่สามารถใช้ตำแหน่งปัจจุบันได้ ระบบจะเริ่มจากวัดแรกในแผน หรือเลือกวัดให้เป็นจุดแรกของทริปได้";
+      elements.locationStatus.textContent = "ไม่สามารถใช้ตำแหน่งปัจจุบันได้ ระบบจะเริ่มจากสถานที่แรกในแผน หรือเลือกวัดให้เป็นจุดเริ่มต้นได้";
       elements.locationButton.disabled = false;
     },
     { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
@@ -2035,7 +2035,7 @@ function renderSelectionPopup(item, selected, origin) {
       <span>${escapeHtml([item.province, item.district].filter(Boolean).join(" / "))}</span>
       ${distanceText}
       <p>${escapeHtml(item.blessings.slice(0, 2).join(" · ") || "ไหว้พระและเสริมสิริมงคล")}</p>
-      <button type="button" data-planner-map-toggle>${selected ? "นำออกจากทริป" : "เพิ่มในทริป"}</button>
+      <button type="button" data-planner-map-toggle>${selected ? "นำออกจากแผน" : "เพิ่มลงแผน"}</button>
     </article>`;
 }
 

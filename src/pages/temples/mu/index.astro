@@ -68,33 +68,33 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
     return a.localeCompare(b, "th");
   },
 );
-const pageTitle = "สายมู | มงคลเวลา";
-const pageDescription = "รวมพิกัดสายมูและสถานที่ศักดิ์สิทธิ์ทั่วไทยสำหรับขอพรเรื่องงาน เงิน ความรัก สุขภาพ โชคลาภ พร้อมแผนที่และตัวกรองจุดประสงค์";
+const pageTitle = "สถานที่มงคล | มงคลเวลา";
+const pageDescription = "รวมสถานที่มงคลและสถานที่ศักดิ์สิทธิ์ทั่วไทยสำหรับสักการะเรื่องงาน เงิน ความรัก สุขภาพ โชคลาภ พร้อมแผนที่และตัวกรองวัตถุประสงค์";
 const breadcrumbs = [
   { label: "หน้าแรก", href: "/" },
   { label: "วัดดังเสริมมงคล", href: "/temples/" },
-  { label: "สายมู", href: "/temples/mu/" },
+  { label: "สถานที่มงคล", href: "/temples/mu/" },
 ];
 const collectionMeta = {
   key: "mu",
-  label: "สายมู",
-  shortLabel: "สายมู",
-  kicker: "MU · กำลังใจ",
-  title: "สายมู",
-  description: "เข้าถึงง่าย ไม่ดูดวง รวมสถานที่เสริมดวง แก้ชง และเสริมกำลังใจ เลือกไปแบบพอดีตัว",
-  intro: "รวมพิกัดขอพรและสถานที่ศักดิ์สิทธิ์สำหรับเรื่องการงาน การเงิน ความรัก สุขภาพ โชคลาภ และการเสริมสิริมงคล พร้อมค้นหาและกรองตามพื้นที่ได้ทันที",
+  label: "สถานที่มงคล",
+  shortLabel: "มงคล",
+  kicker: "มงคล · ศรัทธา",
+  title: "สถานที่มงคล",
+  description: "รวมสถานที่สำหรับสักการะ เสริมสิริมงคล แก้ชง และตั้งจิตอธิษฐาน โดยนำเสนออย่างพอดีและเคารพสถานที่",
+  intro: "รวมสถานที่ศักดิ์สิทธิ์สำหรับเรื่องการงาน การเงิน ความรัก สุขภาพ โชคลาภ และการเสริมสิริมงคล พร้อมค้นหาและกรองตามพื้นที่ได้ทันที",
   accent: "#b0691c",
   heroBg: "radial-gradient(circle at 18% 0%, #8a4c16, #3d1c0d 70%)",
-  mapTitle: "สายมู",
+  mapTitle: "สถานที่มงคล",
   mapSearchPlaceholder: "ค้นหาสถานที่ในแผนที่",
-  searchLabel: "ค้นหาพิกัดสายมู",
-  searchPlaceholder: "ค้นหาในสายมู",
-  gridLabel: "พิกัดสายมูยอดนิยม",
-  emptyText: "ไม่พบพิกัดสายมูที่ตรงกับคำค้นหา",
-  imageAlt: "พิกัดสายมูและสถานที่ศักดิ์สิทธิ์ทั่วไทย",
+  searchLabel: "ค้นหาสถานที่มงคล",
+  searchPlaceholder: "ค้นหาสถานที่มงคล",
+  gridLabel: "สถานที่มงคลยอดนิยม",
+  emptyText: "ไม่พบสถานที่มงคลที่ตรงกับคำค้นหา",
+  imageAlt: "สถานที่มงคลและสถานที่ศักดิ์สิทธิ์ทั่วไทย",
 } as const;
 const itemListJsonLd = createItemListJsonLd({
-  name: "พิกัดสายมูยอดนิยมทั่วไทย",
+  name: "สถานที่มงคลยอดนิยมทั่วไทย",
   description: pageDescription,
   url: "/temples/mu/",
   items: rankedTemples.slice(0, 8).map((temple) => ({

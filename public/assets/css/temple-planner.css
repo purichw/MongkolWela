@@ -2102,12 +2102,21 @@ body.has-planner-dialog {
 .planner-field select,
 .planner-field input {
   min-height: 48px;
+  min-width: 0;
+  max-width: 100%;
   padding: 10px 14px;
   background: #fffdf7;
   border: 1px solid rgba(77, 56, 41, 0.22);
   border-radius: 8px;
   font-size: 0.98rem;
   font-weight: 650;
+}
+
+.planner-field--time input[type="time"] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .planner-field input::placeholder {
@@ -2483,6 +2492,10 @@ body.temple-planner-page .site-footer--temple-hub-v2 .credits {
 
   .planner-setup {
     padding: 20px 16px;
+  }
+
+  .planner-field--time input[type="time"] {
+    inline-size: 100%;
   }
 
   .planner-setup__heading {

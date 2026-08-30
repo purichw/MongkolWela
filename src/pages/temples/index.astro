@@ -11,27 +11,27 @@ const thailandTempleCount = 44705;
 const collectionCards = [
   {
     variant: "popular",
-    kicker: "Popular · เส้นทาง",
+    kicker: "เส้นทาง · ยอดนิยม",
     title: "สายไหว้พระ ๙ วัด",
-    description: "วัดดังที่คนรู้จัก จัดเรียงตามความนิยม จัดเป็นเส้นทางไหว้พระต่อเนื่องได้ในคลิกเดียว",
+    description: "วัดยอดนิยมที่จัดเรียงเป็นเส้นทางไหว้พระต่อเนื่อง เพื่อใช้วางแผนเดินทางได้รวดเร็วขึ้น",
     href: "/temples/popular/",
     count: `${formatThaiNumber(popularTemples.length)} สถานที่`,
     linkLabel: "ดูคอลเลกชัน",
   },
   {
     variant: "sacred",
-    kicker: "Sacred · ศรัทธา",
+    kicker: "ศรัทธา · ข้อมูลประกอบ",
     title: "วัดศักดิ์สิทธิ์",
-    description: "สงบและน่าเชื่อถือ เลือกจากจังหวัด ภูมิภาค และเรื่องที่ตั้งใจขอพร พร้อมพิกัดและข้อมูลประกอบ",
+    description: "เลือกจากจังหวัด ภูมิภาค และวัตถุประสงค์ด้านมงคล พร้อมพิกัดและข้อมูลประกอบสำหรับตรวจสอบก่อนเดินทาง",
     href: "/temples/sacred/",
     count: `${formatThaiNumber(sacredTemples.length)} สถานที่`,
     linkLabel: "ดูคอลเลกชัน",
   },
   {
     variant: "mu",
-    kicker: "Mu · กำลังใจ",
-    title: "สายมู",
-    description: "เข้าถึงง่าย ไม่ฉูดฉาด รวมสถานที่เสริมดวง แก้ชง และเสริมกำลังใจ เลือกไปแบบพอดีตัว",
+    kicker: "มงคล · กำลังใจ",
+    title: "สถานที่มงคล",
+    description: "รวมสถานที่สำหรับสักการะ เสริมสิริมงคล แก้ชง และตั้งจิตอธิษฐาน โดยนำเสนออย่างพอดีและเคารพสถานที่",
     href: "/temples/mu/",
     count: `${formatThaiNumber(muTemples.length)} สถานที่`,
     linkLabel: "ดูคอลเลกชัน",
@@ -49,8 +49,8 @@ const intentLinks = [
 
 const supportingLinks = [
   { label: "วันพระและปฏิทินไทย", href: "/calendar/" },
-  { label: "เซียมซี", href: "/horoscope/seamsi/" },
-  { label: "ไพ่ประจำวัน", href: "/tarot/daily/" },
+  { label: "คำเซียมซี", href: "/horoscope/seamsi/" },
+  { label: "ไพ่ยิปซีรายวัน", href: "/tarot/daily/" },
 ];
 ---
 
@@ -63,7 +63,7 @@ const supportingLinks = [
   bodyClass="temples-hub-page temples-hub-v2-page"
   canonicalPath="/temples/"
   image="/assets/images/hero-temple-red.jpg"
-  imageAlt="วัดดังเสริมมงคล สายมู สายไหว้พระ และวัดทั่วประเทศไทย"
+  imageAlt="วัดดังเสริมมงคล สถานที่มงคล เส้นทางไหว้พระ และวัดทั่วประเทศไทย"
   breadcrumbs={[
     { label: "หน้าแรก", href: "/" },
     { label: "วัดดังเสริมมงคล", href: "/temples/" },
@@ -86,19 +86,19 @@ const supportingLinks = [
           <span>/</span>
           <span>วัดดังเสริมมงคล</span>
         </nav>
-        <p class="section-kicker">Temple Guide · ศูนย์รวมเส้นทางไหว้พระ</p>
+        <p class="section-kicker">คู่มือวางแผนเดินทางมงคล</p>
         <h1 id="temple-page-title">{templeHubContent.heading}</h1>
         <p>
-          เลือกเส้นทางที่ใช่ จากวัดยอดนิยม วัดศักดิ์สิทธิ์ และสายมู
-          หรือค้นหาวัดทั่วประเทศไทยด้วยพิกัดจริง แล้วให้ตัวช่วยจัดลำดับทริปให้
+          เลือกเส้นทางจากวัดยอดนิยม วัดศักดิ์สิทธิ์ และสถานที่มงคล
+          หรือค้นหาวัดทั่วประเทศไทยด้วยพิกัดจริง แล้วใช้เครื่องมือช่วยจัดลำดับการเดินทาง
         </p>
 
         <form class="temple-hub-v2-search" action="/temples/sacred/" method="get" role="search">
-          <label class="sr-only" for="temple-hub-search">ค้นหาวัด จังหวัด หรือพรที่อยากขอ</label>
+          <label class="sr-only" for="temple-hub-search">ค้นหาวัด จังหวัด หรือวัตถุประสงค์ด้านมงคล</label>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path>
           </svg>
-          <input id="temple-hub-search" type="search" name="name" placeholder="ค้นหาวัด จังหวัด หรือพรที่อยากขอ" autocomplete="off" />
+          <input id="temple-hub-search" type="search" name="name" placeholder="ค้นหาวัด จังหวัด หรือวัตถุประสงค์ด้านมงคล" autocomplete="off" />
           <button type="submit">ค้นหา</button>
         </form>
       </div>
@@ -108,8 +108,8 @@ const supportingLinks = [
       <div class="temple-hub-v2-section-head">
         <span>๐๑</span>
         <div>
-          <p>เลือกแนวทาง</p>
-          <h2 id="temple-collections-title">สามสาย สามบุคลิก</h2>
+          <p>หมวดการค้นหา</p>
+          <h2 id="temple-collections-title">เลือกจากหมวดหลัก</h2>
         </div>
       </div>
 
@@ -130,19 +130,19 @@ const supportingLinks = [
     <section class="temple-hub-v2-section temple-hub-v2-tools" aria-label="ตัวช่วยวัดดังเสริมมงคล">
       <a class="temple-hub-v2-tool-card temple-hub-v2-tool-card--planner" href="/temples/planner/">
         <div>
-          <span>Planner · ตัวช่วย</span>
-          <strong>วางแผนไหว้พระอัตโนมัติ</strong>
-          <p>เลือก ๓ / ๕ / ๙ แห่ง แล้วให้ระบบจัดลำดับเส้นทางที่เดินทางต่อเนื่องและใช้เวลาน้อยที่สุด</p>
+          <span>เครื่องมือวางแผน</span>
+          <strong>วางแผนไหว้พระ</strong>
+          <p>เลือก ๓ / ๕ / ๙ แห่ง แล้วให้ระบบจัดลำดับเส้นทางโดยพิจารณาระยะทางและเวลาเปิดของสถานที่</p>
         </div>
-        <b>เริ่มวางแผน →</b>
+        <b>เริ่มวางแผน</b>
       </a>
       <a class="temple-hub-v2-tool-card temple-hub-v2-tool-card--database" href="/temples/thailand/">
         <div>
-          <span>Database · ทั่วไทย</span>
+          <span>ฐานข้อมูลทั่วไทย</span>
           <strong>ค้นหาวัดทั่วประเทศไทย</strong>
           <p>{formatThaiNumber(thailandTempleCount)} วัด ค้นหาตามภาค จังหวัด อำเภอ ตำบล พร้อมพิกัดสำหรับนำทาง</p>
         </div>
-        <b>เปิดฐานข้อมูล →</b>
+        <b>เปิดฐานข้อมูล</b>
       </a>
     </section>
 
@@ -150,8 +150,8 @@ const supportingLinks = [
       <div class="temple-hub-v2-section-head">
         <span>๐๒</span>
         <div>
-          <p>เริ่มจากความตั้งใจ</p>
-          <h2 id="temple-intent-title">อยากเสริมเรื่องไหน</h2>
+          <p>วัตถุประสงค์ด้านมงคล</p>
+          <h2 id="temple-intent-title">เลือกเรื่องที่ต้องการวางแผน</h2>
         </div>
       </div>
 
@@ -168,8 +168,8 @@ const supportingLinks = [
     <aside class="temple-hub-v2-confidence" aria-label="ข้อมูลประกอบการเดินทาง">
       <div>
         <p>ข้อมูลตรงไปตรงมา</p>
-        <strong>บอกตรงเมื่อบางข้อมูลควรตรวจสอบ</strong>
-        <span>ทุกสถานที่มีระดับความมั่นใจของข้อมูลกำกับ เพื่อให้วางแผนไหว้พระได้อย่างสบายใจและเคารพสถานที่</span>
+        <strong>ระบุเมื่อข้อมูลควรตรวจสอบเพิ่มเติม</strong>
+        <span>ทุกสถานที่มีระดับความมั่นใจของข้อมูลกำกับ เพื่อให้วางแผนไหว้พระได้รอบคอบและเคารพสถานที่</span>
       </div>
       <ul>
         <li><span class="is-high"></span>ข้อมูลมั่นใจสูง</li>

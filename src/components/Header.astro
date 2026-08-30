@@ -20,6 +20,7 @@ const { locale = "th", page = "home" } = Astro.props as {
   page?: string;
 };
 const config = siteConfig[locale] || siteConfig.th;
+const navCopy = config.copy?.nav || {};
 const liveNavigation = (liveContent as { navigation?: { tabs?: NavItem[]; utility?: NavItem[] } }).navigation;
 const defaultNavigation = (defaultContent as { navigation?: { tabs?: NavItem[]; utility?: NavItem[] } }).navigation;
 const navigation =
@@ -68,14 +69,8 @@ function navChildClassName(child: NavItem) {
     .join(" ");
 }
 function mobileNavMeta(child: NavItem) {
-  return (
-    {
-      "popular-temples": "ยอดนิยม",
-      "sacred-temples": "ศรัทธา",
-      "mu-temples": "สายมู",
-      "all-temples": "ทั้งหมด",
-    }[child.id || ""] || ""
-  );
+  const meta = navCopy.mobileMeta as Record<string, string> | undefined;
+  return meta?.[child.id || ""] || "";
 }
 
 function resolveHref(href = "") {
@@ -136,8 +131,8 @@ function isCurrentNavItem(item: NavItem) {
       data-nav-mode="shared-site"
     >
       <div class="nav-drawer-head" aria-hidden="true">
-        <span>เมนูหลัก</span>
-        <span>เลือกหน้า</span>
+        <span>{navCopy.drawerTitle || "เมนูหลัก"}</span>
+        <span>{navCopy.drawerHint || "เลือกหมวดข้อมูล"}</span>
       </div>
       {visibleNavTabs.map((item) => (
         <div class={navItemClassName(item)} data-nav-item-id={item.id}>

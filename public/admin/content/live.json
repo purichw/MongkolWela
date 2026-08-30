@@ -22,16 +22,16 @@
       "patches": [
         {
           "id": "home-hero-title",
-          "kind": "text",
+          "kind": "html",
           "label": "Hero title",
-          "value": "มงคลเวลา",
+          "value": "<span>วางแผนไหว้</span><span>พระ</span><mark>อย่างรอบคอบ</mark>",
           "selector": "#hero-title"
         },
         {
           "id": "home-hero-copy",
           "kind": "html",
           "label": "Hero copy",
-          "value": "ค้นหาวัดและสถานที่ศักดิ์สิทธิ์สำหรับไหว้พระ ขอพร ทำบุญ และวางแผนเส้นทางมงคล<br>ให้เหมาะกับสิ่งที่อยากเสริมในชีวิต",
+          "value": "กำหนดจังหวัด วัตถุประสงค์ และเวลาที่เดินทางได้ เพื่อค้นหาสถานที่จริง<br>จัดลำดับเส้นทาง และแสดงข้อมูลสำหรับตรวจสอบก่อนเดินทาง",
           "selector": ".hero-copy"
         },
         {
@@ -39,7 +39,7 @@
           "attr": "placeholder",
           "kind": "attr",
           "label": "Search placeholder",
-          "value": "ค้นหาวัด จังหวัด หรือพรที่อยากขอ เช่น โชคลาภ การงาน ความรัก",
+          "value": "ค้นหาวัด จังหวัด หรือวัตถุประสงค์",
           "selector": "#site-search"
         },
         {
@@ -139,7 +139,7 @@
     {
       "id": "seamsi",
       "kind": "existing",
-      "label": "เสี่ยงเซียมซี",
+      "label": "คำเซียมซี",
       "route": "/horoscope/seamsi/",
       "blocks": [],
       "enabled": true,
@@ -209,7 +209,7 @@
     {
       "id": "tarotLuck",
       "kind": "existing",
-      "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค",
+      "label": "ไพ่ยิปซีด้านโชคลาภ",
       "route": "/tarot/luck/",
       "blocks": [],
       "enabled": true,
@@ -249,7 +249,7 @@
     {
       "id": "templesMu",
       "kind": "existing",
-      "label": "สายมู",
+      "label": "สถานที่มงคล",
       "route": "/temples/mu/",
       "blocks": [],
       "enabled": true,
@@ -341,7 +341,7 @@
           },
           {
             "id": "temple-featured-section",
-            "label": "วัดเด่นวัดดัง",
+            "label": "วัดเด่นและวัดสำคัญ",
             "section": true,
             "enabled": true
           },
@@ -353,7 +353,7 @@
           },
           {
             "id": "mu-temples",
-            "label": "สถานที่มู",
+            "label": "สถานที่มงคล",
             "href": "temples/mu/",
             "enabled": true
           },
@@ -371,7 +371,7 @@
           },
           {
             "id": "all-temples",
-            "label": "ค้นหาวัดทั่วประเทศไทย",
+            "label": "วัดทั่วประเทศไทย",
             "href": "temples/thailand/",
             "enabled": true
           }
@@ -434,7 +434,7 @@
           },
           {
             "id": "tarot-luck",
-            "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค",
+            "label": "ไพ่ยิปซีด้านโชคลาภ",
             "href": "tarot/luck/",
             "enabled": true
           },
@@ -464,7 +464,7 @@
           },
           {
             "id": "seamsi",
-            "label": "เสี่ยงเซียมซี",
+            "label": "คำเซียมซี",
             "href": "horoscope/seamsi/",
             "enabled": true
           }

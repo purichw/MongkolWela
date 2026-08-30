@@ -3,6 +3,7 @@ import {
   createSessionCookie,
   isProductionRuntime,
   readJsonBody,
+  requireSameOrigin,
   sendJson,
   verifySessionCookie,
   parseCookies,
@@ -25,6 +26,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "DELETE") {
+    if (!requireSameOrigin(req, res)) return;
     res.setHeader("Set-Cookie", cookieHeader("", { clear: true }));
     sendJson(res, 200, { ok: true });
     return;
@@ -35,7 +37,15 @@ export default async function handler(req, res) {
     return;
   }
 
-  const body = await readJsonBody(req);
+  if (!requireSameOrigin(req, res)) return;
+
+  let body;
+  try {
+    body = await readJsonBody(req, { maxBytes: 8192 });
+  } catch (error) {
+    sendJson(res, error.statusCode || 400, { ok: false, error: error.message || "Invalid request body" });
+    return;
+  }
   const password = String(body.password || "");
   const actor = String(body.actor || "admin").trim() || "admin";
   const expected = process.env.ADMIN_PASSWORD || (isProductionRuntime() ? "" : "admin");

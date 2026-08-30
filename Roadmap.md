@@ -48,6 +48,7 @@ Latest known code state:
 - Added `/temples/planner/` for trip planning with auto trip generation, manual selection, nearby search, radius controls, route estimates, draggable selected-place chips, replace/reorder controls, and trip-condition filtering.
 - Refined planner UX so search/filter criteria are applied explicitly, auto trip actions warn only after a trip/list exists, and manual selection remains separate from generated trip criteria.
 - Added staggered reveal animation and manual `ดูเพิ่ม` behavior for temple card lists while keeping page performance predictable.
+- Added a lightweight all-Thailand temple directory index so filters and the first-page preview do not require loading the full raw dataset immediately.
 - Cleaned the calendar navigation: `วันพระ` is now the direct top-level nav link to `/calendar/`; stale `ฤกษ์และปฏิทิน` menu items are no longer restored by CMS hydration.
 - Deployed latest changes to production.
 
@@ -136,6 +137,7 @@ Continue refining `/temples/thailand/`:
 - Do not show temple code column.
 - Keep source text short: `ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ`
 - Avoid long source/process explanations in the UI.
+- Keep `/assets/data/temples-thailand-index.json` as the lightweight initial payload; load the full raw dataset only when full search/table results are needed.
 
 ## Medium-Priority Backlog
 

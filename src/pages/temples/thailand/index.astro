@@ -21,15 +21,14 @@ const datasetJsonLd = {
     "@type": "Organization",
     name: "สำนักงานพระพุทธศาสนาแห่งชาติ",
   },
+  isBasedOn: {
+    "@type": "CreativeWork",
+    name: "ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ",
+  },
   publisher: {
     "@type": "Organization",
     name: "มงคลเวลา",
     url: absoluteUrl("/"),
-  },
-  distribution: {
-    "@type": "DataDownload",
-    contentUrl: absoluteUrl("/assets/data/temples-thailand.json"),
-    encodingFormat: "application/json",
   },
 };
 ---
@@ -116,7 +115,7 @@ const datasetJsonLd = {
 
           <div class="temple-actions">
             <button class="temple-search-button" type="submit">ค้นหา</button>
-            <button class="temple-clear-button" type="button" data-temple-clear>เคลียร์ข้อมูล</button>
+            <button class="temple-clear-button" type="button" data-temple-clear>ล้างตัวกรอง</button>
           </div>
         </form>
       </section>

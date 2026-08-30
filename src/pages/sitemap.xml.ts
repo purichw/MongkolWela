@@ -36,7 +36,7 @@ const staticEntries: SitemapEntry[] = [
   { path: "/tarot/luck/", priority: "0.66", changefreq: "weekly" },
   { path: "/temples/", priority: "0.9", changefreq: "weekly", image: imageEntry("/assets/images/hero-temple-red.jpg", "วัดดังเสริมมงคล") },
   { path: "/temples/popular/", priority: "0.95", changefreq: "weekly", image: imageEntry("/assets/images/hero-temple-red.jpg", "สายไหว้พระ 9 วัด") },
-  { path: "/temples/mu/", priority: "0.94", changefreq: "weekly", image: imageEntry("/assets/images/hero-temple-red.jpg", "สายมู") },
+  { path: "/temples/mu/", priority: "0.94", changefreq: "weekly", image: imageEntry("/assets/images/hero-temple-red.jpg", "สถานที่มงคล") },
   { path: "/temples/sacred/", priority: "0.9", changefreq: "weekly", image: imageEntry("/assets/images/hero-temple-red.jpg", "วัดศักดิ์สิทธิ์") },
   { path: "/temples/thailand/", priority: "0.92", changefreq: "weekly" },
 ];

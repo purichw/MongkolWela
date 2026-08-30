@@ -5,6 +5,8 @@ const popularTempleGrid = document.querySelector("[data-popular-temple-grid]");
 const columnIndexes = [0, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12];
 const numericColumns = new Set([0, 6, 8, 12]);
 const pageSize = 20;
+const thailandIndexUrl = "/assets/data/temples-thailand-index.json";
+const thailandDataUrl = "/assets/data/temples-thailand.json";
 
 const labels = {
   all: "-- ทั้งหมด --",
@@ -13,8 +15,11 @@ const labels = {
   chooseProvinceFirst: "-- เลือกจังหวัดก่อน --",
   chooseDistrictFirst: "-- เลือกอำเภอก่อน --",
   loading: "กำลังโหลดข้อมูลวัด",
+  loadingFull: "กำลังโหลดฐานข้อมูลฉบับเต็ม",
   loadError: "โหลดข้อมูลวัดไม่สำเร็จ",
   count: (shown, total) => `พบ ${shown.toLocaleString("th-TH")} จาก ${total.toLocaleString("th-TH")} วัด`,
+  previewCount: (shown, total) =>
+    `แสดงตัวอย่าง ${shown.toLocaleString("th-TH")} จาก ${total.toLocaleString("th-TH")} วัด · กดค้นหาเพื่อโหลดผลลัพธ์เต็ม`,
   noResults: "ไม่พบวัดที่ตรงกับเงื่อนไขค้นหา",
   source: "แหล่งที่มา: ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ",
   previous: "ก่อนหน้า",
@@ -636,7 +641,7 @@ function initializePopularTempleGrid(grid) {
     const hasTempleImage = Boolean(item.hasTempleImage) && item.imageUrl && item.imageUrl !== placeholderSrc;
     const imageUrl = hasTempleImage ? String(item.imageUrl) : placeholderSrc;
     const mobileSrc = String(item.imageMobileUrl || imageUrl);
-    const confidence = item.confidence || { key: "check", label: "ควรเช็ก" };
+    const confidence = item.confidence || { key: "check", label: "ควรตรวจสอบ" };
     const card = document.createElement("article");
     card.className = `popular-temple-card temple-collection-v2-card${hasTempleImage ? "" : " is-placeholder"}`;
     card.dataset.rank = String(item.rank || "");
@@ -669,7 +674,7 @@ function initializePopularTempleGrid(grid) {
         <figcaption>${Number(item.rank || 0).toLocaleString("th-TH-u-nu-thai")}</figcaption>
         <span class="temple-collection-v2-confidence is-${escapeHtml(confidence.key || "check")}">
           <span aria-hidden="true"></span>
-          ${escapeHtml(confidence.label || "ควรเช็ก")}
+          ${escapeHtml(confidence.label || "ควรตรวจสอบ")}
         </span>
         <span class="popular-temple-distance" data-popular-temple-distance hidden></span>
       </figure>
@@ -680,11 +685,11 @@ function initializePopularTempleGrid(grid) {
         <strong>${escapeHtml(item.intent || item.placeType || "สิริมงคล")}</strong>
         <div class="temple-collection-v2-card-meta">
           <small>ข้อมูลชุดปัจจุบัน</small>
-          <a href="#consult">แจ้งข้อมูลผิด</a>
+          <a href="#consult">แจ้งแก้ไขข้อมูล</a>
         </div>
         <div class="temple-collection-v2-card-actions">
-          <a class="temple-collection-v2-card-plan" href="${escapeHtml(item.plannerUrl || "/temples/planner/")}">+ เพิ่มลงทริป</a>
-          <a class="temple-collection-v2-card-detail" href="${escapeHtml(item.detailUrl || "#")}" data-popular-temple-detail>รายละเอียด →</a>
+          <a class="temple-collection-v2-card-plan" href="${escapeHtml(item.plannerUrl || "/temples/planner/")}">เพิ่มลงแผน</a>
+          <a class="temple-collection-v2-card-detail" href="${escapeHtml(item.detailUrl || "#")}" data-popular-temple-detail>รายละเอียด</a>
         </div>
       </div>
     `;
@@ -897,6 +902,35 @@ function formatDistance(distanceKm) {
   return `${Math.round(distanceKm).toLocaleString("th-TH")} กม.`;
 }
 
+async function fetchTempleThailandIndex() {
+  const response = await fetch(`${thailandIndexUrl}?v=1`, {
+    cache: "force-cache",
+  });
+  if (!response.ok) throw new Error(`Temple index failed: ${response.status}`);
+  return response.json();
+}
+
+async function fetchTempleThailandData() {
+  const response = await fetch(thailandDataUrl, {
+    cache: "force-cache",
+  });
+  if (!response.ok) throw new Error(`Temple data failed: ${response.status}`);
+  return response.json();
+}
+
+function getThailandColumns(payload) {
+  return payload?.meta?.columns || payload?.columns || [];
+}
+
+function formatThailandSource(payload, t) {
+  const sourceLabel = payload?.meta?.sourceLabel || "";
+  return sourceLabel ? `แหล่งที่มา: ${sourceLabel}` : t.source;
+}
+
+function hasSearchParams() {
+  return new URLSearchParams(window.location.search).size > 0;
+}
+
 async function initializeTempleDirectory(rootElement) {
   const t = labels;
   const form = rootElement.querySelector("[data-temple-form]");
@@ -909,43 +943,75 @@ async function initializeTempleDirectory(rootElement) {
 
   let rows = [];
   let headers = [];
+  let indexPayload = null;
+  let fullDataLoad = null;
+  let hasFullData = false;
+  let totalRows = 0;
   let filteredRows = [];
   let currentPage = 1;
+  let isPreview = false;
 
   try {
-    const response = await fetch("/assets/data/temples-thailand.json");
-    if (!response.ok) throw new Error(`Temple data failed: ${response.status}`);
-    const data = await response.json();
-    rows = data.rows || [];
-    headers = data.meta?.columns || [];
+    indexPayload = await fetchTempleThailandIndex();
+    rows = Array.isArray(indexPayload.previewRows) ? indexPayload.previewRows : [];
+    headers = getThailandColumns(indexPayload);
+    totalRows = Number(indexPayload.meta?.rowCount) || rows.length;
     renderHead(tableHead, headers);
-    populateStaticOptions(form, rows, t);
-    updateAreaOptions(form, rows, t);
-    filteredRows = applySearchParams(form, rows, t) ? filterRows(form, rows) : rows;
+    populateStaticOptions(form, indexPayload, t);
+    updateAreaOptions(form, indexPayload, t);
+    if (sourceNode) sourceNode.textContent = formatThailandSource(indexPayload, t);
+
+    if (hasSearchParams()) {
+      await ensureFullData();
+      applySearchParams(form, rows, t);
+      filteredRows = filterRows(form, rows);
+    } else {
+      filteredRows = rows;
+      isPreview = true;
+    }
+
     updateView();
-    if (sourceNode) sourceNode.textContent = t.source;
   } catch (error) {
-    console.error(error);
-    countNode.textContent = t.loadError;
-    tableBody.innerHTML = `<tr><td class="temple-empty">${t.loadError}</td></tr>`;
-    return;
+    try {
+      await ensureFullData();
+      renderHead(tableHead, headers);
+      populateStaticOptions(form, rows, t);
+      updateAreaOptions(form, rows, t);
+      filteredRows = applySearchParams(form, rows, t) ? filterRows(form, rows) : rows;
+      updateView();
+      if (sourceNode) sourceNode.textContent = t.source;
+    } catch (fullDataError) {
+      console.error(error, fullDataError);
+      countNode.textContent = t.loadError;
+      tableBody.innerHTML = `<tr><td class="temple-empty">${t.loadError}</td></tr>`;
+      return;
+    }
   }
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    currentPage = 1;
-    filteredRows = filterRows(form, rows);
-    syncUrlFromForm(form);
-    updateView();
+    try {
+      await ensureFullData({ showLoading: true });
+      currentPage = 1;
+      isPreview = false;
+      filteredRows = filterRows(form, rows);
+      syncUrlFromForm(form);
+      updateView();
+    } catch (error) {
+      console.error(error);
+      countNode.textContent = t.loadError;
+      tableBody.innerHTML = `<tr><td class="temple-empty" colspan="${columnIndexes.length}">${t.loadError}</td></tr>`;
+    }
   });
 
-  bindAreaEvents(form, rows, t);
+  bindAreaEvents(form, () => (hasFullData ? rows : indexPayload || rows), t);
 
   clearButton.addEventListener("click", () => {
     form.reset();
     currentPage = 1;
-    filteredRows = rows;
-    updateAreaOptions(form, rows, t);
+    isPreview = !hasFullData && Boolean(indexPayload);
+    filteredRows = isPreview ? (indexPayload.previewRows || []) : rows;
+    updateAreaOptions(form, hasFullData ? rows : indexPayload || rows, t);
     clearSearchUrl();
     updateView();
   });
@@ -963,9 +1029,29 @@ async function initializeTempleDirectory(rootElement) {
   function updateView() {
     const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
     currentPage = Math.min(currentPage, totalPages);
-    countNode.textContent = t.count(filteredRows.length, rows.length);
+    countNode.textContent = isPreview ? t.previewCount(filteredRows.length, totalRows) : t.count(filteredRows.length, rows.length);
     renderRows(tableBody, filteredRows, currentPage, headers, t);
     renderPagination(pagination, currentPage, totalPages, t);
+  }
+
+  async function ensureFullData({ showLoading = false } = {}) {
+    if (hasFullData) return;
+    if (showLoading) {
+      countNode.textContent = t.loadingFull;
+      tableBody.innerHTML = `<tr><td class="temple-empty" colspan="${columnIndexes.length}">${t.loadingFull}</td></tr>`;
+    }
+
+    if (!fullDataLoad) fullDataLoad = fetchTempleThailandData();
+    const data = await fullDataLoad;
+    rows = data.rows || [];
+    headers = getThailandColumns(data);
+    totalRows = Number(data.meta?.rowCount) || rows.length;
+    hasFullData = true;
+    isPreview = false;
+    renderHead(tableHead, headers);
+    populateStaticOptions(form, rows, t);
+    updateAreaOptions(form, rows, t);
+    if (sourceNode) sourceNode.textContent = formatThailandSource(data, t);
   }
 }
 
@@ -973,16 +1059,14 @@ async function initializeTempleQuickSearch(rootElement) {
   const t = labels;
   const form = rootElement.querySelector("[data-temple-form]");
   const clearButton = rootElement.querySelector("[data-temple-clear]");
+  let optionSource = null;
 
   try {
-    const response = await fetch("/assets/data/temples-thailand.json");
-    if (!response.ok) throw new Error(`Temple data failed: ${response.status}`);
-    const data = await response.json();
-    const rows = data.rows || [];
-    populateStaticOptions(form, rows, t);
-    updateAreaOptions(form, rows, t);
-    applySearchParams(form, rows, t);
-    bindAreaEvents(form, rows, t);
+    optionSource = await fetchTempleThailandIndex();
+    populateStaticOptions(form, optionSource, t);
+    updateAreaOptions(form, optionSource, t);
+    applySearchParams(form, optionSource, t);
+    bindAreaEvents(form, () => optionSource, t);
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -991,7 +1075,7 @@ async function initializeTempleQuickSearch(rootElement) {
 
     clearButton.addEventListener("click", () => {
       form.reset();
-      updateAreaOptions(form, rows, t);
+      updateAreaOptions(form, optionSource, t);
     });
   } catch (error) {
     console.error(error);
@@ -1001,23 +1085,25 @@ async function initializeTempleQuickSearch(rootElement) {
   }
 }
 
-function bindAreaEvents(form, rows, t) {
+function bindAreaEvents(form, source, t) {
+  const getSource = typeof source === "function" ? source : () => source;
+
   form.querySelector("[data-temple-region]").addEventListener("change", () => {
     form.querySelector("[data-temple-province]").value = "";
     form.querySelector("[data-temple-district]").value = "";
     form.querySelector("[data-temple-subdistrict]").value = "";
-    updateAreaOptions(form, rows, t);
+    updateAreaOptions(form, getSource(), t);
   });
 
   form.querySelector("[data-temple-province]").addEventListener("change", () => {
     form.querySelector("[data-temple-district]").value = "";
     form.querySelector("[data-temple-subdistrict]").value = "";
-    updateAreaOptions(form, rows, t);
+    updateAreaOptions(form, getSource(), t);
   });
 
   form.querySelector("[data-temple-district]").addEventListener("change", () => {
     form.querySelector("[data-temple-subdistrict]").value = "";
-    updateAreaOptions(form, rows, t);
+    updateAreaOptions(form, getSource(), t);
   });
 }
 
@@ -1075,13 +1161,29 @@ function renderPagination(pagination, page, totalPages, t) {
   `;
 }
 
-function populateStaticOptions(form, rows, t) {
+function populateStaticOptions(form, source, t) {
+  const facets = getThailandFacets(source);
+  if (facets) {
+    fillOptions(form.querySelector("[data-temple-type]"), facets.types || [], t.all);
+    fillOptions(form.querySelector("[data-temple-sect]"), facets.sects || [], t.all);
+    fillOptions(form.querySelector("[data-temple-region]"), getFacetRegions(facets), t.chooseRegion);
+    return;
+  }
+
+  const rows = Array.isArray(source) ? source : [];
   fillOptions(form.querySelector("[data-temple-type]"), unique(rows, 3), t.all);
   fillOptions(form.querySelector("[data-temple-sect]"), unique(rows, 4), t.all);
   fillOptions(form.querySelector("[data-temple-region]"), getAvailableRegions(rows), t.chooseRegion);
 }
 
-function updateAreaOptions(form, rows, t) {
+function updateAreaOptions(form, source, t) {
+  const facets = getThailandFacets(source);
+  if (facets) {
+    updateAreaOptionsFromFacets(form, facets, t);
+    return;
+  }
+
+  const rows = Array.isArray(source) ? source : [];
   const region = form.querySelector("[data-temple-region]").value;
   const provinceSelect = form.querySelector("[data-temple-province]");
   const province = form.querySelector("[data-temple-province]").value;
@@ -1129,6 +1231,60 @@ function updateAreaOptions(form, rows, t) {
   const previousSubdistrict = subdistrictSelect.value;
   const subdistrictOptions = unique(subdistrictRows, 9);
   fillOptions(subdistrictSelect, subdistrictOptions, t.all, subdistrictOptions.includes(previousSubdistrict) ? previousSubdistrict : "");
+}
+
+function updateAreaOptionsFromFacets(form, facets, t) {
+  const region = form.querySelector("[data-temple-region]").value;
+  const provinceSelect = form.querySelector("[data-temple-province]");
+  const province = provinceSelect.value;
+  const districtSelect = form.querySelector("[data-temple-district]");
+  const subdistrictSelect = form.querySelector("[data-temple-subdistrict]");
+  const district = districtSelect.value;
+
+  if (!region) {
+    fillOptions(provinceSelect, [], t.chooseRegionFirst, "");
+    fillOptions(districtSelect, [], t.chooseProvinceFirst, "");
+    fillOptions(subdistrictSelect, [], t.chooseDistrictFirst, "");
+    provinceSelect.disabled = true;
+    districtSelect.disabled = true;
+    subdistrictSelect.disabled = true;
+    return;
+  }
+
+  const regionFacet = getRegionFacet(facets, region);
+  const provinceOptions = (regionFacet?.provinces || []).map((item) => item.name).filter(Boolean);
+  provinceSelect.disabled = false;
+  fillOptions(provinceSelect, provinceOptions, t.all, provinceOptions.includes(province) ? province : "");
+
+  if (!provinceSelect.value) {
+    fillOptions(districtSelect, [], t.chooseProvinceFirst, "");
+    fillOptions(subdistrictSelect, [], t.chooseDistrictFirst, "");
+    districtSelect.disabled = true;
+    subdistrictSelect.disabled = true;
+    return;
+  }
+
+  const provinceFacet = getProvinceFacet(facets, region, provinceSelect.value);
+  const districtOptions = (provinceFacet?.districts || []).map((item) => item.name).filter(Boolean);
+  districtSelect.disabled = false;
+  fillOptions(districtSelect, districtOptions, t.all, districtOptions.includes(district) ? district : "");
+
+  if (!districtSelect.value) {
+    fillOptions(subdistrictSelect, [], t.chooseDistrictFirst, "");
+    subdistrictSelect.disabled = true;
+    return;
+  }
+
+  const districtFacet = getDistrictFacet(facets, region, provinceSelect.value, districtSelect.value);
+  const previousSubdistrict = subdistrictSelect.value;
+  const subdistrictOptions = districtFacet?.subdistricts || [];
+  subdistrictSelect.disabled = false;
+  fillOptions(
+    subdistrictSelect,
+    subdistrictOptions,
+    t.all,
+    subdistrictOptions.includes(previousSubdistrict) ? previousSubdistrict : "",
+  );
 }
 
 function filterRows(form, rows) {
@@ -1224,6 +1380,27 @@ function uniqueSorted(values) {
 function getAvailableRegions(rows) {
   const rowRegions = new Set(rows.map((row) => provinceRegionMap[row[11]]).filter(Boolean));
   return regionOrder.filter((region) => rowRegions.has(region));
+}
+
+function getThailandFacets(source) {
+  return source && !Array.isArray(source) && source.facets ? source.facets : null;
+}
+
+function getFacetRegions(facets) {
+  const availableRegions = new Set((facets.regions || []).map((item) => item.name).filter(Boolean));
+  return regionOrder.filter((region) => availableRegions.has(region));
+}
+
+function getRegionFacet(facets, region) {
+  return (facets.regions || []).find((item) => item.name === region);
+}
+
+function getProvinceFacet(facets, region, province) {
+  return getRegionFacet(facets, region)?.provinces?.find((item) => item.name === province);
+}
+
+function getDistrictFacet(facets, region, province, district) {
+  return getProvinceFacet(facets, region, province)?.districts?.find((item) => item.name === district);
 }
 
 function fillOptions(select, options, allLabel, selected = select.value) {

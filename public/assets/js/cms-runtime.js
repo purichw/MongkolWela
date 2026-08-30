@@ -144,8 +144,8 @@ function mobileNavMeta(child) {
     {
       "popular-temples": "ยอดนิยม",
       "sacred-temples": "ศรัทธา",
-      "mu-temples": "สายมู",
-      "all-temples": "ทั้งหมด",
+      "mu-temples": "มงคล",
+      "all-temples": "ฐานข้อมูล",
     }[child?.id || ""] || ""
   );
 }

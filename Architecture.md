@@ -418,6 +418,13 @@ Client JS:
 
 - `public/assets/js/temple-directory.js`
 
+Runtime data:
+
+- `/assets/data/temples-thailand-index.json` is a build-generated lightweight index for form facets, area dependencies, counts, and the first-page preview.
+- `/assets/data/temples-thailand.json` remains the full raw dataset and is fetched only when the full table/search result set is needed.
+- The public JSON assets stay under `/assets/data/` with noindex/noarchive response headers and same-origin CORS.
+- Structured data for this route should describe the dataset source, but should not advertise the raw JSON file as a public `DataDownload` while anti-scraping controls are enabled.
+
 Expected UX:
 
 - Search field should not feel squeezed.
@@ -434,6 +441,10 @@ Data source constraint:
 
 - The all-Thailand temple directory uses the attached/provided `Report_Temple 2.numbers` only.
 - Do not scrape/export that data from the web unless the user explicitly changes this constraint.
+
+## API And Admin Hardening
+
+Admin APIs under `/api/admin/` are intentionally no-store and noindex. Production sessions fail closed when no admin session secret or password is configured, unsafe admin mutations require a same-origin request when an `Origin` header is present, and JSON request bodies are size-limited before parsing. Public analytics POSTs are non-blocking for visitors, but obvious bot/cross-site/rate-limit traffic is ignored instead of being recorded.
 
 ## Current Deployment Workflow
 

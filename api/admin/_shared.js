@@ -15,6 +15,7 @@ export const LOCAL_ANALYTICS_PATH = path.join(process.cwd(), "public/admin/conte
 export const COOKIE_NAME = "mw_admin_session";
 export const SESSION_TTL_MS = 1000 * 60 * 60 * 12;
 export const CMS_EDITABLE_CONTRACT_VERSION = 2;
+const DEFAULT_JSON_BODY_LIMIT_BYTES = 1024 * 1024;
 
 export function sendJson(res, status, payload, headers = {}) {
   res.statusCode = status;
@@ -26,12 +27,27 @@ export function sendJson(res, status, payload, headers = {}) {
   res.end(JSON.stringify(payload));
 }
 
-export async function readJsonBody(req) {
+export async function readJsonBody(req, { maxBytes = DEFAULT_JSON_BODY_LIMIT_BYTES } = {}) {
   const chunks = [];
-  for await (const chunk of req) chunks.push(chunk);
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > maxBytes) {
+      const error = new Error("Request body is too large");
+      error.statusCode = 413;
+      throw error;
+    }
+    chunks.push(chunk);
+  }
   const raw = Buffer.concat(chunks).toString("utf8");
   if (!raw) return {};
-  return JSON.parse(raw);
+  try {
+    return JSON.parse(raw);
+  } catch {
+    const error = new Error("Invalid JSON body");
+    error.statusCode = 400;
+    throw error;
+  }
 }
 
 export function parseCookies(req) {
@@ -48,7 +64,9 @@ export function parseCookies(req) {
 }
 
 function sessionSecret() {
-  return process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_PASSWORD || "mongkolwela-dev-session";
+  const secret = process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_PASSWORD || "";
+  if (secret) return secret;
+  return isProductionRuntime() ? "" : "mongkolwela-dev-session";
 }
 
 export function isProductionRuntime() {
@@ -56,7 +74,13 @@ export function isProductionRuntime() {
 }
 
 export function signValue(value) {
-  return crypto.createHmac("sha256", sessionSecret()).update(value).digest("base64url");
+  const secret = sessionSecret();
+  if (!secret) {
+    const error = new Error("Admin session secret is not configured");
+    error.statusCode = 503;
+    throw error;
+  }
+  return crypto.createHmac("sha256", secret).update(value).digest("base64url");
 }
 
 export function createSessionCookie(actor = "admin") {
@@ -72,7 +96,11 @@ export function createSessionCookie(actor = "admin") {
 export function verifySessionCookie(token) {
   if (!token || !token.includes(".")) return null;
   const [payload, signature] = token.split(".");
-  if (!payload || !signature || signature !== signValue(payload)) return null;
+  if (!payload || !signature) return null;
+  const secret = sessionSecret();
+  if (!secret) return null;
+  const expectedSignature = crypto.createHmac("sha256", secret).update(payload).digest("base64url");
+  if (!safeEqual(signature, expectedSignature)) return null;
   try {
     const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
     if (!data.exp || Date.now() > data.exp) return null;
@@ -83,6 +111,11 @@ export function verifySessionCookie(token) {
 }
 
 export function requireAdmin(req, res) {
+  if (isProductionRuntime() && !sessionSecret()) {
+    sendJson(res, 503, { ok: false, error: "Admin session secret is not configured" });
+    return null;
+  }
+
   const session = verifySessionCookie(parseCookies(req)[COOKIE_NAME]);
   if (!session) {
     sendJson(res, 401, { ok: false, error: "Admin session required" });
@@ -91,10 +124,52 @@ export function requireAdmin(req, res) {
   return session;
 }
 
+export function requireSameOrigin(req, res) {
+  const method = String(req.method || "GET").toUpperCase();
+  if (["GET", "HEAD", "OPTIONS"].includes(method)) return true;
+
+  const origin = String(req.headers.origin || "");
+  if (!origin) return true;
+
+  const requestHost = String(req.headers["x-forwarded-host"] || req.headers.host || "").split(",")[0].trim();
+  if (!requestHost) return true;
+
+  const requestProtocol = String(req.headers["x-forwarded-proto"] || (isProductionRuntime() ? "https" : "http"))
+    .split(",")[0]
+    .trim();
+  const allowedOrigins = new Set(
+    [
+      `${requestProtocol}://${requestHost}`,
+      process.env.MONGKOLWELA_SITE_URL,
+      process.env.MONGKOLWELA_ADMIN_ORIGIN,
+    ]
+      .filter(Boolean)
+      .map((value) => String(value).replace(/\/+$/g, "")),
+  );
+
+  let normalizedOrigin = "";
+  try {
+    normalizedOrigin = new URL(origin).origin;
+  } catch {
+    normalizedOrigin = origin.replace(/\/+$/g, "");
+  }
+
+  if (allowedOrigins.has(normalizedOrigin)) return true;
+
+  sendJson(res, 403, { ok: false, error: "Same-origin request required" });
+  return false;
+}
+
 export function cookieHeader(value, { clear = false } = {}) {
   const secure = isProductionRuntime() ? "; Secure" : "";
   const maxAge = clear ? "Max-Age=0" : `Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`;
   return `${COOKIE_NAME}=${encodeURIComponent(value || "")}; Path=/; ${maxAge}; HttpOnly; SameSite=Lax${secure}`;
+}
+
+function safeEqual(value, expected) {
+  const left = Buffer.from(String(value));
+  const right = Buffer.from(String(expected));
+  return left.length === right.length && crypto.timingSafeEqual(left, right);
 }
 
 export async function readDefaultContent() {

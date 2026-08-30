@@ -3,11 +3,11 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import TempleSearchHero from "../../../components/TempleSearchHero.astro";
 
 const plannerDataSrc = "/assets/data/temple-planner.json";
-const extraStyles = ["/assets/css/temple-planner.css?feature=20260830-01"];
-const extraScripts = ["/assets/js/temple-planner.js?feature=20260729-02"];
+const extraStyles = ["/assets/css/temple-planner.css?feature=20260830-02"];
+const extraScripts = ["/assets/js/temple-planner.js?feature=20260830-03"];
 const pageTitle = "วางแผนไหว้พระ | มงคลเวลา";
 const pageDescription =
-  "บอกโจทย์จำนวนวัด พื้นที่ เวลา และสิ่งที่อยากเสริม แล้วให้มงคลเวลาช่วยจัดลำดับเส้นทางไหว้พระที่ต่อเนื่องและใช้เวลาน้อยที่สุด";
+  "กำหนดจำนวนสถานที่ พื้นที่ เวลา และวัตถุประสงค์ด้านมงคล แล้วให้มงคลเวลาช่วยจัดลำดับเส้นทางไหว้พระที่ต่อเนื่องและตรวจสอบได้";
 const plannerBanner = {
   adminKey: "temples.planner.banner",
   imageUrl: "/assets/images/hero-temple-red.jpg",
@@ -17,7 +17,7 @@ const plannerBanner = {
 const plannerAreas = [
   { label: "กรุงเทพมหานคร", value: "province:กรุงเทพมหานคร", hint: "เลือกจังหวัดหรือย่านที่จะเดินทาง" },
   { label: "นนทบุรี · ปทุมธานี", value: "provinces:นนทบุรี|ปทุมธานี", hint: "โซนใกล้กรุงเทพฯ ฝั่งเหนือ" },
-  { label: "พระนครศรีอยุธยา", value: "province:พระนครศรีอยุธยา", hint: "เหมาะกับทริปวัดเก่าและริมแม่น้ำ" },
+  { label: "พระนครศรีอยุธยา", value: "province:พระนครศรีอยุธยา", hint: "เหมาะกับเส้นทางวัดเก่าและริมแม่น้ำ" },
   { label: "เชียงใหม่", value: "province:เชียงใหม่", hint: "เส้นทางวัดสำคัญในภาคเหนือ" },
   { label: "นครปฐม", value: "province:นครปฐม", hint: "เส้นทางใกล้กรุงเทพฯ ฝั่งตะวันตก" },
   { label: "ทุกพื้นที่", value: "", hint: "ให้ระบบเลือกจากทุกจังหวัดในฐานข้อมูล" },
@@ -62,15 +62,15 @@ const plannerPurposes = [
         { label: "วัด", href: "../../" },
         { label: "วางแผนไหว้พระ" },
       ]}
-      kicker="✦ ตัวช่วยหลักของมงคลเวลา"
+      kicker="เครื่องมือหลักของมงคลเวลา"
       title="วางแผนไหว้พระ"
-      description="บอกโจทย์ของคุณ — จำนวนวัด พื้นที่ เวลา และสิ่งที่อยากเสริม แล้วให้ระบบจัดลำดับเส้นทางที่เดินทางต่อเนื่องและใช้เวลาน้อยที่สุด"
+      description="กำหนดจำนวนสถานที่ พื้นที่ เวลา และวัตถุประสงค์ด้านมงคล แล้วให้ระบบจัดลำดับเส้นทางที่เดินทางต่อเนื่อง โดยอ้างอิงพิกัดและเวลาเปิดของสถานที่"
     >
       <section slot="panel" class="planner-setup" aria-labelledby="planner-setup-title">
         <div class="planner-setup__heading">
           <div>
-            <p class="section-kicker"><span aria-hidden="true">๐๑</span> ตั้งโจทย์ทริป</p>
-            <h2 id="planner-setup-title">อยากไปกี่วัด แบบไหน</h2>
+            <p class="section-kicker"><span aria-hidden="true">๐๑</span> เงื่อนไขการเดินทาง</p>
+            <h2 id="planner-setup-title">กำหนดจำนวนสถานที่และพื้นที่</h2>
           </div>
         </div>
 
@@ -110,11 +110,11 @@ const plannerPurposes = [
                 </label>
               ))}
             </div>
-            <small>เส้นทางยอดนิยมคือไหว้พระ ๙ วัดในวันเดียว</small>
+            <small>เส้นทางไหว้พระ ๙ วัดเหมาะสำหรับการวางแผนภายในวันเดียว</small>
           </fieldset>
 
           <label class="planner-field planner-field--area">
-            <span>พื้นที่</span>
+            <span>พื้นที่เดินทาง</span>
             <select data-planner-area data-planner-area-default="province:กรุงเทพมหานคร">
               {plannerAreas.map((area) => <option value={area.value} data-planner-area-hint={area.hint}>{area.label}</option>)}
             </select>
@@ -122,14 +122,14 @@ const plannerPurposes = [
           </label>
 
           <label class="planner-field planner-field--time">
-            <span>เริ่มทริปเวลา</span>
+            <span>เวลาเริ่มเดินทาง</span>
             <input type="time" value="09:00" data-planner-start-time />
-            <small>ไล่ตามเวลาเปิดของวัด</small>
+            <small>อ้างอิงเวลาเปิดของวัด</small>
           </label>
 
           <div class="planner-field planner-field--purpose">
-            <span>อยากเสริมเรื่องอะไร</span>
-            <div class="planner-wish-chips" aria-label="เลือกเรื่องที่อยากเสริม">
+            <span>วัตถุประสงค์ด้านมงคล</span>
+            <div class="planner-wish-chips" aria-label="เลือกวัตถุประสงค์ด้านมงคล">
               {plannerPurposes.map((purpose) => (
                 <button
                   type="button"
@@ -143,11 +143,11 @@ const plannerPurposes = [
           </div>
 
           <label class="planner-field planner-field--origin">
-            <span>เริ่มทริปจาก (จุดเริ่มต้น)</span>
+            <span>จุดเริ่มต้นการเดินทาง</span>
             <input
               type="text"
               list="planner-start-suggestions"
-              placeholder="เช่น สถานีรถไฟฟ้า BTS สนามกีฬาแห่งชาติ หรือที่พักของคุณ"
+              placeholder="เช่น สถานีรถไฟฟ้า สนามกีฬาแห่งชาติ หรือที่พัก"
               autocomplete="off"
               data-planner-origin-text
             />
@@ -156,29 +156,29 @@ const plannerPurposes = [
 
           <div class="planner-search-actions" aria-label="เลือกวิธีค้นหาและจัดแผน">
             <div class="planner-search-actions__group">
-              <span>เลือกสถานที่เอง</span>
+              <span>เลือกสถานที่ด้วยตนเอง</span>
               <button class="planner-secondary-button planner-filter-button" type="button" data-planner-filter-search>
-                เปิดรายการวัดแล้วเลือกเอง
+                เปิดรายการสถานที่
               </button>
             </div>
 
             <div class="planner-search-actions__or" aria-hidden="true">หรือ</div>
 
             <div class="planner-search-actions__group planner-search-actions__group--auto">
-              <span class="planner-action-label-with-help">ให้ระบบจัดทริปให้</span>
-              <p>จากโจทย์ด้านบน ระบบจะเรียงลำดับให้เดินทางสั้นและต่อเนื่องที่สุด</p>
+              <span class="planner-action-label-with-help">จัดเส้นทางแนะนำ</span>
+              <p>ระบบจะเรียงลำดับตามเงื่อนไขด้านบน โดยพิจารณาระยะทางและเวลาเปิดของสถานที่</p>
               <button class="planner-primary-button" type="button" data-planner-auto>
-                ✦ ให้ระบบจัดทริป
+                จัดเส้นทางแนะนำ
               </button>
             </div>
           </div>
 
           <button class="planner-location-button" type="button" data-planner-location>
-            ค้นหาใกล้ฉัน
+            ใกล้ตำแหน่งปัจจุบัน
           </button>
 
           <button class="planner-secondary-button planner-reset-button" type="button" data-planner-reset-filters>
-            รีเซ็ตโจทย์
+            ล้างเงื่อนไข
           </button>
 
         </div>
@@ -186,11 +186,11 @@ const plannerPurposes = [
         <div class="planner-criteria-notice" data-planner-criteria-notice hidden>
           <p>
             <strong>เงื่อนไขด้านบนเปลี่ยนแล้ว</strong>
-            <span>ทริปที่แสดงอยู่ยังใช้โจทย์เดิม กดจัดทริปใหม่ถ้าต้องการใช้เงื่อนไขล่าสุด</span>
+            <span>แผนที่แสดงอยู่ยังใช้เงื่อนไขเดิม กดจัดเส้นทางใหม่เพื่อใช้ข้อมูลล่าสุด</span>
           </p>
           <div class="planner-criteria-notice__actions">
-            <button class="planner-primary-button" type="button" data-planner-criteria-rebuild>จัดทริปใหม่</button>
-            <button class="planner-secondary-button" type="button" data-planner-criteria-restore>คืนค่าโจทย์เดิม</button>
+            <button class="planner-primary-button" type="button" data-planner-criteria-rebuild>จัดเส้นทางใหม่</button>
+            <button class="planner-secondary-button" type="button" data-planner-criteria-restore>คืนค่าเงื่อนไขเดิม</button>
           </div>
         </div>
 
@@ -201,8 +201,8 @@ const plannerPurposes = [
     <section class="planner-pick" id="planner-pick" aria-labelledby="planner-pick-title" hidden>
       <div class="planner-section-head">
         <div>
-          <p class="section-kicker">เลือกสถานที่เอง</p>
-          <h2 id="planner-pick-title">เลือกเองจากรายการหรือแผนที่</h2>
+          <p class="section-kicker">เลือกสถานที่ด้วยตนเอง</p>
+          <h2 id="planner-pick-title">เลือกจากรายการหรือแผนที่</h2>
         </div>
         <div class="planner-selection-count" aria-live="polite">
           เลือกแล้ว <strong data-planner-selected-count>0</strong>/<span data-planner-target-count>9</span>
@@ -211,17 +211,17 @@ const plannerPurposes = [
 
       <div class="planner-picker-context" data-planner-picker-context>
         <div>
-          <p class="section-kicker" data-planner-picker-kicker>รายการสำหรับเลือกเอง</p>
-          <h3 data-planner-picker-title>เลือกสถานที่เข้าทริป</h3>
+          <p class="section-kicker" data-planner-picker-kicker>รายการสำหรับเลือกสถานที่</p>
+          <h3 data-planner-picker-title>เลือกสถานที่เข้าแผน</h3>
           <p data-planner-picker-description>
-            รายการนี้แยกจากโจทย์ด้านบน ใช้ค้นหาและปรับสถานที่ในทริปที่กำลังแก้
+            รายการนี้แยกจากเงื่อนไขด้านบน ใช้ค้นหาและปรับสถานที่ในแผนที่กำลังแก้ไข
           </p>
           <div class="planner-picker-chips" data-planner-picker-chips></div>
         </div>
         <div class="planner-picker-context__controls">
           <div class="planner-picker-mode" aria-label="โหมดรายการสถานที่">
-            <button type="button" class="is-active" data-planner-picker-mode="recommended">แนะนำก่อน</button>
-            <button type="button" data-planner-picker-mode="browse">ค้นเอง</button>
+            <button type="button" class="is-active" data-planner-picker-mode="recommended">รายการแนะนำ</button>
+            <button type="button" data-planner-picker-mode="browse">ค้นหาด้วยตนเอง</button>
           </div>
           <label class="planner-search planner-search--picker">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -236,14 +236,14 @@ const plannerPurposes = [
             />
           </label>
           <button class="planner-secondary-button planner-picker-scope-button" type="button" data-planner-picker-toggle-scope>
-            ดูทั้งหมด
+            แสดงทั้งหมด
           </button>
         </div>
       </div>
       <p class="planner-picker-note" data-planner-picker-note></p>
 
       <div class="planner-selected-tray" data-planner-selected-tray>
-        <p>ยังไม่ได้เลือกสถานที่ ระบบสามารถแนะนำให้ครบตามจำนวนได้</p>
+        <p>ยังไม่ได้เลือกสถานที่ ระบบสามารถแนะนำให้ครบตามจำนวนที่กำหนดได้</p>
       </div>
 
       <div class="planner-pick__toolbar">
@@ -263,7 +263,7 @@ const plannerPurposes = [
         <div class="planner-map-shell">
           <div class="planner-map" data-planner-selection-map aria-label="แผนที่เลือกวัดและสถานที่ศักดิ์สิทธิ์"></div>
           <div class="planner-map-note">
-            แตะหมุดเพื่อดูข้อมูลและเพิ่มในทริป หมุดสีแดงคือสถานที่ที่เลือกแล้ว
+            แตะหมุดเพื่อดูข้อมูลและเพิ่มลงแผน หมุดสีแดงคือสถานที่ที่เลือกแล้ว
           </div>
         </div>
       </div>
@@ -273,7 +273,7 @@ const plannerPurposes = [
           จัดลำดับสถานที่ที่เลือก
         </button>
         <button class="planner-secondary-button" type="button" data-planner-clear-selection>
-          ล้างที่เลือก
+          ล้างรายการที่เลือก
         </button>
       </div>
     </section>
@@ -282,11 +282,11 @@ const plannerPurposes = [
       <div class="planner-section-head">
         <div>
           <p class="section-kicker">แผนการเดินทาง</p>
-          <h2 id="planner-result-title">ทริปที่จัดให้</h2>
+          <h2 id="planner-result-title">แผนเส้นทางที่จัดลำดับแล้ว</h2>
         </div>
         <div class="planner-result__head-actions">
-          <button class="planner-secondary-button" type="button" data-planner-edit>ปรับสถานที่เอง</button>
-          <button class="planner-secondary-button planner-clear-trip-button" type="button" data-planner-clear-trip>ล้างทริปนี้</button>
+          <button class="planner-secondary-button" type="button" data-planner-edit>ปรับสถานที่ด้วยตนเอง</button>
+          <button class="planner-secondary-button planner-clear-trip-button" type="button" data-planner-clear-trip>ล้างแผนนี้</button>
         </div>
       </div>
 
@@ -296,7 +296,7 @@ const plannerPurposes = [
 
       <div class="planner-result__toolbar">
         <div class="planner-tabs" role="tablist" aria-label="มุมมองแผนการเดินทาง">
-          <button type="button" role="tab" aria-selected="true" data-planner-result-tab="timeline">แผนตามเวลา</button>
+          <button type="button" role="tab" aria-selected="true" data-planner-result-tab="timeline">ลำดับตามเวลา</button>
           <button type="button" role="tab" aria-selected="false" data-planner-result-tab="map">ดูบนแผนที่</button>
         </div>
         <div class="planner-result__actions">
@@ -318,25 +318,25 @@ const plannerPurposes = [
       </div>
 
       <p class="planner-disclaimer">
-        ระยะทางและเวลาเป็นค่าประมาณสำหรับวางแผนจากพิกัด ไม่รวมสภาพจราจร เหตุปิดถนน เวลาเปิด–ปิด หรือเวลารอจริง
+        ระยะทางและเวลาเป็นค่าประมาณสำหรับวางแผนจากพิกัด ไม่รวมสภาพจราจร เหตุปิดถนน เวลาเปิด-ปิด หรือเวลารอจริง
         ควรตรวจเส้นทางอีกครั้งก่อนออกเดินทาง
       </p>
     </section>
 
-    <section class="planner-guides" id="guides" aria-label="หลักการจัดทริป">
+    <section class="planner-guides" id="guides" aria-label="หลักการจัดเส้นทาง">
       <article>
         <span>๐๑ / เกณฑ์</span>
-        <h2>จัดจากอะไร</h2>
-        <p>ระยะเดินทาง เวลาเปิดของวัด และพรที่คุณตั้งใจ — ไม่ใช่แค่ความดัง</p>
+        <h2>ใช้ข้อมูลอะไร</h2>
+        <p>ระยะเดินทาง เวลาเปิดของวัด และวัตถุประสงค์ที่เลือก ไม่จัดจากความนิยมเพียงอย่างเดียว</p>
       </article>
       <article>
         <span>๐๒ / ความมั่นใจ</span>
-        <h2>บอกตรงเมื่อควรเช็ก</h2>
+        <h2>ระบุเมื่อควรตรวจสอบ</h2>
         <p>จุดสีเขียว-ทอง-เทา บอกระดับความมั่นใจของข้อมูลแต่ละแห่ง</p>
       </article>
       <article>
         <span>๐๓ / ปรับได้</span>
-        <h2>แก้ลำดับเองได้</h2>
+        <h2>ปรับลำดับได้</h2>
         <p>สลับ เพิ่ม หรือเอาสถานที่ออก แล้วเปิดเส้นทางต่อใน Google Maps</p>
       </article>
     </section>
@@ -344,8 +344,8 @@ const plannerPurposes = [
     <section class="planner-supporting-tools" id="supporting-tools" aria-label="เครื่องมือเสริม">
       <p>เครื่องมือเสริม</p>
       <a href="/calendar/">วันพระและปฏิทินไทย</a>
-      <a href="/horoscope/seamsi/">เซียมซี</a>
-      <a href="/tarot/daily/">ไพ่ประจำวัน</a>
+      <a href="/horoscope/seamsi/">คำเซียมซี</a>
+      <a href="/tarot/daily/">ไพ่ยิปซีรายวัน</a>
     </section>
 
     <div class="planner-dialog" data-planner-dialog aria-hidden="true" hidden>

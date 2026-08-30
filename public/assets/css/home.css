@@ -262,6 +262,7 @@ body[data-cms-page="home"] .hero h1 {
 .hero h1 mark {
   color: #f3cc6f;
   background: transparent;
+  white-space: nowrap;
 }
 
 .hero-copy {

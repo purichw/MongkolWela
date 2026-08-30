@@ -20,12 +20,12 @@
         "enabled": true,
         "items": [
           { "id": "temple-planner", "label": "วางแผนไหว้พระ", "href": "temples/planner/", "enabled": true },
-          { "id": "temple-featured-section", "label": "วัดเด่นวัดดัง", "section": true, "enabled": true },
+          { "id": "temple-featured-section", "label": "วัดเด่นและวัดสำคัญ", "section": true, "enabled": true },
           { "id": "popular-temples", "label": "วัดดัง", "href": "temples/popular/", "enabled": true },
-          { "id": "mu-temples", "label": "สถานที่มู", "href": "temples/mu/", "enabled": true },
+          { "id": "mu-temples", "label": "สถานที่มงคล", "href": "temples/mu/", "enabled": true },
           { "id": "sacred-temples", "label": "วัดศักดิ์สิทธิ์", "href": "temples/sacred/", "enabled": true },
           { "id": "temple-all-section", "label": "วัดทั่วประเทศไทย", "section": true, "enabled": true },
-          { "id": "all-temples", "label": "ค้นหาวัดทั่วประเทศไทย", "href": "temples/thailand/", "enabled": true }
+          { "id": "all-temples", "label": "วัดทั่วประเทศไทย", "href": "temples/thailand/", "enabled": true }
         ]
       },
       {
@@ -48,12 +48,12 @@
           { "id": "tarot-love", "label": "ไพ่ยิปซีความรัก", "href": "tarot/love/", "enabled": true },
           { "id": "tarot-money", "label": "ไพ่ยิปซีการเงิน", "href": "tarot/money/", "enabled": true },
           { "id": "tarot-career", "label": "ไพ่ยิปซีการงาน อาชีพ", "href": "tarot/career/", "enabled": true },
-          { "id": "tarot-luck", "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค", "href": "tarot/luck/", "enabled": true },
+          { "id": "tarot-luck", "label": "ไพ่ยิปซีด้านโชคลาภ", "href": "tarot/luck/", "enabled": true },
           { "id": "other-tools-section", "label": "อื่น ๆ", "section": true, "enabled": true },
           { "id": "life-graph", "label": "กราฟชีวิต", "href": "horoscope/life-graph/", "enabled": true },
           { "id": "palmistry", "label": "อ่านลายมือ", "href": "horoscope/palmistry/", "enabled": true },
           { "id": "thai-astrology", "label": "โหราศาสตร์ไทย", "href": "horoscope/thai-astrology/", "enabled": true },
-          { "id": "seamsi", "label": "เสี่ยงเซียมซี", "href": "horoscope/seamsi/", "enabled": true }
+          { "id": "seamsi", "label": "คำเซียมซี", "href": "horoscope/seamsi/", "enabled": true }
         ]
       }
     ],
@@ -67,15 +67,15 @@
       "enabled": true,
       "kind": "existing",
       "patches": [
-        { "id": "home-hero-search-placeholder", "label": "Search placeholder", "selector": "#site-search", "kind": "attr", "attr": "placeholder", "value": "ค้นหาวัด จังหวัด หรือพรที่อยากขอ เช่น โชคลาภ การงาน ความรัก" },
+        { "id": "home-hero-search-placeholder", "label": "Search placeholder", "selector": "#site-search", "kind": "attr", "attr": "placeholder", "value": "ค้นหาวัด จังหวัด หรือวัตถุประสงค์" },
         { "id": "home-hero-image-1", "label": "Hero image 1", "selector": ".hero-slide:nth-child(1) img", "kind": "image", "src": "/assets/images/hero-temple-red.jpg", "alt": "พระอุโบสถและบรรยากาศวัดไทยในแสงอบอุ่น" }
       ],
       "sections": [
         { "id": "hero", "label": "Hero", "selector": ".hero", "enabled": true, "order": 10 },
         { "id": "stats", "label": "แถบสถิติ", "selector": ".home-stat-ticker", "enabled": true, "order": 15 },
         { "id": "intent", "label": "ความตั้งใจ", "selector": ".home-intent-section", "enabled": true, "order": 20 },
-        { "id": "temple-routes", "label": "ตัวช่วยจัดทริป", "selector": "#temple-routes", "enabled": true, "order": 30 },
-        { "id": "collections", "label": "สามสาย", "selector": "#collections", "enabled": true, "order": 40 },
+        { "id": "temple-routes", "label": "เครื่องมือวางแผน", "selector": "#temple-routes", "enabled": true, "order": 30 },
+        { "id": "collections", "label": "หมวดค้นหา", "selector": "#collections", "enabled": true, "order": 40 },
         { "id": "supporting-tools", "label": "เครื่องมือเสริม", "selector": "#supporting-tools", "enabled": true, "order": 70 }
       ],
       "blocks": []
@@ -84,18 +84,18 @@
     { "id": "lifeGraph", "label": "กราฟชีวิต", "route": "/horoscope/life-graph/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "thaiAstrology", "label": "โหราศาสตร์ไทย", "route": "/horoscope/thai-astrology/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "palmistry", "label": "อ่านลายมือ", "route": "/horoscope/palmistry/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "seamsi", "label": "เสี่ยงเซียมซี", "route": "/horoscope/seamsi/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
+    { "id": "seamsi", "label": "คำเซียมซี", "route": "/horoscope/seamsi/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotMeanings", "label": "ความหมายไพ่ยิปซี 78 ใบ", "route": "/tarot/meanings/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotDaily", "label": "ไพ่ยิปซีรายวัน", "route": "/tarot/daily/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotMonthly", "label": "ไพ่ยิปซีรายเดือน", "route": "/tarot/monthly/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotLove", "label": "ไพ่ยิปซีความรัก", "route": "/tarot/love/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotMoney", "label": "ไพ่ยิปซีการเงิน", "route": "/tarot/money/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "tarotCareer", "label": "ไพ่ยิปซีการงาน อาชีพ", "route": "/tarot/career/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "tarotLuck", "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค", "route": "/tarot/luck/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
+    { "id": "tarotLuck", "label": "ไพ่ยิปซีด้านโชคลาภ", "route": "/tarot/luck/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "temples", "label": "วัดดังเสริมมงคล", "route": "/temples/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "templesPlanner", "label": "วางแผนไหว้พระ", "route": "/temples/planner/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "templesPopular", "label": "สายไหว้พระ 9 วัด", "route": "/temples/popular/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "templesMu", "label": "สายมู", "route": "/temples/mu/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
+    { "id": "templesMu", "label": "สถานที่มงคล", "route": "/temples/mu/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "templesSacred", "label": "วัดศักดิ์สิทธิ์", "route": "/temples/sacred/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     { "id": "templesThailand", "label": "วัดทั่วประเทศไทย", "route": "/temples/thailand/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
     {

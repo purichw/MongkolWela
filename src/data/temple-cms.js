@@ -10,7 +10,7 @@ export const templeCollectionConfig = {
   },
   mu: {
     key: "mu",
-    label: "สายมู",
+    label: "สถานที่มงคล",
     href: "/temples/mu/",
   },
   sacred: {

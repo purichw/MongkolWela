@@ -98,5 +98,5 @@ function confidenceFor(temple: TempleCard, hasTempleImage: boolean) {
   if (Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude)) && hasTempleImage) {
     return { key: "medium", label: "ปานกลาง" };
   }
-  return { key: "check", label: "ควรเช็ก" };
+  return { key: "check", label: "ควรตรวจสอบ" };
 }

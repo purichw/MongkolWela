@@ -4,6 +4,7 @@ import {
   readJsonBody,
   readLiveContent,
   requireAdmin,
+  requireSameOrigin,
   sendJson,
 } from "./_shared.js";
 
@@ -31,6 +32,8 @@ export default async function handler(req, res) {
       sendJson(res, 405, { ok: false, error: "Method not allowed" });
       return;
     }
+
+    if (!requireSameOrigin(req, res)) return;
 
     const session = requireAdmin(req, res);
     if (!session) return;
