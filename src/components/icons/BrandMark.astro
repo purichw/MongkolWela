@@ -1,20 +1,33 @@
-<svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-label="มงคลเวลา">
-  <defs>
-    <radialGradient id="brand-mark-fill" cx="34%" cy="28%" r="72%">
-      <stop offset="0%" stop-color="#c84f3c" />
-      <stop offset="100%" stop-color="#7c271f" />
-    </radialGradient>
-  </defs>
-  <circle cx="24" cy="24" r="22" fill="url(#brand-mark-fill)" stroke="rgba(255, 236, 188, 0.45)" />
-  <text
-    x="24"
-    y="30"
-    text-anchor="middle"
-    font-family="Noto Sans Thai, sans-serif"
-    font-size="22"
-    font-weight="800"
-    fill="#f5d99b"
-  >
-    ๙
-  </text>
-</svg>
+---
+import { brandAssets } from "../../config/site.js";
+
+type BrandAssetKey = "mark" | "emblem" | "lockup";
+
+const {
+  class: className = "brand-mark",
+  variant = "mark",
+  decorative = false,
+  loading = "eager",
+  fetchpriority,
+} = Astro.props as {
+  class?: string;
+  variant?: BrandAssetKey;
+  decorative?: boolean;
+  loading?: "eager" | "lazy";
+  fetchpriority?: "high" | "low" | "auto";
+};
+
+const asset = brandAssets[variant] || brandAssets.mark;
+---
+
+<img
+  class:list={[className, `brand-mark--${variant}`]}
+  src={asset.src}
+  width={asset.width}
+  height={asset.height}
+  alt={decorative ? "" : brandAssets.alt}
+  aria-hidden={decorative ? "true" : undefined}
+  loading={loading}
+  decoding="async"
+  fetchpriority={fetchpriority}
+/>

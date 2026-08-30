@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from "../config/site.js";
+import BrandMark from "./icons/BrandMark.astro";
 
 type FooterLink = {
   label: string;
@@ -40,7 +41,7 @@ const footerLinks = pageConfig.footerLinks || [
 {isPopularDirectory && !isTempleCollectionPage ? (
   <footer class="site-footer site-footer--popular-directory" id="consult">
     <div class="site-footer-popular-brand">
-      <span aria-hidden="true">๙</span>
+      <BrandMark class="site-footer-brand-mark" decorative loading="lazy" />
       <strong>{config.footer.title}</strong>
     </div>
     <p>ค้นหาวัดดัง สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระเสริมมงคลสำหรับผู้ใช้ไทย</p>
@@ -49,7 +50,7 @@ const footerLinks = pageConfig.footerLinks || [
   <footer class="site-footer site-footer--home-v2" id="consult">
     <div class="site-footer-home-grid">
       <div class="site-footer-home-brand">
-        <span aria-hidden="true">๙</span>
+        <BrandMark class="site-footer-brand-mark" decorative loading="lazy" />
         <strong>{config.footer.title}</strong>
         <p>คู่มือเดินทางสายมงคล ค้นหาวัดดัง และพาคุณวางความตั้งใจไปสู่สถานที่จริงได้ง่ายขึ้น</p>
       </div>
@@ -73,7 +74,7 @@ const footerLinks = pageConfig.footerLinks || [
   <footer class="site-footer site-footer--temple-hub-v2" id="consult">
     <div class="site-footer-temple-hub-grid">
       <div class="site-footer-temple-hub-brand">
-        <span aria-hidden="true">๙</span>
+        <BrandMark class="site-footer-brand-mark" decorative loading="lazy" />
         <strong>{config.footer.title}</strong>
         <p>คู่มือเดินทางสายมงคลที่อบอุ่น น่าเชื่อถือ และพาคุณจากความตั้งใจไปสู่สถานที่จริงได้เร็วที่สุด</p>
       </div>

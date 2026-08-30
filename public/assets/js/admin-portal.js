@@ -78,6 +78,32 @@ function escapeHtml(value = "") {
     .replace(/"/g, "&quot;");
 }
 
+function adminBrand() {
+  const root = $("#adminApp");
+  const dataset = root?.dataset || {};
+  return {
+    name: dataset.brandName || "",
+    subtitle: dataset.brandSubtitle || "",
+    label: dataset.brandLabel || dataset.brandName || "",
+    markSrc: dataset.brandMarkSrc || "",
+    markWidth: Number(dataset.brandMarkWidth) || 512,
+    markHeight: Number(dataset.brandMarkHeight) || 512,
+  };
+}
+
+function adminLogoImageMarkup(className = "mw-admin-logo-mark") {
+  const brand = adminBrand();
+  return `<img class="${escapeHtml(className)}" src="${escapeHtml(brand.markSrc)}" width="${brand.markWidth}" height="${brand.markHeight}" alt="" aria-hidden="true" decoding="async">`;
+}
+
+function adminLogoMarkup() {
+  const brand = adminBrand();
+  return `<a class="mw-admin-logo" href="/admin/" aria-label="${escapeHtml(brand.label)}">
+    ${adminLogoImageMarkup()}
+    <div><strong>${escapeHtml(brand.name)}</strong><small>${escapeHtml(brand.subtitle)}</small></div>
+  </a>`;
+}
+
 function normalizeRoute(route = "/") {
   if (!route || route === "/index.html") return "/";
   return route.endsWith("/") ? route : `${route}/`;
@@ -192,7 +218,7 @@ function icon(name) {
     page: "⌂",
     nav: "≣",
     section: "⛩",
-    component: "๙",
+    component: "⌁",
     chart: "▦",
     dates: "✦",
     media: "▤",
@@ -225,7 +251,7 @@ function renderAppShell() {
   $("#adminApp").innerHTML = `<div class="mw-admin-shell">
     <aside class="mw-admin-sidebar">
       <header class="mw-admin-header">
-        <a class="mw-admin-logo" href="/admin/"><span>๙</span><div><strong>มงคลเวลา</strong><small>ADMIN CONSOLE</small></div></a>
+        ${adminLogoMarkup()}
       </header>
       <nav class="mw-admin-nav" id="adminNav" aria-label="Admin navigation"></nav>
       <div class="mw-admin-sidebar-foot">
@@ -323,11 +349,12 @@ function toggleSidebar() {
 }
 
 function renderLogin() {
+  const brand = adminBrand();
   $("#adminApp").innerHTML = `<main class="mw-admin-login">
     <form class="mw-admin-login-card" id="loginForm">
-      <span class="mw-admin-login-mark">MW</span>
+      ${adminLogoImageMarkup("mw-admin-login-mark")}
       <h1>ระบบจัดการเว็บ</h1>
-      <p>แก้หน้าเว็บ เนื้อหา เมนู รูปภาพ และดูสถิติของมงคลเวลา</p>
+      <p>แก้หน้าเว็บ เนื้อหา เมนู รูปภาพ และดูสถิติของ${escapeHtml(brand.name)}</p>
       <label>ชื่อผู้แก้ไข<input name="actor" autocomplete="username" value="Admin"></label>
       <label>รหัสผ่าน<input name="password" type="password" autocomplete="current-password" placeholder="รหัสผ่านผู้ดูแล" required></label>
       <button class="mw-admin-btn mw-admin-btn-primary" type="submit">เข้าสู่ระบบ</button>

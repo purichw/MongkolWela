@@ -2378,17 +2378,14 @@ body.temple-planner-page .site-footer-temple-hub-grid {
   padding: 56px 0 28px;
 }
 
-body.temple-planner-page .site-footer-temple-hub-brand span {
-  display: inline-grid;
+body.temple-planner-page .site-footer-temple-hub-brand .site-footer-brand-mark {
+  display: inline-block;
   width: 44px;
   height: 44px;
   margin-right: 12px;
-  place-items: center;
-  color: #ead3a0;
-  background: radial-gradient(circle at 34% 28%, #c84f3c, #591d19);
-  border-radius: 12px;
-  font-size: 1.4rem;
-  font-weight: 800;
+  object-fit: contain;
+  vertical-align: middle;
+  filter: drop-shadow(0 8px 18px rgba(104, 28, 24, 0.28));
 }
 
 body.temple-planner-page .site-footer-temple-hub-brand strong {

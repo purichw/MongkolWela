@@ -1,5 +1,7 @@
+import { brandAssets } from "../config/site.js";
+
 export const SEO_SITE_URL = "https://mongkolwela.vercel.app";
-export const SEO_SITE_NAME = "มงคลเวลา";
+export const SEO_SITE_NAME = brandAssets.name;
 export const SEO_DEFAULT_IMAGE = "/assets/images/hero-temple-red.jpg";
 export const SEO_DEFAULT_IMAGE_WIDTH = 1200;
 export const SEO_DEFAULT_IMAGE_HEIGHT = 630;
@@ -40,11 +42,13 @@ export function createOrganizationJsonLd() {
     "@type": "Organization",
     "@id": absoluteUrl("/#organization"),
     name: SEO_SITE_NAME,
-    alternateName: "Mongkol Wela",
+    alternateName: brandAssets.alternateName,
     url: SEO_SITE_URL,
     logo: {
       "@type": "ImageObject",
-      url: absoluteUrl("/favicon.svg"),
+      url: absoluteUrl(brandAssets.mark.src),
+      width: brandAssets.mark.width,
+      height: brandAssets.mark.height,
     },
   };
 }
@@ -54,7 +58,7 @@ export function createWebSiteJsonLd() {
     "@type": "WebSite",
     "@id": absoluteUrl("/#website"),
     name: SEO_SITE_NAME,
-    alternateName: "Mongkol Wela",
+    alternateName: brandAssets.alternateName,
     url: SEO_SITE_URL,
     inLanguage: "th-TH",
     description: SITE_DESCRIPTION,

@@ -82,17 +82,13 @@
 }
 
 .brand-mark {
-  display: grid;
-  place-items: center;
+  display: block;
+  flex: 0 0 auto;
   width: 42px;
   height: 42px;
-  color: var(--gold-soft);
-  background: radial-gradient(circle at 34% 28%, #c84f3c, var(--lacquer-dark));
-  border: 1px solid rgba(255, 236, 188, 0.35);
-  border-radius: 50%;
-  font-size: 1.35rem;
-  font-weight: 800;
-  box-shadow: 0 8px 22px rgba(89, 29, 25, 0.24);
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 8px 22px rgba(89, 29, 25, 0.24));
 }
 
 .navbar--shared-site .brand {
@@ -103,15 +99,7 @@
 .navbar--shared-site .brand-mark {
   width: 44px;
   height: 44px;
-  overflow: hidden;
-  background: radial-gradient(circle at 34% 28%, #c84f3c, #591d19);
-  border-radius: 12px;
   filter: drop-shadow(0 8px 22px rgba(89, 29, 25, 0.24));
-  box-shadow: none;
-}
-
-.navbar--shared-site .brand-mark circle {
-  display: none;
 }
 
 .brand strong {
