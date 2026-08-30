@@ -7,17 +7,20 @@ const {
   class: className = "brand-mark",
   variant = "mark",
   decorative = false,
+  alt,
   loading = "eager",
   fetchpriority,
 } = Astro.props as {
   class?: string;
   variant?: BrandAssetKey;
   decorative?: boolean;
+  alt?: string;
   loading?: "eager" | "lazy";
   fetchpriority?: "high" | "low" | "auto";
 };
 
 const asset = brandAssets[variant] || brandAssets.mark;
+const imageAlt = decorative ? "" : alt || asset.alt || brandAssets.alt;
 ---
 
 <img
@@ -25,7 +28,7 @@ const asset = brandAssets[variant] || brandAssets.mark;
   src={asset.src}
   width={asset.width}
   height={asset.height}
-  alt={decorative ? "" : brandAssets.alt}
+  alt={imageAlt}
   aria-hidden={decorative ? "true" : undefined}
   loading={loading}
   decoding="async"

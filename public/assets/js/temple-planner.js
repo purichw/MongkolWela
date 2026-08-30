@@ -693,7 +693,7 @@ function renderSelected(state, elements) {
       return `
         <span class="planner-selected-chip" draggable="true" data-planner-selected-id="${escapeHtml(id)}">
           <b>${(index + 1).toLocaleString("th-TH")}</b>
-          ${escapeHtml(item.name)}
+          <span class="planner-selected-chip__label">${escapeHtml(item.name)}</span>
           <button type="button" draggable="false" data-planner-remove-selected="${escapeHtml(id)}" aria-label="นำ ${escapeHtml(item.name)} ออกจากแผน">×</button>
         </span>`;
     })

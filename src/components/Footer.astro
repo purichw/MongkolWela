@@ -53,8 +53,7 @@ const toolLinks = footerCopy.tools || [
 {isPopularDirectory && !isTempleCollectionPage ? (
   <footer class="site-footer site-footer--popular-directory" id="consult">
     <div class="site-footer-popular-brand">
-      <BrandMark class="site-footer-brand-mark" decorative loading="lazy" />
-      <strong>{config.footer.title}</strong>
+      <BrandMark class="site-footer-brand-lockup" variant="lockup" loading="lazy" />
     </div>
     <p>ค้นหาวัดดัง สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระเสริมมงคลสำหรับผู้ใช้ไทย</p>
   </footer>
@@ -62,8 +61,7 @@ const toolLinks = footerCopy.tools || [
   <footer class="site-footer site-footer--home-v2" id="consult">
     <div class="site-footer-home-grid">
       <div class="site-footer-home-brand">
-        <BrandMark class="site-footer-brand-mark" decorative loading="lazy" />
-        <strong>{config.footer.title}</strong>
+        <BrandMark class="site-footer-brand-lockup" variant="lockup" loading="lazy" />
         <p>{footerCopy.homeDescription || config.footer.description}</p>
       </div>
       <nav aria-label={footerCopy.templeRoutesLabel || "เส้นทางและสถานที่"}>
@@ -79,14 +77,12 @@ const toolLinks = footerCopy.tools || [
         ))}
       </nav>
     </div>
-    <p class="credits">{config.footer.imageCredits}</p>
   </footer>
 ) : isTempleV2Page ? (
   <footer class="site-footer site-footer--temple-hub-v2" id="consult">
     <div class="site-footer-temple-hub-grid">
       <div class="site-footer-temple-hub-brand">
-        <BrandMark class="site-footer-brand-mark" decorative loading="lazy" />
-        <strong>{config.footer.title}</strong>
+        <BrandMark class="site-footer-brand-lockup" variant="lockup" loading="lazy" />
         <p>{footerCopy.templeDescription || config.footer.description}</p>
       </div>
       <nav aria-label={footerCopy.templeRoutesLabel || "เส้นทางและสถานที่"}>
@@ -108,7 +104,7 @@ const toolLinks = footerCopy.tools || [
 ) : (
   <footer class="site-footer" id="consult">
     <div>
-      <strong>{config.footer.title}</strong>
+      <BrandMark class="site-footer-brand-lockup" variant="lockup" loading="lazy" />
       <p>{config.footer.description}</p>
     </div>
     <div class="footer-links">
@@ -116,8 +112,5 @@ const toolLinks = footerCopy.tools || [
         <a href={resolveHref(item.href)}>{item.label}</a>
       ))}
     </div>
-    {pageConfig.footerVariant === "home" && (
-      <p class="credits">{config.footer.imageCredits}</p>
-    )}
   </footer>
 )}

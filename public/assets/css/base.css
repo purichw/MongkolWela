@@ -499,6 +499,18 @@ option {
   margin: 0 auto;
 }
 
+.site-footer-brand-lockup {
+  display: block;
+  width: min(236px, 100%);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 22px rgba(104, 28, 24, 0.28));
+}
+
+.site-footer > div:first-child .site-footer-brand-lockup {
+  margin-bottom: 16px;
+}
+
 .section-kicker,
 .eyebrow {
   margin: 0 0 10px;

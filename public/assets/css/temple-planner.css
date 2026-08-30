@@ -850,6 +850,8 @@ body.has-planner-dialog {
   display: flex;
   align-items: center;
   gap: 8px;
+  max-width: 100%;
+  min-width: 0;
   min-height: 42px;
   margin-bottom: 14px;
   padding: 0;
@@ -969,11 +971,13 @@ body.has-planner-dialog {
 }
 
 .planner-selected-chip {
-  display: inline-flex;
+  display: inline-grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   flex: 0 0 auto;
   align-items: center;
   gap: 7px;
-  max-width: 260px;
+  max-width: min(420px, 100%);
+  min-width: 0;
   padding: 7px 8px;
   color: var(--ink);
   background: #fffaf0;
@@ -984,6 +988,12 @@ body.has-planner-dialog {
   cursor: grab;
   white-space: nowrap;
   user-select: none;
+}
+
+.planner-selected-chip__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .planner-selected-chip.is-dragging {
@@ -1008,6 +1018,7 @@ body.has-planner-dialog {
 
 .planner-selected-chip button {
   display: grid;
+  flex: 0 0 auto;
   width: 26px;
   height: 26px;
   margin-left: 2px;
@@ -1121,20 +1132,26 @@ body.has-planner-dialog {
 
 .planner-place-card figure {
   position: relative;
+  flex: 0 0 auto;
   min-width: 0;
   margin: 0;
+  overflow: hidden;
   aspect-ratio: 16 / 9;
   background: var(--paper-deep);
 }
 
-.planner-place-card picture,
-.planner-place-card img {
+.planner-place-card picture {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
 }
 
 .planner-place-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -1142,6 +1159,7 @@ body.has-planner-dialog {
   position: absolute;
   top: 8px;
   left: 8px;
+  z-index: 1;
   max-width: calc(100% - 16px);
   padding: 5px 8px;
   overflow: hidden;
@@ -1959,7 +1977,7 @@ body.has-planner-dialog {
   }
 
   .planner-selected-chip {
-    max-width: 220px;
+    max-width: min(300px, 100%);
   }
 }
 
@@ -2284,7 +2302,7 @@ body.has-planner-dialog {
 
 .planner-location-status {
   min-height: 0;
-  margin: -8px 0 0;
+  margin: 12px 0 0;
 }
 
 .planner-location-status:empty {
@@ -2382,30 +2400,19 @@ body.temple-planner-page .site-footer-temple-hub-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 32px;
-  width: min(var(--planner-container), calc(100% - 48px));
+  width: min(var(--planner-container, 1180px), calc(100% - 48px));
   margin: 0 auto;
   padding: 56px 0 28px;
 }
 
-body.temple-planner-page .site-footer-temple-hub-brand .site-footer-brand-mark {
-  display: inline-block;
-  width: 44px;
-  height: 44px;
-  margin-right: 12px;
-  object-fit: contain;
-  vertical-align: middle;
-  filter: drop-shadow(0 8px 18px rgba(104, 28, 24, 0.28));
-}
-
-body.temple-planner-page .site-footer-temple-hub-brand strong {
-  color: #fff5df;
-  font-size: 1.3rem;
-  font-weight: 900;
+body.temple-planner-page .site-footer-temple-hub-brand .site-footer-brand-lockup {
+  width: min(268px, 100%);
+  margin-bottom: 18px;
 }
 
 body.temple-planner-page .site-footer-temple-hub-brand p {
   max-width: 340px;
-  margin: 16px 0 0;
+  margin: 0;
   color: #c9b48c;
   font-weight: 600;
 }
@@ -2436,7 +2443,7 @@ body.temple-planner-page .site-footer--temple-hub-v2 nav a:focus-visible {
 }
 
 body.temple-planner-page .site-footer--temple-hub-v2 .credits {
-  width: min(var(--planner-container), calc(100% - 48px));
+  width: min(var(--planner-container, 1180px), calc(100% - 48px));
   max-width: none;
   margin: 0 auto;
   padding: 18px 0;
@@ -2563,11 +2570,11 @@ body.temple-planner-page .site-footer--temple-hub-v2 .credits {
   body.temple-planner-page .site-footer-temple-hub-grid {
     grid-template-columns: 1fr;
     gap: 28px;
-    width: min(100% - 32px, var(--planner-container));
+    width: min(100% - 32px, var(--planner-container, 1180px));
     padding: 42px 0 24px;
   }
 
   body.temple-planner-page .site-footer--temple-hub-v2 .credits {
-    width: min(100% - 32px, var(--planner-container));
+    width: min(100% - 32px, var(--planner-container, 1180px));
   }
 }

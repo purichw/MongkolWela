@@ -4,19 +4,22 @@ export const brandAssets = {
   label: "มงคลเวลา หน้าแรก",
   alt: "ตรามงคลเวลา",
   mark: {
-    src: "/assets/brand/favicon-192.png",
+    src: "/assets/brand/mongkolwela-mark-192.webp",
     width: 192,
     height: 192,
+    alt: "ตรามงคลเวลา",
   },
   emblem: {
     src: "/assets/brand/mongkolwela-mark.png",
     width: 500,
     height: 560,
+    alt: "ตรามงคลเวลา",
   },
   lockup: {
-    src: "/assets/brand/mongkolwela-logo-lockup.png",
-    width: 1200,
-    height: 462,
+    src: "/assets/brand/mongkolwela-logo-lockup.webp",
+    width: 760,
+    height: 293,
+    alt: "มงคลเวลา Mongkol Wela",
   },
   favicon: {
     src: "/assets/brand/favicon-32.png",
@@ -57,9 +60,6 @@ export const siteConfig = {
       title: "มงคลเวลา",
       description: "คู่มือวางแผนไหว้พระ ค้นหาวัด สถานที่ศักดิ์สิทธิ์ ปฏิทินไทย และเครื่องมือมงคลสำหรับผู้ใช้ไทย",
       contact: "ติดต่อมงคลเวลา",
-      credits: "เครดิตรูปภาพ",
-      imageCredits:
-        "เครดิตภาพ: ภาพจิตรกรรมหน้าแรกจากเจ้าของโปรเจกต์ และภาพวัดไทยโดย Nomadic Julien, Unsplash",
     },
     copy: {
       nav: {

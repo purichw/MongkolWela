@@ -24,7 +24,7 @@
           "id": "home-hero-title",
           "kind": "html",
           "label": "Hero title",
-          "value": "<span>วางแผนไหว้</span><span>พระ</span><mark>อย่างรอบคอบ</mark>",
+          "value": "<span>วางแผน<span class=\"hero-title-keep\">ไหว้พระ</span></span><mark>อย่างรอบคอบ</mark>",
           "selector": "#hero-title"
         },
         {

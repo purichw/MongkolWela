@@ -67,6 +67,7 @@
       "enabled": true,
       "kind": "existing",
       "patches": [
+        { "id": "home-hero-title", "label": "Hero title", "selector": "#hero-title", "kind": "html", "value": "<span>วางแผน<span class=\"hero-title-keep\">ไหว้พระ</span></span><mark>อย่างรอบคอบ</mark>" },
         { "id": "home-hero-search-placeholder", "label": "Search placeholder", "selector": "#site-search", "kind": "attr", "attr": "placeholder", "value": "ค้นหาวัด จังหวัด หรือวัตถุประสงค์" },
         { "id": "home-hero-image-1", "label": "Hero image 1", "selector": ".hero-slide:nth-child(1) img", "kind": "image", "src": "/assets/images/hero-temple-red.jpg", "alt": "พระอุโบสถและบรรยากาศวัดไทยในแสงอบอุ่น" }
       ],
