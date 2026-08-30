@@ -146,39 +146,72 @@
 @media (max-width: 720px) {
   .topbar {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    justify-content: stretch;
-    gap: 2px 12px;
+    grid-template-columns: minmax(0, auto) auto minmax(0, auto);
+    align-items: center;
+    justify-content: space-between;
+    gap: 3px 14px;
     min-height: auto;
-    padding: 7px 14px;
+    padding: 7px 16px 8px;
     overflow: visible;
     text-align: left;
-    white-space: normal;
-    font-size: 0.76rem;
-    line-height: 1.35;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    line-height: 1.28;
+  }
+
+  .topbar > :first-child {
+    margin-right: 0;
   }
 
   .topbar a,
   .topbar span {
-    white-space: normal;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .topbar span {
+  .topbar > :nth-child(2) {
+    justify-self: center;
+  }
+
+  .topbar .topbar__item--feature {
     grid-column: 1 / -1;
-    order: 2;
+    order: 4;
+    justify-self: start;
+    max-width: 100%;
     color: rgba(247, 234, 210, 0.88);
   }
 
   .topbar a:last-child {
+    justify-self: end;
+    order: 3;
     text-align: right;
   }
 
   .navbar {
-    grid-template-columns: auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: "brand actions";
     justify-content: space-between;
     min-height: 68px;
     padding: 0 18px;
+  }
+
+  .navbar--shared-site .brand {
+    gap: 10px;
+    min-width: 0;
+    max-width: calc(100vw - 96px);
+  }
+
+  .navbar--shared-site .brand-mark {
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
+  }
+
+  .navbar--shared-site .brand strong {
+    font-size: 1.08rem;
+    line-height: 1.12;
   }
 
   .brand {
@@ -223,10 +256,21 @@
     width: 100%;
   }
 
+  .nav-item {
+    padding: 12px 0;
+    border-bottom: 1px dashed rgba(77, 56, 41, 0.22);
+  }
+
+  .nav-item:last-child {
+    border-bottom: 0;
+  }
+
   .nav-item > a,
   .plain-link {
     justify-content: space-between;
+    min-height: auto;
     width: 100%;
+    padding: 0;
   }
 
   .mega-panel {
@@ -235,14 +279,25 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
     min-width: 0;
-    margin: 0 0 8px;
+    margin: 10px 0 0;
+    padding: 10px 0 0;
+    background: transparent;
+    border: 0;
+    border-top: 1px dashed rgba(77, 56, 41, 0.18);
+    border-radius: 0;
     opacity: 1;
     pointer-events: auto;
     transform: none;
     box-shadow: none;
   }
 
+  .nav-item:hover .mega-panel,
+  .nav-item:focus-within .mega-panel {
+    transform: none;
+  }
+
   .mega-panel a {
+    padding: 8px 0 8px 16px;
     white-space: normal;
   }
 
@@ -345,11 +400,13 @@
 
 @media (max-width: 380px) {
   .topbar {
-    grid-template-columns: 1fr;
+    gap: 3px 10px;
+    padding-inline: 12px;
+    font-size: 0.72rem;
   }
 
   .topbar a:last-child {
-    text-align: left;
+    text-align: right;
   }
 
   .hero h1 {

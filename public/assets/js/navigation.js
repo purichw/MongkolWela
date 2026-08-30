@@ -12,9 +12,9 @@ export function initMobileNavigation() {
   const mobileQuery = window.matchMedia("(max-width: 720px)");
   syncMenuAvailability(navToggle, navMenu, mobileQuery.matches);
 
-  navToggle.addEventListener("click", () => {
+  navToggle.addEventListener("click", (event) => {
     const isOpen = navToggle.getAttribute("aria-expanded") === "true";
-    setMenuOpen(navToggle, navMenu, !isOpen, { focusMenu: true });
+    setMenuOpen(navToggle, navMenu, !isOpen, { focusMenu: !isOpen && event.detail === 0 });
   });
 
   navMenu.addEventListener("click", (event) => {
