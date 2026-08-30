@@ -24,3 +24,259 @@ body select:not([multiple]),
   background-position: right 18px center;
   background-size: 18px 18px;
 }
+
+@media (max-width: 900px), (pointer: coarse) {
+  body:not(.admin-page) :is(input:not([type="hidden"]), select, textarea) {
+    font-size: 1rem;
+  }
+
+  body:not(.admin-page) :is(.temple-table-wrap, .life-basis-table-wrap, .thai-planet-table-wrap) {
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body:not(.admin-page) .calendar-month-nav {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 720px) {
+  body:not(.admin-page) .navbar--shared-site .nav-menu {
+    max-height: min(620px, calc(100dvh - 260px));
+    max-height: min(620px, calc(100svh - 260px));
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item > a:focus-visible,
+  body:not(.admin-page) .navbar--shared-site .mega-panel a:focus-visible {
+    border-radius: 8px;
+    outline-width: 2px;
+    outline-offset: 4px;
+  }
+}
+
+.nav-drawer-head {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  body:not(.admin-page) .navbar--shared-site .nav-menu {
+    gap: 0;
+    padding: 14px;
+    border-radius: 16px;
+    background: #fffaf0;
+    box-shadow: 0 18px 38px rgba(38, 22, 15, 0.24);
+    overscroll-behavior: contain;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 2px 12px;
+    border-bottom: 1px dashed rgba(77, 56, 41, 0.24);
+    color: #8e2d24;
+    font-family: var(--header-display-font);
+    font-size: 0.88rem;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-drawer-head span:first-child {
+    color: #4a3d33;
+    font-size: 1.02rem;
+    font-weight: 900;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item {
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item + .nav-item {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(77, 56, 41, 0.22);
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item > a {
+    position: relative;
+    min-height: 0;
+    width: 100%;
+    padding: 0 4px;
+    color: #8e2d24;
+    font-family: var(--header-display-font);
+    font-size: 1rem;
+    font-weight: 900;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item--has-panel > a {
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    font-size: 1.22rem;
+    font-weight: 850;
+    line-height: 1.16;
+    text-align: left;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item--has-panel > a::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #c09a4a;
+    box-shadow: 0 0 0 5px rgba(192, 154, 74, 0.14);
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item--solo > a {
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid rgba(226, 211, 191, 0.9);
+    border-radius: 12px;
+    background: rgba(255, 253, 247, 0.72);
+    color: #3f352f;
+    font-size: 0.98rem;
+    font-weight: 850;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item--solo > a::after {
+    content: "เปิด";
+    color: #b08438;
+    font-family: var(--header-utility-font);
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .mega-panel {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    width: 100%;
+    min-width: 0;
+    margin: 8px 0 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    box-shadow: none;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .mega-panel-section {
+    padding: 10px 6px 6px;
+    border-bottom: 0;
+    color: #2b211d;
+    font-family: var(--header-display-font);
+    font-size: 0.94rem;
+    font-weight: 900;
+    line-height: 1.25;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .mega-panel-section:not(:first-child) {
+    margin-top: 4px;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .mega-panel-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 42px;
+    padding: 8px 6px 8px 28px;
+    border-top: 1px solid rgba(226, 211, 191, 0.7);
+    border-radius: 0;
+    color: #51433a;
+    font-size: 0.96rem;
+    font-weight: 650;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .mega-panel-link::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #b89552;
+    transform: translateY(-50%);
+  }
+
+  body:not(.admin-page) .navbar--shared-site .mega-panel-link::after {
+    content: attr(data-nav-mobile-meta);
+    color: #9a8471;
+    font-family: var(--header-utility-font);
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .mega-panel-link--primary {
+    min-height: 54px;
+    margin: 10px 0 12px;
+    padding: 12px 14px;
+    border: 0;
+    border-radius: 12px;
+    color: #fff7e8;
+    background: #9c3027;
+    box-shadow: 0 10px 20px rgba(156, 48, 39, 0.18);
+    font-family: var(--header-display-font);
+    font-size: 1rem;
+    font-weight: 900;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .mega-panel-link--primary::before {
+    content: none;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .mega-panel-link--primary::after {
+    content: "→";
+    color: #fff7e8;
+    font-family: var(--header-display-font);
+    font-size: 1.08rem;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item--horoscope .mega-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item--horoscope .mega-panel-section {
+    grid-column: 1 / -1;
+    padding: 9px 4px 1px;
+    color: #2d211b;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item--horoscope .mega-panel-link {
+    justify-content: center;
+    min-height: 40px;
+    padding: 7px 8px;
+    border: 1px solid rgba(226, 211, 191, 0.95);
+    border-radius: 11px;
+    color: #0f483b;
+    background: rgba(255, 253, 247, 0.76);
+    font-family: var(--header-utility-font);
+    font-size: 0.84rem;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  body:not(.admin-page) .navbar--shared-site .nav-item--horoscope .mega-panel-link::before,
+  body:not(.admin-page) .navbar--shared-site .nav-item--horoscope .mega-panel-link::after {
+    content: none;
+  }
+}

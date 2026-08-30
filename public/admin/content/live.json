@@ -391,12 +391,6 @@
         "enabled": true,
         "items": [
           {
-            "id": "life-graph",
-            "label": "กราฟชีวิต",
-            "href": "horoscope/life-graph/",
-            "enabled": true
-          },
-          {
             "id": "tarot-section",
             "label": "ไพ่ยิปซี",
             "section": true,
@@ -442,6 +436,18 @@
             "id": "tarot-luck",
             "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค",
             "href": "tarot/luck/",
+            "enabled": true
+          },
+          {
+            "id": "other-tools-section",
+            "label": "อื่น ๆ",
+            "section": true,
+            "enabled": true
+          },
+          {
+            "id": "life-graph",
+            "label": "กราฟชีวิต",
+            "href": "horoscope/life-graph/",
             "enabled": true
           },
           {

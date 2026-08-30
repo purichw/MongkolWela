@@ -14,7 +14,7 @@ export function initMobileNavigation() {
 
   navToggle.addEventListener("click", (event) => {
     const isOpen = navToggle.getAttribute("aria-expanded") === "true";
-    setMenuOpen(navToggle, navMenu, !isOpen, { focusMenu: !isOpen && event.detail === 0 });
+    setMenuOpen(navToggle, navMenu, !isOpen);
   });
 
   navMenu.addEventListener("click", (event) => {
@@ -47,11 +47,6 @@ function setMenuOpen(navToggle, navMenu, shouldOpen, options = {}) {
   navMenu.classList.toggle("is-open", shouldOpen);
   navMenu.toggleAttribute("inert", !shouldOpen && navMenu.dataset.mobileMenu === "true");
   document.body.classList.toggle("has-open-mobile-nav", shouldOpen);
-
-  if (shouldOpen && options.focusMenu) {
-    const firstLink = navMenu.querySelector("a, button");
-    firstLink?.focus?.({ preventScroll: true });
-  }
 
   if (!shouldOpen && options.returnFocus) {
     navToggle.focus({ preventScroll: true });

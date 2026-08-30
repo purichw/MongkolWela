@@ -110,6 +110,46 @@ function escapeHtml(value = "") {
     .replace(/"/g, "&quot;");
 }
 
+function safeClassToken(value = "") {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function navItemClassName(item, children = []) {
+  const idClass = safeClassToken(item?.id);
+  return [
+    "nav-item",
+    children.length ? "nav-item--has-panel" : "nav-item--solo",
+    idClass ? `nav-item--${idClass}` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function navChildClassName(child) {
+  return [
+    "mega-panel-link",
+    child?.id === "temple-planner" || hrefMatches(child?.href, "temples/planner/")
+      ? "mega-panel-link--primary"
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function mobileNavMeta(child) {
+  return (
+    {
+      "popular-temples": "ยอดนิยม",
+      "sacred-temples": "ศรัทธา",
+      "mu-temples": "สายมู",
+      "all-temples": "ทั้งหมด",
+    }[child?.id || ""] || ""
+  );
+}
+
 function safeHtml(value = "") {
   const template = document.createElement("template");
   template.innerHTML = String(value || "");
@@ -137,14 +177,17 @@ function applyNavigation(content) {
     const tabs = allTabs;
     const utility = isSharedSiteNav ? [] : (content.navigation.utility || []).filter((item) => item.enabled !== false);
     const currentSharedHref = isSharedSiteNav ? currentSharedNavHref() : "";
-    navMenu.innerHTML = `${tabs
+    const drawerHead = isSharedSiteNav
+      ? `<div class="nav-drawer-head" aria-hidden="true"><span>เมนูหลัก</span><span>เลือกหน้า</span></div>`
+      : "";
+    navMenu.innerHTML = `${drawerHead}${tabs
       .map((item) => {
         const children = (item.items || []).filter((child) => child.enabled !== false);
         const currentClass =
           isSharedSiteNav && currentSharedHref && hrefMatches(item.href, currentSharedHref)
             ? ` class="is-current" aria-current="page"`
             : "";
-        return `<div class="nav-item">
+        return `<div class="${escapeHtml(navItemClassName(item, children))}" data-nav-item-id="${escapeHtml(item.id || "")}">
           <a${currentClass} href="${escapeHtml(resolveHref(item.href))}">${escapeHtml(item.label)}</a>
           ${
             children.length
@@ -153,7 +196,11 @@ function applyNavigation(content) {
                     .map((child) =>
                       child.section
                         ? `<span class="mega-panel-section">${escapeHtml(child.label)}</span>`
-                        : `<a href="${escapeHtml(resolveHref(child.href))}">${escapeHtml(child.label)}</a>`,
+                        : `<a class="${escapeHtml(navChildClassName(child))}" data-nav-child-id="${escapeHtml(
+                            child.id || "",
+                          )}" data-nav-mobile-meta="${escapeHtml(mobileNavMeta(child))}" href="${escapeHtml(
+                            resolveHref(child.href),
+                          )}">${escapeHtml(child.label)}</a>`,
                     )
                     .join("")}
                 </div>`

@@ -28,6 +28,11 @@ const navigation =
     : defaultNavigation || {};
 const navTabs = (navigation.tabs || []).filter((item) => item.enabled !== false);
 const enabledChildren = (item?: NavItem) => (item?.items || []).filter((child) => child.enabled !== false);
+const safeClassToken = (value = "") =>
+  String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 const normalizeNavHref = (href = "") => String(href || "").replace(/^\/+/u, "").replace(/\/?$/u, "/");
 function findNavItemByHref(items: NavItem[] = [], href = ""): NavItem | undefined {
   const expectedHref = normalizeNavHref(href);
@@ -41,6 +46,37 @@ function findNavItemByHref(items: NavItem[] = [], href = ""): NavItem | undefine
 }
 const homePlannerTab = findNavItemByHref(navTabs, "temples/planner/");
 const visibleNavTabs = navTabs;
+const hasNavChildren = (item?: NavItem) => enabledChildren(item).length > 0;
+function navItemClassName(item: NavItem) {
+  const idClass = safeClassToken(item.id);
+  return [
+    "nav-item",
+    hasNavChildren(item) ? "nav-item--has-panel" : "nav-item--solo",
+    idClass ? `nav-item--${idClass}` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+function navChildClassName(child: NavItem) {
+  return [
+    "mega-panel-link",
+    child.id === "temple-planner" || normalizeNavHref(child.href) === normalizeNavHref("temples/planner/")
+      ? "mega-panel-link--primary"
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+function mobileNavMeta(child: NavItem) {
+  return (
+    {
+      "popular-temples": "ยอดนิยม",
+      "sacred-temples": "ศรัทธา",
+      "mu-temples": "สายมู",
+      "all-temples": "ทั้งหมด",
+    }[child.id || ""] || ""
+  );
+}
 
 function resolveHref(href = "") {
   if (!href) return "/";
@@ -99,8 +135,12 @@ function isCurrentNavItem(item: NavItem) {
       aria-label={config.navLabel}
       data-nav-mode="shared-site"
     >
+      <div class="nav-drawer-head" aria-hidden="true">
+        <span>เมนูหลัก</span>
+        <span>เลือกหน้า</span>
+      </div>
       {visibleNavTabs.map((item) => (
-        <div class="nav-item">
+        <div class={navItemClassName(item)} data-nav-item-id={item.id}>
           <a
             class={isCurrentNavItem(item) ? "is-current" : undefined}
             aria-current={isCurrentNavItem(item) ? "page" : undefined}
@@ -114,7 +154,14 @@ function isCurrentNavItem(item: NavItem) {
                 child.section ? (
                   <span class="mega-panel-section">{child.label}</span>
                 ) : (
-                  <a href={resolveHref(child.href)}>{child.label}</a>
+                  <a
+                    class={navChildClassName(child)}
+                    data-nav-child-id={child.id}
+                    data-nav-mobile-meta={mobileNavMeta(child)}
+                    href={resolveHref(child.href)}
+                  >
+                    {child.label}
+                  </a>
                 )
               )}
             </div>

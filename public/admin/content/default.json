@@ -41,7 +41,6 @@
         "href": "#supporting-tools",
         "enabled": true,
         "items": [
-          { "id": "life-graph", "label": "กราฟชีวิต", "href": "horoscope/life-graph/", "enabled": true },
           { "id": "tarot-section", "label": "ไพ่ยิปซี", "section": true, "enabled": true },
           { "id": "tarot-meanings", "label": "ความหมายไพ่ยิปซี 78 ใบ", "href": "tarot/meanings/", "enabled": true },
           { "id": "tarot-daily", "label": "ไพ่ยิปซีรายวัน", "href": "tarot/daily/", "enabled": true },
@@ -50,6 +49,8 @@
           { "id": "tarot-money", "label": "ไพ่ยิปซีการเงิน", "href": "tarot/money/", "enabled": true },
           { "id": "tarot-career", "label": "ไพ่ยิปซีการงาน อาชีพ", "href": "tarot/career/", "enabled": true },
           { "id": "tarot-luck", "label": "ไพ่ยิปซีโชคลาภ เสี่ยงโชค", "href": "tarot/luck/", "enabled": true },
+          { "id": "other-tools-section", "label": "อื่น ๆ", "section": true, "enabled": true },
+          { "id": "life-graph", "label": "กราฟชีวิต", "href": "horoscope/life-graph/", "enabled": true },
           { "id": "palmistry", "label": "อ่านลายมือ", "href": "horoscope/palmistry/", "enabled": true },
           { "id": "thai-astrology", "label": "โหราศาสตร์ไทย", "href": "horoscope/thai-astrology/", "enabled": true },
           { "id": "seamsi", "label": "เสี่ยงเซียมซี", "href": "horoscope/seamsi/", "enabled": true }
