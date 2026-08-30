@@ -1,6 +1,6 @@
 @import url("./assets/css/tokens.css?v=20260607-03");
 @import url("./assets/css/base.css?v=20260830-02");
-@import url("./assets/css/header.css?v=20260830-02");
+@import url("./assets/css/header.css?v=20260830-03");
 @import url("./assets/css/home.css?v=20260830-04");
 @import url("./assets/css/feature-template.css?v=20260610-01");
 @import url("./assets/css/tarot.css?v=20260609-05");
@@ -13,7 +13,7 @@
 @import url("./assets/css/temple-map.css?v=20260719-02");
 @import url("./assets/css/responsive.css?v=20260830-01");
 @import url("./assets/css/thai-headlines.css?v=20260607-03");
-@import url("./assets/css/admin.css?v=20260830-01");
+@import url("./assets/css/admin.css?v=20260830-02");
 
 body select:not([multiple]),
 .admin-page select:not([multiple]) {

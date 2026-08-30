@@ -718,8 +718,18 @@ function renderPdpaBanner(content) {
   const pdpa = content.site.pdpa;
   const banner = document.createElement("aside");
   banner.className = "pdpa-consent";
-  banner.innerHTML = `<p>${escapeHtml(pdpa.bannerText || "")}</p>
-    <div>
+  banner.setAttribute("aria-label", pdpa.titleText || "การใช้คุกกี้และข้อมูลการใช้งาน");
+  const policyLink = pdpa.policyHref
+    ? `<a class="pdpa-consent__link" href="${escapeHtml(resolveHref(pdpa.policyHref))}">${escapeHtml(
+        pdpa.policyLabel || "นโยบายความเป็นส่วนตัว",
+      )}</a>`
+    : "";
+  banner.innerHTML = `<div class="pdpa-consent__copy">
+      <strong class="pdpa-consent__title">${escapeHtml(pdpa.titleText || "การใช้คุกกี้และข้อมูลการใช้งาน")}</strong>
+      <p>${escapeHtml(pdpa.bannerText || "")}</p>
+      ${policyLink}
+    </div>
+    <div class="pdpa-consent__actions">
       <button type="button" data-pdpa-accept>${escapeHtml(pdpa.acceptLabel || "ยอมรับ")}</button>
       <button type="button" data-pdpa-decline>${escapeHtml(pdpa.declineLabel || "ไม่ใช้งาน")}</button>
     </div>`;

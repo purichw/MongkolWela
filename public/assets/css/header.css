@@ -204,6 +204,7 @@
   position: absolute;
   top: 44px;
   left: 50%;
+  z-index: 2;
   display: grid;
   grid-template-columns: repeat(2, max-content);
   gap: 6px;
@@ -219,6 +220,18 @@
   pointer-events: none;
   transform: translate(-50%, 8px);
   transition: opacity 160ms ease, transform 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav-item--has-panel::after {
+    position: absolute;
+    top: 100%;
+    left: -18px;
+    right: -18px;
+    z-index: 1;
+    height: 18px;
+    content: "";
+  }
 }
 
 .nav-item:hover .mega-panel,
