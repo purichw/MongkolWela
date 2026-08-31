@@ -9,7 +9,7 @@ Source:
 - Implementation files: `src/components/TempleFilterChips.astro`
 - Implementation files: `src/components/TempleMapOverlay.astro`
 - Implementation files: `public/assets/css/temples.css`, `public/assets/css/temple-map.css`
-- Implementation files: `public/assets/js/temple-directory.js`, `public/assets/js/temple-map.js`
+- Implementation files: `src/scripts/temple-directory.js`, `src/scripts/temple-map.js`
 
 ## Purpose
 

@@ -1,6 +1,6 @@
-import popularTemples from "./popular-temples.json";
-import muTemples from "./mu-temples.json";
-import sacredTemples from "./sacred-temples.json";
+import popularTemples from "./popular-temples.json" with { type: "json" };
+import muTemples from "./mu-temples.json" with { type: "json" };
+import sacredTemples from "./sacred-temples.json" with { type: "json" };
 import { applyTempleImageOverrides, templePlaceholderImage } from "./temple-images.js";
 import { getTempleDetailUrl } from "./temple-slugs.js";
 

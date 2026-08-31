@@ -2,7 +2,6 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 const mainContent = "<main id=\"calendar-top\">\n      <section class=\"thai-calendar-hero\">\n        <div>\n          <nav class=\"calendar-breadcrumb\" aria-label=\"breadcrumb\">\n            <a href=\"../\">หน้าแรก</a>\n            <span>/</span>\n            <span>ปฏิทินไทย</span>\n          </nav>\n          <p class=\"section-kicker\">ปฏิทินมงคล</p>\n          <h1>เปิดปฏิทินไทย แล้วอ่านวันให้ลึกกว่าเลขวันที่</h1>\n          <p>\n            เลือกปี พ.ศ. 2300-2700 เพื่อดูจันทรคติไทย วันพระ วันหยุด เทศกาล\n            และดิถีที่ควรใช้หรือควรระวัง ก่อนลงรายละเอียดรายวัน\n          </p>\n        </div>\n        <div class=\"calendar-hero-card\" aria-label=\"ตัวอย่างปฏิทิน\">\n          <h2>มิถุนายน 2569</h2>\n          <div class=\"mini-calendar\">\n            <span>1</span><span>2</span><span>3</span><span>4</span><span class=\"is-selected\">5</span><span>6</span><span>7</span>\n            <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>\n            <span>15</span><span>16</span><span class=\"is-holy\">17</span><span>18</span><span>19</span><span>20</span><span>21</span>\n          </div>\n        </div>\n      </section>\n\n      <div class=\"calendar-control-shell\">\n        <div class=\"calendar-controls\">\n          <form data-calendar-form>\n            <label for=\"calendar-year\">เลือกปี พ.ศ.</label>\n            <select id=\"calendar-year\" name=\"year\" data-calendar-year></select>\n          </form>\n          <nav class=\"calendar-month-nav\" data-calendar-months aria-label=\"เลือกเดือน\"></nav>\n          <a class=\"primary-action\" data-calendar-today href=\"./day/\">วันนี้</a>\n        </div>\n      </div>\n\n      <section class=\"calendar-shell\" aria-live=\"polite\">\n        <div class=\"calendar-summary\" data-calendar-summary></div>\n        <div class=\"calendar-year-grid\" data-calendar-grid></div>\n      </section>\n    </main>";
-const extraScripts = ["/assets/js/thai-calendar-year.js"];
 ---
 
 <BaseLayout
@@ -12,7 +11,10 @@ const extraScripts = ["/assets/js/thai-calendar-year.js"];
   locale="th"
   page="calendar"
   bodyClass="thai-calendar-page"
-  extraScripts={extraScripts}
 >
   <Fragment set:html={mainContent} />
+
+  <script>
+    import "../../scripts/thai-calendar-year.js";
+  </script>
 </BaseLayout>

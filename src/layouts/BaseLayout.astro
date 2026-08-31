@@ -27,7 +27,6 @@ interface Props {
   page?: string;
   bodyClass?: string;
   extraStyles?: string[];
-  extraScripts?: string[];
   canonicalPath?: string;
   image?: string;
   imageAlt?: string;
@@ -49,7 +48,6 @@ const {
   page = "home",
   bodyClass = "",
   extraStyles = [],
-  extraScripts = [],
   canonicalPath,
   image = SEO_DEFAULT_IMAGE,
   imageAlt = SEO_SITE_NAME,
@@ -145,9 +143,10 @@ const jsonLd = toJsonLdGraph([
     <slot />
     <Footer locale={locale} page={page} />
 
-    <script is:inline type="module" src={versionedAsset("/script.js")}></script>
-    {extraScripts.map((src: string) => <script is:inline type="module" src={versionedAsset(src)}></script>)}
-    <script is:inline type="module" src={versionedAsset("/assets/js/cms-runtime.js")}></script>
+    <script>
+      import "../scripts/site.js";
+      import "../scripts/cms-runtime.js";
+    </script>
     <script is:inline>
       (() => {
         const host = window.location.hostname;

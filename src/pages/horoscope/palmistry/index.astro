@@ -4,7 +4,6 @@ import FeaturePageHero from "../../../components/FeaturePageHero.astro";
 import PalmistryHandDiagram from "../../../components/PalmistryHandDiagram.astro";
 import PalmLineWidget from "../../../components/PalmLineWidget.astro";
 
-const extraScripts = ["/assets/js/palmistry.js"];
 const extraStyles = ["/assets/css/palmistry.css?feature=20260612-09"];
 
 const breadcrumbs = [
@@ -22,7 +21,6 @@ const breadcrumbs = [
   page="palmistry"
   bodyClass="palmistry-page feature-template-page"
   extraStyles={extraStyles}
-  extraScripts={extraScripts}
   canonicalPath="/horoscope/palmistry/"
   breadcrumbs={breadcrumbs}
 >
@@ -146,4 +144,8 @@ const breadcrumbs = [
       </details>
     </section>
   </main>
+
+  <script>
+    import "../../../scripts/palmistry.js";
+  </script>
 </BaseLayout>

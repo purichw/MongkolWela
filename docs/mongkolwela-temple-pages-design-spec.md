@@ -279,7 +279,7 @@ Export transformations:
 - Rewrote in-scope links to relative local paths.
 - Redirected out-of-scope links to production.
 - Downloaded all 196 external rendered images into `assets/offline-images/`.
-- Embedded CMS content into `assets/js/cms-runtime.js`.
+- Embedded CMS runtime source into `src/scripts/cms-runtime.js`.
 - Embedded Thailand temple data into `assets/data/temples-thailand.offline.js`.
 - Added `script.offline.js` as a classic-script bundle because Chromium blocks `type="module"` under `file://`.
 - Converted page-level module scripts to classic scripts for file-based use.

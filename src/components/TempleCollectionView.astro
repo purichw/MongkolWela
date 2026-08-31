@@ -78,7 +78,6 @@ const {
   batchSize?: number;
 };
 
-const extraScripts = ["/assets/js/temple-directory.js", "/assets/js/temple-map.js"];
 const collectionTabs = [
   { key: "popular", label: "๙ วัด", href: "/temples/popular/" },
   { key: "sacred", label: "ศักดิ์สิทธิ์", href: "/temples/sacred/" },
@@ -120,7 +119,6 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
   locale="th"
   page={pageKey}
   bodyClass={`temples-hub-page temples-collection-v2-page temples-collection-v2-page--${collection}`}
-  extraScripts={extraScripts}
   canonicalPath={canonicalPath}
   image="/assets/images/hero-temple-red.jpg"
   imageAlt={meta.imageAlt}
@@ -357,4 +355,9 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
       <div class="popular-temple-sentinel" data-popular-temple-sentinel aria-hidden="true"></div>
     </section>
   </main>
+
+  <script>
+    import "../scripts/temple-directory.js";
+    import "../scripts/temple-map.js";
+  </script>
 </BaseLayout>

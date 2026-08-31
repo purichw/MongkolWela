@@ -1,4 +1,4 @@
-import { getCardArtClass, tarotCards } from "./tarot-data.js?v=20260609-1";
+import { getCardArtClass, tarotCards } from "./tarot-data.js";
 
 const selectors = {
   form: "[data-tarot-spread-form]",

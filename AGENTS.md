@@ -183,9 +183,9 @@ Important components:
 
 Important scripts:
 
-- `public/assets/js/temple-directory.js`
-- `public/assets/js/temple-map.js`
-- `public/assets/js/temple-detail.js`
+- `src/scripts/temple-directory.js`
+- `src/scripts/temple-map.js`
+- `src/scripts/temple-detail.js`
 
 Important CSS:
 
@@ -211,8 +211,8 @@ Palmistry:
 - `src/pages/horoscope/palmistry/index.astro`
 - `src/components/PalmistryHandDiagram.astro`
 - `src/components/PalmLineWidget.astro`
-- `public/assets/js/palmistry.js`
-- `public/assets/js/palmistry-data.js`
+- `src/scripts/palmistry.js`
+- `src/scripts/palmistry-data.js`
 - `public/assets/css/palmistry.css`
 
 Tarot:
@@ -220,9 +220,9 @@ Tarot:
 - `src/data/tarot-topic-pages.js`
 - `src/data/tarot-meanings.js`
 - `src/data/tarot-major-arcana-details.js`
-- `public/assets/js/tarot-data.js`
-- `public/assets/js/tarot-spread.js`
-- `public/assets/js/tarot-spread-result.js`
+- `src/scripts/tarot-data.js`
+- `src/scripts/tarot-spread.js`
+- `src/scripts/tarot-spread-result.js`
 - `public/assets/css/tarot.css`
 
 ## Verification Expectations
@@ -319,7 +319,7 @@ The travel-data confidence indicator on temple detail pages is implemented by:
 
 - `src/components/TempleDetail.astro`
 - `public/assets/css/temple-map.css`
-- `public/assets/js/temple-detail.js`
+- `src/scripts/temple-detail.js`
 
 Preserve these interaction rules:
 

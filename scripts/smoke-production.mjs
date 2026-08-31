@@ -13,6 +13,7 @@ const CMS_EDITABLE_CONTRACT_VERSION = 2;
 const statusRoutes = unique([
   "/",
   "/api/admin/content",
+  "/api/temple-planner/data",
   "/temples/",
   "/temples/popular/",
   "/temples/mu/",
@@ -47,6 +48,10 @@ const cacheChecks = [
     path: "/assets/data/temples-thailand-index.json",
     expected: "public, max-age=3600, stale-while-revalidate=86400",
   },
+  {
+    path: "/api/temple-planner/data",
+    expected: "no-store",
+  },
 ];
 
 const headerChecks = [
@@ -75,6 +80,11 @@ const headerChecks = [
     header: "x-robots-tag",
     expected: "noindex, nofollow, noarchive, nosnippet",
   },
+  {
+    path: "/api/temple-planner/data",
+    header: "x-robots-tag",
+    expected: "noindex, nofollow, noarchive, nosnippet",
+  },
 ];
 
 await main();
@@ -87,6 +97,7 @@ async function main() {
   await Promise.all(cacheChecks.map(checkCacheHeader));
   await Promise.all(headerChecks.map(checkResponseHeader));
   await checkCmsContent();
+  await checkPlannerApi();
 
   if (failures.length) {
     console.error(`\nProduction smoke failed (${failures.length}):`);
@@ -190,6 +201,66 @@ async function checkCacheHeader({ path, expected }) {
   const actual = normalizeHeader(response.headers.get("cache-control"));
   if (actual !== normalizeHeader(expected)) {
     failures.push(`${path}: Cache-Control expected "${expected}", got "${actual || "(missing)"}"`);
+  }
+}
+
+async function checkPlannerApi() {
+  const path = "/api/temple-planner/plan";
+  let response;
+  try {
+    response = await fetch(new URL(path, siteUrl), {
+      method: "POST",
+      redirect: "manual",
+      headers: {
+        accept: "application/json,text/plain,*/*",
+        "accept-language": "th-TH,th;q=0.9,en-US;q=0.6,en;q=0.5",
+        "content-type": "application/json",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "mongkolwela-production-smoke/1.0",
+      },
+      body: JSON.stringify({
+        mode: "auto",
+        criteria: {
+          count: 3,
+          budget: "300",
+          startTime: "09:00",
+          provinces: ["กรุงเทพมหานคร"],
+          purposes: ["การงาน"],
+        },
+      }),
+    });
+  } catch (error) {
+    failures.push(`${path}: request failed (${error.message})`);
+    return;
+  }
+
+  if (!response.ok) {
+    failures.push(`${path}: expected 2xx status, got ${response.status}`);
+    return;
+  }
+
+  const cacheControl = normalizeHeader(response.headers.get("cache-control"));
+  if (cacheControl !== "no-store") {
+    failures.push(`${path}: Cache-Control expected "no-store", got "${cacheControl || "(missing)"}"`);
+  }
+
+  const robots = normalizeHeader(response.headers.get("x-robots-tag"));
+  if (robots !== "noindex, nofollow, noarchive, nosnippet") {
+    failures.push(`${path}: x-robots-tag expected "noindex, nofollow, noarchive, nosnippet", got "${robots || "(missing)"}"`);
+  }
+
+  let payload;
+  try {
+    payload = await response.json();
+  } catch (error) {
+    failures.push(`${path}: JSON parse failed (${error.message})`);
+    return;
+  }
+
+  if (payload.ok !== true || !Array.isArray(payload.planIds) || payload.planIds.length < 1 || !payload.details?.stops?.length) {
+    failures.push(`${path}: missing planner result payload`);
   }
 }
 

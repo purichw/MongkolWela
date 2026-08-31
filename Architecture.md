@@ -15,13 +15,13 @@ The app is built as static Astro pages. Client-side behavior is small, route-spe
 ## Top-Level Structure
 
 - `src/pages/`: Astro routes.
-- `src/layouts/BaseLayout.astro`: shared document shell, header/footer, global CSS, cache-busted scripts.
+- `src/layouts/BaseLayout.astro`: shared document shell, header/footer, global CSS, and bundled global scripts.
 - `src/components/`: shared Astro components.
 - `src/data/`: JSON datasets and small data helpers.
 - `src/config/`: site/navigation/page configuration.
 - `public/styles.css`: CSS import entrypoint.
 - `public/assets/css/`: feature CSS files.
-- `public/assets/js/`: browser-side feature modules.
+- `src/scripts/`: browser-side source modules bundled and minified by Astro/Vite.
 - `public/assets/images/`: local images and generated placeholders.
 - `outputs/`: local generated artifacts. This directory is intentionally untracked unless a future task says otherwise.
 
@@ -66,10 +66,9 @@ All normal pages use `src/layouts/BaseLayout.astro`.
 
 Important behavior:
 
-- `assetVersion` is used to cache-bust `/styles.css`, `/script.js`, and page-specific scripts.
-- When changing CSS or public JS, bump `assetVersion`.
+- `assetVersion` is used to cache-bust `/styles.css` and additional public CSS.
+- Browser JavaScript is imported from `src/scripts/` by the shared layout, page, or component that needs it, then emitted as hashed `/_astro/` assets.
 - `public/styles.css` also imports CSS files with explicit version query strings. Bump those when cache correctness matters.
-- `extraScripts` is passed by pages that need route-specific JS.
 - A fixed scroll progress indicator is rendered by `BaseLayout.astro`, styled in `base.css`, and updated by `scroll-progress.js`.
 - A global page loader is rendered by `LoadingScreen.astro`, styled in `base.css`, and controlled by `page-loader.js`.
   It shows a 3-second simulated intro once per browser session, then only reappears for slow loads or pending internal navigation.
@@ -104,7 +103,7 @@ Routes include:
 - `/tarot/meanings/`
 - `/tarot/meanings/[card]/`
 
-Feature JS lives under `public/assets/js/`, for example:
+Feature JS source lives under `src/scripts/`, for example:
 
 - `life-graph.js`
 - `seamsi.js`
@@ -131,8 +130,8 @@ Main components:
 
 Supporting assets:
 
-- `public/assets/js/palmistry.js`
-- `public/assets/js/palmistry-data.js`
+- `src/scripts/palmistry.js`
+- `src/scripts/palmistry-data.js`
 - `public/assets/css/palmistry.css`
 - `public/images/lines/`
 
@@ -325,7 +324,7 @@ Shared behavior:
 
 Client JS:
 
-- `public/assets/js/temple-directory.js`
+- `src/scripts/temple-directory.js`
 
 CSS:
 
@@ -339,7 +338,7 @@ Component:
 
 Client JS:
 
-- `public/assets/js/temple-map.js`
+- `src/scripts/temple-map.js`
 
 CSS:
 
@@ -368,7 +367,7 @@ Component:
 
 Client JS:
 
-- `public/assets/js/temple-detail.js`
+- `src/scripts/temple-detail.js`
 
 CSS:
 
@@ -416,7 +415,7 @@ Route:
 
 Client JS:
 
-- `public/assets/js/temple-directory.js`
+- `src/scripts/temple-directory.js`
 
 Runtime data:
 
@@ -445,6 +444,8 @@ Data source constraint:
 ## API And Admin Hardening
 
 Admin APIs under `/api/admin/` are intentionally no-store and noindex. Production sessions fail closed when no admin session secret or password is configured, unsafe admin mutations require a same-origin request when an `Origin` header is present, and JSON request bodies are size-limited before parsing. Public analytics POSTs are non-blocking for visitors, but obvious bot/cross-site/rate-limit traffic is ignored instead of being recorded.
+
+The temple planner keeps its interactive picker/map helpers in the browser, but its planner payload comes from `/api/temple-planner/data` instead of a static asset. Automatic route selection, manual route ordering, travel-time summary, and route warnings are calculated by `/api/temple-planner/plan`. These endpoints are public because visitors use them, but they are no-store/noindex and only return the data needed for the current request.
 
 ## Current Deployment Workflow
 

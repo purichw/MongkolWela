@@ -1,6 +1,7 @@
 {
   "name": "mongkolwela",
   "version": "1.0.0",
+  "private": true,
   "description": "Thai-first auspicious, horoscope, calendar, and spiritual knowledge website built with Astro.",
   "type": "module",
   "scripts": {
@@ -34,7 +35,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/purichw/hora-astro/issues"
   },

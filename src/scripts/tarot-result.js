@@ -1,4 +1,4 @@
-import { getCardArtClass, getTarotCardById } from "./tarot-data.js?v=20260609-1";
+import { getCardArtClass, getTarotCardById } from "./tarot-data.js";
 
 const t = {
   fallbackTitle: "ยังไม่มีไพ่สำหรับคำทำนาย",

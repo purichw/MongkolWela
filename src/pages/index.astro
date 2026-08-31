@@ -116,7 +116,6 @@ const supportingLinks = [
   { label: "อ่านลายมือ", href: "/horoscope/palmistry/" },
 ];
 
-const extraScripts = ["/assets/js/home-motion.js"];
 ---
 
 <BaseLayout
@@ -126,7 +125,6 @@ const extraScripts = ["/assets/js/home-motion.js"];
   locale="th"
   page="home"
   bodyClass="home-v2-page"
-  extraScripts={extraScripts}
   canonicalPath="/"
   image="/assets/images/hero-temple-red.jpg"
   imageAlt="มงคลเวลา วัด สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระ"
@@ -325,4 +323,8 @@ const extraScripts = ["/assets/js/home-motion.js"];
       ))}
     </section>
   </main>
+
+  <script>
+    import "../scripts/home-motion.js";
+  </script>
 </BaseLayout>

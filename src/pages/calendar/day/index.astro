@@ -2,7 +2,6 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 
 const mainContent = "<main data-calendar-day-detail></main>";
-const extraScripts = ["/assets/js/thai-calendar-day.js"];
 ---
 
 <BaseLayout
@@ -12,7 +11,10 @@ const extraScripts = ["/assets/js/thai-calendar-day.js"];
   locale="th"
   page="calendarDay"
   bodyClass="calendar-day-page"
-  extraScripts={extraScripts}
 >
   <Fragment set:html={mainContent} />
+
+  <script>
+    import "../../../scripts/thai-calendar-day.js";
+  </script>
 </BaseLayout>

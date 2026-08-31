@@ -74,6 +74,15 @@
       ]
     },
     {
+      "source": "/_astro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
       "source": "/api/admin/(.*)",
       "headers": [
         {
@@ -87,16 +96,20 @@
       ]
     },
     {
-      "source": "/styles.css",
+      "source": "/api/temple-planner/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
+          "value": "no-store"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive, nosnippet"
         }
       ]
     },
     {
-      "source": "/script.js",
+      "source": "/styles.css",
       "headers": [
         {
           "key": "Cache-Control",

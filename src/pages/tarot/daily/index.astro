@@ -2,7 +2,6 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import FeaturePageHero from "../../../components/FeaturePageHero.astro";
 
-const extraScripts = ["/assets/js/tarot-daily.js"];
 const breadcrumbs = [
   { label: "หน้าแรก", href: "/" },
   { label: "ไพ่ยิปซีรายวัน" },
@@ -20,7 +19,6 @@ const seoBreadcrumbs = [
   locale="th"
   page="tarotDaily"
   bodyClass="tarot-page"
-  extraScripts={extraScripts}
   canonicalPath="/tarot/daily/"
   breadcrumbs={seoBreadcrumbs}
 >
@@ -86,4 +84,8 @@ const seoBreadcrumbs = [
       </p>
     </section>
   </main>
+
+  <script>
+    import "../../../scripts/tarot-daily.js";
+  </script>
 </BaseLayout>

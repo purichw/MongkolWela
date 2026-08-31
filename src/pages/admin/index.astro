@@ -76,6 +76,8 @@ const config = siteConfig.th;
         </main>
       </div>
     </div>
-    <script is:inline type="module" src={`/assets/js/admin-portal.js?v=${assetVersion}`}></script>
+    <script>
+      import "../../scripts/admin-portal.js";
+    </script>
   </body>
 </html>

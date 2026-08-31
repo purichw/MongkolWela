@@ -4,7 +4,6 @@ import TempleSearchHero from "../../../components/TempleSearchHero.astro";
 import templePageBanners from "../../../data/temple-page-banners.json";
 import { absoluteUrl } from "../../../lib/seo.js";
 
-const extraScripts = ["/assets/js/temple-directory.js"];
 const pageDescription =
   "ค้นหารายการวัดทั่วประเทศไทยจากระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ พร้อมตัวกรองชื่อวัด ประเภทวัด นิกาย ภาค จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา";
 const datasetJsonLd = {
@@ -40,7 +39,6 @@ const datasetJsonLd = {
   locale="th"
   page="templesThailand"
   bodyClass="temple-directory-page"
-  extraScripts={extraScripts}
   canonicalPath="/temples/thailand/"
   image="/assets/images/hero-temple-red.jpg"
   imageAlt="ค้นหาวัดทั่วประเทศไทยจากทะเบียนวัด"
@@ -157,4 +155,8 @@ const datasetJsonLd = {
       <div class="temple-pagination" data-temple-pagination></div>
     </section>
   </main>
+
+  <script>
+    import "../../../scripts/temple-directory.js";
+  </script>
 </BaseLayout>

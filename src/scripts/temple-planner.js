@@ -1,6 +1,7 @@
 const root = document.querySelector("[data-temple-planner]");
 const payloadNode = document.getElementById("templePlannerData");
 const PLANNER_PICKER_BATCH_SIZE = 12;
+const PLANNER_PLAN_API = "/api/temple-planner/plan";
 
 if (root) {
   root.setAttribute("aria-busy", "true");
@@ -51,6 +52,7 @@ function initializeTemplePlanner(planner, payload) {
     activeProvinces: new Set(),
     activePurposes: new Set(),
     manualSelectionOrder: false,
+    planDetails: null,
     pickerReady: true,
     hasPlannerAction: false,
     nearbyMode: false,
@@ -85,7 +87,7 @@ function initializeTemplePlanner(planner, payload) {
   updateTargetCount(state, elements);
   renderPicker(state, elements);
   if (state.plan.length) {
-    renderPlan(state, elements, { scroll: false });
+    refreshPlanFromServer(state, elements, { scroll: false, manualSelectionOrder: true, quiet: true });
   } else {
     updateTripSource(state, elements);
     updateCriteriaNotice(state, elements);
@@ -444,6 +446,7 @@ function bindControls(state, elements) {
   elements.clearSelection?.addEventListener("click", () => {
     state.selected = [];
     state.plan = [];
+    state.planDetails = null;
     renderSelected(state, elements);
     renderPicker(state, elements);
     refreshSelectionMap(state, elements);
@@ -814,6 +817,7 @@ function synchronizePlanWithSelection(state, elements) {
 
   state.plan = planItems;
   state.selected = state.plan.map((item) => item.id);
+  state.planDetails = null;
 
   if (!state.plan.length) {
     elements.result.hidden = true;
@@ -833,6 +837,7 @@ function applyPinnedStart(state, elements) {
   if (previousStartId && previousStartId !== nextStartId) {
     state.selected = state.selected.filter((id) => id !== previousStartId);
     state.plan = state.plan.filter((item) => item.id !== previousStartId);
+    state.planDetails = null;
   }
 
   state.pinnedStartId = nextStartId;
@@ -842,6 +847,7 @@ function applyPinnedStart(state, elements) {
   state.selected = [pinnedStart.id, ...state.selected.filter((id) => id !== pinnedStart.id)].slice(0, getTargetCount(elements));
   if (state.plan.length) {
     state.plan = [pinnedStart, ...state.plan.filter((item) => item.id !== pinnedStart.id)];
+    state.planDetails = null;
   }
 }
 
@@ -1387,6 +1393,7 @@ function showNoResultsDialog(state, elements, message) {
 function clearTrip(state, elements) {
   state.selected = [];
   state.plan = [];
+  state.planDetails = null;
   state.tripCriteria = null;
   state.manualSelectionOrder = false;
   state.pickerContext = createPickerContext("browse", { criteria: getDraftCriteria(state, elements), mode: "browse" });
@@ -1526,53 +1533,21 @@ function getTargetCount(elements) {
   return Number(elements.countInputs.find((input) => input.checked)?.value || 9);
 }
 
-function buildAutomaticPlan(state, elements) {
+async function buildAutomaticPlan(state, elements) {
   const criteria = getDraftCriteria(state, elements);
   state.manualSelectionOrder = false;
   state.pickerReady = false;
+  state.planDetails = null;
   elements.pickSection.hidden = true;
-  const target = getTargetCount(elements);
-  const candidates = getAutomaticCandidates(state, elements);
-  const pinnedStart = getPinnedStartItem(state, elements);
   state.selected = [];
   state.plan = [];
   elements.result.hidden = true;
   renderSelected(state, elements);
-  const selectedIds = new Set();
-  const anchor = getStartPoint(state, elements);
-  const chosen = [];
-
-  if (!candidates.length && !pinnedStart) {
-    showNoResultsDialog(state, elements, "ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ที่ตรงกับภาค จังหวัด และวัตถุประสงค์ที่เลือก");
-    persistState(state, elements);
-    return;
-  }
-
-  if (pinnedStart) {
-    chosen.push(pinnedStart);
-    selectedIds.add(pinnedStart.id);
-  } else if (!chosen.length) {
-    chosen.push(pickFirstCandidate(candidates, anchor, getPrimaryPurpose(state)));
-    selectedIds.add(chosen[0].id);
-  }
-
-  while (chosen.length < target) {
-    const current = chosen.at(-1) || anchor;
-    const next = candidates
-      .filter((item) => !selectedIds.has(item.id))
-      .map((item) => ({ item, score: automaticCandidateScore(current, item, getPrimaryPurpose(state)) }))
-      .sort((left, right) => left.score - right.score)[0]?.item;
-    if (!next) break;
-    chosen.push(next);
-    selectedIds.add(next.id);
-  }
-
-  state.selected = chosen.map((item) => item.id);
-  state.plan = optimizeOrder(chosen, anchor);
-  state.selected = state.plan.map((item) => item.id);
-  state.tripCriteria = { ...criteria, source: "auto" };
-  renderSelected(state, elements);
-  renderPlan(state, elements);
+  await runPlannerPlanRequest(state, elements, {
+    mode: "auto",
+    criteria,
+    emptyMessage: "ไม่พบวัดหรือสถานที่ศักดิ์สิทธิ์ที่ตรงกับภาค จังหวัด และวัตถุประสงค์ที่เลือก",
+  });
 }
 
 function showManualEditMode(state, elements, options = {}) {
@@ -1599,20 +1574,106 @@ function showManualEditMode(state, elements, options = {}) {
   persistState(state, elements);
 }
 
-function buildSelectedPlan(state, elements) {
+async function buildSelectedPlan(state, elements) {
   const criteria = state.pickerContext?.criteria || getDraftCriteria(state, elements);
   enforcePinnedStartByCriteria(state, elements, criteria);
   if (!state.selected.length) {
-    buildAutomaticPlan(state, elements);
+    await buildAutomaticPlan(state, elements);
     return;
   }
-  const anchor = getStartPointFromCriteria(state, criteria);
-  const items = state.selected.map((id) => state.itemById.get(id)).filter(Boolean);
-  state.plan = state.manualSelectionOrder ? items : optimizeOrder(items, anchor);
-  state.selected = state.plan.map((item) => item.id);
-  state.tripCriteria = { ...criteria, source: "manual" };
+  await runPlannerPlanRequest(state, elements, {
+    mode: "manual",
+    criteria,
+    selectedIds: state.selected,
+    manualSelectionOrder: state.manualSelectionOrder,
+    emptyMessage: "ไม่สามารถจัดลำดับจากสถานที่ที่เลือกได้",
+  });
+}
+
+async function refreshPlanFromServer(state, elements, options = {}) {
+  if (!state.plan.length && !state.selected.length) return;
+  const criteria = state.tripCriteria || getDraftCriteria(state, elements);
+  await runPlannerPlanRequest(state, elements, {
+    mode: "manual",
+    criteria,
+    selectedIds: state.plan.length ? state.plan.map((item) => item.id) : state.selected,
+    manualSelectionOrder: options.manualSelectionOrder !== false,
+    emptyMessage: "ไม่สามารถคำนวณรายละเอียดแผนนี้ได้",
+    scroll: options.scroll,
+    quiet: options.quiet,
+  });
+}
+
+async function runPlannerPlanRequest(state, elements, options) {
+  const previousStatus = elements.locationStatus?.textContent || "";
+  setPlannerPlanBusy(elements, true);
+  if (!options.quiet && elements.locationStatus) {
+    elements.locationStatus.textContent = options.mode === "manual" ? "กำลังจัดลำดับและคำนวณแผน..." : "กำลังจัดแผนจากเงื่อนไขที่เลือก...";
+  }
+
+  try {
+    const payload = await requestPlannerPlan({
+      mode: options.mode,
+      criteria: options.criteria,
+      selectedIds: options.selectedIds || [],
+      manualSelectionOrder: Boolean(options.manualSelectionOrder),
+    });
+    applyPlannerPlanResult(state, elements, payload, { scroll: options.scroll, quiet: options.quiet });
+  } catch (error) {
+    console.warn("คำนวณแผนไหว้พระไม่สำเร็จ", error);
+    state.planDetails = null;
+    if (elements.locationStatus) elements.locationStatus.textContent = previousStatus || "คำนวณแผนไม่สำเร็จ กรุณาลองใหม่";
+    showNoResultsDialog(state, elements, error.message || options.emptyMessage || "ไม่สามารถคำนวณแผนนี้ได้");
+    persistState(state, elements);
+  } finally {
+    setPlannerPlanBusy(elements, false);
+  }
+}
+
+async function requestPlannerPlan(body) {
+  const response = await fetch(PLANNER_PLAN_API, {
+    method: "POST",
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+    },
+    body: JSON.stringify(body),
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok || payload.ok !== true) {
+    throw new Error(payload.error || `Planner API failed: ${response.status}`);
+  }
+  return payload;
+}
+
+function applyPlannerPlanResult(state, elements, payload, options = {}) {
+  const plan = (payload.planIds || []).map((id) => state.itemById.get(id)).filter(Boolean);
+  if (!plan.length) throw new Error("ไม่พบสถานที่ในแผนที่คำนวณได้");
+
+  state.plan = plan;
+  state.selected = plan.map((item) => item.id);
+  state.tripCriteria = payload.criteria || { ...getDraftCriteria(state, elements), source: payload.mode || "manual" };
+  state.manualSelectionOrder = payload.mode === "manual";
+  state.planDetails = payload.details || null;
+  state.pickerReady = true;
+
   renderSelected(state, elements);
-  renderPlan(state, elements);
+  renderPlan(state, elements, options);
+  if (!options.quiet && elements.locationStatus) {
+    const count = state.plan.length.toLocaleString("th-TH");
+    elements.locationStatus.textContent =
+      payload.mode === "manual" ? `จัดลำดับ ${count} สถานที่แล้ว` : `จัดแผน ${count} สถานที่จากเงื่อนไขแล้ว`;
+  }
+}
+
+function setPlannerPlanBusy(elements, isBusy) {
+  [elements.autoButton, elements.buildButton, elements.criteriaRebuild].forEach((button) => {
+    if (!button) return;
+    button.disabled = isBusy;
+    button.setAttribute("aria-busy", String(isBusy));
+  });
 }
 
 function enforcePinnedStartByCriteria(state, elements, criteria) {
@@ -1621,58 +1682,13 @@ function enforcePinnedStartByCriteria(state, elements, criteria) {
   state.selected = [pinnedStart.id, ...state.selected.filter((id) => id !== pinnedStart.id)].slice(0, getTargetCount(elements));
 }
 
-function getAutomaticCandidates(state, elements) {
-  const criteria = getDraftCriteria(state, elements);
-  return getItemsByCriteria(state, criteria);
-}
-
-function pickFirstCandidate(candidates, anchor, purpose) {
-  if (anchor) {
-    return [...candidates].sort((left, right) => haversineKm(anchor, left) - haversineKm(anchor, right))[0];
-  }
-  return [...candidates].sort((left, right) => {
-    const purposeDifference = Number(right.blessings.includes(purpose)) - Number(left.blessings.includes(purpose));
-    return purposeDifference || left.globalRank - right.globalRank || right.globalMentions - left.globalMentions;
-  })[0];
-}
-
-function automaticCandidateScore(current, item, purpose) {
-  const leg = current ? estimateLeg(current, item) : { midpointMinutes: 0, directKm: 0 };
-  const distancePenalty = leg.midpointMinutes > 180 ? 10000 : leg.midpointMinutes > 90 ? 900 : leg.midpointMinutes;
-  const purposeBonus = purpose && item.blessings.includes(purpose) ? -45 : 0;
-  const rankPenalty = Math.min(item.globalRank, 200) * 0.45;
-  return distancePenalty + rankPenalty + purposeBonus + leg.directKm * 0.2;
-}
-
-function getPrimaryPurpose(state) {
-  return state.activePurposes.values().next().value || "";
-}
-
-function optimizeOrder(items, anchor) {
-  const remaining = [...items];
-  const ordered = [];
-  let current = anchor;
-
-  if (!current && remaining.length) {
-    remaining.sort((left, right) => left.globalRank - right.globalRank);
-    current = remaining.shift();
-    ordered.push(current);
-  }
-
-  while (remaining.length) {
-    const nextIndex = remaining
-      .map((item, index) => ({ index, distance: haversineKm(current, item) }))
-      .sort((left, right) => left.distance - right.distance)[0].index;
-    const [next] = remaining.splice(nextIndex, 1);
-    ordered.push(next);
-    current = next;
-  }
-  return ordered;
-}
-
 function renderPlan(state, elements, options = {}) {
   if (!state.plan.length) return;
-  const details = calculatePlan(state, elements);
+  const details = hydratePlanDetails(state);
+  if (!details) {
+    refreshPlanFromServer(state, elements, { scroll: options.scroll, manualSelectionOrder: true, quiet: true });
+    return;
+  }
   elements.result.hidden = false;
   updateTripSource(state, elements);
   updateCriteriaNotice(state, elements);
@@ -1689,38 +1705,17 @@ function renderPlan(state, elements, options = {}) {
   }
 }
 
-function calculatePlan(state, elements) {
-  const criteria = state.tripCriteria || getDraftCriteria(state, elements);
-  const startPoint = getStartPointFromCriteria(state, criteria);
-  const startMinutes = parseTime(criteria.startTime || "09:00");
-  const legs = [];
-  let cursor = startMinutes;
-  let previous = startPoint;
-  let totalTravel = 0;
-  let totalVisit = 0;
-
-  const stops = state.plan.map((item, index) => {
-    const before = previous && previous.id !== item.id ? estimateLeg(previous, item) : null;
-    if (before) {
-      cursor += before.midpointMinutes;
-      totalTravel += before.midpointMinutes;
-      legs.push({ from: previous, to: item, ...before });
-    }
-    const arrival = cursor;
-    const visitMinutes = Number(item.visitMinutes || 45);
-    cursor += visitMinutes;
-    totalVisit += visitMinutes;
-    const nextItem = state.plan[index + 1];
-    const nextLeg = nextItem ? estimateLeg(item, nextItem) : null;
-    previous = item;
-    return { item, arrival, departure: cursor, visitMinutes, before, nextLeg };
-  });
-
-  const totalMinutes = totalTravel + totalVisit;
-  const totalRoadKm = legs.reduce((sum, leg) => sum + leg.roadKm, 0);
-  const warnings = buildWarnings(legs, totalTravel, totalMinutes, Number(criteria.budget || 300), state.plan.length);
-
-  return { startMinutes, endMinutes: cursor, stops, legs, totalTravel, totalVisit, totalMinutes, totalRoadKm, warnings };
+function hydratePlanDetails(state) {
+  const details = state.planDetails;
+  if (!details || !Array.isArray(details.stops)) return null;
+  const planIds = state.plan.map((item) => item.id);
+  const detailIds = details.stops.map((stop) => stop.itemId);
+  if (planIds.join("|") !== detailIds.join("|")) return null;
+  const stops = details.stops
+    .map((stop) => ({ ...stop, item: state.itemById.get(stop.itemId) }))
+    .filter((stop) => stop.item);
+  if (stops.length !== state.plan.length) return null;
+  return { ...details, stops };
 }
 
 function renderSummary(details) {
@@ -1807,6 +1802,7 @@ function handleTimelineAction(event, state, elements) {
     if (nextIndex < 0 || nextIndex >= state.plan.length) return;
     [state.plan[index], state.plan[nextIndex]] = [state.plan[nextIndex], state.plan[index]];
     state.selected = state.plan.map((item) => item.id);
+    state.planDetails = null;
     renderSelected(state, elements);
     renderPlan(state, elements, { scroll: false });
     return;
@@ -1814,6 +1810,7 @@ function handleTimelineAction(event, state, elements) {
   if (event.target.closest("[data-planner-replace]")) {
     const [removed] = state.plan.splice(index, 1);
     state.selected = state.plan.map((item) => item.id);
+    state.planDetails = null;
     if (removed.id === elements.start?.value) {
       elements.start.value = "";
       state.pinnedStartId = "";
@@ -1861,21 +1858,10 @@ function bindTimelineDrag(state, elements) {
     const [moved] = state.plan.splice(from, 1);
     state.plan.splice(to, 0, moved);
     state.selected = state.plan.map((item) => item.id);
+    state.planDetails = null;
     renderSelected(state, elements);
     renderPlan(state, elements, { scroll: false });
   });
-}
-
-function buildWarnings(legs, totalTravel, totalMinutes, budget, stopCount) {
-  const warnings = [];
-  const longLegs = legs.filter((leg) => leg.midpointMinutes > 90);
-  const veryLongLegs = legs.filter((leg) => leg.midpointMinutes > 180);
-  if (veryLongLegs.length) warnings.push(`มี ${veryLongLegs.length.toLocaleString("th-TH")} ช่วงที่ใช้เวลาเกิน 3 ชั่วโมง เหมาะกับการแยกวันมากกว่า`);
-  else if (longLegs.length) warnings.push(`มี ${longLegs.length.toLocaleString("th-TH")} ช่วงที่ใช้เวลาเกิน 1 ชั่วโมง 30 นาที`);
-  if (totalTravel > 240) warnings.push("เวลาเดินทางรวมเกิน 4 ชั่วโมง ควรลดจำนวนสถานที่หรือจำกัดพื้นที่ให้แคบลง");
-  if (totalMinutes > budget) warnings.push(`แผนยาวกว่าเวลาที่เลือกประมาณ ${formatMinutes(totalMinutes - budget)}`);
-  if (stopCount < 3) warnings.push("จำนวนสถานที่น้อยกว่า 3 แห่ง ลองขยายพื้นที่หรือลดตัวกรอง");
-  return warnings;
 }
 
 function estimateLeg(from, to) {
@@ -1920,12 +1906,6 @@ function haversineKm(left, right) {
 function getStartPoint(state, elements) {
   if (state.currentLocation) return state.currentLocation;
   return getPinnedStartItem(state, elements);
-}
-
-function getStartPointFromCriteria(state, criteria) {
-  if (criteria?.currentLocation) return criteria.currentLocation;
-  if (criteria?.start) return state.itemById.get(criteria.start) || null;
-  return null;
 }
 
 function getPinnedStartItem(state, elements) {
@@ -2204,6 +2184,7 @@ function applyPlannerSearchParams(state, elements) {
       if (elements.originText) elements.originText.value = matchedStart.name;
       state.selected = [matchedStart.id, ...state.selected.filter((id) => id !== matchedStart.id)].slice(0, getTargetCount(elements));
       state.plan = [];
+      state.planDetails = null;
       state.tripCriteria = null;
     }
 

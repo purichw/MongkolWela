@@ -1,7 +1,5 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-
-const extraScripts = ["/assets/js/tarot-spread.js"];
 ---
 
 <BaseLayout
@@ -11,7 +9,6 @@ const extraScripts = ["/assets/js/tarot-spread.js"];
   locale="th"
   page="tarotMonthly"
   bodyClass="tarot-page"
-  extraScripts={extraScripts}
 >
   <main id="monthly-tarot">
     <section class="tarot-hero">
@@ -87,4 +84,8 @@ const extraScripts = ["/assets/js/tarot-spread.js"];
       </p>
     </section>
   </main>
+
+  <script>
+    import "../../../scripts/tarot-spread.js";
+  </script>
 </BaseLayout>

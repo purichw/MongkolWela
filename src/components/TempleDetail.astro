@@ -296,7 +296,6 @@ const templeJsonLd = createTempleJsonLd({
   locale="th"
   page="temples"
   bodyClass="temples-hub-page"
-  extraScripts={["/assets/js/temple-detail.js"]}
   canonicalPath={detailUrl}
   image={imageUrl}
   imageAlt={temple.imageAlt || `${temple.name} ${temple.province}`}
@@ -655,4 +654,8 @@ const templeJsonLd = createTempleJsonLd({
       </section>
     )}
   </main>
+
+  <script>
+    import "../scripts/temple-detail.js";
+  </script>
 </BaseLayout>

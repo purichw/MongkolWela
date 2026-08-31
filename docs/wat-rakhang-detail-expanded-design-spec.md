@@ -6,7 +6,7 @@ Source:
 - Runtime surface: `/temples/popular/001-วัดระฆังโฆสิตาราม-กรุงเทพมหานคร/`
 - Implementation files: `src/components/TempleDetail.astro`
 - Implementation files: `public/assets/css/temple-map.css`
-- Implementation files: `public/assets/js/temple-detail.js`
+- Implementation files: `src/scripts/temple-detail.js`
 
 ## Purpose
 

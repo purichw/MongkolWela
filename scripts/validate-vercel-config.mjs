@@ -68,14 +68,16 @@ function validateHeaders(headers) {
 
   requireCache(headers, "/assets/data/(.*)", "public, max-age=3600, stale-while-revalidate=86400");
   requireCache(headers, "/assets/(.*)", "public, max-age=31536000, immutable");
+  requireCache(headers, "/_astro/(.*)", "public, max-age=31536000, immutable");
+  requireCache(headers, "/api/temple-planner/(.*)", "no-store");
   requireCache(headers, "/styles.css", "public, max-age=31536000, immutable");
-  requireCache(headers, "/script.js", "public, max-age=31536000, immutable");
   requireCache(headers, "/site.webmanifest", "public, max-age=86400, stale-while-revalidate=604800");
   requireCache(headers, "/sitemap.xml", "public, max-age=3600, stale-while-revalidate=86400");
   requireCache(headers, "/robots.txt", "public, max-age=3600, stale-while-revalidate=86400");
   requireCache(headers, "/llms.txt", "public, max-age=3600, stale-while-revalidate=86400");
   requireHeader(getHeaderMap(headers, "/assets/data/(.*)"), "X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
   requireHeader(getHeaderMap(headers, "/api/admin/(.*)"), "X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
+  requireHeader(getHeaderMap(headers, "/api/temple-planner/(.*)"), "X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
   requireHeader(getHeaderMap(headers, "/llms.txt"), "X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
   requireHeader(getHeaderMap(headers, "/assets/data/(.*)"), "Access-Control-Allow-Origin", "https://mongkolwela.vercel.app");
   requireHeader(getHeaderMap(headers, "/assets/data/(.*)"), "Vary", "Origin");

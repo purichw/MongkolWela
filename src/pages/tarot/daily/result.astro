@@ -2,7 +2,6 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 
 const mainContent = "<main>\n      <section class=\"tarot-result-shell\" data-tarot-result>\n        <div class=\"tarot-result-copy\">\n          <p class=\"section-kicker\">Daily Tarot</p>\n          <h1>กำลังเปิดคำทำนาย</h1>\n          <p>โปรดรอสักครู่...</p>\n        </div>\n      </section>\n\n      <section class=\"tarot-related\">\n        <p class=\"section-kicker\">หลังอ่านคำทำนาย</p>\n        <h2>ใช้ไพ่เป็นแสงไฟเล็ก ๆ ไม่ใช่กรงขังใจ</h2>\n        <p>\n          หากไพ่เตือนเรื่องใด ให้รับไว้ด้วยความไม่ประมาท\n          หากไพ่ให้กำลังใจ ให้ใช้เป็นแรงตั้งต้นทำสิ่งดีในวันนี้\n        </p>\n      </section>\n    </main>";
-const extraScripts = ["/assets/js/tarot-result.js"];
 ---
 
 <BaseLayout
@@ -12,9 +11,12 @@ const extraScripts = ["/assets/js/tarot-result.js"];
   locale="th"
   page="tarotResult"
   bodyClass="tarot-page tarot-result-page"
-  extraScripts={extraScripts}
   canonicalPath="/tarot/daily/result/"
   robots="noindex, follow"
 >
   <Fragment set:html={mainContent} />
+
+  <script>
+    import "../../../scripts/tarot-result.js";
+  </script>
 </BaseLayout>

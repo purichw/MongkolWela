@@ -10,7 +10,6 @@ export function getStaticPaths() {
 }
 
 const { topic } = Astro.props;
-const extraScripts = ["/assets/js/tarot-spread.js"];
 ---
 
 <BaseLayout
@@ -20,7 +19,6 @@ const extraScripts = ["/assets/js/tarot-spread.js"];
   locale="th"
   page={topic.pageId}
   bodyClass="tarot-page"
-  extraScripts={extraScripts}
   canonicalPath={`/tarot/${topic.slug}/`}
   breadcrumbs={[
     { label: "หน้าแรก", href: "/" },
@@ -91,4 +89,8 @@ const extraScripts = ["/assets/js/tarot-spread.js"];
       <p>{topic.noteCopy}</p>
     </section>
   </main>
+
+  <script>
+    import "../../../scripts/tarot-spread.js";
+  </script>
 </BaseLayout>
