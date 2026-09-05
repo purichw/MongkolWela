@@ -43,14 +43,18 @@ export async function readDatabaseContent() {
   const supabase = supabaseClient();
   if (!supabase) return null;
 
-  const { data, error } = await supabase
+  const { data, error, status } = await supabase
     .from("cms_documents")
     .select("content")
     .eq("id", LIVE_DOCUMENT_ID)
     .eq("status", "published")
     .maybeSingle();
 
-  if (error) throw new Error("Published content read failed", { cause: error });
+  if (error) {
+    console.error("Published CMS database request failed", { status, code: error.code || null });
+    throw new Error("Published content read failed", { cause: error });
+  }
+  if (!data?.content) console.error("Published CMS document missing", { status, rowFound: Boolean(data) });
   return data?.content || null;
 }
 

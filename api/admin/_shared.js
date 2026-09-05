@@ -227,11 +227,22 @@ export async function readGithubContent() {
 }
 
 export async function readLiveContent() {
-  const read = hasReadableDatabase() ? readDatabaseContent
-    : githubContentConfig().token ? readGithubContent
-    : !process.env.VERCEL && !isProductionRuntime() ? readBundledLiveContent
-    : async () => { throw new Error("Live source is not configured"); };
-  return readPublishedContent({ read, normalize: normalizeCmsContent });
+  const source = hasReadableDatabase() ? "database"
+    : githubContentConfig().token ? "github"
+    : !process.env.VERCEL && !isProductionRuntime() ? "local" : "unconfigured";
+  const read = { database: readDatabaseContent, github: readGithubContent, local: readBundledLiveContent }[source]
+    || (async () => { throw new Error("Live source is not configured"); });
+  try {
+    return await readPublishedContent({ read, normalize: normalizeCmsContent });
+  } catch (error) {
+    console.error("Published CMS read failed", {
+      source,
+      errorType: error.cause?.name,
+      code: error.cause?.cause?.code || error.cause?.code || null,
+      missingDocument: error.cause?.message === "Published content is invalid or missing",
+    });
+    throw error;
+  }
 }
 
 export async function publishLiveContent(content, actor = "admin") {
