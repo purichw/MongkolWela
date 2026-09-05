@@ -79,17 +79,22 @@ Preserve visitor criteria during errors; use retry after the source recovers.
 - `npm audit --omit=dev`: zero reported vulnerabilities. Full audit retains three
   build-tool findings (one low, two high); no forced major migration in this release.
 
-## Production Release Hold
+## Production Source Recovery
 
-Code is committed locally; do not push main or promote until the configured
-live source passes the read/plan smoke. The primary domain remains on deployment
-`dpl_7on2iaBTkewzf9JApPk4V48UsKcT` (verified 2026-09-05).
+The initial release hold was resolved after the user restored the Supabase
+project to live status. The protected candidate
+`dpl_6vFVQEnq6PK9uZumpVsXLLjvazTt` now reads the configured database successfully.
+Authenticated smoke checks on 2026-09-05 confirmed:
 
-The protected candidate `dpl_6vFVQEnq6PK9uZumpVsXLLjvazTt` builds successfully,
-but its CMS endpoint returns 503. Server logs identify source `database`, upstream
-status `0`, no database error code: a connection failure, not proof of a missing
-document or invalid credentials. Check Supabase project availability and the
-configured endpoint before release. No database migration, seed or write was run.
+- CMS endpoint: 200; full payload matches the previous production deployment.
+- Planner catalog: 200, 378 places and a nonempty revision.
+- Automatic plan: 200, three current items and the matching catalog revision.
+- Outdated revision: 409 with `CATALOG_CHANGED`.
+
+No database migration, seed or write was run. No credentials were changed.
+The previous deployment `dpl_7on2iaBTkewzf9JApPk4V48UsKcT` remains the code
+recovery point. The earlier 503/upstream status 0 was a connection failure,
+not evidence of a missing document or invalid credentials.
 
 Production variables are marked sensitive in Vercel. Empty values returned by
 CLI export are not evidence that the deployed secrets are empty. Do not replace
@@ -97,7 +102,7 @@ them based on that export, or restore cross-source fallback to hide the failure.
 
 Protected candidates require authenticated `vercel curl`; ordinary smoke requests
 hit Vercel Authentication. Use the existing smoke harness user agent for the
-site's firewall. Full public-domain smoke and live-browser verification are pending.
+site's firewall. Run public-domain smoke and live-browser verification after promotion.
 
 One Chromium multi-flow test timed out while browsers ran concurrently; the same
 test passed unchanged when run alone. Mobile WebKit build tests passed (six tests,
