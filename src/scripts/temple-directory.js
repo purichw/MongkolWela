@@ -224,6 +224,7 @@ function initializePopularTempleGrid(grid) {
   });
 
   document.addEventListener("mw:temple-overrides-applied", () => {
+    cards = Array.from(grid.querySelectorAll("[data-popular-temple-card]"));
     updateFacetOptions();
     applyPopularFilters();
   });

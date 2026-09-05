@@ -7,6 +7,7 @@ import {
   requireSameOrigin,
   sendJson,
 } from "./_shared.js";
+import { publicContentForPath } from "../../src/lib/public-content.js";
 
 function normalizeContent(content, actor) {
   const now = new Date().toISOString();
@@ -24,7 +25,8 @@ export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const content = await readLiveContent();
-      sendJson(res, 200, { ok: true, content });
+      const pathname = new URL(req.url, "http://localhost").searchParams.get("path");
+      sendJson(res, 200, { ok: true, content: pathname ? publicContentForPath(content, pathname) : content });
       return;
     }
 

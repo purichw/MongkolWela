@@ -82,13 +82,13 @@ test("visitor runtime ignores stale local drafts and does not fetch fallback whe
     await page.getByRole("button", { name: "เปิดเมนู" }).click();
   }
 
-  await expect(menu.getByRole("link", { name: "วันพระ", exact: true })).toBeVisible();
+  await expect(menu.getByRole("link", { name: /^วันพระ(?: เปิด)?$/ })).toBeVisible();
   await expect(menu.getByRole("link", { name: "วัดดังเสริมมงคล", exact: true })).toHaveCount(0);
   await expect(menu.getByRole("link", { name: "วางแผนไหว้พระ", exact: true })).toHaveCount(0);
   expect(fallbackRequests).toBe(0);
 });
 
-test("visitor runtime fetches bundled fallback only when live API is unavailable", async ({ page }) => {
+test("visitor runtime shows an outage and retries live without falling back", async ({ page }) => {
   let fallbackRequests = 0;
 
   await page.route("**/api/admin/content?*", (route) => {
@@ -110,13 +110,19 @@ test("visitor runtime fetches bundled fallback only when live API is unavailable
 
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(page.locator("html")).not.toHaveClass(/cms-navigation-pending/);
-  await expect(page.locator("html")).toHaveAttribute("data-cms-fallback", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "false");
+  await expect(page.locator("[data-cms-load-error]")).toBeVisible();
 
   const menu = page.locator("#primary-menu");
   if ((page.viewportSize()?.width || 0) <= 720) {
     await page.getByRole("button", { name: "เปิดเมนู" }).click();
   }
 
-  await expect(menu.getByRole("link", { name: "เมนูสำรอง", exact: true })).toBeVisible();
-  expect(fallbackRequests).toBe(1);
+  await expect(menu.getByRole("link", { name: "เมนูสำรอง", exact: true })).toHaveCount(0);
+  expect(fallbackRequests).toBe(0);
+  if ((page.viewportSize()?.width || 0) <= 720) await page.getByRole("button", { name: "ปิดเมนู" }).click();
+  await page.route("**/api/admin/content?*", (route) => route.fulfill({ json: { ok: true, content: liveCmsContent } }));
+  await page.locator("[data-cms-load-error] button").click();
+  await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "true");
+  await expect(page.locator("[data-cms-load-error]")).toHaveCount(0);
 });

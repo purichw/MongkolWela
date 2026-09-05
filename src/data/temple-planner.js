@@ -1,7 +1,8 @@
 import popularTemples from "./popular-temples.json" with { type: "json" };
 import muTemples from "./mu-temples.json" with { type: "json" };
 import sacredTemples from "./sacred-temples.json" with { type: "json" };
-import { applyTempleImageOverrides, templePlaceholderImage } from "./temple-images.js";
+import { templePlaceholderImage } from "./temple-images.js";
+import { applyTempleCmsRecords } from "./temple-cms.js";
 import { getTempleDetailUrl } from "./temple-slugs.js";
 
 const collectionPriority = ["popular", "mu", "sacred"];
@@ -44,8 +45,6 @@ function mergeTemple(existing, temple, collection) {
   }
 
   existing.collections.push(collection);
-  existing.blessings = mergeValues(existing.blessings, temple.blessings);
-  existing.objectHero = mergeValues(existing.objectHero, temple.objectHero);
   existing.categoryMembership = mergeValues(existing.categoryMembership, temple.categoryMembership);
   existing.globalRank = Math.min(
     Number(existing.globalRank || Number.POSITIVE_INFINITY),
@@ -53,27 +52,21 @@ function mergeTemple(existing, temple, collection) {
   );
   existing.globalMentions = Math.max(Number(existing.globalMentions || 0), Number(temple.globalMentions || 0));
 
-  if ((!existing.imageUrl || existing.imageUrl === templePlaceholderImage) && temple.imageUrl) {
-    existing.imageUrl = temple.imageUrl;
-    existing.imageMobileUrl = temple.imageMobileUrl;
-    existing.imageAlt = temple.imageAlt;
-  }
-
   return existing;
 }
 
-export function getTemplePlannerData() {
+export function getTemplePlannerData(content) {
   const sources = {
-    popular: applyTempleImageOverrides("popular", [...popularTemples]),
-    mu: applyTempleImageOverrides("mu", [...muTemples]),
-    sacred: applyTempleImageOverrides("sacred", [...sacredTemples]),
+    popular: applyTempleCmsRecords("popular", popularTemples, content),
+    mu: applyTempleCmsRecords("mu", muTemples, content),
+    sacred: applyTempleCmsRecords("sacred", sacredTemples, content),
   };
   const merged = new Map();
 
   collectionPriority.forEach((collection) => {
     sources[collection].forEach((temple) => {
-      if (!Number.isFinite(Number(temple.latitude)) || !Number.isFinite(Number(temple.longitude))) return;
-      const key = `${normalizeKey(temple.name)}|${normalizeKey(temple.province)}`;
+      if ([temple.latitude, temple.longitude].some((value) => value === "" || value == null || !Number.isFinite(Number(value)))) return;
+      const key = temple.plannerId || `${normalizeKey(temple.name)}|${normalizeKey(temple.province)}`;
       merged.set(key, mergeTemple(merged.get(key), temple, collection));
     });
   });

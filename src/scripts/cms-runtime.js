@@ -1,26 +1,17 @@
+import { requestJson, createLatestRequest } from "./request.js";
+
 const CMS_CONTENT_URL = "/api/admin/content";
-const CMS_FALLBACK_URL = "/admin/content/default.json";
 const CMS_CONSENT_KEY = "mongkolwela.pdpa.analytics";
 const CMS_EDITABLE_CONTRACT_VERSION = 2;
 
 let activeContent = null;
+const contentRequests = createLatestRequest();
 
 function markCmsNavigationReady() {
   document.documentElement.classList.remove("cms-navigation-pending");
   document.documentElement.dataset.cmsNavReady = "true";
 }
 
-async function fetchJson(url) {
-  const response = await fetch(`${url}${url.includes("?") ? "&" : "?"}ts=${Date.now()}`, {
-    cache: "no-store",
-    headers: {
-      "Cache-Control": "no-cache",
-      Pragma: "no-cache",
-    },
-  });
-  if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
-  return response.json();
-}
 
 function normalizeCmsContent(content) {
   if (!content || typeof content !== "object") return null;
@@ -40,26 +31,12 @@ function normalizeCmsContent(content) {
   };
 }
 
-async function loadFallbackContent() {
-  const content = normalizeCmsContent(await fetchJson(CMS_FALLBACK_URL));
-  if (!content) throw new Error("Bundled CMS fallback is invalid");
-  document.documentElement.dataset.cmsFallback = "true";
+async function loadContent(signal) {
+  const path = encodeURIComponent(window.location.pathname);
+  const payload = await requestJson(`${CMS_CONTENT_URL}?path=${path}`, { signal });
+  const content = normalizeCmsContent(payload.content);
+  if (!content) throw new Error("Live CMS payload is invalid");
   return content;
-}
-
-async function loadContent() {
-  try {
-    const payload = await fetchJson(CMS_CONTENT_URL);
-    const content = normalizeCmsContent(payload.content);
-    if (content) {
-      delete document.documentElement.dataset.cmsFallback;
-      return content;
-    }
-    throw new Error("Live CMS payload is invalid");
-  } catch (error) {
-    console.warn("Live CMS content unavailable; using bundled fallback", error);
-    return loadFallbackContent();
-  }
 }
 
 function normalizeRoute(pathname = window.location.pathname) {
@@ -374,8 +351,27 @@ function templeKeyFromHref(href = "") {
 
 function getTempleOverride(content, key) {
   const override = content?.temples?.records?.[key] || content?.temples?.overrides?.[key];
-  if (!override || override.enabled === false) return null;
-  return override;
+  return override || null;
+}
+
+function imageVariantUrl(variant) {
+  return typeof variant === "string" ? variant : variant?.url;
+}
+
+function applyPublishedImage(root, override, slot) {
+  const image = root?.querySelector("img");
+  if (!image) return;
+  const desktop = imageVariantUrl(override.images?.[slot]?.desktop) ?? override.fields?.imageUrl;
+  const mobile = imageVariantUrl(override.images?.[slot]?.mobile) ?? desktop;
+  const placeholder = image.dataset.fallbackSrc || "/assets/images/temple-placeholder-auspicious.png";
+  if (desktop !== undefined) {
+    image.src = desktop || placeholder;
+    image.dataset.fallbackApplied = "";
+    root.classList.toggle("is-placeholder", !desktop);
+  }
+  const source = root.querySelector("[data-temple-mobile-source]");
+  if (source && mobile !== undefined) source.srcset = mobile || placeholder;
+  if (override.fields?.imageAlt !== undefined) image.alt = override.fields.imageAlt;
 }
 
 function fieldValue(override, field, fallback = "") {
@@ -407,7 +403,10 @@ function applyTempleCardOverrides(content) {
     const detailHref = card.getAttribute("href") || card.querySelector("[data-popular-temple-detail]")?.getAttribute("href");
     const override = getTempleOverride(content, templeKeyFromHref(detailHref));
     if (!override) return;
-    const fields = override.fields || {};
+    if (override.status === "deleted" || override.enabled === false) {
+      card.remove();
+      return;
+    }
     const name = fieldValue(override, "name", card.dataset.name || "");
     const region = fieldValue(override, "region", card.dataset.region || "");
     const province = fieldValue(override, "province", card.dataset.province || "");
@@ -428,18 +427,7 @@ function applyTempleCardOverrides(content) {
     setText(".popular-temple-card-body h3", name, card);
     setText(".popular-temple-card-body p", `${province}${district ? ` / ${district}` : ""}`, card);
 
-    const image = card.querySelector("img");
-    const cardDesktop = override.images?.card?.desktop?.url || fields.imageUrl;
-    const cardMobile = override.images?.card?.mobile?.url || cardDesktop;
-    if (image && cardDesktop) {
-      image.src = cardDesktop;
-      image.dataset.fallbackApplied = "";
-      card.classList.remove("is-placeholder");
-      card.removeAttribute("data-image-placeholder");
-    }
-    const mobileSource = card.querySelector("[data-temple-mobile-source]");
-    if (mobileSource && cardMobile) mobileSource.srcset = cardMobile;
-    if (image && fields.imageAlt !== undefined) image.alt = fields.imageAlt;
+    applyPublishedImage(card, override, "card");
   });
   document.dispatchEvent(new CustomEvent("mw:temple-overrides-applied"));
 }
@@ -599,7 +587,10 @@ function applyTempleDetailOverride(content) {
   const override = getTempleOverride(content, key);
   const root = document.querySelector(".temple-detail");
   if (!override || !root) return;
-  const fields = override.fields || {};
+  if (override.status === "deleted" || override.enabled === false) {
+    root.innerHTML = '<section class="section-shell" role="status"><h1>สถานที่นี้ไม่เปิดเผยแพร่</h1><a href="/temples/">ดูสถานที่อื่น</a></section>';
+    return;
+  }
   const name = fieldValue(override, "name", document.querySelector("#temple-detail-title")?.textContent || "");
   const mapElement = root.querySelector("[data-temple-detail-map]");
   const currentTags = [...root.querySelectorAll(".temple-detail-tags span")].map((item) => item.textContent.trim()).filter(Boolean);
@@ -621,13 +612,7 @@ function applyTempleDetailOverride(content) {
 
   setText("#temple-detail-title", name, root);
   document.title = document.title.replace(/^.*?\s\|/, `${name} |`);
-  const image = root.querySelector(".temple-detail-hero__media img");
-  const heroDesktop = override.images?.hero?.desktop?.url || fields.imageUrl;
-  const heroMobile = override.images?.hero?.mobile?.url || heroDesktop;
-  if (image && heroDesktop) image.src = heroDesktop;
-  const mobileSource = root.querySelector(".temple-detail-hero__media [data-temple-mobile-source]");
-  if (mobileSource && heroMobile) mobileSource.srcset = heroMobile;
-  if (image && fields.imageAlt !== undefined) image.alt = fields.imageAlt;
+  applyPublishedImage(root.querySelector(".temple-detail-hero__media"), override, "hero");
   setText(".temple-detail-hero__media figcaption", fieldValue(override, "imageSourceLabel", currentSourceLabel), root);
 
   const summary = splitTempleList(blessings).length
@@ -692,6 +677,7 @@ function applyTempleDetailOverride(content) {
   }
   root.querySelectorAll(".temple-detail-map-card__body a, .temple-detail-action--primary").forEach((link) => {
     if (mapHref) link.href = mapHref;
+    else link.removeAttribute("href");
   });
   setText(".temple-detail-map-card__body p", locationText, root);
   const metaRows = root.querySelectorAll(".temple-detail-meta div");
@@ -760,8 +746,10 @@ function trackPageview(content) {
 }
 
 async function bootCmsRuntime() {
+  const request = contentRequests.start();
   try {
-    const content = await loadContent();
+    const content = await loadContent(request.signal);
+    if (!request.isCurrent()) return;
     if (!content) return;
     activeContent = content;
     window.MongkolWelaCMS = {
@@ -770,6 +758,7 @@ async function bootCmsRuntime() {
       applyTempleOverrides: () => applyTempleOverrides(activeContent),
     };
     document.documentElement.dataset.cmsReady = "true";
+    document.querySelector("[data-cms-load-error]")?.remove();
     applyNavigation(content);
     applyTempleOverrides(content);
     if (!renderCustomPage(content)) {
@@ -783,10 +772,25 @@ async function bootCmsRuntime() {
     trackPageview(content);
     document.dispatchEvent(new CustomEvent("mw:cms-content-ready", { detail: { content: activeContent } }));
   } catch (error) {
+    if (!request.isCurrent()) return;
+    document.documentElement.dataset.cmsReady = "false";
+    if (!document.querySelector("[data-cms-load-error]")) {
+      const notice = document.createElement("div");
+      notice.dataset.cmsLoadError = "true";
+      notice.className = "cms-load-error";
+      notice.setAttribute("role", "status");
+      notice.textContent = "ไม่สามารถยืนยันข้อมูลล่าสุดได้ ";
+      const retry = document.createElement("button");
+      retry.type = "button";
+      retry.textContent = "ลองใหม่";
+      retry.addEventListener("click", bootCmsRuntime);
+      notice.append(retry);
+      document.querySelector("main")?.prepend(notice);
+    }
     console.warn("CMS runtime unavailable", error);
   } finally {
-    markCmsNavigationReady();
+    if (request.isCurrent()) markCmsNavigationReady();
   }
 }
 
-bootCmsRuntime();
+if (!document.body.classList.contains("admin-page")) bootCmsRuntime();

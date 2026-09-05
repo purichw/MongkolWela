@@ -3,10 +3,12 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import {
   hasWritableDatabase,
+  hasReadableDatabase,
   readDatabaseAnalyticsSummary,
   readDatabaseContent,
   writeDatabaseContent,
 } from "./_database.js";
+import { readPublishedContent } from "../../src/lib/live-content.js";
 
 export const DEFAULT_CONTENT_PATH = path.join(process.cwd(), "public/admin/content/default.json");
 export const LOCAL_LIVE_CONTENT_PATH = path.join(process.cwd(), "public/admin/content/live.json");
@@ -214,71 +216,34 @@ export function githubContentConfig() {
 
 export async function readGithubContent() {
   const config = githubContentConfig();
-  const rawUrl = `https://raw.githubusercontent.com/${config.owner}/${config.repo}/${config.branch}/${config.path}`;
-  const response = await fetch(`${rawUrl}?ts=${Date.now()}`, {
+  const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}?ref=${encodeURIComponent(config.branch)}`;
+  const response = await fetch(url, {
     cache: "no-store",
-    headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+    signal: AbortSignal.timeout(10000),
+    headers: { Accept: "application/vnd.github.raw+json", Authorization: `Bearer ${config.token}`, "Cache-Control": "no-cache" },
   });
-  if (!response.ok) return null;
+  if (!response.ok) throw new Error(`Published content read failed (${response.status})`);
   return response.json();
 }
 
 export async function readLiveContent() {
-  const sources = isProductionRuntime()
-    ? [readDatabaseContent, readGithubContent, readBundledLiveContent, readDefaultContent]
-    : [readBundledLiveContent, readDatabaseContent, readGithubContent, readDefaultContent];
-
-  for (const readSource of sources) {
-    try {
-      const content = normalizeCmsContent(await readSource());
-      if (content) return content;
-    } catch {
-      // Try the next source.
-    }
-  }
-
-  throw new Error("Content source unavailable");
+  const read = hasReadableDatabase() ? readDatabaseContent
+    : githubContentConfig().token ? readGithubContent
+    : !process.env.VERCEL && !isProductionRuntime() ? readBundledLiveContent
+    : async () => { throw new Error("Live source is not configured"); };
+  return readPublishedContent({ read, normalize: normalizeCmsContent });
 }
 
-export async function publishLiveContent(content, actor = "admin", { fast = isProductionRuntime() } = {}) {
-  const publishResults = [];
-  const failures = [];
-
+export async function publishLiveContent(content, actor = "admin") {
   if (hasWritableDatabase()) {
-    try {
-      const databaseResult = await writeDatabaseContent(content, actor, { source: "admin" });
-      publishResults.push(databaseResult);
-      if (fast) {
-        return {
-          mode: databaseResult.mode,
-          commitSha: "",
-          contentSha: "",
-          warnings: [],
-          fast: true,
-        };
-      }
-    } catch (error) {
-      failures.push(error);
-    }
+    const result = await writeDatabaseContent(content, actor, { source: "admin" });
+    return { ...result, warnings: [], fast: true };
   }
-
-  try {
-    publishResults.push(await publishGithubContent(content, actor));
-  } catch (error) {
-    failures.push(error);
+  if (hasReadableDatabase()) {
+    throw Object.assign(new Error("Live source is read-only"), { statusCode: 503 });
   }
-
-  if (publishResults.length) {
-    return {
-      mode: publishResults.map((result) => result.mode).filter(Boolean).join("+"),
-      commitSha: publishResults.find((result) => result.commitSha)?.commitSha || "",
-      contentSha: publishResults.find((result) => result.contentSha)?.contentSha || "",
-      warnings: failures.map((error) => error.message).filter(Boolean),
-      fast: false,
-    };
-  }
-
-  throw failures[0] || new Error("No publish target configured");
+  const result = await publishGithubContent(content, actor);
+  return { ...result, warnings: [], fast: false };
 }
 
 export async function readLiveAnalytics() {

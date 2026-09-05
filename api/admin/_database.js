@@ -16,7 +16,7 @@ export function databaseConfig() {
 
 export function hasReadableDatabase() {
   const config = databaseConfig();
-  return Boolean(config.url && config.anonKey);
+  return Boolean(config.url && (config.anonKey || config.serviceRoleKey));
 }
 
 export function hasWritableDatabase() {
@@ -26,12 +26,15 @@ export function hasWritableDatabase() {
 
 function supabaseClient({ service = false } = {}) {
   const config = databaseConfig();
-  const key = service ? config.serviceRoleKey : config.anonKey;
+  const key = service ? config.serviceRoleKey : config.anonKey || config.serviceRoleKey;
   if (!config.url || !key) return null;
   return createClient(config.url, key, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
+    },
+    global: {
+      fetch: (url, options = {}) => fetch(url, { ...options, cache: "no-store", signal: options.signal || AbortSignal.timeout(10000) }),
     },
   });
 }
@@ -47,7 +50,7 @@ export async function readDatabaseContent() {
     .eq("status", "published")
     .maybeSingle();
 
-  if (error) return null;
+  if (error) throw new Error("Published content read failed", { cause: error });
   return data?.content || null;
 }
 

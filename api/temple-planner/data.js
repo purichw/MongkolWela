@@ -1,4 +1,4 @@
-import { getTemplePlannerData } from "../../src/data/temple-planner.js";
+import { readPlannerCatalog } from "./_catalog.js";
 
 function sendJson(res, status, payload) {
   res.statusCode = status;
@@ -14,8 +14,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    sendJson(res, 200, getTemplePlannerData());
+    sendJson(res, 200, await readPlannerCatalog());
   } catch (error) {
-    sendJson(res, 500, { ok: false, error: error.message || "Planner data unavailable" });
+    sendJson(res, error.statusCode || 500, { ok: false, error: "ไม่สามารถโหลดข้อมูลล่าสุดได้ กรุณาลองใหม่" });
   }
 }

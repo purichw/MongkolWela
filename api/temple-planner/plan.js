@@ -1,4 +1,4 @@
-import { getTemplePlannerData } from "../../src/data/temple-planner.js";
+import { readPlannerCatalog } from "./_catalog.js";
 import { createTemplePlannerPlan } from "../../src/lib/temple-planner-engine.js";
 
 const MAX_BODY_BYTES = 64 * 1024;
@@ -41,7 +41,29 @@ export default async function handler(req, res) {
 
   try {
     const body = await readJsonBody(req);
-    const result = createTemplePlannerPlan(getTemplePlannerData(), body);
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      sendJson(res, 400, { ok: false, error: "Invalid planner request" });
+      return;
+    }
+    if ((body.selectedIds !== undefined && (!Array.isArray(body.selectedIds) || body.selectedIds.length > 9 || body.selectedIds.some((id) => typeof id !== "string"))) || (body.criteria != null && (typeof body.criteria !== "object" || Array.isArray(body.criteria)))) {
+      sendJson(res, 400, { ok: false, error: "Invalid planner criteria" });
+      return;
+    }
+    const catalog = await readPlannerCatalog();
+    if (body.revision && body.revision !== catalog.revision) {
+      sendJson(res, 409, { ok: false, code: "CATALOG_CHANGED", error: "ข้อมูลสถานที่มีการเปลี่ยนแปลง กรุณาตรวจสอบแล้วจัดแผนอีกครั้ง", catalog });
+      return;
+    }
+    const ids = new Set(catalog.items.map((item) => item.id));
+    if ((body.selectedIds || []).some((id) => !ids.has(id)) || (body.criteria?.start && !ids.has(body.criteria.start))) {
+      sendJson(res, 422, { ok: false, error: "มีสถานที่ที่ไม่พร้อมใช้งาน กรุณาตรวจสอบรายการอีกครั้ง" });
+      return;
+    }
+    const result = createTemplePlannerPlan(catalog, body);
+    if (result.ok) {
+      result.revision = catalog.revision;
+      result.items = result.planIds.map((id) => catalog.items.find((item) => item.id === id));
+    }
     sendJson(res, result.ok ? 200 : 422, result);
   } catch (error) {
     sendJson(res, error.statusCode || 500, { ok: false, error: error.message || "Planner API failed" });

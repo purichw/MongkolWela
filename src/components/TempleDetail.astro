@@ -164,7 +164,7 @@ const getConfidenceMeta = (confidence?: string): ConfidenceMeta | null => {
 };
 
 const { collection, collectionLabel, collectionHref, temple, placeholderImage, relatedTemples = [] } = Astro.props as Props;
-const imageUrl = temple.detailImageUrl || temple.imageUrl || placeholderImage;
+const imageUrl = (temple.detailImageUrl ?? temple.imageUrl) || placeholderImage;
 const imageMobileUrl = temple.detailImageMobileUrl || imageUrl;
 const title = `${temple.name} | ${collectionLabel} | มงคลเวลา`;
 const detailUrl = getTempleDetailUrl(collection, temple);

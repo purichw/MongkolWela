@@ -67,7 +67,7 @@ function collectionOrderFromContent(content, collection) {
 
 function imageVariant(value, fallbackUrl = "") {
   if (typeof value === "string") return { url: value };
-  if (value && typeof value === "object") return { ...value, url: value.url || fallbackUrl };
+  if (value && typeof value === "object") return { ...value, url: value.url ?? fallbackUrl };
   return { url: fallbackUrl };
 }
 
@@ -98,23 +98,26 @@ export function normalizeTempleImages(images = {}, fallbackUrl = "", fallbackAlt
 function mergeTempleRecord(baseTemple, record, collection, key) {
   const fields = { ...(record?.fields || {}) };
   const merged = { ...baseTemple, ...fields };
-  const fallbackImage = fields.imageUrl || merged.imageUrl || "";
-  const fallbackAlt = fields.imageAlt || merged.imageAlt || `${merged.name || "สถานที่"} ${merged.province || ""}`.trim();
+  const fallbackImage = fields.imageUrl ?? merged.imageUrl ?? "";
+  const fallbackAlt = fields.imageAlt ?? merged.imageAlt ?? `${merged.name || "สถานที่"} ${merged.province || ""}`.trim();
   const images = normalizeTempleImages(record?.images, fallbackImage, fallbackAlt);
   const slug = record?.slug || merged.cmsSlug || createTempleSlug(merged);
 
   return {
     ...merged,
     cmsKey: key,
+    plannerId: baseTemple?.name
+      ? `${baseTemple.name}|${baseTemple.province}`.normalize("NFC").replace(/\s+/g, "").toLocaleLowerCase("th")
+      : key,
     cmsSlug: slug,
     cmsSource: record?.source || (baseTemple ? "dataset" : "admin"),
     cmsImages: images,
-    imageUrl: images.card.desktop.url || fallbackImage,
-    imageMobileUrl: images.card.mobile.url || images.card.desktop.url || fallbackImage,
-    detailImageUrl: images.hero.desktop.url || images.card.desktop.url || fallbackImage,
-    detailImageMobileUrl: images.hero.mobile.url || images.hero.desktop.url || fallbackImage,
-    mapImageUrl: images.map.desktop.url || images.card.desktop.url || fallbackImage,
-    mapImageMobileUrl: images.map.mobile.url || images.map.desktop.url || fallbackImage,
+    imageUrl: images.card.desktop.url,
+    imageMobileUrl: images.card.mobile.url,
+    detailImageUrl: images.hero.desktop.url,
+    detailImageMobileUrl: images.hero.mobile.url,
+    mapImageUrl: images.map.desktop.url,
+    mapImageMobileUrl: images.map.mobile.url,
     imageAlt: fallbackAlt,
     collection,
   };
