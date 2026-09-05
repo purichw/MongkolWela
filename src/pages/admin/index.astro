@@ -1,7 +1,6 @@
 ---
 import { brandAssets, siteConfig } from "../../config/site.js";
-
-const assetVersion = "20260830-admin-02";
+import { stylesForPath } from "../../config/styles.js";
 const config = siteConfig.th;
 ---
 
@@ -20,7 +19,7 @@ const config = siteConfig.th;
     />
     <link rel="icon" type={brandAssets.favicon.type} sizes={brandAssets.favicon.sizes} href={brandAssets.favicon.src} />
     <link rel="apple-touch-icon" sizes={brandAssets.appleTouchIcon.sizes} href={brandAssets.appleTouchIcon.src} />
-    <link rel="stylesheet" href={`/styles.css?v=${assetVersion}`} />
+    {stylesForPath("/admin/").map((src) => <link rel="stylesheet" href={src} />)}
   </head>
   <body class="admin-page">
     <div

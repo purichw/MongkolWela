@@ -572,3 +572,9 @@ h3,
   background: #fff6e5;
   border-color: var(--line);
 }
+ .cms-load-error {
+  padding: 12px 24px;
+  color: #782c24;
+  background: #fff5df;
+  font-size: 1rem;
+ }

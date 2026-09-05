@@ -8,7 +8,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check",
+    "check": "astro check && node scripts/check-script-bindings.mjs",
+    "test:runtime": "node --test tests/runtime/*.test.mjs",
     "nfr:data": "node scripts/validate-runtime-data.mjs",
     "nfr:visit-info": "node scripts/validate-temple-visit-info.mjs",
     "audit:visit-info": "node scripts/audit-temple-visit-info.mjs",
@@ -51,6 +52,7 @@
     "yaml": "^2.8.3"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.107.0"
+    "@supabase/supabase-js": "^2.107.0",
+    "web-vitals": "^6.2.1"
   }
 }

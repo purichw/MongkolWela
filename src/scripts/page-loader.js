@@ -5,8 +5,6 @@ const selectors = {
   timeout: "[data-loader-timeout]",
 };
 
-const SESSION_KEY = "mongkolwela.loader.v2.seen";
-const FIRST_SESSION_DURATION = 3000;
 const SLOW_LOAD_DELAY = 850;
 const NAVIGATION_DELAY = 260;
 const TIMEOUT_DELAY = 4200;
@@ -48,20 +46,8 @@ export function initPageLoader() {
     finishRequested: false,
   };
 
-  const firstSession = shouldShowFirstSessionLoader();
-
-  if (firstSession) {
-    markSessionSeen();
-    startLoader(state, {
-      className: "is-loading",
-      minDuration: FIRST_SESSION_DURATION,
-      statusText: messages.intro,
-      target: 92,
-    });
-  } else {
-    document.documentElement.classList.remove("is-loading");
-    scheduleSlowLoad(state);
-  }
+  document.documentElement.classList.remove("is-loading");
+  scheduleSlowLoad(state);
 
   if (document.readyState === "complete") {
     finishLoader(state);
@@ -212,22 +198,6 @@ function scheduleTimeoutMessages(state) {
     state.loader.classList.add("has-long-timeout");
     setText(state.timeout, messages.longTimeout);
   }, LONG_TIMEOUT_DELAY);
-}
-
-function shouldShowFirstSessionLoader() {
-  try {
-    return window.sessionStorage.getItem(SESSION_KEY) !== "1";
-  } catch {
-    return true;
-  }
-}
-
-function markSessionSeen() {
-  try {
-    window.sessionStorage.setItem(SESSION_KEY, "1");
-  } catch {
-    // If sessionStorage is blocked, the intro loader remains per page.
-  }
 }
 
 function setText(element, text) {

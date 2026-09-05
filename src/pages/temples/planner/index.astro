@@ -3,7 +3,6 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import TempleSearchHero from "../../../components/TempleSearchHero.astro";
 
 const plannerDataSrc = "/api/temple-planner/data";
-const extraStyles = ["/assets/css/temple-planner.css?feature=20260830-05"];
 const pageTitle = "วางแผนไหว้พระ | มงคลเวลา";
 const pageDescription =
   "กำหนดจำนวนสถานที่ พื้นที่ เวลา และวัตถุประสงค์ด้านมงคล แล้วให้มงคลเวลาช่วยจัดลำดับเส้นทางไหว้พระที่ต่อเนื่องและตรวจสอบได้";
@@ -37,7 +36,6 @@ const plannerPurposes = [
   locale="th"
   page="templesPlanner"
   bodyClass="temple-planner-page"
-  extraStyles={extraStyles}
   canonicalPath="/temples/planner/"
   image={plannerBanner.imageUrl}
   imageAlt={plannerBanner.imageAlt}

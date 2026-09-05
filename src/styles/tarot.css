@@ -394,7 +394,7 @@
   background:
     radial-gradient(ellipse at 50% 50%, rgba(234, 211, 160, 0.2), transparent 34%),
     linear-gradient(135deg, rgba(18, 61, 52, 0.8), rgba(62, 35, 31, 0.78)),
-    url("../images/tarot-celestial-bg.svg"),
+    url("/assets/images/tarot-celestial-bg.svg"),
     linear-gradient(135deg, rgba(18, 61, 52, 0.96), rgba(62, 35, 31, 0.96));
   background-position: center, center, center, center;
   background-repeat: no-repeat;

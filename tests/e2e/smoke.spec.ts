@@ -17,16 +17,11 @@ test.describe("Mongkol Wela smoke regression", () => {
     });
   }
 
-  test("shows first-session loader for three seconds", async ({ page }, testInfo) => {
+  test("releases the loader when the page is ready without a first-session delay", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "chromium-desktop", "loader timing is covered once to avoid browser timing noise");
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.goto("/", { waitUntil: "load" });
     const loader = page.locator("[data-page-loader]");
-    await expect(loader).toHaveAttribute("aria-hidden", "false");
-    await expect(loader).toBeVisible();
-    await page.waitForTimeout(2200);
-    await expect(loader).toBeVisible();
-    await page.waitForTimeout(1300);
-    await expect(loader).toHaveAttribute("aria-hidden", "true");
+    await expect(loader).toHaveAttribute("aria-hidden", "true", { timeout: 1000 });
   });
 
   test("opens and closes temple map overlay with keyboard focus", async ({ page }, testInfo) => {
@@ -72,7 +67,7 @@ test.describe("Mongkol Wela smoke regression", () => {
     await skipIntroLoader(page);
     await page.goto("/horoscope/palmistry/", { waitUntil: "domcontentloaded" });
 
-    await expect(page.locator('link[href*="palmistry.css?feature=20260612-09"]')).toHaveCount(1);
+    await expect(page.locator('link[href*="palmistry"]')).toHaveCount(1);
     await expect(page.locator(".palm-hand-map style")).toContainText(".palm-map-line");
 
     const leftCameraInput = page.locator(

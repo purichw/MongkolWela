@@ -3,6 +3,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import LoadingScreen from "../components/LoadingScreen.astro";
 import { brandAssets } from "../config/site.js";
+import { stylesForPath } from "../config/styles.js";
 import {
   SEO_DEFAULT_IMAGE,
   SEO_DEFAULT_IMAGE_HEIGHT,
@@ -26,7 +27,6 @@ interface Props {
   locale?: "th";
   page?: string;
   bodyClass?: string;
-  extraStyles?: string[];
   canonicalPath?: string;
   image?: string;
   imageAlt?: string;
@@ -47,7 +47,6 @@ const {
   locale = lang,
   page = "home",
   bodyClass = "",
-  extraStyles = [],
   canonicalPath,
   image = SEO_DEFAULT_IMAGE,
   imageAlt = SEO_SITE_NAME,
@@ -59,8 +58,6 @@ const {
   structuredData = [],
 } = Astro.props as Props;
 
-const assetVersion = "20260830-12";
-const versionedAsset = (src: string) => `${src}${src.includes("?") ? "&" : "?"}v=${assetVersion}`;
 const pagePath = canonicalPath || Astro.url.pathname;
 const pageUrl = canonicalUrl(pagePath);
 const seoDescription = cleanDescription(description);
@@ -110,15 +107,7 @@ const jsonLd = toJsonLdGraph([
     <meta name="application-name" content={SEO_SITE_NAME} />
     <meta name="apple-mobile-web-app-title" content={SEO_SITE_NAME} />
     <script is:inline>
-      try {
-        document.documentElement.classList.add("cms-navigation-pending");
-        if (window.sessionStorage.getItem("mongkolwela.loader.v2.seen") !== "1") {
-          document.documentElement.classList.add("is-loading");
-        }
-      } catch {
-        document.documentElement.classList.add("cms-navigation-pending");
-        document.documentElement.classList.add("is-loading");
-      }
+      document.documentElement.classList.add("cms-navigation-pending");
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -130,8 +119,7 @@ const jsonLd = toJsonLdGraph([
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&family=Prompt:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href={versionedAsset("/styles.css")} />
-    {extraStyles.map((src: string) => <link rel="stylesheet" href={versionedAsset(src)} />)}
+    {stylesForPath(Astro.url.pathname).map((src: string) => <link rel="stylesheet" href={src} />)}
     <script is:inline type="application/ld+json" set:html={jsonLd}></script>
   </head>
   <body class={bodyClass} data-cms-page={page}>
