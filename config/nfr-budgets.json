@@ -11,7 +11,9 @@
     },
     "css": {
       "totalKb": 650,
-      "maxFileKb": 220
+      "maxFileKb": 220,
+      "maxRouteKb": 230,
+      "routes": { "/": 80, "/temples/planner/": 230, "/calendar/": 65, "/tarot/daily/": 80 }
     },
     "html": {
       "maxFileKb": 430

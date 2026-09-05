@@ -68,17 +68,17 @@ Checks already completed for the latest production release:
 
 ## CMS Content Guardrail
 
-Admin Portal page registry and navigation are code-owned in `public/admin/content/live.json`.
-Keep `public/admin/content/default.json` in sync for the same page/nav entries.
+Published page content and navigation belong to the configured live CMS source.
+Bundled `live.json` and `default.json` are build/bootstrap seeds only.
 
 When adding a new feature page or menu item:
 
-1. Update both CMS JSON files.
+1. Update route code and build seeds as needed, then publish the intended navigation change through Admin without replacing unrelated live edits.
 2. Run `npm run nfr:cms`.
-3. Run `npm run db:seed:cms` when Supabase env is available, so production database content is not stale.
+3. Do not run `npm run db:seed:cms` during routine deploys.
 4. After deploy, run `npm run cms:verify:production` or `npm run smoke:production`.
 
-This prevents `/api/admin/content` or `cms-runtime.js` from overwriting the rendered nav with an older Admin Portal copy. New Admin Portal publishes include the editable CMS contract and can intentionally update visitor navigation. If `npm run db:seed:cms` cannot run because Supabase env values are missing or empty, the API/runtime bundled-navigation guard still keeps production user-facing nav aligned with the repo until a current Admin publish is made.
+Live-source errors are explicit and retryable; bundled content never overrides a newer publish or silently substitutes for a failed source. Schema versions are not content timestamps. See `CMS.md` for the current contract.
 
 ## High-Priority Backlog
 

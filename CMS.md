@@ -4,30 +4,33 @@ Runtime precedence is simple: valid current Admin Portal/API content is live for
 visitors and must not be overridden by bundled JSON, cache, or stale fallback
 logic.
 
-`public/admin/content/live.json` is the code-owned deployable fallback and seed
-copy for published Admin Portal content during deploys.
+Production reads and writes one configured source: Supabase when configured,
+otherwise authenticated GitHub Contents API. Outages, missing documents, and
+invalid payloads return 503. Runtime does not silently use build JSON or another
+publish target. GitHub credentials remain on the server.
 
-`public/admin/content/default.json` must stay in sync with `live.json` for page
-registry and navigation fallback. It is used only when the live API is
-unavailable or invalid.
+`public/admin/content/live.json` and `default.json` are build/development seeds.
+Local development without a configured remote source reads `live.json`. Do not
+run `db:seed:cms` during routine deploys: it can overwrite live Admin changes.
 
-Production `/api/admin/content` may read from Supabase first. Older CMS copies
-without the current editable contract are guarded by bundled page/navigation
-data so stale Supabase content cannot restore old nav after hydration. New Admin
-Portal publishes include `cmsContractVersion` and may intentionally override
-bundled navigation for visitors. After adding, removing, or renaming a
-code-owned page or navigation item:
+`/api/admin/content?path=/calendar/` returns shared shell settings and only the
+current page's editable content. Temple records are included for temple pages
+and Home, not unrelated tool pages. The database currently stores one CMS JSON
+document, so this projection reduces browser payload, not database reads.
 
-1. Update both `public/admin/content/live.json` and `public/admin/content/default.json`.
-2. Run `npm run nfr:cms`.
-3. If Supabase is configured, run `npm run db:seed:cms` to write `live.json` into `cms_documents/live`.
-4. After deployment, run `npm run cms:verify:production` or `npm run smoke:production`.
+Admin and Planner use the same `applyTempleCmsRecords` merge rules. Explicit
+empty fields and image slots are preserved. Planner identities derive from
+stable dataset identity or CMS record key, never an edited display name.
 
-Do not rely on stale database content to define navigation. Database content is
-a published copy; the repo JSON files define the deployable fallback contract,
-while current Admin Portal publishes define the editable runtime contract.
-Production smoke must pass `/api/admin/content`, and a browser hydration
-spot-check is recommended for header navigation changes.
+Planner data and plan requests read the current source once per request. A
+catalog revision identifies the data used by the browser. A changed revision
+returns 409 with a fresh catalog; the visitor can review and resubmit. Successful
+plans return current selected-place details. Browser storage contains user
+criteria and IDs, not authoritative content or calculated results.
+
+Run `nfr:cms` after local registry changes. Verify published contracts with
+`cms:verify:production` or `smoke:production` after deployment. Schema versions
+describe data shape; they do not determine which document is newest.
 
 ## Admin Media
 
@@ -48,7 +51,6 @@ ImageKit:
 
 The private ImageKit key remains server-only. `/api/admin/media` returns a short-lived upload signature after validating the Admin session.
 
-The production smoke test checks older CMS copies against the `live.json`
-fallback contract only to block stale page/navigation regressions. For current
-Admin Portal publishes, it validates the editable contract and allows live API
-content to differ from bundled fallback data intentionally.
+Live navigation may intentionally differ from build seeds. Test publication,
+reload, explicit clears, deletions, source failure, recovery, and revision
+conflicts using `npm run test:runtime` and the focused browser suites.

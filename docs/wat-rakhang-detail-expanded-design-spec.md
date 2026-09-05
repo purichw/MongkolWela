@@ -5,7 +5,7 @@ Source:
 - Offline export: `/Users/point/Website Projects/hora-astro/outputs/wat-rakhang-detail-expanded-standalone/index.html`
 - Runtime surface: `/temples/popular/001-วัดระฆังโฆสิตาราม-กรุงเทพมหานคร/`
 - Implementation files: `src/components/TempleDetail.astro`
-- Implementation files: `public/assets/css/temple-map.css`
+- Implementation files: `src/styles/temple-map.css`
 - Implementation files: `src/scripts/temple-detail.js`
 
 ## Purpose

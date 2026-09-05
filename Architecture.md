@@ -1,6 +1,6 @@
 # Architecture
 
-Last updated: 2026-06-19
+Last updated: 2026-09-05
 
 ## Project Shape
 
@@ -19,26 +19,26 @@ The app is built as static Astro pages. Client-side behavior is small, route-spe
 - `src/components/`: shared Astro components.
 - `src/data/`: JSON datasets and small data helpers.
 - `src/config/`: site/navigation/page configuration.
-- `public/styles.css`: CSS import entrypoint.
-- `public/assets/css/`: feature CSS files.
+- `src/styles/site.css`: shared control and navigation styles.
+- `src/styles/`: feature CSS files.
 - `src/scripts/`: browser-side source modules bundled and minified by Astro/Vite.
 - `public/assets/images/`: local images and generated placeholders.
 - `outputs/`: local generated artifacts. This directory is intentionally untracked unless a future task says otherwise.
 
 ## Admin Portal CMS Content
 
-Admin Portal content has three deploy-time surfaces:
+Admin Portal content has separate runtime and build surfaces:
 
-- `public/admin/content/live.json`: code-owned source of truth for published page registry and navigation.
-- `public/admin/content/default.json`: bundled fallback that must match `live.json` for page registry and navigation.
+- `public/admin/content/live.json`: build/development seed, not an override for live Admin content.
+- `public/admin/content/default.json`: bootstrap/template seed, not a runtime outage fallback.
 - `/api/admin/content`: production API used by `cms-runtime.js` and Admin Portal.
 
-Production may read `/api/admin/content` from Supabase first. To avoid stale database content hiding new features, `readLiveContent()` uses the bundled `live.json` page registry and navigation as the fallback deploy contract when the stored CMS copy does not include the current editable contract. New Admin Portal publishes include `cmsContractVersion` and are allowed to override bundled navigation for visitors. `cms-runtime.js` follows the same rule, so old data cannot restore stale nav after hydration while fresh Admin publishes remain visible.
+Production reads one configured source: Supabase when configured, otherwise the authenticated GitHub API. A failed or absent live document returns 503; it does not switch to bundled content. CMS contract versions describe schema, not freshness. Admin publishing and Planner catalog/plan requests use that same source. Browser requests send the current path to limit the response to relevant page content. Planner revisions detect changes between selection and calculation. See `CMS.md` and `docs/non-functional-maintenance.md` for ownership and error contracts.
 
 Validation commands:
 
 - `npm run nfr:cms`: validates local `default.json` and `live.json`.
-- `npm run db:seed:cms`: writes `live.json` into Supabase `cms_documents/live` when server-only Supabase env is available.
+- `npm run db:seed:cms`: explicit bootstrap/recovery only; never run during a routine deploy because it overwrites live Admin content.
 - `npm run cms:verify:production`: validates production `/api/admin/content` against `live.json`.
 - `npm run smoke:production`: includes the production CMS API check.
 
@@ -66,12 +66,12 @@ All normal pages use `src/layouts/BaseLayout.astro`.
 
 Important behavior:
 
-- `assetVersion` is used to cache-bust `/styles.css` and additional public CSS.
+- `src/config/styles.js` selects ordered route styles from `src/styles/`; Vite emits content-hashed CSS URLs.
 - Browser JavaScript is imported from `src/scripts/` by the shared layout, page, or component that needs it, then emitted as hashed `/_astro/` assets.
-- `public/styles.css` also imports CSS files with explicit version query strings. Bump those when cache correctness matters.
+- Hashed CSS/JS can be cached immutably. Live API requests and responses use `no-store`.
 - A fixed scroll progress indicator is rendered by `BaseLayout.astro`, styled in `base.css`, and updated by `scroll-progress.js`.
 - A global page loader is rendered by `LoadingScreen.astro`, styled in `base.css`, and controlled by `page-loader.js`.
-  It shows a 3-second simulated intro once per browser session, then only reappears for slow loads or pending internal navigation.
+  It appears only for slow loads or pending internal navigation, with no artificial first-visit delay.
   The loader uses a soft full-page smoke treatment, transparent vector outline icons, simulated progress, and timeout messaging for unusually long loads.
   It intentionally avoids a visibly framed loading card or skeleton panel.
 
@@ -115,7 +115,7 @@ Feature JS source lives under `src/scripts/`, for example:
 - `tarot-result.js`
 - `tarot-spread-result.js`
 
-CSS is split by feature in `public/assets/css/`.
+CSS is split by feature in `src/styles/`.
 
 ### Palmistry
 
@@ -132,7 +132,7 @@ Supporting assets:
 
 - `src/scripts/palmistry.js`
 - `src/scripts/palmistry-data.js`
-- `public/assets/css/palmistry.css`
+- `src/styles/palmistry.css`
 - `public/images/lines/`
 
 Reading model:
@@ -328,7 +328,7 @@ Client JS:
 
 CSS:
 
-- `public/assets/css/temples.css`
+- `src/styles/temples.css`
 
 ### Temple Map Overlay
 
@@ -342,7 +342,7 @@ Client JS:
 
 CSS:
 
-- `public/assets/css/temple-map.css`
+- `src/styles/temple-map.css`
 
 Behavior:
 
@@ -371,7 +371,7 @@ Client JS:
 
 CSS:
 
-- `public/assets/css/temple-map.css`
+- `src/styles/temple-map.css`
 
 Behavior:
 

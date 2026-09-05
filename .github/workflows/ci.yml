@@ -38,6 +38,9 @@ jobs:
       - name: Astro check
         run: npm run check
 
+      - name: Runtime regression tests
+        run: npm run test:runtime
+
       - name: Validate deploy config
         run: npm run nfr:vercel
 

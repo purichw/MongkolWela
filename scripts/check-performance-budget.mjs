@@ -18,10 +18,11 @@ const files = walk(distDir);
 checkAssetBudget("javascript", files.filter((file) => file.endsWith(".js")));
 checkAssetBudget("css", files.filter((file) => file.endsWith(".css")));
 checkHtmlBudget();
+checkRouteStyles();
 checkKeyRouteImages();
 
 console.log(
-  `Core Web Vitals targets: LCP <= ${budget.coreWebVitals.lcpMs}ms, CLS <= ${budget.coreWebVitals.cls}, INP <= ${budget.coreWebVitals.inpMs}ms`,
+  `Unmeasured field targets: LCP <= ${budget.coreWebVitals.lcpMs}ms, CLS <= ${budget.coreWebVitals.cls}, INP <= ${budget.coreWebVitals.inpMs}ms. This check measures file sizes only; use browser measurements and field telemetry for Web Vitals.`,
 );
 console.log(`Browser matrix: ${budget.browserMatrix.join(", ")}`);
 
@@ -31,7 +32,7 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("Performance budget passed.");
+console.log("Static asset budget passed (not a Core Web Vitals result).");
 
 function checkAssetBudget(kind, matchedFiles) {
   const limits = budget.assets[kind];
@@ -53,10 +54,31 @@ function checkAssetBudget(kind, matchedFiles) {
 function checkHtmlBudget() {
   const limit = budget.assets.html.maxFileKb;
   getKeyRouteHtmlFiles().forEach((file) => {
-    if (!file || !fs.existsSync(file)) return;
+    if (!fs.existsSync(file)) { failures.push(`Missing key route: ${relative(file)}`); return; }
     const sizeKb = fs.statSync(file).size / 1024;
     if (sizeKb > limit) failures.push(`${relative(file)} HTML ${formatKb(sizeKb)} เกินงบ ${limit}KB`);
   });
+}
+
+function checkRouteStyles() {
+  const routes = new Set([...nfrKeyRoutePaths, ...Object.keys(budget.assets.css.routes || {})]);
+  for (const route of routes) {
+    const htmlFile = route === "/404.html" ? path.join(distDir, "404.html") : path.join(distDir, route, "index.html");
+    if (!fs.existsSync(htmlFile)) { failures.push(`Missing CSS budget route: ${route}`); continue; }
+    const html = fs.readFileSync(htmlFile, "utf8");
+    const sheets = [...html.matchAll(/<link\b[^>]*>/gi)].filter(([tag]) => /rel=["']stylesheet["']/i.test(tag)).map(([tag]) => tag.match(/href=["']([^"']+)["']/i)?.[1]).filter((href) => href?.startsWith("/"));
+    if (!sheets.length) failures.push(`${route}: no local stylesheets`);
+    let bytes = 0;
+    for (const href of new Set(sheets)) {
+      const file = path.join(distDir, href.split("?")[0]);
+      if (!fs.existsSync(file)) { failures.push(`${route}: missing stylesheet ${href}`); continue; }
+      if (!href.startsWith("/_astro/")) failures.push(`${route}: stylesheet is not content-hashed: ${href}`);
+      bytes += fs.statSync(file).size;
+    }
+    const limit = budget.assets.css.routes?.[route] ?? budget.assets.css.maxRouteKb;
+    if (bytes / 1024 > limit) failures.push(`${route}: CSS ${formatKb(bytes / 1024)} exceeds ${limit}KB`);
+    console.log(`${route}: CSS ${formatKb(bytes / 1024)}`);
+  }
 }
 
 function checkKeyRouteImages() {

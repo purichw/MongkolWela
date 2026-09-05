@@ -84,8 +84,7 @@ npm run smoke:production
 - Do not revert user changes.
 - Do not run destructive git commands unless the user explicitly requests them.
 - Keep edits scoped to the requested behavior.
-- Bump `assetVersion` in `src/layouts/BaseLayout.astro` when changing public CSS/JS.
-- Bump query strings in `public/styles.css` when changing imported CSS that needs cache invalidation.
+- CSS/JS are emitted with content hashes. Use `src/config/styles.js` for route CSS ownership; no manual version bumps.
 - Do not add `outputs/` unless explicitly requested.
 
 ## Language And Product Direction
@@ -115,17 +114,14 @@ npm run smoke:production
 - Runtime precedence: valid current Admin Portal/API content is the live source
   for visitors and must not be overridden by bundled fallback JSON, cache, or
   older stale CMS copies.
-- `public/admin/content/live.json` is the code-owned deployable fallback and seed
-  copy for published Admin Portal content.
-- Keep `public/admin/content/default.json` in sync with `live.json` for pages and
-  navigation fallback.
+- `public/admin/content/live.json` and `default.json` are build/development seed
+  data, not production runtime failover sources.
 - After adding/removing/renaming pages or navigation items, run `npm run nfr:cms`.
-- If Supabase env is configured, run `npm run db:seed:cms` after page/nav changes so `cms_documents/live` does not serve stale content.
+- Never seed over live Admin edits during a routine deploy. Explicit content migrations must preserve current published values.
 - Production verification must include `npm run cms:verify:production` or `npm run smoke:production`; both catch stale `/api/admin/content` page/nav data.
-- Bundled page/navigation data is the fallback deploy contract. Current Admin
-  Portal publishes include `cmsContractVersion` and may intentionally override
-  bundled navigation, while older CMS copies are still guarded so stale API
-  content cannot overwrite the rendered header after hydration.
+- Supabase is authoritative when configured; otherwise authenticated GitHub is
+  authoritative. Failure returns 503 rather than another source. Browser reloads
+  show an error/retry state. Schema versions validate shape, not content freshness.
 
 ### Excel Workbooks
 
@@ -189,8 +185,8 @@ Important scripts:
 
 Important CSS:
 
-- `public/assets/css/temples.css`
-- `public/assets/css/temple-map.css`
+- `src/styles/temples.css`
+- `src/styles/temple-map.css`
 
 ## Horoscope Feature Map
 
@@ -213,7 +209,7 @@ Palmistry:
 - `src/components/PalmLineWidget.astro`
 - `src/scripts/palmistry.js`
 - `src/scripts/palmistry-data.js`
-- `public/assets/css/palmistry.css`
+- `src/styles/palmistry.css`
 
 Tarot:
 
@@ -223,7 +219,7 @@ Tarot:
 - `src/scripts/tarot-data.js`
 - `src/scripts/tarot-spread.js`
 - `src/scripts/tarot-spread-result.js`
-- `public/assets/css/tarot.css`
+- `src/styles/tarot.css`
 
 ## Verification Expectations
 
@@ -318,7 +314,7 @@ For deployment tasks:
 The travel-data confidence indicator on temple detail pages is implemented by:
 
 - `src/components/TempleDetail.astro`
-- `public/assets/css/temple-map.css`
+- `src/styles/temple-map.css`
 - `src/scripts/temple-detail.js`
 
 Preserve these interaction rules:

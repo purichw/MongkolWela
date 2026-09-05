@@ -42,8 +42,8 @@ npm run build
 - `src/config/` - shared site config
 - `src/data/` - runtime temple data, image overrides, banners, and slug helpers
 - `src/scripts/` - browser interaction source modules bundled and minified by Astro
-- `public/styles.css` - CSS entrypoint
-- `public/assets/css/` - design tokens, base rules, feature styles, and responsive behavior
+- `src/styles/site.css` - shared control and navigation styles
+- `src/styles/` - design tokens, base rules, feature styles, and responsive behavior
 - `public/assets/images/` - local visual assets
 - `outputs/` - local generated artifacts; intentionally untracked
 
