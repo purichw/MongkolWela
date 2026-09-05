@@ -39,13 +39,19 @@ const temples = collections.flatMap((collection) => {
 });
 
 async function mockAdminApis(page) {
+  let publishedContent;
   await page.route("**/api/admin/**", async (route) => {
     const pathname = new URL(route.request().url()).pathname;
+    if (pathname === "/api/admin/content" && route.request().method() === "POST") {
+      publishedContent = { ...route.request().postDataJSON().content, publishedAt: new Date().toISOString() };
+      await route.fulfill({ json: { ok: true, content: publishedContent, meta: { fast: true } } });
+      return;
+    }
     const responses = {
       "/api/admin/session": { ok: true, actor: "Playwright" },
       "/api/admin/content": {
         ok: true,
-        content: {
+        content: publishedContent || {
           schemaVersion: 1,
           pages: [],
           navigation: { tabs: [], utility: [] },
@@ -111,6 +117,20 @@ test.describe("Temple Admin Portal", () => {
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     expect(overflow).toBeLessThanOrEqual(2);
+  });
+
+  test("publishes edited content and verifies the latest revision", async ({ page }) => {
+    const errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    await page.locator('[data-edit-temple="popular:001"]').click();
+    await page.getByLabel("ชื่อสถานที่", { exact: true }).fill("ชื่อที่เผยแพร่ล่าสุด");
+    await page.getByRole("button", { name: "บันทึก", exact: true }).click();
+    const published = page.waitForRequest((request) => request.url().endsWith("/api/admin/content") && request.method() === "POST");
+    await page.locator('[data-action="publish"]').first().click();
+    expect((await published).postDataJSON().content.temples.records["popular:001"].fields.name).toBe("ชื่อที่เผยแพร่ล่าสุด");
+    await expect(page.locator("[data-publish-progress-title]")).toHaveText("หน้าเว็บอัปเดตแล้ว");
+    await expect(page.locator('[data-action="publish"]').first()).toBeEnabled();
+    expect(errors).toEqual([]);
   });
 
   test("opens a fixed-ratio crop editor for an existing image", async ({ page }, testInfo) => {

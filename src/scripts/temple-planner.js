@@ -1,7 +1,21 @@
+import { createPlannerPicker } from "./planner/picker.js";
+import { createPlannerResults } from "./planner/results.js";
+import { createPlannerMaps } from "./planner/maps.js";
+import { createPlannerStorage } from "./planner/storage.js";
+import { getThailandNow, parseTime, formatClock, formatMinutes, formatMinutesRange, formatDistance, formatDistanceRange, normalize, toRadians, escapeHtml, prefersReducedMotion } from "./planner/format.js";
+import { createLatestRequest } from "./request.js";
+import { loadPlannerCatalog, requestPlannerPlan, reconcileCatalog } from "./planner/api.js";
+
 const root = document.querySelector("[data-temple-planner]");
-const payloadNode = document.getElementById("templePlannerData");
 const PLANNER_PICKER_BATCH_SIZE = 12;
-const PLANNER_PLAN_API = "/api/temple-planner/plan";
+
+const { persistState, restoreState } = createPlannerStorage({ getTargetCount });
+
+const { refreshSelectionMap, ensureSelectionMap, updateSelectionMarker, createSelectionIcon, renderSelectionPopup, renderRouteMap, addTiles, ensureLeaflet, loadStylesheet, loadScript } = createPlannerMaps({ getPickerItems, getStartPoint, toggleSelection, haversineKm, formatDistance, escapeHtml });
+
+const { renderSummary, renderWarnings, renderTimelineItem } = createPlannerResults({ formatDistance, formatMinutes, formatClock, escapeHtml, formatDistanceRange, formatMinutesRange, buildSingleMapUrl });
+
+const { renderPicker, revealPlannerPlaceCards, queuePlannerCardReveal, assignPlannerRevealDelays, renderSelected } = createPlannerPicker({ getPickerItems, getStartPoint, renderPickerContext, haversineKm, formatDistance, getPickerRecommendationText, escapeHtml, prefersReducedMotion });
 
 if (root) {
   root.setAttribute("aria-busy", "true");
@@ -14,26 +28,31 @@ if (root) {
 }
 
 async function loadTemplePlannerPayload(planner) {
-  if (payloadNode?.textContent) return JSON.parse(payloadNode.textContent || "{}");
   const dataSrc = planner.dataset.plannerDataSrc;
   if (!dataSrc) throw new Error("Planner data source is missing.");
 
-  const response = await fetch(`${dataSrc}${dataSrc.includes("?") ? "&" : "?"}ts=${Date.now()}`, {
-    cache: "no-store",
-    headers: {
-      "Cache-Control": "no-cache",
-      Pragma: "no-cache",
-    },
-  });
-  if (!response.ok) throw new Error(`Planner data failed: ${response.status}`);
-  return response.json();
+  return loadPlannerCatalog(dataSrc);
 }
 
 function showPlannerLoadError(planner, error) {
   console.warn("โหลดข้อมูลวางแผนไหว้พระไม่สำเร็จ", error);
   planner.dataset.plannerLoadError = "true";
   const status = planner.querySelector("[data-planner-location-status]");
-  if (status) status.textContent = "โหลดข้อมูลสถานที่ไม่สำเร็จ กรุณารีเฟรชแล้วลองใหม่";
+  if (status) {
+    status.textContent = "โหลดข้อมูลสถานที่ไม่สำเร็จ ";
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.textContent = "ลองใหม่";
+    retry.addEventListener("click", async () => {
+      retry.disabled = true;
+      try {
+        const payload = await loadTemplePlannerPayload(planner);
+        delete planner.dataset.plannerLoadError;
+        initializeTemplePlanner(planner, payload);
+      } catch (error) { showPlannerLoadError(planner, error); }
+    }, { once: true });
+    status.append(retry);
+  }
 }
 
 function initializeTemplePlanner(planner, payload) {
@@ -43,6 +62,8 @@ function initializeTemplePlanner(planner, payload) {
   const state = {
     items,
     itemById,
+    revision: payload.revision,
+    planRequests: createLatestRequest(),
     selected: [],
     plan: [],
     visibleCount: PLANNER_PICKER_BATCH_SIZE,
@@ -564,144 +585,6 @@ function initializeSelectionMap(planner, panels, value) {
   }
 }
 
-function renderPicker(state, elements) {
-  const filtered = getPickerItems(state, elements);
-  const visible = filtered.slice(0, state.visibleCount);
-  const selectedIds = new Set(state.selected);
-  const origin = getStartPoint(state, elements);
-  const previousVisibleIds = new Set(
-    [...elements.grid.querySelectorAll("[data-planner-place-card]")].map((card) => card.dataset.plannerPlaceCard),
-  );
-
-  renderPickerContext(state, elements, filtered.length);
-  elements.grid.innerHTML = visible
-    .map((item) => {
-      const selected = selectedIds.has(item.id);
-      const distance = origin ? haversineKm(origin, item) : null;
-      const distanceBadge = Number.isFinite(distance)
-        ? `<span class="planner-place-card__distance">${formatDistance(distance)}</span>`
-        : "";
-      const recommendation = getPickerRecommendationText(state, elements, item);
-      return `
-        <article class="planner-place-card${selected ? " is-selected" : ""}" data-planner-place-card="${escapeHtml(item.id)}">
-          <figure>
-            <picture>
-              ${item.imageMobileUrl && item.imageMobileUrl !== item.imageUrl ? `<source media="(max-width: 767px)" srcset="${escapeHtml(item.imageMobileUrl)}">` : ""}
-              <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.imageAlt)}" loading="lazy" decoding="async">
-            </picture>
-            <span>${escapeHtml(item.region)}</span>
-            ${distanceBadge}
-          </figure>
-          <div class="planner-place-card__body">
-            <div>
-              <h3>${escapeHtml(item.name)}</h3>
-              <p>${escapeHtml([item.province, item.district].filter(Boolean).join(" / "))}</p>
-            </div>
-            <p class="planner-place-card__blessing">${escapeHtml(item.blessings.slice(0, 2).join(" · ") || "ไหว้พระและเสริมสิริมงคล")}</p>
-            ${recommendation ? `<p class="planner-place-card__reason">${escapeHtml(recommendation)}</p>` : ""}
-            <button
-              type="button"
-              class="${selected ? "planner-remove-button" : "planner-add-button"}"
-              data-planner-toggle-place="${escapeHtml(item.id)}"
-              aria-pressed="${selected}"
-            >${selected ? "อยู่ในแผน" : "เพิ่มลงแผน"}</button>
-          </div>
-        </article>`;
-    })
-    .join("");
-
-  revealPlannerPlaceCards(elements, previousVisibleIds);
-  elements.moreButton.hidden = filtered.length <= state.visibleCount;
-  elements.empty.hidden = filtered.length > 0;
-}
-
-function revealPlannerPlaceCards(elements, previousVisibleIds) {
-  const cards = [...elements.grid.querySelectorAll("[data-planner-place-card]")];
-  const revealCards = [];
-
-  cards.forEach((card) => {
-    const wasVisible = previousVisibleIds.has(card.dataset.plannerPlaceCard);
-    if (wasVisible) {
-      card.classList.add("is-revealed");
-      return;
-    }
-    revealCards.push(card);
-  });
-
-  queuePlannerCardReveal(revealCards);
-}
-
-function queuePlannerCardReveal(revealCards) {
-  if (!revealCards.length) return;
-
-  if (prefersReducedMotion()) {
-    revealCards.forEach((card) => {
-      card.classList.add("is-revealed");
-    });
-    return;
-  }
-
-  revealCards.forEach((card) => {
-    card.classList.add("is-reveal-ready");
-    card.classList.remove("is-revealed");
-  });
-
-  window.requestAnimationFrame(() => {
-    assignPlannerRevealDelays(revealCards);
-    window.requestAnimationFrame(() => {
-      revealCards.forEach((card) => {
-        card.classList.add("is-revealed");
-      });
-    });
-  });
-}
-
-function assignPlannerRevealDelays(revealCards) {
-  const sortedCards = [...revealCards].sort((a, b) => {
-    const aRect = a.getBoundingClientRect();
-    const bRect = b.getBoundingClientRect();
-    if (Math.abs(aRect.top - bRect.top) > 8) return aRect.top - bRect.top;
-    return aRect.left - bRect.left;
-  });
-  let rowTop = null;
-  let rowIndex = -1;
-  let columnIndex = 0;
-
-  sortedCards.forEach((card) => {
-    const rect = card.getBoundingClientRect();
-    if (rowTop === null || Math.abs(rect.top - rowTop) > 8) {
-      rowTop = rect.top;
-      rowIndex += 1;
-      columnIndex = 0;
-    }
-
-    const delay = rowIndex * 120 + columnIndex * 24;
-    card.style.setProperty("--planner-card-reveal-delay", `${delay}ms`);
-    columnIndex += 1;
-  });
-}
-
-function renderSelected(state, elements) {
-  elements.selectedCount.textContent = state.selected.length.toLocaleString("th-TH");
-  elements.selectedTray.classList.toggle("is-empty", !state.selected.length);
-  if (!state.selected.length) {
-    elements.selectedTray.innerHTML = "<p>ยังไม่ได้เลือกสถานที่ ระบบสามารถแนะนำให้ครบตามจำนวนที่กำหนดได้</p>";
-    return;
-  }
-
-  elements.selectedTray.innerHTML = state.selected
-    .map((id, index) => {
-      const item = state.itemById.get(id);
-      if (!item) return "";
-      return `
-        <span class="planner-selected-chip" draggable="true" data-planner-selected-id="${escapeHtml(id)}">
-          <b>${(index + 1).toLocaleString("th-TH")}</b>
-          <span class="planner-selected-chip__label">${escapeHtml(item.name)}</span>
-          <button type="button" draggable="false" data-planner-remove-selected="${escapeHtml(id)}" aria-label="นำ ${escapeHtml(item.name)} ออกจากแผน">×</button>
-        </span>`;
-    })
-    .join("");
-}
 
 function bindSelectedTrayDrag(state, elements) {
   let draggedId = "";
@@ -923,25 +806,6 @@ function createPickerContext(type = "browse", overrides = {}) {
   };
 }
 
-function getThailandNow() {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Bangkok",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(new Date()).reduce((values, part) => {
-    if (part.type !== "literal") values[part.type] = part.value;
-    return values;
-  }, {});
-
-  return {
-    date: `${parts.year}-${parts.month}-${parts.day}`,
-    time: `${parts.hour}:${parts.minute}`,
-  };
-}
 
 function enforcePlannerDateTimeBounds(elements, options = {}) {
   if (!elements.startDate || !elements.startTime) return;
@@ -1391,10 +1255,13 @@ function showNoResultsDialog(state, elements, message) {
 }
 
 function clearTrip(state, elements) {
+  state.planRequests.cancel();
+  setPlannerPlanBusy(elements, false);
   state.selected = [];
   state.plan = [];
   state.planDetails = null;
   state.tripCriteria = null;
+  state.lastSuccessfulPayload = null;
   state.manualSelectionOrder = false;
   state.pickerContext = createPickerContext("browse", { criteria: getDraftCriteria(state, elements), mode: "browse" });
   elements.result.hidden = true;
@@ -1605,7 +1472,7 @@ async function refreshPlanFromServer(state, elements, options = {}) {
 }
 
 async function runPlannerPlanRequest(state, elements, options) {
-  const previousStatus = elements.locationStatus?.textContent || "";
+  const request = state.planRequests.start();
   setPlannerPlanBusy(elements, true);
   if (!options.quiet && elements.locationStatus) {
     elements.locationStatus.textContent = options.mode === "manual" ? "กำลังจัดลำดับและคำนวณแผน..." : "กำลังจัดแผนจากเงื่อนไขที่เลือก...";
@@ -1617,38 +1484,36 @@ async function runPlannerPlanRequest(state, elements, options) {
       criteria: options.criteria,
       selectedIds: options.selectedIds || [],
       manualSelectionOrder: Boolean(options.manualSelectionOrder),
-    });
+      revision: state.revision,
+    }, { signal: request.signal });
+    if (!request.isCurrent()) return;
     applyPlannerPlanResult(state, elements, payload, { scroll: options.scroll, quiet: options.quiet });
   } catch (error) {
+    if (!request.isCurrent()) return;
+    if (error.payload?.code === "CATALOG_CHANGED") {
+      reconcileCatalog(state, error.payload.catalog);
+      populatePlannerStartSuggestions(state, elements);
+      renderSelected(state, elements);
+      renderPicker(state, elements);
+      elements.result.hidden = true;
+    } else if (state.lastSuccessfulPayload) {
+      const draftSelection = [...state.selected];
+      applyPlannerPlanResult(state, elements, state.lastSuccessfulPayload, { scroll: false, quiet: true });
+      state.selected = draftSelection;
+      renderSelected(state, elements);
+    }
     console.warn("คำนวณแผนไหว้พระไม่สำเร็จ", error);
-    state.planDetails = null;
-    if (elements.locationStatus) elements.locationStatus.textContent = previousStatus || "คำนวณแผนไม่สำเร็จ กรุณาลองใหม่";
+    if (elements.locationStatus) elements.locationStatus.textContent = "คำนวณแผนไม่สำเร็จ กรุณาลองใหม่";
     showNoResultsDialog(state, elements, error.message || options.emptyMessage || "ไม่สามารถคำนวณแผนนี้ได้");
     persistState(state, elements);
   } finally {
-    setPlannerPlanBusy(elements, false);
+    if (request.isCurrent()) setPlannerPlanBusy(elements, false);
   }
-}
-
-async function requestPlannerPlan(body) {
-  const response = await fetch(PLANNER_PLAN_API, {
-    method: "POST",
-    cache: "no-store",
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-cache",
-      Pragma: "no-cache",
-    },
-    body: JSON.stringify(body),
-  });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok || payload.ok !== true) {
-    throw new Error(payload.error || `Planner API failed: ${response.status}`);
-  }
-  return payload;
 }
 
 function applyPlannerPlanResult(state, elements, payload, options = {}) {
+  for (const item of payload.items || []) state.itemById.set(item.id, item);
+  state.revision = payload.revision || state.revision;
   const plan = (payload.planIds || []).map((id) => state.itemById.get(id)).filter(Boolean);
   if (!plan.length) throw new Error("ไม่พบสถานที่ในแผนที่คำนวณได้");
 
@@ -1657,6 +1522,7 @@ function applyPlannerPlanResult(state, elements, payload, options = {}) {
   state.tripCriteria = payload.criteria || { ...getDraftCriteria(state, elements), source: payload.mode || "manual" };
   state.manualSelectionOrder = payload.mode === "manual";
   state.planDetails = payload.details || null;
+  state.lastSuccessfulPayload = payload;
   state.pickerReady = true;
 
   renderSelected(state, elements);
@@ -1669,6 +1535,7 @@ function applyPlannerPlanResult(state, elements, payload, options = {}) {
 }
 
 function setPlannerPlanBusy(elements, isBusy) {
+  elements.result?.setAttribute("aria-busy", String(isBusy));
   [elements.autoButton, elements.buildButton, elements.criteriaRebuild].forEach((button) => {
     if (!button) return;
     button.disabled = isBusy;
@@ -1718,78 +1585,6 @@ function hydratePlanDetails(state) {
   return { ...details, stops };
 }
 
-function renderSummary(details) {
-  return [
-    ["จำนวนสถานที่", `${details.stops.length.toLocaleString("th-TH")} แห่ง`],
-    ["ระยะทางประมาณ", formatDistance(details.totalRoadKm)],
-    ["เวลาเดินทาง", formatMinutes(details.totalTravel)],
-    ["เวลารวมทั้งแผน", `${formatMinutes(details.totalMinutes)} · ถึงประมาณ ${formatClock(details.endMinutes)}`],
-  ]
-    .map(([label, value]) => `<div><span>${label}</span><strong>${value}</strong></div>`)
-    .join("");
-}
-
-function renderWarnings(details, elements) {
-  if (!details.warnings.length) {
-    elements.warnings.hidden = true;
-    elements.warnings.innerHTML = "";
-    return;
-  }
-  elements.warnings.hidden = false;
-  elements.warnings.innerHTML = `
-    <strong>ควรตรวจแผนนี้อีกครั้ง</strong>
-    <ul>${details.warnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join("")}</ul>`;
-}
-
-function renderTimelineItem(item, index, details, totalStops) {
-  const stop = details.stops[index];
-  const leg = stop.nextLeg;
-  const reason = item.blessings.slice(0, 2).join(" · ") || "ไหว้พระและเสริมสิริมงคล";
-  const legText = leg
-    ? `
-      <div class="planner-timeline__leg">
-        <span>ไปจุดถัดไป</span>
-        <strong>${formatDistanceRange(leg)} · ${formatMinutesRange(leg)}</strong>
-      </div>`
-    : "";
-  const startLeg = index === 0 && stop.before
-    ? `<p class="planner-timeline__start-leg">จากจุดเริ่มต้นประมาณ ${formatDistanceRange(stop.before)} · ${formatMinutesRange(stop.before)}</p>`
-    : "";
-
-  return `
-    <li class="planner-timeline__item" draggable="true" data-planner-stop="${escapeHtml(item.id)}">
-      <div class="planner-timeline__rail">
-        <span>${(index + 1).toLocaleString("th-TH")}</span>
-      </div>
-      <article>
-        <div class="planner-timeline__time">
-          <span>คาดว่าจะถึง</span>
-          <strong>${formatClock(stop.arrival)}</strong>
-        </div>
-        <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.imageAlt)}" loading="lazy" decoding="async">
-        <div class="planner-timeline__copy">
-          <span>${escapeHtml(item.region)} · ${escapeHtml(item.province)}</span>
-          <h3>${escapeHtml(item.name)}</h3>
-          <p>${escapeHtml(reason)}</p>
-          ${startLeg}
-          <div class="planner-timeline__meta">
-            <span>ใช้เวลาประมาณ ${formatMinutes(stop.visitMinutes)}</span>
-            <span>ออกประมาณ ${formatClock(stop.departure)}</span>
-          </div>
-          <div class="planner-timeline__links">
-            <a href="${escapeHtml(item.detailUrl)}">ดูรายละเอียด</a>
-            <a href="${buildSingleMapUrl(item)}" target="_blank" rel="noopener">เปิดพิกัด</a>
-          </div>
-        </div>
-        <div class="planner-timeline__controls" aria-label="จัดลำดับ ${escapeHtml(item.name)}">
-          <button type="button" data-planner-move="up" aria-label="เลื่อนขึ้น" ${index === 0 ? "disabled" : ""}>↑</button>
-          <button type="button" data-planner-move="down" aria-label="เลื่อนลง" ${index === totalStops - 1 ? "disabled" : ""}>↓</button>
-          <button type="button" data-planner-replace aria-label="เปลี่ยนสถานที่">เปลี่ยน</button>
-        </div>
-        ${legText}
-      </article>
-    </li>`;
-}
 
 function handleTimelineAction(event, state, elements) {
   const stop = event.target.closest("[data-planner-stop]");
@@ -1941,163 +1736,6 @@ function requestCurrentLocation(state, elements) {
   );
 }
 
-function refreshSelectionMap(state, elements) {
-  if (!state.selectionMap || !state.selectionCluster) return;
-  const filteredIds = new Set(getPickerItems(state, elements).map((item) => item.id));
-  const origin = getStartPoint(state, elements);
-  state.selectionCluster.clearLayers();
-  state.selectionMarkers.forEach((marker, id) => {
-    if (!filteredIds.has(id)) return;
-    updateSelectionMarker(marker, state.selected.indexOf(id), origin);
-    state.selectionCluster.addLayer(marker);
-  });
-  if (state.selectionCluster.getLayers().length) {
-    state.selectionMap.fitBounds(state.selectionCluster.getBounds(), { padding: [30, 30], maxZoom: 13 });
-  }
-}
-
-async function ensureSelectionMap(state, elements) {
-  if (state.selectionMap || !elements.selectionMap) {
-    state.selectionMap?.invalidateSize();
-    return;
-  }
-  await ensureLeaflet();
-  const map = window.L.map(elements.selectionMap, { minZoom: 5, maxZoom: 18, scrollWheelZoom: true }).setView([13.7563, 100.5018], 6);
-  addTiles(map);
-  const cluster = window.L.markerClusterGroup({ maxClusterRadius: 48, showCoverageOnHover: false });
-  state.items.forEach((item) => {
-    const marker = window.L.marker([item.latitude, item.longitude], {
-      icon: createSelectionIcon(state.selected.indexOf(item.id)),
-    });
-    marker._plannerItem = item;
-    marker.bindPopup(renderSelectionPopup(item, state.selected.includes(item.id), getStartPoint(state, elements)), { minWidth: 230, maxWidth: 280 });
-    marker.on("popupopen", (event) => {
-      const popup = event.popup.getElement();
-      popup?.querySelector("[data-planner-map-toggle]")?.addEventListener("click", () => {
-        toggleSelection(state, elements, item.id);
-        marker.setPopupContent(renderSelectionPopup(item, state.selected.includes(item.id), getStartPoint(state, elements)));
-        marker.openPopup();
-      });
-    });
-    state.selectionMarkers.set(item.id, marker);
-    cluster.addLayer(marker);
-  });
-  cluster.addTo(map);
-  map.fitBounds(cluster.getBounds(), { padding: [30, 30], maxZoom: 7 });
-  state.selectionMap = map;
-  state.selectionCluster = cluster;
-  elements.selectionMap._plannerContext = { state, elements };
-  refreshSelectionMap(state, elements);
-}
-
-function updateSelectionMarker(marker, selectedIndex, origin) {
-  marker.setIcon(createSelectionIcon(selectedIndex));
-  marker.setPopupContent(renderSelectionPopup(marker._plannerItem, selectedIndex >= 0, origin));
-}
-
-function createSelectionIcon(selectedIndex) {
-  const selected = selectedIndex >= 0;
-  return window.L.divIcon({
-    className: `planner-leaflet-marker${selected ? " is-selected" : ""}`,
-    html: `<span>${selected ? (selectedIndex + 1).toLocaleString("th-TH") : ""}</span>`,
-    iconSize: selected ? [38, 38] : [28, 28],
-    iconAnchor: selected ? [19, 19] : [14, 14],
-    popupAnchor: [0, selected ? -20 : -15],
-  });
-}
-
-function renderSelectionPopup(item, selected, origin) {
-  const distance = origin ? haversineKm(origin, item) : null;
-  const distanceText = Number.isFinite(distance) ? `<span class="planner-map-popup__distance">${formatDistance(distance)} จากจุดเริ่มต้น</span>` : "";
-  return `
-    <article class="planner-map-popup">
-      <strong>${escapeHtml(item.name)}</strong>
-      <span>${escapeHtml([item.province, item.district].filter(Boolean).join(" / "))}</span>
-      ${distanceText}
-      <p>${escapeHtml(item.blessings.slice(0, 2).join(" · ") || "ไหว้พระและเสริมสิริมงคล")}</p>
-      <button type="button" data-planner-map-toggle>${selected ? "นำออกจากแผน" : "เพิ่มลงแผน"}</button>
-    </article>`;
-}
-
-function renderRouteMap(state, elements) {
-  if (!window.L || !elements.routeMap || !state.plan.length) return;
-  if (!state.routeMap) {
-    state.routeMap = window.L.map(elements.routeMap, { minZoom: 5, maxZoom: 18, scrollWheelZoom: true }).setView([13.7563, 100.5018], 6);
-    addTiles(state.routeMap);
-  }
-  if (state.routeLayer) state.routeLayer.remove();
-  const group = window.L.layerGroup();
-  const coordinates = state.plan.map((item) => [item.latitude, item.longitude]);
-  state.plan.forEach((item, index) => {
-    window.L.marker([item.latitude, item.longitude], { icon: createSelectionIcon(index) })
-      .bindPopup(`<strong>${(index + 1).toLocaleString("th-TH")}. ${escapeHtml(item.name)}</strong>`)
-      .addTo(group);
-  });
-  window.L.polyline(coordinates, { color: "#8e2d24", weight: 4, opacity: 0.78, dashArray: "8 10" }).addTo(group);
-  group.addTo(state.routeMap);
-  state.routeLayer = group;
-  setTimeout(() => {
-    state.routeMap.invalidateSize();
-    state.routeMap.fitBounds(window.L.latLngBounds(coordinates), { padding: [36, 36], maxZoom: 13 });
-  }, 40);
-}
-
-function addTiles(map) {
-  window.L.tileLayer(
-    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-    {
-      attribution: "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ",
-      maxZoom: 18,
-    },
-  ).addTo(map);
-}
-
-let leafletPromise;
-function ensureLeaflet() {
-  if (window.L?.markerClusterGroup) return Promise.resolve();
-  if (leafletPromise) return leafletPromise;
-  const styles = [
-    "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
-    "https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css",
-    "https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css",
-  ];
-  const scripts = [
-    "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
-    "https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js",
-  ];
-  leafletPromise = Promise.all([
-    ...styles.map(loadStylesheet),
-    scripts.reduce((promise, src) => promise.then(() => loadScript(src)), Promise.resolve()),
-  ]).then(() => {
-    if (!window.L?.markerClusterGroup) throw new Error("Leaflet failed to initialize");
-  });
-  return leafletPromise;
-}
-
-function loadStylesheet(href) {
-  if (document.querySelector(`link[href="${href}"]`)) return Promise.resolve();
-  return new Promise((resolve, reject) => {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = href;
-    link.onload = resolve;
-    link.onerror = reject;
-    document.head.appendChild(link);
-  });
-}
-
-function loadScript(src) {
-  if (document.querySelector(`script[src="${src}"]`)) {
-    if (src.includes("markercluster") ? window.L?.markerClusterGroup : window.L) return Promise.resolve();
-  }
-  return new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = src;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
 
 function buildGoogleMapsUrl(state, elements) {
   const plan = state.plan;
@@ -2124,51 +1762,6 @@ function buildSingleMapUrl(item) {
   return url.toString();
 }
 
-function persistState(state, elements) {
-  try {
-    localStorage.setItem(
-      "mongkolwela.templePlanner.v1",
-      JSON.stringify({
-        selected: state.selected,
-        plan: state.plan.map((item) => item.id),
-        count: getTargetCount(elements),
-        budget: elements.budget.value,
-        startDate: elements.startDate?.value,
-        startTime: elements.startTime.value,
-        radius: elements.radius?.value,
-        regions: [...state.activeRegions],
-        provinces: [...state.activeProvinces],
-        purposes: [...state.activePurposes],
-        start: elements.start.value,
-        originText: elements.originText?.value || "",
-        tripCriteria: state.tripCriteria,
-      }),
-    );
-  } catch {}
-}
-
-function restoreState(state, elements) {
-  try {
-    const saved = JSON.parse(localStorage.getItem("mongkolwela.templePlanner.v1") || "{}");
-    const countInput = elements.countInputs.find((input) => Number(input.value) === Number(saved.count));
-    if (countInput) countInput.checked = true;
-    if (saved.budget) elements.budget.value = saved.budget;
-    if (saved.startDate && elements.startDate) elements.startDate.value = saved.startDate;
-    if (saved.startTime) elements.startTime.value = saved.startTime;
-    if ("radius" in saved && elements.radius) elements.radius.value = saved.radius ?? "100";
-    (saved.regions || (saved.region ? [saved.region] : [])).forEach((region) => state.activeRegions.add(region));
-    (saved.purposes || (saved.purpose ? [saved.purpose] : [])).forEach((purpose) => state.activePurposes.add(purpose));
-    if (saved.start && state.itemById.has(saved.start)) elements.start.value = saved.start;
-    if (saved.originText && elements.originText) elements.originText.value = saved.originText;
-    (saved.provinces || (saved.province ? [saved.province] : [])).forEach((province) => state.activeProvinces.add(province));
-    state.selected = (saved.selected || []).filter((id) => state.itemById.has(id)).slice(0, getTargetCount(elements));
-    state.plan = (saved.plan || []).map((id) => state.itemById.get(id)).filter(Boolean);
-    if (saved.tripCriteria) state.tripCriteria = saved.tripCriteria;
-    return saved;
-  } catch {
-    return {};
-  }
-}
 
 function applyPlannerSearchParams(state, elements) {
   try {
@@ -2212,43 +1805,6 @@ function normalizePlannerLookup(value) {
     .toLocaleLowerCase("th");
 }
 
-function parseTime(value) {
-  const [hours, minutes] = String(value).split(":").map(Number);
-  return (Number.isFinite(hours) ? hours : 8) * 60 + (Number.isFinite(minutes) ? minutes : 0);
-}
-
-function formatClock(totalMinutes) {
-  const normalized = ((Math.round(totalMinutes) % 1440) + 1440) % 1440;
-  const hours = Math.floor(normalized / 60);
-  const minutes = normalized % 60;
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} น.`;
-}
-
-function formatMinutes(minutes) {
-  const rounded = Math.max(0, Math.round(minutes / 5) * 5);
-  const hours = Math.floor(rounded / 60);
-  const remainder = rounded % 60;
-  if (!hours) return `${remainder.toLocaleString("th-TH")} นาที`;
-  if (!remainder) return `${hours.toLocaleString("th-TH")} ชม.`;
-  return `${hours.toLocaleString("th-TH")} ชม. ${remainder.toLocaleString("th-TH")} นาที`;
-}
-
-function formatMinutesRange(leg) {
-  return `${formatMinutes(leg.lowMinutes)}–${formatMinutes(leg.highMinutes)}`;
-}
-
-function formatDistance(kilometers) {
-  if (kilometers < 1) return `${Math.round(kilometers * 1000).toLocaleString("th-TH")} ม.`;
-  return `${kilometers.toLocaleString("th-TH", { maximumFractionDigits: kilometers < 10 ? 1 : 0 })} กม.`;
-}
-
-function formatDistanceRange(leg) {
-  return `${formatDistance(leg.lowKm)}–${formatDistance(leg.highKm)}`;
-}
-
-function normalize(value) {
-  return String(value || "").normalize("NFC").trim().toLocaleLowerCase("th");
-}
 
 function initializeSmoothFilterAccordions(scope = document) {
   const accordions = scope?.querySelectorAll?.(".temple-province-accordion, .temple-purpose-accordion") || [];
@@ -2316,22 +1872,6 @@ function initializeSmoothFilterAccordions(scope = document) {
   });
 }
 
-function toRadians(value) {
-  return (value * Math.PI) / 180;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function prefersReducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
 
 document.addEventListener("planner:map-visible", () => {
   const planner = document.querySelector("[data-temple-planner]");
