@@ -114,6 +114,48 @@ function initializeTemplePlanner(planner, payload) {
     updateCriteriaNotice(state, elements);
   }
   elements.locationStatus.textContent = "";
+  bindPlannerContentRefresh(planner, state, elements);
+}
+
+function bindPlannerContentRefresh(planner, state, elements) {
+  let appliedCmsRevision = window.MongkolWelaCMS?.content?.plannerDataRevision;
+  let refreshing = false;
+  document.addEventListener("mw:cms-content-checked", async (event) => {
+    const cmsRevision = event.detail?.content?.plannerDataRevision;
+    if (!cmsRevision || cmsRevision === appliedCmsRevision || refreshing || elements.result.getAttribute("aria-busy") === "true") return;
+    refreshing = true;
+    const previousRevision = state.revision;
+    try {
+      const catalog = await loadPlannerCatalog(planner.dataset.plannerDataSrc, { revision: previousRevision });
+      // A plan response may have supplied a newer catalog while this request ran.
+      if (state.revision !== previousRevision || elements.result.getAttribute("aria-busy") === "true") return;
+      if (!catalog.unchanged) {
+        const hadPlan = state.plan.length > 0;
+        reconcileCatalog(state, catalog);
+        populatePlannerStartSuggestions(state, elements);
+        synchronizeFilterOptions(state, elements);
+        renderSelected(state, elements);
+        renderPicker(state, elements);
+        refreshSelectionMap(state, elements);
+        elements.result.hidden = true;
+        if (hadPlan) elements.pickSection.hidden = false;
+        elements.locationStatus.textContent = hadPlan
+          ? "ข้อมูลสถานที่อัปเดตแล้ว กรุณาตรวจสอบและจัดแผนอีกครั้ง"
+          : "อัปเดตข้อมูลสถานที่ล่าสุดแล้ว";
+        persistState(state, elements);
+      } else if (planner.dataset.plannerRefreshError) {
+        elements.locationStatus.textContent = "";
+      }
+      delete planner.dataset.plannerRefreshError;
+      appliedCmsRevision = cmsRevision;
+    } catch (error) {
+      planner.dataset.plannerRefreshError = "true";
+      elements.locationStatus.textContent = "ไม่สามารถยืนยันข้อมูลสถานที่ล่าสุดได้ กำลังรอตรวจสอบอีกครั้ง";
+      console.warn("Planner content refresh unavailable", error);
+    } finally {
+      refreshing = false;
+    }
+  });
 }
 
 function collectElements(planner) {

@@ -3214,6 +3214,17 @@
   display: none;
 }
 
+.admin-page .mw-commerce-admin-link {
+  text-decoration: none;
+}
+
+.admin-page .mw-commerce-admin-link:hover,
+.admin-page .mw-commerce-admin-link:focus-visible {
+  background: rgba(255, 248, 232, 0.08);
+  outline: 2px solid #d6bb7e;
+  outline-offset: 2px;
+}
+
 .admin-page .mw-admin-nav button,
 .admin-page .mw-admin-ghost {
   position: relative;

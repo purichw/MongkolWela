@@ -41,7 +41,7 @@ function normalizeVisitInfo(temple, visitInfoData) {
   };
 }
 
-async function loadTempleCatalog() {
+export async function loadTempleCatalog() {
   const content = await readLiveContent();
   const collections = Object.entries(DATASETS).map(([collection, temples]) =>
     applyTempleCmsRecords(collection, temples, content).map((temple) => {

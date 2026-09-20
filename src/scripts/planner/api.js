@@ -1,7 +1,9 @@
 import { requestJson } from "../request.js";
 
-export async function loadPlannerCatalog(url, options = {}) {
-  const payload = await requestJson(url, options);
+export async function loadPlannerCatalog(url, { revision, ...options } = {}) {
+  const separator = url.includes("?") ? "&" : "?";
+  const payload = await requestJson(revision ? `${url}${separator}revision=${encodeURIComponent(revision)}` : url, options);
+  if (revision && payload.unchanged === true && payload.revision === revision) return payload;
   if (!Array.isArray(payload?.items) || !payload.filters) throw new Error("ข้อมูลสถานที่ไม่สมบูรณ์ กรุณาลองใหม่");
   return payload;
 }

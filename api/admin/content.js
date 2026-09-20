@@ -8,6 +8,7 @@ import {
   sendJson,
 } from "./_shared.js";
 import { publicContentForPath } from "../../src/lib/public-content.js";
+import { contentRevision } from "../../src/lib/content-revision.js";
 
 function normalizeContent(content, actor) {
   const now = new Date().toISOString();
@@ -25,8 +26,15 @@ export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const content = await readLiveContent();
-      const pathname = new URL(req.url, "http://localhost").searchParams.get("path");
-      sendJson(res, 200, { ok: true, content: pathname ? publicContentForPath(content, pathname) : content });
+      const params = new URL(req.url, "http://localhost").searchParams;
+      const pathname = params.get("path");
+      const projected = pathname ? publicContentForPath(content, pathname) : content;
+      // Publication timestamps alone do not indicate changes to the current page.
+      const { publishedAt, updatedAt, ...revisionContent } = projected;
+      const revision = contentRevision(revisionContent);
+      sendJson(res, 200, params.get("revision") === revision
+        ? { ok: true, revision, unchanged: true }
+        : { ok: true, revision, content: projected });
       return;
     }
 

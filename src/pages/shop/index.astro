@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CommerceNav from "../../components/CommerceNav.astro";
+import "../../styles/commerce.css";
+---
+<BaseLayout title="วัตถุมงคลและเครื่องราง | มงคลเวลา" description="วัตถุมงคลจากวัดและผู้จำหน่าย พร้อมแหล่งที่มาและข้อมูลผู้ขาย" page="shop" robots="noindex,follow" analytics={false}>
+  <main class="commerce-page" data-commerce-public="shop">
+    <CommerceNav active="shop" />
+    <header class="commerce-heading"><p class="section-kicker">ร้านค้ามงคลเวลา</p><h1>วัตถุมงคลและเครื่องราง</h1></header>
+    <div class="commerce-message" role="status" aria-live="polite" data-commerce-message></div>
+    <div data-commerce-content aria-busy="true"><p>กำลังโหลดสินค้า</p></div>
+  </main>
+  <script>import "../../scripts/commerce-public.js";</script>
+</BaseLayout>

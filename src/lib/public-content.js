@@ -1,3 +1,5 @@
+import { contentRevision } from "./content-revision.js";
+
 export function publicContentForPath(content, pathname) {
   const route = `/${String(pathname || "").replace(/^\/+|\/+$/g, "")}/`.replace(/^\/\/$/, "/");
   const templesNeeded = route === "/" || (route.startsWith("/temples/") && route !== "/temples/planner/");
@@ -13,5 +15,6 @@ export function publicContentForPath(content, pathname) {
       return pageRoute === route;
     }),
     ...(templesNeeded ? { temples: content.temples } : {}),
+    ...(route === "/temples/planner/" ? { plannerDataRevision: contentRevision(content.temples) } : {}),
   };
 }

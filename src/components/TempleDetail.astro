@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import TempleResponsiveImage from "./TempleResponsiveImage.astro";
+import TempleActivities from "./TempleActivities.astro";
+import TempleCommerce from "./TempleCommerce.astro";
 import { getTempleTravel } from "../data/temple-travel.js";
 import { getTempleVisitInfo } from "../data/temple-visit-info.js";
-import { getTempleDetailUrl } from "../data/temple-slugs.js";
+import { getTempleDetailUrl, createTempleSlug } from "../data/temple-slugs.js";
 import { absoluteUrl, createTempleJsonLd, splitSeoList } from "../lib/seo.js";
 
 interface Props {
@@ -12,6 +14,7 @@ interface Props {
   collectionHref: string;
   temple: {
     rank: number;
+    cmsKey?: string;
     name: string;
     region: string;
     province: string;
@@ -628,6 +631,9 @@ const templeJsonLd = createTempleJsonLd({
         </section>
       </aside>
     </section>
+
+    <TempleActivities templeId={temple.cmsKey || `${collection}:${createTempleSlug(temple)}`} />
+    <TempleCommerce templeId={temple.cmsKey || `${collection}:${createTempleSlug(temple)}`} />
 
     {relatedTemples.length > 0 && (
       <section class="temple-detail-related" aria-labelledby="temple-detail-related-title">

@@ -1,0 +1,18 @@
+---
+import "../styles/temple-activities.css";
+interface Props { templeId: string; }
+const { templeId } = Astro.props;
+---
+<section class="temple-activities" data-temple-activities data-temple-id={templeId} aria-labelledby="temple-activities-heading">
+  <header class="temple-activities-heading">
+    <div><p class="section-kicker">ประกาศจากสถานที่</p><h2 id="temple-activities-heading">กิจกรรมและงานบุญ</h2></div>
+    <div class="temple-activities-tabs" role="group" aria-label="ช่วงเวลากิจกรรม">
+      <button type="button" data-activity-period="upcoming" aria-pressed="true">กำลังจะมาถึง</button>
+      <button type="button" data-activity-period="past" aria-pressed="false">ที่ผ่านมา</button>
+    </div>
+  </header>
+  <div data-activity-result aria-live="polite" aria-busy="true"><p class="temple-activities-empty">กำลังโหลดกิจกรรม…</p></div>
+  <button class="temple-activities-more" type="button" data-activities-more hidden>ดูกิจกรรมทั้งหมด</button>
+  <noscript><p>กรุณาเปิด JavaScript เพื่อดูประกาศกิจกรรมล่าสุด</p></noscript>
+</section>
+<script>import "../scripts/temple-activities.js";</script>

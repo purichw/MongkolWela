@@ -1,0 +1,10 @@
+---
+interface Props { active?: string }
+const { active = "" } = Astro.props;
+---
+<nav class="commerce-nav" aria-label="ร้านค้าและร่วมบุญ">
+  <a href="/shop/" aria-current={active === "shop" ? "page" : undefined}>วัตถุมงคลและเครื่องราง</a>
+  <a href="/merit/" aria-current={active === "merit" ? "page" : undefined}>กฐินและร่วมบุญ</a>
+  <a href="/shop/?view=cart">ตะกร้า <span data-cart-count>0</span></a>
+  <a href="/seller/">จัดการร้านค้า</a>
+</nav>

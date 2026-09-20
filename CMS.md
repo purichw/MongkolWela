@@ -1,5 +1,10 @@
 # CMS Content
 
+Temple activities are a separate, private per-record store with their own
+Admin save/publish action and public projection. They never replace the live
+page document. See [Temple Activities](docs/temple-activities.md) for event
+validation, Supabase RLS, concurrency, freshness and QA contracts.
+
 Runtime precedence is simple: valid current Admin Portal/API content is live for
 visitors and must not be overridden by bundled JSON, cache, or stale fallback
 logic.
@@ -18,6 +23,24 @@ current page's editable content. Temple records are included for temple pages
 and Home, not unrelated tool pages. The database currently stores one CMS JSON
 document, so this projection reduces browser payload, not database reads.
 
+Visitor pages check again on tab focus, visibility restoration, restored
+back/forward navigation, reconnection, and every 60 seconds while visible.
+Concurrent focus/visibility events are combined; hidden tabs do not poll.
+The request includes the last page-scoped revision. The API reads the current
+source and hashes actual content (not publication timestamps), returning only
+`unchanged` and the revision when identical. This detects direct database edits
+without depending on a timestamp trigger. It still reads the CMS document once
+per check; it is not a database subscription or instant push.
+
+Only changed navigation, page patches, sections, and temple records are applied.
+Refresh does not repeat analytics, consent banners, or unchanged page markup.
+Planner pages receive a small temple-data revision in the CMS response and fetch
+their catalog only when that changes. Criteria and remaining selected IDs are
+preserved; an existing plan is marked for review instead of showing stale travel
+calculations. Refresh failures retain the current view with an explicit warning
+and retry the live source, never a build seed. Static all-Thailand source files
+remain separate from this published CMS refresh contract.
+
 Admin and Planner use the same `applyTempleCmsRecords` merge rules. Explicit
 empty fields and image slots are preserved. Planner identities derive from
 stable dataset identity or CMS record key, never an edited display name.
@@ -31,6 +54,15 @@ criteria and IDs, not authoritative content or calculated results.
 Run `nfr:cms` after local registry changes. Verify published contracts with
 `cms:verify:production` or `smoke:production` after deployment. Schema versions
 describe data shape; they do not determine which document is newest.
+
+## Commerce And Merit
+
+Commerce and merit reservations use separate private tables, not CMS JSON.
+The Admin sidebar links to `/seller/` for platform management; seller access is
+scoped by active organization membership. See
+[Commerce And Merit](docs/commerce-and-merit.md) for schema, local preview,
+verification and release gates. The feature is disabled in deployed APIs unless
+explicitly enabled; payment processing remains unavailable even then.
 
 ## Admin Media
 

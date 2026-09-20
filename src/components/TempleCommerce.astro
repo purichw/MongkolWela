@@ -1,0 +1,10 @@
+---
+import "../styles/commerce.css";
+interface Props { templeId: string }
+const { templeId } = Astro.props;
+---
+<section class="temple-commerce" data-temple-commerce={templeId} aria-label="ร้านค้าและร่วมบุญของวัด" hidden>
+  <header class="commerce-section-heading"><div><p class="section-kicker">ข้อมูลจากผู้จัดและผู้จำหน่าย</p><h2>วัตถุมงคลและร่วมบุญ</h2></div><a href="/merit/">ดูรายการร่วมบุญทั้งหมด</a></header>
+  <div data-temple-commerce-content role="status">กำลังตรวจสอบรายการ</div>
+</section>
+<script>import "../scripts/temple-commerce.js";</script>

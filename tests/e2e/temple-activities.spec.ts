@@ -1,0 +1,115 @@
+import { test, expect } from "@playwright/test";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { createActivitiesPreview } from "../helpers/activities-preview.mjs";
+import { bangkokToday } from "../../src/lib/temple-activities.js";
+
+let server;
+let base;
+let temple;
+const snapshotDir = path.join(process.cwd(), ".local/activities-snapshots");
+const day = (offset) => bangkokToday(new Date(Date.now() + offset * 86400000));
+const event = (overrides = {}) => ({ templeId: temple.key, title: "ตัวอย่างทดสอบ: ทำบุญตักบาตรและฟังธรรม", type: "ceremony", status: "published", startDate: day(7), timeMode: "timed", startTime: "07:00", endTime: "10:00", venue: "ศาลาการเปรียญ", description: "ข้อมูลตัวอย่างสำหรับทดสอบระบบเท่านั้น ไม่ใช่ประกาศกิจกรรมจริง", participation: "ประชาชนทั่วไป", cost: "ไม่มีค่าใช้จ่าย", preparation: "แต่งกายสุภาพ", sourceUrl: "https://example.org/test-announcement", registrationUrl: "https://example.org/test-registration", verifiedAt: day(0), ...overrides });
+
+test.beforeEach(async ({ page }, testInfo) => {
+  test.skip(!["chromium-desktop", "webkit-mobile"].includes(testInfo.project.name), "Focused desktop/mobile coverage");
+  await fs.mkdir(path.join(process.cwd(), "test-results"), { recursive: true });
+  process.env.MONGKOLWELA_ACTIVITIES_DIR = await fs.mkdtemp(path.join(process.cwd(), "test-results/activity-e2e-"));
+  server = createActivitiesPreview();
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  base = `http://127.0.0.1:${server.address().port}`;
+  await page.request.post(`${base}/api/admin/session`, { data: { actor: "ผู้ทดสอบ", password: "admin" } });
+  temple = (await (await page.request.get(`${base}/api/admin/temples`)).json()).temples[0];
+});
+
+test.afterEach(async () => {
+  if (server) await new Promise<void>((resolve) => { server.closeAllConnections(); server.close(resolve); });
+});
+
+test("Admin saves draft, reloads, validates, publishes and preserves conflicting edits", async ({ page, isMobile }) => {
+  const submit = async (name) => {
+    const button = page.getByRole("button", { name, exact: true });
+    await button.evaluate((element) => element.scrollIntoView({ behavior: "instant", block: "center" }));
+    if (isMobile) await button.tap();
+    else await button.click();
+  };
+  await page.goto(`${base}/admin/`);
+  await page.getByRole("button", { name: /กิจกรรมและงานบุญ/ }).click();
+  await page.getByRole("button", { name: "เพิ่มกิจกรรม", exact: true }).click();
+  await page.getByLabel("ชื่อกิจกรรม", { exact: true }).fill("ตัวอย่างทดสอบ: ฟังธรรมวันอาทิตย์");
+  await page.getByLabel("วัด / สถานที่").selectOption(temple.key);
+  await submit("บันทึกกิจกรรม");
+  await expect(page.locator("#activity-feedback")).toContainText("ไม่แสดงบนหน้าวัด");
+  await page.reload();
+  await page.getByRole("button", { name: /กิจกรรมและงานบุญ/ }).click();
+  await page.locator("[data-activity-filter]").selectOption("draft");
+  await page.getByRole("button", { name: "แก้ไข ตัวอย่างทดสอบ: ฟังธรรมวันอาทิตย์" }).click();
+  await page.getByRole("combobox", { name: "สถานะ", exact: true }).selectOption("published");
+  await submit("บันทึกและเผยแพร่กิจกรรม");
+  await expect(page.locator("#activity-feedback")).toContainText("ก่อนเผยแพร่");
+  await page.getByLabel("วันเริ่ม", { exact: true }).fill(day(7));
+  await page.getByLabel("ลิงก์ประกาศจากผู้จัด").fill("https://example.org/test-announcement");
+  await page.getByLabel("วันที่ตรวจสอบประกาศ").fill(day(0));
+  await submit("บันทึกและเผยแพร่กิจกรรม");
+  await expect(page.locator("#activity-feedback")).toHaveText("เผยแพร่กิจกรรมแล้ว");
+  const published = await (await page.request.get(`${base}/api/temple-activities?templeId=${encodeURIComponent(temple.key)}`)).json();
+  expect(published.events).toHaveLength(1);
+  const current = (await (await page.request.get(`${base}/api/admin/activities`)).json()).events[0];
+  await page.request.post(`${base}/api/admin/activities`, { data: { id: current.id, expectedVersion: current.version, event: { ...current, title: "แก้ไขจากหน้าต่างอื่น" } } });
+  await page.getByLabel("ชื่อกิจกรรม", { exact: true }).fill("ข้อความที่ต้องไม่หาย");
+  await submit("บันทึกและเผยแพร่กิจกรรม");
+  await expect(page.locator("#activity-feedback")).toContainText("อีกหน้าต่าง");
+  await expect(page.getByLabel("ชื่อกิจกรรม", { exact: true })).toHaveValue("ข้อความที่ต้องไม่หาย");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+});
+
+test("public list, details, past, refresh, error/retry and responsive snapshots", async ({ page }, testInfo) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  const fixtures = [event(), event({ title: "ตัวอย่างทดสอบ: ปฏิบัติธรรมช่วงเช้า", type: "meditation", startDate: day(10) }), event({ title: "ตัวอย่างทดสอบ: จิตอาสาดูแลวัด", type: "volunteer", startDate: day(12), status: "cancelled", statusNote: "ผู้จัดแจ้งยกเลิกกิจกรรม" }), event({ title: "ตัวอย่างทดสอบ: ฟังธรรม", type: "teaching", startDate: day(14), status: "postponed", statusNote: "รอผู้จัดยืนยันกำหนดการใหม่" }), event({ title: "ตัวอย่างทดสอบ: กิจกรรมที่ผ่านมา", startDate: day(-7) }), event({ title: "ข้อมูลฉบับร่างที่ห้ามเปิดเผย", status: "draft" })];
+  for (const item of fixtures) expect((await page.request.post(`${base}/api/admin/activities`, { data: { event: item } })).ok()).toBe(true);
+  await page.goto(`${base}${temple.detailUrl}`);
+  const section = page.locator("[data-temple-activities]");
+  await expect(section.locator(".temple-activity")).toHaveCount(3);
+  await expect(section).not.toContainText("ข้อมูลฉบับร่างที่ห้ามเปิดเผย");
+  await section.getByRole("button", { name: "ดูกิจกรรมทั้งหมด (4)" }).click();
+  await expect(section.locator(".temple-activity")).toHaveCount(4);
+  const cancelled = section.locator('[data-status="cancelled"]');
+  await cancelled.getByText("รายละเอียดกิจกรรม", { exact: true }).click();
+  await expect(cancelled.getByRole("link", { name: /ลงทะเบียน/ })).toHaveCount(0);
+  await section.getByRole("button", { name: "ที่ผ่านมา", exact: true }).click();
+  await expect(section.locator(".temple-activity")).toHaveCount(1);
+  await expect(section).toContainText("สิ้นสุดแล้ว");
+  await section.getByRole("button", { name: "กำลังจะมาถึง", exact: true }).click();
+  const current = (await (await page.request.get(`${base}/api/admin/activities`)).json()).events.find((item) => item.title === fixtures[0].title);
+  await page.request.post(`${base}/api/admin/activities`, { data: { id: current.id, expectedVersion: current.version, event: { ...current, title: "ตัวอย่างทดสอบ: ทำบุญตักบาตรและฟังธรรม (ปรับกำหนดการ)" } } });
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await expect(section).toContainText("ปรับกำหนดการ");
+  await page.route("**/api/temple-activities?**", (route) => route.fulfill({ status: 503, json: { ok: false } }));
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await expect(section.getByRole("button", { name: "ลองใหม่", exact: true })).toBeVisible();
+  await expect(section.locator(".temple-activity")).toHaveCount(0);
+  await page.unroute("**/api/temple-activities?**");
+  await section.getByRole("button", { name: "ลองใหม่", exact: true }).click();
+  await expect(section.locator(".temple-activity")).toHaveCount(3);
+  await section.locator("details").first().locator("summary").click();
+  await expect(section.locator("details").first().getByRole("link", { name: /ประกาศจากผู้จัด/ })).toHaveAttribute("href", "https://example.org/test-announcement");
+  await section.locator("details").first().locator("summary").click();
+  await page.evaluate(() => { const top = document.querySelector("[data-temple-activities]").getBoundingClientRect().top + scrollY; scrollTo({ top: top - 140, behavior: "instant" }); });
+  await expect(section).toHaveCSS("border-top-width", "1px");
+  await page.evaluate(() => document.fonts.ready);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  await fs.mkdir(snapshotDir, { recursive: true });
+  await page.screenshot({ path: path.join(snapshotDir, `temple-activities-${testInfo.project.name}.png`) });
+  expect(errors).toEqual([]);
+  await page.goto(`${base}/admin/`);
+  await page.getByRole("button", { name: /กิจกรรมและงานบุญ/ }).click();
+  await expect(page.locator(".mw-activity-row")).toHaveCount(4);
+  expect((await page.getByRole("button", { name: "เพิ่มกิจกรรม", exact: true }).boundingBox()).height).toBeLessThanOrEqual(56);
+  await page.screenshot({ path: path.join(snapshotDir, `admin-activities-${testInfo.project.name}.png`), fullPage: true });
+});
+
+test("no announcements is distinct from an API failure", async ({ page }) => {
+  await page.goto(`${base}${temple.detailUrl}`);
+  await expect(page.locator("[data-temple-activities]")).toContainText("ยังไม่มีประกาศกิจกรรมที่ยืนยันในระบบ");
+});

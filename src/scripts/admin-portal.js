@@ -1,4 +1,5 @@
 import { createAdminPublishing } from "./admin/publishing.js";
+import { createActivityEditor } from "./admin/activities.js";
 import { createAdminMedia } from "./admin/media.js";
 import { createTempleEditor } from "./admin/editor.js";
 import { requestJson } from "./request.js";
@@ -270,7 +271,8 @@ function renderSideNav() {
     navButton("navigation", "เมนูนำทาง", "nav", "", "เมนูเว็บไซต์"),
     navButton("temples", "วัดและสถานที่", "component", templeCount, "สถานที่ศักดิ์สิทธิ์"),
     navButton("collections", "เส้นทาง / คอลเลกชัน", "section", TEMPLE_COLLECTIONS.length),
-    navButton("dates", "ฤกษ์มงคล", "dates", "๓"),
+    navButton("dates", "กิจกรรมและงานบุญ", "dates", ""),
+    `<a class="mw-admin-ghost mw-commerce-admin-link" href="/seller/" title="ร้านค้า กฐิน และ e-Donation"><span>${icon("section")}</span><strong>ร้านค้าและร่วมบุญ</strong></a>`,
     navButton("media", "คลังสื่อ", "media", "๕"),
     navButton("users", "ผู้ดูแล", "users", "๓"),
     navButton("settings", "ตั้งค่า / อนุกรมวิธาน", "settings"),
@@ -373,12 +375,14 @@ async function loadSecondaryAdminData() {
   await Promise.allSettled([loadTemples(), loadAnalytics(), loadMediaConfig()]);
   state.secondaryReady = true;
   state.secondaryLoading = false;
-  if (["dashboard", "temples", "analytics", "collections", "media"].includes(state.section)) renderAdmin();
+  if (["dashboard", "temples", "analytics", "collections", "media", "dates"].includes(state.section)) renderAdmin();
   if (!state.dirty) setStatus("พร้อมใช้งาน", "ok");
 }
 
 function renderAdmin() {
   renderSideNav();
+  $("#adminTopActions")?.classList.toggle("mw-activity-top-actions", state.section === "dates");
+  document.querySelectorAll('[data-action="save-draft"], [data-action="publish"]').forEach((button) => { button.hidden = state.section === "dates"; });
   if (!state.content) {
     renderAdminLoading("ภาพรวม", "กำลังโหลดข้อมูล", "กำลังเตรียมข้อมูลหลักสำหรับระบบจัดการเว็บ");
     return;
@@ -441,7 +445,7 @@ function renderDashboard() {
   $("#adminContent").innerHTML = `<div class="mw-admin-grid mw-admin-dashboard-stats">
     ${statCard("วัด/สถานที่", templeCount, "เผยแพร่ + ฉบับร่าง", "component", "lacquer")}
     ${statCard("เส้นทาง", TEMPLE_COLLECTIONS.length, "คอลเลกชันไหว้พระ", "section", "jade")}
-    ${statCard("ฤกษ์มงคล", 3, "ในปฏิทินที่เผยแพร่", "dates", "gold")}
+    ${statCard("กิจกรรมและงานบุญ", "—", "จัดการประกาศจากสถานที่", "dates", "gold")}
     ${statCard("รอตรวจสอบ", reviewCount, "ข้อมูลควรยืนยัน", "alert", "muted")}
   </div>
   <div class="mw-admin-dashboard-layout">
@@ -996,20 +1000,7 @@ function renderCollections() {
 }
 
 function renderDates() {
-  setTitle("ฤกษ์มงคล", "จัดการเนื้อหา");
-  const dates = [
-    ["๘", "ก.ค.", "วันธงชัย · ขึ้น ๘ ค่ำ", "ฤกษ์ดีสำหรับเริ่มต้นและทำบุญ", "๙ / ๑๐"],
-    ["๑๕", "ก.ค.", "วันพระ · ขึ้น ๑๕ ค่ำ", "เหมาะกับการรักษาศีลและทำบุญ", "๘ / ๑๐"],
-    ["๒๒", "ก.ค.", "ฤกษ์เปิดกิจการ", "จังหวะดีด้านการค้าและการเงิน", "๗ / ๑๐"],
-  ];
-  setTopActions(`<button class="mw-admin-btn mw-admin-btn-primary" type="button" disabled title="ยังไม่มี API สำหรับเพิ่มฤกษ์">+ เพิ่มฤกษ์</button>`);
-  $("#adminContent").innerHTML = `<div class="mw-admin-date-list">
-    ${dates.map(([day, month, title, detail, score]) => `<article class="mw-admin-date-row">
-      <time><strong>${day}</strong><span>${month}</span></time>
-      <div><h2>${title}</h2><p>${detail}</p></div>
-      <mark><i></i>${score}</mark>
-    </article>`).join("")}
-  </div>`;
+  activityEditor.render();
 }
 
 function templeMediaItems() {
@@ -1316,6 +1307,7 @@ function handleGlobalClick(event) {
   }
   const sectionButton = event.target.closest("[data-section]");
   if (sectionButton) {
+    if (state.section === "dates" && !activityEditor.canLeave()) return;
     if (sectionButton.dataset.pageJump) state.selectedPageId = sectionButton.dataset.pageJump;
     state.section = sectionButton.dataset.section;
     renderAdmin();
@@ -1446,6 +1438,7 @@ function restoreTempleListScroll() {
 }
 
 function handleInput(event) {
+  if (state.section === "dates") return;
   const target = event.target;
   if (target.matches("[data-field='selectedPage']")) {
     state.selectedPageId = target.value;
@@ -2017,7 +2010,7 @@ function moveArrayItem(array, index, direction) {
 }
 
 window.addEventListener("beforeunload", (event) => {
-  if (!state.dirty) return;
+  if (!state.dirty && !activityEditor.isDirty() && !activityEditor.isBusy()) return;
   event.preventDefault();
   event.returnValue = "";
 });
@@ -2027,5 +2020,7 @@ const { templeRecords, templeOrders, currentTempleRecord, currentTempleEdit, tem
 const { imageFieldFromButton, setTempleImage, useTempleImageUrl, verifyImageLoads, cropTempleImage, reuseTempleImage, clearTempleImage, handleTempleImageUpload, templeImageFilename, detectImageProvider, uploadAdminMedia, openTempleCropper, initializeTempleCrop, bindTempleCropPointerEvents, pickCropBox, moveTempleCrop, resizeTempleCrop, updateTempleCropSelection, applyTempleCrop, closeTempleCropper } = createAdminMedia({ markDirty, setStatus, state, api, $, TEMPLE_IMAGE_FIELDS, escapeHtml, currentTempleEdit, currentTempleRecord, renderTemples, templeImageValue });
 
 const { setPublishControlsDisabled, setPublishProgress, hidePublishProgress, publishedContentMatches, waitForPublishedContent, publish } = createAdminPublishing({ queryAll: (selector) => document.querySelectorAll(selector), $, api, sleep, state, setStatus, renderAdmin });
+
+const activityEditor = createActivityEditor({ state, $, api, escapeHtml, setTitle, setTopActions, setStatus });
 
 boot();

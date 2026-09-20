@@ -14,12 +14,13 @@ import map from "../styles/temple-map.css?url";
 import responsive from "../styles/responsive.css?url";
 import headlines from "../styles/thai-headlines.css?url";
 import admin from "../styles/admin.css?url";
+import adminActivities from "../styles/admin-activities.css?url";
 import site from "../styles/site.css?url";
 import planner from "../styles/temple-planner.css?url";
 
 // Keep the existing cascade order while loading only the route's feature styles.
 export function stylesForPath(path) {
-  if (path === "/admin/") return [tokens, base, admin, site];
+  if (path === "/admin/") return [tokens, base, admin, site, adminActivities];
   const featureStyles = path.startsWith("/tarot/") ? [tarot]
     : path.startsWith("/calendar/") ? [calendar]
     : path.includes("/life-graph/") ? [life]

@@ -62,3 +62,56 @@ test("planner retries loading, keeps a working plan on errors, revalidates chang
   await expect(page.locator("[data-planner-stop]")).toHaveCount(0);
   expect(errors).toEqual([]);
 });
+
+test("background catalog refresh keeps trip inputs and selections while invalidating old calculations", async ({ page }) => {
+  let data = catalog();
+  let cmsRevision = "cms-v1";
+  let catalogReads = 0;
+  let catalogUnavailable = false;
+  await page.route("**/api/admin/content?*", (route) => route.fulfill({ json: new URL(route.request().url()).searchParams.get("revision") === cmsRevision
+    ? { ok: true, revision: cmsRevision, unchanged: true }
+    : { ok: true, revision: cmsRevision, content: { schemaVersion: 1, pages: [], navigation: { tabs: [], utility: [] }, plannerDataRevision: cmsRevision } },
+  }));
+  await page.route("**/api/temple-planner/data*", (route) => {
+    catalogReads++;
+    if (catalogUnavailable) return route.fulfill({ status: 503, json: { error: "Unavailable" } });
+    return route.fulfill({ json: new URL(route.request().url()).searchParams.get("revision") === data.revision
+      ? { revision: data.revision, unchanged: true } : data });
+  });
+  await page.route("**/api/temple-planner/plan", (route) => {
+    const result = createTemplePlannerPlan(data, route.request().postDataJSON());
+    return route.fulfill({ json: { ...result, revision: data.revision, items: (result.planIds || []).map((id) => data.items.find((item) => item.id === id)) } });
+  });
+  await page.goto("/temples/planner/");
+  await expect(page.locator("[data-temple-planner]")).not.toHaveAttribute("aria-busy", "true");
+  await page.locator("[data-planner-auto]").click();
+  await expect(page.locator("[data-planner-stop]")).toHaveCount(3);
+  await page.locator("[data-planner-start-time]").fill("11:30");
+  const selected = await page.evaluate(() => (document.querySelector("[data-temple-planner]") as any)._plannerState.state.selected);
+  await page.clock.install();
+  const before = catalogReads;
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await page.clock.runFor(300);
+  expect(catalogReads).toBe(before);
+  cmsRevision = "cms-v2";
+  data = { ...data, revision: "test-v2", items: data.items.map((item) => ({ ...item, name: `ชื่ออัปเดต ${item.id}` })) };
+  catalogUnavailable = true;
+  await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true })));
+  await page.clock.runFor(300);
+  await expect(page.locator("[data-planner-refresh-error]")).toHaveCount(1);
+  await expect(page.locator("[data-planner-start-time]")).toHaveValue("11:30");
+  catalogUnavailable = false;
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await page.clock.runFor(300);
+  await expect(page.locator("[data-planner-location-status]")).toContainText("ข้อมูลสถานที่อัปเดตแล้ว");
+  await expect(page.locator("[data-planner-result]")).toBeHidden();
+  await expect(page.locator("[data-planner-start-time]")).toHaveValue("11:30");
+  const refreshed = await page.evaluate(() => {
+    const state = (document.querySelector("[data-temple-planner]") as any)._plannerState.state;
+    return { selected: state.selected, names: state.plan.map((item) => item.name), details: state.planDetails };
+  });
+  expect(refreshed.selected).toEqual(selected);
+  expect(refreshed.names.every((name) => name.startsWith("ชื่ออัปเดต"))).toBe(true);
+  expect(refreshed.details).toBeNull();
+  expect(catalogReads).toBe(before + 2);
+});

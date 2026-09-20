@@ -14,7 +14,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    sendJson(res, 200, await readPlannerCatalog());
+    const catalog = await readPlannerCatalog();
+    const revision = new URL(req.url, "http://localhost").searchParams.get("revision");
+    sendJson(res, 200, revision === catalog.revision
+      ? { revision: catalog.revision, unchanged: true }
+      : catalog);
   } catch (error) {
     sendJson(res, error.statusCode || 500, { ok: false, error: "ไม่สามารถโหลดข้อมูลล่าสุดได้ กรุณาลองใหม่" });
   }

@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CommerceNav from "../../components/CommerceNav.astro";
+import "../../styles/commerce.css";
+---
+<BaseLayout title="กฐินและร่วมบุญ | มงคลเวลา" description="ค้นหารายการกฐิน จองร่วมเป็นเจ้าภาพ และตรวจสอบช่องทาง e-Donation ของวัด" page="merit" robots="noindex,follow" analytics={false}>
+  <main class="commerce-page" data-commerce-public="merit">
+    <CommerceNav active="merit" />
+    <header class="commerce-heading"><p class="section-kicker">ร่วมบุญกับวัด</p><h1>กฐินและร่วมบุญ</h1></header>
+    <div class="commerce-message" role="status" aria-live="polite" data-commerce-message></div>
+    <div data-commerce-content aria-busy="true"><p>กำลังโหลดรายการร่วมบุญ</p></div>
+  </main>
+  <script>import "../../scripts/commerce-public.js";</script>
+</BaseLayout>

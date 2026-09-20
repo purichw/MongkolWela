@@ -498,6 +498,16 @@ Important UI decisions:
 - Operational/search interfaces should remain usable and dense enough, not become landing pages.
 - Cards may be used for repeated items and framed tools; avoid unnecessary card nesting.
 
+## Commerce And Merit Preparation
+
+The `/shop/`, `/merit/` and `/seller/` routes share commerce presentation and a
+private server-side domain layer. `TempleCommerce` adds linked offerings and
+reviewed donation destinations to temple details. Separate additive Supabase
+tables preserve CMS/temple content ownership. Deployed APIs require an explicit
+feature flag; payment, fulfillment and settlement integration remain disabled.
+See [Commerce And Merit](docs/commerce-and-merit.md) for the implementation map,
+transaction model, permission boundaries, tests and production release gates.
+
 ## Known External References
 
 Notenwert local reference project:

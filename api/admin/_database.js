@@ -24,7 +24,7 @@ export function hasWritableDatabase() {
   return Boolean(config.url && config.serviceRoleKey);
 }
 
-function supabaseClient({ service = false } = {}) {
+export function supabaseClient({ service = false } = {}) {
   const config = databaseConfig();
   const key = service ? config.serviceRoleKey : config.anonKey || config.serviceRoleKey;
   if (!config.url || !key) return null;

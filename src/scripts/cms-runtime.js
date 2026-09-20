@@ -1,11 +1,18 @@
 import { requestJson, createLatestRequest } from "./request.js";
+import { startContentRefresh } from "./content-refresh.js";
 
 const CMS_CONTENT_URL = "/api/admin/content";
 const CMS_CONSENT_KEY = "mongkolwela.pdpa.analytics";
 const CMS_EDITABLE_CONTRACT_VERSION = 2;
 
 let activeContent = null;
+let activeRevision = "";
+let contentLoading = false;
+let pageviewTracked = false;
+let disabledPageChildren = null;
+const appliedPatches = new Map();
 const contentRequests = createLatestRequest();
+const unchanged = (before, after) => JSON.stringify(before) === JSON.stringify(after);
 
 function markCmsNavigationReady() {
   document.documentElement.classList.remove("cms-navigation-pending");
@@ -33,10 +40,12 @@ function normalizeCmsContent(content) {
 
 async function loadContent(signal) {
   const path = encodeURIComponent(window.location.pathname);
-  const payload = await requestJson(`${CMS_CONTENT_URL}?path=${path}`, { signal });
+  const revision = activeRevision ? `&revision=${encodeURIComponent(activeRevision)}` : "";
+  const payload = await requestJson(`${CMS_CONTENT_URL}?path=${path}${revision}`, { signal });
+  if (payload.unchanged === true && activeContent && payload.revision === activeRevision) return payload;
   const content = normalizeCmsContent(payload.content);
   if (!content) throw new Error("Live CMS payload is invalid");
-  return content;
+  return { content, revision: payload.revision || "" };
 }
 
 function normalizeRoute(pathname = window.location.pathname) {
@@ -231,7 +240,34 @@ function applyPatch(patch) {
   });
 }
 
+function applyPagePatches(patches = []) {
+  const key = (patch) => JSON.stringify([patch.selector, patch.kind, patch.attr]);
+  const next = new Map(patches.filter((patch) => patch.selector && patch.enabled !== false).map((patch) => [key(patch), patch]));
+  for (const [id, previous] of appliedPatches) {
+    if (unchanged(previous.patch, next.get(id))) continue;
+    previous.restore.forEach((restore) => restore());
+    appliedPatches.delete(id);
+  }
+  for (const [id, patch] of next) {
+    const nodes = [...document.querySelectorAll(patch.selector)];
+    const previous = appliedPatches.get(id);
+    if (previous && nodes.length === previous.nodes.length && nodes.every((node, index) => node === previous.nodes[index])) continue;
+    const restore = nodes.map((node) => {
+      if (patch.kind === "image" || (patch.kind === "attr" && patch.attr)) {
+        const attributes = patch.kind === "image" ? ["src", "alt"] : [patch.attr];
+        const values = attributes.map((name) => [name, node.getAttribute(name)]);
+        return () => values.forEach(([name, value]) => value === null ? node.removeAttribute(name) : node.setAttribute(name, value));
+      }
+      const children = [...node.childNodes];
+      return () => node.replaceChildren(...children);
+    });
+    applyPatch(patch);
+    appliedPatches.set(id, { patch, restore, nodes });
+  }
+}
+
 function applySections(page) {
+  document.querySelectorAll("[data-cms-duplicate-of]").forEach((node) => node.remove());
   const sections = (page.sections || []).filter((section) => section.selector);
   const found = sections
     .map((section) => ({ ...section, node: document.querySelector(section.selector) }))
@@ -269,9 +305,14 @@ function applySections(page) {
 }
 
 function disablePage(page) {
-  if (!page || page.enabled !== false) return false;
   const main = document.querySelector("main");
+  if (!page || page.enabled !== false) {
+    if (main && disabledPageChildren) main.replaceChildren(...disabledPageChildren);
+    disabledPageChildren = null;
+    return false;
+  }
   if (!main) return true;
+  if (!disabledPageChildren) disabledPageChildren = [...main.childNodes];
   main.innerHTML = `<section class="section-shell cms-disabled-page">
     <div class="section-heading">
       <p class="section-kicker">ปิดใช้งานชั่วคราว</p>
@@ -693,12 +734,15 @@ function applyTempleOverrides(content) {
 }
 
 function shouldTrackAnalytics(content) {
+  if (document.body.dataset.analyticsDisabled === "true") return false;
   if (!content?.analytics?.enabled) return false;
   if (!content.site?.pdpa?.analyticsConsentRequired) return true;
   return localStorage.getItem(CMS_CONSENT_KEY) === "accepted";
 }
 
 function renderPdpaBanner(content) {
+  document.querySelector(".pdpa-consent")?.remove();
+  if (document.body.dataset.analyticsDisabled === "true") return;
   if (!content?.site?.pdpa?.analyticsConsentRequired) return;
   if (localStorage.getItem(CMS_CONSENT_KEY)) return;
   const pdpa = content.site.pdpa;
@@ -732,7 +776,8 @@ function renderPdpaBanner(content) {
 }
 
 function trackPageview(content) {
-  if (!shouldTrackAnalytics(content)) return;
+  if (pageviewTracked || !shouldTrackAnalytics(content)) return;
+  pageviewTracked = true;
   const payload = JSON.stringify({
     type: "pageview",
     path: normalizeRoute(),
@@ -747,30 +792,39 @@ function trackPageview(content) {
 
 async function bootCmsRuntime() {
   const request = contentRequests.start();
+  contentLoading = true;
   try {
-    const content = await loadContent(request.signal);
+    const payload = await loadContent(request.signal);
     if (!request.isCurrent()) return;
-    if (!content) return;
+    document.documentElement.dataset.cmsReady = "true";
+    document.querySelector("[data-cms-load-error]")?.remove();
+    if (payload.unchanged) {
+      document.dispatchEvent(new CustomEvent("mw:cms-content-checked", { detail: { content: activeContent } }));
+      return;
+    }
+    const { content } = payload;
+    const previous = activeContent;
+    if (!previous || !unchanged(previous.navigation, content.navigation)) applyNavigation(content);
+    if (!previous || !unchanged(previous.temples, content.temples)) applyTempleOverrides(content);
+    const page = pageForRoute(content);
+    const previousPage = pageForRoute(previous);
+    if (!previous || !unchanged(previousPage, page)) {
+      if (!renderCustomPage(content) && !disablePage(page)) {
+        if (page && (!previous || !unchanged(previousPage?.sections, page.sections))) applySections(page);
+        applyPagePatches(page?.patches);
+      }
+    }
+    if (!previous || !unchanged(previous.site?.pdpa, content.site?.pdpa)) renderPdpaBanner(content);
     activeContent = content;
+    activeRevision = payload.revision;
     window.MongkolWelaCMS = {
       content: activeContent,
       reload: bootCmsRuntime,
       applyTempleOverrides: () => applyTempleOverrides(activeContent),
     };
-    document.documentElement.dataset.cmsReady = "true";
-    document.querySelector("[data-cms-load-error]")?.remove();
-    applyNavigation(content);
-    applyTempleOverrides(content);
-    if (!renderCustomPage(content)) {
-      const page = pageForRoute(content);
-      if (!disablePage(page) && page) {
-        applySections(page);
-        (page.patches || []).forEach(applyPatch);
-      }
-    }
-    renderPdpaBanner(content);
     trackPageview(content);
     document.dispatchEvent(new CustomEvent("mw:cms-content-ready", { detail: { content: activeContent } }));
+    document.dispatchEvent(new CustomEvent("mw:cms-content-checked", { detail: { content: activeContent } }));
   } catch (error) {
     if (!request.isCurrent()) return;
     document.documentElement.dataset.cmsReady = "false";
@@ -789,8 +843,14 @@ async function bootCmsRuntime() {
     }
     console.warn("CMS runtime unavailable", error);
   } finally {
-    if (request.isCurrent()) markCmsNavigationReady();
+    if (request.isCurrent()) {
+      contentLoading = false;
+      markCmsNavigationReady();
+    }
   }
 }
 
-if (!document.body.classList.contains("admin-page")) bootCmsRuntime();
+if (!document.body.classList.contains("admin-page")) {
+  bootCmsRuntime();
+  startContentRefresh(() => contentLoading ? undefined : bootCmsRuntime());
+}
