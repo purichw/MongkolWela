@@ -1,6 +1,6 @@
 ---
 import { brandAssets } from "../../config/site.js";
-import "../../styles/tokens.css";
+import tokens from "../../styles/tokens.css?url";
 import "../../styles/commerce.css";
 ---
 <!doctype html>
@@ -10,6 +10,7 @@ import "../../styles/commerce.css";
     <meta name="robots" content="noindex,nofollow" /><meta name="referrer" content="no-referrer" />
     <title>จัดการร้านค้าและร่วมบุญ | มงคลเวลา</title>
     <link rel="icon" href={brandAssets.favicon.src} />
+    <link rel="stylesheet" href={tokens} />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body class="commerce-console">
