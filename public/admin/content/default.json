@@ -20,13 +20,48 @@
         "href": "temples/",
         "enabled": true,
         "items": [
-          { "id": "temple-planner", "label": "วางแผนไหว้พระ", "href": "temples/planner/", "enabled": true },
-          { "id": "temple-featured-section", "label": "วัดเด่นและวัดสำคัญ", "section": true, "enabled": true },
-          { "id": "popular-temples", "label": "วัดดัง", "href": "temples/popular/", "enabled": true },
-          { "id": "mu-temples", "label": "สถานที่มงคล", "href": "temples/mu/", "enabled": true },
-          { "id": "sacred-temples", "label": "วัดศักดิ์สิทธิ์", "href": "temples/sacred/", "enabled": true },
-          { "id": "temple-all-section", "label": "วัดทั่วประเทศไทย", "section": true, "enabled": true },
-          { "id": "all-temples", "label": "วัดทั่วประเทศไทย", "href": "temples/thailand/", "enabled": true }
+          {
+            "id": "temple-planner",
+            "label": "วางแผนไหว้พระ",
+            "href": "temples/planner/",
+            "enabled": true
+          },
+          {
+            "id": "temple-featured-section",
+            "label": "วัดเด่นและวัดสำคัญ",
+            "section": true,
+            "enabled": true
+          },
+          {
+            "id": "popular-temples",
+            "label": "วัดดัง",
+            "href": "temples/popular/",
+            "enabled": true
+          },
+          {
+            "id": "mu-temples",
+            "label": "สถานที่มงคล",
+            "href": "temples/mu/",
+            "enabled": true
+          },
+          {
+            "id": "sacred-temples",
+            "label": "วัดศักดิ์สิทธิ์",
+            "href": "temples/sacred/",
+            "enabled": true
+          },
+          {
+            "id": "temple-all-section",
+            "label": "วัดทั่วประเทศไทย",
+            "section": true,
+            "enabled": true
+          },
+          {
+            "id": "all-temples",
+            "label": "วัดทั่วประเทศไทย",
+            "href": "temples/thailand/",
+            "enabled": true
+          }
         ]
       },
       {
@@ -42,19 +77,84 @@
         "href": "#supporting-tools",
         "enabled": true,
         "items": [
-          { "id": "tarot-section", "label": "ไพ่ยิปซี", "section": true, "enabled": true },
-          { "id": "tarot-meanings", "label": "ความหมายไพ่ยิปซี 78 ใบ", "href": "tarot/meanings/", "enabled": true },
-          { "id": "tarot-daily", "label": "ไพ่ยิปซีรายวัน", "href": "tarot/daily/", "enabled": true },
-          { "id": "tarot-monthly", "label": "ไพ่ยิปซีรายเดือน", "href": "tarot/monthly/", "enabled": true },
-          { "id": "tarot-love", "label": "ไพ่ยิปซีความรัก", "href": "tarot/love/", "enabled": true },
-          { "id": "tarot-money", "label": "ไพ่ยิปซีการเงิน", "href": "tarot/money/", "enabled": true },
-          { "id": "tarot-career", "label": "ไพ่ยิปซีการงาน อาชีพ", "href": "tarot/career/", "enabled": true },
-          { "id": "tarot-luck", "label": "ไพ่ยิปซีด้านโชคลาภ", "href": "tarot/luck/", "enabled": true },
-          { "id": "other-tools-section", "label": "อื่น ๆ", "section": true, "enabled": true },
-          { "id": "life-graph", "label": "กราฟชีวิต", "href": "horoscope/life-graph/", "enabled": true },
-          { "id": "palmistry", "label": "อ่านลายมือ", "href": "horoscope/palmistry/", "enabled": true },
-          { "id": "thai-astrology", "label": "โหราศาสตร์ไทย", "href": "horoscope/thai-astrology/", "enabled": true },
-          { "id": "seamsi", "label": "คำเซียมซี", "href": "horoscope/seamsi/", "enabled": true }
+          {
+            "id": "tarot-section",
+            "label": "ไพ่ยิปซี",
+            "section": true,
+            "enabled": true
+          },
+          {
+            "id": "tarot-meanings",
+            "label": "ความหมายไพ่ยิปซี 78 ใบ",
+            "href": "tarot/meanings/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-daily",
+            "label": "ไพ่ยิปซีรายวัน",
+            "href": "tarot/daily/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-monthly",
+            "label": "ไพ่ยิปซีรายเดือน",
+            "href": "tarot/monthly/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-love",
+            "label": "ไพ่ยิปซีความรัก",
+            "href": "tarot/love/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-money",
+            "label": "ไพ่ยิปซีการเงิน",
+            "href": "tarot/money/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-career",
+            "label": "ไพ่ยิปซีการงาน อาชีพ",
+            "href": "tarot/career/",
+            "enabled": true
+          },
+          {
+            "id": "tarot-luck",
+            "label": "ไพ่ยิปซีด้านโชคลาภ",
+            "href": "tarot/luck/",
+            "enabled": true
+          },
+          {
+            "id": "other-tools-section",
+            "label": "อื่น ๆ",
+            "section": true,
+            "enabled": true
+          },
+          {
+            "id": "life-graph",
+            "label": "กราฟชีวิต",
+            "href": "horoscope/life-graph/",
+            "enabled": true
+          },
+          {
+            "id": "palmistry",
+            "label": "อ่านลายมือ",
+            "href": "horoscope/palmistry/",
+            "enabled": true
+          },
+          {
+            "id": "thai-astrology",
+            "label": "โหราศาสตร์ไทย",
+            "href": "horoscope/thai-astrology/",
+            "enabled": true
+          },
+          {
+            "id": "seamsi",
+            "label": "คำเซียมซี",
+            "href": "horoscope/seamsi/",
+            "enabled": true
+          }
         ]
       }
     ],
@@ -68,38 +168,565 @@
       "enabled": true,
       "kind": "existing",
       "patches": [
-        { "id": "home-hero-title", "label": "Hero title", "selector": "#hero-title", "kind": "html", "value": "<span>วางแผน<span class=\"hero-title-keep\">ไหว้พระ</span></span><mark>อย่างรอบคอบ</mark>" },
-        { "id": "home-hero-search-placeholder", "label": "Search placeholder", "selector": "#site-search", "kind": "attr", "attr": "placeholder", "value": "ค้นหาวัด จังหวัด หรือวัตถุประสงค์" },
-        { "id": "home-hero-image-1", "label": "Hero image 1", "selector": ".hero-slide:nth-child(1) img", "kind": "image", "src": "/assets/images/hero-temple-red.jpg", "alt": "พระอุโบสถและบรรยากาศวัดไทยในแสงอบอุ่น" }
+        {
+          "id": "home-hero-title",
+          "label": "Hero title",
+          "selector": "#hero-title",
+          "kind": "html",
+          "value": "มงคลเวลา"
+        },
+        {
+          "id": "home-hero-search-placeholder",
+          "label": "Search placeholder",
+          "selector": "#site-search",
+          "kind": "attr",
+          "attr": "placeholder",
+          "value": "ค้นหาวัด จังหวัด หรือวัตถุประสงค์"
+        },
+        {
+          "id": "home-hero-image-1",
+          "label": "Hero image 1",
+          "selector": ".hero-slide:nth-child(1) img",
+          "kind": "image",
+          "src": "/assets/images/hero-doi-suthep-gold.webp",
+          "alt": "พระธาตุดอยสุเทพสีทองมองผ่านซุ้มลายไทย เชียงใหม่",
+          "position": "50% 28%",
+          "credit": "Nat Weerawong",
+          "sourceUrl": "https://unsplash.com/photos/ZmvuHreuHdo",
+          "license": "Unsplash License",
+          "licenseUrl": "https://unsplash.com/license"
+        },
+        {
+          "id": "home-hero-image-2",
+          "label": "Hero image 2",
+          "selector": ".hero-slide:nth-child(2) img",
+          "kind": "image",
+          "src": "/assets/images/hero-songkhla-buddha.webp",
+          "alt": "พระพุทธรูปสีทองท่ามกลางพื้นที่สีเขียวในสงขลา",
+          "position": "50% 50%",
+          "credit": "mohd hasan",
+          "sourceUrl": "https://www.pexels.com/photo/buddhist-temple-in-the-forest-15486655/",
+          "license": "Pexels License",
+          "licenseUrl": "https://www.pexels.com/license/"
+        },
+        {
+          "id": "home-hero-image-3",
+          "label": "Hero image 3",
+          "selector": ".hero-slide:nth-child(3) img",
+          "kind": "image",
+          "src": "/assets/images/hero-doi-suthep-forest.webp",
+          "alt": "พระธาตุดอยสุเทพและกลุ่มอาคารวัดท่ามกลางป่าเขียว เชียงใหม่",
+          "position": "50% 43%",
+          "credit": "Mike Holp",
+          "sourceUrl": "https://unsplash.com/photos/4Gq3UG5v4Es",
+          "license": "Unsplash License",
+          "licenseUrl": "https://unsplash.com/license"
+        },
+        {
+          "id": "home-hero-image-4",
+          "label": "Hero image 4",
+          "selector": ".hero-slide:nth-child(4) img",
+          "kind": "image",
+          "src": "/assets/images/hero-wat-mahathat-sukhothai.webp",
+          "alt": "พระพุทธรูปและเจดีย์วัดมหาธาตุ สุโขทัย สะท้อนบนผิวน้ำยามเย็น",
+          "position": "54% 48%",
+          "credit": "Supanut Arunoprayote · ปรับขนาดและครอป",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Wat_Mahathat_Sukhothai_at_sunset.jpg",
+          "license": "CC BY 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        {
+          "id": "home-hero-image-5",
+          "label": "Hero image 5",
+          "selector": ".hero-slide:nth-child(5) img",
+          "kind": "image",
+          "src": "/assets/images/hero-wat-arun-sunset.webp",
+          "alt": "พระปรางค์วัดอรุณส่องสว่างสีทองยามเย็น กรุงเทพมหานคร",
+          "position": "50% 12%",
+          "credit": "Haley Hong",
+          "sourceUrl": "https://unsplash.com/photos/BVB6A30FI4c",
+          "license": "Unsplash License",
+          "licenseUrl": "https://unsplash.com/license"
+        },
+        {
+          "id": "home-hero-subtitle",
+          "label": "Hero subtitle",
+          "selector": ".home-hero-subtitle",
+          "kind": "text",
+          "value": "ค้นหาวัด สร้างเส้นทางบุญ วางแผนไหว้พระในวันมงคล"
+        },
+        {
+          "id": "home-intent-wealth",
+          "label": "เป้าหมาย: โชคลาภ",
+          "selector": "#home-intent-wealth",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/home-intent-wealth.webp",
+          "alt": "",
+          "position": "50% 50%",
+          "credit": "Pixabay / Pexels",
+          "sourceUrl": "https://www.pexels.com/photo/gold-bar-lot-47047/",
+          "license": "CC0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+          "id": "home-intent-career",
+          "label": "เป้าหมาย: การงาน",
+          "selector": "#home-intent-career",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/home-intent-career.webp",
+          "alt": "",
+          "position": "50% 50%",
+          "credit": "Pexels",
+          "sourceUrl": "https://www.pexels.com/photo/person-using-a-laptop-7213105/",
+          "license": "Pexels License",
+          "licenseUrl": "https://www.pexels.com/license/"
+        },
+        {
+          "id": "home-intent-love",
+          "label": "เป้าหมาย: ความรัก",
+          "selector": "#home-intent-love",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/home-intent-love.webp",
+          "alt": "",
+          "position": "50% 24%",
+          "credit": "Pexels",
+          "sourceUrl": "https://www.pexels.com/photo/close-up-of-a-pink-lotus-17433156/",
+          "license": "Pexels License",
+          "licenseUrl": "https://www.pexels.com/license/"
+        },
+        {
+          "id": "home-intent-family",
+          "label": "เป้าหมาย: ครอบครัว",
+          "selector": "#home-intent-family",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/home-intent-family.webp",
+          "alt": "",
+          "position": "50% 28%",
+          "credit": "Pexels",
+          "sourceUrl": "https://www.pexels.com/photo/close-up-of-man-holding-a-seedling-in-soil-in-his-hands-12969371/",
+          "license": "Pexels License",
+          "licenseUrl": "https://www.pexels.com/license/"
+        },
+        {
+          "id": "home-intent-beginning",
+          "label": "เป้าหมาย: เริ่มต้นใหม่",
+          "selector": "#home-intent-beginning",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/home-intent-beginning.webp",
+          "alt": "",
+          "position": "50% 34%",
+          "credit": "Pexels",
+          "sourceUrl": "https://www.pexels.com/photo/person-with-arms-raised-holding-a-stick-12757209/",
+          "license": "Pexels License",
+          "licenseUrl": "https://www.pexels.com/license/"
+        },
+        {
+          "id": "home-intent-peace",
+          "label": "เป้าหมาย: เสริมกำลังใจ",
+          "selector": "#home-intent-peace",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/home-intent-peace.webp",
+          "alt": "",
+          "position": "50% 50%",
+          "credit": "Pexels",
+          "sourceUrl": "https://www.pexels.com/photo/close-up-photography-of-incenses-3626470/",
+          "license": "Pexels License",
+          "licenseUrl": "https://www.pexels.com/license/"
+        },
+        {
+          "id": "home-planner-background",
+          "label": "พื้นหลังแนะนำเส้นทาง",
+          "selector": "#home-planner-background",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/hero-doi-suthep-forest.webp",
+          "alt": "",
+          "position": "50% 45%",
+          "credit": "Mike Holp",
+          "sourceUrl": "https://unsplash.com/photos/4Gq3UG5v4Es",
+          "license": "Unsplash License",
+          "licenseUrl": "https://unsplash.com/license"
+        },
+        {
+          "id": "home-stop-pho",
+          "label": "ตัวอย่างเส้นทาง: วัดโพธิ์",
+          "selector": "#home-stop-pho",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/home-wat-pho.webp",
+          "alt": "",
+          "position": "50% 50%",
+          "credit": "Mastertongapollo / Wikimedia Commons",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:พระมหาเจดีย์_4_รัชกาล_วัดพระเชตุพนฯ.jpg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+        },
+        {
+          "id": "home-stop-arun",
+          "label": "ตัวอย่างเส้นทาง: วัดอรุณ",
+          "selector": "#home-stop-arun",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/hero-wat-arun-sunset.webp",
+          "alt": "",
+          "position": "50% 50%",
+          "credit": "Haley Hong",
+          "sourceUrl": "https://unsplash.com/photos/BVB6A30FI4c",
+          "license": "Unsplash License",
+          "licenseUrl": "https://unsplash.com/license"
+        },
+        {
+          "id": "home-stop-kalayanamit",
+          "label": "ตัวอย่างเส้นทาง: วัดกัลยาณมิตร",
+          "selector": "#home-stop-kalayanamit",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/home-wat-kalayanamit.webp",
+          "alt": "",
+          "position": "50% 50%",
+          "credit": "Mastertongapollo / Wikimedia Commons",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:วัดกัลยาณมิตรวรมหาวิหาร2.jpg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+        },
+        {
+          "id": "home-collection-popular",
+          "label": "หมวด: เส้นทาง 9 วัด",
+          "selector": "#home-collection-popular",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/hero-wat-arun-sunset.webp",
+          "alt": "",
+          "position": "50% 50%",
+          "credit": "Haley Hong",
+          "sourceUrl": "https://unsplash.com/photos/BVB6A30FI4c",
+          "license": "Unsplash License",
+          "licenseUrl": "https://unsplash.com/license"
+        },
+        {
+          "id": "home-collection-sacred",
+          "label": "หมวด: วัดศักดิ์สิทธิ์",
+          "selector": "#home-collection-sacred",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/hero-doi-suthep-gold.webp",
+          "alt": "",
+          "position": "50% 50%",
+          "credit": "Nat Weerawong",
+          "sourceUrl": "https://unsplash.com/photos/ZmvuHreuHdo",
+          "license": "Unsplash License",
+          "licenseUrl": "https://unsplash.com/license"
+        },
+        {
+          "id": "home-collection-mu",
+          "label": "หมวด: สถานที่มงคล",
+          "selector": "#home-collection-mu",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/hero-doi-suthep-forest.webp",
+          "alt": "",
+          "position": "50% 50%",
+          "credit": "Mike Holp",
+          "sourceUrl": "https://unsplash.com/photos/4Gq3UG5v4Es",
+          "license": "Unsplash License",
+          "licenseUrl": "https://unsplash.com/license"
+        },
+        {
+          "id": "home-directory-map",
+          "label": "ฐานข้อมูล: แผนที่ประเทศไทย",
+          "selector": "#home-directory-map",
+          "kind": "image",
+          "enabled": true,
+          "src": "/assets/images/home-thailand-map.png",
+          "alt": "",
+          "position": "50% 50%",
+          "credit": "Existing Thailand boundary dataset",
+          "sourceUrl": "/assets/data/thailand-boundary.geojson"
+        }
       ],
       "sections": [
-        { "id": "hero", "label": "Hero", "selector": ".hero", "enabled": true, "order": 10 },
-        { "id": "stats", "label": "แถบสถิติ", "selector": ".home-stat-ticker", "enabled": true, "order": 15 },
-        { "id": "intent", "label": "ความตั้งใจ", "selector": ".home-intent-section", "enabled": true, "order": 20 },
-        { "id": "temple-routes", "label": "เครื่องมือวางแผน", "selector": "#temple-routes", "enabled": true, "order": 30 },
-        { "id": "collections", "label": "หมวดค้นหา", "selector": "#collections", "enabled": true, "order": 40 },
-        { "id": "supporting-tools", "label": "เครื่องมือเสริม", "selector": "#supporting-tools", "enabled": true, "order": 70 }
+        {
+          "id": "hero",
+          "label": "Hero",
+          "selector": ".hero",
+          "enabled": true,
+          "order": 10
+        },
+        {
+          "id": "stats",
+          "label": "แถบสถิติ",
+          "selector": ".home-stat-ticker",
+          "enabled": true,
+          "order": 15
+        },
+        {
+          "id": "intent",
+          "label": "ความตั้งใจ",
+          "selector": ".home-intent-section",
+          "enabled": true,
+          "order": 20
+        },
+        {
+          "id": "temple-routes",
+          "label": "เครื่องมือวางแผน",
+          "selector": "#temple-routes",
+          "enabled": true,
+          "order": 30
+        },
+        {
+          "id": "collections",
+          "label": "หมวดค้นหา",
+          "selector": "#collections",
+          "enabled": true,
+          "order": 40
+        },
+        {
+          "id": "supporting-tools",
+          "label": "เครื่องมือเสริม",
+          "selector": "#supporting-tools",
+          "enabled": true,
+          "order": 70
+        }
       ],
       "blocks": []
     },
-    { "id": "calendar", "label": "ปฏิทินไทย", "route": "/calendar/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "lifeGraph", "label": "กราฟชีวิต", "route": "/horoscope/life-graph/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "thaiAstrology", "label": "โหราศาสตร์ไทย", "route": "/horoscope/thai-astrology/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "palmistry", "label": "อ่านลายมือ", "route": "/horoscope/palmistry/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "seamsi", "label": "คำเซียมซี", "route": "/horoscope/seamsi/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "tarotMeanings", "label": "ความหมายไพ่ยิปซี 78 ใบ", "route": "/tarot/meanings/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "tarotDaily", "label": "ไพ่ยิปซีรายวัน", "route": "/tarot/daily/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "tarotMonthly", "label": "ไพ่ยิปซีรายเดือน", "route": "/tarot/monthly/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "tarotLove", "label": "ไพ่ยิปซีความรัก", "route": "/tarot/love/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "tarotMoney", "label": "ไพ่ยิปซีการเงิน", "route": "/tarot/money/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "tarotCareer", "label": "ไพ่ยิปซีการงาน อาชีพ", "route": "/tarot/career/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "tarotLuck", "label": "ไพ่ยิปซีด้านโชคลาภ", "route": "/tarot/luck/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "temples", "label": "วัดดังเสริมมงคล", "route": "/temples/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "templesPlanner", "label": "วางแผนไหว้พระ", "route": "/temples/planner/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "templesPopular", "label": "สายไหว้พระ 9 วัด", "route": "/temples/popular/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "templesMu", "label": "สถานที่มงคล", "route": "/temples/mu/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "templesSacred", "label": "วัดศักดิ์สิทธิ์", "route": "/temples/sacred/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
-    { "id": "templesThailand", "label": "วัดทั่วประเทศไทย", "route": "/temples/thailand/", "enabled": true, "kind": "existing", "patches": [], "sections": [], "blocks": [] },
+    {
+      "id": "calendar",
+      "label": "ปฏิทินไทย",
+      "route": "/calendar/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [
+        {
+          "id": "calendar-hero-image",
+          "label": "ภาพ Banner ปฏิทิน",
+          "selector": "#calendar-hero-image",
+          "kind": "image",
+          "src": "/assets/images/hero-songkhla-buddha.webp",
+          "alt": "พระพุทธรูปสีทองท่ามกลางพื้นที่สีเขียวในสงขลา",
+          "position": "50% 30%",
+          "credit": "mohd hasan",
+          "sourceUrl": "https://www.pexels.com/photo/buddhist-temple-in-the-forest-15486655/",
+          "license": "Pexels License",
+          "licenseUrl": "https://www.pexels.com/license/"
+        },
+        {
+          "id": "calendar-guide-image",
+          "label": "ภาพอ่านปฏิทิน",
+          "selector": "#calendar-guide-image",
+          "kind": "image",
+          "src": "/assets/images/hero-wat-arun-sunset.webp",
+          "alt": "พระปรางค์วัดอรุณส่องสว่างสีทองยามเย็น กรุงเทพมหานคร",
+          "position": "50% 30%",
+          "credit": "Haley Hong",
+          "sourceUrl": "https://unsplash.com/photos/BVB6A30FI4c",
+          "license": "Unsplash License",
+          "licenseUrl": "https://unsplash.com/license"
+        }
+      ],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "calendarDay",
+      "kind": "existing",
+      "label": "รายละเอียดวัน",
+      "route": "/calendar/day/",
+      "blocks": [],
+      "enabled": true,
+      "patches": [
+        {
+          "id": "calendar-day-hero-image",
+          "label": "ภาพ Banner รายละเอียดวัน",
+          "selector": "#calendar-day-hero-image",
+          "kind": "image",
+          "src": "/assets/images/hero-wat-mahathat-sukhothai.webp",
+          "alt": "พระพุทธรูปและเจดีย์วัดมหาธาตุ สุโขทัย สะท้อนบนผิวน้ำยามเย็น",
+          "position": "54% 40%",
+          "credit": "Supanut Arunoprayote · ปรับขนาดและครอป",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Wat_Mahathat_Sukhothai_at_sunset.jpg",
+          "license": "CC BY 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+        }
+      ],
+      "sections": []
+    },
+    {
+      "id": "lifeGraph",
+      "label": "กราฟชีวิต",
+      "route": "/horoscope/life-graph/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "thaiAstrology",
+      "label": "โหราศาสตร์ไทย",
+      "route": "/horoscope/thai-astrology/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "palmistry",
+      "label": "อ่านลายมือ",
+      "route": "/horoscope/palmistry/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "seamsi",
+      "label": "คำเซียมซี",
+      "route": "/horoscope/seamsi/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "tarotMeanings",
+      "label": "ความหมายไพ่ยิปซี 78 ใบ",
+      "route": "/tarot/meanings/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "tarotDaily",
+      "label": "ไพ่ยิปซีรายวัน",
+      "route": "/tarot/daily/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "tarotMonthly",
+      "label": "ไพ่ยิปซีรายเดือน",
+      "route": "/tarot/monthly/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "tarotLove",
+      "label": "ไพ่ยิปซีความรัก",
+      "route": "/tarot/love/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "tarotMoney",
+      "label": "ไพ่ยิปซีการเงิน",
+      "route": "/tarot/money/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "tarotCareer",
+      "label": "ไพ่ยิปซีการงาน อาชีพ",
+      "route": "/tarot/career/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "tarotLuck",
+      "label": "ไพ่ยิปซีด้านโชคลาภ",
+      "route": "/tarot/luck/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "temples",
+      "label": "วัดดังเสริมมงคล",
+      "route": "/temples/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "templesPlanner",
+      "label": "วางแผนไหว้พระ",
+      "route": "/temples/planner/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "templesPopular",
+      "label": "สายไหว้พระ 9 วัด",
+      "route": "/temples/popular/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "templesMu",
+      "label": "สถานที่มงคล",
+      "route": "/temples/mu/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "templesSacred",
+      "label": "วัดศักดิ์สิทธิ์",
+      "route": "/temples/sacred/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "templesThailand",
+      "label": "วัดทั่วประเทศไทย",
+      "route": "/temples/thailand/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
     {
       "id": "sampleCustomPage",
       "label": "หน้าตัวอย่างจาก Admin",

@@ -1,0 +1,9 @@
+---
+import SiteIcon from "./icons/SiteIcon.astro";
+export interface Props { class?: string; }
+---
+<span class:list={["link-arrow", Astro.props.class]} aria-hidden="true"><SiteIcon name="arrow-right" /></span>
+<style>
+  .link-arrow { display: inline-grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--home-line, #e8d7b9); background: #fffdf7; }
+  .link-arrow :global(.site-icon) { width: 14px; height: 14px; --site-icon-color: var(--home-red, #8e2d24); }
+</style>

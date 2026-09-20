@@ -1,0 +1,24 @@
+/* Shared anatomy/material only. Route owners retain dimensions and placement. */
+.ui-icon-mask {
+  background: currentColor;
+  mask-position: center;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+}
+
+.ui-medallion {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.ui-glass {
+  background: var(--glass-background, rgba(255, 253, 245, .86));
+  backdrop-filter: blur(var(--glass-blur, 8px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 8px));
+  box-shadow: var(--glass-shadow, inset 0 1px #fff9, 0 6px 20px #102b221c);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .ui-glass { background: var(--glass-solid, #fffaf0); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}

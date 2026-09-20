@@ -3,10 +3,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import TempleResponsiveImage from "./TempleResponsiveImage.astro";
 import TempleActivities from "./TempleActivities.astro";
 import TempleCommerce from "./TempleCommerce.astro";
+import SiteIcon from "./icons/SiteIcon.astro";
+import IconMedallion from "./IconMedallion.astro";
 import { getTempleTravel } from "../data/temple-travel.js";
 import { getTempleVisitInfo } from "../data/temple-visit-info.js";
+import { getTempleCmsRecordMap } from "../data/temple-cms.js";
 import { getTempleDetailUrl, createTempleSlug } from "../data/temple-slugs.js";
-import { absoluteUrl, createTempleJsonLd, splitSeoList } from "../lib/seo.js";
+import { absoluteUrl, createTempleJsonLd } from "../lib/seo.js";
+import { createPlaceModel, renderIdentity, renderImageCredit, renderHighlights, renderLocation, renderVisit, renderTravel, icon } from "../lib/place-detail-view.js";
+import "../styles/place-detail.css";
 
 interface Props {
   collection: "popular" | "mu" | "sacred";
@@ -67,601 +72,79 @@ interface Props {
   relatedTemples?: Props["temple"][];
 }
 
-type TravelRoute = {
-  mode: string;
-  sectionLabel: string;
-  shortLabel: string;
-  stop: string;
-  distanceText?: string;
-  routeText?: string;
-  operatorText?: string;
-  typeText?: string;
-  isTransfer?: boolean;
-};
-
-type TravelView = {
-  routes: TravelRoute[];
-  sections: {
-    key: string;
-    mode: string;
-    label: string;
-    shortLabel: string;
-    highlightLabel: string;
-    routes: TravelRoute[];
-  }[];
-  recommendations: { label: string; route: TravelRoute }[];
-  hasTravelDetail: boolean;
-};
-
-type VisitInfoSource = {
-  label: string;
-  url: string;
-};
-
-type VisitInfoDetail = {
-  term: string;
-  value: string;
-  href?: string;
-};
-
-type VisitInfoSection = {
-  kind: string;
-  status: string;
-  label: string;
-  summary: string;
-  details: VisitInfoDetail[];
-  timetable?: { day: string; time: string }[];
-};
-
-type ConfidenceTone = "low" | "medium" | "high";
-
-type ConfidenceMeta = {
-  label: string;
-  description: string;
-  value: number;
-  tone: ConfidenceTone;
-};
-
-const confidenceLabels: Record<string, ConfidenceMeta> = {
-  high: {
-    label: "สูง",
-    description: "ชื่อ สถานที่ และแหล่งอ้างอิงตรงกันชัดเจน",
-    value: 100,
-    tone: "high",
-  },
-  "medium-high": {
-    label: "ค่อนข้างสูง",
-    description: "ข้อมูลหลักตรงกัน แต่ยังมีบางส่วนที่ใช้การเทียบเคียง",
-    value: 82,
-    tone: "high",
-  },
-  accepted_province_match: {
-    label: "ตรงระดับจังหวัด",
-    description: "ข้อมูลจังหวัดตรงกัน ใช้ได้เป็นแนวทางและควรตรวจจุดย่อยซ้ำ",
-    value: 68,
-    tone: "medium",
-  },
-  medium: {
-    label: "ปานกลาง",
-    description: "ข้อมูลใช้งานได้ แต่มีส่วนที่อาศัย fallback หรือ heuristic",
-    value: 58,
-    tone: "medium",
-  },
-  low: {
-    label: "ควรตรวจซ้ำ",
-    description: "มีข้อมูลพอแสดงผล แต่ยังไม่ควรใช้เป็นข้อสรุปสุดท้าย",
-    value: 34,
-    tone: "low",
-  },
-};
-
-const getConfidenceMeta = (confidence?: string): ConfidenceMeta | null => {
-  const key = String(confidence || "").trim().toLowerCase();
-  if (!key) return null;
-  return confidenceLabels[key] || {
-    label: "รอตรวจซ้ำ",
-    description: "ยังไม่มีระดับความมั่นใจมาตรฐานสำหรับข้อมูลชุดนี้",
-    value: 28,
-    tone: "low",
-  };
-};
 
 const { collection, collectionLabel, collectionHref, temple, placeholderImage, relatedTemples = [] } = Astro.props as Props;
+const key = temple.cmsKey || `${collection}:${createTempleSlug(temple)}`;
+const override = getTempleCmsRecordMap()[key] || {};
+const seed = { key, record: temple, visit: getTempleVisitInfo(temple), collectionLabel, collectionHref, placeholderImage };
+const vm = createPlaceModel(seed, override);
 const imageUrl = (temple.detailImageUrl ?? temple.imageUrl) || placeholderImage;
 const imageMobileUrl = temple.detailImageMobileUrl || imageUrl;
-const title = `${temple.name} | ${collectionLabel} | มงคลเวลา`;
 const detailUrl = getTempleDetailUrl(collection, temple);
-const hasCoordinates = Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude));
-const latitude = Number(temple.latitude);
-const longitude = Number(temple.longitude);
-const plusCode = String(temple.plusCode || "").trim();
-const hasPlusCode = Boolean(plusCode);
-const locationText = [temple.region, temple.province, temple.district].filter(Boolean).join(" · ");
-const splitList = splitSeoList;
-const blessingItems = splitList(temple.blessings);
-const objectItems = splitList(temple.objectHero);
-const travelModeItems = splitList(temple.travelModes);
-const travelDetail = temple.travelDetail || {};
-const travelView = getTempleTravel(travelDetail) as TravelView;
-const hasTravelDetail = travelView.hasTravelDetail;
-const travelConfidence = getConfidenceMeta(travelDetail.confidence);
-const visitInfo = getTempleVisitInfo(temple);
-const visitSections = visitInfo.sections as VisitInfoSection[];
-const hasVisibleVisitInfo = Boolean(visitInfo.hasVisibleSections);
-const visitSources = visitInfo.sources as VisitInfoSource[];
-const mapQuery = hasPlusCode ? plusCode : hasCoordinates ? `${latitude},${longitude}` : "";
-const mapHref = mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : "";
-const mapLabel = hasPlusCode ? plusCode : hasCoordinates ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` : "";
-const coordinateLabel = hasCoordinates ? `${latitude.toFixed(4)}, ${longitude.toFixed(4)}` : mapLabel;
-const addressText = String(temple.coordinateAddress || "").trim();
-const summaryText = blessingItems.length
-  ? `${temple.name} เหมาะสำหรับ${blessingItems.slice(0, 3).join(" · ")}`
-  : `${temple.name} หนึ่งในพิกัดแนะนำของ${collectionLabel} ใน${temple.province}`;
-const sourceLabel = temple.imageSourceLabel && temple.imageSourceLabel !== "Placeholder" ? temple.imageSourceLabel : "มงคลเวลา";
-const splitTravelTokens = (value?: string) =>
-  String(value || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-const directCheckText = "โปรดตรวจสอบกับสถานที่โดยตรง";
-const getVisitSectionClass = (section: VisitInfoSection) =>
-  section.status === "verified" ? "is-verified" : section.status === "listed" ? "is-listed" : "needs-check";
-const needsDirectCheck = (section: VisitInfoSection) =>
-  !["verified", "listed"].includes(section.status) || (!section.details.length && !(section.timetable || []).length);
-const isExternalHref = (href?: string) => /^https?:\/\//iu.test(String(href || ""));
-const displayTravelMode = (value: string) =>
-  value
-    .replace(/\s*Hop-on\s*\/\s*Hop-off\s*/giu, "")
-    .replace(/\s*Hop-on\s+Hop-off\s*/giu, "")
-    .replace(/\s{2,}/gu, " ")
-    .trim();
-const railTagPatterns = [
-  {
-    label: "BTS",
-    pattern: /\bBTS\b|รถไฟฟ้าบีทีเอส|สายสุขุมวิท|สายสีลม/iu,
-  },
-  {
-    label: "MRT",
-    pattern: /\bMRT\b|รถไฟฟ้ามหานคร|สายเฉลิมรัชมงคล|สายสีน้ำเงิน|สายสีม่วง|สายสีเหลือง|สายสีชมพู|บริษัท ทางด่วนและรถไฟฟ้ากรุงเทพ/iu,
-  },
-  {
-    label: "ARL",
-    pattern: /\bARL\b|Airport\s*Rail\s*Link|แอร์พอร์ต\s*เรล\s*ลิงก์/iu,
-  },
-  {
-    label: "SRT",
-    pattern: /\bSRT\b|รถไฟฟ้าชานเมือง|สายสีแดง/iu,
-  },
-];
-const detectRailTagsFromRoutes = (routes: TravelRoute[]) => {
-  const routeText = routes
-    .filter((route) => route.mode === "rail")
-    .map((route) => [route.stop, route.routeText, route.operatorText, route.typeText].filter(Boolean).join(" "))
-    .join(" ");
-  return railTagPatterns.filter((item) => item.pattern.test(routeText)).map((item) => item.label);
-};
-const splitCombinedRailTag = (item: string) => (/^BTS\s*\/\s*MRT$/iu.test(item) ? ["BTS", "MRT"] : [item]);
-const isRailModeTag = (item: string) => /^(?:BTS|MRT|ARL|SRT|BTS\s*\/\s*MRT)$/iu.test(item);
-const getDisplayedTravelModeItems = (items: string[], routes: TravelRoute[]) => {
-  const routeRailTags = detectRailTagsFromRoutes(routes);
-  const hasRouteRailTags = routeRailTags.length > 0;
-  const displayItems: string[] = [];
-  let insertedRailTags = false;
-
-  const addItem = (item: string) => {
-    const displayItem = displayTravelMode(item);
-    if (displayItem && !displayItems.includes(displayItem)) displayItems.push(displayItem);
-  };
-  const addRailTags = () => {
-    const railTags = hasRouteRailTags ? routeRailTags : items.flatMap((item) => splitCombinedRailTag(displayTravelMode(item))).filter(isRailModeTag);
-    railTags.forEach(addItem);
-    insertedRailTags = true;
-  };
-
-  for (const item of items) {
-    const displayItem = displayTravelMode(item);
-    if (!displayItem) continue;
-    if (isRailModeTag(displayItem)) {
-      if (!insertedRailTags) addRailTags();
-      continue;
-    }
-    addItem(displayItem);
-  }
-
-  if (!insertedRailTags && hasRouteRailTags) addRailTags();
-  return displayItems;
-};
-const displayedTravelModeItems = getDisplayedTravelModeItems(travelModeItems, travelView.routes);
-const getRouteIntro = (route: TravelRoute) =>
-  [route.typeText, route.operatorText].filter(Boolean).join(" · ") || route.shortLabel;
-const getWalkLabel = (route: TravelRoute) =>
-  route.distanceText ? `เดิน ${route.distanceText.replace(/^~/u, "").trim()}` : "เดินต่อไปยังจุดหมาย";
-const detailDescription = `${temple.name} ${temple.province}${temple.district ? ` ${temple.district}` : ""} ใน${collectionLabel}${blessingItems.length ? ` เหมาะสำหรับ${blessingItems.slice(0, 4).join(" · ")}` : ""} พร้อมพิกัด แผนที่ วิธีเดินทาง และสถานที่ใกล้เคียง`;
-const detailBreadcrumbs = [
-  { label: "หน้าแรก", href: "/" },
-  { label: "วัดดังเสริมมงคล", href: "/temples/" },
-  { label: collectionLabel, href: collectionHref },
-  { label: temple.name, href: detailUrl },
-];
-const templeJsonLd = createTempleJsonLd({
-  temple,
-  collectionLabel,
-  collectionHref,
-  pageUrl: absoluteUrl(detailUrl),
-  imageUrl: absoluteUrl(imageUrl),
-});
+const title = `${temple.name} | ${collectionLabel} | มงคลเวลา`;
+const detailDescription = `${temple.name} ${temple.province} ใน${collectionLabel} พร้อมพิกัด แผนที่ วิธีเดินทาง และข้อมูลเข้าชม`;
+const detailBreadcrumbs = [{ label: "หน้าแรก", href: "/" }, { label: "วัดดังเสริมมงคล", href: "/temples/" }, { label: collectionLabel, href: collectionHref }, { label: temple.name, href: detailUrl }];
+const templeJsonLd = createTempleJsonLd({ temple, collectionLabel, collectionHref, pageUrl: absoluteUrl(detailUrl), imageUrl: absoluteUrl(imageUrl) });
+const rank = Number(temple.rank);
 ---
-
-<BaseLayout
-  title={title}
-  description={detailDescription}
-  lang="th"
-  locale="th"
-  page="temples"
-  bodyClass="temples-hub-page"
-  canonicalPath={detailUrl}
-  image={imageUrl}
-  imageAlt={temple.imageAlt || `${temple.name} ${temple.province}`}
-  breadcrumbs={detailBreadcrumbs}
-  structuredData={templeJsonLd}
->
-  <main class="temple-detail">
-    <nav class="temple-detail__back" aria-label="breadcrumb">
-      <a href={collectionHref} aria-label={`กลับไป${collectionLabel}`}>
-        <span aria-hidden="true">‹</span>
-        กลับไป{collectionLabel}
-      </a>
-      <div>
-        <a href="/">หน้าแรก</a>
-        <span>/</span>
-        <a href="/temples/">วัดดังเสริมมงคล</a>
-        <span>/</span>
-        <a href={collectionHref}>{collectionLabel}</a>
-      </div>
+<BaseLayout title={title} description={detailDescription} lang="th" locale="th" page="temples" bodyClass="temples-hub-page place-detail-page"
+  canonicalPath={detailUrl} image={imageUrl} imageAlt={temple.imageAlt || temple.name} breadcrumbs={detailBreadcrumbs} structuredData={templeJsonLd}>
+  <main class="temple-detail place-detail" data-place-key={key} data-place-detail>
+    <script type="application/json" data-place-seed set:html={JSON.stringify(seed).replace(/</g, "\\u003c")} />
+    <nav class="pd-back" aria-label="เส้นทางนำทาง">
+      <a href={collectionHref}><SiteIcon name="arrow-left" />กลับไป{collectionLabel}</a>
+      <ol><li><a href="/">หน้าแรก</a></li><li><a href="/temples/">วัดดังเสริมมงคล</a></li><li><a href={collectionHref}>{collectionLabel}</a></li><li aria-current="page" data-place-breadcrumb>{temple.name}</li></ol>
     </nav>
-
-    <section class="temple-detail-hero" aria-labelledby="temple-detail-title">
-      <figure class="temple-detail-hero__media">
-        <TempleResponsiveImage
-          desktopSrc={imageUrl}
-          mobileSrc={imageMobileUrl}
-          alt={temple.imageAlt || `${temple.name} ${temple.province}`}
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-          fallbackSrc={placeholderImage}
-        />
-        <figcaption title={sourceLabel}>อันดับ {temple.rank.toString().padStart(2, "0")} · {collectionLabel}</figcaption>
+    <section class="pd-hero" aria-labelledby="temple-detail-title">
+      <figure class="pd-hero-media" data-place-media>
+        <TempleResponsiveImage desktopSrc={imageUrl} mobileSrc={imageMobileUrl} alt={temple.imageAlt || temple.name} loading="eager" decoding="async" fetchpriority="high" fallbackSrc={placeholderImage} />
+        <figcaption data-place-rank hidden={!Number.isFinite(rank) || rank <= 0}>#{String(rank).padStart(2, "0")} {collectionLabel}</figcaption>
+        <span class="pd-image-credit" data-pd-domain="imageCredit" set:html={renderImageCredit(vm)} />
       </figure>
-      <div class="temple-detail-hero__copy">
-        <p class="section-kicker">{collectionLabel} · อันดับ #{temple.rank.toString().padStart(2, "0")}</p>
-        <h1 id="temple-detail-title">{temple.name}</h1>
-        <p>{summaryText}</p>
-        <div class="temple-detail-tags" aria-label="ข้อมูลย่อ">
-          <span>{temple.placeType || "วัดและสถานที่ศักดิ์สิทธิ์"}</span>
-          <span>{temple.region}</span>
-          <span>{temple.province}</span>
-        </div>
-        <div class="temple-detail-actions" aria-label="การทำงานของหน้า">
-          {mapHref && <a class="temple-detail-action temple-detail-action--primary" href={mapHref} target="_blank" rel="noopener">เปิดแผนที่</a>}
-          <button class="temple-detail-action" type="button" data-temple-detail-share data-share-title={title}>แชร์</button>
-          <button class="temple-detail-action" type="button" data-temple-detail-copy>คัดลอกลิงก์</button>
+      <div class="pd-hero-copy">
+        <div data-pd-domain="identity" set:html={renderIdentity(vm)} />
+        <div class="pd-actions" aria-label="การทำงานของหน้า">
+          <a class="pd-button pd-button--primary" href={vm.mapHref} hidden={!vm.mapHref} data-place-map-link target="_blank" rel="noopener"><Fragment set:html={icon("map-pin")} />เปิดแผนที่</a>
+          <button class="pd-button" type="button" data-temple-detail-share data-pd-enhanced hidden><Fragment set:html={icon("share-2")} />แชร์</button>
+          <button class="pd-button" type="button" data-temple-detail-copy data-pd-enhanced hidden><Fragment set:html={icon("link")} />คัดลอกลิงก์</button>
         </div>
       </div>
     </section>
-
-    <section class="temple-detail-layout" aria-label="รายละเอียดสถานที่">
-      <article class="temple-detail-story">
-        <p class="section-kicker">ข้อมูลสำคัญ</p>
-        <h2>จุดเด่นของพิกัดนี้</h2>
-        <p>
-          {temple.name} อยู่ใน{temple.province}{temple.district ? ` เขต/อำเภอ ${temple.district}` : ""} เป็นหนึ่งในสถานที่ที่ถูกจัดไว้ใน{collectionLabel}
-          เพื่อช่วยเลือกเส้นทางไหว้พระและวางแผนการเดินทางให้เหมาะกับจังหวะชีวิต
-        </p>
-
-        {blessingItems.length > 0 && (
-          <div class="temple-detail-chip-group">
-            {blessingItems.slice(0, 8).map((item) => <span>{item}</span>)}
-          </div>
-        )}
-
-        {objectItems.length > 0 && (
-          <div class="temple-detail-notes">
-            <h3>สิ่งที่นิยมสักการะ</h3>
-            <ul>
-              {objectItems.slice(0, 6).map((item) => <li>{item}</li>)}
-            </ul>
-          </div>
-        )}
-
-        <section class="temple-detail-visit" aria-labelledby="temple-detail-visit-title">
-          <div class="temple-detail-visit__head">
-            <h3 id="temple-detail-visit-title">ข้อมูลเข้าชมและติดต่อ</h3>
-          </div>
-
-          {(travelConfidence || travelDetail.updatedAt) && (
-            <div class="temple-detail-confidence">
-              {travelConfidence && (
-                <div class="temple-detail-confidence__score" data-confidence-tone={travelConfidence.tone}>
-                  <div class="temple-detail-confidence__label">
-                    <span>ความมั่นใจข้อมูล:</span>
-                    <strong>{travelConfidence.label}</strong>
-                  </div>
-                  <div class="temple-detail-confidence__bar-row">
-                    <div
-                      class="temple-detail-confidence__bar"
-                      role="progressbar"
-                      aria-label={`ความมั่นใจข้อมูล ${travelConfidence.label}`}
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                      aria-valuenow={travelConfidence.value}
-                    >
-                      <span style={`--confidence-value: ${travelConfidence.value}%;`}></span>
-                    </div>
-                    <div class="temple-detail-confidence__help" data-confidence-help>
-                      <button
-                        type="button"
-                        aria-label="ดูคำอธิบายระดับความมั่นใจ"
-                        aria-expanded="false"
-                        aria-controls="temple-confidence-help"
-                        data-confidence-help-toggle
-                      >
-                        <span aria-hidden="true">?</span>
-                      </button>
-                      <div
-                        class="temple-detail-confidence__help-panel"
-                        id="temple-confidence-help"
-                        aria-hidden="true"
-                        data-confidence-help-panel
-                      >
-                        <strong>ระดับความมั่นใจหมายถึงอะไร</strong>
-                        <ul>
-                          <li data-confidence-tone="high">
-                            <i aria-hidden="true"></i>
-                            <span><b>สีเขียว · ยืนยันได้ดี</b>ชื่อสถานที่ พิกัด และข้อมูลการเดินทางตรงกันจากหลายแหล่ง</span>
-                          </li>
-                          <li data-confidence-tone="medium">
-                            <i aria-hidden="true"></i>
-                            <span><b>สีทอง · ใช้เป็นแนวทาง</b>ข้อมูลส่วนใหญ่ตรงกัน แต่บางรายละเอียดอาจต้องตรวจสอบเพิ่ม</span>
-                          </li>
-                          <li data-confidence-tone="low">
-                            <i aria-hidden="true"></i>
-                            <span><b>สีน้ำตาลอ่อน · ควรตรวจซ้ำ</b>แหล่งข้อมูลยังไม่เพียงพอหรือมีรายละเอียดไม่ตรงกัน</span>
-                          </li>
-                        </ul>
-                        <p>เวลาเปิดและเส้นทางอาจเปลี่ยนแปลง ควรตรวจสอบก่อนเดินทาง</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {travelDetail.updatedAt && <small>อัปเดต {travelDetail.updatedAt}</small>}
-            </div>
-          )}
-
-          <p class="temple-detail-visit__address">
-            ที่อยู่: {addressText || [temple.name, temple.district, temple.province].filter(Boolean).join(" ")}
-          </p>
-
-          <div class="temple-detail-visit__grid">
-            {visitSections.map((section) => (
-              <article class={`temple-detail-visit-card temple-detail-visit-card--${section.kind} ${getVisitSectionClass(section)}`}>
-                <span class="temple-detail-visit-card__label">{section.label}</span>
-                {needsDirectCheck(section) && <p>{directCheckText}</p>}
-                {(section.timetable || []).length > 0 && (
-                  <table class="temple-detail-visit-timetable">
-                    <tbody>
-                      {(section.timetable || []).map((row) => (
-                        <tr>
-                          <th scope="row">{row.day}</th>
-                          <td>{row.time}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-                {section.details.length > 0 && (
-                  <dl>
-                    {section.details.map((item) => (
-                      <div>
-                        <dt>{item.term}</dt>
-                        <dd>
-                          {item.href ? (
-                            <a href={item.href} target={isExternalHref(item.href) ? "_blank" : undefined} rel={isExternalHref(item.href) ? "noopener" : undefined}>
-                              {item.value}
-                            </a>
-                          ) : (
-                            item.value
-                          )}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
-              </article>
-            ))}
-          </div>
-
-          {visitSources.length > 0 ? (
-            <details class="temple-detail-visit-sources">
-              <summary>แหล่งข้อมูลที่ใช้ยืนยัน</summary>
-              <p>{visitInfo.notice}</p>
-              <ul>
-                {visitSources.map((source) => (
-                  <li>
-                    <a href={source.url} target="_blank" rel="noopener">{source.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </details>
-          ) : hasVisibleVisitInfo ? (
-            <p class="temple-detail-visit__notice">{visitInfo.notice}</p>
-          ) : null}
-        </section>
-
-        {hasTravelDetail && (
-          <section class="temple-detail-transit" aria-labelledby="temple-detail-transit-title">
-            <div class="temple-detail-transit__head">
-              <h3 id="temple-detail-transit-title">วิธีเดินทาง</h3>
-              {travelView.routes.length > 0 && <p>เลือกจากจุดจอดใกล้สุดและเส้นทางหลักที่มีข้อมูลยืนยัน</p>}
-            </div>
-
-            {travelView.recommendations.length > 0 && (
-              <div class="temple-detail-transit-highlights" aria-label="ทางเลือกแนะนำ">
-                {travelView.recommendations.map((item) => (
-                  <article class={`temple-detail-transit-highlights__item temple-detail-transit-highlights__item--${item.route.mode}`}>
-                    <span>{item.label}</span>
-                    <strong>{item.route.stop}</strong>
-                    <small>
-                      {item.route.shortLabel}
-                      {item.route.distanceText ? ` · ${item.route.distanceText}` : ""}
-                      {item.route.isTransfer ? " · ข้ามฟาก" : ""}
-                    </small>
-                  </article>
-                ))}
-              </div>
-            )}
-
-            {travelView.sections.length > 0 ? (
-              <div class="temple-detail-transit__list">
-                {travelView.sections.map((item) => (
-                  <details open>
-                    <summary>{item.label}</summary>
-                    <div class="temple-detail-route-list">
-                      {item.routes.map((route, routeIndex) => {
-                        const routeTokens = splitTravelTokens(route.routeText);
-                        const visibleRouteTokens = routeTokens.slice(0, 5);
-                        const hiddenRouteTokens = routeTokens.slice(5);
-                        const routeNote = [
-                          getRouteIntro(route),
-                          route.isTransfer ? "มีเรือข้ามฟาก" : "",
-                        ].filter(Boolean).join(" · ");
-
-                        return (
-                          <article class={`temple-detail-route temple-detail-route--${route.mode}`}>
-                            <div class="temple-detail-route__summary">
-                              <span class="temple-route-distance">{route.distanceText || (routeIndex === 0 ? "ใกล้สุด" : `ทางเลือก ${routeIndex + 1}`)}</span>
-                              <span class="temple-route-node" aria-hidden="true"></span>
-                              <div>
-                                <strong>{route.stop}</strong>
-                                <small>{routeNote || getWalkLabel(route)}</small>
-                                {(route.routeText || hiddenRouteTokens.length > 0) && (
-                                  <>
-                                    <div class="temple-detail-route-lines" aria-label="สายหรือเส้นทางที่ผ่าน">
-                                      {visibleRouteTokens.length > 0 ? visibleRouteTokens.map((token) => <span>{token}</span>) : <span>{route.routeText}</span>}
-                                    </div>
-                                    {hiddenRouteTokens.length > 0 && (
-                                      <details class="temple-detail-route-more">
-                                        <summary>ดูสายทั้งหมด +{hiddenRouteTokens.length}</summary>
-                                        <div class="temple-detail-route-lines">
-                                          {hiddenRouteTokens.map((token) => <span>{token}</span>)}
-                                        </div>
-                                      </details>
-                                    )}
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          </article>
-                        );
-                      })}
-                    </div>
-                  </details>
-                ))}
-              </div>
-            ) : (
-              travelDetail.summary && <p class="temple-detail-transit__fallback">{travelDetail.summary}</p>
-            )}
-          </section>
-        )}
-      </article>
-
-      <aside class="temple-detail-side" aria-label="พิกัดและข้อมูลประกอบ">
-        <section class="temple-detail-map-card">
-          {hasCoordinates ? (
-            <>
-              <div
-                role="button"
-                tabindex="0"
-                class="temple-detail-map-card__map"
-                data-temple-detail-map
-                data-lat={latitude}
-                data-lng={longitude}
-                data-title={temple.name}
-                data-map-url={mapHref}
-                data-map-label={mapLabel}
-                aria-label={`ดูแผนที่ ${temple.name}`}
-              >
-                <span>ดูแผนที่</span>
-              </div>
-            </>
-          ) : (
-            <div class="temple-detail-map-card__body">
-              <h2>พิกัดและการเดินทาง</h2>
-              <p>{mapLabel || "ยังไม่มีพิกัดยืนยันสำหรับสถานที่นี้"}</p>
-              {mapHref && <a href={mapHref} target="_blank" rel="noopener">เปิดใน Google Maps</a>}
-            </div>
-          )}
-        </section>
-
-        <section class="temple-detail-meta-card">
-          <p class="temple-detail-meta-card__label">พิกัดและการเดินทาง</p>
-          <p class="temple-detail-meta-card__coords">{coordinateLabel || locationText}</p>
-          {mapHref && <a href={mapHref} target="_blank" rel="noopener">เปิดใน Google Maps →</a>}
-          <dl class="temple-detail-meta">
-            <div>
-              <dt>จังหวัด</dt>
-              <dd>{temple.province}</dd>
-            </div>
-            <div>
-              <dt>เขต / อำเภอ</dt>
-              <dd>{temple.district || "-"}</dd>
-            </div>
-            <div>
-              <dt>ประเภท</dt>
-              <dd>{temple.placeType || "วัดและสถานที่ศักดิ์สิทธิ์"}</dd>
-            </div>
-            {displayedTravelModeItems.length > 0 && (
-              <div>
-                <dt>การเดินทาง</dt>
-                <dd>{displayedTravelModeItems.slice(0, 5).join(" · ")}</dd>
-              </div>
-            )}
-          </dl>
-        </section>
-      </aside>
-    </section>
-
-    <TempleActivities templeId={temple.cmsKey || `${collection}:${createTempleSlug(temple)}`} />
-    <TempleCommerce templeId={temple.cmsKey || `${collection}:${createTempleSlug(temple)}`} />
-
-    {relatedTemples.length > 0 && (
-      <section class="temple-detail-related" aria-labelledby="temple-detail-related-title">
-        <div>
-          <p class="section-kicker">พิกัดใกล้เคียง</p>
-          <h2 id="temple-detail-related-title">แนะนำในชุดเดียวกัน</h2>
-        </div>
-        <div class="temple-detail-related__grid">
-          {relatedTemples.slice(0, 3).map((item) => (
-            <a href={getTempleDetailUrl(collection, item)} class="temple-detail-related-card">
-              <img
-                src={item.imageUrl || placeholderImage}
-                alt={item.imageAlt || `${item.name} ${item.province}`}
-                loading="lazy"
-                decoding="async"
-                data-fallback-src={placeholderImage}
-              />
-              <span>#{item.rank.toString().padStart(2, "0")}</span>
-              <strong>{item.name}</strong>
-              <small>{[item.province, item.district].filter(Boolean).join(" / ")}</small>
-            </a>
-          ))}
-        </div>
+    <div class="pd-overview">
+      <section class="pd-highlights pd-surface" aria-labelledby="pd-highlights-title">
+        <header class="pd-section-heading"><IconMedallion class="pd-medallion"><SiteIcon name="lotus" /></IconMedallion><h2 id="pd-highlights-title">จุดเด่นของสถานที่นี้</h2></header>
+        <div class="pd-highlight-copy" data-pd-domain="highlights" set:html={renderHighlights(vm)} />
       </section>
-    )}
+      <section class="pd-location pd-surface" aria-label="พิกัดและที่อยู่">
+        <div class="pd-map-frame" data-place-map-frame>
+          <div class="pd-map-canvas" data-temple-detail-map data-lat={vm.coords?.[0] ?? ""} data-lng={vm.coords?.[1] ?? ""} data-title={vm.record.name} data-map-url={vm.mapHref} data-address={vm.record.coordinateAddress || ""} aria-hidden="true"></div>
+          <p class="pd-map-status" data-map-status role="status">{vm.coords ? "เปิดพิกัดผ่าน Google Maps ด้านล่าง" : "ยังไม่มีพิกัดสำหรับแผนที่ภายใน"}</p>
+          <button type="button" class="pd-map-expand" data-map-open data-pd-enhanced hidden><span class="pd-button"><SiteIcon name="maximize-2" />ขยายแผนที่</span></button>
+          <button type="button" class="pd-map-retry pd-button" data-map-retry hidden>ลองโหลดแผนที่ใหม่</button>
+          <small class="pd-map-attribution">Map tiles © Esri</small>
+          <noscript><p class="pd-map-noscript">เปิดพิกัดผ่าน Google Maps ด้านล่าง</p></noscript>
+        </div>
+        <div data-pd-domain="location" set:html={renderLocation(vm)} />
+      </section>
+      <section class="pd-visit pd-surface" aria-labelledby="pd-visit-title">
+        <header class="pd-section-heading"><h2 id="pd-visit-title">ข้อมูลเข้าชมและติดต่อ</h2></header>
+        <div data-pd-domain="visit" set:html={renderVisit(vm)} />
+      </section>
+    </div>
+    <section class="pd-travel" aria-label="ข้อมูลการเดินทาง" data-pd-domain="travel" set:html={renderTravel(getTempleTravel(temple.travelDetail), vm.record)} />
+    <TempleActivities templeId={key} />
+    <TempleCommerce templeId={key} />
+    {relatedTemples.length > 0 && <section class="pd-related" aria-labelledby="pd-related-title">
+      <header class="pd-section-heading"><IconMedallion class="pd-medallion"><SiteIcon name="temple" /></IconMedallion><div><h2 id="pd-related-title">แนะนำในชุดเดียวกัน</h2><p>{collectionLabel}</p></div><a class="pd-all-link" href={collectionHref}>ดูทั้งหมด <SiteIcon name="arrow-right" /></a></header>
+      <div class="pd-related-rail" data-related-rail>
+        {relatedTemples.slice(0, 3).map(item => <a href={getTempleDetailUrl(collection, item)} class="pd-related-card">
+          <div class="pd-related-image"><img src={item.imageUrl || placeholderImage} alt={item.imageAlt || item.name} loading="lazy" decoding="async" data-fallback-src={placeholderImage} />{Number(item.rank) > 0 && <span>#{String(item.rank).padStart(2, "0")}</span>}</div>
+          <strong>{item.name}</strong><small>{[item.province, item.district].filter(Boolean).join(" · ")}</small>
+        </a>)}
+      </div>
+      <div class="pd-rail-controls" data-related-controls hidden><button type="button" aria-label="สถานที่ก่อนหน้า" data-related-prev><SiteIcon name="chevron-left" /></button><span data-related-count role="status">1 / {Math.min(relatedTemples.length, 3)}</span><button type="button" aria-label="สถานที่ถัดไป" data-related-next><SiteIcon name="chevron-right" /></button></div>
+    </section>}
+    <div class="pd-sr-only" role="status" data-place-status></div>
   </main>
-
-  <script>
-    import "../scripts/temple-detail.js";
-  </script>
+  <script>import "../scripts/temple-detail.js";</script>
 </BaseLayout>

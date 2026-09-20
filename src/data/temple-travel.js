@@ -41,8 +41,11 @@ export const TRAVEL_SECTION_DEFINITIONS = [
 const SECTION_BY_MODE = Object.fromEntries(TRAVEL_SECTION_DEFINITIONS.map((section) => [section.mode, section]));
 
 export function getTempleTravel(travelDetail = {}) {
-  const routes = normalizeTravelRoutes(travelDetail);
-  const sections = TRAVEL_SECTION_DEFINITIONS.map((section) => ({
+  travelDetail ||= {};
+  const routes = normalizeTravelRoutes(travelDetail).map((route) => ({ ...route, id: [route.id || route.stop, route.mode, route.operatorText, route.direction, route.routeText].join("|") }));
+  const extraModes = [...new Set(routes.map(route => route.mode))].filter(mode => !SECTION_BY_MODE[mode]);
+  const definitions = [...TRAVEL_SECTION_DEFINITIONS, ...extraModes.map(mode => ({ key: mode, mode, label: mode === "other" ? "การเดินทางอื่น" : mode, shortLabel: mode, highlightLabel: mode }))];
+  const sections = definitions.map((section) => ({
     ...section,
     routes: routes.filter((route) => route.mode === section.mode),
   })).filter((section) => section.routes.length);
@@ -67,8 +70,8 @@ function normalizeTravelRoutes(travelDetail) {
 }
 
 function normalizeStructuredRoute(route) {
-  const section = SECTION_BY_MODE[route.mode] || TRAVEL_SECTION_DEFINITIONS.find((item) => item.key === route.sourceKey);
-  if (!section) return null;
+  if (!route || typeof route !== "object") return null;
+  const section = SECTION_BY_MODE[route.mode] || TRAVEL_SECTION_DEFINITIONS.find((item) => item.key === route.sourceKey) || { key: "other", mode: cleanText(route.mode) || "other", label: "การเดินทางอื่น", shortLabel: "อื่น ๆ" };
 
   const stop = cleanText(route.stop || route.name || route.title);
   if (!stop) return null;
@@ -79,6 +82,9 @@ function normalizeStructuredRoute(route) {
   const typeText = cleanText(route.type || route.typeText);
 
   return {
+    id: cleanText(route.id),
+    direction: cleanText(route.direction),
+    locationUrl: cleanText(route.locationUrl),
     mode: section.mode,
     sourceKey: section.key,
     sectionLabel: section.label,
@@ -171,7 +177,7 @@ function getRecommendedTravelRoutes(routes) {
 }
 
 function routeKey(route) {
-  return [route.mode, route.stop, route.routeText].join("|");
+  return [route.mode, route.stop, route.routeText, route.operatorText, route.direction].join("|");
 }
 
 function splitRows(value) {

@@ -1,180 +1,97 @@
-const selectors = {
-  carousel: "[data-carousel]",
-  slide: ".hero-slide",
-  dot: "[data-carousel-dot]",
-  previous: "[data-carousel-prev]",
-  next: "[data-carousel-next]",
-};
-
 const intervalMs = 8000;
-const transitionMs = 860;
 
 export function initHeroCarousel() {
-  const carousel = document.querySelector(selectors.carousel);
-  if (!carousel) return;
-
-  const hero = carousel.closest(".hero");
-  const slides = Array.from(carousel.querySelectorAll(selectors.slide));
-  const dots = Array.from(document.querySelectorAll(selectors.dot));
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
+  const carousel = document.querySelector("[data-carousel]");
+  const hero = carousel?.closest(".hero");
+  if (!hero) return;
+  const slides = [...carousel.querySelectorAll(".hero-slide")];
   if (slides.length < 2) return;
+  const dots = [...hero.querySelectorAll("[data-carousel-dot]")];
+  const pauseButton = hero.querySelector("[data-carousel-pause]");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let index = Math.max(0, slides.findIndex(slide => slide.classList.contains("is-active")));
+  let paused = false;
+  let timer;
+  let pointerStart;
 
-  let activeIndex = Math.max(0, slides.findIndex((slide) => slide.classList.contains("is-active")));
-  let timerId;
-  let pointerStartX;
-  let transitionTimerId;
-
-  slides.forEach((slide, slideIndex) => {
-    slide.style.setProperty("--slide-index", String(slideIndex));
-  });
-
-  function setActiveSlide(index, direction = "forward") {
-    const nextIndex = (index + slides.length) % slides.length;
-    const previousIndex = activeIndex;
-
-    if (nextIndex === previousIndex) return;
-
-    slides.forEach((slide, slideIndex) => {
-      slide.classList.remove(
-        "is-entering-forward",
-        "is-entering-backward",
-        "is-exiting-forward",
-        "is-exiting-backward",
-      );
-
-      if (slideIndex !== previousIndex && slideIndex !== nextIndex) {
-        slide.classList.remove("is-active");
-      }
+  function show(next) {
+    index = (next + slides.length) % slides.length;
+    const image = slides[index].querySelector("img");
+    // A published CMS src always wins over the deferred build-time image.
+    if (image && !image.hasAttribute("src") && image.dataset.carouselSrc) {
+      image.src = image.dataset.carouselSrc;
+    }
+    slides.forEach((slide, i) => {
+      slide.classList.toggle("is-active", i === index);
+      slide.setAttribute("aria-hidden", String(i !== index));
     });
-
-    const previousSlide = slides[previousIndex];
-    const nextSlide = slides[nextIndex];
-    const enteringClass = direction === "backward" ? "is-entering-backward" : "is-entering-forward";
-    const exitingClass = direction === "backward" ? "is-exiting-backward" : "is-exiting-forward";
-
-    nextSlide.classList.add(enteringClass);
-    nextSlide.setAttribute("aria-hidden", "false");
-
-    window.requestAnimationFrame(() => {
-      previousSlide.classList.add(exitingClass);
-      previousSlide.classList.remove("is-active");
-      nextSlide.classList.add("is-active");
-      nextSlide.classList.remove(enteringClass);
-      activeIndex = nextIndex;
-      syncControls();
+    dots.forEach((dot, i) => {
+      dot.classList.toggle("is-active", i === index);
+      dot.setAttribute("aria-pressed", String(i === index));
     });
-
-    if (transitionTimerId) window.clearTimeout(transitionTimerId);
-    transitionTimerId = window.setTimeout(() => {
-      previousSlide.classList.remove(exitingClass);
-      previousSlide.setAttribute("aria-hidden", "true");
-    }, transitionMs);
-  }
-
-  function moveBy(offset) {
-    setActiveSlide(activeIndex + offset, offset < 0 ? "backward" : "forward");
-    restart();
-  }
-
-  function start() {
-    if (prefersReducedMotion) return;
-    stop();
-    timerId = window.setInterval(() => setActiveSlide(activeIndex + 1, "forward"), intervalMs);
+    const current = hero.querySelector("[data-carousel-current]");
+    if (current) current.textContent = String(index + 1);
   }
 
   function stop() {
-    if (timerId) {
-      window.clearInterval(timerId);
-      timerId = undefined;
-    }
+    window.clearInterval(timer);
+    timer = undefined;
   }
 
   function restart() {
     stop();
-    start();
+    const stopped = paused || reduced.matches;
+    if (pauseButton) {
+      pauseButton.setAttribute("aria-pressed", String(stopped));
+      pauseButton.disabled = reduced.matches;
+      const label = reduced.matches ? "ปิดการเปลี่ยนภาพตามการตั้งค่าลดการเคลื่อนไหว"
+        : paused ? "เริ่มเปลี่ยนภาพอัตโนมัติ" : "หยุดเปลี่ยนภาพอัตโนมัติ";
+      pauseButton.setAttribute("aria-label", label);
+      pauseButton.setAttribute("title", label);
+      pauseButton.querySelector("[data-carousel-pause-icon]").hidden = stopped;
+      pauseButton.querySelector("[data-carousel-play-icon]").hidden = !stopped;
+    }
+    if (stopped || document.hidden || hero.matches(":hover") || hero.contains(document.activeElement)) return;
+    timer = window.setInterval(() => show(index + 1), intervalMs);
   }
 
-  document.addEventListener("click", (event) => {
+  function move(offset) {
+    show(index + offset);
+    restart();
+  }
+  hero.addEventListener("click", (event) => {
     const target = event.target instanceof Element ? event.target : null;
-    if (!target || !hero?.contains(target)) return;
-
-    const previousTrigger = target.closest(selectors.previous);
-    const nextTrigger = target.closest(selectors.next);
-    const dotTrigger = target.closest(selectors.dot);
-
-    if (previousTrigger) {
-      moveBy(-1);
-      return;
-    }
-
-    if (nextTrigger) {
-      moveBy(1);
-      return;
-    }
-
-    if (dotTrigger) {
-      const dotIndex = dots.indexOf(dotTrigger);
-      if (dotIndex >= 0) {
-        setActiveSlide(dotIndex, dotIndex < activeIndex ? "backward" : "forward");
-        restart();
-      }
-    }
+    if (target?.closest("[data-carousel-prev]")) move(-1);
+    if (target?.closest("[data-carousel-next]")) move(1);
+    const dot = target?.closest("[data-carousel-dot]");
+    if (dot) { show(dots.indexOf(dot)); restart(); }
+    if (target?.closest("[data-carousel-pause]")) { paused = !paused; restart(); }
   });
-
-  hero?.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      moveBy(-1);
-    }
-
-    if (event.key === "ArrowRight") {
-      event.preventDefault();
-      moveBy(1);
-    }
+  hero.querySelector(".hero-controls")?.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    move(event.key === "ArrowLeft" ? -1 : 1);
   });
-
-  hero?.addEventListener("pointerdown", (event) => {
+  hero.addEventListener("pointerdown", (event) => {
+    pointerStart = undefined;
+    if (event.target.closest("a, button, input, textarea, select, [contenteditable]")) return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
-    pointerStartX = event.clientX;
+    pointerStart = { x: event.clientX, y: event.clientY };
   });
-
-  hero?.addEventListener("pointerup", (event) => {
-    if (typeof pointerStartX !== "number") return;
-
-    const deltaX = event.clientX - pointerStartX;
-    pointerStartX = undefined;
-
-    if (Math.abs(deltaX) < 48) return;
-    moveBy(deltaX < 0 ? 1 : -1);
+  hero.addEventListener("pointerup", (event) => {
+    if (!pointerStart) return;
+    const dx = event.clientX - pointerStart.x;
+    const dy = event.clientY - pointerStart.y;
+    pointerStart = undefined;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) move(dx < 0 ? 1 : -1);
   });
-
-  hero?.addEventListener("pointercancel", () => {
-    pointerStartX = undefined;
-  });
-
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      stop();
-    } else {
-      start();
-    }
-  });
-
-  function syncControls() {
-    dots.forEach((dot, dotIndex) => {
-      const isActive = dotIndex === activeIndex;
-      dot.classList.toggle("is-active", isActive);
-      dot.setAttribute("aria-pressed", String(isActive));
-    });
-
-    slides.forEach((slide, slideIndex) => {
-      slide.setAttribute("aria-hidden", String(slideIndex !== activeIndex));
-    });
-
-    hero?.style.setProperty("--active-slide", String(activeIndex + 1));
-  }
-
-  syncControls();
-  start();
+  hero.addEventListener("pointercancel", () => { pointerStart = undefined; });
+  hero.addEventListener("mouseenter", stop);
+  hero.addEventListener("mouseleave", restart);
+  hero.addEventListener("focusin", stop);
+  hero.addEventListener("focusout", () => window.setTimeout(restart, 0));
+  document.addEventListener("visibilitychange", restart);
+  reduced.addEventListener("change", restart);
+  show(index);
+  restart();
 }

@@ -1,335 +1,314 @@
-const DETAIL_MAP_CONFIG = {
-  thailandBounds: [[5.2, 96.6], [21.2, 106.5]],
-  minZoom: 6,
-  maxZoom: 19,
-  focusedZoom: 15,
-  maxBoundsPad: 0.04,
-  tileUrl: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-  tileAttribution: "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ",
-};
+import { coordinates, esc, icon } from "../lib/place-detail-view.js";
 
-const leafletAssets = {
-  css: ["https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"],
-  js: ["https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"],
-};
-
-const detailMapStates = new WeakMap();
+const root = document.querySelector("[data-place-detail]");
+const TILE_URL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
 let leafletPromise;
 let toastTimer;
+const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-document.querySelectorAll("[data-temple-detail-map]").forEach(initializeDetailMap);
-document.querySelector("[data-temple-detail-copy]")?.addEventListener("click", copyCurrentUrl);
-document.querySelector("[data-temple-detail-share]")?.addEventListener("click", shareCurrentPage);
-document.querySelectorAll("[data-confidence-help]").forEach(initializeConfidenceHelp);
-
-document.addEventListener("click", (event) => {
-  if (event.target instanceof Element && event.target.closest("[data-confidence-help]")) return;
-  document.querySelectorAll("[data-confidence-help].is-open").forEach(closeConfidenceHelp);
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key !== "Escape") return;
-  document.querySelectorAll("[data-temple-detail-map-modal].is-open").forEach((modal) => closeDetailMapModal(modal));
-  document.querySelectorAll("[data-confidence-help].is-open").forEach(closeConfidenceHelp);
-});
-
-function initializeConfidenceHelp(help) {
-  const button = help.querySelector("[data-confidence-help-toggle]");
-  const panel = help.querySelector("[data-confidence-help-panel]");
-  if (!button || !panel) return;
-
-  button.addEventListener("click", (event) => {
-    event.stopPropagation();
-    const shouldOpen = !help.classList.contains("is-open");
-    document.querySelectorAll("[data-confidence-help].is-open").forEach(closeConfidenceHelp);
-    help.classList.toggle("is-open", shouldOpen);
-    button.setAttribute("aria-expanded", String(shouldOpen));
-    panel.setAttribute("aria-hidden", String(!shouldOpen));
+if (root) {
+  root.querySelectorAll("[data-pd-enhanced]").forEach(node => { node.hidden = false; });
+  initializeImages(root);
+  initializeTravel(root);
+  initializeRelated(root);
+  initializeMaps(root);
+  root.querySelector("[data-temple-detail-copy]")?.addEventListener("click", () => copyUrl());
+  root.querySelector("[data-temple-detail-share]")?.addEventListener("click", async () => {
+    if (navigator.share) {
+      try { await navigator.share({ title: document.title, url: canonicalUrl() }); return; }
+      catch (error) { if (error.name === "AbortError") return; }
+    }
+    await copyUrl();
+  });
+  document.addEventListener("click", event => {
+    if (event.target instanceof Element && !event.target.closest(".pd-confidence-help")) root.querySelectorAll(".pd-confidence-help[open]").forEach(d => { d.open = false; });
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") root.querySelectorAll(".pd-confidence-help[open]").forEach(d => { d.open = false; d.querySelector("summary").focus(); });
   });
 }
 
-function closeConfidenceHelp(help) {
-  help.classList.remove("is-open");
-  help.querySelector("[data-confidence-help-toggle]")?.setAttribute("aria-expanded", "false");
-  help.querySelector("[data-confidence-help-panel]")?.setAttribute("aria-hidden", "true");
-}
-
-async function initializeDetailMap(element) {
-  const lat = Number(element.dataset.lat);
-  const lng = Number(element.dataset.lng);
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-
-  const state = {
-    lat,
-    lng,
-    title: element.dataset.title || "พิกัด",
-    mapUrl: element.dataset.mapUrl || "",
-    locationLabel: element.dataset.mapLabel || `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
-    miniMap: null,
-    modal: null,
-    modalMap: null,
-    lastFocusedElement: null,
-  };
-  detailMapStates.set(element, state);
-
-  element.addEventListener("click", () => openDetailMapModal(element));
-  element.addEventListener("keydown", (event) => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    event.preventDefault();
-    openDetailMapModal(element);
-  });
-
-  try {
-    await ensureLeaflet();
-  } catch (error) {
-    element.classList.add("has-map-error");
-    element.querySelector("span").textContent = "ดูแผนที่";
-    document.dispatchEvent(new CustomEvent("mw:map-load-error", {
-      detail: { scope: "detail_minimap", title: state.title, reason: error?.message || "leaflet_load_failed" },
-    }));
-    return;
+function initializeImages(page) {
+  const credit = page.querySelector(".pd-image-credit");
+  function updateCredit(image) {
+    if (!image.closest("[data-place-media]")) return;
+    credit.hidden = image.currentSrc === new URL(image.dataset.fallbackSrc, location.href).href;
   }
-  if (!window.L) return;
-
-  const bounds = window.L.latLngBounds(DETAIL_MAP_CONFIG.thailandBounds[0], DETAIL_MAP_CONFIG.thailandBounds[1]);
-  const map = window.L.map(element, {
-    zoomControl: false,
-    attributionControl: false,
-    dragging: false,
-    tap: false,
-    scrollWheelZoom: false,
-    doubleClickZoom: false,
-    boxZoom: false,
-    keyboard: false,
-    minZoom: DETAIL_MAP_CONFIG.minZoom,
-    maxBounds: bounds.pad(DETAIL_MAP_CONFIG.maxBoundsPad),
-    maxBoundsViscosity: 1,
-  }).setView([lat, lng], DETAIL_MAP_CONFIG.focusedZoom);
-
-  window.L.tileLayer(DETAIL_MAP_CONFIG.tileUrl, {
-    attribution: DETAIL_MAP_CONFIG.tileAttribution,
-    maxZoom: DETAIL_MAP_CONFIG.maxZoom,
-  }).addTo(map);
-
-  window.L.marker([lat, lng], { icon: createMiniTempleIcon(), interactive: false, keyboard: false })
-    .bindTooltip(state.title, {
-      direction: "top",
-      offset: [0, -12],
-      opacity: 0.94,
-    })
-    .addTo(map);
-
-  state.miniMap = map;
-  setTimeout(() => map.invalidateSize(), 120);
-}
-
-function createMiniTempleIcon() {
-  return window.L.divIcon({
-    className: "temple-detail-mini-marker",
-    html: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M4 10h16M6 10v11M18 10v11M8 14v3M12 14v3M16 14v3M5 7l7-4 7 4"/></svg>',
-    iconSize: [34, 34],
-    iconAnchor: [17, 17],
+  function fallback(image) {
+    if (!(image instanceof HTMLImageElement) || !image.dataset.fallbackSrc) return;
+    image.closest("picture")?.querySelectorAll("source").forEach(source => source.remove());
+    if (image.getAttribute("src") !== image.dataset.fallbackSrc) image.src = image.dataset.fallbackSrc;
+    image.dataset.fallbackApplied = "true";
+    if (image.closest("[data-place-media]")) credit.hidden = true;
+  }
+  page.addEventListener("error", event => fallback(event.target), true);
+  page.addEventListener("load", event => { if (event.target instanceof HTMLImageElement && event.target.dataset.fallbackSrc) updateCredit(event.target); }, true);
+  page.querySelectorAll("img[data-fallback-src]").forEach(image => {
+    if (image.complete && !image.naturalWidth) fallback(image);
+    else if (image.complete) updateCredit(image);
   });
 }
 
-async function openDetailMapModal(element) {
-  const state = detailMapStates.get(element);
-  if (!state) return;
-
-  state.modal = state.modal || createDetailMapModal(element, state);
-  state.lastFocusedElement = document.activeElement;
-  state.modal.classList.add("is-open");
-  state.modal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-
-  document.dispatchEvent(new CustomEvent("mw:map-open", { detail: { scope: "detail", title: state.title } }));
-
-  try {
-    await ensureLeaflet();
-  } catch (error) {
-    state.modal.classList.add("has-map-error");
-    state.modal.querySelector(".temple-detail-map-modal__canvas").textContent = "โหลดแผนที่ไม่สำเร็จ ลองเชื่อมต่ออินเทอร์เน็ตอีกครั้ง";
-    document.dispatchEvent(new CustomEvent("mw:map-load-error", {
-      detail: { scope: "detail_modal", title: state.title, reason: error?.message || "leaflet_load_failed" },
-    }));
-    state.modal.querySelector("[data-temple-detail-map-close]")?.focus({ preventScroll: true });
-    return;
-  }
-  if (!window.L) return;
-  if (!state.modalMap) initializeDetailModalMap(state);
-
-  setTimeout(() => {
-    state.modalMap?.invalidateSize();
-    state.modalMap?.setView([state.lat, state.lng], DETAIL_MAP_CONFIG.focusedZoom);
-    state.modal.querySelector("[data-temple-detail-map-close]")?.focus({ preventScroll: true });
-  }, 120);
-}
-
-function closeDetailMapModal(modal) {
-  const mapElement = document.querySelector(`[data-temple-detail-map][data-modal-id="${modal.id}"]`);
-  const state = mapElement ? detailMapStates.get(mapElement) : null;
-  modal.classList.remove("is-open");
-  modal.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
-  state?.lastFocusedElement?.focus?.({ preventScroll: true });
-}
-
-function createDetailMapModal(element, state) {
-  const modal = document.createElement("div");
-  modal.className = "temple-detail-map-modal";
-  modal.id = `temple-detail-map-modal-${Math.random().toString(36).slice(2)}`;
-  modal.setAttribute("aria-hidden", "true");
-  modal.setAttribute("data-temple-detail-map-modal", "");
-  element.dataset.modalId = modal.id;
-  modal.innerHTML = `
-    <button class="temple-detail-map-modal__overlay" type="button" data-temple-detail-map-close aria-label="ปิดแผนที่"></button>
-    <section class="temple-detail-map-modal__panel" role="dialog" aria-modal="true" aria-labelledby="${modal.id}-title">
-      <header class="temple-detail-map-modal__head">
-        <h2 id="${modal.id}-title">${escapeHtml(state.title)}</h2>
-        <button type="button" data-temple-detail-map-close aria-label="ปิดแผนที่">×</button>
-      </header>
-      <div class="temple-detail-map-modal__canvas" role="application" aria-label="แผนที่ ${escapeHtml(state.title)}" tabindex="0"></div>
-      <footer class="temple-detail-map-modal__foot">
-        <span>${escapeHtml(state.locationLabel)}</span>
-        ${state.mapUrl ? `<a href="${escapeHtml(state.mapUrl)}" target="_blank" rel="noopener">เปิดใน Google Maps</a>` : ""}
-      </footer>
-    </section>`;
-  modal.querySelectorAll("[data-temple-detail-map-close]").forEach((button) => {
-    button.addEventListener("click", () => closeDetailMapModal(modal));
-  });
-  document.body.appendChild(modal);
-  return modal;
-}
-
-function initializeDetailModalMap(state) {
-  const canvas = state.modal?.querySelector(".temple-detail-map-modal__canvas");
-  if (!canvas || !window.L) return;
-
-  const bounds = window.L.latLngBounds(DETAIL_MAP_CONFIG.thailandBounds[0], DETAIL_MAP_CONFIG.thailandBounds[1]);
-  const map = window.L.map(canvas, {
-    zoomControl: true,
-    scrollWheelZoom: true,
-    minZoom: DETAIL_MAP_CONFIG.minZoom,
-    maxBounds: bounds.pad(DETAIL_MAP_CONFIG.maxBoundsPad),
-    maxBoundsViscosity: 1,
-  }).setView([state.lat, state.lng], DETAIL_MAP_CONFIG.focusedZoom);
-
-  window.L.tileLayer(DETAIL_MAP_CONFIG.tileUrl, {
-    attribution: DETAIL_MAP_CONFIG.tileAttribution,
-    maxZoom: DETAIL_MAP_CONFIG.maxZoom,
-  }).addTo(map);
-
-  window.L.marker([state.lat, state.lng], { icon: createMiniTempleIcon(), keyboard: false, title: state.title })
-    .bindPopup(`<strong>${escapeHtml(state.title)}</strong>`, {
-      closeButton: false,
-      className: "temple-detail-map-modal__popup",
-    })
-    .addTo(map)
-    .openPopup();
-
-  state.modalMap = map;
-}
-
-document.addEventListener("keydown", (event) => {
-  if (event.key !== "Tab") return;
-  const modal = document.querySelector("[data-temple-detail-map-modal].is-open");
-  if (!modal) return;
-  trapFocus(event, modal);
-});
-
-function trapFocus(event, modal) {
-  const focusable = [...modal.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')]
-    .filter((element) => element.offsetParent !== null);
-  if (!focusable.length) return;
-
-  const first = focusable[0];
-  const last = focusable.at(-1);
-  if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault();
-    last.focus();
-  } else if (!event.shiftKey && document.activeElement === last) {
-    event.preventDefault();
-    first.focus();
-  }
-}
-
-async function shareCurrentPage(event) {
-  const button = event.currentTarget;
-  const title = button.dataset.shareTitle || document.title;
-  if (navigator.share) {
-    try {
-      await navigator.share({ title, url: window.location.href });
-      return;
-    } catch {
-      return;
+function initializeTravel(page) {
+  let selected = "all";
+  const expanded = new Map();
+  const filters = [...page.querySelectorAll("[data-pd-mode]")];
+  const stops = [...page.querySelectorAll("[data-pd-stop]")];
+  const more = page.querySelector("[data-pd-stops-more]");
+  if (!more) return;
+  function apply(announce = false) {
+    const candidates = stops.filter(s => selected === "all" || s.dataset.mode === selected);
+    const firstModes = new Set();
+    const initial = selected === "all" ? candidates.filter(s => {
+      if (firstModes.has(s.dataset.mode) || firstModes.size >= 4) return false;
+      firstModes.add(s.dataset.mode); return true;
+    }) : candidates.slice(0, 2);
+    const shown = expanded.get(selected) ? candidates : initial;
+    stops.forEach(stop => { stop.hidden = !shown.includes(stop); });
+    filters.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pdMode === selected)));
+    more.hidden = candidates.length <= initial.length;
+    more.setAttribute("aria-expanded", String(Boolean(expanded.get(selected))));
+    more.textContent = expanded.get(selected) ? "แสดงน้อยลง" : `ดูจุดเดินทางทั้งหมด (${candidates.length})`;
+    if (announce) {
+      page.querySelector("[data-pd-travel-status]").textContent = `แสดง ${shown.length} จาก ${candidates.length} จุดเดินทาง`;
+      const active = filters.find(button => button.dataset.pdMode === selected);
+      const strip = active?.parentElement;
+      if (strip && strip.scrollWidth > strip.clientWidth) strip.scrollTo({ left: strip.scrollLeft + active.getBoundingClientRect().left - strip.getBoundingClientRect().left - (strip.clientWidth - active.offsetWidth) / 2, behavior: reducedMotion() ? "instant" : "smooth" });
     }
   }
-  await copyUrl();
+  filters.forEach(button => button.addEventListener("click", () => { selected = button.dataset.pdMode; apply(true); }));
+  page.querySelectorAll("[data-pd-quick]").forEach(button => button.addEventListener("click", () => {
+    selected = button.dataset.pdQuick;
+    apply(true);
+    const target = stops.find(s => s.dataset.pdStop === button.dataset.stopKey);
+    if (target?.hidden) { expanded.set(selected, true); apply(true); }
+    const heading = page.querySelector("#pd-results-heading");
+    heading?.focus({ preventScroll: true });
+    (target || heading)?.scrollIntoView({ behavior: reducedMotion() ? "instant" : "smooth", block: "center" });
+  }));
+  more.addEventListener("click", () => { expanded.set(selected, !expanded.get(selected)); apply(true); });
+  apply();
 }
 
-async function copyCurrentUrl() {
-  await copyUrl();
+function initializeRelated(page) {
+  const rail = page.querySelector("[data-related-rail]");
+  if (!rail) return;
+  const cards = [...rail.children];
+  const controls = page.querySelector("[data-related-controls]");
+  const prev = controls.querySelector("[data-related-prev]");
+  const next = controls.querySelector("[data-related-next]");
+  let current = 0;
+  function update() {
+    const left = rail.getBoundingClientRect().left;
+    current = cards.reduce((best, card, i) => Math.abs(card.getBoundingClientRect().left - left) < Math.abs(cards[best].getBoundingClientRect().left - left) ? i : best, 0);
+    if (rail.scrollLeft >= rail.scrollWidth - rail.clientWidth - 2 && rail.scrollLeft > 0) current = cards.length - 1;
+    controls.hidden = rail.scrollWidth <= rail.clientWidth + 1;
+    prev.disabled = rail.scrollLeft <= 1;
+    next.disabled = rail.scrollLeft >= rail.scrollWidth - rail.clientWidth - 1;
+    controls.querySelector("[data-related-count]").textContent = `${current + 1} / ${cards.length}`;
+  }
+  function move(delta) {
+    const card = cards[Math.max(0, Math.min(cards.length - 1, current + delta))];
+    rail.scrollTo({ left: rail.scrollLeft + card.getBoundingClientRect().left - rail.getBoundingClientRect().left, behavior: reducedMotion() ? "instant" : "smooth" });
+  }
+  prev.addEventListener("click", () => move(-1));
+  next.addEventListener("click", () => move(1));
+  rail.addEventListener("scroll", update, { passive: true });
+  new ResizeObserver(update).observe(rail);
+  update();
+}
+
+function createDialog(title) {
+  const dialog = document.createElement("dialog");
+  dialog.className = "pd-dialog";
+  dialog.innerHTML = `<header><h2 id="pd-dialog-title">${esc(title)}</h2><button type="button" data-dialog-close aria-label="ปิด">${icon("x")}</button></header>`;
+  dialog.setAttribute("aria-labelledby", "pd-dialog-title");
+  const lastFocus = document.activeElement;
+  const previousOverflow = document.body.style.overflow;
+  dialog.querySelector("[data-dialog-close]").addEventListener("click", () => dialog.close());
+  dialog.addEventListener("keydown", event => {
+    if (event.key !== "Tab") return;
+    const controls = [...dialog.querySelectorAll('a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])')].filter(node => node.getClientRects().length && !node.closest("[hidden]"));
+    const first = controls[0], last = controls.at(-1);
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+  });
+  dialog.addEventListener("click", event => {
+    const rect = dialog.getBoundingClientRect();
+    if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
+  });
+  dialog.addEventListener("close", () => {
+    document.body.style.overflow = previousOverflow;
+    if (lastFocus?.isConnected && lastFocus.getClientRects().length) lastFocus.focus?.({ preventScroll: true });
+    else { const heading = root?.querySelector("h1"); if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); } }
+    dialog.remove();
+  }, { once: true });
+  document.body.append(dialog);
+  document.body.style.overflow = "hidden";
+  return dialog;
+}
+
+function canonicalUrl() {
+  const canonical = document.querySelector('link[rel="canonical"]')?.href;
+  const url = new URL(canonical || location.pathname, location.origin);
+  url.search = ""; url.hash = "";
+  return url.href;
 }
 
 async function copyUrl() {
-  try {
-    await navigator.clipboard.writeText(window.location.href);
-    showDetailToast("คัดลอกลิงก์แล้ว");
-  } catch {
-    window.prompt("คัดลอกลิงก์", window.location.href);
+  try { await navigator.clipboard.writeText(canonicalUrl()); toast("คัดลอกลิงก์แล้ว"); }
+  catch {
+    const dialog = createDialog("คัดลอกลิงก์");
+    dialog.insertAdjacentHTML("beforeend", `<div class="pd-dialog-copy"><label for="pd-copy-url">ลิงก์ของสถานที่</label><input id="pd-copy-url" readonly value="${esc(canonicalUrl())}" /></div>`);
+    dialog.showModal();
+    const input = dialog.querySelector("input"); input.focus(); input.select();
   }
 }
 
-function showDetailToast(message) {
-  let toast = document.querySelector(".temple-detail-toast");
-  if (!toast) {
-    toast = document.createElement("div");
-    toast.className = "temple-detail-toast";
-    toast.setAttribute("role", "status");
-    document.body.appendChild(toast);
-  }
-  toast.textContent = message;
-  toast.classList.add("is-visible");
+function toast(message) {
+  let node = document.querySelector(".pd-toast");
+  if (!node) { node = document.createElement("div"); node.className = "pd-toast"; node.setAttribute("role", "status"); document.body.append(node); }
+  node.hidden = false; node.textContent = message;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 1700);
+  toastTimer = setTimeout(() => { node.hidden = true; }, 2200);
+}
+
+function initializeMaps(page) {
+  const canvas = page.querySelector("[data-temple-detail-map]");
+  const status = page.querySelector("[data-map-status]");
+  const open = page.querySelector("[data-map-open]");
+  const retry = page.querySelector("[data-map-retry]");
+  const state = { coords: null, mini: null, miniMarker: null, miniLayer: null, modal: null, modalMap: null, modalMarker: null, modalLayer: null, loading: false };
+  const read = () => ({ coords: coordinates({ latitude: canvas.dataset.lat, longitude: canvas.dataset.lng }), title: canvas.dataset.title || "พิกัด", url: canvas.dataset.mapUrl || "", address: canvas.dataset.address || "" });
+  const marker = () => window.L.divIcon({ className: "pd-marker", html: icon("map-pin"), iconSize: [36, 36], iconAnchor: [18, 18] });
+  function reportError(scope) { document.dispatchEvent(new CustomEvent("mw:map-load-error", { detail: { scope, title: read().title, reason: "map_load_failed" } })); }
+  function tileLayer(map, modal) {
+    let loaded = false;
+    const layer = window.L.tileLayer(TILE_URL, { maxZoom: 19, attribution: "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ" });
+    layer.on("tileerror", () => {
+      const node = modal ? state.modal?.querySelector("[data-modal-status]") : status;
+      if (node) { node.hidden = false; node.textContent = "โหลดแผนที่บางส่วนไม่สำเร็จ ลองโหลดใหม่หรือเปิดใน Google Maps"; }
+      if (modal && state.modal) state.modal.querySelector("[data-modal-retry]").hidden = false; else retry.hidden = false;
+      reportError(modal ? "detail_modal" : "detail_minimap");
+    });
+    layer.on("tileload", () => {
+      if (loaded) return;
+      loaded = true;
+      const node = modal ? state.modal?.querySelector("[data-modal-status]") : status;
+      if (node) node.hidden = true;
+    });
+    layer.addTo(map);
+    return layer;
+  }
+  async function loadMini() {
+    if (state.loading || !read().coords || !page.isConnected) return;
+    state.loading = true; retry.hidden = true; status.hidden = false; status.textContent = "กำลังโหลดแผนที่";
+    try {
+      await ensureLeaflet();
+      const data = read();
+      if (!data.coords || !canvas.isConnected) return;
+      if (!state.mini) {
+        state.mini = window.L.map(canvas, { zoomControl: false, attributionControl: false, dragging: false, touchZoom: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false }).setView(data.coords, 15);
+        state.miniLayer = tileLayer(state.mini, false);
+      } else { state.miniLayer.redraw(); state.mini.setView(data.coords, 15); }
+      if (!state.miniMarker) state.miniMarker = window.L.marker(data.coords, { icon: marker(), interactive: false, keyboard: false }).addTo(state.mini);
+      else state.miniMarker.setLatLng(data.coords);
+      status.hidden = true;
+    } catch {
+      status.hidden = false; status.textContent = "โหลดแผนที่ไม่สำเร็จ";
+      retry.hidden = false; reportError("detail_minimap");
+    } finally { state.loading = false; }
+  }
+  function update() {
+    const data = read();
+    const changed = JSON.stringify(data.coords) !== JSON.stringify(state.coords);
+    state.coords = data.coords;
+    open.hidden = !data.coords;
+    open.setAttribute("aria-label", `ขยายแผนที่ ${data.title}`);
+    if (!data.coords) {
+      if (state.miniMarker) { state.miniMarker.remove(); state.miniMarker = null; }
+      if (state.modalMarker) { state.modalMarker.remove(); state.modalMarker = null; }
+      status.hidden = false; status.textContent = "ยังไม่มีพิกัดสำหรับแผนที่ภายใน"; retry.hidden = true;
+    } else if (state.mini) {
+      if (!state.miniMarker) state.miniMarker = window.L.marker(data.coords, { icon: marker(), interactive: false, keyboard: false }).addTo(state.mini);
+      state.miniMarker.setLatLng(data.coords);
+      if (changed) state.mini.setView(data.coords, 15);
+      status.hidden = true;
+    } else void loadMini();
+    if (state.modal) {
+      state.modal.querySelector("h2").textContent = `แผนที่ ${data.title}`;
+      state.modal.querySelector("[data-modal-address]").textContent = data.address;
+      const external = state.modal.querySelector("[data-modal-external]");
+      external.hidden = !data.url; if (data.url) external.href = data.url; else external.removeAttribute("href");
+      state.modal.querySelector("[data-modal-coords]").textContent = data.coords ? data.coords.map(v => v.toFixed(6)).join(", ") : "ยังไม่มีพิกัดยืนยัน";
+      const recenter = state.modal.querySelector("[data-map-recenter]");
+      if (!data.coords) recenter.hidden = true;
+      else if (changed) recenter.hidden = false;
+      if (data.coords && state.modalMap) {
+        if (!state.modalMarker) state.modalMarker = window.L.marker(data.coords, { icon: marker(), keyboard: false }).addTo(state.modalMap);
+        state.modalMarker.setLatLng(data.coords);
+      }
+      if (!data.coords) {
+        const note = state.modal.querySelector("[data-modal-status]");
+        note.hidden = false; note.textContent = "พิกัดถูกปรับปรุงและยังไม่มีจุดที่ยืนยัน";
+      }
+    }
+  }
+  async function loadModal(dialog) {
+    const note = dialog.querySelector("[data-modal-status]");
+    dialog.querySelector("[data-modal-retry]").hidden = true;
+    note.hidden = false; note.textContent = "กำลังโหลดแผนที่";
+    try {
+      await ensureLeaflet();
+      const data = read();
+      if (!dialog.open || !data.coords) return;
+      if (!state.modalMap) {
+        state.modalMap = window.L.map(dialog.querySelector(".pd-dialog-map"), { zoomControl: true, scrollWheelZoom: true }).setView(data.coords, 15);
+        state.modalLayer = tileLayer(state.modalMap, true);
+        state.modalMarker = window.L.marker(data.coords, { icon: marker(), keyboard: false }).addTo(state.modalMap);
+      } else state.modalLayer.redraw();
+      state.modalMap.invalidateSize();
+      note.hidden = true;
+    } catch {
+      if (!dialog.isConnected) return;
+      note.textContent = "โหลดแผนที่ไม่สำเร็จ"; note.hidden = false;
+      dialog.querySelector("[data-modal-retry]").hidden = false;
+      reportError("detail_modal");
+    }
+  }
+  open.addEventListener("click", () => {
+    const data = read(); if (!data.coords || state.modal?.open) return;
+    const dialog = createDialog(`แผนที่ ${data.title}`);
+    state.modal = dialog;
+    dialog.insertAdjacentHTML("beforeend", `<p class="pd-dialog-status" data-modal-status role="status">กำลังโหลดแผนที่</p><div class="pd-dialog-map" tabindex="0" aria-label="แผนที่ ${esc(data.title)}"></div><footer><div class="pd-dialog-location"><p data-modal-address>${esc(data.address)}</p><span data-modal-coords>${esc(data.coords.join(", "))}</span></div><button class="pd-button" type="button" data-map-recenter hidden>ดูพิกัดที่อัปเดต</button><button class="pd-button" type="button" data-modal-retry hidden>ลองโหลดใหม่</button><a class="pd-button" data-modal-external href="${esc(data.url)}" ${!data.url ? "hidden" : ""} target="_blank" rel="noopener">เปิดใน Google Maps</a></footer>`);
+    dialog.querySelector("[data-map-recenter]").addEventListener("click", event => { if (read().coords) state.modalMap?.setView(read().coords, 15); event.currentTarget.hidden = true; });
+    dialog.querySelector("[data-modal-retry]").addEventListener("click", () => loadModal(dialog));
+    dialog.addEventListener("close", () => { state.modalMap?.remove(); state.modal = null; state.modalMap = null; state.modalMarker = null; state.modalLayer = null; }, { once: true });
+    dialog.showModal();
+    dialog.querySelector("[data-dialog-close]").focus();
+    document.dispatchEvent(new CustomEvent("mw:map-open", { detail: { scope: "detail", title: data.title } }));
+    void loadModal(dialog);
+  });
+  retry.addEventListener("click", loadMini);
+  page.addEventListener("mw:place-detail-updated", update);
+  page.addEventListener("mw:place-detail-unavailable", () => { state.modal?.close(); state.mini?.remove(); });
+  new ResizeObserver(() => { state.mini?.invalidateSize(); state.modalMap?.invalidateSize(); }).observe(canvas);
+  update();
 }
 
 function ensureLeaflet() {
   if (window.L) return Promise.resolve();
   if (leafletPromise) return leafletPromise;
-  leafletPromise = Promise.all([
-    ...leafletAssets.css.map(loadStylesheet),
-    leafletAssets.js.reduce((promise, src) => promise.then(() => loadScript(src)), Promise.resolve()),
-  ]);
-  return leafletPromise;
-}
-
-function loadStylesheet(href) {
-  if (document.querySelector(`link[href="${href}"]`)) return Promise.resolve();
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = href;
-  document.head.appendChild(link);
-  return Promise.resolve();
-}
-
-function loadScript(src) {
-  if (document.querySelector(`script[src="${src}"]`)) return Promise.resolve();
-  return new Promise((resolve, reject) => {
+  leafletPromise = new Promise((resolve, reject) => {
+    if (!document.querySelector("link[data-pd-leaflet]")) {
+      const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"; css.dataset.pdLeaflet = ""; document.head.append(css);
+    }
     const script = document.createElement("script");
-    script.src = src;
-    script.async = true;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"; script.async = true;
+    const timer = setTimeout(() => { script.remove(); reject(new Error("Map load timeout")); }, 15000);
+    script.onload = () => { clearTimeout(timer); window.L ? resolve() : reject(new Error("Map unavailable")); };
+    script.onerror = () => { clearTimeout(timer); script.remove(); reject(new Error("Map unavailable")); };
+    document.head.append(script);
+  }).catch(error => { leafletPromise = null; throw error; });
+  return leafletPromise;
 }

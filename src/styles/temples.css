@@ -2889,12 +2889,6 @@ body.temples-collection-v2-page .site-footer--temple-hub-v2 {
   background: #fbf6eb;
 }
 
-.temples-popular-directory-page .site-header {
-  background: rgba(251, 246, 235, 0.92);
-  border-bottom: 1px solid rgba(77, 56, 41, 0.16);
-  backdrop-filter: blur(18px);
-}
-
 .temples-popular-directory-page .navbar--popular-directory {
   display: grid;
   grid-template-columns: minmax(190px, auto) minmax(0, 1fr);

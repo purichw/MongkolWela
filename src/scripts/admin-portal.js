@@ -832,6 +832,7 @@ function pageToolbar(page) {
 
 function renderPatchEditor(patch, index) {
   const type = patch.kind || "text";
+  const isHomeHero = type === "image" && currentPage()?.id === "home" && /^home-hero-image-\d+$/.test(patch.id || "");
   return `<article class="mw-admin-item" data-patch-index="${index}">
     <div class="mw-admin-item-head">
       <strong>${escapeHtml(patch.label || patch.id || `Field ${index + 1}`)}</strong>
@@ -846,6 +847,13 @@ function renderPatchEditor(patch, index) {
     ${type === "html" ? `<label>ข้อความจัดรูปแบบ<div class="mw-admin-rich" contenteditable="true" data-patch-rich="value">${patch.value || ""}</div></label>` : ""}
     ${type !== "html" && type !== "image" ? `<label>ค่า<textarea data-patch-field="value">${escapeHtml(patch.value || "")}</textarea></label>` : ""}
     ${type === "image" ? `<div class="mw-admin-form-grid"><label>ลิงก์รูปภาพ<input data-patch-field="src" value="${escapeHtml(patch.src || "")}"></label><label>คำอธิบายรูป<input data-patch-field="alt" value="${escapeHtml(patch.alt || "")}"></label></div>` : ""}
+    ${isHomeHero ? `<div class="mw-admin-form-grid">
+      <label>ตำแหน่งครอปภาพ<input data-patch-field="position" value="${escapeHtml(patch.position || "")}" placeholder="50% 50%"></label>
+      <label>เครดิตผู้ถ่าย / การปรับภาพ<input data-patch-field="credit" value="${escapeHtml(patch.credit || "")}"></label>
+      <label>ลิงก์ที่มาภาพ<input data-patch-field="sourceUrl" value="${escapeHtml(patch.sourceUrl || "")}" type="url"></label>
+      <label>ใบอนุญาต<input data-patch-field="license" value="${escapeHtml(patch.license || "")}"></label>
+      <label>ลิงก์ใบอนุญาต<input data-patch-field="licenseUrl" value="${escapeHtml(patch.licenseUrl || "")}" type="url"></label>
+    </div>` : ""}
   </article>`;
 }
 

@@ -98,6 +98,18 @@ npm run smoke:production
 
 ## Design Rules
 
+Before adding repeated public UI, consult `docs/shared-ui.md` and reuse its
+canonical components/styles. Keep page geometry and responsive composition local;
+shared changes require representative desktop/mobile before-and-after checks.
+
+For mockup-led UI adaptation, read `docs/mockup-adaptation-lessons.md` before
+implementation and use `$mockup-to-product` when available. Treat composition,
+mobile layout, icon/material/motif details and overall proportions as part of
+the requested design, not optional later polish. Review the full requested
+surface proactively; do not wait for point-by-point corrections. Keep effort
+proportional for tiny follow-ups. Explicit exact/pixel-perfect requests still
+use `$reference-to-a-tee`; do not weaken their fidelity requirements.
+
 - Match the existing CI: warm paper background, lacquer red, jade/green, gold, restrained sacred tone.
 - Avoid making operational pages into landing pages.
 - Use cards for repeated items and genuine tools only.

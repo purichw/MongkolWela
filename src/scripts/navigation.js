@@ -4,6 +4,18 @@ const selectors = {
 };
 
 export function initMobileNavigation() {
+  const focusSearch = () => {
+    const input = document.querySelector("#site-search");
+    if (!(input instanceof HTMLInputElement)) return false;
+    input.focus({ preventScroll: true });
+    input.scrollIntoView({ block: "center", behavior: "instant" });
+    return true;
+  };
+  document.querySelector("[data-header-search]")?.addEventListener("click", (event) => {
+    if (focusSearch()) event.preventDefault();
+  });
+  if (window.location.hash === "#site-search") focusSearch();
+
   const navToggle = document.querySelector(selectors.navToggle);
   const navMenu = document.querySelector(selectors.navMenu);
 

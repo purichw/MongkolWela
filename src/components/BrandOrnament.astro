@@ -1,0 +1,9 @@
+---
+interface Props { class?: string; mirrored?: boolean; }
+const { class: className, mirrored = false } = Astro.props;
+---
+<span class:list={["brand-ornament", className, { "is-mirrored": mirrored }]} aria-hidden="true"></span>
+<style>
+  .brand-ornament { position: absolute; inset-block: 0; left: 0; width: var(--ornament-width, 150px); background: url('/assets/images/ornament-lotus-bodhi.webp') left center / auto 100% no-repeat; opacity: var(--ornament-opacity, .22); pointer-events: none; }
+  .brand-ornament.is-mirrored { left: auto; right: 0; transform: scaleX(-1); }
+</style>

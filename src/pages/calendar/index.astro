@@ -1,19 +1,94 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import cmsSeed from "../../../public/admin/content/live.json";
+import CmsImage from "../../components/CmsImage.astro";
+import SiteIcon from "../../components/icons/SiteIcon.astro";
+import BrandOrnament from "../../components/BrandOrnament.astro";
+import { createYearOptions, thaiMonthNames } from "../../scripts/thai-calendar-core.js";
+import { monthShortNames } from "../../scripts/calendar-view-model.js";
 
-const mainContent = "<main id=\"calendar-top\">\n      <section class=\"thai-calendar-hero\">\n        <div>\n          <nav class=\"calendar-breadcrumb\" aria-label=\"breadcrumb\">\n            <a href=\"../\">หน้าแรก</a>\n            <span>/</span>\n            <span>ปฏิทินไทย</span>\n          </nav>\n          <p class=\"section-kicker\">ปฏิทินมงคล</p>\n          <h1>เปิดปฏิทินไทย แล้วอ่านวันให้ลึกกว่าเลขวันที่</h1>\n          <p>\n            เลือกปี พ.ศ. 2300-2700 เพื่อดูจันทรคติไทย วันพระ วันหยุด เทศกาล\n            และดิถีที่ควรใช้หรือควรระวัง ก่อนลงรายละเอียดรายวัน\n          </p>\n        </div>\n        <div class=\"calendar-hero-card\" aria-label=\"ตัวอย่างปฏิทิน\">\n          <h2>มิถุนายน 2569</h2>\n          <div class=\"mini-calendar\">\n            <span>1</span><span>2</span><span>3</span><span>4</span><span class=\"is-selected\">5</span><span>6</span><span>7</span>\n            <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>\n            <span>15</span><span>16</span><span class=\"is-holy\">17</span><span>18</span><span>19</span><span>20</span><span>21</span>\n          </div>\n        </div>\n      </section>\n\n      <div class=\"calendar-control-shell\">\n        <div class=\"calendar-controls\">\n          <form data-calendar-form>\n            <label for=\"calendar-year\">เลือกปี พ.ศ.</label>\n            <select id=\"calendar-year\" name=\"year\" data-calendar-year></select>\n          </form>\n          <nav class=\"calendar-month-nav\" data-calendar-months aria-label=\"เลือกเดือน\"></nav>\n          <a class=\"primary-action\" data-calendar-today href=\"./day/\">วันนี้</a>\n        </div>\n      </div>\n\n      <section class=\"calendar-shell\" aria-live=\"polite\">\n        <div class=\"calendar-summary\" data-calendar-summary></div>\n        <div class=\"calendar-year-grid\" data-calendar-grid></div>\n      </section>\n    </main>";
+const patches = cmsSeed.pages.find(page => page.id === "calendar")?.patches || [];
+const media = (id: string) => patches.find(patch => patch.id === id && patch.enabled !== false);
 ---
 
 <BaseLayout
   title="ปฏิทินไทย | มงคลเวลา"
-  description="ปฏิทินไทยและจันทรคติไทย พ.ศ.2300-2700 พร้อมวันพระ วันมงคล ดิถี หมายเหตุ และรายละเอียดรายวัน"
+  description="เช็กวันพระ วันสำคัญ และรายละเอียดรายวัน เลือกดูปฏิทินไทยรายเดือนและทั้งปี พร้อมข้อมูลจันทรคติประกอบการวางแผน"
   lang="th"
   locale="th"
   page="calendar"
   bodyClass="thai-calendar-page"
 >
-  <Fragment set:html={mainContent} />
+  <main id="calendar-top" class="calendar-app" data-calendar-app data-state="loading">
+    {(["lotus", "stupa", "calendar-days", "chevron-left", "chevron-right", "arrow-right"] as const).map(name => (
+      <template data-calendar-symbol={name}><SiteIcon name={name} /></template>
+    ))}
+    <section class="cal-hero thai-calendar-hero" aria-labelledby="calendar-title">
+      <CmsImage slot="calendar-hero-image" image={media("calendar-hero-image")} width={1920} height={1080} loading="eager" fetchpriority="high" class="cal-hero-image" />
+      <BrandOrnament /><BrandOrnament mirrored />
+      <div class="cal-container cal-hero-copy">
+        <nav class="cal-breadcrumb" aria-label="เส้นทางนำทาง">
+          <a href="/">หน้าแรก</a><span aria-hidden="true">/</span><span aria-current="page">ปฏิทินไทย</span>
+        </nav>
+        <h1 id="calendar-title" data-calendar-title>ปฏิทินไทย</h1>
+        <p class="cal-hero-subtitle">เช็กวันพระ วันสำคัญ และรายละเอียดรายวัน</p>
+        <p class="cal-hero-description">วางแผนชีวิต เดินทางไหว้พระ ทำบุญ<br />และกิจกรรมมงคลตลอดทั้งปี</p>
+      </div>
+      <blockquote class="cal-hero-quote">“เวลา...<br />ก็เป็นมงคลได้<br />หากเราเลือกใช้ด้วยใจที่ดี”</blockquote>
+    </section>
 
+    <div class="cal-toolbar-wrap" data-calendar-toolbar>
+      <div class="cal-toolbar cal-container">
+        <div class="cal-year-control">
+          <label for="calendar-year">เลือกปี</label>
+          <select id="calendar-year" name="year" data-calendar-year>
+            {createYearOptions().map(year => <option value={year}>{year} / {year - 543}</option>)}
+          </select>
+        </div>
+        <nav class="cal-month-nav" data-calendar-months aria-label="เลือกเดือน">
+          {thaiMonthNames.map((month, i) => (
+            <button type="button" data-month={i + 1} aria-label={month} aria-pressed="false" title={month}>{monthShortNames[i]}</button>
+          ))}
+        </nav>
+        <div class="cal-view-switch" role="group" aria-label="มุมมองปฏิทิน">
+          <button type="button" data-view="overview" aria-pressed="true"><SiteIcon name="calendar-days" />ภาพรวม</button>
+          <button type="button" data-view="month" aria-pressed="false"><SiteIcon name="calendar-days" />รายเดือน</button>
+          <button type="button" data-view="events" aria-pressed="false"><SiteIcon name="calendar-days" />วันสำคัญ</button>
+        </div>
+        <select class="cal-mobile-view" data-calendar-view aria-label="มุมมองปฏิทิน">
+          <option value="overview">ภาพรวม</option><option value="month">รายเดือน</option><option value="events">วันสำคัญ</option>
+        </select>
+        <a class="cal-today cal-button" data-calendar-today href="/calendar/day/" aria-label="รายละเอียดวันนี้" title="รายละเอียดวันนี้">
+          <SiteIcon name="calendar-days" /><span>วันนี้</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="cal-container cal-content">
+      <p class="sr-only" role="status" data-calendar-status></p>
+      <section class="cal-summaries" data-calendar-summary aria-label="สรุปปฏิทิน" aria-busy="true">
+        {Array.from({ length: 4 }, () => <div class="cal-summary-skeleton" aria-hidden="true"><span></span><span></span></div>)}
+      </section>
+      <section class="cal-workspace" id="calendar-workspace" data-calendar-workspace tabindex="-1" aria-label="ปฏิทินเดือนที่เลือก" aria-busy="true">
+        <div class="cal-grid-skeleton" aria-hidden="true">
+          {Array.from({ length: 35 }, () => <span></span>)}
+        </div>
+        <p class="sr-only">กำลังเตรียมข้อมูลปฏิทิน</p>
+      </section>
+      <section class="cal-year-overview" data-calendar-overview aria-labelledby="calendar-year-title"></section>
+      <section class="cal-guide" data-calendar-guide hidden aria-labelledby="cal-guide-title">
+        <h2 id="cal-guide-title">เกร็ดความรู้</h2>
+        <a href="/calendar/day/">
+          <CmsImage slot="calendar-guide-image" image={media("calendar-guide-image")} width={240} height={180} />
+          <span><strong>อ่านวันพระและจันทรคติ</strong><small>ดูข้างขึ้น ข้างแรม และข้อมูลประกอบของแต่ละวัน</small></span>
+          <SiteIcon name="arrow-right" />
+        </a>
+      </section>
+      <noscript>
+        <p class="cal-data-note">โปรดเปิด JavaScript เพื่อเลือกปี เดือน และอ่านรายละเอียดปฏิทิน</p>
+      </noscript>
+    </div>
+  </main>
   <script>
     import "../../scripts/thai-calendar-year.js";
   </script>

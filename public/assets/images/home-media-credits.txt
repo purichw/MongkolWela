@@ -1,0 +1,30 @@
+Mongkol Wela - Home discovery media
+
+Wat Pho and Wat Kalayanamit photographs:
+Mastertongapollo, Wikimedia Commons, CC BY-SA 4.0.
+Resized, WebP-encoded and cropped for display. These derivative image files
+remain available under CC BY-SA 4.0; this does not license the website code.
+https://creativecommons.org/licenses/by-sa/4.0/
+https://commons.wikimedia.org/wiki/File:พระมหาเจดีย์_4_รัชกาล_วัดพระเชตุพนฯ.jpg
+https://commons.wikimedia.org/wiki/File:วัดกัลยาณมิตรวรมหาวิหาร2.jpg
+
+Wat Arun: Haley Hong, Unsplash License.
+https://unsplash.com/photos/BVB6A30FI4c
+Doi Suthep forest: Mike Holp, Unsplash License.
+https://unsplash.com/photos/4Gq3UG5v4Es
+https://unsplash.com/license
+
+Gold bars: Pixabay / Pexels, CC0.
+https://www.pexels.com/photo/gold-bar-lot-47047/
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Other intent photographs: Pexels License, resized and WebP-encoded.
+https://www.pexels.com/license/
+https://www.pexels.com/photo/person-using-a-laptop-7213105/
+https://www.pexels.com/photo/close-up-of-a-pink-lotus-17433156/
+https://www.pexels.com/photo/close-up-of-man-holding-a-seedling-in-soil-in-his-hands-12969371/
+https://www.pexels.com/photo/person-with-arms-raised-holding-a-stick-12757209/
+https://www.pexels.com/photo/close-up-photography-of-incenses-3626470/
+
+Thailand silhouette: derived from the site's existing Thailand boundary data.
+/assets/data/thailand-boundary.geojson

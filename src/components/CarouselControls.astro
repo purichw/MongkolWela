@@ -1,0 +1,38 @@
+---
+import SiteIcon from "./icons/SiteIcon.astro";
+const { count, label = "ภาพประกอบ", class: className } = Astro.props as { count: number; label?: string; class?: string };
+---
+<div class:list={["carousel-controls", className]} aria-label={label}>
+  <button type="button" data-carousel-prev aria-label="ภาพก่อนหน้า" title="ภาพก่อนหน้า"><SiteIcon name="chevron-left" /></button>
+  <div class="carousel-dots" aria-label="เลือกภาพประกอบ">
+    {Array.from({ length: count }, (_, i) => <button class:list={{ "is-active": i === 0 }} type="button" data-carousel-dot aria-label={'ภาพที่ ' + (i + 1)} aria-pressed={i === 0}></button>)}
+  </div>
+  <span class="carousel-count" aria-hidden="true"><span data-carousel-current>1</span><span>/</span>{count}</span>
+  <button type="button" data-carousel-next aria-label="ภาพถัดไป" title="ภาพถัดไป"><SiteIcon name="chevron-right" /></button>
+  <button type="button" data-carousel-pause aria-label="หยุดเปลี่ยนภาพอัตโนมัติ" aria-pressed="false" title="หยุดเปลี่ยนภาพอัตโนมัติ">
+    <span data-carousel-pause-icon><SiteIcon name="pause" /></span>
+    <span data-carousel-play-icon hidden><SiteIcon name="play" /></span>
+  </button>
+</div>
+<style>
+  .carousel-controls { display: inline-flex; align-items: center; gap: 0; padding: 2px; color: #f5dda5; background: #132b23a6; backdrop-filter: blur(8px); border: 1px solid #ead3a080; border-radius: 24px; }
+  .carousel-controls button { display: grid; place-items: center; flex: none; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; color: inherit; background: transparent; line-height: 1; cursor: pointer; }
+  .carousel-controls button:hover { background: #ffffff20; }
+  .carousel-controls button:focus-visible { outline: 2px solid #f5dda5; outline-offset: 1px; }
+  .carousel-controls :global(.site-icon) { width: 18px; height: 18px; --site-icon-color: currentColor; }
+  [data-carousel-pause] > span { display: grid; place-items: center; }
+  [data-carousel-pause] > span[hidden] { display: none; }
+  .carousel-controls [data-carousel-pause] { border-left: 1px solid #ead3a044; border-radius: 0 50% 50% 0; }
+  .carousel-dots { display: flex; align-items: center; }
+  .carousel-dots button { width: 24px; }
+  .carousel-dots button::before { content: ""; width: 6px; height: 6px; border: 1px solid #ead3a0; border-radius: 50%; }
+  .carousel-dots button.is-active::before { width: 12px; background: #f2ce73; border-radius: 4px; }
+  .carousel-count { display: none; }
+  @media (max-width: 720px) {
+    .carousel-controls { padding: 1px; border-color: #ead3a044; }
+    .carousel-controls button { width: 24px; height: 24px; }
+    .carousel-controls :global(.site-icon) { width: 14px; height: 14px; }
+    .carousel-dots { display: none; }
+    .carousel-count { display: flex; align-items: center; justify-content: center; gap: 4px; width: 32px; font-size: 10px; line-height: 1; font-variant-numeric: tabular-nums; }
+  }
+</style>

@@ -1,10 +1,13 @@
 import { requestJson } from "./request.js";
 import { startContentRefresh } from "./content-refresh.js";
 import { ACTIVITY_TYPES, activityDateLabel, safeActivityUrl } from "../lib/temple-activities.js";
+import { icon } from "../lib/place-detail-view.js";
 
 const esc = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 
 document.querySelectorAll("[data-temple-activities]").forEach((root) => {
+  root.querySelectorAll("[data-activity-enhanced]").forEach(node => { node.hidden = false; });
+  const templeId = root.dataset.templeId;
   const result = root.querySelector("[data-activity-result]");
   const more = root.querySelector("[data-activities-more]");
   let events = [];
@@ -13,6 +16,7 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
   let expanded = false;
   let loading = false;
   let failed = false;
+  let received = false;
 
   function row(event) {
     const changed = ["postponed", "cancelled"].includes(event.status);
@@ -38,10 +42,20 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
   }
 
   function render() {
+    if (!received && !failed) return;
     const openIds = new Set([...root.querySelectorAll("details[open]")].map((element) => element.dataset.activityDetails));
+    const focusedId = document.activeElement?.closest("[data-activity-details]")?.dataset.activityDetails;
+    const focusedHref = document.activeElement?.getAttribute("href");
     const visible = events.filter((event) => period === "past" ? event.past : !event.past);
-    result.innerHTML = visible.length ? visible.slice(0, expanded ? undefined : 3).map(row).join("") : `<p class="temple-activities-empty">${period === "past" ? "ยังไม่มีกิจกรรมที่ผ่านมาในระบบ" : "ยังไม่มีประกาศกิจกรรมที่ยืนยันในระบบ"}</p>`;
+    const warning = failed ? `<div class="temple-activities-stale" role="status"><p>${received ? "ไม่สามารถโหลดกิจกรรมล่าสุดได้ กำลังแสดงข้อมูลที่โหลดไว้ก่อนหน้า" : "ไม่สามารถโหลดกิจกรรมล่าสุดได้"}</p><button type="button" data-activities-retry>ลองใหม่</button></div>` : "";
+    result.innerHTML = warning + (received ? visible.length ? visible.slice(0, expanded ? undefined : 3).map(row).join("") : `<div class="temple-activities-empty">${icon("calendar-days")}<p>${period === "past" ? "ยังไม่มีกิจกรรมที่ผ่านมาในระบบ" : "ยังไม่มีประกาศกิจกรรมที่ยืนยันในระบบ"}</p></div>` : "");
     root.querySelectorAll("details").forEach((element) => { element.open = openIds.has(element.dataset.activityDetails); });
+    if (focusedId) {
+      const details = [...root.querySelectorAll("[data-activity-details]")].find(d => d.dataset.activityDetails === focusedId);
+      const target = focusedHref ? [...(details?.querySelectorAll("a") || [])].find(a => a.getAttribute("href") === focusedHref) : details?.querySelector("summary");
+      target?.focus({ preventScroll: true });
+    }
+    result.querySelector("[data-activities-retry]")?.addEventListener("click", refresh);
     more.hidden = visible.length <= 3;
     more.textContent = expanded ? "แสดงน้อยลง" : `ดูกิจกรรมทั้งหมด (${visible.length})`;
     more.setAttribute("aria-expanded", String(expanded));
@@ -50,18 +64,19 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
   async function refresh() {
     if (loading || !root.isConnected) return;
     loading = true;
+    result.setAttribute("aria-busy", "true");
     try {
-      const params = new URLSearchParams({ templeId: root.dataset.templeId, revision });
+      const params = new URLSearchParams({ templeId, revision });
       const payload = await requestJson(`/api/temple-activities?${params}`);
+      if (!root.isConnected || root.dataset.templeId !== templeId) return;
       if (!payload.ok || (!payload.unchanged && !Array.isArray(payload.events))) throw new Error("Invalid activity response");
-      if (!payload.unchanged) { events = payload.events; revision = payload.revision; render(); }
-      else if (failed) render();
+      const hadFailed = failed;
       failed = false;
+      if (!payload.unchanged) { events = payload.events; revision = payload.revision; received = true; render(); }
+      else if (hadFailed) render();
     } catch {
       failed = true;
-      more.hidden = true;
-      result.innerHTML = '<div class="temple-activities-empty" role="alert"><p>ไม่สามารถโหลดกิจกรรมล่าสุดได้</p><button type="button" data-activities-retry>ลองใหม่</button></div>';
-      result.querySelector("[data-activities-retry]").addEventListener("click", refresh);
+      render();
     } finally { loading = false; result.setAttribute("aria-busy", "false"); }
   }
 
@@ -69,7 +84,7 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
     period = button.dataset.activityPeriod;
     expanded = false;
     root.querySelectorAll("[data-activity-period]").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-    if (!failed) render();
+    render();
   }));
   more.addEventListener("click", () => { expanded = !expanded; render(); });
   void refresh();

@@ -1,0 +1,6 @@
+---
+import { iconMedallionClass } from "../lib/ui-markup.js";
+
+export interface Props { class?: string; }
+---
+<span class={iconMedallionClass(Astro.props.class)}><slot /></span>

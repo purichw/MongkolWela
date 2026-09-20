@@ -2,6 +2,7 @@
 import { siteConfig } from "../config/site.js";
 import BrandMark from "./icons/BrandMark.astro";
 import MenuIcon from "./icons/MenuIcon.astro";
+import SiteIcon from "./icons/SiteIcon.astro";
 import Topbar from "./Topbar.astro";
 import liveContent from "../../public/admin/content/live.json" with { type: "json" };
 import defaultContent from "../../public/admin/content/default.json" with { type: "json" };
@@ -104,7 +105,7 @@ function isCurrentNavItem(item: NavItem) {
 }
 ---
 
-<header class="site-header">
+<header class="site-header ui-glass">
   <Topbar items={config.topbar} />
 
   <nav
@@ -166,6 +167,7 @@ function isCurrentNavItem(item: NavItem) {
     </div>
 
     <div class="nav-actions">
+      <a class="header-search icon-button" data-header-search href="/#site-search" aria-label="ค้นหาวัด" title="ค้นหาวัด"><SiteIcon name="search" /></a>
       {homePlannerTab && (
         <a class="nav-cta-site" data-nav-cta="temple-planner" href={resolveHref(homePlannerTab.href)}>
           {homePlannerTab.label}

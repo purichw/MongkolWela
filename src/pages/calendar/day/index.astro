@@ -1,7 +1,11 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-
-const mainContent = "<main data-calendar-day-detail></main>";
+import cmsSeed from "../../../../public/admin/content/live.json";
+import CmsImage from "../../../components/CmsImage.astro";
+import SiteIcon from "../../../components/icons/SiteIcon.astro";
+import BrandOrnament from "../../../components/BrandOrnament.astro";
+import "../../../styles/calendar-day.css";
+const hero = cmsSeed.pages.find(page => page.id === "calendarDay")?.patches?.find(patch => patch.id === "calendar-day-hero-image" && patch.enabled !== false);
 ---
 
 <BaseLayout
@@ -12,7 +16,21 @@ const mainContent = "<main data-calendar-day-detail></main>";
   page="calendarDay"
   bodyClass="calendar-day-page"
 >
-  <Fragment set:html={mainContent} />
+  <main class="day-detail" data-calendar-day-detail data-state="loading">
+    {(["calendar-days", "arrow-left", "arrow-right", "chevron-down", "leaf", "ban", "lightbulb", "book-open", "compass", "orbit", "moon-star", "coins", "layers-2", "maximize-2"] as const).map(name => (
+      <template data-day-symbol={name}><SiteIcon name={name} /></template>
+    ))}
+    <section class="day-hero" aria-labelledby="day-title">
+      <CmsImage slot="calendar-day-hero-image" image={hero} width={1920} height={1280} loading="eager" fetchpriority="high" class="day-hero-image" />
+      <BrandOrnament /><BrandOrnament mirrored />
+      <div class="day-container day-hero-content" data-day-hero>
+        <h1 id="day-title">รายละเอียดวัน</h1>
+        <p role="status">กำลังเตรียมข้อมูลปฏิทิน</p>
+      </div>
+    </section>
+    <div class="day-container day-content" data-day-content></div>
+    <noscript><p class="day-container">โปรดเปิด JavaScript เพื่ออ่านข้อมูลของวันที่เลือก <a href="/calendar/">กลับสู่ปฏิทิน</a></p></noscript>
+  </main>
 
   <script>
     import "../../../scripts/thai-calendar-day.js";

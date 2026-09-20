@@ -1,0 +1,6 @@
+---
+import SiteIcon, { type Props } from "./icons/SiteIcon.astro";
+const { name, class: className } = Astro.props as Props;
+---
+
+<SiteIcon name={name} class:list={["home-symbol", className]} />

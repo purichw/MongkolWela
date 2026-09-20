@@ -1,6 +1,9 @@
 ---
 import { siteConfig } from "../config/site.js";
 import BrandMark from "./icons/BrandMark.astro";
+import BrandOrnament from "./BrandOrnament.astro";
+import SiteIcon from "./icons/SiteIcon.astro";
+import "../styles/public-footer.css";
 
 type FooterLink = {
   label: string;
@@ -20,7 +23,8 @@ const footerCopy = config.copy?.footer || {};
 const pages = config.pages as Record<string, PageConfig>;
 const pageConfig = pages[page] || pages.home;
 const isPopularDirectory = page === "templesPopular";
-const isHomePage = page === "home";
+const isPlaceDetail = /^\/temples\/(popular|sacred|mu)\/[^/]+\/?$/.test(Astro.url.pathname);
+const usesEditorialFooter = ["home", "calendar", "calendarDay"].includes(page) || isPlaceDetail;
 const isTempleHubPage = page === "temples";
 const isTemplePlannerPage = page === "templesPlanner";
 const isTempleCollectionPage = ["templesPopular", "templesSacred", "templesMu"].includes(page);
@@ -57,26 +61,38 @@ const toolLinks = footerCopy.tools || [
     </div>
     <p>ค้นหาวัดดัง สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระเสริมมงคลสำหรับผู้ใช้ไทย</p>
   </footer>
-) : isHomePage ? (
-  <footer class="site-footer site-footer--home-v2" id="consult">
+) : usesEditorialFooter ? (
+  <footer class:list={["site-footer", "site-footer--home-v2", { "site-footer--ivory": page === "calendarDay" }]} id="consult">
+    <BrandOrnament /><BrandOrnament mirrored />
     <div class="site-footer-home-grid">
       <div class="site-footer-home-brand">
         <BrandMark class="site-footer-brand-lockup" variant="lockup" loading="lazy" />
         <p>{footerCopy.homeDescription || config.footer.description}</p>
       </div>
-      <nav aria-label={footerCopy.templeRoutesLabel || "เส้นทางและสถานที่"}>
-        <strong>{footerCopy.templeRoutesLabel || "เส้นทางและสถานที่"}</strong>
-        {templeRouteLinks.map((item: FooterLink) => (
-          <a href={resolveHref(item.href)}>{item.label}</a>
-        ))}
-      </nav>
-      <nav aria-label={footerCopy.toolsLabel || "เครื่องมือเสริม"}>
-        <strong>{footerCopy.toolsLabel || "เครื่องมือเสริม"}</strong>
-        {toolLinks.map((item: FooterLink) => (
-          <a href={resolveHref(item.href)}>{item.label}</a>
-        ))}
-      </nav>
+      <details class="site-footer-home-links" data-home-footer-links open>
+        <summary>เส้นทางและเครื่องมือ <SiteIcon name="chevron-right" /></summary>
+        <div class="site-footer-home-navs">
+          <nav aria-label={footerCopy.templeRoutesLabel || "เส้นทางและสถานที่"}>
+            <strong>{footerCopy.templeRoutesLabel || "เส้นทางและสถานที่"}</strong>
+            {templeRouteLinks.map((item: FooterLink) => (
+              <a href={resolveHref(item.href)}>{item.label}</a>
+            ))}
+          </nav>
+          <nav aria-label={footerCopy.toolsLabel || "เครื่องมือเสริม"}>
+            <strong>{footerCopy.toolsLabel || "เครื่องมือเสริม"}</strong>
+            {toolLinks.map((item: FooterLink) => (
+              <a href={resolveHref(item.href)}>{item.label}</a>
+            ))}
+          </nav>
+        </div>
+      </details>
+      <div class="site-footer-home-action">
+        <span>เริ่มต้นการเดินทาง</span>
+        <a href="/temples/planner/">วางแผนไหว้พระ <SiteIcon name="arrow-right" /></a>
+        <a class="site-footer-home-calendar" href="/calendar/">ดูปฏิทินไทย <SiteIcon name="arrow-right" /></a>
+      </div>
     </div>
+    <div class="site-footer-home-bottom"><small>© {new Date().getFullYear() + 543} มงคลเวลา</small><small>ควรตรวจสอบข้อมูลสถานที่ก่อนออกเดินทาง</small></div>
   </footer>
 ) : isTempleV2Page ? (
   <footer class="site-footer site-footer--temple-hub-v2" id="consult">
@@ -114,3 +130,13 @@ const toolLinks = footerCopy.tools || [
     </div>
   </footer>
 )}
+
+<script>
+  const links = document.querySelector<HTMLDetailsElement>("[data-home-footer-links]");
+  if (links) {
+    const desktop = matchMedia("(min-width: 721px)");
+    const sync = () => { links.open = desktop.matches; };
+    sync();
+    desktop.addEventListener("change", sync);
+  }
+</script>

@@ -1,0 +1,19 @@
+---
+import { homeHeroAttributes } from "../lib/home-hero-media.js";
+
+export interface Props {
+  slot: string;
+  image?: { src?: string; alt?: string; position?: string; credit?: string; sourceUrl?: string; license?: string; licenseUrl?: string };
+  width: number;
+  height: number;
+  class?: string;
+  loading?: "lazy" | "eager";
+  fetchpriority?: "high" | "low" | "auto";
+}
+const { slot, image = {}, width, height, class: className, loading = "lazy", fetchpriority = "auto" } = Astro.props;
+const fallback = "/assets/images/temple-placeholder-auspicious.png";
+---
+<img id={slot} class={className} src={image.src || fallback} alt={image.alt || ""}
+  width={width} height={height} loading={loading} fetchpriority={fetchpriority} decoding="async"
+  style={{ objectPosition: image.position || "50% 50%" }} {...homeHeroAttributes(image)}
+  data-cms-media data-home-media data-fallback-src={fallback} />

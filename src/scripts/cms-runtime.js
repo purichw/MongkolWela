@@ -1,5 +1,7 @@
 import { requestJson, createLatestRequest } from "./request.js";
+import { applyPlaceDetailOverride } from "./place-detail-content.js";
 import { startContentRefresh } from "./content-refresh.js";
+import { homeHeroAttributes, homeHeroMetadata } from "../lib/home-hero-media.js";
 
 const CMS_CONTENT_URL = "/api/admin/content";
 const CMS_CONSENT_KEY = "mongkolwela.pdpa.analytics";
@@ -224,7 +226,16 @@ function applyPatch(patch) {
   if (!patch?.selector || patch.enabled === false) return;
   document.querySelectorAll(patch.selector).forEach((node) => {
     if (patch.kind === "image") {
-      if ("src" in node && patch.src) node.setAttribute("src", patch.src);
+      if (node.hasAttribute("data-home-hero-image")) {
+        node.setAttribute("data-carousel-src", patch.src || "");
+        if (!patch.src) node.removeAttribute("src");
+        else if (node.hasAttribute("src") || node.closest(".is-active")) node.setAttribute("src", patch.src);
+        for (const [attr, value] of Object.entries(homeHeroAttributes(patch))) node.setAttribute(attr, value);
+      } else if ("src" in node && patch.src) node.setAttribute("src", patch.src);
+      if (node.hasAttribute("data-cms-media")) {
+        node.style.objectPosition = patch.position || "50% 50%";
+        for (const [attr, value] of Object.entries(homeHeroAttributes(patch))) node.setAttribute(attr, value);
+      }
       if (patch.alt !== undefined) node.setAttribute("alt", patch.alt);
       return;
     }
@@ -254,9 +265,12 @@ function applyPagePatches(patches = []) {
     if (previous && nodes.length === previous.nodes.length && nodes.every((node, index) => node === previous.nodes[index])) continue;
     const restore = nodes.map((node) => {
       if (patch.kind === "image" || (patch.kind === "attr" && patch.attr)) {
-        const attributes = patch.kind === "image" ? ["src", "alt"] : [patch.attr];
+        const attributes = patch.kind === "image" ? ["src", "alt", ...(node.hasAttribute("data-home-hero-image") ? ["data-carousel-src", ...Object.values(homeHeroMetadata)] : []), ...(node.hasAttribute("data-cms-media") ? ["style", ...Object.values(homeHeroMetadata)] : [])] : [patch.attr];
         const values = attributes.map((name) => [name, node.getAttribute(name)]);
-        return () => values.forEach(([name, value]) => value === null ? node.removeAttribute(name) : node.setAttribute(name, value));
+        return () => {
+          values.forEach(([name, value]) => value === null ? node.removeAttribute(name) : node.setAttribute(name, value));
+          if (node.hasAttribute("data-home-hero-image") && node.closest(".is-active") && !node.hasAttribute("src") && node.dataset.carouselSrc) node.setAttribute("src", node.dataset.carouselSrc);
+        };
       }
       const children = [...node.childNodes];
       return () => node.replaceChildren(...children);
@@ -629,9 +643,11 @@ function applyTempleDetailOverride(content) {
   const root = document.querySelector(".temple-detail");
   if (!override || !root) return;
   if (override.status === "deleted" || override.enabled === false) {
+    root.dispatchEvent(new CustomEvent("mw:place-detail-unavailable"));
     root.innerHTML = '<section class="section-shell" role="status"><h1>สถานที่นี้ไม่เปิดเผยแพร่</h1><a href="/temples/">ดูสถานที่อื่น</a></section>';
     return;
   }
+  if (applyPlaceDetailOverride(root, override)) return;
   const name = fieldValue(override, "name", document.querySelector("#temple-detail-title")?.textContent || "");
   const mapElement = root.querySelector("[data-temple-detail-map]");
   const currentTags = [...root.querySelectorAll(".temple-detail-tags span")].map((item) => item.textContent.trim()).filter(Boolean);
