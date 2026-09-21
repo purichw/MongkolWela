@@ -4140,11 +4140,22 @@
   display: grid;
   width: 42px;
   height: 42px;
+  flex: 0 0 42px;
   place-items: center;
   border-radius: 50%;
   background: var(--admin-lacquer);
   color: #fff8e8;
   font-weight: 900;
+}
+
+.admin-page .mw-admin-user-cell > div {
+  min-width: 0;
+}
+
+.admin-page .mw-admin-user-cell strong,
+.admin-page .mw-admin-user-cell small {
+  display: block;
+  overflow-wrap: anywhere;
 }
 
 .admin-page .mw-admin-setting-list label {
