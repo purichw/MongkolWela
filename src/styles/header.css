@@ -9,6 +9,8 @@
   --mw-line: #e7d5b8;
   --mw-red: #9d171a;
   --mw-paper: #fffdf7;
+  --mw-nav-trigger-size: 44px;
+  --mw-nav-chevron-size: 18px;
   position: sticky;
   top: 0;
   z-index: 70;
@@ -69,15 +71,18 @@
 .mw-header[data-header-mode="wide"] .mw-brand { padding-right: 28px; border-right: 1px solid var(--mw-line); }
 .mw-desktop-nav { display: flex; align-items: center; gap: 20px; flex: none; }
 .mw-nav-item { position: relative; display: flex; align-items: center; min-height: 80px; }
+/* Leaf links share the visual gap left by a centered disclosure chevron. */
+.mw-nav-item:not(:has(> .mw-disclosure)):not(:last-child) { margin-inline-end: calc((var(--mw-nav-trigger-size) - var(--mw-nav-chevron-size)) / 2); }
 .mw-top-link { display: flex; align-items: center; min-height: 48px; color: var(--mw-ink); font-family: "Prompt", var(--font-thai); font-size: 1rem; font-weight: 600; line-height: 1.4; white-space: nowrap; }
 .mw-top-link > .mw-arrow { display: none; }
 .mw-nav-item.is-current > .mw-top-link, .mw-nav-item:has(> details[open]) > .mw-top-link { color: var(--mw-red); }
 .mw-nav-item:has(> details[open])::after, .mw-nav-item.is-current::after {
   content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--mw-red);
 }
-.mw-disclosure > summary { list-style: none; cursor: pointer; width: 44px; min-height: 48px; display: grid; place-items: center; color: inherit; border-radius: 6px; }
+.mw-disclosure > summary { list-style: none; cursor: pointer; width: var(--mw-nav-trigger-size); min-height: 48px; display: grid; place-items: center; color: inherit; border-radius: 6px; }
 .mw-header summary::-webkit-details-marker { display: none; }
 .mw-chevron, .mw-arrow { width: 18px; height: 18px; flex: none; }
+.mw-disclosure > summary > .mw-chevron { width: var(--mw-nav-chevron-size); height: var(--mw-nav-chevron-size); }
 .mw-disclosure[open] > summary { color: var(--mw-red); }
 .mw-disclosure[open] > summary .mw-chevron, .mw-mobile-group[open] > summary .mw-chevron { transform: rotate(180deg); }
 .mw-header-actions { display: flex; align-items: center; gap: 12px; flex: none; padding-left: 20px; border-left: 1px solid var(--mw-line); }
