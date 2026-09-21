@@ -249,7 +249,7 @@ body.has-planner-dialog { overflow: hidden; }
 .planner-map-tile-error { position: absolute; z-index: 600; left: 8px; right: 8px; bottom: 20px; margin: 0; padding: 8px; background: #fff9e9; color: #573e24; font-size: 12px; }
 .planner-map-tile-error button { min-height: 44px; border: 0; background: transparent; color: var(--lacquer); text-decoration: underline; }
 .planner-timeline__item.is-map-focused { background: #f4ead0; }
-.planner-result, .planner-pick { scroll-margin-top: 110px; }
+.planner-result, .planner-pick { scroll-margin-top: calc(var(--site-header-sticky-height, 80px) + 24px); }
 @keyframes planner-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .planner-place-card.is-new { animation: planner-enter .22s ease both; }
 @media (1180px <= width < 1440px) { [data-workspace-view="both"] .planner-place-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } }

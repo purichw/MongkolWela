@@ -13,6 +13,7 @@ import palmistry from "../styles/palmistry.css?url";
 import calendar from "../styles/thai-calendar.css?url";
 import calendarOverview from "../styles/calendar-overview.css?url";
 import temples from "../styles/temples.css?url";
+import templeHub from "../styles/temple-hub.css?url";
 import map from "../styles/temple-map.css?url";
 import responsive from "../styles/responsive.css?url";
 import headlines from "../styles/thai-headlines.css?url";
@@ -32,6 +33,7 @@ export function stylesForPath(path) {
     : path.includes("/seamsi/") ? [seamsi]
     : path.includes("/thai-astrology/") ? [astrology]
     : path.includes("/palmistry/") ? [palmistry]
+    : path === "/temples/" ? [templeHub]
     : path.startsWith("/temples/") ? [temples, map]
     : [];
   return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : [])];

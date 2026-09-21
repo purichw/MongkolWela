@@ -1,0 +1,25 @@
+Temple Hub media defaults - 2026-09-21
+
+temples-hub-golden-panorama.webp
+Generated with OpenAI image generation for Mongkol Wela. Imaginary editorial
+architecture, not a documentary photo or evidence of a specific temple.
+Original output: exec-f78df473-0961-4dfb-b258-a6b57f19d360.png
+Source dimensions: 2164 x 727. Encoded as WebP, quality 88.
+Direction: wide 3:1 Thai temple panorama at golden sunset, shaded green foliage
+and quiet negative space on the left, ornate sunlit Thai prang towers center-right,
+no text, people, logos, Buddha portrait, interface, watermark or borders.
+
+hero-doi-suthep-gold.webp (existing project asset, reused)
+Nat Weerawong / Unsplash
+https://unsplash.com/photos/ZmvuHreuHdo
+https://unsplash.com/license
+
+hero-wat-arun-sunset.webp (existing project asset, reused)
+Haley Hong / Unsplash
+https://unsplash.com/photos/BVB6A30FI4c
+https://unsplash.com/license
+
+Icons: existing heritage SiteIcon artwork plus Lucide's official SVGs.
+New Lucide names: briefcase-business, heart, shield-check, map, pencil-line.
+Source: https://github.com/lucide-icons/lucide/tree/main/icons
+License: public/assets/icons/lucide/LICENSE

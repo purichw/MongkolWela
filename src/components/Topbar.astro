@@ -1,34 +1,7 @@
 ---
-type TopbarItem = {
-  label: string;
-  href?: string;
-  featured?: boolean;
-  realtime?: "lunarToday" | "solarToday";
-};
-
-const { items = [] } = Astro.props as {
-  items?: TopbarItem[];
-};
-
-function resolveHref(href = "") {
-  if (!href) return "/";
-  if (/^(https?:|mailto:|tel:)/.test(href)) return href;
-  if (href.startsWith("#")) return `/${href}`;
-  if (href.startsWith("/")) return href;
-  return `/${href}`;
-}
-
-function classNameFor(item: TopbarItem) {
-  return ["topbar__item", item.featured ? "topbar__item--feature" : ""].filter(Boolean).join(" ");
-}
+import { renderUtilityNavigation } from "../lib/site-navigation.js";
+const { items = [], options = {} } = Astro.props;
 ---
-
-<div class="topbar" aria-label="ลิงก์ด่วน">
-  {items.map((item: TopbarItem) =>
-    item.href ? (
-      <a class={classNameFor(item)} href={resolveHref(item.href)} data-topbar-realtime={item.realtime}>{item.label}</a>
-    ) : (
-      <span class={classNameFor(item)} data-topbar-realtime={item.realtime}>{item.label}</span>
-    )
-  )}
+<div class="mw-utility" data-header-utility aria-label="ลิงก์ด่วน" style={options.assets?.lotus ? `--mw-lotus-art: url('${options.assets.lotus}')` : undefined}>
+  <div class="mw-utility-inner" data-header-utility-links set:html={renderUtilityNavigation(items, options)} />
 </div>

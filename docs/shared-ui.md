@@ -9,8 +9,9 @@ points. A different task layout must still sit on the same site frame.
 
 | Owner | Use | Current consumers |
 | --- | --- | --- |
-| `tokens.css` page tokens | 1220px maximum, 32/20/12/8px responsive gutters; 48/40/28px secondary-page title scale | Public header/footer, Home, Calendar/Day, planner, temple hub/collections/directory/details, tarot and horoscope tools, shop/merit |
+| `tokens.css` page tokens | 1220px maximum, 32/20/12/8px responsive gutters; 56/44/32/30px page-title scale; 64/52/36/32px editorial display role | Public content/footer, Home, Calendar/Day, planner, temple hub/collections/directory/details, tarot and horoscope tools, shop/merit |
 | `Header.astro`, `Footer.astro` | One public shell; Footer keeps only the approved ivory Day variant and contextual links | All public routes through `BaseLayout.astro`; admin/seller workspaces remain separate |
+| `Topbar.astro`, `lib/site-navigation.js`, `scripts/navigation.js`, `header.css` | One published navigation model for SSR/CMS; split links/disclosures, opaque panels, compact dialog drawer and intrinsic fit guard | Every shared Header consumer |
 | `PageBanner.astro`, `page-banner.css` | Shared full-width image layer, shade, motifs, breadcrumb/copy scale, quote and content alignment | Calendar, Day, temple hub, three temple collections, planner and Thailand directory via `TempleSearchHero` |
 | `scripts/planner/place-card.js` | One escaped, semantic place-selection renderer for desktop tiles and mobile rows | Planner list in picker-only and combined views |
 | `icons/SiteIcon.astro` | Decorative heritage raster or Lucide icon; parent provides the accessible action name | Header/footer, Home, Calendar, Calendar Day, Place Detail |
@@ -22,11 +23,42 @@ points. A different task layout must still sit on the same site frame.
 
 ## Usage
 
+### Shared Navigation
+
+The header handoff intentionally gives navigation a 1440px maximum frame with
+32/24/12px gutters; content/footer retain their 1220px frame. The utility strip
+scrolls away. `--site-header-sticky-height` measures the sticky main row;
+`--site-header-visible-bottom` measures its current viewport bottom. Calendar's
+observer, Planner anchors, Tarot detail and temple sticky sidebars use this
+measurement contract. Do not resize page bodies to compensate for header height.
+
+`navigationModel` preserves published order, gates and stable IDs. Both renderers
+share grouping/escaping/current-route logic. `updateHeaderNavigation` reconciles
+keyed elements to retain focus, groups and scroll. Request/revision ownership
+stays in `cms-runtime` / `content-refresh`; no second fetch loop or root HTML swap.
+Native details work before JS; enhancement moves the same fallback content into
+one modal dialog. Desktop panels are ordinary disclosures, not ARIA menus.
+
+Latest compact adaptation: temple panel 560px, drawer title 20px, primary rows
+16px, children 15px, tools 14px regular, controls at least 44px. Drawer utility
+aliases are omitted only when their exact destination is already in the main
+menu. Decorative art is a shared design asset; CMS still owns navigation labels
+and routes. See `docs/header-navbar-implementation.md` for proof and limitations.
+
+### Page Surfaces
+
 For a full-width public content section, use `width: var(--page-width)` and
 `margin-inline: auto`. Do not add another outer max-width or mobile gutter in a
 route stylesheet. `--page-inset` is the equivalent padding for full-bleed bands.
 Nested forms, reading columns, charts and map dialogs may be narrower; do not use
 the outer page-width token inside an already constrained container.
+
+Page-title scale was enlarged at the user's request in the Hub mockup pass.
+`--page-title-size` applies to shared secondary-page titles; the Hub uses
+`--page-display-title-size` for its short editorial H1. The latter is not a blanket
+rule for every H1, card, dialog or admin title. `--section-title-size` stays 28px
+desktop / 22px mobile / 20px below 360px. Card titles, table headings and controls
+retain their domain-specific sizes. Use role tokens, not viewport-scaled type.
 
 ```astro
 <PageBanner titleId="page-title">

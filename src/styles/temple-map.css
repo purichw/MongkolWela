@@ -1529,7 +1529,7 @@
 
 .temple-detail-side {
   position: sticky;
-  top: 88px;
+  top: calc(var(--site-header-sticky-height, 80px) + 12px);
   display: flex;
   flex-direction: column;
   align-self: start;

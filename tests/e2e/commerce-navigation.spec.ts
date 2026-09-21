@@ -34,12 +34,13 @@ async function mockContent(page) {
 
 async function openCommerceMenu(page) {
   await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "true");
-  const group = page.locator('[data-nav-item-id="commerce"]');
-  if ((page.viewportSize()?.width || 0) <= 720) {
-    await page.locator(".nav-toggle").click();
-    await group.evaluate((element) => element.scrollIntoView({ block: "nearest", behavior: "instant" }));
+  const compact = await page.locator(".mw-header").getAttribute("data-header-mode") === "compact";
+  const group = page.locator(compact ? '[data-nav-key="mobile-group-commerce"]' : '[data-nav-item-id="commerce"]');
+  if (compact) {
+    await page.locator(".mw-menu-toggle").click();
+    if (!(await group.evaluate((element: HTMLDetailsElement) => element.open))) await group.locator(":scope > summary").click();
   } else {
-    await group.locator(":scope > a").focus();
+    await group.locator("summary").click();
   }
   return group;
 }
@@ -50,19 +51,19 @@ test("commerce navigation reaches both routes on desktop and mobile", async ({ p
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/shop/");
   const group = await openCommerceMenu(page);
-  await expect(group.locator(":scope > a")).toHaveAttribute("aria-current", "page");
+  await expect(group.locator('[data-nav-id="shop"]')).toHaveAttribute("aria-current", "page");
   await expect(group.getByRole("link", { name: "ร้านค้ากลาง", exact: true })).toHaveAttribute("href", "/shop/");
   await expect(group.getByRole("link", { name: "กฐินและร่วมบุญ", exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  if ((page.viewportSize()?.width || 0) <= 720) {
-    expect(await page.locator("#primary-menu").evaluate((menu) => menu.scrollWidth <= menu.clientWidth)).toBe(true);
+  if (await page.locator(".mw-header").getAttribute("data-header-mode") === "compact") {
+    expect(await page.locator(".mw-drawer-scroll").evaluate((menu) => menu.scrollWidth <= menu.clientWidth)).toBe(true);
   }
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: testInfo.outputPath("commerce-navigation.png"), animations: "disabled" });
   await group.getByRole("link", { name: "กฐินและร่วมบุญ", exact: true }).click();
   await expect(page).toHaveURL(/\/merit\/$/);
   const meritGroup = await openCommerceMenu(page);
-  await expect(meritGroup.locator(":scope > a")).toHaveAttribute("aria-current", "page");
+  await expect(meritGroup.locator('[data-nav-id="merit"]')).toHaveAttribute("aria-current", "page");
   await meritGroup.getByRole("link", { name: "ร้านค้ากลาง", exact: true }).click();
   await expect(page).toHaveURL(/\/shop\/$/);
   expect(errors).toEqual([]);
@@ -88,9 +89,9 @@ test("Admin can publish commerce labels, destinations and visibility without res
   await expect(tab.locator('[data-nav-item="1"] [data-nav-item-enabled]')).not.toBeChecked();
   await page.goto("/shop/");
   const group = await openCommerceMenu(page);
-  await expect(group.locator(":scope > a")).toHaveText("ร้านค้าและงานบุญ");
+  await expect(group.locator('[data-nav-id="commerce"]')).toHaveText("ร้านค้าและงานบุญ");
   await expect(group.getByRole("link", { name: "สินค้าจากทุกสถานที่", exact: true })).toHaveAttribute("href", "/shop/?category=all");
-  await expect(group.locator('[data-nav-child-id="merit"]')).toHaveCount(0);
+  await expect(group.locator('[data-nav-id="merit"]')).toHaveCount(0);
   const unrelatedTabs = store.content().navigation.tabs.filter((entry) => entry.id !== "commerce");
   expect(unrelatedTabs).toEqual(seed.navigation.tabs.filter((entry) => entry.id !== "commerce"));
   store.content().navigation.tabs[index].enabled = false;

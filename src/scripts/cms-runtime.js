@@ -1,6 +1,7 @@
 import { requestJson, createLatestRequest } from "./request.js";
 import { applyPlaceDetailOverride } from "./place-detail-content.js";
 import { startContentRefresh } from "./content-refresh.js";
+import { updateHeaderNavigation } from "./navigation.js";
 import { homeHeroAttributes, homeHeroMetadata } from "../lib/home-hero-media.js";
 
 const CMS_CONTENT_URL = "/api/admin/content";
@@ -64,28 +65,6 @@ function resolveHref(href = "") {
   return `/${href}`;
 }
 
-function hrefMatches(value = "", expected = "") {
-  const normalize = (href) => String(href || "").replace(/^\/+/u, "").replace(/\/?$/u, "/");
-  return normalize(value) === normalize(expected);
-}
-
-function findNavigationItemByHref(items = [], href = "") {
-  for (const item of items || []) {
-    if (!item || item.enabled === false) continue;
-    if (!item.section && hrefMatches(item.href, href)) return item;
-    const childMatch = findNavigationItemByHref(item.items || [], href);
-    if (childMatch) return childMatch;
-  }
-  return null;
-}
-
-function currentSharedNavHref(route = normalizeRoute()) {
-  if (route.startsWith("/temples/")) return "temples/";
-  if (route.startsWith("/calendar/")) return "calendar/";
-  if (route.startsWith("/horoscope/") || route.startsWith("/tarot/")) return "#supporting-tools";
-  return "";
-}
-
 function pageForRoute(content, route = normalizeRoute()) {
   return (content?.pages || []).find((page) => normalizeRoute(page.route) === route) || null;
 }
@@ -96,46 +75,6 @@ function escapeHtml(value = "") {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
-}
-
-function safeClassToken(value = "") {
-  return String(value || "")
-    .toLowerCase()
-    .replace(/[^a-z0-9_-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-function navItemClassName(item, children = []) {
-  const idClass = safeClassToken(item?.id);
-  return [
-    "nav-item",
-    children.length ? "nav-item--has-panel" : "nav-item--solo",
-    idClass ? `nav-item--${idClass}` : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
-}
-
-function navChildClassName(child) {
-  return [
-    "mega-panel-link",
-    child?.id === "temple-planner" || hrefMatches(child?.href, "temples/planner/")
-      ? "mega-panel-link--primary"
-      : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
-}
-
-function mobileNavMeta(child) {
-  return (
-    {
-      "popular-temples": "ยอดนิยม",
-      "sacred-temples": "ศรัทธา",
-      "mu-temples": "มงคล",
-      "all-temples": "ฐานข้อมูล",
-    }[child?.id || ""] || ""
-  );
 }
 
 function safeHtml(value = "") {
@@ -154,75 +93,7 @@ function safeHtml(value = "") {
 }
 
 function applyNavigation(content) {
-  const navMenu = document.querySelector(".nav-menu");
-  const staticNavMenu = document.querySelector(".nav-menu-static");
-  if ((!navMenu && !staticNavMenu) || !content?.navigation) return;
-  const allTabs = (content.navigation.tabs || []).filter((item) => item.enabled !== false);
-
-  if (navMenu) {
-    const navMode = navMenu.dataset.navMode || "default";
-    const isSharedSiteNav = navMode === "shared-site";
-    const tabs = allTabs;
-    const utility = isSharedSiteNav ? [] : (content.navigation.utility || []).filter((item) => item.enabled !== false);
-    const currentSharedHref = isSharedSiteNav ? currentSharedNavHref() : "";
-    const drawerHead = isSharedSiteNav
-      ? `<div class="nav-drawer-head" aria-hidden="true"><span>เมนูหลัก</span><span>เลือกหน้า</span></div>`
-      : "";
-    navMenu.innerHTML = `${drawerHead}${tabs
-      .map((item) => {
-        const children = (item.items || []).filter((child) => child.enabled !== false);
-        const currentClass =
-          isSharedSiteNav && (
-            (currentSharedHref && hrefMatches(item.href, currentSharedHref)) ||
-            (["/shop/", "/merit/"].includes(normalizeRoute()) && findNavigationItemByHref([item], normalizeRoute()))
-          )
-            ? ` class="is-current" aria-current="page"`
-            : "";
-        return `<div class="${escapeHtml(navItemClassName(item, children))}" data-nav-item-id="${escapeHtml(item.id || "")}">
-          <a${currentClass} href="${escapeHtml(resolveHref(item.href))}">${escapeHtml(item.label)}</a>
-          ${
-            children.length
-              ? `<div class="mega-panel">
-                  ${children
-                    .map((child) =>
-                      child.section
-                        ? `<span class="mega-panel-section">${escapeHtml(child.label)}</span>`
-                        : `<a class="${escapeHtml(navChildClassName(child))}" data-nav-child-id="${escapeHtml(
-                            child.id || "",
-                          )}" data-nav-mobile-meta="${escapeHtml(mobileNavMeta(child))}" href="${escapeHtml(
-                            resolveHref(child.href),
-                          )}">${escapeHtml(child.label)}</a>`,
-                    )
-                    .join("")}
-                </div>`
-              : ""
-          }
-        </div>`;
-      })
-      .join("")}
-      ${utility
-        .map((item) => `<a class="plain-link" href="${escapeHtml(resolveHref(item.href))}">${escapeHtml(item.label)}</a>`)
-        .join("")}`;
-  }
-
-  const plannerCta = document.querySelector('[data-nav-cta="temple-planner"]');
-  if (plannerCta) {
-    const plannerTab = findNavigationItemByHref(allTabs, "temples/planner/");
-    if (plannerTab) {
-      plannerCta.textContent = plannerTab.label;
-      plannerCta.setAttribute("href", resolveHref(plannerTab.href));
-    }
-  }
-
-  if (staticNavMenu) {
-    const templeTab = allTabs.find((item) => item.href === "temples/");
-    const calendarTab = allTabs.find((item) => item.href === "calendar/");
-    staticNavMenu.innerHTML = [
-      templeTab ? `<a href="${escapeHtml(resolveHref(templeTab.href))}">${escapeHtml(templeTab.label)}</a>` : "",
-      calendarTab ? `<a href="${escapeHtml(resolveHref(calendarTab.href))}">${escapeHtml(calendarTab.label)}</a>` : "",
-      `<a href="${escapeHtml(resolveHref(templeTab?.href || "temples/"))}">← กลับ</a>`,
-    ].join("");
-  }
+  updateHeaderNavigation(content?.navigation);
 }
 
 function applyPatch(patch) {

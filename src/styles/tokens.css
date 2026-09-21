@@ -15,7 +15,8 @@
   --page-gutter: 32px;
   --page-width: min(var(--container), calc(100% - var(--page-gutter) * 2));
   --page-inset: max(var(--page-gutter), calc((100% - var(--container)) / 2));
-  --page-title-size: 48px;
+  --page-title-size: 56px;
+  --page-display-title-size: 64px;
   --section-title-size: 28px;
   --page-lead-size: 16px;
   --radius: 8px;
@@ -24,11 +25,11 @@
 }
 
 @media (max-width: 999px) {
-  :root { --page-gutter: 20px; --page-title-size: 40px; }
+  :root { --page-gutter: 20px; --page-title-size: 44px; --page-display-title-size: 52px; }
 }
 @media (max-width: 720px) {
-  :root { --page-gutter: 12px; --page-title-size: 28px; --section-title-size: 22px; --page-lead-size: 14px; }
+  :root { --page-gutter: 12px; --page-title-size: 32px; --page-display-title-size: 36px; --section-title-size: 22px; --page-lead-size: 14px; }
 }
 @media (max-width: 359px) {
-  :root { --page-gutter: 8px; }
+  :root { --page-gutter: 8px; --page-title-size: 30px; --page-display-title-size: 32px; --section-title-size: 20px; }
 }
