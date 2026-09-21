@@ -51,8 +51,9 @@ GitHub CMS fallback is not an activity-storage fallback.
   cannot be in the future. Only HTTP(S) links are accepted.
 - `registrationUrl` optional; hidden for postponed, cancelled and past events.
 - `imageUrl` and `imageAlt` optional. Image URLs must be HTTPS or local `/assets/`
-  paths. Existing records without images remain text-only cards; a failed image
-  falls back to the text layout. Images and alt text share the event's existing
+  paths. Records without images and failed images use the existing
+  `temple-placeholder-auspicious.png` asset with decorative empty alt text.
+  Images and alt text share the event's existing
   save, publish, version and refresh contract; no database migration is needed.
 - The activity editor supports URL entry, preview, removal and uploads through
   the existing configured Cloudinary/ImageKit provider (JPG/PNG/WebP/AVIF, 8 MB).
@@ -77,7 +78,7 @@ Successful zero results display: `ยังไม่มีประกาศก�
 
 Temple detail cards show a compact photo/date/venue summary, with three activity
 columns and four product columns on desktop and two columns on mobile. Closed
-cards share a fixed responsive height, including text-only announcements.
+cards share a fixed responsive height, including announcements using a placeholder.
 Time, participation, sources and registration remain in expandable details.
 The neighboring temple shop uses its own scoped product cards, not marketplace
 CSS overrides. Related temples and all earlier detail-page sections are unchanged.

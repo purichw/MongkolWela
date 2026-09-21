@@ -14,7 +14,6 @@
 .temple-activity-media { height: var(--temple-card-media-height); flex: none; margin: 0; overflow: hidden; background: #f4eddf; }
 .temple-activity-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .temple-activity-status { position: absolute; top: 8px; left: 8px; z-index: 1; font-size: 12px; color: var(--jade-dark); background: #e4ece5; padding: 2px 8px; border-radius: 4px; }
-.temple-activity[data-has-image="false"]:has(.temple-activity-status) .temple-activity-body { padding-top: 38px; }
 .temple-activity[data-status="postponed"] .temple-activity-status { color: #654519; background: #f4e5c1; }
 .temple-activity[data-status="cancelled"] .temple-activity-status { color: var(--lacquer); background: #f3e0da; }
 .temple-community-section .temple-activity h3 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; min-height: 42px; font-size: 14px; line-height: 21px; margin: 0 0 4px; color: var(--pd-green, var(--jade-dark)); overflow-wrap: anywhere; }
@@ -24,7 +23,6 @@
 .temple-activity-body > .temple-activity-schedule > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .temple-activity-schedule .pd-icon, .temple-activity-venue .pd-icon { width: 15px; height: 15px; flex-basis: 15px; margin-top: 3px; color: var(--pd-gold, var(--gold)); }
 .temple-activity-venue > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.temple-activity .temple-activity-excerpt { color: var(--ink-soft); margin: 8px 0 36px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
 .temple-activity-notice { color: var(--lacquer); font-weight: 600; }
 .temple-activity details { margin-top: auto; padding-top: 2px; }
 .temple-activity summary { position: absolute; right: 6px; bottom: 6px; cursor: pointer; color: var(--lacquer); display: flex; justify-content: center; align-items: center; width: 44px; height: 44px; border-radius: 6px; list-style: none; }
@@ -35,7 +33,6 @@
 .temple-activity:has(details[open]) { height: auto; min-height: var(--temple-card-height); }
 .temple-activity details[open] summary { position: static; margin-left: auto; }
 .temple-community-section .temple-activity:has(details[open]) h3 { display: block; overflow: visible; }
-.temple-activity:has(details[open]) .temple-activity-excerpt { display: none; }
 .temple-activity-detail { padding-top: 14px; overflow-wrap: anywhere; font-size: 14px; }
 .temple-activity-detail p, .temple-activity-detail dd { white-space: pre-line; }
 .temple-activity-detail dl { margin: 12px 0; }

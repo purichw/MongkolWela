@@ -104,6 +104,9 @@ test("populated cards retain details, inventory, refresh, and donation destinati
   await expect(activities.locator(".temple-activity")).toHaveCount(3);
   await expect(activities.locator('[data-has-image="true"]')).toHaveCount(2);
   await expect(activities.locator('[data-has-image="false"]')).toHaveCount(1);
+  const placeholder = activities.locator('[data-has-image="false"] [data-activity-image]');
+  await expect(placeholder).toHaveAttribute("src", "/assets/images/temple-placeholder-auspicious.png");
+  await expect(placeholder).toHaveAttribute("alt", "");
   await expect(shop.locator(".temple-shop-product")).toHaveCount(4);
   await expect(shop.locator(".temple-shop-product").nth(3)).toContainText("สินค้าหมด");
   await expect(shop.locator(".temple-shop-action").first()).toHaveAttribute("href", "/shop/?product=qa-product-0");
@@ -120,6 +123,7 @@ test("populated cards retain details, inventory, refresh, and donation destinati
   }
   await expectCompactCards();
   await capture(page, "populated");
+  expect(await activities.locator("[data-activity-image]").evaluateAll(images => images.length === 3 && images.every(image => (image as HTMLImageElement).naturalWidth > 0))).toBe(true);
   if (testInfo.project.name === "chromium-desktop") {
     const baseline = JSON.parse(await fs.readFile(".local/temple-sections-qa/before-metrics.json", "utf8").catch(() => "{}"));
     for (const width of [1440, 390, 320, 768, 1024]) {
@@ -149,6 +153,10 @@ test("populated cards retain details, inventory, refresh, and donation destinati
   const missingImage = activities.locator('[data-activity-details="qa-event-3"]').locator("xpath=../..");
   await missingImage.scrollIntoViewIfNeeded();
   await expect(missingImage).toHaveAttribute("data-has-image", "false");
+  await expect(missingImage.locator("[data-activity-image]")).toHaveAttribute("src", "/assets/images/temple-placeholder-auspicious.png");
+  await expect(missingImage.locator("[data-activity-image]")).toHaveAttribute("alt", "");
+  await expect.poll(() => missingImage.locator("[data-activity-image]").evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  await expectCompactCards();
   const cancelled = activities.locator('[data-status="cancelled"]');
   await cancelled.locator("summary").click();
   await expect(cancelled.getByRole("link", { name: /ลงทะเบียน/ })).toHaveCount(0);

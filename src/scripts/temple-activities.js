@@ -3,6 +3,7 @@ import { startContentRefresh } from "./content-refresh.js";
 import { ACTIVITY_TYPES, activityDateLabel, safeActivityUrl, safeActivityImageUrl } from "../lib/temple-activities.js";
 import { icon } from "../lib/place-detail-view.js";
 
+const ACTIVITY_PLACEHOLDER_IMAGE = "/assets/images/temple-placeholder-auspicious.png";
 const esc = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 
 document.querySelectorAll("[data-temple-activities]").forEach((root) => {
@@ -27,13 +28,12 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
     const registration = safeActivityUrl(event.registrationUrl);
     const image = safeActivityImageUrl(event.imageUrl);
     return `<article class="temple-activity" data-status="${esc(event.status)}" data-has-image="${Boolean(image)}">
-      ${image ? `<figure class="temple-activity-media"><img src="${esc(image)}" alt="${esc(event.imageAlt || event.title)}" width="600" height="240" loading="lazy" decoding="async" data-activity-image /></figure>` : ""}
+      <figure class="temple-activity-media"><img src="${esc(image || ACTIVITY_PLACEHOLDER_IMAGE)}" alt="${image ? esc(event.imageAlt || event.title) : ""}" width="600" height="240" loading="lazy" decoding="async" data-activity-image /></figure>
       ${changed || event.past ? `<span class="temple-activity-status">${status}</span>` : ""}
       <div class="temple-activity-body">
         <h3 title="${esc(event.title)}">${esc(event.title)}</h3>
         <p class="temple-activity-schedule">${icon("calendar-days")}<span>${event.status === "postponed" ? "กำหนดเดิม: " : ""}${esc(activityDateLabel(event))}</span></p>
         ${event.venue ? `<p class="temple-activity-venue">${icon("map-pin")}<span>${esc(event.venue)}</span></p>` : ""}
-        ${!image && event.description ? `<p class="temple-activity-excerpt">${esc(event.description)}</p>` : ""}
         <details data-activity-details="${esc(event.id)}"><summary aria-label="รายละเอียดกิจกรรม ${esc(event.title)}" title="รายละเอียดกิจกรรม"><span class="temple-card-action-label">รายละเอียดกิจกรรม</span>${icon("arrow-right")}</summary><div class="temple-activity-detail">
           ${changed ? `<p class="temple-activity-notice">${esc(event.statusNote)}</p>` : ""}
           <p class="temple-activity-schedule">${icon("clock")}<span>${esc(time)} · ${esc(ACTIVITY_TYPES[event.type])}</span></p>
@@ -60,12 +60,14 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
       result.querySelector("[data-empty-description]").textContent = "กิจกรรมที่สิ้นสุดแล้วจะแสดงในส่วนนี้";
     }
     result.querySelectorAll("[data-activity-image]").forEach(img => {
-      const showTextCard = () => {
-        img.closest("figure").hidden = true;
+      const showPlaceholder = () => {
+        if (img.getAttribute("src") === ACTIVITY_PLACEHOLDER_IMAGE) return;
+        img.alt = "";
+        img.src = ACTIVITY_PLACEHOLDER_IMAGE;
         img.closest("article").dataset.hasImage = "false";
       };
-      img.addEventListener("error", showTextCard, { once: true });
-      if (img.complete && !img.naturalWidth) showTextCard();
+      img.addEventListener("error", showPlaceholder, { once: true });
+      if (img.complete && !img.naturalWidth) showPlaceholder();
     });
     root.querySelectorAll("details").forEach((element) => { element.open = openIds.has(element.dataset.activityDetails); });
     if (focusedId) {
