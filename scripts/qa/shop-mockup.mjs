@@ -47,12 +47,16 @@ try {
       width: window.innerWidth, documentWidth: document.documentElement.scrollWidth, height: document.body.scrollHeight,
       titleFont: getComputedStyle(document.querySelector("h1")).fontSize,
       panelHeight: document.querySelector(".shop-closed").getBoundingClientRect().height,
+      destinationIconWidth: document.querySelector(".shop-destination-art--calendar > .site-icon").getBoundingClientRect().width,
+      mapPinPosition: getComputedStyle(document.querySelector(".shop-map-pin")).position,
       brokenImages: [...document.querySelectorAll("main img")].filter(img => !img.naturalWidth).map(img => img.src),
       clippedText: [...document.querySelectorAll(".shop-page h1, .shop-page h2, .shop-destination-copy")].filter(el => el.scrollWidth > el.clientWidth + 1).map(el => el.textContent),
     }));
     assert.equal(geometry.documentWidth, width);
     assert.deepEqual(geometry.brokenImages, []);
     assert.deepEqual(geometry.clippedText, []);
+    assert.equal(geometry.destinationIconWidth, width < 359 ? 48 : width <= 900 ? 57 : width <= 1100 ? 52 : 70);
+    assert.equal(geometry.mapPinPosition, "absolute");
     await expect(page.locator("[data-commerce-operational]")).toBeHidden();
     await expect(page.getByRole("button", { name: "ลองใหม่", exact: true })).toHaveCount(0);
     report.viewports.push(geometry);
