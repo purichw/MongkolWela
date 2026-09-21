@@ -64,6 +64,16 @@ scoped by active organization membership. See
 verification and release gates. The feature is disabled in deployed APIs unless
 explicitly enabled; payment processing remains unavailable even then.
 
+The shared navigation exposes a CMS-managed `commerce` group with `shop`
+and `merit` links. Admin > Navigation controls their labels, destinations,
+order and visibility. Both routes are also registered as existing CMS pages.
+Adding these links does not enable commerce APIs or payments.
+
+The bundled entries are development/build seeds. For an existing production
+document, publish only the new group and page entries against the latest Admin
+content; do not replace the document with a bundled seed. An intentional
+published removal or disabled entry must remain authoritative.
+
 ## Admin Media
 
 Temple image uploads go directly from the browser to the configured media provider so the image bytes do not pass through Vercel Functions.

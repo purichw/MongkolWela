@@ -77,9 +77,10 @@ privacy/retention policy and reviewed real seller/temple data remain release gat
 | Persistence and compare-and-swap retry | `api/commerce/_store.js` |
 | Database schema and private RPCs | `supabase/migrations/20260920000000_commerce_and_merit.sql` |
 
-New routes are `noindex` during preparation. Shared navigation is not published
-to the live CMS in this task. The existing Admin sidebar and temple detail
-component provide entry points; `CommerceNav` is shared by both public routes.
+New routes are `noindex` during preparation. The shared header's CMS-managed
+commerce group links to `/shop/` and `/merit/`. Temple detail pages expose the
+same catalog, filtered by temple ID, immediately after activities. `CommerceNav`
+is shared by both public routes. Navigation visibility does not enable commerce.
 
 ## Database And Security
 
@@ -146,8 +147,11 @@ No emails, charges, shipments or donations are sent by these tests.
    account invitation/recovery and seller sign-in end to end with test accounts.
 3. Keep `MONGKOLWELA_COMMERCE_ENABLED` unset until launch is approved. Only `1`
    enables deployed APIs; it does NOT enable payments. Local preview has its own
-   isolated explicit flag. When disabled, temple pages hide the new section and
-   stop its polling; visitors can reload after activation. Emergency pause:
+   isolated explicit flag. When disabled, temple pages keep the commerce section
+   after activities, show an unavailable message and stop its polling; visitors
+   can reload after activation. The section links to the shared marketplace at
+   `/shop/`; its products are scoped by temple ID, not a separate inventory.
+   Emergency pause:
    unset this feature flag; retain tables.
 4. Add deployment-level bot/rate protection, retention/deletion procedures,
    privacy terms, seller verification and incident handling before collecting

@@ -86,6 +86,9 @@ function isCurrentNavItem(item: NavItem) {
   const href = normalizeNavHref(item.href);
   if (page.startsWith("temples")) return href === normalizeNavHref("temples/");
   if (page.startsWith("calendar")) return href === normalizeNavHref("calendar/");
+  if (page === "shop" || page === "merit") {
+    return findNavItemByHref([item], `${page}/`) !== undefined;
+  }
   if (
     [
       "lifeGraph",

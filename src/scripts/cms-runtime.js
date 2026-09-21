@@ -172,7 +172,10 @@ function applyNavigation(content) {
       .map((item) => {
         const children = (item.items || []).filter((child) => child.enabled !== false);
         const currentClass =
-          isSharedSiteNav && currentSharedHref && hrefMatches(item.href, currentSharedHref)
+          isSharedSiteNav && (
+            (currentSharedHref && hrefMatches(item.href, currentSharedHref)) ||
+            (["/shop/", "/merit/"].includes(normalizeRoute()) && findNavigationItemByHref([item], normalizeRoute()))
+          )
             ? ` class="is-current" aria-current="page"`
             : "";
         return `<div class="${escapeHtml(navItemClassName(item, children))}" data-nav-item-id="${escapeHtml(item.id || "")}">

@@ -48,6 +48,7 @@ body select:not([multiple]),
 
 @media (max-width: 720px) {
   body:not(.admin-page) .navbar--shared-site .nav-menu {
+    flex-wrap: nowrap;
     gap: 0;
     padding: 14px;
     border-radius: 16px;

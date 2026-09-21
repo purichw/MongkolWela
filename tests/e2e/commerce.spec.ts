@@ -176,8 +176,16 @@ test("catalog source failure is retryable; donation edit clears public approval"
   await page.route("**/api/commerce?templeId=*", route => route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ ok: false, code: "COMMERCE_DISABLED", error: "ระบบร้านค้าและร่วมบุญยังไม่เปิดบริการ" }) }));
   const temple = (await loadTempleCatalog()).find(t => t.key === fixture.product.templeId);
   await page.goto(`${base}/temples/${temple.collection}/${temple.slug}/`);
-  await expect(page.locator("[data-temple-commerce]")).toBeHidden();
-  await expect(page.locator("[data-temple-commerce]")).toHaveCount(1);
+  const commerceSection = page.locator("[data-temple-commerce]");
+  await expect(commerceSection).toBeVisible();
+  await expect(commerceSection).toHaveCount(1);
+  await expect(commerceSection).toContainText("ร้านค้าและการร่วมบุญออนไลน์ยังไม่เปิดบริการ");
+  await expect(commerceSection.getByRole("link", { name: "ดูร้านค้ากลาง" })).toHaveAttribute("href", "/shop/");
+  expect(await commerceSection.evaluate(el => {
+    let previous = el.previousElementSibling;
+    while (previous && ["SCRIPT", "STYLE", "LINK"].includes(previous.tagName)) previous = previous.previousElementSibling;
+    return previous?.hasAttribute("data-temple-activities");
+  })).toBe(true);
 });
 
 test("platform admin manages organizations and review; temple section uses shared catalog", async ({ page }, info) => {

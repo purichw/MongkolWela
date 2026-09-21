@@ -587,6 +587,26 @@
       "sections": []
     },
     {
+      "id": "shop",
+      "label": "ร้านค้ากลาง",
+      "route": "/shop/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
+      "id": "merit",
+      "label": "กฐินและร่วมบุญ",
+      "route": "/merit/",
+      "enabled": true,
+      "kind": "existing",
+      "patches": [],
+      "sections": [],
+      "blocks": []
+    },
+    {
       "id": "sampleCustomPage",
       "kind": "custom",
       "label": "หน้าตัวอย่างจาก Admin",
@@ -776,6 +796,26 @@
             "id": "seamsi",
             "label": "คำเซียมซี",
             "href": "horoscope/seamsi/",
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "id": "commerce",
+        "label": "ร้านค้าและร่วมบุญ",
+        "href": "shop/",
+        "enabled": true,
+        "items": [
+          {
+            "id": "shop",
+            "label": "ร้านค้ากลาง",
+            "href": "shop/",
+            "enabled": true
+          },
+          {
+            "id": "merit",
+            "label": "กฐินและร่วมบุญ",
+            "href": "merit/",
             "enabled": true
           }
         ]

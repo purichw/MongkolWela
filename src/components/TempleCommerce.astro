@@ -1,10 +1,39 @@
 ---
 import "../styles/commerce.css";
+import SiteIcon from "./icons/SiteIcon.astro";
+import IconMedallion from "./IconMedallion.astro";
 interface Props { templeId: string }
 const { templeId } = Astro.props;
 ---
-<section class="temple-commerce" data-temple-commerce={templeId} aria-label="ร้านค้าและร่วมบุญของวัด" hidden>
-  <header class="commerce-section-heading"><div><p class="section-kicker">ข้อมูลจากผู้จัดและผู้จำหน่าย</p><h2>วัตถุมงคลและร่วมบุญ</h2></div><a href="/merit/">ดูรายการร่วมบุญทั้งหมด</a></header>
-  <div data-temple-commerce-content role="status">กำลังตรวจสอบรายการ</div>
+<section class="temple-commerce" data-temple-commerce={templeId} aria-labelledby="temple-commerce-heading">
+  <header class="commerce-section-heading">
+    <div class="pd-section-heading">
+      <IconMedallion class="pd-medallion"><SiteIcon name="coins" /></IconMedallion>
+      <div><h2 id="temple-commerce-heading">ร้านค้าและวัตถุมงคล</h2><p>สินค้าและช่องทางร่วมบุญของสถานที่</p></div>
+    </div>
+    <nav class="temple-commerce-links" aria-label="ร้านค้าและร่วมบุญ">
+      <a href="/shop/">ดูร้านค้ากลาง <SiteIcon name="arrow-right" /></a>
+      <a href="/merit/">กฐินและร่วมบุญ <SiteIcon name="arrow-right" /></a>
+    </nav>
+  </header>
+  <div data-temple-commerce-content role="status" aria-live="polite" aria-busy="true"><p class="temple-commerce-notice">กำลังตรวจสอบรายการของสถานที่นี้</p></div>
 </section>
 <script>import "../scripts/temple-commerce.js";</script>
+
+<style>
+  .temple-commerce { margin-top: 26px; padding-top: 20px; }
+  .commerce-section-heading { margin-bottom: 20px; }
+  .pd-section-heading { min-width: 0; margin: 0; }
+  .pd-section-heading > div { min-width: 0; }
+  .temple-commerce .commerce-section-heading h2 { margin: 0; font-size: 23px; color: var(--pd-ink, var(--ink)); }
+  .pd-section-heading p { margin: 4px 0 0; font-size: 14px; color: var(--ink-soft); }
+  .temple-commerce-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .temple-commerce-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 14px; font-weight: 500; text-decoration: none; }
+  .temple-commerce-links :global(.site-icon) { width: 18px; height: 18px; }
+  .temple-commerce :global(.temple-commerce-notice) { margin: 0; padding: 24px 20px; border: 1px solid var(--pd-line, var(--line)); border-radius: 8px; color: var(--ink-soft); background: #fffdf8dc; text-align: center; }
+  @media (max-width: 720px) {
+    .temple-commerce { margin-top: 20px; }
+    .temple-commerce .commerce-section-heading h2 { font-size: 20px; }
+    .temple-commerce-links { width: 100%; }
+  }
+</style>
