@@ -1,11 +1,11 @@
 {
   "hub": {
     "adminKey": "temples.hub.banner",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Wat_Phra_That_Doi_Suthep_%28I%29.jpg/960px-Wat_Phra_That_Doi_Suthep_%28I%29.jpg",
-    "imageAlt": "วัดพระธาตุดอยสุเทพ เชียงใหม่",
-    "imageSourceLabel": "Wikimedia Commons",
-    "imageSourceUrl": "https://commons.wikimedia.org/wiki/File:Wat_Phra_That_Doi_Suthep_(I).jpg",
-    "focalPoint": "center 42%"
+    "imageUrl": "/assets/images/temples-hub-golden-panorama.webp",
+    "imageAlt": "ภาพประกอบหมู่วัดไทยท่ามกลางสวนเขียวและแสงอาทิตย์สีทอง",
+    "imageSourceLabel": "ภาพประกอบสร้างด้วย AI สำหรับมงคลเวลา",
+    "imageSourceUrl": "",
+    "focalPoint": "center top"
   },
   "popular": {
     "adminKey": "temples.popular.banner",

@@ -1,181 +1,63 @@
 ---
+import { getImage } from "astro:assets";
 import { siteConfig } from "../config/site.js";
 import BrandMark from "./icons/BrandMark.astro";
 import MenuIcon from "./icons/MenuIcon.astro";
 import SiteIcon from "./icons/SiteIcon.astro";
 import Topbar from "./Topbar.astro";
+import { navigationModel, navigationUtilities, drawerUtilities, renderDesktopNavigation, renderMobileNavigation, renderMobileHub, renderUtilityNavigation, findNavigationLink } from "../lib/site-navigation.js";
+import temple from "../assets/loading/temple.png";
+import lotus from "../assets/loading/lotus.png";
 import liveContent from "../../public/admin/content/live.json" with { type: "json" };
 import defaultContent from "../../public/admin/content/default.json" with { type: "json" };
 
-type NavItem = {
-  id?: string;
-  label: string;
-  href?: string;
-  enabled?: boolean;
-  section?: boolean;
-  items?: NavItem[];
-};
-
-const { locale = "th", page = "home" } = Astro.props as {
-  locale?: "th";
-  page?: string;
-};
-const config = siteConfig[locale] || siteConfig.th;
-const navCopy = config.copy?.nav || {};
-const liveNavigation = (liveContent as { navigation?: { tabs?: NavItem[]; utility?: NavItem[] } }).navigation;
-const defaultNavigation = (defaultContent as { navigation?: { tabs?: NavItem[]; utility?: NavItem[] } }).navigation;
-const navigation =
-  Array.isArray(liveNavigation?.tabs) && Array.isArray(liveNavigation?.utility)
-    ? liveNavigation
-    : defaultNavigation || {};
-const navTabs = (navigation.tabs || []).filter((item) => item.enabled !== false);
-const enabledChildren = (item?: NavItem) => (item?.items || []).filter((child) => child.enabled !== false);
-const safeClassToken = (value = "") =>
-  String(value || "")
-    .toLowerCase()
-    .replace(/[^a-z0-9_-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-const normalizeNavHref = (href = "") => String(href || "").replace(/^\/+/u, "").replace(/\/?$/u, "/");
-function findNavItemByHref(items: NavItem[] = [], href = ""): NavItem | undefined {
-  const expectedHref = normalizeNavHref(href);
-  for (const item of items) {
-    if (!item || item.enabled === false) continue;
-    if (!item.section && normalizeNavHref(item.href) === expectedHref) return item;
-    const childMatch = findNavItemByHref(item.items || [], href);
-    if (childMatch) return childMatch;
-  }
-  return undefined;
-}
-const homePlannerTab = findNavItemByHref(navTabs, "temples/planner/");
-const visibleNavTabs = navTabs;
-const hasNavChildren = (item?: NavItem) => enabledChildren(item).length > 0;
-function navItemClassName(item: NavItem) {
-  const idClass = safeClassToken(item.id);
-  return [
-    "nav-item",
-    hasNavChildren(item) ? "nav-item--has-panel" : "nav-item--solo",
-    idClass ? `nav-item--${idClass}` : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
-}
-function navChildClassName(child: NavItem) {
-  return [
-    "mega-panel-link",
-    child.id === "temple-planner" || normalizeNavHref(child.href) === normalizeNavHref("temples/planner/")
-      ? "mega-panel-link--primary"
-      : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
-}
-function mobileNavMeta(child: NavItem) {
-  const meta = navCopy.mobileMeta as Record<string, string> | undefined;
-  return meta?.[child.id || ""] || "";
-}
-
-function resolveHref(href = "") {
-  if (!href) return "/";
-  if (/^(https?:|mailto:|tel:)/.test(href)) return href;
-  if (href.startsWith("#")) return `/${href}`;
-  if (href.startsWith("/")) return href;
-  return `/${href}`;
-}
-
-function isCurrentNavItem(item: NavItem) {
-  const href = normalizeNavHref(item.href);
-  if (page.startsWith("temples")) return href === normalizeNavHref("temples/");
-  if (page.startsWith("calendar")) return href === normalizeNavHref("calendar/");
-  if (page === "shop" || page === "merit") {
-    return findNavItemByHref([item], `${page}/`) !== undefined;
-  }
-  if (
-    [
-      "lifeGraph",
-      "seamsi",
-      "thaiAstrology",
-      "palmistry",
-      "tarotMeanings",
-      "tarotDaily",
-      "tarotMonthly",
-      "tarotLuck",
-      "tarotResult",
-    ].includes(page)
-  ) {
-    return item.href === "#supporting-tools";
-  }
-  return false;
-}
+const config = siteConfig.th;
+const navigation = Array.isArray(liveContent.navigation?.tabs) ? liveContent.navigation : defaultContent.navigation;
+const model = navigationModel(navigation);
+const templeImage = await getImage({ src: temple, width: 256, format: "webp" });
+const lotusImage = await getImage({ src: lotus, width: 128, format: "webp" });
+const assets = { temple: templeImage.src, lotus: lotusImage.src };
+const options = { location: Astro.url.pathname, assets };
+const utility = navigationUtilities(model, config.topbar);
+const planner = findNavigationLink(model.tabs, "/temples/planner/");
 ---
 
-<header class="site-header ui-glass">
-  <Topbar items={config.topbar} />
-
-  <nav
-    class="navbar navbar--shared-site"
-    aria-label={config.navLabel}
-  >
-    <a class="brand" href="/" aria-label={config.brandLabel}>
+<Topbar items={utility} options={options} />
+<header class="site-header mw-header" data-header-mode="compact" data-header-assets={JSON.stringify(assets)} style={`--mw-temple-art: url('${templeImage.src}'); --mw-lotus-art: url('${lotusImage.src}')`}>
+  <div class="mw-header-row">
+    <a class="mw-brand" href="/" aria-label={config.brandLabel}>
       <BrandMark decorative fetchpriority="high" />
-      <span>
-        <strong>{config.brandName}</strong>
-        <small>{config.brandSubtitle}</small>
-      </span>
+      <span><strong>{config.brandName}</strong><small>{config.brandSubtitle}</small></span>
     </a>
-
-    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-menu">
-      <MenuIcon />
-      <span class="sr-only">{config.openMenuLabel}</span>
-    </button>
-
-    <div
-      class="nav-menu"
-      id="primary-menu"
-      aria-label={config.navLabel}
-      data-nav-mode="shared-site"
-    >
-      <div class="nav-drawer-head" aria-hidden="true">
-        <span>{navCopy.drawerTitle || "เมนูหลัก"}</span>
-        <span>{navCopy.drawerHint || "เลือกหมวดข้อมูล"}</span>
+    <nav class="mw-desktop-nav" data-header-desktop aria-label={config.navLabel} set:html={renderDesktopNavigation(model, options)} />
+    <div class="mw-header-actions">
+      <a class="mw-search mw-round-control" data-header-search href="/#site-search" aria-label="ค้นหาวัด" title="ค้นหาวัด"><SiteIcon name="search" /></a>
+      <div data-header-cta>
+        {planner && <a class="mw-planner-cta" data-nav-key="planner-cta" data-nav-cta="temple-planner" href={planner.href!} aria-label={planner.label}>
+          <span class="mw-cta-full">{planner.label}</span><span class="mw-cta-short" aria-hidden="true">วางแผน</span><SiteIcon name="arrow-right" />
+        </a>}
       </div>
-      {visibleNavTabs.map((item) => (
-        <div class={navItemClassName(item)} data-nav-item-id={item.id}>
-          <a
-            class={isCurrentNavItem(item) ? "is-current" : undefined}
-            aria-current={isCurrentNavItem(item) ? "page" : undefined}
-            href={resolveHref(item.href)}
-          >
-            {item.label}
-          </a>
-          {enabledChildren(item).length > 0 && (
-            <div class="mega-panel">
-              {enabledChildren(item).map((child) =>
-                child.section ? (
-                  <span class="mega-panel-section">{child.label}</span>
-                ) : (
-                  <a
-                    class={navChildClassName(child)}
-                    data-nav-child-id={child.id}
-                    data-nav-mobile-meta={mobileNavMeta(child)}
-                    href={resolveHref(child.href)}
-                  >
-                    {child.label}
-                  </a>
-                )
-              )}
-            </div>
-          )}
-        </div>
-      ))}
+      <button class="mw-menu-toggle mw-round-control" type="button" aria-expanded="false" aria-controls="mw-navigation-dialog" aria-label="เปิดเมนู"><MenuIcon /></button>
     </div>
-
-    <div class="nav-actions">
-      <a class="header-search icon-button" data-header-search href="/#site-search" aria-label="ค้นหาวัด" title="ค้นหาวัด"><SiteIcon name="search" /></a>
-      {homePlannerTab && (
-        <a class="nav-cta-site" data-nav-cta="temple-planner" href={resolveHref(homePlannerTab.href)}>
-          {homePlannerTab.label}
-        </a>
-      )}
+  </div>
+  <details class="mw-fallback">
+    <summary>เมนูหลัก</summary>
+    <div class="mw-drawer-content" data-header-drawer-content>
+      <div class="mw-drawer-intro">
+        <div class="mw-drawer-eyebrow"><span class="mw-eyebrow">MONGKOL WELA</span><div data-header-mobile-hub set:html={renderMobileHub(model, options)} /></div>
+        <h2 id="mw-drawer-title">เดินทางสายบุญ<br />ให้ทุกก้าวมีความหมาย</h2>
+        <p>ค้นหาวัดและเส้นทางมงคล วางแผนการเดินทางได้ง่าย ๆ</p>
+      </div>
+      <a class="mw-drawer-search mw-mobile-row" data-header-search href="/#site-search"><SiteIcon name="search" /><span>ค้นหาวัด</span><SiteIcon name="chevron-right" /></a>
+      <nav data-header-mobile aria-label="เมนูหลักบนมือถือ" set:html={renderMobileNavigation(model, options)} />
+      <nav class="mw-drawer-utility" data-header-mobile-utility aria-label="ลิงก์เพิ่มเติม" set:html={renderUtilityNavigation(drawerUtilities(model, utility), options)} />
+      <div class="mw-drawer-quote" aria-hidden="true"><SiteIcon name="sparkles" /><p>“ เพราะทุกการเดินทาง<br />คือการเติมพลังใจให้ชีวิต ”</p></div>
     </div>
-  </nav>
+  </details>
+  <dialog class="mw-drawer" id="mw-navigation-dialog" aria-labelledby="mw-drawer-title">
+    <div class="mw-drawer-shell">
+      <button class="mw-drawer-close mw-round-control" type="button" aria-label="ปิดเมนู"><SiteIcon name="x" /></button>
+      <div class="mw-drawer-scroll"></div>
+    </div>
+  </dialog>
 </header>

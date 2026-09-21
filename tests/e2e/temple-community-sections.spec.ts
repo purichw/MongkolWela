@@ -127,9 +127,12 @@ test("populated cards retain details, inventory, refresh, and donation destinati
       await expectCompactCards();
       expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
       if (baseline[width]) {
+        const heroY = await page.locator(".pd-hero").evaluate(el => el.getBoundingClientRect().top + scrollY);
         for (const selector of [".pd-hero", ".pd-overview", ".pd-travel"]) {
           const box = await page.locator(selector).evaluate(el => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y + scrollY, width: r.width, height: r.height }; });
-          for (const key of ["x", "y", "width", "height"]) expect(Math.abs(box[key] - baseline[width][selector][key]), `${selector} ${width} ${key}`).toBeLessThan(1);
+          for (const key of ["x", "width", "height"]) expect(Math.abs(box[key] - baseline[width][selector][key]), `${selector} ${width} ${key}`).toBeLessThan(1);
+          // Shared header height can change without moving content within the detail page.
+          expect(Math.abs((box.y - heroY) - (baseline[width][selector].y - baseline[width][".pd-hero"].y)), `${selector} ${width} relative y`).toBeLessThan(1);
         }
       }
     }

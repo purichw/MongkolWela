@@ -81,9 +81,8 @@ test("registry composition preserves row detail, paging, filters, and empty resu
   await page.getByLabel("ไปหน้าที่").fill("4");
   await page.getByRole("button", { name: "ไป", exact: true }).click();
   await expect(page.locator(".registry-summary-row").first().locator("td").first()).toHaveText("61");
-  const previousPage = await page.getByRole("button", { name: "ก่อนหน้า", exact: true }).boundingBox();
-  const nextPage = await page.getByRole("button", { name: "ถัดไป", exact: true }).boundingBox();
-  expect(previousPage.y).toBe(nextPage.y);
+  const pageControlTops = await page.locator(".registry-page-controls > button").evaluateAll(buttons => buttons.map(button => button.getBoundingClientRect().top));
+  expect(pageControlTops[0]).toBe(pageControlTops.at(-1));
   await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
   await page.screenshot({ path: `.local/thailand-redesign/results-${isMobile ? 390 : 1440}.png`, fullPage: true, animations: "disabled" });
   await page.locator("[data-temple-region]").selectOption("ภาคกลาง");

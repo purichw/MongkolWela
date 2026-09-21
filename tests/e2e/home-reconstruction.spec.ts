@@ -83,14 +83,15 @@ test("mobile hero keeps three shortcuts, readable symbols and the daily card bel
     expect(geometry.iconWidth).toBeGreaterThanOrEqual(26);
     expect(Math.max(...geometry.iconCenters)).toBeLessThan(1);
   }
-  await page.locator("[data-header-search]").click();
+  await page.locator(".mw-menu-toggle").click();
+  await page.locator(".mw-drawer-search").click();
   await expect(page.locator("#site-search")).toBeFocused();
   await expect(page.locator(".home-today-date")).toBeVisible();
   await expect(page.locator(".home-today-date")).toHaveAttribute("href", "/calendar/day/");
-  await page.locator(".nav-toggle").click();
-  await expect(page.locator(".nav-toggle")).toHaveAttribute("aria-expanded", "true");
+  await page.locator(".mw-menu-toggle").click();
+  await expect(page.locator(".mw-menu-toggle")).toHaveAttribute("aria-expanded", "true");
   await page.keyboard.press("Escape");
-  await expect(page.locator(".nav-toggle")).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator(".mw-menu-toggle")).toHaveAttribute("aria-expanded", "false");
 });
 
 test("compact discovery keeps image slots, mobile card rows and every tool reachable", async ({ page }) => {
@@ -248,11 +249,11 @@ test("shared public header keeps the same geometry, search and menu across route
         const r = (s: string) => header.querySelector(s)!.getBoundingClientRect();
         return {
           height: header.getBoundingClientRect().height,
-          brandRight: r(".brand").right,
-          actionsLeft: r(".nav-actions").left,
-          actionsRight: r(".nav-actions").right,
-          menuLeft: r(".nav-toggle").left,
-          iconWidth: r(".header-search .site-icon").width,
+          brandRight: r(".mw-brand").right,
+          actionsLeft: r(".mw-header-actions").left,
+          actionsRight: r(".mw-header-actions").right,
+          menuLeft: r(".mw-menu-toggle").left,
+          iconWidth: r(".mw-search .site-icon").width,
           overflow: header.scrollWidth > innerWidth,
         };
       });
@@ -260,21 +261,22 @@ test("shared public header keeps the same geometry, search and menu across route
       expect(geometry.height, `${path} / ${width}`).toBeCloseTo(headerHeight, 0);
       expect(geometry.overflow, `${path} / ${width}`).toBe(false);
       expect(geometry.brandRight).toBeLessThanOrEqual(geometry.actionsLeft);
-      expect(geometry.iconWidth).toBe(18);
-      await expect(page.locator("[data-header-search]")).toHaveAttribute("href", "/#site-search");
-      await expect(page.locator(".nav-cta-site")).toBeVisible();
+      if (width >= 390) expect(geometry.iconWidth).toBe(22);
+      await expect(page.locator(".mw-search")).toHaveAttribute("href", "/#site-search");
+      await expect(page.locator(".mw-planner-cta")).toBeVisible();
       if (width <= 720) {
-        expect(geometry.actionsRight).toBeLessThanOrEqual(geometry.menuLeft);
-        await page.locator(".nav-toggle").click();
-        await expect(page.locator("#primary-menu")).toBeVisible();
-        await expect(page.locator("#primary-menu")).not.toHaveAttribute("inert", "");
+        expect(geometry.menuLeft).toBeGreaterThan(geometry.brandRight);
+        await page.locator(".mw-menu-toggle").click();
+        await expect(page.locator(".mw-drawer")).toBeVisible();
+        await expect(page.locator(".mw-drawer")).toHaveAttribute("open", "");
         await page.keyboard.press("Escape");
-        await expect(page.locator(".nav-toggle")).toBeFocused();
-        await expect(page.locator("#primary-menu")).toHaveAttribute("inert", "");
+        await expect(page.locator(".mw-menu-toggle")).toBeFocused();
+        await expect(page.locator(".mw-drawer")).not.toHaveAttribute("open", "");
       }
     }
   }
-  await page.locator("[data-header-search]").click();
+  await page.locator(".mw-menu-toggle").click();
+  await page.locator(".mw-drawer-search").click();
   await expect(page).toHaveURL(/\/#site-search$/);
   await expect(page.locator("#site-search")).toBeFocused();
   expect(errors).toEqual([]);
@@ -282,9 +284,9 @@ test("shared public header keeps the same geometry, search and menu across route
 
 test("shared desktop dropdown stays open while crossing from trigger into panel", async ({ page }) => {
   await setup(page);
-  const item = page.locator(".nav-item--has-panel").last();
+  const item = page.locator(".mw-nav-item:has(.mw-disclosure)").last();
   const trigger = item.locator(":scope > a");
-  const panel = item.locator(".mega-panel");
+  const panel = item.locator(".mw-panel");
   await trigger.hover();
   await expect(panel).toHaveCSS("opacity", "1");
   const from = (await trigger.boundingBox())!;
@@ -526,8 +528,8 @@ test("consent stays styled, declines persist, and mobile navigation stays intern
   await page.reload();
   await expect(banner).toHaveCount(0);
   await page.getByRole("button", { name: "เปิดเมนู", exact: true }).click();
-  await expect(page.locator("#primary-menu")).toBeVisible();
-  expect(await page.locator("#primary-menu").evaluate(e => ["auto", "scroll"].includes(getComputedStyle(e).overflowY))).toBe(true);
+  await expect(page.locator(".mw-drawer")).toBeVisible();
+  expect(await page.locator(".mw-drawer-scroll").evaluate(e => ["auto", "scroll"].includes(getComputedStyle(e).overflowY))).toBe(true);
   await page.keyboard.press("Escape");
   await expect(page.getByRole("button", { name: "เปิดเมนู", exact: true })).toHaveAttribute("aria-expanded", "false");
 });

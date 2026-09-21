@@ -240,7 +240,7 @@
 
 .tarot-meaning-card-large {
   position: sticky;
-  top: 128px;
+  top: calc(var(--site-header-sticky-height, 80px) + 24px);
   display: grid;
   gap: 10px;
   padding: 12px;

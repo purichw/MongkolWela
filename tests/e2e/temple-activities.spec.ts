@@ -115,7 +115,8 @@ test("public list, details, past, refresh, error/retry and responsive snapshots"
   await section.getByRole("button", { name: "ดูกิจกรรมทั้งหมด (4)" }).click();
   await expect(section.locator(".temple-activity")).toHaveCount(4);
   const cancelled = section.locator('[data-status="cancelled"]');
-  await cancelled.getByText("รายละเอียดกิจกรรม", { exact: true }).click();
+  await cancelled.locator("summary").click();
+  await expect(cancelled.locator("details")).toHaveAttribute("open", "");
   await expect(cancelled.getByRole("link", { name: /ลงทะเบียน/ })).toHaveCount(0);
   await section.getByRole("button", { name: "ที่ผ่านมา", exact: true }).click();
   await expect(section.locator(".temple-activity")).toHaveCount(1);
@@ -128,7 +129,8 @@ test("public list, details, past, refresh, error/retry and responsive snapshots"
   await page.route("**/api/temple-activities?**", (route) => route.fulfill({ status: 503, json: { ok: false } }));
   await page.evaluate(() => window.dispatchEvent(new Event("focus")));
   await expect(section.getByRole("button", { name: "ลองใหม่", exact: true })).toBeVisible();
-  await expect(section.locator(".temple-activity")).toHaveCount(0);
+  await expect(section.locator(".temple-activities-stale")).toContainText("กำลังแสดงข้อมูลที่โหลดไว้ก่อนหน้า");
+  await expect(section.locator(".temple-activity")).toHaveCount(3);
   await page.unroute("**/api/temple-activities?**");
   await section.getByRole("button", { name: "ลองใหม่", exact: true }).click();
   await expect(section.locator(".temple-activity")).toHaveCount(3);
