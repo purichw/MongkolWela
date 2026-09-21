@@ -1,10 +1,11 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ToolsLayout from "../../../layouts/ToolsLayout.astro";
+import ToolsHero from "../../../components/ToolsHero.astro";
 
-const mainContent = "<main class=\"life-graph-page\">\n      <section class=\"life-graph-hero\">\n        <div>\n          <nav class=\"breadcrumb\" aria-label=\"breadcrumb\">\n            <a href=\"../../\">หน้าแรก</a>\n            <span>/</span>\n            <span>กราฟชีวิต</span>\n          </nav>\n          <p class=\"section-kicker\">Life Graph • เลข 12 ตัว</p>\n          <h1>กราฟชีวิต</h1>\n          <p>\n            เครื่องมือดูจังหวะชีวิตจากวันเกิด เวลาเกิด และวันจร แสดงเป็นกราฟ 12 เรือน\n            เพื่อช่วยมองภาพรวมว่าช่วงไหนควรเร่ง ช่วงไหนควรตั้งหลัก และหัวข้อใดควรใส่ใจเป็นพิเศษ\n          </p>\n        </div>\n        <aside class=\"life-graph-note\">\n          <strong>สูตรฐาน 12</strong>\n          <p>\n            คำนวณจากฐานวัน ฐานเดือนจันทรคติ และฐานปีนักษัตร\n            โดยใช้ ThaiCalendarProvider ตรวจข้อมูลปฏิทินไทยก่อนวางกราฟ\n          </p>\n        </aside>\n      </section>\n\n      <section class=\"life-graph-tool\" aria-label=\"เครื่องมือกราฟชีวิต\">\n        <form class=\"life-graph-form\" data-life-graph-form>\n          <div class=\"form-heading\">\n            <p class=\"section-kicker\">ข้อมูลตั้งต้น</p>\n            <h2>กรอกวันเกิดและวันจร</h2>\n          </div>\n\n          <label>\n            <span>ชื่อ</span>\n            <input name=\"name\" type=\"text\" value=\"ผู้มาเยือน\" maxlength=\"80\">\n          </label>\n\n          <label>\n            <span>วันเกิด</span>\n            <input name=\"birthDate\" type=\"date\" required>\n          </label>\n\n          <div class=\"form-row\">\n            <label>\n              <span>ชั่วโมงเกิด</span>\n              <select name=\"birthHour\" required data-hour-options></select>\n            </label>\n            <label>\n              <span>นาทีเกิด</span>\n              <select name=\"birthMinute\" required data-minute-options></select>\n            </label>\n          </div>\n\n          <label>\n            <span>วันจร / วันที่ต้องการอ่าน</span>\n            <input name=\"transitDate\" type=\"date\" required>\n          </label>\n\n          <button class=\"primary-action\" type=\"submit\">คำนวณกราฟชีวิต</button>\n          <p class=\"form-footnote\">\n            สูตรฐาน 12 ใช้วัน เดือนจันทรคติ และปีนักษัตรเป็นแกนหลัก เวลาเกิดเก็บไว้สำหรับการต่อยอดร่วมกับศาสตร์อื่น\n          </p>\n        </form>\n\n        <div class=\"life-graph-output\" data-life-graph-output>\n          <div class=\"output-empty\">\n            <span>๑๒</span>\n            <strong>ตั้งข้อมูลเพื่อเปิดกราฟ</strong>\n            <p>กราฟ ตารางเลข และคำอ่านรายเรือนจะแสดงที่นี่หลังคำนวณ</p>\n          </div>\n        </div>\n      </section>\n\n      <section class=\"life-graph-principles\">\n        <div>\n          <p class=\"section-kicker\">แนวทางของเรา</p>\n          <h2>ทำให้กราฟชีวิตอ่านง่ายขึ้น โดยไม่ตัดความขลังออก</h2>\n        </div>\n        <div class=\"principle-grid\">\n          <article>\n            <strong>แยกสูตรออกจากคำทำนาย</strong>\n            <p>สูตรฐาน 12 อยู่ใน engine เฉพาะ ส่วนคำอ่านเป็น content layer ที่ปรับผ่านระบบเนื้อหาได้โดยไม่แตะสูตรคำนวณ</p>\n          </article>\n          <article>\n            <strong>กราฟต้องโต้ตอบได้</strong>\n            <p>ผู้ใช้ควรคลิกแต่ละเรือนเพื่ออ่านหัวข้อที่สนใจ ไม่ต้องไล่อ่านข้อความยาวทั้งหมด</p>\n          </article>\n          <article>\n            <strong>ไม่ลอกคำทำนายเดิม</strong>\n            <p>ทุกข้อความเขียนใหม่ในน้ำเสียงของมงคลเวลา และระบุว่าเป็นแนวทางประกอบการตัดสินใจ</p>\n          </article>\n        </div>\n      </section>\n    </main>";
+
 ---
 
-<BaseLayout
+<ToolsLayout
   title="กราฟชีวิต | มงคลเวลา"
   description="ต้นแบบกราฟชีวิต เลข 12 ตัว สำหรับดูจังหวะชีวิตจากวันเกิด เวลาเกิด และวันจร พร้อมกราฟเชิงโต้ตอบ"
   lang="th"
@@ -12,9 +13,86 @@ const mainContent = "<main class=\"life-graph-page\">\n      <section class=\"li
   page="lifeGraph"
   bodyClass=""
 >
-  <Fragment set:html={mainContent} />
+  <main class="life-graph-page">
+      <ToolsHero title="กราฟชีวิต" kicker="Life Graph" lead="อ่านจังหวะชีวิตจากวันเกิดและวันจร ผ่านกราฟ 12 เรือน พร้อมคำแนะนำสำหรับทบทวนและวางแผนชีวิต" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"กราฟชีวิต"}]} />
+
+      <section class="life-graph-tool tools-workspace" aria-label="เครื่องมือกราฟชีวิต">
+        <form class="life-graph-form tools-form" data-life-graph-form>
+          <div class="form-heading">
+            <p class="section-kicker">ข้อมูลตั้งต้น</p>
+            <h2>กรอกวันเกิดและวันจร</h2>
+          </div>
+
+          <label>
+            <span>ชื่อ</span>
+            <input name="name" type="text" value="ผู้มาเยือน" maxlength="80">
+          </label>
+
+          <label>
+            <span>วันเกิด</span>
+            <input name="birthDate" type="date" required>
+          </label>
+
+          <div class="form-row tools-form-row">
+            <label>
+              <span>ชั่วโมงเกิด</span>
+              <select name="birthHour" required data-hour-options></select>
+            </label>
+            <label>
+              <span>นาทีเกิด</span>
+              <select name="birthMinute" required data-minute-options></select>
+            </label>
+          </div>
+
+          <label>
+            <span>วันจร / วันที่ต้องการอ่าน</span>
+            <input name="transitDate" type="date" required>
+          </label>
+
+          <button class="primary-action" type="submit">คำนวณกราฟชีวิต</button>
+          <p class="form-footnote">
+            สูตรฐาน 12 ใช้วัน เดือนจันทรคติ และปีนักษัตรเป็นแกนหลัก เวลาเกิดเก็บไว้สำหรับการต่อยอดร่วมกับศาสตร์อื่น
+          </p>
+        <aside class="life-graph-note">
+          <strong>สูตรฐาน 12</strong>
+          <p>
+            คำนวณจากฐานวัน ฐานเดือนจันทรคติ และฐานปีนักษัตร
+            โดยใช้ ThaiCalendarProvider ตรวจข้อมูลปฏิทินไทยก่อนวางกราฟ
+          </p>
+        </aside></form>
+
+        <div class="life-graph-output tools-panel" data-life-graph-output>
+          <div class="output-empty">
+            <span>๑๒</span>
+            <strong>ตั้งข้อมูลเพื่อเปิดกราฟ</strong>
+            <p>กราฟ ตารางเลข และคำอ่านรายเรือนจะแสดงที่นี่หลังคำนวณ</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="life-graph-principles tools-section">
+        <div>
+          <p class="section-kicker">แนวทางของเรา</p>
+          <h2>ทำให้กราฟชีวิตอ่านง่ายขึ้น โดยไม่ตัดความขลังออก</h2>
+        </div>
+        <div class="principle-grid">
+          <article>
+            <strong>แยกสูตรออกจากคำทำนาย</strong>
+            <p>สูตรฐาน 12 อยู่ใน engine เฉพาะ ส่วนคำอ่านเป็น content layer ที่ปรับผ่านระบบเนื้อหาได้โดยไม่แตะสูตรคำนวณ</p>
+          </article>
+          <article>
+            <strong>กราฟต้องโต้ตอบได้</strong>
+            <p>ผู้ใช้ควรคลิกแต่ละเรือนเพื่ออ่านหัวข้อที่สนใจ ไม่ต้องไล่อ่านข้อความยาวทั้งหมด</p>
+          </article>
+          <article>
+            <strong>ไม่ลอกคำทำนายเดิม</strong>
+            <p>ทุกข้อความเขียนใหม่ในน้ำเสียงของมงคลเวลา และระบุว่าเป็นแนวทางประกอบการตัดสินใจ</p>
+          </article>
+        </div>
+      </section>
+    </main>
 
   <script>
     import "../../../scripts/life-graph.js";
   </script>
-</BaseLayout>
+</ToolsLayout>

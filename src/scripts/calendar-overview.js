@@ -1,5 +1,6 @@
 import { getCalendarSourceNote, thaiMonthNames, toIsoDate, weekdayNames } from "./thai-calendar-core.js";
 import { renderIconMedallion } from "../lib/ui-markup.js";
+import { syncPublicSelects } from "./public-select.js";
 import { calendarUrl, createCalendarStore, eventTypes, getImportantDays, getPeriodSummary, monthShortNames, readCalendarState, shiftMonth } from "./calendar-view-model.js";
 
 export function mountCalendar(root) {
@@ -31,6 +32,7 @@ export function mountCalendar(root) {
   function updateControls() {
     yearSelect.value = String(state.year);
     root.querySelector("[data-calendar-view]").value = state.view;
+    syncPublicSelects(root);
     root.dataset.view = state.view;
     root.querySelector("[data-calendar-title]").textContent = `ปฏิทินไทย พ.ศ. ${state.year}`;
     root.querySelector("[data-calendar-today]").href = `/calendar/day/?date=${toIsoDate(new Date())}`;

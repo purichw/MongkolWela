@@ -1,8 +1,9 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ToolsLayout from "../../../layouts/ToolsLayout.astro";
+import ToolsHero from "../../../components/ToolsHero.astro";
 ---
 
-<BaseLayout
+<ToolsLayout
   title="ไพ่ยิปซีด้านโชคลาภ | มงคลเวลา"
   description="ดูไพ่ยิปซีด้านโชคลาภ เลือกไพ่ Major Arcana 1 ใบเพื่ออ่านจังหวะ โอกาส และข้อควรระวังอย่างมีขอบเขต"
   lang="th"
@@ -11,33 +12,10 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
   bodyClass="tarot-page"
 >
   <main id="luck-tarot">
-    <section class="tarot-hero">
-      <div>
-        <nav class="tarot-breadcrumb" aria-label="breadcrumb">
-          <a href="../../">หน้าแรก</a>
-          <span>/</span>
-          <span>ไพ่ยิปซีด้านโชคลาภ</span>
-        </nav>
-        <p class="section-kicker">ไพ่ยิปซีด้านโชคลาภ</p>
-        <h1>ไพ่ยิปซี <span class="tarot-nowrap">ด้านโชคลาภ</span></h1>
-        <p class="tarot-hero-copy">
-          ตั้งคำถามเรื่องโชค โอกาส หรือผลลัพธ์ที่กำลังรอ แล้วเลือกไพ่ Major Arcana 1 ใบ
-          เพื่ออ่านจังหวะโดยรวม พร้อมคำเตือนเรื่องการตัดสินใจอย่างพอดี
-        </p>
-      </div>
+    <ToolsHero title="ไพ่ยิปซีด้านโชคลาภ" kicker="Luck Tarot" lead="เลือกไพ่ Major Arcana 1 ใบเพื่อทบทวนจังหวะและโอกาส พร้อมข้อควรระวังในการตัดสินใจอย่างมีขอบเขต" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ไพ่ยิปซีด้านโชคลาภ"}]} />
 
-      <aside class="tarot-ritual-panel" aria-label="ขั้นตอนการดูไพ่โชคลาภ">
-        <ol>
-          <li><span>1</span>ตั้งคำถามให้ชัดว่าต้องการพิจารณาเรื่องใด</li>
-          <li><span>2</span>สับไพ่หรือตัดไพ่ก่อนเลือก</li>
-          <li><span>3</span>เลือกไพ่ Major Arcana ที่รู้สึกสะดุดใจ 1 ใบ</li>
-          <li><span>4</span>อ่านผลด้วยสติและกำหนดขอบเขตของตัวเอง</li>
-        </ol>
-      </aside>
-    </section>
-
-    <section class="tarot-oracle">
-      <aside class="tarot-intention">
+    <section class="tarot-oracle tools-workspace">
+      <aside class="tarot-intention tools-panel">
         <p class="section-kicker">ตั้งจิต</p>
         <h2>ก่อนเลือกไพ่</h2>
         <p>
@@ -45,10 +23,17 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
           ไม่ใช่การรับประกันผลลัพธ์ ควรกำหนดขอบเขตและพิจารณาข้อมูลจริงเสมอ
         </p>
         <div class="tarot-warning">ไม่ควรใช้คำทำนายแทนข้อมูลจริงหรือการตัดสินใจทางการเงิน</div>
-      </aside>
+      <aside class="tarot-ritual-panel" aria-label="ขั้นตอนการดูไพ่โชคลาภ">
+        <ol>
+          <li><span>1</span>ตั้งคำถามให้ชัดว่าต้องการพิจารณาเรื่องใด</li>
+          <li><span>2</span>สับไพ่หรือตัดไพ่ก่อนเลือก</li>
+          <li><span>3</span>เลือกไพ่ Major Arcana ที่รู้สึกสะดุดใจ 1 ใบ</li>
+          <li><span>4</span>อ่านผลด้วยสติและกำหนดขอบเขตของตัวเอง</li>
+        </ol>
+      </aside></aside>
 
       <form
-        class="tarot-deck-stage"
+        class="tarot-deck-stage tools-panel"
         data-tarot-spread-form
         data-spread-type="luck"
         data-required-count="1"
@@ -75,7 +60,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
       </form>
     </section>
 
-    <section class="tarot-note">
+    <section class="tarot-note tools-section">
       <p class="section-kicker">แนวคิดของเรา</p>
       <h2>โชคที่ดีควรเดินคู่กับขอบเขต</h2>
       <p>
@@ -88,4 +73,4 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
   <script>
     import "../../../scripts/tarot-spread.js";
   </script>
-</BaseLayout>
+</ToolsLayout>

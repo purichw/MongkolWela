@@ -18,7 +18,8 @@ points. A different task layout must still sit on the same site frame.
 | `lib/ui-markup.js` | Same Lucide glyph attributes for Astro and runtime-rendered HTML | `SiteIcon`, place detail SSR, CMS refresh, travel controls, map markers |
 | `IconMedallion.astro` / `renderIconMedallion` | A circular centered icon wrapper; slot/argument is trusted icon markup | Home intent cards, Calendar summaries, Calendar Day facts/guidance, Place Detail headings/activities |
 | `public-ui.css` | Icon mask, medallion anatomy, existing glass material | All public routes via `stylesForPath` |
-| `site.css` native-select rule | One owner for native single-select appearance, arrow and arrow clearance | Calendar, temple directory/planner, legacy forms, admin |
+| `site.css` field rules | Native single-select appearance/arrow clearance; centered public choices and short numeric/date/time values | Calendar, temple directory/planner, horoscope, shop/merit; admin/seller keep existing alignment |
+| `public-select.js`, `public-select-control.js`, `public-select.css` | Native-backed Choices.js dropdown, searchable long lists, floating popup, keyboard and form synchronization | Visible public single-selects, including asynchronously rendered filters; excludes admin/seller and multi-selects |
 | `CarouselControls.astro`, `LinkArrow.astro`, `BrandOrnament.astro` | Existing shared control, link affordance and decorative motif | Existing Home/Calendar/detail/shell consumers |
 
 ## Usage
@@ -124,10 +125,63 @@ Native selects expose these optional custom properties on the **select itself**:
 - `--ui-select-padding-end`: default `44px`.
 
 Calendar uses its existing compact `12px / 7px / 22px` values. Route selectors
-keep their width, height, font size and padding on other sides. Do not introduce
+keep their width, height, font size and vertical padding. Do not introduce
 another `appearance`/arrow implementation or apply compact sizes to every form.
 If a route sets a padding shorthand, use `var(--ui-select-padding-end, 44px)`
 for its right side. Multiple selects remain outside this arrow rule.
+
+Public single-selects reserve the same arrow clearance on both sides and center
+the selected value. Number, numeric-code, date and time inputs also center their
+values. Free-text/search inputs, contact details, textareas and field labels keep
+their existing reading alignment; the Thailand registry centers its short temple
+name query explicitly. Admin and seller operations are excluded. Date/time
+pickers remain native.
+
+### Public Dropdowns
+
+`site.js` initializes one lazy-loaded enhancer for single-selects inside `main`.
+Choices.js owns selection/search/keyboard behavior; Floating UI places the popup
+in the browser top layer to avoid clipping. The native select remains the source
+of truth for option labels/values, form data, required validation and `change`
+events. No data source or CMS schema changes are needed.
+
+- Search is automatic for eight or more enabled, nonempty options, except short
+  numeric lists such as hours/minutes. Years, provinces and long place lists are
+  searchable. `data-select-search="on"` or `"off"` explicitly overrides this.
+- New controls and changed options/disabled attributes are observed automatically.
+  After assigning only `.value` programmatically, call `syncPublicSelects(root)`
+  from `src/scripts/public-select.js`; Calendar and Planner already do this.
+  Native `change` and form `reset` synchronize the shared display automatically.
+- Selected labels/options are centered. Search input stays left-aligned. Shared
+  CSS owns the popup, selection marker, focus ring and disabled/invalid states;
+  route CSS owns control geometry through `--mw-select-height`,
+  `--mw-select-font-size` and the existing arrow-clearance properties.
+- `data-native-select`, `multiple`, `size > 1`, and hidden legacy controls opt out.
+  Without JavaScript or Popover API support the native control remains available.
+  The enhancer does not apply to Admin or seller-console forms.
+- Plain option labels are never rendered as HTML. No external fonts, CDN scripts,
+  API keys or third-party data requests are introduced.
+
+Focused verification: `tests/e2e/public-select.spec.ts` covers cascading filters,
+search/no results, keyboard/focus, validation, form data/reset, async options,
+literal HTML labels, narrow popup bounds and native fallback. The field-alignment
+suite samples Calendar, Planner, registry, horoscope and commerce controls.
+
+## Tool Layout
+
+`ToolsLayout.astro` composes `BaseLayout.astro`; it does not fork the shared
+header, footer, navigation, SEO or CMS runtime. `ToolsHero.astro` owns the tool
+title, breadcrumb, lead and optional quote. `tools.css` is loaded only on Tarot
+and the four horoscope tool routes, after existing route styles.
+
+Use `.tools-workspace` for an input rail with a result surface, `.tools-form` for
+the input surface, and `.tools-section` for unframed supporting content. Route
+owners retain field IDs, state, chart logic, storage and result navigation.
+Thai astrology needs a custom grid so its single chart can precede the same form
+on mobile; do not render a second chart or duplicate the form.
+
+See [tool implementation notes](tools-layout/IMPLEMENTATION_NOTES.md) for route
+coverage, calculation limitations, reference adaptations and scoped QA evidence.
 
 ## Boundaries
 
@@ -169,7 +223,7 @@ working travel filter/disclosure, no runtime errors or horizontal overflow.
 | Surface | Evidence | Priority |
 | --- | --- | --- |
 | Home, Calendar, Calendar Day, Place Detail | Same fixture/date, full-page before/after, measured layout and styles at 390/1440 | P0 |
-| Directory and life-graph selects | Same dimensions/styles and native control behavior | P0 |
+| Public single-selects | Shared custom UI, native values/forms, keyboard/focus, cascade/reset, search and mobile popup bounds | P0 |
 | Shared markup | Asset paths, decoration semantics, class preservation, injection rejection | P0 |
 
 Before changing shared CSS/markup:

@@ -1,0 +1,11 @@
+---
+import type { ComponentProps } from "astro/types";
+import BaseLayout from "./BaseLayout.astro";
+
+type Props = ComponentProps<typeof BaseLayout>;
+const { bodyClass = "", ...props } = Astro.props;
+---
+
+<BaseLayout {...props} bodyClass={`tools-page ${bodyClass}`}>
+  <slot />
+</BaseLayout>

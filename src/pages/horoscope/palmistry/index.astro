@@ -1,6 +1,6 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
-import FeaturePageHero from "../../../components/FeaturePageHero.astro";
+import ToolsLayout from "../../../layouts/ToolsLayout.astro";
+import ToolsHero from "../../../components/ToolsHero.astro";
 import PalmistryHandDiagram from "../../../components/PalmistryHandDiagram.astro";
 import PalmLineWidget from "../../../components/PalmLineWidget.astro";
 
@@ -12,7 +12,7 @@ const breadcrumbs = [
 ];
 ---
 
-<BaseLayout
+<ToolsLayout
   title="ดูลายมือซ้าย มือขวา และมือถนัด | มงคลเวลา"
   description="ดูลายมือซ้าย มือขวา หรือเทียบสองมือ เลือกลักษณะเส้นชีวิต เส้นสมอง เส้นหัวใจ และเส้นวาสนา พร้อมแปลพื้นฐานเดิม สิ่งที่พัฒนา และแนวโน้มปัจจุบัน"
   lang="th"
@@ -23,20 +23,9 @@ const breadcrumbs = [
   breadcrumbs={breadcrumbs}
 >
   <main>
-    <FeaturePageHero
-      class="palm-hero"
-      breadcrumbs={breadcrumbs}
-      kicker="หัตถศาสตร์ไทย-first"
-      title="อ่านลายมือ"
-      lead="เลือกมือที่ต้องการอ่านและลักษณะเส้นที่เห็นชัด ระบบจะแยกความหมายพื้นฐานออกจากบริบทของมือถนัด มือไม่ถนัด และการเปรียบเทียบสองมือ"
-      mediaLabel="แผนภาพเส้นหลักบนฝ่ามือ"
-      mediaWidth="400px"
-      mediaAlign="center"
-    >
-      <PalmistryHandDiagram slot="media" />
-    </FeaturePageHero>
+    <ToolsHero title="อ่านลายมือ" kicker="Palmistry" lead="เลือกมือและลักษณะเส้นที่เห็นชัด เพื่ออ่านพื้นฐานเดิม สิ่งที่พัฒนา และเปรียบเทียบสองมืออย่างมีบริบท" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"อ่านลายมือ"}]} />
 
-    <section class="palm-hand-context" aria-labelledby="palm-hand-context-title">
+    <div class="palm-reference-intro"><section class="palm-hand-context" aria-labelledby="palm-hand-context-title">
       <div class="palm-hand-context__head">
         <div>
           <p class="section-kicker">ก่อนเริ่มอ่าน</p>
@@ -66,11 +55,12 @@ const breadcrumbs = [
       </div>
     </section>
 
+<PalmistryHandDiagram /></div>
     <section class="palm-lines-reference" id="palmistry-tool">
       <PalmLineWidget />
     </section>
 
-    <section class="palm-method">
+    <section class="palm-method tools-section">
       <div class="palm-method-head">
         <div>
           <p class="section-kicker">วิธีกันผลมั่ว</p>
@@ -80,7 +70,7 @@ const breadcrumbs = [
       <div class="palm-guide-grid" data-palm-line-guide></div>
     </section>
 
-    <section class="palm-sources">
+    <section class="palm-sources tools-section">
       <details class="palm-source-disclosure">
         <summary>แหล่งข้อมูลที่ใช้ยืนยัน</summary>
         <ul>
@@ -146,4 +136,4 @@ const breadcrumbs = [
   <script>
     import "../../../scripts/palmistry.js";
   </script>
-</BaseLayout>
+</ToolsLayout>

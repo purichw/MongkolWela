@@ -38,7 +38,7 @@ function initTarotResult() {
     </div>
     <div class="tarot-result-copy">
       <p class="section-kicker">${t.kicker}</p>
-      <h1>${card.thName}</h1>
+      <h2>${card.thName}</h2>
       <p class="tarot-result-name">${card.name}</p>
       <dl class="tarot-reading-list">
         <div>
@@ -84,7 +84,7 @@ function renderFallback(resultRoot) {
   resultRoot.innerHTML = `
     <div class="tarot-result-copy tarot-empty-result">
       <p class="section-kicker">Daily Tarot</p>
-      <h1>${t.fallbackTitle}</h1>
+      <h2>${t.fallbackTitle}</h2>
       <p>${t.fallbackCopy}</p>
       <a class="primary-action" href="../">${t.noCard}</a>
     </div>

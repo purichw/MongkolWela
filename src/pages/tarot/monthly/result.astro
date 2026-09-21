@@ -1,8 +1,9 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ToolsLayout from "../../../layouts/ToolsLayout.astro";
+import ToolsHero from "../../../components/ToolsHero.astro";
 ---
 
-<BaseLayout
+<ToolsLayout
   title="ผลคำทำนายไพ่ยิปซีรายเดือน | มงคลเวลา"
   description="ผลคำทำนายไพ่ยิปซีรายเดือนแบบ 10 ใบ พร้อมตำแหน่ง ความหมาย คำแนะนำ และบทสรุปของเดือน"
   lang="th"
@@ -13,6 +14,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
   robots="noindex, follow"
 >
   <main>
+<ToolsHero title="คำทำนายไพ่ยิปซีรายเดือน" kicker="Tarot Reading" lead="อ่านคำทำนายเป็นแนวทางประกอบการตัดสินใจ ไม่ใช่การรับรองผลลัพธ์ล่วงหน้า" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ไพ่ยิปซีรายเดือน",href:"/tarot/monthly/"},{label:"ผลคำทำนาย"}]} />
     <section
       class="tarot-result-shell tarot-spread-result"
       data-tarot-spread-result
@@ -21,12 +23,12 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
     >
       <div class="tarot-result-copy">
         <p class="section-kicker">Monthly Tarot</p>
-        <h1>กำลังเปิดคำทำนาย</h1>
+        <h2>กำลังเปิดคำทำนาย</h2>
         <p>โปรดรอสักครู่...</p>
       </div>
     </section>
 
-    <section class="tarot-related">
+    <section class="tarot-related tools-section">
       <p class="section-kicker">หลังอ่านคำทำนาย</p>
       <h2>เลือกหนึ่งเรื่องที่ทำได้จริงในเดือนนี้</h2>
       <p>
@@ -39,4 +41,4 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
   <script>
     import "../../../scripts/tarot-spread-result.js";
   </script>
-</BaseLayout>
+</ToolsLayout>

@@ -48,7 +48,7 @@ main.temple-planner .site-icon { width: 20px; height: 20px; flex: 0 0 20px; colo
 .planner-field legend { margin-bottom: 4px; padding: 0; }
 .planner-field :is(input:not([type="radio"]),select), .planner-search input { width: 100%; min-width: 0; max-width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid var(--planner-border); border-radius: 6px; background-color: #fffdfa; color: var(--ink); font-size: 16px; font-weight: 400; }
 .planner-field input[type="time"] { display: block; -webkit-appearance: none; }
-.planner-field input[type="time"]::-webkit-date-and-time-value { text-align: left; min-width: 0; }
+.planner-field input[type="time"]::-webkit-date-and-time-value { min-width: 0; }
 .planner-field small, .planner-muted, .planner-map-note, .planner-disclaimer { color: var(--planner-muted); font-size: 14px; line-height: 1.55; font-weight: 400; }
 .planner-field small { display: block; font-size: 12px; }
 .planner-segmented { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border: 1px solid var(--planner-border); border-radius: 6px; overflow: hidden; }

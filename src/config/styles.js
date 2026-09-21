@@ -22,6 +22,8 @@ import adminActivities from "../styles/admin-activities.css?url";
 import site from "../styles/site.css?url";
 import planner from "../styles/temple-planner.css?url";
 import thailand from "../styles/temple-thailand.css?url";
+import publicSelect from "../styles/public-select.css?url";
+import tools from "../styles/tools.css?url";
 
 // Keep the existing cascade order while loading only the route's feature styles.
 export function stylesForPath(path) {
@@ -37,5 +39,6 @@ export function stylesForPath(path) {
     : path === "/temples/" ? [templeHub]
     : path.startsWith("/temples/") ? [temples, map]
     : [];
-  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : []), ...(path === "/temples/thailand/" ? [thailand] : [])];
+  const isTool = path.startsWith("/tarot/") || /^\/horoscope\/(life-graph|palmistry|seamsi|thai-astrology)\//.test(path);
+  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : []), ...(path === "/temples/thailand/" ? [thailand] : []), publicSelect, ...(isTool ? [tools] : [])];
 }

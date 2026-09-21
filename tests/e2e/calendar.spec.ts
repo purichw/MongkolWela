@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { chooseOption } from "./select-helpers";
 
 const content = JSON.parse(readFileSync(new URL("../../public/admin/content/live.json", import.meta.url), "utf8"));
 const calendar = "[data-calendar-app]";
@@ -29,7 +30,7 @@ test("month/year boundaries, leap days, reload and browser history stay in sync"
   await expect(page.locator("#cal-month-title")).toHaveText("ธันวาคม 2568");
   await page.goForward();
   await expect(page.locator("#cal-month-title")).toHaveText("มกราคม 2569");
-  await page.locator("[data-calendar-year]").selectOption("2567");
+  await chooseOption(page, "[data-calendar-year]", "2567");
   await page.locator('.cal-month-nav [data-month="2"]').click();
   await expect(page.locator(".cal-day")).toHaveCount(29);
   await page.reload();
@@ -162,9 +163,10 @@ test("responsive layouts, sticky toolbar, keyboard and reduced motion remain usa
     }));
     expect(geometry.titleTop).toBeGreaterThanOrEqual(geometry.toolbarBottom);
     if (width <= 600) {
-      await page.locator('[data-calendar-view]').focus();
-      await expect(page.locator('[data-calendar-view]')).toBeFocused();
-      await page.locator('[data-calendar-view]').selectOption('month');
+      const viewControl = page.locator('.mw-select').filter({ has: page.locator('[data-calendar-view]') });
+      await viewControl.focus();
+      await expect(viewControl).toBeFocused();
+      await chooseOption(page, '[data-calendar-view]', 'month');
     } else {
       await page.locator('.cal-view-switch [data-view="month"]').focus();
       await page.keyboard.press("Enter");
@@ -195,12 +197,12 @@ test("mobile preview expands to every date, keeps late-date selection, and expos
   await ready(page);
   await expect(page.locator('[data-date="2026-01-31"]')).toBeVisible();
   await expect(page.locator('.cal-month-table tbody tr:visible')).toHaveCount(3);
-  await page.locator('[data-calendar-view]').selectOption('month');
+  await chooseOption(page, '[data-calendar-view]', 'month');
   await expect(page.locator('.cal-day:visible')).toHaveCount(31);
   await expect(page.locator('[data-expand-month]')).not.toBeVisible();
-  await page.locator('[data-calendar-view]').selectOption('events');
+  await chooseOption(page, '[data-calendar-view]', 'events');
   await expect(page.locator('.cal-events-group')).toHaveCount(12);
-  await page.locator('[data-calendar-view]').selectOption('overview');
+  await chooseOption(page, '[data-calendar-view]', 'overview');
   await expect(page.locator('[data-calendar-guide]')).toBeVisible();
   await page.locator('[data-expand-year]').click();
   await expect(page.locator('[data-calendar-overview]')).toHaveClass(/is-expanded/);

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { createTemplePlannerPlan } from "../../src/lib/temple-planner-engine.js";
+import { chooseOption } from "./select-helpers";
 
 test.use({ channel: "chrome", viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
 const catalog = () => ({ revision: "workspace-v1", filters: {}, items: Array.from({ length: 12 }, (_, index) => ({
@@ -222,7 +223,7 @@ test("nine-stop export preserves every point, budget is advisory, midnight is ex
   await page.locator("[data-planner-start-time]").fill("23:30");
   await page.locator(".planner-advanced summary").click();
   await page.locator("[data-planner-start-date]").fill("2027-09-21");
-  await page.locator("[data-planner-budget]").selectOption("300");
+  await chooseOption(page, "[data-planner-budget]", "300");
   await page.locator(".planner-advanced summary").click();
   await expect(page.locator("[data-planner-advanced-summary]")).toContainText("2570");
   await page.locator("[data-planner-auto]").click();
@@ -255,7 +256,7 @@ test("show-all retains outside-filter selections, purpose filters use OR, and in
   await page.locator("[data-planner-picker-toggle-scope]").click();
   await expect(page.locator("[data-planner-selected-tray]")).toContainText("นอกตัวกรอง");
   expect((await read(page)).selected).toEqual(["place-11"]);
-  await page.locator("[data-planner-area]").selectOption("");
+  await chooseOption(page, "[data-planner-area]", "");
   await page.locator('[data-planner-purpose-tag][value="ความรัก/คู่ครอง"]').click();
   await expect(page.locator("[data-planner-place-card]")).toHaveCount(12);
   await page.evaluate(() => localStorage.setItem("mongkolwela.templePlanner.v1", JSON.stringify({ count: 9, selected: ["place-0", "deleted-id"], plan: ["place-0", "deleted-id"], startDate: "2020-01-01" })));

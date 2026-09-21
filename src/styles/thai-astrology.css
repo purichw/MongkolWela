@@ -1,602 +1,161 @@
-.thai-astrology-page {
-  padding-bottom: 84px;
-}
-
-.thai-astro-hero,
-.thai-astro-tool,
-.thai-astro-section,
-.thai-astro-sources {
+/* One chart, form and committed result; the grid changes placement, never data. */
+.tools-page .thai-astro-tool {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: var(--tool-rail) 280px minmax(0, 1fr);
+  grid-template-areas: "form heading heading" "form overview chart" "form planets planets" "form readings readings";
+  gap: 0 var(--tool-gap);
+  align-items: start;
   width: var(--page-width);
   margin: 0 auto;
 }
-
-.thai-astro-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 390px;
-  gap: 42px;
-  align-items: end;
-  padding: 76px 0 48px;
-}
-
-.thai-astro-breadcrumb {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 18px;
-  color: var(--ink-soft);
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.thai-astro-breadcrumb a {
-  color: var(--lacquer);
-}
-
-.thai-astro-hero h1 {
-  max-width: 900px;
-  margin: 0;
-  font-size: clamp(3.2rem, 8.4vw, 7.2rem);
-  font-weight: 800;
-  line-height: 1;
-}
-
-.thai-astro-hero p {
-  max-width: 790px;
-  margin: 22px 0 0;
-  color: var(--ink-soft);
-  font-size: 1.06rem;
-}
-
-.thai-astro-orbit {
-  position: relative;
-  display: grid;
-  place-items: center;
-  aspect-ratio: 1;
-  color: #fff7e6;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(234, 211, 160, 0.2), transparent 30%),
-    linear-gradient(145deg, var(--jade-dark), var(--lacquer-dark));
-  border: 1px solid rgba(234, 211, 160, 0.28);
-  border-radius: 50%;
-  box-shadow: var(--shadow);
-}
-
-.thai-astro-orbit::before,
-.thai-astro-orbit::after {
-  position: absolute;
-  inset: 11%;
-  border: 1px solid rgba(234, 211, 160, 0.26);
-  border-radius: 50%;
+.thai-astro-tool::before {
   content: "";
-}
-
-.thai-astro-orbit::after {
-  inset: 24%;
-}
-
-.thai-astro-orbit strong {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 118px;
-  height: 118px;
-  color: var(--ink);
-  background: var(--gold-soft);
-  border-radius: 50%;
-  font-size: 2.4rem;
-  box-shadow: 0 0 0 18px rgba(234, 211, 160, 0.12);
-}
-
-.thai-astro-orbit span {
   position: absolute;
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border: 1px solid rgba(234, 211, 160, 0.38);
-  border-radius: 50%;
-  font-weight: 800;
+  z-index: -1;
+  inset: 0 0 0 calc(var(--tool-rail) + var(--tool-gap));
+  background: var(--tool-surface);
+  border: 1px solid var(--tool-line);
+  border-radius: 12px;
+  box-shadow: var(--tool-shadow);
 }
-
-.thai-astro-orbit span:nth-child(1) {
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
+.tools-page .thai-astro-form { grid-area: form; border-radius: 12px; }
+.tools-page .thai-astro-form h2 { font-size: 25px; }
+.tools-page .thai-astro-form .thai-astro-mode-row { grid-template-columns: 1fr; }
+.thai-astro-feedback:empty { display: none; }
+.thai-astro-feedback { margin: 0; color: var(--jade-dark); font-size: 13px; }
+.thai-field-error { color: var(--lacquer); font-weight: 500; }
+.thai-astro-form [aria-invalid="true"] { border-color: var(--lacquer); }
+.thai-reading-head { grid-area: heading; display: flex; gap: 16px; flex-wrap: wrap; align-items: start; padding: 22px; }
+.thai-result-heading { display: flex; align-items: start; gap: 12px; min-width: 0; flex: 1 1 320px; }
+.thai-result-heading > .ui-icon-mask { width: 32px; height: 32px; flex: 0 0 32px; margin-top: 12px; }
+.thai-result-heading > div { min-width: 0; }
+.tools-page .thai-result-heading .section-kicker { font-size: 12px; margin-bottom: 4px; }
+.tools-page .thai-result-heading h2 { font-size: 24px; margin: 0 0 6px; }
+.thai-result-heading p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+.thai-edit-link { display: inline-flex; gap: 6px; align-items: center; color: var(--jade-dark); font-size: 13px; min-height: 44px; text-decoration: none; }
+.thai-edit-link .ui-icon-mask { width: 16px; height: 16px; }
+.thai-stale-notice { flex-basis: 100%; margin: 0; padding: 10px 12px; color: var(--lacquer); background: #fff0e5; border: 1px solid var(--tool-line); border-radius: 6px; font-size: 14px; }
+.thai-reading-icon { color: var(--tool-gold-ink); }
+.thai-chart-summary { grid-area: overview; margin-left: 22px; padding-right: 4px; }
+.tools-page .thai-chart-summary h3 { display: flex; gap: 8px; align-items: center; font-size: 16px; margin: 0 0 10px; color: var(--tool-gold-ink); }
+.thai-chart-summary > p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.thai-chart-summary dl { display: grid; gap: 12px; margin: 20px 0; font-size: 13px; }
+.thai-chart-summary dl > div { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 8px; }
+.thai-chart-summary dt { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.thai-chart-summary .ui-icon-mask { width: 18px; height: 18px; flex-shrink: 0; }
+.thai-chart-summary dd { margin: 0; color: var(--ink-soft); }
+.tools-page .thai-provenance { padding-top: 12px; border-top: 1px solid var(--tool-line); font-size: 12px; }
+.thai-model-note { margin-top: 10px; font-size: 12px; color: var(--ink-soft); }
+.thai-model-note summary { cursor: pointer; padding-block: 8px; color: var(--jade-dark); }
+.thai-model-note p { margin: 6px 0 0; }
+.thai-chart-stage { grid-area: chart; position: relative; min-width: 0; padding: 4px 18px 16px 0; align-self: center; }
+.thai-chart-stage::after { content: ""; z-index: -1; position: absolute; right: 0; bottom: 0; width: 85px; height: 165px; background: url("/assets/images/ornament-lotus-bodhi.webp") center / contain no-repeat; opacity: .22; pointer-events: none; }
+.thai-chart-figure { margin: 0; text-align: center; }
+.thai-chart-wheel { position: relative; width: min(100%, 408px); aspect-ratio: 1; margin: 0 auto; color: var(--ink); }
+.thai-chart-lines { display: block; width: 100%; height: 100%; stroke: #99702f; stroke-width: 1; }
+.thai-chart-ornaments { stroke: #bb9554; stroke-width: .8; }
+.thai-chart-center-fill { fill: #f8ebce; }
+.thai-wheel-center { position: absolute; inset: 34.25%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.thai-wheel-center span { font-size: 15px; color: var(--tool-gold-ink); }
+.thai-wheel-center strong { font-size: 23px; }
+.thai-wheel-house { position: absolute; top: var(--house-y); left: var(--house-x); transform: translate(-50%, -50%); display: grid; justify-items: center; align-content: center; width: 16.5%; line-height: 1.2; text-align: center; }
+.thai-house-number { font-size: 17px; font-weight: 700; }
+.thai-wheel-house strong { font-size: 13px; font-weight: 600; white-space: nowrap; }
+.thai-house-planets { display: flex; justify-content: center; align-items: center; gap: 4px; min-height: 14px; color: var(--jade-dark); }
+.thai-house-planets b { font-size: 11px; font-weight: 500; }
+.thai-house-planets small { font-size: 11px; }
+.thai-chart-figure figcaption { font-size: 12px; color: var(--ink-soft); margin: 10px 0 2px; }
+.thai-chart-table-link { display: inline-flex; align-items: center; gap: 6px; color: var(--jade-dark); font-size: 13px; min-height: 44px; }
+.thai-chart-table-link .ui-icon-mask { width: 16px; height: 16px; }
+.thai-planet-table-card { grid-area: planets; min-width: 0; margin: 22px; padding: 20px 0 0; border-top: 1px solid var(--tool-line); scroll-margin-top: calc(var(--site-header-sticky-height, 80px) + 16px); }
+.tools-page .thai-planet-table-card h3 { margin: 0 0 12px; font-size: 18px; }
+.thai-planet-table-wrap { border: 1px solid var(--tool-line); border-radius: 8px; overflow: hidden; }
+.thai-planet-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 13px; }
+.thai-planet-table :is(th, td) { border: 0; border-bottom: 1px solid var(--tool-line); padding: 9px 8px; text-align: center; vertical-align: top; overflow-wrap: anywhere; }
+.thai-planet-table thead { background: var(--tool-soft); }
+.thai-planet-table th:first-child { width: 17%; }
+.thai-planet-table th:nth-child(2) { width: 13%; }
+.thai-planet-table th:nth-child(3) { width: 10%; }
+.thai-planet-table th:nth-child(4) { width: 12%; }
+.thai-planet-table th:last-child { width: 48%; }
+.thai-planet-table tbody th { text-align: start; white-space: nowrap; }
+.thai-planet-table .thai-planet-role { text-align: start; color: var(--ink-soft); }
+.thai-planet-glyph { display: inline-grid; place-items: center; width: 19px; height: 19px; border-radius: 50%; margin-right: 5px; color: var(--tool-gold-ink); background: var(--tool-soft); font-size: 12px; }
+.thai-planet-table tr:last-child > * { border-bottom: 0; }
+.thai-reading-section { grid-area: readings; min-width: 0; margin: 0 22px 22px; }
+.thai-reading-highlight { border-left: 2px solid var(--gold); padding: 0 0 0 14px; margin-bottom: 24px; }
+.thai-reading-highlight h3 { display: flex; gap: 8px; align-items: center; color: var(--lacquer); margin: 0; }
+.thai-reading-highlight p { color: var(--ink-soft); font-size: 14px; margin: 8px 0 0; }
+.thai-reading-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; align-items: start; }
+.thai-reading-card { border-top: 1px solid var(--tool-line); }
+.thai-reading-card summary { display: flex; gap: 10px; align-items: center; min-height: 48px; padding: 10px 0; cursor: pointer; color: var(--jade-dark); font-weight: 600; list-style: none; }
+.thai-reading-card summary::-webkit-details-marker { display: none; }
+.thai-reading-card .ui-icon-mask { width: 18px; height: 18px; flex-shrink: 0; }
+.thai-reading-card summary .ui-icon-mask:last-child { margin-left: auto; }
+.thai-reading-card[open] summary .ui-icon-mask:last-child { transform: rotate(180deg); }
+.thai-reading-card p { font-size: 14px; color: var(--ink-soft); margin: 0 0 18px; }
+.thai-astro-section-head { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 32px; margin-bottom: 24px; }
+.thai-astro-section-head p { margin: 0; color: var(--ink-soft); }
+.thai-astro-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.thai-astro-card { padding-top: 16px; border-top: 1px solid var(--tool-line); }
+.thai-astro-card > span { color: var(--tool-gold-ink); font-size: 13px; }
+.thai-astro-card h3 { margin: 8px 0; }
+.thai-astro-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.thai-source-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.thai-source-grid a { color: var(--jade-dark); text-decoration: none; }
+.thai-source-grid span { display: block; color: var(--ink-soft); font-size: 14px; margin-top: 8px; }
+#thai-result-title, #thai-form-title { scroll-margin-top: calc(var(--site-header-sticky-height, 80px) + 20px); }
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .tools-page .thai-astro-tool { grid-template-columns: var(--tool-rail) 240px minmax(0, 1fr); }
+  .thai-chart-summary { margin-left: 18px; }
+  .thai-chart-stage { padding-right: 12px; }
+  .thai-house-number { font-size: 16px; }
+  .thai-wheel-house strong { font-size: 13px; }
 }
-
-.thai-astro-orbit span:nth-child(2) {
-  top: 50%;
-  right: 10%;
-  transform: translateY(-50%);
+@media (max-width: 1023px) {
+  .tools-page .thai-astro-tool { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "heading heading" "chart chart" "form form" "overview overview" "planets planets" "readings readings"; gap: 20px; }
+  .thai-astro-tool::before { display: none; }
+  .thai-reading-head { padding: 0; }
+  .thai-chart-stage { padding: 0; }
+  .thai-chart-summary { margin: 0; padding: 20px 0 0; border-top: 1px solid var(--tool-line); }
+  .thai-chart-summary dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .thai-chart-summary dl > div { grid-template-columns: 1fr; gap: 4px; }
+  .thai-chart-summary dd { margin-left: 26px; }
+  .thai-planet-table-card { margin: 0; }
+  .thai-reading-section { margin: 0; }
+  .thai-astro-section-head { grid-template-columns: 1fr; gap: 12px; }
+  .thai-astro-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-
-.thai-astro-orbit span:nth-child(3) {
-  bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
+@media (max-width: 767px) {
+  .tools-page .thai-astro-tool { display: flex; flex-direction: column; gap: 18px; }
+  .thai-astro-tool > * { width: 100%; }
+  .thai-reading-head { gap: 4px; }
+  .tools-page .thai-result-heading h2 { font-size: 20px; }
+  .thai-result-heading { gap: 8px; }
+  .thai-result-heading > .ui-icon-mask { width: 26px; height: 26px; flex-basis: 26px; }
+  .thai-chart-wheel { max-width: 336px; }
+  .thai-wheel-center strong { font-size: 20px; }
+  .thai-wheel-center span { font-size: 13px; }
+  .thai-house-number { font-size: 14px; }
+  .thai-wheel-house strong { font-size: 12px; }
+  .thai-house-planets { min-height: 12px; }
+  .thai-house-planets b { font-size: 10px; }
+  .thai-chart-figure figcaption { font-size: 11px; }
+  .thai-chart-summary dl { gap: 16px; }
+  .thai-reading-grid, .thai-astro-card-grid, .thai-source-grid { grid-template-columns: 1fr; }
+  .thai-planet-table-wrap { overflow: visible; border: 0; }
+  .thai-planet-table, .thai-planet-table tbody { display: block; }
+  .thai-planet-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .thai-planet-table tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--tool-line); padding: 12px 0; }
+  .thai-planet-table :is(th, td) { display: block; width: auto !important; border: 0; padding: 4px 0; font-size: 14px; }
+  .thai-planet-table tbody th { grid-column: 1 / -1; }
+  .thai-planet-table td::before { content: attr(data-label); display: block; font-size: 12px; color: var(--ink-soft); }
+  .thai-planet-table .thai-planet-role { grid-column: 1 / -1; }
+  .thai-planet-table .thai-planet-role::before { display: none; }
 }
-
-.thai-astro-orbit span:nth-child(4) {
-  top: 50%;
-  left: 10%;
-  transform: translateY(-50%);
-}
-
-.thai-astro-tool {
-  display: grid;
-  grid-template-columns: 340px minmax(0, 1fr);
-  gap: 26px;
-  align-items: start;
-  scroll-margin-top: 172px;
-}
-
-.thai-astro-form,
-.thai-astro-output,
-.thai-astro-card,
-.thai-astro-section,
-.thai-astro-sources {
-  background: rgba(255, 250, 240, 0.78);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-
-.thai-astro-form {
-  position: relative;
-  display: grid;
-  gap: 15px;
-  align-self: start;
-  scroll-margin-top: 172px;
-  padding: 22px;
-}
-
-.thai-astro-form h2,
-.thai-reading-head h2,
-.thai-astro-section h2,
-.thai-astro-sources h2 {
-  margin: 0;
-  font-size: clamp(1.5rem, 3vw, 2.35rem);
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.thai-astro-form label {
-  display: grid;
-  gap: 7px;
-  color: var(--ink-soft);
-  font-size: 0.88rem;
-  font-weight: 600;
-}
-
-.thai-astro-form input,
-.thai-astro-form select {
-  width: 100%;
-  min-height: 44px;
-  padding: 8px 11px;
-  color: var(--ink);
-  background: #fffdf6;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  outline: 0;
-}
-
-.thai-astro-form input:focus,
-.thai-astro-form select:focus {
-  border-color: rgba(194, 141, 53, 0.72);
-  box-shadow: 0 0 0 3px rgba(194, 141, 53, 0.16);
-}
-
-.thai-astro-form-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.thai-astro-form-note {
-  margin: 0;
-  color: var(--ink-soft);
-  font-size: 0.84rem;
-  line-height: 1.45;
-}
-
-.thai-astro-output {
-  min-width: 0;
-  min-height: 620px;
-  padding: 24px;
-}
-
-.thai-reading-head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 170px;
-  gap: 18px;
-  align-items: end;
-  margin-bottom: 18px;
-}
-
-.thai-reading-head p {
-  margin: 10px 0 0;
-  color: var(--ink-soft);
-}
-
-.thai-reading-badge {
-  display: grid;
-  justify-items: center;
-  padding: 16px;
-  background: #fff6e5;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-
-.thai-reading-badge span {
-  color: var(--ink-soft);
-  font-weight: 800;
-}
-
-.thai-reading-badge strong {
-  color: var(--lacquer);
-  font-size: 1.45rem;
-}
-
-.thai-chart-layout {
-  display: grid;
-  grid-template-columns: minmax(300px, 430px) minmax(0, 1fr);
-  gap: 18px;
-  align-items: stretch;
-  margin-bottom: 18px;
-}
-
-.thai-chart-wheel {
-  position: relative;
-  min-height: 430px;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(234, 211, 160, 0.3), transparent 28%),
-    linear-gradient(145deg, var(--jade-dark), var(--lacquer-dark));
-  border: 1px solid rgba(234, 211, 160, 0.3);
-  border-radius: var(--radius);
-}
-
-.thai-chart-wheel::before,
-.thai-chart-wheel::after {
-  position: absolute;
-  inset: 9%;
-  border: 1px solid rgba(234, 211, 160, 0.22);
-  border-radius: 50%;
-  content: "";
-}
-
-.thai-chart-wheel::after {
-  inset: 26%;
-}
-
-.thai-wheel-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 112px;
-  height: 112px;
-  color: var(--ink);
-  background: var(--gold-soft);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.thai-wheel-center span {
-  font-size: 1.8rem;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.thai-wheel-center strong {
-  margin-top: -12px;
-  font-size: 0.96rem;
-}
-
-.thai-wheel-house {
-  position: absolute;
-  top: calc(50% + sin((var(--house) * 30deg) - 90deg) * 38%);
-  left: calc(50% + cos((var(--house) * 30deg) - 90deg) * 38%);
-  z-index: 1;
-  display: grid;
-  justify-items: center;
-  width: 86px;
-  min-height: 78px;
-  padding: 8px;
-  color: #fff7e6;
-  background: rgba(21, 16, 13, 0.34);
-  border: 1px solid rgba(234, 211, 160, 0.24);
-  border-radius: var(--radius);
-  text-align: center;
-  transform: translate(-50%, -50%);
-}
-
-.thai-wheel-house span,
-.thai-wheel-house small {
-  color: rgba(255, 247, 230, 0.72);
-  font-size: 0.72rem;
-  font-weight: 800;
-}
-
-.thai-wheel-house strong {
-  font-size: 0.9rem;
-}
-
-.thai-wheel-house div {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 3px;
-  margin-top: 3px;
-}
-
-.thai-wheel-house b {
-  display: grid;
-  place-items: center;
-  width: 18px;
-  height: 18px;
-  color: var(--ink);
-  background: var(--gold-soft);
-  border-radius: 50%;
-  font-size: 0.7rem;
-}
-
-.thai-chart-summary,
-.thai-planet-table-card,
-.thai-reading-grid article {
-  background: rgba(255, 255, 250, 0.74);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-
-.thai-chart-summary {
-  padding: 22px;
-}
-
-.thai-chart-summary strong {
-  display: block;
-  color: var(--lacquer);
-  font-size: 1.28rem;
-  font-weight: 800;
-}
-
-.thai-chart-summary p,
-.thai-planet-table-card p,
-.thai-reading-grid p,
-.thai-astro-card p,
-.thai-astro-sources p {
-  color: var(--ink-soft);
-}
-
-.thai-chart-summary dl {
-  display: grid;
-  gap: 10px;
-  margin: 18px 0 0;
-}
-
-.thai-chart-summary div {
-  display: grid;
-  grid-template-columns: 112px 1fr;
-  gap: 12px;
-}
-
-.thai-chart-summary dt {
-  color: var(--jade);
-  font-weight: 800;
-}
-
-.thai-chart-summary dd {
-  margin: 0;
-}
-
-.thai-planet-table-card {
-  min-width: 0;
-  padding: 18px;
-  margin-bottom: 18px;
-}
-
-.thai-planet-table-card h3,
-.thai-reading-grid span {
-  margin: 0 0 6px;
-  font-size: 1.18rem;
-  font-weight: 800;
-}
-
-.thai-planet-table-wrap {
-  max-width: 100%;
-  overflow-x: auto;
-  border: 1px solid rgba(77, 56, 41, 0.14);
-  border-radius: var(--radius);
-}
-
-.thai-planet-table {
-  width: max(100%, 760px);
-  border-collapse: collapse;
-  background: #fffdf6;
-}
-
-.thai-planet-table th,
-.thai-planet-table td {
-  padding: 10px;
-  border: 1px solid rgba(77, 56, 41, 0.12);
-  text-align: left;
-}
-
-.thai-planet-table thead th {
-  color: var(--ink-soft);
-  background: #fbf2df;
-}
-
-.thai-planet-table tbody th span {
-  display: inline-grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
-  color: var(--ink);
-  background: var(--gold-soft);
-  border-radius: 50%;
-}
-
-.thai-reading-grid,
-.thai-astro-card-grid,
-.thai-source-grid {
-  display: grid;
-  gap: 14px;
-}
-
-.thai-reading-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.thai-reading-grid article,
-.thai-astro-card {
-  padding: 18px;
-}
-
-.thai-reading-grid span,
-.thai-astro-card span {
-  display: block;
-  color: var(--jade);
-  font-size: 0.82rem;
-  text-transform: uppercase;
-}
-
-.thai-reading-grid p,
-.thai-astro-card p {
-  margin: 7px 0 0;
-}
-
-.thai-astro-section,
-.thai-astro-sources {
-  padding: 30px;
-  margin-top: 28px;
-}
-
-.thai-astro-section-head {
-  display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
-  gap: 28px;
-  margin-bottom: 22px;
-}
-
-.thai-astro-section-head p {
-  margin: 0;
-  color: var(--ink-soft);
-}
-
-.thai-astro-card-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.thai-source-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.thai-source-grid a {
-  display: block;
-  padding: 16px;
-  background: rgba(255, 255, 250, 0.72);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-
-.thai-source-grid strong {
-  display: block;
-  color: var(--lacquer);
-}
-
-.thai-source-grid span {
-  display: block;
-  margin-top: 6px;
-  color: var(--ink-soft);
-  font-size: 0.9rem;
-}
-
-@media (min-width: 721px) and (max-width: 1080px) {
-  .thai-astro-hero {
-    grid-template-columns: minmax(0, 1fr) 300px;
-    gap: 28px;
-  }
-
-  .thai-astro-tool {
-    grid-template-columns: 300px minmax(0, 1fr);
-  }
-
-  .thai-chart-layout,
-  .thai-astro-card-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .thai-chart-wheel {
-    min-height: 520px;
-  }
-
-  .thai-astro-section-head {
-    grid-template-columns: 240px minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 720px) {
-  .thai-astro-hero,
-  .thai-astro-tool,
-  .thai-astro-section,
-  .thai-astro-sources {
-    width: var(--page-width);
-  }
-
-  .thai-astro-hero,
-  .thai-astro-tool,
-  .thai-reading-head,
-  .thai-chart-layout,
-  .thai-reading-grid,
-  .thai-astro-section-head,
-  .thai-astro-card-grid,
-  .thai-source-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .thai-astro-hero {
-    padding: 38px 0 28px;
-  }
-
-  .thai-astro-hero h1 {
-    font-size: 3.3rem;
-  }
-
-  .thai-astro-orbit {
-    max-width: 320px;
-    margin: 0 auto;
-  }
-
-  .thai-astro-form {
-    position: static;
-  }
-
-  .thai-astro-output {
-    padding: 16px;
-  }
-
-  .thai-chart-wheel {
-    min-height: 470px;
-  }
-
-  .thai-wheel-house {
-    width: 72px;
-    min-height: 68px;
-    padding: 6px;
-  }
-
-  .thai-chart-summary div,
-  .thai-astro-form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .thai-astro-section,
-  .thai-astro-sources {
-    padding: 22px;
-  }
+@media (max-width: 359px) {
+  .thai-house-planets { gap: 2px; }
+  .thai-chart-summary dl { grid-template-columns: 1fr; }
 }

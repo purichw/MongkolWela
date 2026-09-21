@@ -2,7 +2,6 @@
   color: var(--ink);
 }
 
-.tarot-hero,
 .tarot-oracle,
 .tarot-result-shell,
 .tarot-note,
@@ -16,13 +15,6 @@
 .tarot-meaning-detail {
   width: var(--page-width);
   margin: 0 auto;
-}
-
-.tarot-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 44px;
-  padding: 74px 0 54px;
 }
 
 .tarot-breadcrumb {
@@ -39,7 +31,6 @@
   color: var(--lacquer);
 }
 
-.tarot-hero h1,
 .tarot-result-copy h1 {
   margin: 0;
   font-size: clamp(2.8rem, 7vw, 6.2rem);
@@ -50,13 +41,6 @@
 
 .tarot-nowrap {
   white-space: nowrap;
-}
-
-.tarot-hero-copy {
-  max-width: 760px;
-  margin: 22px 0 0;
-  color: var(--ink-soft);
-  font-size: clamp(1rem, 1.45vw, 1.24rem);
 }
 
 .tarot-ritual-panel {
@@ -1106,11 +1090,6 @@
 }
 
 @media (min-width: 721px) and (max-width: 1080px) {
-  .tarot-hero {
-    grid-template-columns: minmax(0, 1fr) 300px;
-    gap: 30px;
-    padding: 60px 0 44px;
-  }
 
   .tarot-oracle {
     grid-template-columns: 250px minmax(0, 1fr);
@@ -1152,7 +1131,6 @@
 }
 
 @media (max-width: 720px) {
-  .tarot-hero,
   .tarot-oracle,
   .tarot-result-shell,
   .tarot-note,
@@ -1163,18 +1141,11 @@
     width: var(--page-width);
   }
 
-  .tarot-hero,
   .tarot-oracle,
   .tarot-result-shell {
     grid-template-columns: 1fr;
   }
 
-  .tarot-hero {
-    gap: 24px;
-    padding: 38px 0 34px;
-  }
-
-  .tarot-hero h1,
   .tarot-result-copy h1 {
     font-size: 2.8rem;
   }

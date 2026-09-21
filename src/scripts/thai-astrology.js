@@ -1,4 +1,5 @@
 import { houses, planetMeanings, zodiacSigns } from "./thai-astrology-data.js";
+import { renderChart } from "./thai-astrology-view.js";
 
 const selectors = {
   form: "[data-thai-astrology-form]",
@@ -17,7 +18,7 @@ const provinceOffsets = {
   foreign: 10,
 };
 
-initThaiAstrology();
+if (typeof document !== "undefined") initThaiAstrology();
 
 function initThaiAstrology() {
   const form = document.querySelector(selectors.form);
@@ -26,12 +27,73 @@ function initThaiAstrology() {
 
   fillTimeOptions(form);
   setDefaultDates(form);
-  renderResult(form, output);
+  const feedback = form.querySelector("[data-astro-feedback]");
+  const submit = form.querySelector('[type="submit"]');
+  let committedInput = null;
+
+  const markDraft = () => {
+    const dirty = committedInput !== JSON.stringify(readInput(form));
+    output.dataset.state = dirty ? "dirty" : "ready";
+    submit.textContent = dirty ? "อัปเดตดวง" : "ผูกดวง";
+    feedback.textContent = dirty ? "แก้ไขข้อมูลแล้ว กดอัปเดตดวงเพื่อคำนวณใหม่" : "";
+    const notice = output.querySelector("[data-astro-stale]");
+    if (notice) notice.hidden = !dirty;
+  };
+
+  const commit = (origin) => {
+    if (!validateForm(form)) return;
+    submit.disabled = true;
+    submit.textContent = "กำลังผูกดวง";
+    output.dataset.state = "submitting";
+    output.setAttribute("aria-busy", "true");
+    try {
+      const input = readInput(form);
+      const chart = calculateChart(input);
+      const parts = renderChart(chart, origin, {
+        headline: createHeadline(chart),
+        overview: readOverview(chart), career: readCareer(chart), wealth: readWealth(chart),
+        relationship: readRelationship(chart), advice: readAdvice(chart), caution: readCaution(chart),
+        mode: getChartTypeLabel(chart.chartType), system: getSystemLabel(chart.calculationSystem),
+      });
+      for (const [part, html] of Object.entries(parts)) {
+        output.querySelector(`[data-astro-${part}]`).innerHTML = html;
+      }
+      committedInput = JSON.stringify(input);
+      output.dataset.origin = origin;
+      output.dataset.provenance = "approximate";
+      markDraft();
+      if (origin === "user") {
+        feedback.textContent = "อัปเดตดวงจากข้อมูลที่กรอกแล้ว";
+        const title = output.querySelector("#thai-result-title");
+        title.focus({ preventScroll: true });
+        title.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+      }
+    } catch {
+      output.dataset.state = "error";
+      feedback.textContent = committedInput
+        ? "คำนวณไม่สำเร็จ ผลด้านบนยังเป็นข้อมูลชุดก่อนหน้า โปรดตรวจข้อมูลแล้วลองอีกครั้ง"
+        : "คำนวณไม่สำเร็จ โปรดตรวจข้อมูลแล้วลองอีกครั้ง";
+    } finally {
+      submit.disabled = false;
+      submit.textContent = output.dataset.state === "ready" ? "ผูกดวง" : "อัปเดตดวง";
+      output.removeAttribute("aria-busy");
+    }
+  };
+
+  commit("sample");
+  form.addEventListener("input", markDraft);
+  form.addEventListener("change", markDraft);
+  output.addEventListener("click", (event) => {
+    if (!event.target.closest("[data-edit-birth]")) return;
+    event.preventDefault();
+    const title = form.querySelector("#thai-form-title");
+    title.focus({ preventScroll: true });
+    title.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  });
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    renderResult(form, output);
-    output.scrollIntoView({ behavior: "smooth", block: "start" });
+    commit("user");
   });
 }
 
@@ -65,10 +127,8 @@ function setDefaultDates(form) {
   if (transitInput && !transitInput.value) transitInput.value = toInputDate(today);
 }
 
-function renderResult(form, output) {
-  if (!form.checkValidity()) return;
-
-  const chart = calculateChart({
+function readInput(form) {
+  return {
     name: form.elements.name.value.trim() || "เจ้าชะตา",
     birthDate: form.elements.birthDate.value,
     birthHour: Number(form.elements.birthHour.value),
@@ -77,12 +137,32 @@ function renderResult(form, output) {
     chartType: form.elements.chartType.value,
     calculationSystem: form.elements.calculationSystem.value,
     transitDate: form.elements.transitDate.value,
-  });
-
-  output.innerHTML = renderChart(chart);
+  };
 }
 
-function calculateChart(input) {
+function validateForm(form) {
+  form.querySelectorAll("[data-field-error]").forEach((element) => element.remove());
+  const fields = [...form.elements].filter((field) => field.willValidate);
+  let firstInvalid;
+  for (const field of fields) {
+    field.removeAttribute("aria-invalid");
+    field.removeAttribute("aria-describedby");
+    if (field.validity.valid) continue;
+    const error = document.createElement("small");
+    error.dataset.fieldError = "";
+    error.id = `thai-error-${field.name}`;
+    error.className = "thai-field-error";
+    error.textContent = field.validationMessage;
+    field.setAttribute("aria-invalid", "true");
+    field.setAttribute("aria-describedby", error.id);
+    field.closest("label")?.append(error);
+    firstInvalid ??= field;
+  }
+  firstInvalid?.focus();
+  return !firstInvalid;
+}
+
+export function calculateChart(input) {
   const birthDate = parseInputDate(input.birthDate);
   const transitDate = parseInputDate(input.transitDate);
   const birthDays = daysSinceEpoch(birthDate) + input.birthHour / 24 + input.birthMinute / 1440;
@@ -135,116 +215,6 @@ function calculateChart(input) {
   };
 }
 
-function renderChart(chart) {
-  const headline = createHeadline(chart);
-
-  return `
-    <section class="thai-reading-head">
-      <div>
-        <p class="section-kicker">ผลผูกดวงเบื้องต้น</p>
-        <h2>${chart.name}</h2>
-        <p>
-          เกิด ${formatThaiDate(chart.birthDate)} เวลา ${pad2(chart.birthHour)}:${pad2(chart.birthMinute)} น.
-          • อ่านจร ${formatThaiDate(chart.transitDate)}
-        </p>
-      </div>
-      <div class="thai-reading-badge">
-        <span>ลัคนา</span>
-        <strong>${chart.ascSign.glyph} ${chart.ascSign.th}</strong>
-      </div>
-    </section>
-
-    <div class="thai-chart-layout">
-      ${renderWheel(chart)}
-      <div class="thai-chart-summary">
-        <strong>${headline.title}</strong>
-        <p>${headline.copy}</p>
-        <dl>
-          <div><dt>ระบบคำนวณ</dt><dd>${getSystemLabel(chart.calculationSystem)}</dd></div>
-          <div><dt>ดวงที่อ่าน</dt><dd>${getChartTypeLabel(chart.chartType)}</dd></div>
-          <div><dt>จันทร์กำเนิด</dt><dd>${chart.moonSign.glyph} ${chart.moonSign.th}</dd></div>
-          <div><dt>ดวงจรเด่น</dt><dd>${chart.activeHouse.th} - ${chart.activeHouse.topic}</dd></div>
-        </dl>
-      </div>
-    </div>
-
-    <section class="thai-planet-table-card">
-      <h3>สมผุสดาวโดยประมาณ</h3>
-      <p>ตารางนี้ใช้สูตรประมาณค่าเพื่อออกแบบ UX ก่อนต่อกับ ephemeris จริง จึงเหมาะกับการอ่านแนวโน้ม ไม่ใช่เอกสารผูกดวงฉบับโหร</p>
-      <div class="thai-planet-table-wrap">
-        <table class="thai-planet-table">
-          <thead>
-            <tr>
-              <th scope="col">ดาว</th>
-              <th scope="col">ราศี</th>
-              <th scope="col">องศา</th>
-              <th scope="col">ภพ</th>
-              <th scope="col">ความหมาย</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${chart.planets.map(renderPlanetRow).join("")}
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="thai-reading-grid">
-      ${renderReadingCard("ภาพรวม", readOverview(chart))}
-      ${renderReadingCard("การงาน", readCareer(chart))}
-      ${renderReadingCard("การเงิน", readWealth(chart))}
-      ${renderReadingCard("ความรัก", readRelationship(chart))}
-      ${renderReadingCard("คำแนะนำ", readAdvice(chart))}
-      ${renderReadingCard("ข้อควรระวัง", readCaution(chart))}
-    </section>
-  `;
-}
-
-function renderWheel(chart) {
-  const houseCells = houses.map((house, index) => {
-    const sign = zodiacSigns[wrapIndex(zodiacSigns.findIndex((item) => item.id === chart.ascSign.id) + index, 12)];
-    const planets = chart.planets.filter((planet) => planet.houseIndex === index);
-    return `
-      <article class="thai-wheel-house" style="--house:${index}">
-        <span>${index + 1}</span>
-        <strong>${house.th}</strong>
-        <small>${sign.glyph} ${sign.th}</small>
-        <div>${planets.map((planet) => `<b title="${planet.th}">${planet.glyph}</b>`).join("")}</div>
-      </article>
-    `;
-  }).join("");
-
-  return `
-    <div class="thai-chart-wheel" aria-label="ผังดวงโหราศาสตร์ไทย 12 ภพ">
-      <div class="thai-wheel-center">
-        <span>ลั</span>
-        <strong>${chart.ascSign.th}</strong>
-      </div>
-      ${houseCells}
-    </div>
-  `;
-}
-
-function renderPlanetRow(planet) {
-  return `
-    <tr>
-      <th scope="row"><span>${planet.glyph}</span>${planet.th}</th>
-      <td>${planet.sign.glyph} ${planet.sign.th}</td>
-      <td>${planet.degree}°</td>
-      <td>${planet.house.th}</td>
-      <td>${planet.role}</td>
-    </tr>
-  `;
-}
-
-function renderReadingCard(title, text) {
-  return `
-    <article>
-      <span>${title}</span>
-      <p>${text}</p>
-    </article>
-  `;
-}
 
 function createHeadline(chart) {
   const first = chart.strongestHouses[0];

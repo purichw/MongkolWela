@@ -2,18 +2,10 @@
   padding-bottom: 84px;
 }
 
-.life-graph-hero,
 .life-graph-tool,
 .life-graph-principles {
   width: var(--page-width);
   margin: 0 auto;
-}
-
-.life-graph-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 36px;
-  padding: 70px 0 34px;
 }
 
 .breadcrumb {
@@ -28,20 +20,6 @@
 .breadcrumb a {
   color: var(--lacquer);
   font-weight: 800;
-}
-
-.life-graph-hero h1 {
-  margin: 0;
-  font-size: clamp(4rem, 9vw, 7.5rem);
-  font-weight: 800;
-  line-height: 0.98;
-}
-
-.life-graph-hero p {
-  max-width: 790px;
-  margin: 22px 0 0;
-  color: var(--ink-soft);
-  font-size: 1.08rem;
 }
 
 .life-graph-note {
@@ -604,10 +582,6 @@
 }
 
 @media (min-width: 721px) and (max-width: 1080px) {
-  .life-graph-hero {
-    grid-template-columns: minmax(0, 1fr) 300px;
-    gap: 28px;
-  }
 
   .life-graph-tool {
     grid-template-columns: 290px minmax(0, 1fr);
@@ -624,25 +598,15 @@
 }
 
 @media (max-width: 720px) {
-  .life-graph-hero,
   .life-graph-tool,
   .life-graph-principles {
     width: var(--page-width);
   }
 
-  .life-graph-hero,
   .life-graph-tool,
   .life-graph-principles,
   .life-reading-head {
     grid-template-columns: 1fr;
-  }
-
-  .life-graph-hero {
-    padding: 38px 0 24px;
-  }
-
-  .life-graph-hero h1 {
-    font-size: 3.6rem;
   }
 
   .life-graph-form {

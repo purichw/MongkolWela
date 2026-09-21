@@ -33,6 +33,9 @@
 .cal-year-control label { font-size: 13px; white-space: nowrap; font-weight: 500; }
 .calendar-app .cal-year-control select, .calendar-app .cal-mobile-view { --ui-select-chevron: url("/assets/icons/lucide/chevron-down.svg"); --ui-select-chevron-size: 12px; --ui-select-chevron-inset: 7px; --ui-select-padding-end: 22px; border: 1px solid var(--cal-border); border-radius: 5px; background-color: #fffdf9; height: 32px; min-height: 0; min-width: 0; padding: 3px var(--ui-select-padding-end) 3px 10px; width: 128px; color: #19232c; font-size: 14px; font-weight: 500; line-height: 1.25; }
 .cal-mobile-view { display: none; }
+.calendar-app .cal-year-control .mw-select { width: 128px; --mw-select-height: 32px; --mw-select-font-size: 14px; --ui-select-padding-end: 22px; --ui-select-chevron-size: 12px; --ui-select-chevron-inset: 7px; }
+.calendar-app .cal-mobile-view.mw-select { padding: 0; border: 0; background: none; --mw-select-height: 32px; }
+.calendar-app .mw-select .choices__inner { padding-block: 3px; }
 .cal-month-nav { display: flex; min-width: 0; gap: 3px; overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-width: thin; padding: 3px; }
 .cal-month-nav button { flex: 1 0 31px; min-height: 32px; border: 1px solid var(--cal-border); border-radius: 5px; background: #faf7ef; color: #403b34; padding: 3px 2px; font-size: 12px; font-weight: 500; white-space: nowrap; }
 .cal-month-nav button:hover { background: #f0e9da; }
@@ -208,13 +211,15 @@ a.cal-summary-card:hover { border-color: var(--gold); }
   .cal-month-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 @media (max-width: 600px) {
+  .calendar-app .cal-year-control .mw-select { width: 120px; --mw-select-height: 28px; --mw-select-font-size: 13px; }
+  .calendar-app .cal-mobile-view.mw-select { --mw-select-height: 28px; --mw-select-font-size: 11px; }
   .cal-toolbar-wrap { margin-top: -14px; }
   .cal-toolbar { grid-template-columns: minmax(0, 1fr) auto auto; padding: 4px 6px; gap: 2px 6px; border-radius: 7px; }
   .cal-year-control { gap: 5px; }
   .cal-year-control label { font-size: 12px; }
-  .calendar-app .cal-toolbar .cal-year-control select { width: 116px; height: 28px; font-size: 13px; padding-left: 8px; }
+  .calendar-app .cal-toolbar .cal-year-control select { width: 120px; height: 28px; font-size: 13px; }
   .cal-view-switch { display: none; }
-  .calendar-app .cal-toolbar .cal-mobile-view { display: block; grid-column: 2; grid-row: 1; width: 84px; height: 28px; padding-left: 7px; font-size: 11px; }
+  .calendar-app .cal-toolbar .cal-mobile-view { display: block; grid-column: 2; grid-row: 1; width: 90px; height: 28px; font-size: 11px; }
   .calendar-app .cal-today { grid-row: 1; grid-column: 3; min-height: 32px; width: 32px; padding: 0; }
   .calendar-app .cal-today > span:not(.site-icon) { display: none; }
   .cal-month-nav { grid-row: 2; padding: 2px 0; gap: 2px; scrollbar-width: none; }
@@ -307,9 +312,9 @@ a.cal-summary-card:hover { border-color: var(--gold); }
   .cal-error h2 { font-size: 22px; }
 }
 @media (max-width: 359px) {
+  .calendar-app .cal-year-control .mw-select { width: 113px; --mw-select-font-size: 12px; }
   .calendar-app .cal-toolbar .cal-year-control select { width: 113px; font-size: 12px; }
   .cal-year-control label { font-size: 10px; }
-  .calendar-app .cal-toolbar .cal-mobile-view { width: 75px; }
   .cal-summary-card { gap: 5px; padding: 8px 6px; }
   .cal-summary-symbol { width: 27px; height: 27px; }
   .calendar-app .cal-summary-symbol .site-icon { width: 20px; height: 20px; }

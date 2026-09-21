@@ -3,6 +3,7 @@ import { skipIntroLoader } from "./helpers";
 import fs from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
+import { chooseOption } from "./select-helpers";
 
 const seed = JSON.parse(readFileSync(new URL("../../public/admin/content/live.json", import.meta.url), "utf8"));
 test.beforeEach(async ({ page, isMobile }) => {
@@ -26,7 +27,7 @@ test.describe("All-Thailand temple directory payload", () => {
     expect(dataRequests).toContain("/assets/data/temples-thailand-index.json");
     expect(dataRequests).not.toContain("/assets/data/temples-thailand.json");
 
-    await page.selectOption("[data-temple-region]", "ภาคกลาง");
+    await chooseOption(page, "[data-temple-region]", "ภาคกลาง");
     await expect(page.locator("[data-temple-province]")).toBeEnabled();
     await expect(page.locator('[data-temple-province] option[value="กรุงเทพมหานคร"]')).toHaveCount(1);
 
@@ -85,8 +86,8 @@ test("registry composition preserves row detail, paging, filters, and empty resu
   expect(pageControlTops[0]).toBe(pageControlTops.at(-1));
   await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
   await page.screenshot({ path: `.local/thailand-redesign/results-${isMobile ? 390 : 1440}.png`, fullPage: true, animations: "disabled" });
-  await page.locator("[data-temple-region]").selectOption("ภาคกลาง");
-  await page.locator("[data-temple-province]").selectOption("กรุงเทพมหานคร");
+  await chooseOption(page, "[data-temple-region]", "ภาคกลาง");
+  await chooseOption(page, "[data-temple-province]", "กรุงเทพมหานคร");
   await expect(page.locator("[data-temple-district]")).toBeEnabled();
   await page.locator(".temple-search-button").click();
   await expect(page).toHaveURL(/province=/);

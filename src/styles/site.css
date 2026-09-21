@@ -8,6 +8,43 @@ body select:not([multiple]),
   background-size: var(--ui-select-chevron-size, 18px) var(--ui-select-chevron-size, 18px);
 }
 
+/* Balance the arrow clearance so public select values stay visually centered. */
+body:not(.admin-page):not(.commerce-console) select:not([multiple]) {
+  padding-inline: var(--ui-select-padding-end, 44px);
+  text-align: center;
+  text-align-last: center;
+}
+
+body:not(.admin-page):not(.commerce-console) :is(input[type="number"], input[type="date"], input[type="time"], input[type="month"], input[type="datetime-local"], input[inputmode="numeric"]) {
+  text-align: center;
+}
+
+body:not(.admin-page):not(.commerce-console) :is(input[type="date"], input[type="time"], input[type="month"], input[type="datetime-local"]) {
+  position: relative;
+  appearance: none;
+}
+
+/* Native date/time internals need their own alignment in Safari and Chromium. */
+body:not(.admin-page):not(.commerce-console) :is(input[type="date"], input[type="time"], input[type="month"], input[type="datetime-local"])::-webkit-datetime-edit {
+  display: inline-flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0;
+}
+
+body:not(.admin-page):not(.commerce-console) :is(input[type="date"], input[type="time"], input[type="month"], input[type="datetime-local"])::-webkit-date-and-time-value {
+  width: 100%;
+  text-align: center;
+}
+
+body:not(.admin-page):not(.commerce-console) :is(input[type="date"], input[type="time"], input[type="month"], input[type="datetime-local"])::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset-inline-end: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+}
+
 @media (max-width: 900px), (pointer: coarse) {
   body:not(.admin-page) :is(input:not([type="hidden"]), select, textarea) {
     font-size: 1rem;

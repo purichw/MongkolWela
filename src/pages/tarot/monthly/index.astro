@@ -1,8 +1,9 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ToolsLayout from "../../../layouts/ToolsLayout.astro";
+import ToolsHero from "../../../components/ToolsHero.astro";
 ---
 
-<BaseLayout
+<ToolsLayout
   title="อ่านไพ่ยิปซีรายเดือน | มงคลเวลา"
   description="อ่านไพ่ยิปซีรายเดือนแบบ Celtic Cross เลือกไพ่ 10 ใบเพื่ออ่านภาพรวมเดือน ความท้าทาย โอกาส และบทสรุปของเดือน"
   lang="th"
@@ -11,33 +12,10 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
   bodyClass="tarot-page"
 >
   <main id="monthly-tarot">
-    <section class="tarot-hero">
-      <div>
-        <nav class="tarot-breadcrumb" aria-label="breadcrumb">
-          <a href="../../">หน้าแรก</a>
-          <span>/</span>
-          <span>ไพ่ยิปซีรายเดือน</span>
-        </nav>
-        <p class="section-kicker">Monthly Tarot</p>
-        <h1>อ่านไพ่ยิปซีรายเดือน</h1>
-        <p class="tarot-hero-copy">
-          ตั้งคำถามถึงภาพรวมของเดือนนี้ แล้วเลือกไพ่ 10 ใบเพื่ออ่านลำดับเรื่องราวแบบ Celtic Cross
-          ทั้งสิ่งท้าทาย โอกาส คนรอบข้าง และบทสรุปที่ควรใช้เป็นแนวทาง
-        </p>
-      </div>
+    <ToolsHero title="อ่านไพ่ยิปซีรายเดือน" kicker="Monthly Tarot" lead="เลือกไพ่ 10 ใบเพื่ออ่านภาพรวมเดือนแบบ Celtic Cross ทั้งสิ่งท้าทาย โอกาส และแนวทางที่ควรใส่ใจ" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ไพ่ยิปซีรายเดือน"}]} />
 
-      <aside class="tarot-ritual-panel" aria-label="ขั้นตอนการดูไพ่รายเดือน">
-        <ol>
-          <li><span>1</span>ตั้งใจถามภาพรวมเดือนนี้อย่างสงบ</li>
-          <li><span>2</span>สับไพ่หรือตัดไพ่เพื่อเปลี่ยนจังหวะพลังงาน</li>
-          <li><span>3</span>เลือกไพ่ 10 ใบตามความรู้สึกทีละใบ</li>
-          <li><span>4</span>กดเปิดคำทำนายเพื่ออ่าน spread รายเดือน</li>
-        </ol>
-      </aside>
-    </section>
-
-    <section class="tarot-oracle">
-      <aside class="tarot-intention">
+    <section class="tarot-oracle tools-workspace">
+      <aside class="tarot-intention tools-panel">
         <p class="section-kicker">ตั้งจิต</p>
         <h2>ก่อนเลือกไพ่</h2>
         <p>
@@ -45,10 +23,17 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
           ให้รับคำทำนายเป็นแผนที่สำหรับทบทวนและจัดลำดับชีวิตในเดือนนี้
         </p>
         <div class="tarot-warning">เลือกให้ครบ 10 ใบตามลำดับที่ใจสะดุด</div>
-      </aside>
+      <aside class="tarot-ritual-panel" aria-label="ขั้นตอนการดูไพ่รายเดือน">
+        <ol>
+          <li><span>1</span>ตั้งใจถามภาพรวมเดือนนี้อย่างสงบ</li>
+          <li><span>2</span>สับไพ่หรือตัดไพ่เพื่อเปลี่ยนจังหวะพลังงาน</li>
+          <li><span>3</span>เลือกไพ่ 10 ใบตามความรู้สึกทีละใบ</li>
+          <li><span>4</span>กดเปิดคำทำนายเพื่ออ่าน spread รายเดือน</li>
+        </ol>
+      </aside></aside>
 
       <form
-        class="tarot-deck-stage"
+        class="tarot-deck-stage tools-panel"
         data-tarot-spread-form
         data-spread-type="monthly"
         data-required-count="10"
@@ -75,7 +60,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
       </form>
     </section>
 
-    <section class="tarot-note">
+    <section class="tarot-note tools-section">
       <p class="section-kicker">แนวคิดของเรา</p>
       <h2>อ่านเดือนทั้งเดือนด้วยสติ ไม่ใช่เร่งคำตอบให้ชีวิต</h2>
       <p>
@@ -88,4 +73,4 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
   <script>
     import "../../../scripts/tarot-spread.js";
   </script>
-</BaseLayout>
+</ToolsLayout>

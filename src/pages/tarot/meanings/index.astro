@@ -1,5 +1,6 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ToolsLayout from "../../../layouts/ToolsLayout.astro";
+import ToolsHero from "../../../components/ToolsHero.astro";
 import { tarotMeaningCards, tarotMeaningGroups, getTarotMeaningGroupCards } from "../../../data/tarot-meanings.js";
 import { createItemListJsonLd } from "../../../lib/seo.js";
 
@@ -14,7 +15,7 @@ const structuredData = createItemListJsonLd({
 });
 ---
 
-<BaseLayout
+<ToolsLayout
   title="ความหมายไพ่ยิปซี 78 ใบ | มงคลเวลา"
   description="รวมความหมายไพ่ยิปซีทั้ง 78 ใบแบบไทย อ่านง่าย พร้อมภาพไพ่ Rider-Waite-Smith ต้นฉบับ ชื่อไพ่ Major Arcana และ Minor Arcana ครบทุกใบ"
   lang="th"
@@ -31,30 +32,15 @@ const structuredData = createItemListJsonLd({
   structuredData={structuredData}
 >
   <main id="tarot-meanings">
-    <section class="tarot-hero tarot-meanings-hero">
-      <div>
-        <nav class="tarot-breadcrumb" aria-label="breadcrumb">
-          <a href="../../">หน้าแรก</a>
-          <span>/</span>
-          <span>ความหมายไพ่ยิปซี 78 ใบ</span>
-        </nav>
-        <p class="section-kicker">Tarot Card Meanings</p>
-        <h1>ความหมายไพ่ยิปซี 78 ใบ</h1>
-        <p class="tarot-hero-copy">
-          เปิดดูหน้าไพ่ Rider-Waite-Smith ทั้งชุด พร้อมความหมายแบบไทยที่ใช้ได้กับชีวิตจริง
-          และเสริมมุม Western เฉพาะธาตุ ดาว ตัวเลข และ archetype เท่าที่ช่วยให้อ่านไพ่คมขึ้น
-        </p>
-      </div>
-
-      <aside class="tarot-ritual-panel" aria-label="แนวทางอ่านความหมายไพ่">
+    <ToolsHero title="ความหมายไพ่ยิปซี 78 ใบ" kicker="Tarot Card Meanings" lead="สำรวจภาพไพ่ Rider-Waite-Smith พร้อมความหมายตรงและกลับหัว ความรัก การงาน และมุมมองสำหรับทบทวนชีวิต" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ความหมายไพ่ยิปซี"}]} />
+<details class="tarot-meanings-guide"><summary>แนวทางอ่านความหมายไพ่</summary><aside class="tarot-ritual-panel" aria-label="แนวทางอ่านความหมายไพ่">
         <ol>
           <li><span>1</span>เริ่มจากภาพหน้าไพ่ก่อนจำคำแปล</li>
           <li><span>2</span>อ่านความหมายตรงและกลับหัวเป็นคู่กัน</li>
           <li><span>3</span>ดูบริบทคำถามก่อนสรุปผล</li>
           <li><span>4</span>ใช้คำทำนายเป็นแนวทาง ไม่ใช่คำสั่งตายตัว</li>
         </ol>
-      </aside>
-    </section>
+      </aside></details>
 
     <section class="tarot-meanings-index" aria-label="หมวดไพ่ยิปซี">
       {tarotMeaningGroups.map((group) => (
@@ -90,4 +76,4 @@ const structuredData = createItemListJsonLd({
       );
     })}
   </main>
-</BaseLayout>
+</ToolsLayout>

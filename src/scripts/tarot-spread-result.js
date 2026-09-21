@@ -258,7 +258,7 @@ function renderTopicResult(resultRoot, cards, spreadType) {
     </div>
     <div class="tarot-result-copy tarot-luck-result">
       <p class="section-kicker">${topic.kicker}</p>
-      <h1>${card.thName}</h1>
+      <h2>${card.thName}</h2>
       <p class="tarot-result-name">${card.name}</p>
       <div class="tarot-luck-verdict tarot-luck-verdict-${verdict.key}">
         <span>${topic.labels.verdict}</span>
@@ -338,7 +338,7 @@ function renderMonthlyResult(resultRoot, cards) {
   resultRoot.innerHTML = `
     <div class="tarot-result-copy tarot-spread-overview">
       <p class="section-kicker">Monthly Tarot</p>
-      <h1>คำทำนายไพ่ยิปซีรายเดือน</h1>
+      <h2>คำทำนายไพ่ยิปซีรายเดือน</h2>
       <p>
         อ่านไพ่ตามลำดับที่เลือกไว้ ไพ่แต่ละใบคือมุมมองหนึ่งของเดือนนี้
         ใช้ร่วมกับสติ ข้อมูลจริง และการตัดสินใจของตัวคุณเอง
@@ -401,7 +401,7 @@ function renderLuckResult(resultRoot, cards) {
     </div>
     <div class="tarot-result-copy tarot-luck-result">
       <p class="section-kicker">Luck Tarot</p>
-      <h1>${card.thName}</h1>
+      <h2>${card.thName}</h2>
       <p class="tarot-result-name">${card.name}</p>
       <div class="tarot-luck-verdict tarot-luck-verdict-${verdict.key}">
         <span>ผลโดยรวม</span>
@@ -458,7 +458,7 @@ function renderFallback(resultRoot, content) {
   resultRoot.innerHTML = `
     <div class="tarot-result-copy tarot-empty-result">
       <p class="section-kicker">${content.kicker}</p>
-      <h1>${content.title}</h1>
+      <h2>${content.title}</h2>
       <p>${content.copy}</p>
       <a class="primary-action" href="${content.href}">${content.label}</a>
     </div>

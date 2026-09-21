@@ -5,6 +5,7 @@ import { createPlannerStorage } from "./planner/storage.js";
 import { getThailandNow, formatClock, formatMinutes, formatMinutesRange, formatDistance, formatDistanceRange, normalize, escapeHtml, prefersReducedMotion } from "./planner/format.js";
 import { createLatestRequest } from "./request.js";
 import { loadPlannerCatalog, requestPlannerPlan } from "./planner/api.js";
+import { syncPublicSelects } from "./public-select.js";
 import { copy, observeDraft, freshness, responseIsCurrent, validatePlan, stageReplacement } from "./planner/workspace-state.js";
 
 const root = document.querySelector("[data-temple-planner]");
@@ -180,6 +181,7 @@ function syncArea(state, elements) {
     const values = raw.split("|").filter(Boolean).sort();
     return JSON.stringify(values) === JSON.stringify([...(type === "region" ? state.activeRegions : state.activeProvinces)].sort());
   })?.value || "";
+  syncPublicSelects(elements.area.closest("main"));
 }
 function syncDraft(state, elements, message = "") {
   state.originText = elements.originText.value;

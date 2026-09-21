@@ -1,0 +1,204 @@
+/* Shared tool frame. Domain controls, charts and state remain with their owners. */
+.tools-page {
+  --tool-paper: #fbf6eb;
+  --tool-surface: #fffdf7;
+  --tool-soft: #f7edd6;
+  --tool-gold-ink: #80551b;
+  --tool-line: rgba(77, 56, 41, .18);
+  --tool-shadow: 0 8px 24px rgba(39, 29, 20, .07);
+  --tool-title: 42px;
+  --tool-heading: 24px;
+  --tool-rail: 304px;
+  --tool-gap: 24px;
+  padding-bottom: 0;
+  background: var(--tool-paper);
+}
+
+.tools-page main {
+  --page-gutter: 24px;
+  --page-width: min(1220px, calc(100% - var(--page-gutter) * 2));
+  --page-title-size: var(--tool-title);
+  --section-title-size: var(--tool-heading);
+  --radius: 8px;
+  min-width: 0;
+  padding-bottom: 56px;
+  color: var(--ink);
+}
+
+.tools-page main :is(h1, h2, h3, p) { overflow-wrap: anywhere; letter-spacing: 0; }
+.tools-page main :is(h1, h2, h3) { line-height: 1.4; }
+.tools-page main h1 { font-size: var(--tool-title); }
+.tools-page main h2 { font-size: var(--tool-heading); }
+.tools-page main h3 { font-size: 18px; }
+.tools-page main .section-kicker { color: var(--tool-gold-ink); font-size: 13px; font-weight: 500; letter-spacing: 0; margin: 0 0 8px; }
+.tools-page main :is(p, dd) { line-height: 1.7; }
+.tools-page main :is(a, button, input, textarea):focus-visible { outline: 2px solid var(--jade); outline-offset: 4px; }
+.tools-page main [hidden] { display: none !important; }
+
+.tools-page .tools-hero {
+  width: 100%;
+  margin: 0 0 24px;
+  border-bottom: 1px solid var(--tool-line);
+}
+.tools-hero__inner {
+  position: relative;
+  isolation: isolate;
+  width: var(--page-width);
+  margin-inline: auto;
+  padding: 24px 0 30px;
+  display: grid;
+  grid-template-columns: minmax(0, 650px) minmax(0, 1fr);
+  column-gap: 40px;
+  overflow: hidden;
+}
+.tools-breadcrumb { grid-column: 1 / -1; display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 26px; font-size: 13px; color: var(--ink-soft); }
+.tools-breadcrumb a { color: var(--ink); text-decoration: none; }
+.tools-breadcrumb a:hover { text-decoration: underline; }
+.tools-hero__copy { position: relative; z-index: 1; min-width: 0; }
+.tools-hero h1 { margin: 0; font-weight: 750; text-wrap: balance; }
+.tools-hero__lead { max-width: 620px; margin: 12px 0 0; color: var(--ink-soft); font-size: 16px; }
+.tools-hero__quote { align-self: center; margin: 0 80px 0 0; color: var(--tool-gold-ink); font-size: 22px; line-height: 1.8; max-width: 260px; text-wrap: balance; }
+.tools-hero__ornament { position: absolute; z-index: -1; right: -55px; bottom: -90px; width: 220px; height: 330px; object-fit: contain; opacity: .28; pointer-events: none; }
+
+.tools-workspace {
+  display: grid;
+  width: var(--page-width);
+  margin: 0 auto;
+  grid-template-columns: var(--tool-rail) minmax(0, 1fr);
+  gap: var(--tool-gap);
+  align-items: start;
+  padding-bottom: 0;
+}
+.tools-page :is(.tools-panel, .tools-form) {
+  min-width: 0;
+  padding: 22px;
+  background: var(--tool-surface);
+  border: 1px solid var(--tool-line);
+  border-radius: 8px;
+  box-shadow: var(--tool-shadow);
+}
+.tools-page .tools-form { display: grid; gap: 16px; }
+.tools-form h2 { margin: 0; }
+.tools-form label { min-width: 0; display: grid; gap: 7px; color: var(--ink); font-size: 14px; font-weight: 500; }
+.tools-page .tools-form :is(input, select, textarea) { min-width: 0; width: 100%; min-height: 44px; padding: 9px 12px; background: #fffefa; color: var(--ink); border: 1px solid var(--tool-line); border-radius: 8px; font-size: 16px; }
+.tools-page .tools-form input[type="text"], .tools-page .tools-form textarea { text-align: start; }
+.tools-page .tools-form :is(.mw-select, select) { --ui-select-padding-end: 30px; --ui-select-chevron-size: 14px; --ui-select-chevron-inset: 8px; }
+.tools-page .tools-form .mw-select { font-size: 16px; }
+.tools-form .tools-form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.tools-page main :is(.primary-action, .tarot-read-button) { min-height: 48px; padding: 10px 18px; border-radius: 8px; background: var(--lacquer); color: #fffdf7; box-shadow: none; font-size: 16px; }
+.tools-page main :is(.primary-action, .tarot-read-button):hover:not(:disabled) { background: var(--lacquer-dark); }
+.tools-page main :is(.secondary-action, .tarot-control) { min-height: 44px; border-radius: 8px; box-shadow: none; }
+.tools-page main :is(.form-footnote, .thai-astro-form-note, .seamsi-form-note) { margin: 0; color: var(--ink-soft); font-size: 13px; line-height: 1.6; }
+
+.tools-page .tools-section {
+  width: var(--page-width);
+  margin: 36px auto 0;
+  padding: 28px 0 0;
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--tool-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+.tools-page .tools-section :is(h2, h3) { margin-top: 0; }
+.tools-page :is(.life-chart-card, .life-table-card) { box-shadow: none; border: 0; border-radius: 0; padding: 16px 0; }
+.tools-page .life-graph-output { min-height: 0; }
+.tools-page .life-graph-note { padding: 14px 0 0; color: var(--ink-soft); background: none; border: 0; border-top: 1px solid var(--tool-line); border-radius: 0; box-shadow: none; }
+.tools-page .life-graph-note :is(strong, p) { color: inherit; font-size: 14px; }
+.tools-page .life-graph-note p { margin: 6px 0 0; }
+.tools-page .life-reading-head h2 { font-size: 24px; }
+
+.tools-page .tarot-ritual-panel { color: var(--ink-soft); padding: 18px 0 0; margin: 18px 0 0; background: none; border-top: 1px solid var(--tool-line); border-radius: 0; box-shadow: none; font-size: 14px; }
+.tools-page .tarot-ritual-panel li { grid-template-columns: 26px 1fr; gap: 10px; }
+.tools-page .tarot-ritual-panel span { width: 26px; height: 26px; background: var(--tool-soft); color: var(--tool-gold-ink); }
+.tools-page .tarot-intention h2 { margin: 0 0 12px; }
+.tools-page .tarot-deck-head { align-items: start; flex-wrap: wrap; }
+.tools-page .tarot-deck-head h2 { font-size: 22px; }
+.tools-page .tarot-deck-stage { background: var(--tool-surface); }
+.tools-page .tarot-note { margin-bottom: 0; }
+.tools-page :is(.tarot-result-shell, .tarot-meaning-detail) { padding-top: 8px; padding-bottom: 0; gap: var(--tool-gap); grid-template-columns: var(--tool-rail) minmax(0, 1fr); }
+.tools-page .tarot-result-shell.tarot-spread-result { grid-template-columns: 1fr; }
+.tools-page .tarot-result-copy { min-width: 0; padding: 24px; background: var(--tool-surface); border: 1px solid var(--tool-line); border-radius: 8px; box-shadow: var(--tool-shadow); }
+.tools-page .tarot-result-copy h1 { font-size: 28px; }
+.tools-page :is(.tarot-reading-list div, .tarot-prayer) { padding: 16px 0; background: none; border: 0; border-top: 1px solid var(--tool-line); border-radius: 0; }
+.tools-page .tarot-spread-card { background: var(--tool-surface); border-radius: 8px; box-shadow: none; }
+.tools-page .tarot-meaning-detail { align-items: start; }
+.tools-page .tarot-meaning-card-large { background: var(--tool-surface); }
+.tools-page .tarot-meaning-copy h1 { font-size: 28px; }
+.tools-page .tarot-meaning-lead { font-size: 16px; margin-top: 0; }
+.tools-page .tarot-meanings-guide { width: var(--page-width); margin: 0 auto 24px; color: var(--ink-soft); }
+.tools-page .tarot-meanings-guide summary { padding: 12px 0; cursor: pointer; font-weight: 600; }
+.tools-page .tarot-meanings-guide .tarot-ritual-panel { padding-top: 0; margin-top: 0; border: 0; }
+.tools-page .tarot-meanings-index { gap: 8px; padding-bottom: 0; }
+.tools-page .tarot-meanings-index article { padding: 12px; background: var(--tool-surface); }
+.tools-page .tarot-meaning-section { padding: 28px 0; }
+
+.tools-page .seamsi-stage { grid-template-columns: minmax(0, 1fr) minmax(240px, 320px); min-height: 440px; background: var(--tool-surface); }
+.tools-page .seamsi-stage-copy, .tools-page .seamsi-stage-copy p { color: var(--ink-soft); }
+.tools-page .seamsi-stage-copy h2 { color: var(--ink); }
+.tools-page .seamsi-status, .tools-page .seamsi-tap-hint { color: var(--tool-gold-ink); }
+.tools-page .seamsi-result:empty { display: none; }
+.tools-page .seamsi-result { background: var(--tool-surface); box-shadow: var(--tool-shadow); }
+.tools-page .seamsi-prayer-card { background: var(--tool-soft); color: var(--ink); border: 1px solid var(--tool-line); box-shadow: none; }
+.tools-page .seamsi-prayer-card p { color: var(--ink-soft); font-size: 16px; font-weight: 400; }
+.tools-page .seamsi-result-head { background: var(--tool-soft); color: var(--lacquer); }
+.tools-page .seamsi-result-head :is(span, small) { color: var(--tool-gold-ink); }
+.tools-page .seamsi-reading-list > div { background: none; border: 0; border-top: 1px solid var(--tool-line); border-radius: 0; padding: 14px 0; }
+.tools-page .life-house-card { background: none; border: 0; border-top: 1px solid var(--tool-line); border-radius: 0; box-shadow: none; }
+.tools-page .palm-reference-intro { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; align-items: start; width: var(--page-width); margin: 0 auto 28px; }
+.tools-page .palm-hand-context { width: 100%; margin: 0; }
+.tools-page .palm-hand-context__head { grid-template-columns: 1fr; gap: 12px; }
+.tools-page .palm-hand-context__head h2 { font-size: 22px; }
+.tools-page .palm-hand-context__grid { grid-template-columns: 1fr; gap: 0; }
+.tools-page .palm-hand-context__grid article { padding: 14px 0; border: 0; border-top: 1px solid var(--tool-line); }
+.tools-page .palm-hand-context__grid span { display: none; }
+.tools-page .palm-diagram-card { box-shadow: none; }
+.tools-page .palm-lines-reference { background: none; box-shadow: none; padding: 0; border: 0; }
+.tools-page .plw-shell { background: var(--tool-surface); box-shadow: var(--tool-shadow); border-radius: 8px; }
+.tools-page .plw-title { font-size: 24px; }
+
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .tools-page { --tool-rail: 272px; --tool-gap: 20px; }
+}
+@media (max-width: 1023px) {
+  .tools-page { --tool-title: 36px; --tool-gap: 20px; }
+  .tools-workspace { grid-template-columns: 1fr; }
+  .tools-page .tools-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tools-form > :not(label):not(.tools-form-row) { grid-column: 1 / -1; }
+  .tools-page .tarot-intention { padding: 18px; }
+  .tools-page .tarot-intention .tarot-ritual-panel ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tools-hero__inner { grid-template-columns: minmax(0, 1fr); }
+  .tools-hero__copy { max-width: 720px; padding-right: 40px; }
+  .tools-hero__quote { font-size: 18px; max-width: none; margin: 12px 0 0; }
+  .tools-page .palm-reference-intro { grid-template-columns: minmax(0, 1fr) 280px; }
+}
+@media (max-width: 767px) {
+  .tools-page { --tool-title: 30px; --tool-heading: 22px; --tool-gap: 16px; }
+  .tools-page main { --page-gutter: 16px; padding-bottom: 32px; }
+  .tools-hero__inner { padding: 18px 0 24px; }
+  .tools-breadcrumb { margin-bottom: 18px; }
+  .tools-hero__copy { padding: 0; }
+  .tools-hero__lead { font-size: 15px; }
+  .tools-hero__ornament { width: 100px; right: -60px; opacity: .13; }
+  .tools-hero__quote { font-size: 16px; margin-right: 0; }
+  .tools-page .tools-form { grid-template-columns: 1fr; }
+  .tools-page :is(.tools-panel, .tools-form) { padding: 18px; }
+  .tools-page .tools-section { margin-top: 28px; padding-top: 24px; }
+  .tools-page :is(.tarot-result-shell, .tarot-meaning-detail) { grid-template-columns: 1fr; }
+  .tools-page .tarot-result-card-wrap, .tools-page .tarot-meaning-card-large { position: static; width: min(240px, 100%); margin: 0 auto; }
+  .tools-page .tarot-result-copy { padding: 18px; }
+  .tools-page .tarot-result-copy h1 { font-size: 24px; }
+  .tools-page .tarot-intention .tarot-ritual-panel ol { grid-template-columns: 1fr; }
+  .tools-page .tarot-meanings-index { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tools-page .tarot-meaning-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 12px; }
+  .tools-page .seamsi-stage { grid-template-columns: 1fr; min-height: 0; }
+  .tools-page .seamsi-oracle { min-height: 365px; }
+  .tools-page .palm-reference-intro { grid-template-columns: 1fr; }
+  .tools-page .palm-diagram-card { width: min(340px, 100%); margin: 0 auto; }
+  .tools-page .palm-lines-reference { padding: 0; }
+}
+@media (max-width: 359px) {
+  .tools-page { --tool-title: 26px; --tool-heading: 20px; }
+  .tools-page main { --page-gutter: 12px; }
+  .tools-page :is(.tools-panel, .tools-form) { padding: 14px; }
+}

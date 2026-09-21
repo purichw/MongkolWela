@@ -1,5 +1,6 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ToolsLayout from "../../../layouts/ToolsLayout.astro";
+import ToolsHero from "../../../components/ToolsHero.astro";
 import { tarotMeaningCards, tarotMeaningGroups } from "../../../data/tarot-meanings.js";
 
 export function getStaticPaths() {
@@ -24,7 +25,7 @@ const relatedCards = (card.relatedCards || []).map((relatedCard) => {
 });
 ---
 
-<BaseLayout
+<ToolsLayout
   title={`${card.thName} ${card.name} ความหมายไพ่ยิปซี | มงคลเวลา`}
   description={`ความหมายไพ่ยิปซี ${card.thName} (${card.name}) แบบไทย พร้อมความหมายตรง กลับหัว ความรัก งานเงิน และมุม Western สำหรับอ่านไพ่ให้เข้าใจง่าย`}
   lang="th"
@@ -41,6 +42,7 @@ const relatedCards = (card.relatedCards || []).map((relatedCard) => {
   ]}
 >
   <main>
+<ToolsHero title={card.thName} kicker={group?.title || "Tarot Meaning"} lead={card.name} breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ความหมายไพ่ยิปซี",href:"/tarot/meanings/"},{label:card.thName}]} />
     <section class="tarot-meaning-detail">
       <div class="tarot-meaning-card-large">
         <img src={card.image} alt={`${card.thName} ${card.name}`} loading="eager" decoding="async" fetchpriority="high" />
@@ -49,16 +51,6 @@ const relatedCards = (card.relatedCards || []).map((relatedCard) => {
       </div>
 
       <article class="tarot-meaning-copy">
-        <nav class="tarot-breadcrumb" aria-label="breadcrumb">
-          <a href="../../../">หน้าแรก</a>
-          <span>/</span>
-          <a href="../">ความหมายไพ่ยิปซี</a>
-          <span>/</span>
-          <span>{card.thName}</span>
-        </nav>
-        <p class="section-kicker">{group?.title || "Tarot Meaning"}</p>
-        <h1>{card.thName}</h1>
-        <p class="tarot-result-name">{card.name}</p>
         <p class="tarot-meaning-lead">{card.overview}</p>
 
         <div class="tarot-meaning-tags">
@@ -163,4 +155,4 @@ const relatedCards = (card.relatedCards || []).map((relatedCard) => {
       </article>
     </section>
   </main>
-</BaseLayout>
+</ToolsLayout>

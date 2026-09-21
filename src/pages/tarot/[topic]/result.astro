@@ -1,5 +1,6 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ToolsLayout from "../../../layouts/ToolsLayout.astro";
+import ToolsHero from "../../../components/ToolsHero.astro";
 import { tarotIntentTopics } from "../../../data/tarot-topic-pages.js";
 
 export function getStaticPaths() {
@@ -12,7 +13,7 @@ export function getStaticPaths() {
 const { topic } = Astro.props;
 ---
 
-<BaseLayout
+<ToolsLayout
   title={topic.resultTitle}
   description={topic.resultDescription}
   lang="th"
@@ -28,6 +29,7 @@ const { topic } = Astro.props;
   ]}
 >
   <main>
+<ToolsHero title={topic.resultTitle.replace(" | มงคลเวลา","")} kicker="Tarot Reading" lead="อ่านคำทำนายเป็นแนวทางประกอบการตัดสินใจ ไม่ใช่การรับรองผลลัพธ์ล่วงหน้า" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:topic.breadcrumb,href:"/tarot/"+topic.slug+"/"},{label:"ผลคำทำนาย"}]} />
     <section
       class="tarot-result-shell"
       data-tarot-spread-result
@@ -36,12 +38,12 @@ const { topic } = Astro.props;
     >
       <div class="tarot-result-copy">
         <p class="section-kicker">{topic.kicker}</p>
-        <h1>กำลังเปิดคำทำนาย</h1>
+        <h2>กำลังเปิดคำทำนาย</h2>
         <p>โปรดรอสักครู่...</p>
       </div>
     </section>
 
-    <section class="tarot-related">
+    <section class="tarot-related tools-section">
       <p class="section-kicker">หลังอ่านคำทำนาย</p>
       <h2>{topic.relatedTitle}</h2>
       <p>{topic.relatedCopy}</p>
@@ -51,4 +53,4 @@ const { topic } = Astro.props;
   <script>
     import "../../../scripts/tarot-spread-result.js";
   </script>
-</BaseLayout>
+</ToolsLayout>

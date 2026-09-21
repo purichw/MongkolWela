@@ -1,5 +1,6 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ToolsLayout from "../../../layouts/ToolsLayout.astro";
+import ToolsHero from "../../../components/ToolsHero.astro";
 import { tarotIntentTopics } from "../../../data/tarot-topic-pages.js";
 
 export function getStaticPaths() {
@@ -12,7 +13,7 @@ export function getStaticPaths() {
 const { topic } = Astro.props;
 ---
 
-<BaseLayout
+<ToolsLayout
   title={topic.title}
   description={topic.description}
   lang="th"
@@ -26,37 +27,24 @@ const { topic } = Astro.props;
   ]}
 >
   <main id={`${topic.slug}-tarot`}>
-    <section class="tarot-hero">
-      <div>
-        <nav class="tarot-breadcrumb" aria-label="breadcrumb">
-          <a href="../../">หน้าแรก</a>
-          <span>/</span>
-          <span>{topic.breadcrumb}</span>
-        </nav>
-        <p class="section-kicker">{topic.kicker}</p>
-        <h1>{topic.heading}</h1>
-        <p class="tarot-hero-copy">{topic.lead}</p>
-      </div>
+    <ToolsHero title={topic.heading} kicker={topic.kicker} lead={topic.lead} breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:topic.breadcrumb}]} />
 
+    <section class="tarot-oracle tools-workspace">
+      <aside class="tarot-intention tools-panel">
+        <p class="section-kicker">ตั้งจิต</p>
+        <h2>{topic.intentionTitle}</h2>
+        <p>{topic.intentionCopy}</p>
+        <div class="tarot-warning">{topic.warning}</div>
       <aside class="tarot-ritual-panel" aria-label={`ขั้นตอน${topic.breadcrumb}`}>
         <ol>
           {topic.steps.map((step, index) => (
             <li><span>{index + 1}</span>{step}</li>
           ))}
         </ol>
-      </aside>
-    </section>
-
-    <section class="tarot-oracle">
-      <aside class="tarot-intention">
-        <p class="section-kicker">ตั้งจิต</p>
-        <h2>{topic.intentionTitle}</h2>
-        <p>{topic.intentionCopy}</p>
-        <div class="tarot-warning">{topic.warning}</div>
-      </aside>
+      </aside></aside>
 
       <form
-        class="tarot-deck-stage"
+        class="tarot-deck-stage tools-panel"
         data-tarot-spread-form
         data-spread-type={topic.spreadType}
         data-required-count="1"
@@ -83,7 +71,7 @@ const { topic } = Astro.props;
       </form>
     </section>
 
-    <section class="tarot-note">
+    <section class="tarot-note tools-section">
       <p class="section-kicker">แนวคิดของเรา</p>
       <h2>{topic.noteTitle}</h2>
       <p>{topic.noteCopy}</p>
@@ -93,4 +81,4 @@ const { topic } = Astro.props;
   <script>
     import "../../../scripts/tarot-spread.js";
   </script>
-</BaseLayout>
+</ToolsLayout>
