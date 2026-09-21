@@ -78,6 +78,21 @@ document, publish only the new group and page entries against the latest Admin
 content; do not replace the document with a bundled seed. An intentional
 published removal or disabled entry must remain authoritative.
 
+## Admin Analytics
+
+The Admin retains chart/card layouts for empty, insufficient and unavailable
+data. Values come from the analytics API, never design-preview metrics.
+Supabase reads aggregate the existing event table over 90 days, capped at the
+latest 10,000 events with explicit coverage metadata. Daily counts use Bangkok
+dates. Referrers show hostnames; a missing referrer does not prove direct traffic.
+Unique/returning users remain unavailable without usable identity/session data.
+No additional visitor tracking or database migration is introduced.
+
+Configured-source errors return 503 rather than falling back to local analytics.
+Local unconfigured development can still read its existing event store. See
+[Admin Design Adaptation](docs/admin-design-adaptation.md) for the data-source
+map, preserved workflows and focused verification.
+
 ## Admin Media
 
 Home Banner uses the five existing `home-hero-image-1` through

@@ -1,6 +1,7 @@
 ---
 import { brandAssets, siteConfig } from "../../config/site.js";
 import { stylesForPath } from "../../config/styles.js";
+import adminDesign from "../../styles/admin-design.css?url";
 const config = siteConfig.th;
 ---
 
@@ -20,8 +21,9 @@ const config = siteConfig.th;
     <link rel="icon" type={brandAssets.favicon.type} sizes={brandAssets.favicon.sizes} href={brandAssets.favicon.src} />
     <link rel="apple-touch-icon" sizes={brandAssets.appleTouchIcon.sizes} href={brandAssets.appleTouchIcon.src} />
     {stylesForPath("/admin/").map((src) => <link rel="stylesheet" href={src} />)}
+    <link rel="stylesheet" href={adminDesign} />
   </head>
-  <body class="admin-page">
+  <body class="admin-page admin-design">
     <div
       id="adminApp"
       data-admin-app

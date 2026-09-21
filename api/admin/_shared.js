@@ -246,7 +246,9 @@ export async function publishLiveContent(content, actor = "admin") {
 export async function readLiveAnalytics() {
   const databaseSummary = await readDatabaseAnalyticsSummary();
   if (databaseSummary) return databaseSummary;
-
+  if (hasReadableDatabase() || isProductionRuntime()) {
+    throw Object.assign(new Error("ยังไม่ได้เชื่อมแหล่งข้อมูลสถิติ"), { statusCode: 503 });
+  }
   return readAnalyticsStore();
 }
 

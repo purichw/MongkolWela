@@ -1,3 +1,6 @@
+import { adminIcon } from "./design.js";
+import { mediaProviderStatus } from "./data.js";
+
 export function createTempleEditor({ state, rememberTempleListScroll, setTitle, setTopActions, escapeHtml, $, TEMPLE_COLLECTIONS, empty, restoreTempleListScroll, collectionTemples, TEMPLE_IMAGE_FIELDS }) {
 function templeRecords() {
   state.content.temples ||= {};
@@ -76,9 +79,9 @@ function renderTemples({ rememberScroll = true } = {}) {
     <div class="mw-admin-table-card">
       <div class="mw-admin-temple-table" role="table" aria-label="วัดและสถานที่">
         <div class="mw-admin-temple-table-head" role="row">
-          <span>ชื่อสถานที่</span><span>พื้นที่</span><span>ประเภท</span><span>สถานะ</span><span>จัดการ</span>
+          <span>ชื่อสถานที่</span><span>พื้นที่</span><span>ประเภท</span><span>ที่มาข้อมูล</span><span>จัดการ</span>
         </div>
-        ${visible.map((item) => renderTempleTableRow(item)).join("") || empty("ไม่พบสถานที่")}
+        ${visible.map((item) => renderTempleTableRow(item)).join("") || (state.templeLoadError ? `${empty("ยังไม่สามารถโหลดรายการสถานที่ได้")}<button class="mw-admin-btn" type="button" data-action="refresh-admin-data">โหลดข้อมูลอีกครั้ง</button>` : empty("ไม่พบสถานที่"))}
       </div>
     </div>
     ${state.templeEditorOpen && record ? renderTempleDrawer(record, edit) : ""}`;
@@ -88,18 +91,18 @@ function renderTemples({ rememberScroll = true } = {}) {
 function renderTempleTableRow(record) {
   const image = templeImageValue(record, templeRecords()[record.key], "card", "desktop");
   const confidence = templeConfidence(record);
-  const status = record.source === "admin" ? "ฉบับร่าง" : "เผยแพร่";
+  const status = record.source === "admin" ? "เพิ่มผ่าน CMS" : "ฐานข้อมูลวัด";
   return `<div class="mw-admin-temple-table-row" role="row" data-temple-row="${escapeHtml(record.key)}">
     <div class="mw-admin-temple-name-cell">
       <span class="mw-admin-table-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" data-admin-temple-image>` : "<i>ไม่มีรูป</i>"}</span>
       <div><strong data-temple-table-title>${escapeHtml(record.temple.name || "ยังไม่มีชื่อ")}</strong><small><i style="--dot:${escapeHtml(confidence.color)}"></i>${escapeHtml(confidence.label)}</small></div>
     </div>
     <div><strong>${escapeHtml(record.temple.region || "ไม่ระบุภูมิภาค")}</strong><small>${escapeHtml([record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง")}</small></div>
-    <div>${escapeHtml(record.temple.placeType || "พระอารามหลวง")}</div>
+    <div>${escapeHtml(record.temple.placeType || "ยังไม่ระบุ")}</div>
     <div><mark class="${record.source === "admin" ? "is-draft" : ""}"><i></i>${escapeHtml(status)}</mark></div>
     <div class="mw-admin-table-actions">
-      <button class="mw-admin-btn mw-admin-btn-icon" type="button" data-edit-temple="${escapeHtml(record.key)}" aria-label="แก้ไข ${escapeHtml(record.temple.name || "สถานที่")}">✎</button>
-      <button class="mw-admin-btn mw-admin-btn-icon mw-admin-btn-danger" type="button" data-action="delete-temple" data-delete-temple-key="${escapeHtml(record.key)}" aria-label="ลบ ${escapeHtml(record.temple.name || "สถานที่")}">▧</button>
+      <button class="mw-admin-btn mw-admin-btn-icon" type="button" data-edit-temple="${escapeHtml(record.key)}" title="แก้ไข" aria-label="แก้ไข ${escapeHtml(record.temple.name || "สถานที่")}">${adminIcon("pencil-line")}</button>
+      <button class="mw-admin-btn mw-admin-btn-icon mw-admin-btn-danger" type="button" data-action="delete-temple" data-delete-temple-key="${escapeHtml(record.key)}" title="ลบ" aria-label="ลบ ${escapeHtml(record.temple.name || "สถานที่")}">${adminIcon("trash")}</button>
     </div>
   </div>`;
 }
@@ -116,7 +119,7 @@ function renderTempleDrawer(record, edit) {
     <aside class="mw-admin-drawer" role="dialog" aria-modal="true" aria-labelledby="templeDrawerTitle">
       <header>
         <div><p>แก้ไขรายการ</p><h2 id="templeDrawerTitle">ข้อมูลวัด/สถานที่</h2></div>
-        <button type="button" data-action="close-temple-editor" aria-label="ปิด">×</button>
+        <button type="button" data-action="close-temple-editor" aria-label="ปิด" title="ปิด">${adminIcon("x")}</button>
       </header>
       <div class="mw-admin-drawer-body">${renderTempleEditor(record, edit)}</div>
       <footer>
@@ -143,7 +146,7 @@ function renderTempleListItem(record) {
     <button type="button" class="mw-admin-temple-list-select" data-select-temple="${escapeHtml(record.key)}">
       <span class="mw-admin-temple-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" data-admin-temple-image>` : "<i>ไม่มีรูป</i>"}</span>
       <span><strong data-temple-list-title>#${escapeHtml(record.temple.rank || "-")} ${escapeHtml(record.temple.name || "ยังไม่มีชื่อ")}</strong><small>${escapeHtml([record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง")}</small></span>
-      ${record.source === "admin" ? '<b>ใหม่</b>' : ""}
+      ${record.source === "admin" ? '<b>CMS</b>' : ""}
     </button>
     <button type="button" class="mw-admin-temple-drag-handle" draggable="${reorderDisabled ? "false" : "true"}" data-temple-drag-key="${escapeHtml(record.key)}" aria-label="จัดลำดับ ${escapeHtml(record.temple.name || "สถานที่")}" title="${reorderDisabled ? "ล้างคำค้นหาเพื่อจัดลำดับ" : "ลากเพื่อจัดลำดับ ใช้ปุ่มลูกศรขึ้นลงบนคีย์บอร์ดได้"}" ${reorderDisabled ? "disabled" : ""}>⋮⋮</button>
   </div>`;
@@ -158,9 +161,7 @@ function renderTempleEmptyState() {
 }
 
 function renderTempleEditor(record, edit) {
-  const provider = state.media.provider
-    ? "พร้อมอัปโหลดรูปเข้าระบบ"
-    : "ยังไม่ได้ตั้งค่าระบบอัปโหลดรูป";
+  const provider = mediaProviderStatus(state.media, state.mediaLoadError);
   const templeLocation = [record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง";
   const confidence = templeConfidence(record);
   return `<div class="mw-admin-temple-editor-head">
@@ -182,7 +183,8 @@ function renderTempleEditor(record, edit) {
       <label>ชื่อสถานที่<input data-temple-field="name" value="${escapeHtml(templeValue(record, edit, "name"))}" required></label>
       <label>ภูมิภาค<input data-temple-field="region" value="${escapeHtml(templeValue(record, edit, "region"))}" placeholder="ภาคกลาง"></label>
       <label>จังหวัด / เขต<input data-temple-field="province" value="${escapeHtml(templeValue(record, edit, "province"))}" placeholder="กรุงเทพฯ / บางกอกน้อย"></label>
-      <label>ประเภท<input data-temple-field="placeType" value="${escapeHtml(templeValue(record, edit, "placeType") || "พระอารามหลวง")}"></label>
+      <label>ประเภท<input data-temple-field="placeType" value="${escapeHtml(templeValue(record, edit, "placeType"))}" placeholder="ยังไม่ระบุ"></label>
+      <label class="mw-admin-form-grid--span">รูปแบบการเดินทาง<input data-temple-field="travelModes" value="${escapeHtml(templeValue(record, edit, "travelModes"))}" placeholder="คั่นแต่ละรูปแบบด้วย ;"></label>
       <label>พิกัด LAT<input type="number" step="0.0001" data-temple-field="latitude" value="${escapeHtml(templeValue(record, edit, "latitude"))}"></label>
       <label>พิกัด LNG<input type="number" step="0.0001" data-temple-field="longitude" value="${escapeHtml(templeValue(record, edit, "longitude"))}"></label>
       <label class="mw-admin-form-grid--span">พรที่นิยมขอ<input data-temple-field="blessings" value="${escapeHtml(templeValue(record, edit, "blessings"))}" placeholder="เมตตามหานิยม, ชื่อเสียง"></label>
@@ -242,12 +244,14 @@ function renderTempleImageField(record, edit, field, viewport, label) {
 }
 
 function templeImageValue(record, edit, role, viewport) {
+  const url = value => typeof value === "string" ? value : value?.url;
   return (
-    edit?.images?.[role]?.[viewport]?.url ??
-    record?.temple?.images?.[role]?.[viewport]?.url ??
+    url(edit?.images?.[role]?.[viewport]) ??
+    url(record?.temple?.images?.[role]?.[viewport]) ??
     (viewport === "mobile"
-      ? edit?.images?.[role]?.desktop?.url ?? record?.temple?.images?.[role]?.desktop?.url
-      : "") ??
+      ? url(edit?.images?.[role]?.desktop) ?? url(record?.temple?.images?.[role]?.desktop)
+      : undefined) ??
+    edit?.fields?.imageUrl ??
     record?.temple?.imageUrl ??
     ""
   );

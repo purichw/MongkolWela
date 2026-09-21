@@ -19,6 +19,15 @@ function init(root) {
   try { secret = sessionStorage.getItem("mw-commerce-access") || `${crypto.randomUUID()}${crypto.randomUUID()}`; sessionStorage.setItem("mw-commerce-access", secret); } catch { secret = `${crypto.randomUUID()}${crypto.randomUUID()}`; }
   let requestId = crypto.randomUUID();
   const notice = text => { message.textContent = text; };
+  function setAvailability(state) {
+    if (mode !== "shop" || !root.querySelector("[data-shop-unavailable]")) return;
+    root.dataset.commerceState = state;
+    const disabled = state === "disabled";
+    root.querySelectorAll("[data-shop-unavailable]").forEach(el => { el.hidden = !disabled; });
+    root.querySelector("[data-commerce-operational]").hidden = disabled;
+    content.hidden = disabled;
+    content.setAttribute("aria-busy", "false");
+  }
   function saveCart() { try { localStorage.setItem("mw-commerce-cart", JSON.stringify(cart)); } catch { notice("ตะกร้าจะอยู่เฉพาะหน้านี้ เนื่องจากเบราว์เซอร์ไม่อนุญาตให้บันทึก"); } document.querySelectorAll("[data-cart-count]").forEach(el => { el.textContent = String(cart.reduce((n, l) => n + l.quantity, 0)); }); }
   const filters = () => `<div class="commerce-filters"><label>ค้นหา<input type="search" data-search value="${e(search)}" placeholder="ชื่อสินค้า งานบุญ หรือวัด" /></label><label>ผู้จำหน่าย / ผู้จัด<select data-seller><option value="">ทั้งหมด</option>${catalog.organizations.map(o => `<option value="${e(o.id)}" ${sellerFilter === o.id ? "selected" : ""}>${e(o.name)}</option>`).join("")}</select></label></div><div data-catalog-list></div>`;
   function renderList() {
@@ -101,9 +110,25 @@ function init(root) {
     receipt.record = result.record; renderReceipt();
   }
   async function load(silent = false) {
-    if (busy || (silent && content.querySelector("form[data-request]"))) return;
-    try { catalog = await commerceApi(); if (receipt) await refreshReceipt(); else render(); if (!silent) notice(""); }
-    catch (error) { notice(error.message); if (!catalog || receipt) content.innerHTML = '<button class="commerce-button secondary" data-retry>ลองใหม่</button>'; }
+    if (busy || (silent && !content.hidden && content.querySelector("form[data-request]"))) return;
+    try {
+      catalog = await commerceApi();
+      const recovering = ["disabled", "error"].includes(root.dataset.commerceState);
+      setAvailability("ready");
+      if (receipt) await refreshReceipt(); else render();
+      if (!silent || recovering) notice("");
+    } catch (error) {
+      // A closed service is not a network failure or an empty catalog.
+      if (mode === "shop" && error.code === "COMMERCE_DISABLED" && root.querySelector("[data-shop-unavailable]")) {
+        setAvailability("disabled");
+        notice("");
+        return;
+      }
+      setAvailability("error");
+      content.setAttribute("aria-busy", "false");
+      notice(error.message);
+      if (!catalog || receipt) content.innerHTML = '<button class="commerce-button secondary" data-retry>ลองใหม่</button>';
+    }
   }
   content.addEventListener("input", event => {
     if (event.target.matches("[data-search]")) { search = event.target.value; renderList(); }

@@ -1,0 +1,13 @@
+Shop availability artwork, created 2026-09-21 with OpenAI image generation.
+Direction: user-supplied Mongkol Wela shop desktop/mobile mockup.
+
+shop-closed-kiosk.webp
+Original: exec-3c23336a-50d3-4d74-8dd1-1b871bc8aba6.png
+Transparent illustrated wooden kiosk. Generated brand artwork, not a real seller or product.
+
+shop-temple-frieze.webp
+Original: exec-24b1540c-9d72-4532-92ce-67c57bcd670b.png
+Transparent botanical/temple ornament. Decorative, not a real place.
+
+Both originals remain in the Codex generated_images output directory.
+Web copies are alpha-preserving WebP, with transparent outer padding trimmed.

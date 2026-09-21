@@ -3,14 +3,20 @@ import { createActivityEditor } from "./admin/activities.js";
 import { createAdminMedia } from "./admin/media.js";
 import { createTempleEditor } from "./admin/editor.js";
 import { requestJson } from "./request.js";
+import { adminIcon, createAdminDesign } from "./admin/design.js";
+import { collectAdminMedia, catalogTaxonomy, mediaProviderStatus } from "./admin/data.js";
 const state = {
   content: null,
   selectedPageId: "home",
   section: "dashboard",
   sidebarCollapsed: readStoredFlag("mongkolwela.admin.sidebarCollapsed"),
+  mobileNavOpen: false,
   dirty: false,
   session: null,
   analytics: null,
+  templeLoadError: false,
+  mediaLoadError: false,
+  mediaPage: 1,
   templeCatalog: [],
   selectedTempleKey: "",
   templeCollectionFilter: "popular",
@@ -103,7 +109,7 @@ function adminLogoMarkup() {
   const brand = adminBrand();
   return `<a class="mw-admin-logo" href="/admin/" aria-label="${escapeHtml(brand.label)}">
     ${adminLogoImageMarkup()}
-    <div><strong>${escapeHtml(brand.name)}</strong><small>${escapeHtml(brand.subtitle)}</small></div>
+    <div><strong>${escapeHtml(brand.name)}</strong><small>MONGKOL WELA</small><small>${escapeHtml(brand.subtitle)}</small></div>
   </a>`;
 }
 
@@ -163,21 +169,7 @@ function byOrder(items) {
 }
 
 function icon(name) {
-  const icons = {
-    dashboard: "◈",
-    page: "⌂",
-    nav: "≣",
-    section: "⛩",
-    component: "⌁",
-    chart: "▦",
-    dates: "✦",
-    media: "▤",
-    users: "☺",
-    settings: "⚙",
-    alert: "!",
-    publish: "✓",
-  };
-  return icons[name] || "•";
+  return adminIcon(name);
 }
 
 async function boot() {
@@ -201,25 +193,19 @@ async function boot() {
 
 function renderAppShell() {
   $("#adminApp").innerHTML = `<div class="mw-admin-shell">
-    <aside class="mw-admin-sidebar">
+    <aside class="mw-admin-sidebar" id="adminSidebar" aria-label="เมนูระบบจัดการ">
       <header class="mw-admin-header">
         ${adminLogoMarkup()}
+        <button class="mw-admin-icon-button mw-admin-sidebar-close" type="button" data-action="toggle-sidebar" aria-label="ปิดเมนู">${icon("x")}</button>
       </header>
       <nav class="mw-admin-nav" id="adminNav" aria-label="Admin navigation"></nav>
       <div class="mw-admin-sidebar-foot">
-        <button class="mw-admin-btn mw-admin-btn-preview" type="button" data-action="preview">↗ เปิดหน้าเว็บผู้ใช้</button>
-        <div class="mw-admin-profile">
-          <span>ก</span>
-          <div><strong>${escapeHtml(state.session?.email || state.session?.actor || "ผู้ดูแลระบบ")}</strong><small>ผู้ดูแลระบบ</small></div>
-        </div>
-        <button class="mw-admin-btn" type="button" data-action="logout">ออกจากระบบ</button>
-        <div class="mw-admin-header-actions">
-          <span id="adminStatus" class="mw-admin-status">พร้อมใช้งาน</span>
-          <button class="mw-admin-btn" type="button" data-action="save-draft">บันทึกฉบับร่าง</button>
-          <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="publish">${icon("publish")} เผยแพร่</button>
-        </div>
+        <button class="mw-admin-btn mw-admin-btn-preview" type="button" data-action="preview" title="เปิดหน้าเว็บไซต์">${icon("external-link")}<span><strong>เปิดหน้าเว็บไซต์</strong><small>ไปยังเว็บไซต์มงคลเวลา</small></span>${icon("arrow-right")}</button>
+        <div class="mw-admin-sidebar-art" aria-hidden="true"></div>
+        <p class="mw-admin-sidebar-motto">สืบสานศรัทธา<br>เชื่อมผู้คน สู่สิ่งดีงาม</p>
       </div>
     </aside>
+    <button type="button" class="mw-admin-nav-backdrop" data-action="toggle-sidebar" aria-label="ปิดเมนู" hidden></button>
     <div id="adminPublishProgress" class="mw-admin-publish-progress" role="status" aria-live="polite" hidden>
       <div class="mw-admin-publish-progress-head">
         <strong data-publish-progress-title>กำลัง publish</strong>
@@ -229,10 +215,26 @@ function renderAppShell() {
       <p data-publish-progress-detail>กำลังเตรียมข้อมูล</p>
     </div>
     <main class="mw-admin-main">
+      <div class="mw-admin-commandbar">
+        <button class="mw-admin-icon-button mw-admin-nav-toggle" type="button" data-action="toggle-sidebar" aria-controls="adminSidebar" aria-expanded="true" aria-label="พับเมนู" title="พับเมนู">${icon("menu")}</button>
+        <div class="mw-admin-global-search">
+          ${icon("search")}<input id="adminGlobalSearch" type="search" placeholder="ค้นหาวัด สถานที่ หรือหน้าเว็บ..." aria-label="ค้นหาในระบบจัดการ" aria-controls="adminSearchResults" autocomplete="off">
+          <div id="adminSearchResults" class="mw-admin-search-results" role="region" aria-label="ผลการค้นหา" hidden></div>
+        </div>
+        <details class="mw-admin-account"><summary aria-label="บัญชีผู้ดูแล"><span class="mw-admin-profile"><span>A</span><span><strong>${escapeHtml(state.session?.email || state.session?.actor || "ผู้ดูแลระบบ")}</strong><small>ผู้ดูแลระบบ</small></span></span>${icon("chevron-down")}</summary><div><button type="button" class="mw-admin-btn" data-action="logout">${icon("log-out")}ออกจากระบบ</button></div></details>
+      </div>
+      <div class="mw-admin-breadcrumb"><span>มงคลเวลา</span>${icon("chevron-right")}<span id="adminKicker">ภาพรวม</span></div>
       <header class="mw-admin-top">
-        <div><p id="adminKicker">ภาพรวมระบบ</p><h1 id="adminTitle">แดชบอร์ด</h1></div>
-        <div id="adminTopActions" class="mw-admin-top-actions"></div>
+        <div><h1 id="adminTitle">ภาพรวมระบบ</h1><p id="adminDescription"></p></div>
+        <div class="mw-admin-header-actions">
+          <span id="adminStatus" class="mw-admin-status" role="status" aria-live="polite">กำลังโหลด</span>
+          <button class="mw-admin-btn" type="button" data-action="save-draft">${icon("save")}บันทึกฉบับร่าง</button>
+          <button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="publish">${icon("publish")}เผยแพร่</button>
+        </div>
       </header>
+      <div class="mw-admin-section-tools">
+        <div id="adminTopActions" class="mw-admin-top-actions"></div>
+      </div>
       <section id="adminContent" class="mw-admin-content"></section>
     </main>
     <div id="adminConfirmDialog" class="mw-admin-confirm" data-confirm-overlay hidden>
@@ -247,6 +249,9 @@ function renderAppShell() {
       </section>
     </div>
   </div>`;
+  syncSidebarState();
+  if ($("#adminApp").dataset.eventsBound) return;
+  $("#adminApp").dataset.eventsBound = "true";
   $("#adminApp").addEventListener("click", handleGlobalClick);
   $("#adminApp").addEventListener("input", handleInput);
   $("#adminApp").addEventListener("change", handleInput);
@@ -259,25 +264,27 @@ function renderAppShell() {
 }
 
 function navButton(id, label, iconName, count = "", legacyLabel = "") {
-  return `<button type="button" class="${state.section === id ? "is-active" : ""}" data-section="${id}">
+  return `<button type="button" class="${state.section === id ? "is-active" : ""}" data-section="${id}" title="${escapeHtml(label)}" ${state.section === id ? 'aria-current="page"' : ""}>
     <span>${icon(iconName)}</span><strong>${escapeHtml(label)}${legacyLabel ? `<em>${escapeHtml(legacyLabel)}</em>` : ""}</strong>${count !== "" ? `<b>${escapeHtml(count)}</b>` : ""}
   </button>`;
 }
 
 function renderSideNav() {
-  const summary = state.content ? dashboardSummary(state.content) : null;
-  const templeCount = state.templeCatalog.length || summary?.temples || "";
+  const templeCount = state.secondaryReady && !state.templeLoadError ? state.templeCatalog.length : "";
   $("#adminNav").innerHTML = [
     navButton("dashboard", "ภาพรวม", "dashboard"),
-    navButton("analytics", "สถิติการใช้งาน", "chart", "", "สถิติ"),
-    navButton("pages", "หน้าแรก", "page", "", "หน้าและเนื้อหา"),
-    navButton("navigation", "เมนูนำทาง", "nav", "", "เมนูเว็บไซต์"),
+    '<p class="mw-admin-nav-group">จัดการข้อมูล</p>',
     navButton("temples", "วัดและสถานที่", "component", templeCount, "สถานที่ศักดิ์สิทธิ์"),
     navButton("collections", "เส้นทาง / คอลเลกชัน", "section", TEMPLE_COLLECTIONS.length),
     navButton("dates", "กิจกรรมและงานบุญ", "dates", ""),
     `<a class="mw-admin-ghost mw-commerce-admin-link" href="/seller/" title="ร้านค้า กฐิน และ e-Donation"><span>${icon("section")}</span><strong>ร้านค้าและร่วมบุญ</strong></a>`,
-    navButton("media", "คลังสื่อ", "media", "๕"),
+    navButton("pages", "หน้าและเนื้อหา", "page", "", "หน้าแรก"),
+    navButton("navigation", "เมนูนำทาง", "nav", "", "เมนูเว็บไซต์"),
+    navButton("media", "คลังสื่อ", "media"),
+    '<p class="mw-admin-nav-group">ผู้ใช้งาน</p>',
+    navButton("analytics", "สถิติการใช้งาน", "chart", "", "สถิติ"),
     navButton("users", "ผู้ดูแล", "users"),
+    '<p class="mw-admin-nav-group">ระบบ</p>',
     navButton("settings", "ตั้งค่า / อนุกรมวิธาน", "settings"),
   ].join("");
 }
@@ -285,18 +292,28 @@ function renderSideNav() {
 function syncSidebarState() {
   const shell = $(".mw-admin-shell");
   if (!shell) return;
-  shell.classList.toggle("is-sidebar-collapsed", state.sidebarCollapsed);
+  const mobile = window.matchMedia("(max-width: 900px)").matches;
+  shell.classList.toggle("is-sidebar-collapsed", !mobile && state.sidebarCollapsed);
+  shell.classList.toggle("is-mobile-nav-open", mobile && state.mobileNavOpen);
+  $(".mw-admin-nav-backdrop").hidden = !(mobile && state.mobileNavOpen);
+  $(".mw-admin-sidebar").inert = mobile && !state.mobileNavOpen;
+  $(".mw-admin-main").inert = mobile && state.mobileNavOpen;
+  document.body.classList.toggle("mw-admin-nav-locked", mobile && state.mobileNavOpen);
   const toggle = $(".mw-admin-nav-toggle");
   if (!toggle) return;
-  toggle.setAttribute("aria-expanded", String(!state.sidebarCollapsed));
-  toggle.setAttribute("title", state.sidebarCollapsed ? "ขยายเมนู" : "พับเมนู");
-  const iconEl = toggle.querySelector("span");
-  const labelEl = toggle.querySelector("strong");
-  if (iconEl) iconEl.textContent = state.sidebarCollapsed ? "→" : "←";
-  if (labelEl) labelEl.textContent = state.sidebarCollapsed ? "ขยายเมนู" : "พับเมนู";
+  const expanded = mobile ? state.mobileNavOpen : !state.sidebarCollapsed;
+  toggle.setAttribute("aria-expanded", String(expanded));
+  toggle.setAttribute("aria-label", expanded ? "พับเมนู" : "เปิดเมนู");
+  toggle.setAttribute("title", expanded ? "พับเมนู" : "เปิดเมนู");
 }
 
 function toggleSidebar() {
+  if (window.matchMedia("(max-width: 900px)").matches) {
+    state.mobileNavOpen = !state.mobileNavOpen;
+    syncSidebarState();
+    requestAnimationFrame(() => (state.mobileNavOpen ? $(".mw-admin-sidebar-close") : $(".mw-admin-nav-toggle"))?.focus());
+    return;
+  }
   state.sidebarCollapsed = !state.sidebarCollapsed;
   writeStoredFlag("mongkolwela.admin.sidebarCollapsed", state.sidebarCollapsed);
   syncSidebarState();
@@ -358,6 +375,7 @@ async function loadAnalytics() {
 async function loadTemples() {
   try {
     const payload = await api("/api/admin/temples");
+    state.templeLoadError = false;
     state.templeCatalog = payload.temples || [];
     const currentExists = state.templeCatalog.some((item) => item.key === state.selectedTempleKey);
     if (!currentExists) {
@@ -367,6 +385,7 @@ async function loadTemples() {
         "";
     }
   } catch {
+    state.templeLoadError = true;
     state.templeCatalog = [];
   }
 }
@@ -375,7 +394,9 @@ async function loadMediaConfig() {
   try {
     const payload = await api("/api/admin/media");
     state.media = payload.media || state.media;
+    state.mediaLoadError = false;
   } catch {
+    state.mediaLoadError = true;
     state.media = { provider: "", cloudinary: { enabled: false }, imagekit: { enabled: false } };
   }
 }
@@ -385,8 +406,8 @@ async function loadSecondaryAdminData() {
   await Promise.allSettled([loadTemples(), loadAnalytics(), loadMediaConfig()]);
   state.secondaryReady = true;
   state.secondaryLoading = false;
-  if (["dashboard", "temples", "analytics", "collections", "media", "dates"].includes(state.section)) renderAdmin();
-  if (!state.dirty) setStatus("พร้อมใช้งาน", "ok");
+  if (["dashboard", "temples", "analytics", "collections", "media", "dates", "settings"].includes(state.section)) renderAdmin();
+  if (!state.dirty) setStatus(state.templeLoadError || state.mediaLoadError || !state.analytics ? "ข้อมูลบางส่วนโหลดไม่สำเร็จ" : "พร้อมใช้งาน", state.templeLoadError || state.mediaLoadError || !state.analytics ? "warn" : "ok");
 }
 
 function renderAdmin() {
@@ -402,24 +423,26 @@ function renderAdmin() {
     return;
   }
   const renderers = {
-    dashboard: renderDashboard,
+    dashboard: design.renderDashboard,
     pages: renderPages,
     temples: renderTemples,
     sections: renderSections,
     navigation: renderNavigation,
     components: renderComponents,
-    analytics: renderAnalytics,
+    analytics: design.renderAnalytics,
     collections: renderCollections,
     dates: renderDates,
     media: renderMedia,
     users: renderUsers,
     settings: renderSettings,
   };
-  (renderers[state.section] || renderDashboard)();
+  (renderers[state.section] || design.renderDashboard)();
 }
 
 function setTitle(title, kicker = "ระบบจัดการเว็บ") {
+  $("#adminContent").classList.remove("is-overview");
   $("#adminTitle").textContent = title;
+  $("#adminDescription").textContent = "";
   const kickerEl = $("#adminKicker");
   if (kickerEl) kickerEl.textContent = kicker;
   setTopActions("");
@@ -444,54 +467,8 @@ function renderAdminLoading(title = "ภาพรวม", heading = "กำล�
   </div>`;
 }
 
-function renderDashboard() {
-  setTitle("แดชบอร์ด", "ภาพรวมระบบ");
-  const content = state.content;
-  const summary = dashboardSummary(content);
-  const templeCount = state.templeCatalog.length || summary.temples;
-  const health = templeHealthRows();
-  const reviewCount = health.low.count + Object.values(templeRecords()).filter((record) => record?.status !== "active").length;
-
-  $("#adminContent").innerHTML = `<div class="mw-admin-grid mw-admin-dashboard-stats">
-    ${statCard("วัด/สถานที่", templeCount, "เผยแพร่ + ฉบับร่าง", "component", "lacquer")}
-    ${statCard("เส้นทาง", TEMPLE_COLLECTIONS.length, "คอลเลกชันไหว้พระ", "section", "jade")}
-    ${statCard("กิจกรรมและงานบุญ", "—", "จัดการประกาศจากสถานที่", "dates", "gold")}
-    ${statCard("รอตรวจสอบ", reviewCount, "ข้อมูลควรยืนยัน", "alert", "muted")}
-  </div>
-  <div class="mw-admin-dashboard-layout">
-    <section class="mw-admin-card mw-admin-quality-card">
-      <div class="mw-admin-card-head">
-        <div>
-          <h2>คุณภาพข้อมูลเนื้อหา</h2>
-          <p>สัดส่วนวัดตามระดับความมั่นใจของข้อมูล</p>
-        </div>
-      </div>
-      ${confidenceBar("มั่นใจสูง", health.high.count, health.total, "#276a52")}
-      ${confidenceBar("ปานกลาง", health.mid.count, health.total, "#c28d35")}
-      ${confidenceBar("ควรตรวจสอบ", health.low.count, health.total, "#9b8578")}
-    </section>
-    <section class="mw-admin-card mw-admin-activity-card">
-      <div class="mw-admin-card-head"><h2>กิจกรรมล่าสุด</h2></div>
-      <div class="mw-admin-activity-list">
-        ${recentActivityRows(summary).join("")}
-      </div>
-    </section>
-  </div>`;
-}
-
 function toThaiNumber(value) {
   return Number(value || 0).toLocaleString("th-TH");
-}
-
-function statCard(label, value, sub = "", iconName = "dashboard", tone = "") {
-  return `<article class="mw-admin-stat ${tone ? `mw-admin-stat--${tone}` : ""}">
-    <div>
-      <span>${escapeHtml(label)}</span>
-      <strong>${escapeHtml(toThaiNumber(value))}</strong>
-      ${sub ? `<small>${escapeHtml(sub)}</small>` : ""}
-    </div>
-    <i aria-hidden="true">${escapeHtml(icon(iconName))}</i>
-  </article>`;
 }
 
 function templeHealthRows() {
@@ -507,33 +484,12 @@ function templeHealthRows() {
     },
     { high: 0, mid: 0, low: 0 },
   );
-  if (!temples.length) counts.low = Object.keys(templeRecords()).length;
   return {
-    total: Math.max(temples.length || counts.low, 1),
+    total: temples.length,
     high: { count: counts.high },
     mid: { count: counts.mid },
     low: { count: counts.low },
   };
-}
-
-function confidenceBar(label, count, total, color) {
-  const pct = Math.round((Number(count) / Math.max(Number(total), 1)) * 100);
-  return `<div class="mw-admin-confidence-row">
-    <div><span style="--dot:${escapeHtml(color)}"></span><strong>${escapeHtml(label)}</strong><em>${escapeHtml(toThaiNumber(count))} · ${pct}%</em></div>
-    <i style="--bar:${pct}%;--color:${escapeHtml(color)}"></i>
-  </div>`;
-}
-
-function recentActivityRows(summary) {
-  return [
-    ["✎", "ปิยะ", `แก้ไขข้อมูลเผยแพร่ล่าสุด ${formatDateTime(summary.updatedAt)}`, "๑๐ นาทีที่แล้ว"],
-    ["+", "กมล", `เพิ่ม/ดูแลเมนู ${toThaiNumber(summary.navItems)} รายการ`, "๒ ชม.ที่แล้ว"],
-    ["✓", "สุดา", `ยืนยันข้อมูลวัด ${toThaiNumber((state.templeCatalog || []).length || summary.temples)} รายการ`, "เมื่อวาน"],
-    ["▤", "ระบบ", `บันทึก draft ขนาด ${summary.sizeLabel}`, "๒ วันก่อน"],
-  ].map(([mark, who, text, when]) => `<div class="mw-admin-activity-row">
-    <span>${escapeHtml(mark)}</span>
-    <div><strong>${escapeHtml(who)}</strong> ${escapeHtml(text)}<small>${escapeHtml(when)}</small></div>
-  </div>`);
 }
 
 function miniMetric(value, label, tone = "") {
@@ -570,7 +526,7 @@ function dashboardSummary(content = state.content || {}) {
     sizeLabel: formatBytes(sizeBytes),
     publishedAt: content.publishedAt || "",
     updatedAt: content.updatedAt || "",
-    publishedBy: content.publishedBy || "ผู้ดูแล",
+    publishedBy: content.publishedBy || "",
   };
 }
 
@@ -751,15 +707,11 @@ function lineAreaChart(rows, options = {}) {
 }
 
 function renderAnalyticsPanel(paths) {
-  const totals = state.analytics?.totals || {};
+  const totals = state.analytics?.totals;
   const topPaths = paths.slice(0, 8);
-  const pageviews = Number(totals.pageviews || 0);
-  const events = Number(totals.events || 0);
+  const pageviews = totals?.pageviews ?? "—";
+  const events = totals?.events ?? "—";
   const tracked = paths.length;
-  const trend = [0.45, 0.58, 0.52, 0.72, 0.64, 0.86, 1].map((ratio, index) => ({
-    label: `${index + 1}`,
-    value: Math.round((pageviews || 1) * ratio),
-  }));
   return `<section class="mw-admin-card mw-admin-dashboard-card">
     <div class="mw-admin-card-head">
       <div>
@@ -769,9 +721,9 @@ function renderAnalyticsPanel(paths) {
       <button class="mw-admin-btn mw-admin-btn-sm" type="button" data-action="refresh-analytics">รีเฟรช</button>
     </div>
     <div class="mw-admin-dashboard-metrics mw-admin-dashboard-metrics--six">
-      ${miniMetric(0, "ผู้ใช้วันนี้")}
-      ${miniMetric(0, "ผู้ใช้ 7 วัน")}
-      ${miniMetric(0, "ผู้ใช้ 30 วัน")}
+      ${miniMetric("—", "ผู้ใช้วันนี้")}
+      ${miniMetric("—", "ผู้ใช้ 7 วัน")}
+      ${miniMetric("—", "ผู้ใช้ 30 วัน")}
       ${miniMetric(pageviews, "เข้าชมทั้งหมด")}
       ${miniMetric(events, "เหตุการณ์")}
       ${miniMetric(tracked, "หน้าที่ติดตาม")}
@@ -779,8 +731,7 @@ function renderAnalyticsPanel(paths) {
     <div class="mw-admin-analytics-grid">
       <article class="mw-admin-chart-block mw-admin-chart-block--wide">
         <h3>แนวโน้ม 30 วัน</h3>
-        ${lineAreaChart(trend, { color: "#2f6fb2", fill: "rgba(47, 111, 178, 0.12)" })}
-        <p class="mw-admin-dashboard-note">จะเปลี่ยนเป็น active users/page views จริงเมื่อเชื่อม GA</p>
+        ${empty("ยังไม่มีข้อมูลสถิติรายวัน")}
       </article>
       <article class="mw-admin-chart-block">
         <h3>หน้าเว็บยอดนิยม</h3>
@@ -790,10 +741,7 @@ function renderAnalyticsPanel(paths) {
       </article>
       <article class="mw-admin-chart-block">
         <h3>แหล่งที่มา</h3>
-        ${donutChart([
-          { label: "Direct", value: pageviews || 1, color: "#123f33" },
-          { label: "รอข้อมูล GA", value: pageviews ? 0 : 1, color: "#d3a32e" },
-        ])}
+        ${empty("ยังไม่มีข้อมูลแหล่งที่มา")}
       </article>
     </div>
   </section>`;
@@ -811,9 +759,10 @@ function pageSelector() {
 }
 
 function renderPages() {
-  setTitle("หน้าแรก (Homepage)", "จัดการหน้าเว็บ");
+  setTitle("หน้าและเนื้อหา", "จัดการหน้าเว็บ");
   const page = currentPage();
-  setTopActions(`<button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="save-draft">บันทึกการตั้งค่าหน้าแรก</button>`);
+  if (!page) { renderNoPages(); return; }
+  setTopActions(`<button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="save-draft">บันทึกการตั้งค่าหน้าเว็บ</button>`);
   $("#adminContent").innerHTML = `${pageToolbar(page)}
     <div class="mw-admin-card">
       <h2>ตั้งค่าหน้าเว็บ</h2>
@@ -838,6 +787,10 @@ function pageToolbar(page) {
     <button class="mw-admin-btn mw-admin-btn-danger" type="button" data-action="remove-page">ลบหน้า</button>
     <a class="mw-admin-btn" target="_blank" rel="noopener" href="${escapeHtml(page.route || "/")}">ดูหน้าเว็บ</a>
   </div>`;
+}
+
+function renderNoPages() {
+  $("#adminContent").innerHTML = `<section class="mw-admin-card">${empty("ยังไม่มีหน้าเว็บใน CMS")}<button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="add-page">เพิ่มหน้า</button></section>`;
 }
 
 function renderPatchEditor(patch, index) {
@@ -871,6 +824,12 @@ function renderPatchEditor(patch, index) {
 function handleAdminImageError(event) {
   const image = event.target.closest?.("[data-admin-temple-image]");
   if (!image) return;
+  const overview = image.closest(".mw-overview-thumb");
+  if (overview) {
+    overview.innerHTML = icon("component");
+    overview.title = "ยังไม่มีภาพสถานที่ที่โหลดได้";
+    return;
+  }
   const container = image.closest(".mw-admin-image-preview, .mw-admin-temple-list-thumb");
   if (!container) return;
   container.classList.add("is-error");
@@ -882,6 +841,7 @@ function handleAdminImageError(event) {
 function renderSections() {
   setTitle("ส่วนหน้าเว็บ", "จัดการหน้าเว็บ");
   const page = currentPage();
+  if (!page) { renderNoPages(); return; }
   $("#adminContent").innerHTML = `${pageToolbar(page)}
     <div class="mw-admin-card">
       <div class="mw-admin-card-head"><h2>การจัดส่วนหน้าเว็บ</h2><button class="mw-admin-btn" type="button" data-action="add-section">เพิ่มส่วนหน้าเว็บ</button></div>
@@ -1003,14 +963,14 @@ function renderCollections() {
     ${TEMPLE_COLLECTIONS.map((collection) => {
       const items = collectionTemples(collection.key);
       return `<article class="mw-admin-collection-card">
-        <span>${escapeHtml(icon("section"))}</span>
+        <span>${icon("section")}</span>
         <div>
           <h2>${escapeHtml(collection.label)}</h2>
-          <p>รวม ${toThaiNumber(items.length)} วัด · จัดลำดับผ่านหน้า “วัดและสถานที่”</p>
-          <div class="mw-admin-chip-row">${items.slice(0, 4).map((item) => `<b>${escapeHtml(item.temple.name)}</b>`).join("") || "<b>ยังไม่มีวัด</b>"}</div>
+          <p>${state.templeLoadError ? "ยังไม่สามารถโหลดรายการสถานที่ได้" : !state.secondaryReady ? "กำลังโหลดรายการสถานที่" : `รวม ${toThaiNumber(items.length)} สถานที่`}</p>
+          <div class="mw-admin-chip-row">${items.slice(0, 4).map((item) => `<b>${escapeHtml(item.temple.name)}</b>`).join("") || (!state.templeLoadError && state.secondaryReady ? "<b>ยังไม่มีสถานที่</b>" : "")}</div>
         </div>
         <div class="mw-admin-card-actions">
-          <button class="mw-admin-btn" type="button" data-section="temples">เปิดรายการวัด</button>
+          <button class="mw-admin-btn" type="button" data-section="temples" data-collection-jump="${collection.key}">เปิดรายการวัด</button>
         </div>
       </article>`;
     }).join("")}
@@ -1021,32 +981,27 @@ function renderDates() {
   activityEditor.render();
 }
 
-function templeMediaItems() {
-  return (state.templeCatalog || [])
-    .map((item) => ({
-      name: `${item.slug || item.key}.jpg`,
-      src: templeImageValue(item, templeRecords()[item.key], "card", "desktop"),
-      uses: 1,
-    }))
-    .filter((item) => item.src)
-    .slice(0, 8);
-}
-
 function renderMedia() {
   setTitle("คลังสื่อ", "สินทรัพย์");
-  const media = templeMediaItems();
-  const provider = state.media.provider ? `${state.media.provider} พร้อมใช้งาน` : "ยังไม่ได้ตั้งค่าผู้ให้บริการอัปโหลด";
+  const media = collectAdminMedia(state.content, state.templeCatalog, templeImageValue);
+  const pageSize = 24;
+  const pages = Math.max(1, Math.ceil(media.length / pageSize));
+  state.mediaPage = Math.max(1, Math.min(state.mediaPage, pages));
+  const provider = mediaProviderStatus(state.media, state.mediaLoadError);
+  setTopActions(`<button class="mw-admin-btn" type="button" data-action="refresh-admin-data">${adminIcon("rotate-ccw")}โหลดข้อมูลอีกครั้ง</button>`);
   $("#adminContent").innerHTML = `<section class="mw-admin-upload-zone">
-    <strong>สถานะคลังสื่อ</strong>
-    <p>${escapeHtml(provider)} · รูปที่แสดงดึงจากข้อมูลวัดปัจจุบัน</p>
+    <strong>${escapeHtml(provider)}</strong>
+    <p>รูปในข้อมูลที่กำลังจัดการ ${toThaiNumber(media.length)} รูป · นับตำแหน่งอ้างอิงใน CMS ไม่ใช่ยอดเข้าชม</p>
+    ${state.templeLoadError ? '<p role="status">โหลดรูปจากสถานที่ไม่สำเร็จ ขณะนี้แสดงเฉพาะรูปในเนื้อหาหน้าเว็บ</p>' : !state.secondaryReady ? '<p role="status">กำลังโหลดรูปจากสถานที่</p>' : ""}
   </section>
   <div class="mw-admin-media-grid">
-    ${media.map((item) => `<article class="mw-admin-media-card">
-      <div>${item.src ? `<img src="${escapeHtml(item.src)}" alt="" data-admin-temple-image>` : ""}</div>
+    ${media.slice((state.mediaPage - 1) * pageSize, state.mediaPage * pageSize).map((item) => `<article class="mw-admin-media-card">
+      <div><img src="${escapeHtml(item.src)}" alt="" loading="lazy" data-admin-temple-image></div>
       <h2>${escapeHtml(item.name)}</h2>
-      <p>ใช้ ${toThaiNumber(item.uses)} ที่</p>
+      <p>อ้างอิง ${toThaiNumber(item.references.length)} ตำแหน่ง</p>
+      <details class="mw-admin-media-references"><summary>ตำแหน่งที่ใช้รูป</summary>${item.references.map(ref => `<button class="mw-admin-text-link" type="button" ${ref.templeKey ? `data-edit-temple="${escapeHtml(ref.templeKey)}"` : `data-section="pages" data-page-jump="${escapeHtml(ref.pageId)}"`}>${escapeHtml(ref.label)} · ${escapeHtml(ref.slot || "รูปภาพ")}${ref.enabled ? "" : " (ปิดไว้)"}${adminIcon("arrow-right")}</button>`).join("")}</details>
     </article>`).join("") || empty("ยังไม่มีรูปในข้อมูลวัด")}
-  </div>`;
+  </div>${pages > 1 ? `<nav class="mw-admin-media-pagination" aria-label="หน้าคลังสื่อ"><button class="mw-admin-btn" type="button" data-media-page="${state.mediaPage - 1}" ${state.mediaPage === 1 ? "disabled" : ""} aria-label="หน้าก่อนหน้า">${adminIcon("chevron-left")}</button><span>หน้า ${state.mediaPage} / ${pages}</span><button class="mw-admin-btn" type="button" data-media-page="${state.mediaPage + 1}" ${state.mediaPage === pages ? "disabled" : ""} aria-label="หน้าถัดไป">${adminIcon("chevron-right")}</button></nav>` : ""}`;
 }
 
 function renderUsers() {
@@ -1069,80 +1024,18 @@ function renderUsers() {
 
 function renderSettings() {
   setTitle("ตั้งค่า / อนุกรมวิธาน", "ระบบ");
-  const regions = ["ภาคกลาง", "ภาคเหนือ", "ภาคอีสาน", "ภาคใต้", "ภาคตะวันออก"];
-  const modes = ["รถไฟฟ้า BTS/MRT", "เรือด่วน", "รถเมล์ / รถตู้", "แท็กซี่ / รถส่วนตัว"];
+  const { regions, modes } = catalogTaxonomy(state.templeCatalog);
+  const list = (rows) => `<div class="mw-admin-setting-list">${rows.map(row => `<div class="mw-admin-taxonomy-row"><strong>${escapeHtml(row.label)}</strong><span>${toThaiNumber(row.count)} สถานที่</span></div>`).join("") || empty(state.templeLoadError ? "ยังไม่สามารถโหลดข้อมูลสถานที่ได้" : !state.secondaryReady ? "กำลังโหลดข้อมูลสถานที่" : "ยังไม่มีข้อมูลในรายการสถานที่")}</div>`;
+  setTopActions(`<button class="mw-admin-btn" type="button" data-action="refresh-admin-data">${adminIcon("rotate-ccw")}โหลดข้อมูลอีกครั้ง</button>`);
   $("#adminContent").innerHTML = `<div class="mw-admin-panel-grid">
     <section class="mw-admin-card">
-      <div class="mw-admin-card-head"><div><h2>ภูมิภาค</h2><p>ใช้กับตัวกรองและข้อมูลสถานที่</p></div></div>
-      <div class="mw-admin-setting-list">${regions.map((name) => `<label><span></span><input value="${escapeHtml(name)}" readonly><button class="mw-admin-btn mw-admin-btn-icon" type="button" disabled>▧</button></label>`).join("")}</div>
+      <div class="mw-admin-card-head"><div><h2>ภูมิภาค</h2><p>สรุปจากรายการสถานที่ใน CMS</p></div></div>
+      ${list(regions)}
     </section>
     <section class="mw-admin-card">
-      <div class="mw-admin-card-head"><div><h2>รูปแบบการเดินทาง</h2><p>ตัวเลือกสีของตัวสร้างเส้นทาง</p></div></div>
-      <div class="mw-admin-setting-list">${modes.map((name) => `<label><span></span><input value="${escapeHtml(name)}" readonly><button class="mw-admin-btn mw-admin-btn-icon" type="button" disabled>▧</button></label>`).join("")}</div>
+      <div class="mw-admin-card-head"><div><h2>รูปแบบการเดินทาง</h2><p>ข้อมูลที่ใช้บนหน้ารายละเอียดสถานที่</p></div></div>
+      ${list(modes)}
     </section>
-  </div>`;
-}
-
-function renderAnalytics() {
-  setTitle("สถิติการใช้งาน", "ภาพรวมระบบ");
-  const paths = Object.values(state.analytics?.paths || {}).sort((a, b) => b.count - a.count);
-  const totals = state.analytics?.totals || {};
-  const pageviews = Number(totals.pageviews || 0);
-  const events = Number(totals.events || 0);
-  const plans = Math.max(1, Math.round(pageviews * 0.075));
-  const saveRate = pageviews ? Math.min(64, Math.max(18, Math.round((events / Math.max(pageviews, 1)) * 100))) : 34;
-  const week = [
-    ["จ", 1820],
-    ["อ", 2140],
-    ["พ", 1980],
-    ["พฤ", 2460],
-    ["ศ", 3180],
-    ["ส", Math.max(4120, Math.round(pageviews * 0.21))],
-    ["อา", 3860],
-  ];
-  $("#adminContent").innerHTML = `<div class="mw-admin-grid mw-admin-dashboard-stats">
-    ${statCard("ผู้เข้าชมทั้งหมด", pageviews || 19360, "๗ วันล่าสุด", "component", "lacquer")}
-    ${statCard("ผู้ใช้ไม่ซ้ำ", events || 11230, "๗ วันล่าสุด", "users", "jade")}
-    ${statCard("แผนเดินทางที่สร้าง", plans || 1458, "๗ วันล่าสุด", "section", "gold")}
-    ${statCard("อัตราบันทึกวัด", saveRate, "เทียบสัปดาห์ก่อน", "dates", "muted")}
-  </div>
-  <section class="mw-admin-card mw-admin-analytics-wide">
-    <div class="mw-admin-card-head"><div><h2>ปริมาณการเข้าชม · ๗ วันล่าสุด</h2></div><p>หน่วย: การเข้าชมต่อวัน</p></div>
-    ${weeklyBarChart(week)}
-  </section>
-  <div class="mw-admin-panel-grid mw-admin-panel-grid--three">
-    <section class="mw-admin-card">
-      <div class="mw-admin-card-head"><h2>วัดที่มีผู้เข้าชมมากที่สุด</h2></div>
-      ${rankList((state.templeCatalog || []).slice(0, 5).map((item, index) => [item.temple.name, [8420, 7130, 5980, 4210, 3560][index] || 1200]), "#a8322a")}
-    </section>
-    <section class="mw-admin-card">
-      <div class="mw-admin-card-head"><h2>คำค้นหายอดนิยม</h2></div>
-      ${rankList([["ไหว้พระ ๙ วัด", 3120], ["ขอโชคลาภ", 2480], ["แก้ชง", 1960], ["ความรัก เนื้อคู่", 1540], ["วัดใกล้ฉัน", 1220]], "#276a52")}
-    </section>
-    <section class="mw-admin-card">
-      <div class="mw-admin-card-head"><h2>แหล่งที่มาของผู้เข้าชม</h2></div>
-      ${rankList([["ค้นหา (Google)", 46], ["เข้าตรง", 22], ["โซเชียล", 19], ["ส่งต่อ/อ้างอิง", 13]], "#276a52", "%")}
-    </section>
-  </div>`;
-}
-
-function weeklyBarChart(rows) {
-  const max = Math.max(...rows.map(([, value]) => value), 1);
-  return `<div class="mw-admin-week-chart">
-    ${rows.map(([label, value], index) => {
-      const height = Math.max(22, Math.round((value / max) * 178));
-      return `<div class="${index === 5 ? "is-peak" : ""}" style="--bar-height:${height}px"><span>${toThaiNumber(value)}</span><i></i><strong>${escapeHtml(label)}</strong></div>`;
-    }).join("")}
-  </div>`;
-}
-
-function rankList(rows, color, suffix = "") {
-  const max = Math.max(...rows.map(([, value]) => Number(value) || 0), 1);
-  return `<div class="mw-admin-rank-list">
-    ${rows.map(([label, value]) => {
-      const pct = Math.max(5, Math.round((Number(value) / max) * 100));
-      return `<div><p><span>${escapeHtml(label)}</span><b>${escapeHtml(toThaiNumber(value))}${escapeHtml(suffix)}</b></p><i style="--bar:${pct}%;--color:${escapeHtml(color)}"></i></div>`;
-    }).join("")}
   </div>`;
 }
 
@@ -1272,6 +1165,7 @@ function handleTempleReorderKeydown(event) {
 }
 
 function handleGlobalClick(event) {
+  if (!event.target.closest(".mw-admin-global-search")) design.closeSearch();
   const confirmAccept = event.target.closest("[data-confirm-accept]");
   if (confirmAccept) {
     runPendingDeleteAction();
@@ -1291,8 +1185,13 @@ function handleGlobalClick(event) {
 
   const editTempleButton = event.target.closest("[data-edit-temple]");
   if (editTempleButton) {
+    if (state.section === "dates" && !activityEditor.canLeave()) return;
+    design.closeSearch();
+    state.section = "temples";
     state.selectedTempleKey = editTempleButton.dataset.editTemple;
+    state.templeCollectionFilter = state.templeCatalog.find(item => item.key === state.selectedTempleKey)?.collection || state.templeCollectionFilter;
     state.templeEditorOpen = true;
+    renderSideNav();
     renderTemples();
     requestAnimationFrame(() => $(".mw-admin-drawer input, .mw-admin-drawer button")?.focus());
     return;
@@ -1325,8 +1224,22 @@ function handleGlobalClick(event) {
   if (sectionButton) {
     if (state.section === "dates" && !activityEditor.canLeave()) return;
     if (sectionButton.dataset.pageJump) state.selectedPageId = sectionButton.dataset.pageJump;
+    if (sectionButton.dataset.collectionJump) {
+      state.templeCollectionFilter = sectionButton.dataset.collectionJump;
+      state.templeSearch = "";
+      state.templeEditorOpen = false;
+    }
     state.section = sectionButton.dataset.section;
+    design.closeSearch();
+    if (state.mobileNavOpen) { state.mobileNavOpen = false; syncSidebarState(); $(".mw-admin-nav-toggle")?.focus(); }
     renderAdmin();
+    return;
+  }
+  const mediaPage = event.target.closest("[data-media-page]");
+  if (mediaPage) {
+    state.mediaPage = Number(mediaPage.dataset.mediaPage);
+    renderMedia();
+    $("#adminTitle")?.scrollIntoView({ block: "start" });
     return;
   }
   const actionButton = event.target.closest("[data-action]");
@@ -1378,6 +1291,11 @@ function handleGlobalClick(event) {
     "move-block-down": moveBlockDown,
     "refresh-analytics": async () => {
       await loadAnalytics();
+      renderAdmin();
+    },
+    "refresh-admin-data": async () => {
+      // Keep local edits: refresh only the independent failed resources.
+      await Promise.allSettled([state.templeLoadError ? loadTemples() : Promise.resolve(), loadMediaConfig(), loadAnalytics()]);
       renderAdmin();
     },
   };
@@ -1461,6 +1379,10 @@ function restoreTempleListScroll() {
 }
 
 function handleInput(event) {
+  if (event.target.id === "adminGlobalSearch") {
+    if (event.type === "input") design.renderSearch(event.target.value);
+    return;
+  }
   if (state.section === "dates") return;
   const target = event.target;
   if (target.matches("[data-field='selectedPage']")) {
@@ -2060,5 +1982,24 @@ const { imageFieldFromButton, setTempleImage, useTempleImageUrl, verifyImageLoad
 const { setPublishControlsDisabled, setPublishProgress, hidePublishProgress, publishedContentMatches, waitForPublishedContent, publish } = createAdminPublishing({ queryAll: (selector) => document.querySelectorAll(selector), $, api, sleep, state, setStatus, renderAdmin });
 
 const activityEditor = createActivityEditor({ state, $, api, escapeHtml, setTitle, setTopActions, setStatus, uploadMedia: uploadAdminMedia });
+
+const design = createAdminDesign({ state, $, escapeHtml, dashboardSummary, templeHealthRows, formatDateTime, setTitle, setTopActions });
+window.matchMedia("(max-width: 900px)").addEventListener("change", () => { state.mobileNavOpen = false; syncSidebarState(); });
+document.addEventListener("keydown", event => {
+  if (!$("#adminGlobalSearch")) return;
+  if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { event.preventDefault(); if (state.mobileNavOpen) toggleSidebar(); $("#adminGlobalSearch").focus(); }
+  if (event.key === "Escape") {
+    if (state.mobileNavOpen) { event.preventDefault(); toggleSidebar(); }
+    if (!$("#adminSearchResults").hidden) { design.closeSearch(); $("#adminGlobalSearch").focus(); }
+    $(".mw-admin-account")?.removeAttribute("open");
+  }
+  if (event.key === "ArrowDown" && event.target.id === "adminGlobalSearch" && !$("#adminSearchResults").hidden) { event.preventDefault(); $("#adminSearchResults button")?.focus(); }
+  if (event.key === "Tab" && state.mobileNavOpen) {
+    const controls = $$("a[href], button:not(:disabled)", $(".mw-admin-sidebar"));
+    const first = controls[0], last = controls.at(-1);
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+  }
+});
 
 boot();

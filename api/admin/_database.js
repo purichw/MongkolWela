@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { summarizeAnalyticsEvents } from "../../src/lib/admin-analytics.js";
 
 const LIVE_DOCUMENT_ID = "live";
 
@@ -123,31 +124,19 @@ export async function readDatabaseAnalyticsSummary() {
   if (!supabase) return null;
 
   const since = new Date(Date.now() - 1000 * 60 * 60 * 24 * 90).toISOString();
-  const { data, error } = await supabase
-    .from("analytics_events")
-    .select("event_type,page_path,page_title,created_at")
-    .gte("created_at", since)
-    .limit(10000);
-
-  if (error || !data) return null;
-
-  const summary = { totals: { pageviews: 0, events: 0 }, paths: {}, events: {}, updatedAt: new Date().toISOString() };
-  data.forEach((event) => {
-    if (event.event_type === "pageview") {
-      summary.totals.pageviews += 1;
-      const key = event.page_path || "/";
-      summary.paths[key] ||= { path: key, title: event.page_title || "", count: 0, lastSeenAt: event.created_at };
-      summary.paths[key].count += 1;
-      summary.paths[key].title = event.page_title || summary.paths[key].title;
-      summary.paths[key].lastSeenAt = event.created_at;
-    } else {
-      summary.totals.events += 1;
-      const key = event.event_type || "event";
-      summary.events[key] ||= { type: key, count: 0, lastSeenAt: event.created_at };
-      summary.events[key].count += 1;
-      summary.events[key].lastSeenAt = event.created_at;
-    }
-  });
-
-  return summary;
+  const now = new Date().toISOString();
+  const rows = [];
+  // Page below PostgREST's row cap; otherwise a successful response can silently
+  // truncate the report. A fixed upper bound prevents moving pages during reads.
+  for (let offset = 0; offset <= 10000; offset += 500) {
+    const { data, error } = await supabase.from("analytics_events")
+      .select("event_type,page_path,page_title,created_at,referrer")
+      .gte("created_at", since).lte("created_at", now)
+      .order("created_at", { ascending: false }).order("id", { ascending: false })
+      .range(offset, Math.min(offset + 499, 10000));
+    if (error || !data) throw Object.assign(new Error("ยังไม่สามารถโหลดข้อมูลสถิติได้"), { statusCode: 503 });
+    rows.push(...data);
+    if (data.length < 500) break;
+  }
+  return summarizeAnalyticsEvents(rows.slice(0, 10000), { since, now, limited: rows.length > 10000 });
 }
