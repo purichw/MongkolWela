@@ -312,3 +312,38 @@ test("five selected values have a correct remainder, long labels wrap, short vie
   await done(page);
   await expect(page.locator(purpose)).toContainText("เลือกแล้ว 1 รายการ");
 });
+
+test("shared choice chips center labels without shifting on selection at desktop and mobile widths", async ({ page }) => {
+  await setup(page); await ready(page);
+  fs.mkdirSync("artifacts/chip-centering", { recursive: true });
+  const geometry = (chip: ReturnType<Page["locator"]>) => chip.evaluate(node => {
+    const box = node.getBoundingClientRect();
+    const text = node.querySelector(".ui-choice-chip__label")!.getBoundingClientRect();
+    return { width: box.width, height: box.height, x: text.left + text.width / 2 - box.left - box.width / 2, y: text.top + text.height / 2 - box.top - box.height / 2 };
+  });
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: width === 1440 ? 1000 : 844 });
+    const region = page.locator("[data-popular-region-tag]").first();
+    expect(Math.abs((await geometry(region)).x)).toBeLessThan(1);
+    for (const trigger of [province, purpose]) {
+      await page.locator(trigger).click();
+      const option = page.locator(".pf-option:visible").first();
+      const before = await geometry(option);
+      expect(Math.abs(before.x)).toBeLessThan(1);
+      expect(Math.abs(before.y)).toBeLessThan(1);
+      expect(before.height).toBeGreaterThanOrEqual(44);
+      const all = await geometry(page.locator(".pf-editor__all"));
+      expect(Math.abs(all.x)).toBeLessThan(1);
+      expect(Math.abs(all.y)).toBeLessThan(1);
+      await option.getByRole("checkbox").check();
+      expect(await geometry(option)).toEqual(before);
+      await expect(option.locator(".ui-choice-chip__check")).toHaveCSS("opacity", "1");
+      if (trigger === province) await page.screenshot({ path: `artifacts/chip-centering/after-${width}.png` });
+      await page.keyboard.press("Space");
+      await expect(option.getByRole("checkbox")).not.toBeChecked();
+      expect(await geometry(option)).toEqual(before);
+      await page.locator("[data-pf-close]").click();
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+});

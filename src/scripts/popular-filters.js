@@ -1,4 +1,4 @@
-import { renderIcon } from "../lib/ui-markup.js";
+import { createChoiceChip } from "../lib/choice-chip.js";
 
 export const normalizeFilterText = value => String(value || "").trim().toLocaleLowerCase("th-TH");
 export const filterSnapshotKey = snapshot => JSON.stringify([
@@ -27,10 +27,7 @@ export function initializePopularFilters(root, engine) {
   let presenting = false;
   let notice = "";
   const optionNodes = new Map();
-  const all = document.createElement("button");
-  all.type = "button";
-  all.className = "pf-editor__all";
-  all.textContent = "ทั้งหมด";
+  const all = createChoiceChip({ kind: "button", label: "ทั้งหมด", className: "pf-editor__all" });
   choices.append(all);
   document.body.append(dialog);
   root.querySelectorAll("[disabled]").forEach(node => { node.disabled = false; });
@@ -152,17 +149,8 @@ export function initializePopularFilters(root, engine) {
     for (const value of values) {
       let node = optionNodes.get(value);
       if (!node) {
-        node = document.createElement("label");
-        node.className = "pf-option";
-        const input = document.createElement("input");
-        input.type = "checkbox";
-        input.value = value;
-        const check = document.createElement("span");
-        check.className = "pf-option__check";
-        check.innerHTML = renderIcon("check");
-        const text = document.createElement("span");
-        text.className = "pf-option__label";
-        node.append(input, check, text);
+        node = createChoiceChip({ label: value, value, className: "pf-option" });
+        const input = node.querySelector("input");
         input.addEventListener("change", () => {
           if (!editor) return;
           if (input.checked) editor.working.add(value); else editor.working.delete(value);
@@ -174,7 +162,7 @@ export function initializePopularFilters(root, engine) {
       }
       const missing = !catalog.has(value);
       node.querySelector("input").checked = working.has(value);
-      node.querySelector(".pf-option__label").textContent = value + (missing ? " (ไม่มีในข้อมูลล่าสุด)" : "");
+      node.querySelector(".ui-choice-chip__label").textContent = value + (missing ? " (ไม่มีในข้อมูลล่าสุด)" : "");
       node.hidden = (selectedOnly && !working.has(value)) || (query && !normalizeFilterText(value).includes(query));
       if (!node.hidden) visible++;
     }

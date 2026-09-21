@@ -15,6 +15,7 @@ points. A different task layout must still sit on the same site frame.
 | `PageBanner.astro`, `page-banner.css` | Shared full-width image layer, shade, motifs, breadcrumb/copy scale, quote and content alignment | Calendar, Day, temple hub, three temple collections, planner and Thailand directory via `TempleSearchHero` |
 | `scripts/planner/place-card.js` | One escaped, semantic place-selection renderer for desktop tiles and mobile rows | Planner list in picker-only and combined views |
 | `PopularFilters.astro`, `scripts/popular-filters.js`, `popular-filters.css` | Feature-local compact selectors and one responsive editor; adapts the existing collection matcher rather than duplicating it | Popular only; Sacred/Mu intentionally keep their current filter UI |
+| `ChoiceChip.astro`, `lib/choice-chip.js`, `public-ui.css` | Centered toggle-button/native-checkbox chips; balanced check inset, 44px target, wrapping, focus and disabled states | Popular regions, province/purpose options and All; legacy Planner/Sacred/Mu chips retain their own contracts |
 | `icons/SiteIcon.astro` | Decorative heritage raster or Lucide icon; parent provides the accessible action name | Header/footer, Home, Calendar, Calendar Day, Place Detail |
 | `lib/ui-markup.js` | Same Lucide glyph attributes for Astro and runtime-rendered HTML | `SiteIcon`, place detail SSR, CMS refresh, travel controls, map markers |
 | `IconMedallion.astro` / `renderIconMedallion` | A circular centered icon wrapper; slot/argument is trusted icon markup | Home intent cards, Calendar summaries, Calendar Day facts/guidance, Place Detail headings/activities |
@@ -24,6 +25,25 @@ points. A different task layout must still sit on the same site frame.
 | `CarouselControls.astro`, `LinkArrow.astro`, `BrandOrnament.astro` | Existing shared control, link affordance and decorative motif | Existing Home/Calendar/detail/shell consumers |
 
 ## Usage
+
+### Choice Chips
+
+`ChoiceChip.astro` accepts `label`, `selected` and native button attributes
+(including `value`, `disabled` and caller-owned data hooks). Client-rendered chips
+use `createChoiceChip({ label, value, kind, selected, disabled, className })`;
+`kind` is `checkbox` by default or `button` for reset/toggle choices such as All.
+Labels are escaped by Astro or assigned with `textContent`. Native `checked` /
+`aria-pressed` state drives appearance; callers retain all change handlers,
+working/draft/applied values, option catalogs and outer layout. The shared chip
+does not fetch data, own selection, or silently submit a form.
+
+Both entry points share `choiceChipClass` and `.ui-choice-chip` anatomy/styles.
+The absolute decorative check leaves equal text insets even while unchecked;
+checking never changes label position or chip dimensions. Long labels wrap and
+stay centered. Material can inherit `--choice-chip-border`, `--choice-chip-ink`,
+`--choice-chip-selected`, `--choice-chip-background` and button inline padding.
+Do not apply this interactive primitive to passive metadata badges, navigation
+links, or unrelated legacy filter workflows without a scoped consumer review.
 
 ### Shared Navigation
 

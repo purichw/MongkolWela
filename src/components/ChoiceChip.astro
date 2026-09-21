@@ -1,0 +1,14 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { choiceChipClass } from "../lib/choice-chip.js";
+
+type Props = Omit<HTMLAttributes<"button">, "class"> & {
+  label: string;
+  selected?: boolean;
+  class?: string;
+};
+const { label, selected = false, class: className = "", ...attributes } = Astro.props;
+---
+<button {...attributes} type="button" class={choiceChipClass("button", className)} aria-pressed={selected}>
+  <span class="ui-choice-chip__label">{label}</span>
+</button>

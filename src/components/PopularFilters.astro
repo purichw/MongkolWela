@@ -1,5 +1,6 @@
 ---
 import SiteIcon from "./icons/SiteIcon.astro";
+import ChoiceChip from "./ChoiceChip.astro";
 import { iconAttributes } from "../lib/ui-markup.js";
 const { regions, purposes } = Astro.props as { regions: string[]; purposes: string[] };
 ---
@@ -9,8 +10,8 @@ const { regions, purposes } = Astro.props as { regions: string[]; purposes: stri
     <div class="pf__regions">
       <span class="pf__region-label">กรองพื้นที่</span>
       <div class="pf__region-options" role="group" aria-label="กรองตามภาค">
-        <button type="button" data-popular-region-tag value="" aria-pressed="true" disabled>ทั้งหมด</button>
-        {regions.map(region => <button type="button" data-popular-region-tag value={region} aria-pressed="false" disabled>{region}</button>)}
+        <ChoiceChip label="ทั้งหมด" data-popular-region-tag value="" selected disabled />
+        {regions.map(region => <ChoiceChip label={region} data-popular-region-tag value={region} disabled />)}
       </div>
       <a class="pf__planner" href="/temples/planner/">วางแผนเส้นทาง <SiteIcon name="arrow-right" /></a>
     </div>
