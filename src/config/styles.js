@@ -22,6 +22,7 @@ import adminActivities from "../styles/admin-activities.css?url";
 import site from "../styles/site.css?url";
 import planner from "../styles/temple-planner.css?url";
 import thailand from "../styles/temple-thailand.css?url";
+import popularFilters from "../styles/popular-filters.css?url";
 import publicSelect from "../styles/public-select.css?url";
 import tools from "../styles/tools.css?url";
 
@@ -40,5 +41,5 @@ export function stylesForPath(path) {
     : path.startsWith("/temples/") ? [temples, map]
     : [];
   const isTool = path.startsWith("/tarot/") || /^\/horoscope\/(life-graph|palmistry|seamsi|thai-astrology)\//.test(path);
-  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : []), ...(path === "/temples/thailand/" ? [thailand] : []), publicSelect, ...(isTool ? [tools] : [])];
+  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : []), ...(path === "/temples/thailand/" ? [thailand] : []), publicSelect, ...(isTool ? [tools] : []), ...(path === "/temples/popular/" ? [popularFilters] : [])];
 }

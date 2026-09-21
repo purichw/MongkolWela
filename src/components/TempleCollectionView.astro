@@ -4,6 +4,7 @@ import TempleMapOverlay from "./TempleMapOverlay.astro";
 import TempleResponsiveImage from "./TempleResponsiveImage.astro";
 import PageBanner from "./PageBanner.astro";
 import CmsImage from "./CmsImage.astro";
+import PopularFilters from "./PopularFilters.astro";
 import templePageBanners from "../data/temple-page-banners.json";
 import { templePlaceholderImage } from "../data/temple-images.js";
 import { getTempleDetailUrl } from "../data/temple-slugs.js";
@@ -168,7 +169,7 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
       </div>
     </PageBanner>
 
-    <section
+    {collection === "popular" ? <PopularFilters regions={regions} purposes={purposes} /> : <section
       class="temple-collection-v2-filter"
       aria-label={meta.searchLabel}
       data-popular-temple-filter
@@ -252,7 +253,7 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
           </div>
         </details>
       </div>
-    </section>
+    </section>}
 
     <section class="temples-section temple-collection-v2-results">
       <div class="temple-collection-v2-results-head">

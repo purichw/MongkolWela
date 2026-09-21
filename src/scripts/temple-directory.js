@@ -1,4 +1,5 @@
 import { renderIcon } from "../lib/ui-markup.js";
+import { initializePopularFilters, filterSnapshotKey } from "./popular-filters.js";
 
 const root = document.querySelector("[data-temple-directory]");
 const quickSearchRoot = document.querySelector("[data-temple-quick-search]");
@@ -151,11 +152,12 @@ if (popularTempleGrid) {
 function initializePopularTempleGrid(grid) {
   let cards = Array.from(grid.querySelectorAll("[data-popular-temple-card]"));
   const filterRoot = document.querySelector("[data-popular-temple-filter]");
+  const compact = Boolean(filterRoot?.hasAttribute("data-compact-filters"));
   const filterForm = filterRoot?.querySelector("[data-popular-temple-filter-form]");
   const filterName = filterRoot?.querySelector("[data-popular-temple-filter-name]");
   const filterClear = filterRoot?.querySelector("[data-popular-temple-filter-clear]");
   const nearbyButton = filterRoot?.querySelector("[data-popular-temple-nearby]");
-  const nearbyStatusNode = createNearbyStatusNode(nearbyButton);
+  const nearbyStatusNode = compact ? null : createNearbyStatusNode(nearbyButton);
   const regionTags = Array.from(filterRoot?.querySelectorAll("[data-popular-region-tag]") || []);
   const provinceFilter = filterRoot?.querySelector("[data-popular-province-filter]");
   const provinceTagsRoot = filterRoot?.querySelector("[data-popular-province-tags]");
@@ -186,8 +188,46 @@ function initializePopularTempleGrid(grid) {
   let appliedQuery = "";
   let hasLoadedCollectionData = false;
   let collectionDataLoad = null;
+  let compactView = null;
+  let facetOptions = { provinces: new Set(), purposes: new Set() };
+  let loadState = "idle";
+  let filterNotice = "";
+  let requestId = 0;
+  let catalogRevision = 0;
+  let lastDraftKey = "";
 
-  if (!cards.length) return;
+  if (!cards.length && !compact) return;
+
+  if (compact) {
+    compactView = initializePopularFilters(filterRoot, {
+      read: () => ({
+        draft: readDraft(),
+        applied: { query: appliedQuery, regions: appliedRegions, provinces: appliedProvinces, purposes: appliedPurposes },
+        catalog: readCatalog(), available: facetOptions, loadState,
+        notice: filterNotice || nearbyStatus, nearby: activeNearby,
+      }),
+      setGroup: (group, values) => {
+        if (group === "provinces") {
+          for (const province of values) {
+            if (activeProvinces.has(province)) continue;
+            const region = cards.find(card => card.dataset.province === province)?.dataset.region;
+            if (region) activeRegions.add(region);
+          }
+        }
+        replaceSet(group === "provinces" ? activeProvinces : activePurposes, values);
+        updateFacetOptions();
+      },
+      restore: () => {
+        filterName.value = appliedQuery;
+        replaceSet(activeRegions, appliedRegions);
+        replaceSet(activeProvinces, appliedProvinces);
+        replaceSet(activePurposes, appliedPurposes);
+        updateFacetOptions();
+      },
+      retry: () => loadCollectionCards(),
+    });
+    filterName?.addEventListener("input", refreshCompactView);
+  }
 
   initializeSmoothFilterAccordions(filterRoot);
   countNode?.setAttribute("role", "status");
@@ -221,6 +261,7 @@ function initializePopularTempleGrid(grid) {
 
   filterForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (compact) { await runCompactSearch(false); return; }
     await loadCollectionCards({ applyFilters: false });
     commitDraftFilters();
     applyPopularFilters();
@@ -229,11 +270,19 @@ function initializePopularTempleGrid(grid) {
 
   document.addEventListener("mw:temple-overrides-applied", () => {
     cards = Array.from(grid.querySelectorAll("[data-popular-temple-card]"));
+    catalogRevision++;
     updateFacetOptions();
     applyPopularFilters();
   });
 
   filterClear?.addEventListener("click", () => {
+    if (compact) {
+      compactView.cancel();
+      requestId++;
+      isRequestingLocation = false;
+      nearbyStatus = "";
+      filterNotice = "";
+    }
     if (filterName) filterName.value = "";
     activeRegions.clear();
     activeProvinces.clear();
@@ -252,6 +301,7 @@ function initializePopularTempleGrid(grid) {
   regionTags.forEach((tag) => {
     tag.addEventListener("click", () => {
       const value = tag.value || "";
+      const previousProvinceCount = activeProvinces.size;
       if (!value) {
         activeRegions.clear();
         activeProvinces.clear();
@@ -267,6 +317,10 @@ function initializePopularTempleGrid(grid) {
         if (!allowedProvinces.has(province)) activeProvinces.delete(province);
       });
       updateFacetOptions();
+      if (compact && activeProvinces.size < previousProvinceCount) {
+        filterNotice = "นำจังหวัดนอกภาคที่เลือกออกแล้ว · กดค้นหาเพื่อใช้เงื่อนไขใหม่";
+        compactView.refresh();
+      }
     });
   });
 
@@ -290,6 +344,7 @@ function initializePopularTempleGrid(grid) {
   });
 
   nearbyButton?.addEventListener("click", async () => {
+    if (compact) { await runCompactSearch(true); return; }
     if (isRequestingLocation) return;
     await loadCollectionCards({ applyFilters: false });
 
@@ -331,6 +386,81 @@ function initializePopularTempleGrid(grid) {
   updateLoadMoreButton();
   loadCollectionCards({ applyFilters: true });
 
+  function readDraft() {
+    return { query: filterName?.value || "", regions: new Set(activeRegions), provinces: new Set(activeProvinces), purposes: new Set(activePurposes) };
+  }
+
+  function readCatalog() {
+    const purposes = uniqueSorted(cards.flatMap(card => splitDataTags(card.dataset.blessings)));
+    const order = compact ? JSON.parse(filterRoot.dataset.purposeOrder || "[]") : [];
+    return {
+      provinces: uniqueSorted(cards.map(card => card.dataset.province)),
+      purposes: [...order.filter(value => purposes.includes(value)), ...purposes.filter(value => !order.includes(value))],
+    };
+  }
+
+  function refreshCompactView() {
+    if (!compactView) return;
+    const key = filterSnapshotKey(readDraft());
+    if (lastDraftKey && lastDraftKey !== key) {
+      requestId++;
+      isRequestingLocation = false;
+      filterNotice = "";
+      nearbyStatus = "";
+      updateNearbyButton();
+    }
+    lastDraftKey = key;
+    compactView.refresh();
+  }
+
+  async function runCompactSearch(nearby) {
+    compactView.cancel();
+    const id = ++requestId;
+    const snapshot = readDraft();
+    const key = filterSnapshotKey(snapshot);
+    const current = () => id === requestId && key === filterSnapshotKey(readDraft());
+    filterNotice = "";
+    nearbyStatus = "";
+    isRequestingLocation = false;
+    updateNearbyButton();
+    const loaded = await loadCollectionCards({ applyFilters: false });
+    if (!current() || !loaded) return;
+    if (nearby && activeNearby) {
+      activeNearby = false;
+      clearCardDistances();
+      updateNearbyButton();
+      applyPopularFilters();
+      return;
+    }
+    const catalog = readCatalog();
+    if (["provinces", "purposes"].some(group => [...snapshot[group]].some(value => !catalog[group].includes(value)))) {
+      filterNotice = "บางตัวเลือกไม่มีในข้อมูลล่าสุด กรุณาตรวจสอบตัวกรอง";
+      refreshCompactView();
+      return;
+    }
+    const revision = catalogRevision;
+    const valid = () => current() && revision === catalogRevision;
+    if (nearby && !activeNearby && !userLocation) {
+      isRequestingLocation = true;
+      updateNearbyButton();
+      const location = await requestUserLocation(valid);
+      if (!current()) return;
+      isRequestingLocation = false;
+      if (!valid()) {
+        filterNotice = "ข้อมูลสถานที่เปลี่ยนแล้ว กรุณาค้นหาอีกครั้ง";
+        updateNearbyButton(); refreshCompactView(); return;
+      }
+      if (!location) { updateNearbyButton(); refreshCompactView(); return; }
+      userLocation = location;
+    }
+    if (nearby) activeNearby = !activeNearby;
+    if (activeNearby) updateCardDistances(); else clearCardDistances();
+    commitDraftFilters(snapshot);
+    updateNearbyButton();
+    applyPopularFilters();
+    scrollToPopularResults();
+  }
+
   function applyPopularFilters() {
     filteredCards = cards.filter((card) => {
       const matchesQuery = !appliedQuery || normalize(getCardSearchText(card)).includes(appliedQuery);
@@ -342,6 +472,7 @@ function initializePopularTempleGrid(grid) {
     sortFilteredCards();
     visibleCount = Math.min(initialCount, filteredCards.length);
     renderVisibleCards({ animateAll: true });
+    refreshCompactView();
     document.dispatchEvent(new CustomEvent("mw:filter-change", {
       detail: {
         scope: "temple_cards",
@@ -451,11 +582,11 @@ function initializePopularTempleGrid(grid) {
     });
   }
 
-  function commitDraftFilters() {
-    appliedQuery = normalize(filterName?.value || "");
-    replaceSet(appliedRegions, activeRegions);
-    replaceSet(appliedProvinces, activeProvinces);
-    replaceSet(appliedPurposes, activePurposes);
+  function commitDraftFilters(snapshot = readDraft()) {
+    appliedQuery = normalize(snapshot.query);
+    replaceSet(appliedRegions, snapshot.regions);
+    replaceSet(appliedProvinces, snapshot.provinces);
+    replaceSet(appliedPurposes, snapshot.purposes);
   }
 
   function applyInitialCollectionSearchParams() {
@@ -510,6 +641,8 @@ function initializePopularTempleGrid(grid) {
     updateRegionTags(availableRegions);
     updateProvinceTags(availableProvinces);
     updatePurposeTags(availablePurposes);
+    facetOptions = { provinces: availableProvinces, purposes: availablePurposes };
+    refreshCompactView();
   }
 
   function matchesCardPurposes(card) {
@@ -591,6 +724,8 @@ function initializePopularTempleGrid(grid) {
     if (!dataSrc) return false;
 
     if (!collectionDataLoad) {
+      loadState = "loading";
+      refreshCompactView();
       collectionDataLoad = fetch(`${dataSrc}${dataSrc.includes("?") ? "&" : "?"}ts=${Date.now()}`, {
         cache: "no-store",
         headers: {
@@ -605,17 +740,24 @@ function initializePopularTempleGrid(grid) {
 
     try {
       const payload = await collectionDataLoad;
-      hydrateCollectionCards(Array.isArray(payload?.items) ? payload.items : []);
-      hasLoadedCollectionData = true;
-      window.MongkolWelaCMS?.applyTempleOverrides?.();
+      if (compact && !Array.isArray(payload?.items)) throw new Error("Invalid collection payload");
+      if (!compact || !hasLoadedCollectionData) {
+        hydrateCollectionCards(Array.isArray(payload?.items) ? payload.items : []);
+        hasLoadedCollectionData = true;
+        catalogRevision++;
+        window.MongkolWelaCMS?.applyTempleOverrides?.();
+      }
+      loadState = "ready";
       if (activeNearby) updateCardDistances();
       updateFacetOptions();
-      if (applyFilters) applyPopularFilters();
+      if (applyFilters || compact) applyPopularFilters();
       else renderVisibleCards();
       return true;
     } catch (error) {
       console.warn("โหลดข้อมูลพิกัดเพิ่มเติมไม่สำเร็จ", error);
       collectionDataLoad = null;
+      loadState = "error";
+      refreshCompactView();
       return false;
     }
   }
@@ -723,7 +865,9 @@ function initializePopularTempleGrid(grid) {
     nearbyButton.setAttribute("aria-pressed", String(activeNearby));
     nearbyButton.setAttribute("aria-busy", String(isRequestingLocation));
     nearbyButton.disabled = isRequestingLocation;
-    nearbyButton.textContent = isRequestingLocation ? "กำลังหาตำแหน่ง..." : activeNearby ? "เรียงตามใกล้ฉัน" : nearbyStatus ? "ลองอีกครั้ง" : "พิกัดใกล้ฉัน";
+    const label = isRequestingLocation ? "กำลังหาตำแหน่ง..." : activeNearby ? "เรียงตามใกล้ฉัน" : nearbyStatus ? "ลองอีกครั้ง" : compact ? "ใกล้ตำแหน่งปัจจุบัน" : "พิกัดใกล้ฉัน";
+    if (compact) nearbyButton.lastElementChild.textContent = label;
+    else nearbyButton.textContent = label;
     nearbyButton.title = nearbyStatus || "";
     if (nearbyStatusNode) {
       nearbyStatusNode.textContent = nearbyStatus;
@@ -755,16 +899,16 @@ function initializePopularTempleGrid(grid) {
     });
   }
 
-  async function requestUserLocation() {
+  async function requestUserLocation(isCurrent = () => true) {
     if (!("geolocation" in navigator)) {
-      nearbyStatus = "เบราว์เซอร์นี้ยังไม่รองรับการใช้ตำแหน่ง";
+      if (isCurrent()) nearbyStatus = "เบราว์เซอร์นี้ยังไม่รองรับการใช้ตำแหน่ง";
       return null;
     }
 
     try {
       const permissionState = await readGeolocationPermissionState();
       if (permissionState === "denied") {
-        nearbyStatus = "ต้องอนุญาตตำแหน่งในเบราว์เซอร์ก่อน";
+        if (isCurrent()) nearbyStatus = "ต้องอนุญาตตำแหน่งในเบราว์เซอร์ก่อน";
         return null;
       }
 
@@ -787,7 +931,7 @@ function initializePopularTempleGrid(grid) {
         longitude: position.coords.longitude,
       };
     } catch (error) {
-      nearbyStatus =
+      if (isCurrent()) nearbyStatus =
         error?.code === 1
           ? "ต้องอนุญาตการใช้ตำแหน่งก่อน"
           : error?.code === 3
