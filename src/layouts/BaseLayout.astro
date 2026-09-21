@@ -2,6 +2,7 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import LoadingScreen from "../components/LoadingScreen.astro";
+import PageEntrance from "../components/PageEntrance.astro";
 import { brandAssets } from "../config/site.js";
 import { stylesForPath } from "../config/styles.js";
 import {
@@ -108,6 +109,7 @@ const jsonLd = toJsonLdGraph([
     <meta name="theme-color" content="#9e2b24" />
     <meta name="application-name" content={SEO_SITE_NAME} />
     <meta name="apple-mobile-web-app-title" content={SEO_SITE_NAME} />
+    <PageEntrance />
     <script is:inline>
       document.documentElement.classList.add("cms-navigation-pending");
     </script>

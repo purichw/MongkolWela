@@ -6,7 +6,13 @@ const targets = document.querySelectorAll([
 ].join(","));
 const seen = new WeakSet();
 
-// Content is visible by default. Animation is an enhancement, not a visibility gate.
+// Never rewind already-visible content to opacity zero after first paint.
+targets.forEach(target => {
+  const bounds = target.getBoundingClientRect();
+  if (bounds.top < window.innerHeight && bounds.bottom > 0) seen.add(target);
+});
+
+// Content stays visible without JS; start offscreen reveals before they enter view.
 function reveal(target) {
   if (seen.has(target)) return;
   seen.add(target);
@@ -19,7 +25,7 @@ if ("IntersectionObserver" in window) {
       reveal(entry.target);
       observer.unobserve(entry.target);
     }
-  }, { threshold: 0, rootMargin: "0px 0px -4% 0px" });
+  }, { threshold: 0, rootMargin: "0px 0px 64px 0px" });
   targets.forEach(target => observer.observe(target));
   reduced.addEventListener("change", () => {
     if (!reduced.matches) return;

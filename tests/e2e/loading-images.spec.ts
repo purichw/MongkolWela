@@ -22,7 +22,13 @@ test("loading images preserve the existing animation and release behavior", asyn
   await expect(icons).toHaveCount(iconNames.length);
   for (let index = 0; index < iconNames.length; index += 1) {
     const icon = icons.nth(index);
-    await expect(icon).toHaveAttribute("src", new RegExp(`/${iconNames[index]}\\..*\\.webp$`));
+    const source = new URL((await icon.getAttribute("src"))!, page.url());
+    if (source.pathname === "/_image") {
+      expect(source.searchParams.get("href")).toMatch(new RegExp(`/${iconNames[index]}\\.png(?:\\?|$)`));
+      expect(source.searchParams.get("f")).toBe("webp");
+    } else {
+      expect(source.pathname).toMatch(new RegExp(`/${iconNames[index]}\\..*\\.webp$`));
+    }
     await expect(icon).toHaveCSS("animation-name", "loader-icon-cycle");
     await expect(icon).toHaveCSS("animation-duration", "8.2s");
     await expect(icon).toHaveCSS("animation-delay", `${Number((index * 0.82).toFixed(2))}s`);

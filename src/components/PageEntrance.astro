@@ -1,0 +1,49 @@
+<style is:inline>
+  html.page-fonts-pending body > :not([data-page-loader]):not(script):not(style) {
+    opacity: 0;
+    visibility: hidden;
+  }
+  html.page-fonts-pending .loader-core p {
+    visibility: hidden;
+  }
+</style>
+<script is:inline>
+  (() => {
+    if (!document.fonts) return;
+    const root = document.documentElement;
+    root.classList.add("page-fonts-pending");
+    let finished = false;
+    let shownAt = 0;
+    let releaseTimer;
+    const loaderDelay = setTimeout(() => {
+      shownAt = performance.now();
+      root.classList.add("is-font-loading");
+      document.querySelector("[data-page-loader]")?.setAttribute("aria-hidden", "false");
+    }, 180);
+    const reveal = () => {
+      if (finished) return;
+      clearTimeout(deadline);
+      clearTimeout(loaderDelay);
+      clearTimeout(releaseTimer);
+      const remaining = shownAt ? Math.max(0, shownAt + 360 - performance.now()) : 0;
+      if (remaining > 0) {
+        releaseTimer = setTimeout(reveal, remaining);
+        return;
+      }
+      finished = true;
+      root.classList.replace("page-fonts-pending", "page-fonts-ready");
+      root.classList.remove("is-font-loading");
+      if (!root.matches(".is-loading, .is-navigating")) {
+        document.querySelector("[data-page-loader]")?.setAttribute("aria-hidden", "true");
+      }
+    };
+    // A blocked font host must never leave the page hidden indefinitely.
+    const deadline = setTimeout(reveal, 2500);
+    document.addEventListener("DOMContentLoaded", () => {
+      document.fonts.ready.then(reveal, reveal);
+    }, { once: true });
+    window.addEventListener("pageshow", event => {
+      if (event.persisted) reveal();
+    });
+  })();
+</script>

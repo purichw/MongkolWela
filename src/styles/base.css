@@ -21,6 +21,19 @@ body {
   hyphens: manual;
 }
 
+html.page-fonts-ready body > :not([data-page-loader]):not(script):not(style) {
+  animation: page-content-enter 800ms ease-in-out;
+}
+
+@keyframes page-content-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.page-fonts-ready body > :not([data-page-loader]):not(script):not(style) { animation: none; }
+}
+
 :lang(en) {
   font-family: var(--font-english);
 }
@@ -89,9 +102,10 @@ option {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 220ms ease, visibility 220ms ease;
+  transition: opacity 360ms ease-in-out, visibility 360ms ease-in-out;
 }
 
+.is-font-loading .site-loader,
 .is-loading .site-loader,
 .is-navigating .site-loader {
   height: 100vh !important;

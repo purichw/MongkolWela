@@ -366,15 +366,18 @@ test("published CMS copy/image/sections retain precedence, including long Thai c
   }
 });
 
-test("hero copy animates once, carousel is lazy and search arrows do not change slides", async ({ page }) => {
+test("page fades once without rewinding hero copy, carousel stays lazy", async ({ page }) => {
   await page.addInitScript(() => {
     (window as any).titleAnimations = 0;
+    (window as any).pageAnimations = 0;
     document.addEventListener("animationstart", e => {
       if ((e.target as Element).id === "hero-title") (window as any).titleAnimations++;
+      if (e.animationName === "page-content-enter" && (e.target as Element).tagName === "MAIN") (window as any).pageAnimations++;
     });
   });
   await setup(page);
-  await expect.poll(() => page.evaluate(() => (window as any).titleAnimations)).toBe(1);
+  await expect.poll(() => page.evaluate(() => (window as any).pageAnimations)).toBe(1);
+  expect(await page.evaluate(() => (window as any).titleAnimations)).toBe(0);
   await expect(page.locator(".hero-slide img[src]")).toHaveCount(1);
   await page.locator("#site-search").fill("วัดอรุณ");
   await page.locator("#site-search").press("ArrowLeft");
@@ -383,7 +386,8 @@ test("hero copy animates once, carousel is lazy and search arrows do not change 
   await expect(page.locator(".hero-slide img[src]")).toHaveCount(2);
   await expect(page.locator("[data-carousel-dot]").nth(1)).toHaveAttribute("aria-pressed", "true");
   await page.locator("[data-carousel-prev]").click();
-  expect(await page.evaluate(() => (window as any).titleAnimations)).toBe(1);
+  expect(await page.evaluate(() => (window as any).titleAnimations)).toBe(0);
+  expect(await page.evaluate(() => (window as any).pageAnimations)).toBe(1);
   await page.locator("[data-carousel-pause]").click();
   await expect(page.locator("[data-carousel-pause]")).toHaveAttribute("aria-pressed", "true");
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -447,7 +451,7 @@ test("lower sections reveal after refresh and never depend on motion JS to be vi
   await expect(page.locator(".home-collection-card").first()).toHaveClass(/home-entered/);
   await page.reload();
   await page.locator("#collections").scrollIntoViewIfNeeded();
-  await expect(page.locator(".home-collection-card").first()).toHaveClass(/home-entered/);
+  await expect(page.locator(".home-collection-card").first()).toBeVisible();
   await page.emulateMedia({ reducedMotion: "reduce" });
   expect(await page.locator(".home-collection-card").first().evaluate(e => getComputedStyle(e).opacity)).toBe("1");
 });

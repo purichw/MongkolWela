@@ -5,8 +5,10 @@ import { initPageLoader } from "./page-loader.js";
 import { initRealtimeTopbar } from "./realtime-topbar.js";
 import { initScrollProgress } from "./scroll-progress.js";
 import { initPublicSelects } from "./public-select.js";
+import { initMediaMotion } from "./media-motion.js";
 
 initPageLoader();
+initMediaMotion();
 initObservability();
 initRealtimeTopbar();
 initScrollProgress();

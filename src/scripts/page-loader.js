@@ -149,7 +149,7 @@ function resetLoader(state) {
   state.loader.classList.remove("has-timeout", "has-long-timeout");
   state.progressRoot.removeAttribute("aria-busy");
   state.progressRoot.setAttribute("aria-valuenow", "8");
-  state.loader.setAttribute("aria-hidden", "true");
+  state.loader.setAttribute("aria-hidden", String(!document.documentElement.classList.contains("is-font-loading")));
   state.progress = 8;
   state.target = 86;
   setProgress(state, state.progress);
