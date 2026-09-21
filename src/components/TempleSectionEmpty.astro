@@ -1,0 +1,23 @@
+---
+import SiteIcon from "./icons/SiteIcon.astro";
+import "../styles/temple-sections.css";
+
+interface Props {
+  kind: "activities" | "shop";
+  title: string;
+  description: string;
+}
+const { kind, title, description } = Astro.props;
+---
+<div class="temple-section-empty">
+  <div class="temple-empty-art" aria-hidden="true">
+    <span class="temple-empty-cloud"></span>
+    <span class="temple-empty-disc"><SiteIcon name={kind === "activities" ? "calendar-days" : "handbag"} />{kind === "shop" && <SiteIcon name="lotus" class="temple-empty-bag-lotus" />}</span>
+    <span class="temple-empty-stupa"><SiteIcon name="stupa" /></span>
+    <span class="temple-empty-lotus"><SiteIcon name="lotus" /></span>
+    <SiteIcon name="plus" class="temple-empty-spark temple-empty-spark--left" />
+    <SiteIcon name="plus" class="temple-empty-spark temple-empty-spark--right" />
+  </div>
+  <h3 data-empty-title>{title}</h3>
+  <p data-empty-description>{description}</p>
+</div>

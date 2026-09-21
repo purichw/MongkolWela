@@ -1,48 +1,84 @@
-.temple-activities { padding: 36px 0; border-top: 1px solid var(--line); margin-top: 32px; }
-.temple-activities-heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 24px; }
-.temple-activities-heading h2 { margin: 4px 0 0; font-size: 28px; line-height: 1.5; }
-.temple-activities-heading .section-kicker { color: var(--ink-soft); }
-.temple-activity-body { min-width: 0; overflow-wrap: anywhere; }
-.temple-activities-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); }
+.temple-activities { padding-bottom: 0; }
+.temple-community-section.temple-activities .temple-community-heading { gap: 8px 16px; margin-bottom: 14px; }
+.temple-activities .temple-community-title { flex: 1; gap: 10px; }
+.temple-community-section.temple-activities .temple-community-title h2 { font-size: 22px; }
+.temple-activities .temple-community-medallion { width: 36px; height: 36px; flex-basis: 36px; }
+.temple-activities .temple-community-medallion .site-icon { width: 23px; height: 23px; }
+.temple-activity-body { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; min-width: 0; padding: 10px; overflow-wrap: anywhere; }
+.temple-activities-tabs { display: flex; gap: 0; width: fit-content; max-width: 100%; border-bottom: 1px solid var(--line); margin: 0; font-size: 14px; }
 .temple-activities button { font: inherit; cursor: pointer; }
-.temple-activities-tabs button { border: 0; border-bottom: 3px solid transparent; padding: 12px 16px; background: transparent; color: var(--ink-soft); white-space: nowrap; }
+.temple-activities-tabs button { min-height: 44px; border: 0; border-bottom: 2px solid transparent; padding: 8px 14px; background: transparent; color: var(--ink-soft); white-space: nowrap; }
 .temple-activities-tabs button[aria-pressed="true"] { color: var(--lacquer); border-bottom-color: var(--lacquer); font-weight: 700; }
-.temple-activity { display: grid; grid-template-columns: 94px minmax(0, 1fr); gap: 28px; padding: 26px 0; border-bottom: 1px solid var(--line); }
-.temple-activity-date { text-align: center; color: var(--jade-dark); padding-top: 4px; }
-.temple-activity-date time { display: grid; }
-.temple-activity-date strong { font-size: 34px; line-height: 1.3; }
-.temple-activity-date span { font-size: 14px; }
-.temple-activity-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; font-size: 14px; color: var(--ink-soft); }
-.temple-activity-status { color: var(--jade-dark); background: #e4ece5; padding: 2px 9px; border-radius: 4px; }
+.temple-activity-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: start; }
+.temple-activity { position: relative; display: flex; flex-direction: column; height: var(--temple-card-height); min-width: 0; border: 1px solid var(--pd-line, var(--line)); border-radius: 8px; background: #fffdf9e8; overflow: hidden; }
+.temple-activity-media { height: var(--temple-card-media-height); flex: none; margin: 0; overflow: hidden; background: #f4eddf; }
+.temple-activity-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.temple-activity-status { position: absolute; top: 8px; left: 8px; z-index: 1; font-size: 12px; color: var(--jade-dark); background: #e4ece5; padding: 2px 8px; border-radius: 4px; }
+.temple-activity[data-has-image="false"]:has(.temple-activity-status) .temple-activity-body { padding-top: 38px; }
 .temple-activity[data-status="postponed"] .temple-activity-status { color: #654519; background: #f4e5c1; }
 .temple-activity[data-status="cancelled"] .temple-activity-status { color: var(--lacquer); background: #f3e0da; }
-.temple-activity h3 { font-size: 21px; line-height: 1.6; margin: 9px 0 6px; color: var(--ink); overflow-wrap: anywhere; }
-.temple-activity p { margin: 4px 0; }
-.temple-activity-schedule, .temple-activity-venue { color: var(--ink-soft); }
-.temple-activity-notice { color: var(--lacquer); }
-.temple-activity details { margin-top: 14px; }
-.temple-activity summary { cursor: pointer; color: var(--jade-dark); width: fit-content; padding: 8px 0; min-height: 44px; }
-.temple-activity-detail { max-width: 760px; overflow-wrap: anywhere; }
+.temple-community-section .temple-activity h3 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; min-height: 42px; font-size: 14px; line-height: 21px; margin: 0 0 4px; color: var(--pd-green, var(--jade-dark)); overflow-wrap: anywhere; }
+.temple-community-section .temple-activity p { margin: 0 0 3px; font-size: 12px; line-height: 18px; }
+.temple-activity-schedule, .temple-activity-venue { display: flex; align-items: flex-start; gap: 8px; color: var(--ink-soft); }
+.temple-activity-body > :is(.temple-activity-schedule, .temple-activity-venue) { padding-right: 36px; }
+.temple-activity-body > .temple-activity-schedule > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.temple-activity-schedule .pd-icon, .temple-activity-venue .pd-icon { width: 15px; height: 15px; flex-basis: 15px; margin-top: 3px; color: var(--pd-gold, var(--gold)); }
+.temple-activity-venue > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.temple-activity .temple-activity-excerpt { color: var(--ink-soft); margin: 8px 0 36px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
+.temple-activity-notice { color: var(--lacquer); font-weight: 600; }
+.temple-activity details { margin-top: auto; padding-top: 2px; }
+.temple-activity summary { position: absolute; right: 6px; bottom: 6px; cursor: pointer; color: var(--lacquer); display: flex; justify-content: center; align-items: center; width: 44px; height: 44px; border-radius: 6px; list-style: none; }
+.temple-activity summary::-webkit-details-marker { display: none; }
+.temple-activity summary:hover { background: #fbf0e9; }
+.temple-activity summary .pd-icon { width: 18px; height: 18px; flex-basis: 18px; }
+.temple-activity details[open] summary .pd-icon { transform: rotate(90deg); }
+.temple-activity:has(details[open]) { height: auto; min-height: var(--temple-card-height); }
+.temple-activity details[open] summary { position: static; margin-left: auto; }
+.temple-community-section .temple-activity:has(details[open]) h3 { display: block; overflow: visible; }
+.temple-activity:has(details[open]) .temple-activity-excerpt { display: none; }
+.temple-activity-detail { padding-top: 14px; overflow-wrap: anywhere; font-size: 14px; }
 .temple-activity-detail p, .temple-activity-detail dd { white-space: pre-line; }
 .temple-activity-detail dl { margin: 12px 0; }
 .temple-activity-detail dl > div { margin: 8px 0; }
 .temple-activity-detail dt { font-weight: 600; }
 .temple-activity-detail dd { margin: 0; color: var(--ink-soft); }
-.temple-activity-links { display: flex; flex-wrap: wrap; gap: 10px 24px; }
-.temple-activity-links a { color: var(--jade-dark); text-decoration: underline; padding: 8px 0; }
+.temple-activity-links { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+.temple-community-section .temple-activity-links a { color: var(--jade-dark); text-decoration: underline; padding: 10px 0; min-height: 44px; }
 .temple-activity-detail small { display: block; color: var(--ink-soft); margin-top: 8px; }
-.temple-activities-empty { padding: 28px 0; color: var(--ink-soft); }
-.temple-activities-more, .temple-activities-empty button { background: transparent; color: var(--jade-dark); border: 1px solid var(--line); border-radius: 6px; padding: 10px 18px; margin-top: 20px; min-height: 44px; }
+.temple-activities .temple-activities-more { display: inline-flex; align-items: center; gap: 7px; background: transparent; color: var(--lacquer); border: 0; padding: 8px 0 8px 8px; min-height: 44px; font-size: 14px; }
+.temple-activities-more .pd-icon { width: 17px; height: 17px; flex-basis: 17px; }
+.temple-community-section.temple-activities .temple-section-empty { min-height: 182px; padding: 18px; }
+.temple-activities .temple-empty-art { width: 180px; height: 76px; }
+.temple-activities .temple-empty-disc { width: 76px; height: 76px; }
+.temple-activities .temple-empty-disc .site-icon { width: 38px; height: 38px; }
+.temple-activities .temple-empty-stupa .site-icon { width: 40px; height: 56px; }
+.temple-activities .temple-empty-lotus .site-icon { width: 34px; height: 28px; }
+.temple-activities .temple-empty-stupa { right: 8px; }
+.temple-activities .temple-empty-lotus { right: 28px; }
+.temple-activities .temple-empty-cloud { width: 44px; height: 10px; bottom: 8px; }
+.temple-activities .temple-empty-cloud::before { width: 22px; height: 24px; left: 15px; }
+.temple-activities .temple-empty-cloud::after { width: 18px; height: 16px; }
+.temple-activities .temple-empty-spark { width: 12px; height: 12px; }
+.temple-activities .temple-empty-spark--left { left: 20px; top: 14px; }
+.temple-community-section.temple-activities .temple-section-empty h3 { font-size: 17px; margin: 10px 0 4px; }
+.temple-community-section.temple-activities .temple-section-empty p { font-size: 14px; max-width: 520px; }
+.temple-activities-stale { padding: 16px; color: #77541d; background: #fff4d8; border: 1px solid #e4c994; border-radius: 8px; font-size: 14px; margin-bottom: 14px; }
+.temple-activities-stale button { min-height: 44px; margin-top: 8px; padding: 8px 14px; border: 1px solid #cbb58b; border-radius: 6px; background: #fffdf8; }
 .temple-activities [hidden] { display: none !important; }
 .temple-activities :is(button, summary, a):focus-visible { outline: 2px solid var(--jade); outline-offset: 4px; }
-@media (max-width: 640px) {
-  .temple-activities-heading { display: block; }
-  .temple-activities-heading h2 { font-size: 24px; }
-  .temple-activities-tabs { margin-top: 16px; }
-  .temple-activities-tabs button { flex: 1; padding-inline: 8px; }
-  .temple-activity { grid-template-columns: 62px minmax(0, 1fr); gap: 14px; padding: 22px 0; }
-  .temple-activity-date strong { font-size: 28px; }
-  .temple-activity-date span { font-size: 12px; }
-  .temple-activity h3 { font-size: 18px; }
-  .temple-activity-schedule, .temple-activity-venue { font-size: 14px; }
+@media (max-width: 1000px) {
+  .temple-activity-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .temple-activities .temple-activities-tabs { order: 3; flex-basis: 100%; }
+}
+@media (max-width: 600px) {
+  .temple-community-section.temple-activities .temple-community-title h2 { font-size: 20px; }
+  .temple-activities .temple-community-medallion { width: 30px; height: 30px; flex-basis: 30px; }
+  .temple-activities .temple-community-medallion .site-icon { width: 22px; height: 22px; }
+  .temple-activities .temple-community-title { gap: 8px; }
+  .temple-activities .temple-activities-tabs { margin-right: 0; }
+  .temple-activities-tabs button { padding-inline: 12px; }
+  .temple-activity-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .temple-activity-schedule, .temple-activity-venue { gap: 4px; }
+  .temple-activity-body > :is(.temple-activity-schedule, .temple-activity-venue) .pd-icon { display: none; }
+  .temple-activities .temple-activities-more { font-size: 13px; }
 }

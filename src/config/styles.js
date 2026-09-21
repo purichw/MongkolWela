@@ -20,6 +20,7 @@ import admin from "../styles/admin.css?url";
 import adminActivities from "../styles/admin-activities.css?url";
 import site from "../styles/site.css?url";
 import planner from "../styles/temple-planner.css?url";
+import thailand from "../styles/temple-thailand.css?url";
 
 // Keep the existing cascade order while loading only the route's feature styles.
 export function stylesForPath(path) {
@@ -34,5 +35,5 @@ export function stylesForPath(path) {
     : path.includes("/palmistry/") ? [palmistry]
     : path.startsWith("/temples/") ? [temples, map]
     : [];
-  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : [])];
+  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : []), ...(path === "/temples/thailand/" ? [thailand] : [])];
 }

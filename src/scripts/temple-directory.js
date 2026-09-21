@@ -1,8 +1,12 @@
+import { renderIcon } from "../lib/ui-markup.js";
+
 const root = document.querySelector("[data-temple-directory]");
 const quickSearchRoot = document.querySelector("[data-temple-quick-search]");
 const popularTempleGrid = document.querySelector("[data-popular-temple-grid]");
 
 const columnIndexes = [0, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12];
+const summaryColumns = [0, 2, 3, 4, 5, 6, 8];
+const tableColumnCount = summaryColumns.length + 1;
 const numericColumns = new Set([0, 6, 8, 12]);
 const pageSize = 20;
 const thailandIndexUrl = "/assets/data/temples-thailand-index.json";
@@ -941,6 +945,9 @@ async function initializeTempleDirectory(rootElement) {
   const tableHead = rootElement.querySelector("[data-temple-table-head]");
   const tableBody = rootElement.querySelector("[data-temple-table-body]");
   const pagination = rootElement.querySelector("[data-temple-pagination]");
+  const loadAll = rootElement.querySelector("[data-temple-load-all]");
+  const tableWrap = rootElement.querySelector(".temple-table-wrap");
+  let searching = false;
 
   let rows = [];
   let headers = [];
@@ -960,7 +967,7 @@ async function initializeTempleDirectory(rootElement) {
     renderHead(tableHead, headers);
     populateStaticOptions(form, indexPayload, t);
     updateAreaOptions(form, indexPayload, t);
-    if (sourceNode) sourceNode.textContent = formatThailandSource(indexPayload, t);
+    updateSource(indexPayload);
 
     if (hasSearchParams()) {
       await ensureFullData();
@@ -984,13 +991,18 @@ async function initializeTempleDirectory(rootElement) {
     } catch (fullDataError) {
       console.error(error, fullDataError);
       countNode.textContent = t.loadError;
-      tableBody.innerHTML = `<tr><td class="temple-empty">${t.loadError}</td></tr>`;
-      return;
+      showFailure();
     }
   }
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (searching) return;
+    searching = true;
+    form.querySelector('[type="submit"]').disabled = true;
+    clearButton.disabled = true;
+    loadAll.disabled = true;
+    tableWrap.setAttribute("aria-busy", "true");
     try {
       await ensureFullData({ showLoading: true });
       currentPage = 1;
@@ -1000,9 +1012,30 @@ async function initializeTempleDirectory(rootElement) {
       updateView();
     } catch (error) {
       console.error(error);
-      countNode.textContent = t.loadError;
-      tableBody.innerHTML = `<tr><td class="temple-empty" colspan="${columnIndexes.length}">${t.loadError}</td></tr>`;
+      showFailure();
+    } finally {
+      searching = false;
+      form.querySelector('[type="submit"]').disabled = false;
+      clearButton.disabled = false;
+      loadAll.disabled = false;
+      tableWrap.setAttribute("aria-busy", "false");
     }
+  });
+
+  loadAll.addEventListener("click", () => form.requestSubmit());
+  tableBody.addEventListener("click", (event) => {
+    if (event.target.closest("[data-temple-retry]")) { form.requestSubmit(); return; }
+    const button = event.target.closest("[data-registry-row]");
+    if (!button) return;
+    const detail = document.getElementById(button.getAttribute("aria-controls"));
+    const open = button.getAttribute("aria-expanded") !== "true";
+    button.setAttribute("aria-expanded", String(open));
+    detail.hidden = !open;
+  });
+  const sourceInfo = rootElement.querySelector(".registry-source-info");
+  document.addEventListener("click", event => { if (!sourceInfo.contains(event.target)) sourceInfo.open = false; });
+  sourceInfo.addEventListener("keydown", event => {
+    if (event.key === "Escape") { sourceInfo.open = false; sourceInfo.querySelector("summary").focus(); }
   });
 
   bindAreaEvents(form, () => (hasFullData ? rows : indexPayload || rows), t);
@@ -1022,27 +1055,60 @@ async function initializeTempleDirectory(rootElement) {
     if (!button) return;
     const page = Number(button.dataset.page);
     if (!Number.isFinite(page)) return;
+    goToPage(page);
+  });
+  pagination.addEventListener("submit", event => {
+    event.preventDefault();
+    goToPage(Number(new FormData(event.target).get("page")));
+  });
+  window.matchMedia("(max-width: 720px)").addEventListener("change", () => {
+    if (!searching && pagination.querySelector(".registry-page-controls")) {
+      renderPagination(pagination, currentPage, Math.max(1, Math.ceil(filteredRows.length / pageSize)), t, filteredRows.length, isPreview);
+    }
+  });
+
+  function goToPage(page) {
+    if (searching || !Number.isInteger(page) || page < 1 || page > Math.ceil(filteredRows.length / pageSize)) return;
     currentPage = page;
     updateView();
+    pagination.querySelector('[aria-current="page"]')?.focus({ preventScroll: true });
     rootElement.querySelector(".temple-results").scrollIntoView({ block: "start" });
-  });
+  }
 
   function updateView() {
     const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
     currentPage = Math.min(currentPage, totalPages);
     countNode.textContent = isPreview ? t.previewCount(filteredRows.length, totalRows) : t.count(filteredRows.length, rows.length);
     renderRows(tableBody, filteredRows, currentPage, headers, t);
-    renderPagination(pagination, currentPage, totalPages, t);
+    renderPagination(pagination, currentPage, totalPages, t, filteredRows.length, isPreview);
+    tableWrap.scrollTop = 0;
+    loadAll.hidden = !isPreview;
+    rootElement.querySelector("[data-temple-load-label]").textContent = `ค้นหาจากทะเบียนทั้งหมด ${totalRows.toLocaleString("th-TH")} วัด`;
+  }
+
+  function showFailure() {
+    countNode.textContent = t.loadError;
+    tableBody.innerHTML = `<tr><td class="temple-empty" colspan="${tableColumnCount}">${t.loadError}<br /><button class="temple-page-button registry-retry" type="button" data-temple-retry>ลองใหม่</button></td></tr>`;
+    pagination.innerHTML = "";
+    loadAll.hidden = true;
+  }
+
+  function updateSource(payload) {
+    if (sourceNode) sourceNode.textContent = formatThailandSource(payload, t);
+    const value = payload?.meta?.generatedAt;
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(value || "") ? new Date(`${value}T12:00:00+07:00`) : null;
+    const text = date && Number.isFinite(date.getTime()) ? `ชุดข้อมูล: ${new Intl.DateTimeFormat("th-TH", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Bangkok" }).format(date)}` : "";
+    rootElement.querySelectorAll("[data-temple-dataset-date]").forEach(node => { node.textContent = text; });
   }
 
   async function ensureFullData({ showLoading = false } = {}) {
     if (hasFullData) return;
     if (showLoading) {
       countNode.textContent = t.loadingFull;
-      tableBody.innerHTML = `<tr><td class="temple-empty" colspan="${columnIndexes.length}">${t.loadingFull}</td></tr>`;
+      tableBody.innerHTML = `<tr><td class="temple-empty" colspan="${tableColumnCount}">${t.loadingFull}</td></tr>`;
     }
 
-    if (!fullDataLoad) fullDataLoad = fetchTempleThailandData();
+    if (!fullDataLoad) fullDataLoad = fetchTempleThailandData().catch(error => { fullDataLoad = null; throw error; });
     const data = await fullDataLoad;
     rows = data.rows || [];
     headers = getThailandColumns(data);
@@ -1052,7 +1118,7 @@ async function initializeTempleDirectory(rootElement) {
     renderHead(tableHead, headers);
     populateStaticOptions(form, rows, t);
     updateAreaOptions(form, rows, t);
-    if (sourceNode) sourceNode.textContent = formatThailandSource(data, t);
+    updateSource(data);
   }
 }
 
@@ -1111,37 +1177,37 @@ function bindAreaEvents(form, source, t) {
 function renderHead(tableHead, headers) {
   tableHead.innerHTML = `
     <tr>
-      ${columnIndexes.map((index) => `<th class="${getColumnClass(index)}">${escapeHtml(headers[index] || "")}</th>`).join("")}
+      ${summaryColumns.map((index) => `<th scope="col" class="${getColumnClass(index)}"${index === 0 ? ' aria-label="ลำดับ"' : ""}>${index === 0 ? "#" : escapeHtml(headers[index] || "")}</th>`).join("")}
+      <th scope="col" class="registry-expand-cell"><span class="registry-sr-only">ข้อมูลวัด</span></th>
     </tr>
   `;
 }
 
 function renderRows(tableBody, rows, page, headers, t) {
   if (!rows.length) {
-    tableBody.innerHTML = `<tr><td class="temple-empty" colspan="${columnIndexes.length}">${t.noResults}</td></tr>`;
+    tableBody.innerHTML = `<tr><td class="temple-empty" colspan="${tableColumnCount}">${t.noResults}</td></tr>`;
     return;
   }
 
   const start = (page - 1) * pageSize;
   const visibleRows = rows.slice(start, start + pageSize);
-  tableBody.innerHTML = visibleRows.map((row) => `
-    <tr>
-      ${columnIndexes.map((index) => `
+  tableBody.innerHTML = visibleRows.map((row, offset) => `
+    <tr class="registry-summary-row">
+      ${summaryColumns.map((index) => `
         <td class="${getColumnClass(index)}" data-label="${escapeHtml(headers[index] || "")}">
           ${escapeHtml(row[index] || "-")}
         </td>
       `).join("")}
+      <td class="registry-expand-cell"><button class="registry-row-toggle" type="button" data-registry-row aria-expanded="false" aria-controls="registry-row-${start + offset}" aria-label="ข้อมูลวัด ${escapeHtml(row[2])}">${renderIcon("chevron-right", "registry-icon")}</button></td>
     </tr>
+    <tr class="registry-detail-row" id="registry-row-${start + offset}" hidden><td colspan="${tableColumnCount}"><dl class="registry-row-details">${columnIndexes.filter(index => ![0, 2].includes(index)).map(index => `<div><dt>${escapeHtml(headers[index] || "")}</dt><dd>${escapeHtml(row[index] || "-")}</dd></div>`).join("")}</dl></td></tr>
   `).join("");
 }
 
-function renderPagination(pagination, page, totalPages, t) {
-  if (totalPages <= 1) {
-    pagination.innerHTML = "";
-    return;
-  }
-
-  const candidates = new Set([1, totalPages, page - 2, page - 1, page, page + 1, page + 2]);
+function renderPagination(pagination, page, totalPages, t, count, isPreview) {
+  const candidates = new Set(window.matchMedia("(max-width: 720px)").matches
+    ? [1, page, totalPages]
+    : [1, totalPages, page - 2, page - 1, page, page + 1, page + 2]);
   const pages = [...candidates].filter((value) => value >= 1 && value <= totalPages).sort((a, b) => a - b);
   const buttons = [];
   let previous = 0;
@@ -1150,15 +1216,16 @@ function renderPagination(pagination, page, totalPages, t) {
     if (value - previous > 1) {
       buttons.push(`<span class="temple-page-status">...</span>`);
     }
-    buttons.push(`<button class="temple-page-button ${value === page ? "is-active" : ""}" type="button" data-page="${value}">${value.toLocaleString()}</button>`);
+    buttons.push(`<button class="temple-page-button ${value === page ? "is-active" : ""}" type="button" data-page="${value}" aria-label="หน้า ${value}" ${value === page ? 'aria-current="page"' : ""}>${value.toLocaleString("th-TH")}</button>`);
     previous = value;
   }
 
   pagination.innerHTML = `
-    <button class="temple-page-button" type="button" data-page="${page - 1}" ${page === 1 ? "disabled" : ""}>${t.previous}</button>
+    <p class="registry-page-summary">แสดง ${count ? (page - 1) * pageSize + 1 : 0}–${Math.min(page * pageSize, count).toLocaleString("th-TH")} จาก <strong>${count.toLocaleString("th-TH")}</strong> ${isPreview ? "รายการตัวอย่าง" : "รายการ"}</p>
+    ${totalPages > 1 ? `<nav class="registry-page-controls" aria-label="หน้าผลการค้นหา"><button class="temple-page-button" type="button" data-page="${page - 1}" aria-label="${t.previous}" title="${t.previous}" ${page === 1 ? "disabled" : ""}>${renderIcon("chevron-left", "registry-icon")}</button>
     ${buttons.join("")}
-    <button class="temple-page-button" type="button" data-page="${page + 1}" ${page === totalPages ? "disabled" : ""}>${t.next}</button>
-    <span class="temple-page-status">${t.pageStatus(page, totalPages)}</span>
+    <button class="temple-page-button" type="button" data-page="${page + 1}" aria-label="${t.next}" title="${t.next}" ${page === totalPages ? "disabled" : ""}>${renderIcon("chevron-right", "registry-icon")}</button></nav>
+    <form class="registry-page-jump"><label for="registry-page-number">ไปหน้าที่</label><input id="registry-page-number" name="page" type="number" inputmode="numeric" min="1" max="${totalPages}" value="${page}" required /><button class="temple-page-button" type="submit">ไป</button></form>` : ""}
   `;
 }
 

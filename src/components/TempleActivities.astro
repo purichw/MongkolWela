@@ -2,19 +2,23 @@
 import "../styles/temple-activities.css";
 import SiteIcon from "./icons/SiteIcon.astro";
 import IconMedallion from "./IconMedallion.astro";
+import TempleSectionEmpty from "./TempleSectionEmpty.astro";
 interface Props { templeId: string; }
 const { templeId } = Astro.props;
 ---
-<section class="temple-activities" data-temple-activities data-temple-id={templeId} aria-labelledby="temple-activities-heading">
-  <header class="temple-activities-heading">
-    <div class="pd-section-heading"><IconMedallion class="pd-medallion"><SiteIcon name="calendar-days" /></IconMedallion><div><h2 id="temple-activities-heading">กิจกรรมและงานบุญ</h2><p>ประกาศจากสถานที่และผู้จัดกิจกรรม</p></div></div>
+<section class="temple-activities temple-community-section" data-temple-activities data-temple-id={templeId} aria-labelledby="temple-activities-heading">
+  <header class="temple-community-heading">
+    <div class="temple-community-title"><IconMedallion class="temple-community-medallion"><SiteIcon name="calendar-days" /></IconMedallion><div><h2 id="temple-activities-heading">กิจกรรมและงานบุญ</h2></div></div>
     <div class="temple-activities-tabs" role="group" aria-label="ช่วงเวลากิจกรรม" data-activity-enhanced hidden>
       <button type="button" data-activity-period="upcoming" aria-pressed="true">กำลังจะมาถึง</button>
       <button type="button" data-activity-period="past" aria-pressed="false">ที่ผ่านมา</button>
     </div>
+    <button class="temple-activities-more" type="button" data-activities-more aria-controls="temple-activity-result" hidden>ดูกิจกรรมทั้งหมด</button>
   </header>
-  <div data-activity-result aria-live="polite" aria-busy="true"><p class="temple-activities-empty" data-activity-enhanced hidden>กำลังโหลดกิจกรรม…</p></div>
-  <button class="temple-activities-more" type="button" data-activities-more hidden>ดูกิจกรรมทั้งหมด</button>
+  <div id="temple-activity-result" data-activity-result aria-live="polite" aria-busy="true"><p class="temple-section-loading" data-activity-enhanced hidden>กำลังโหลดกิจกรรม…</p></div>
+  <template data-activity-empty>
+    <TempleSectionEmpty kind="activities" title="ยังไม่มีประกาศกิจกรรมที่ยืนยันในระบบ" description="เมื่อมีประกาศกิจกรรมที่ยืนยันแล้ว จะแสดงที่นี่ในภายหลัง" />
+  </template>
   <noscript><p>กรุณาเปิด JavaScript เพื่อดูประกาศกิจกรรมล่าสุด</p></noscript>
 </section>
 <script>import "../scripts/temple-activities.js";</script>

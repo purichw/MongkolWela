@@ -1,6 +1,6 @@
 import { requestJson } from "./request.js";
 import { startContentRefresh } from "./content-refresh.js";
-import { ACTIVITY_TYPES, activityDateLabel, safeActivityUrl } from "../lib/temple-activities.js";
+import { ACTIVITY_TYPES, activityDateLabel, safeActivityUrl, safeActivityImageUrl } from "../lib/temple-activities.js";
 import { icon } from "../lib/place-detail-view.js";
 
 const esc = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
@@ -10,6 +10,7 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
   const templeId = root.dataset.templeId;
   const result = root.querySelector("[data-activity-result]");
   const more = root.querySelector("[data-activities-more]");
+  const emptyTemplate = root.querySelector("[data-activity-empty]");
   let events = [];
   let revision = "";
   let period = "upcoming";
@@ -24,14 +25,19 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
     const time = event.timeMode === "timed" ? `${event.startTime}${event.endTime ? `–${event.endTime}` : ""} น.` : event.timeMode === "allDay" ? "ตลอดวัน" : "รอประกาศเวลา";
     const source = safeActivityUrl(event.sourceUrl);
     const registration = safeActivityUrl(event.registrationUrl);
-    return `<article class="temple-activity" data-status="${esc(event.status)}">
-      <div class="temple-activity-date"><time datetime="${esc(event.startDate)}"><strong>${esc(event.startDate?.slice(8))}</strong><span>${esc(new Intl.DateTimeFormat("th-TH", { month: "short", year: "numeric", timeZone: "Asia/Bangkok" }).format(new Date(`${event.startDate}T12:00:00+07:00`)))}</span></time></div>
-      <div class="temple-activity-body"><div class="temple-activity-meta"><span class="temple-activity-status">${status}</span><span>${esc(ACTIVITY_TYPES[event.type])}</span></div>
-        <h3>${esc(event.title)}</h3>
-        <p class="temple-activity-schedule">${event.status === "postponed" ? "กำหนดเดิม: " : ""}${esc(activityDateLabel(event))} · ${esc(time)}</p>
-        ${event.venue ? `<p class="temple-activity-venue">${esc(event.venue)}</p>` : ""}
-        ${changed ? `<p class="temple-activity-notice">${esc(event.statusNote)}</p>` : ""}
-        <details data-activity-details="${esc(event.id)}"><summary>รายละเอียดกิจกรรม</summary><div class="temple-activity-detail">
+    const image = safeActivityImageUrl(event.imageUrl);
+    return `<article class="temple-activity" data-status="${esc(event.status)}" data-has-image="${Boolean(image)}">
+      ${image ? `<figure class="temple-activity-media"><img src="${esc(image)}" alt="${esc(event.imageAlt || event.title)}" width="600" height="240" loading="lazy" decoding="async" data-activity-image /></figure>` : ""}
+      ${changed || event.past ? `<span class="temple-activity-status">${status}</span>` : ""}
+      <div class="temple-activity-body">
+        <h3 title="${esc(event.title)}">${esc(event.title)}</h3>
+        <p class="temple-activity-schedule">${icon("calendar-days")}<span>${event.status === "postponed" ? "กำหนดเดิม: " : ""}${esc(activityDateLabel(event))}</span></p>
+        ${event.venue ? `<p class="temple-activity-venue">${icon("map-pin")}<span>${esc(event.venue)}</span></p>` : ""}
+        ${!image && event.description ? `<p class="temple-activity-excerpt">${esc(event.description)}</p>` : ""}
+        <details data-activity-details="${esc(event.id)}"><summary aria-label="รายละเอียดกิจกรรม ${esc(event.title)}" title="รายละเอียดกิจกรรม"><span class="temple-card-action-label">รายละเอียดกิจกรรม</span>${icon("arrow-right")}</summary><div class="temple-activity-detail">
+          ${changed ? `<p class="temple-activity-notice">${esc(event.statusNote)}</p>` : ""}
+          <p class="temple-activity-schedule">${icon("clock")}<span>${esc(time)} · ${esc(ACTIVITY_TYPES[event.type])}</span></p>
+          ${event.venue ? `<p>${esc(event.venue)}</p>` : ""}
           ${event.description ? `<p>${esc(event.description)}</p>` : ""}
           <dl>${[["การเข้าร่วม", event.participation], ["ค่าใช้จ่าย", event.cost], ["สิ่งที่ต้องเตรียม", event.preparation]].filter(([, value]) => value).map(([label, value]) => `<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl>
           <div class="temple-activity-links">${source ? `<a href="${esc(source)}" target="_blank" rel="noopener noreferrer">ประกาศจากผู้จัด ↗</a>` : ""}${registration && !changed && !event.past ? `<a href="${esc(registration)}" target="_blank" rel="noopener noreferrer">ลงทะเบียนกับผู้จัด ↗</a>` : ""}</div>
@@ -48,7 +54,19 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
     const focusedHref = document.activeElement?.getAttribute("href");
     const visible = events.filter((event) => period === "past" ? event.past : !event.past);
     const warning = failed ? `<div class="temple-activities-stale" role="status"><p>${received ? "ไม่สามารถโหลดกิจกรรมล่าสุดได้ กำลังแสดงข้อมูลที่โหลดไว้ก่อนหน้า" : "ไม่สามารถโหลดกิจกรรมล่าสุดได้"}</p><button type="button" data-activities-retry>ลองใหม่</button></div>` : "";
-    result.innerHTML = warning + (received ? visible.length ? visible.slice(0, expanded ? undefined : 3).map(row).join("") : `<div class="temple-activities-empty">${icon("calendar-days")}<p>${period === "past" ? "ยังไม่มีกิจกรรมที่ผ่านมาในระบบ" : "ยังไม่มีประกาศกิจกรรมที่ยืนยันในระบบ"}</p></div>` : "");
+    result.innerHTML = warning + (received ? visible.length ? `<div class="temple-activity-list">${visible.slice(0, expanded ? undefined : 3).map(row).join("")}</div>` : emptyTemplate.innerHTML : "");
+    if (received && !visible.length && period === "past") {
+      result.querySelector("[data-empty-title]").textContent = "ยังไม่มีกิจกรรมที่ผ่านมาในระบบ";
+      result.querySelector("[data-empty-description]").textContent = "กิจกรรมที่สิ้นสุดแล้วจะแสดงในส่วนนี้";
+    }
+    result.querySelectorAll("[data-activity-image]").forEach(img => {
+      const showTextCard = () => {
+        img.closest("figure").hidden = true;
+        img.closest("article").dataset.hasImage = "false";
+      };
+      img.addEventListener("error", showTextCard, { once: true });
+      if (img.complete && !img.naturalWidth) showTextCard();
+    });
     root.querySelectorAll("details").forEach((element) => { element.open = openIds.has(element.dataset.activityDetails); });
     if (focusedId) {
       const details = [...root.querySelectorAll("[data-activity-details]")].find(d => d.dataset.activityDetails === focusedId);
@@ -57,7 +75,8 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
     }
     result.querySelector("[data-activities-retry]")?.addEventListener("click", refresh);
     more.hidden = visible.length <= 3;
-    more.textContent = expanded ? "แสดงน้อยลง" : `ดูกิจกรรมทั้งหมด (${visible.length})`;
+    more.innerHTML = `${expanded ? "แสดงน้อยลง" : `ดูทั้งหมด (${visible.length})`} ${icon("arrow-right")}`;
+    more.setAttribute("aria-label", expanded ? "แสดงกิจกรรมน้อยลง" : `ดูกิจกรรมทั้งหมด (${visible.length})`);
     more.setAttribute("aria-expanded", String(expanded));
   }
 

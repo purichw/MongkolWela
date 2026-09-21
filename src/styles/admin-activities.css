@@ -20,6 +20,10 @@
 .mw-activity-editor label { display: grid; gap: 6px; min-width: 0; }
 .mw-activity-editor :is(input, select, textarea), .mw-activity-toolbar :is(input, select) { width: 100%; min-width: 0; max-width: 100%; min-height: 44px; box-sizing: border-box; font: inherit; color: var(--admin-ink); background: var(--admin-surface-strong); border: 1px solid var(--admin-line-strong); border-radius: 6px; padding: 10px 12px; }
 .mw-activity-editor textarea { resize: vertical; }
+.mw-activity-photo { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 16px; }
+.mw-activity-photo > img { width: 240px; max-width: 100%; aspect-ratio: 5 / 2; object-fit: cover; border: 1px solid var(--admin-line); border-radius: 6px; }
+.mw-activity-photo > div { flex: 1; min-width: min(100%, 240px); }
+.mw-activity-photo p { font-size: 13px; color: var(--admin-ink-soft); margin: 8px 0; }
 .mw-activity-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .mw-activity-editor-actions { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 20px 0; border-top: 1px solid var(--admin-line); }
 #activity-feedback { color: var(--admin-jade); min-height: 24px; }

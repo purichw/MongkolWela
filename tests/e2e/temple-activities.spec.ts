@@ -38,12 +38,17 @@ test("Admin saves draft, reloads, validates, publishes and preserves conflicting
   await page.getByRole("button", { name: "เพิ่มกิจกรรม", exact: true }).click();
   await page.getByLabel("ชื่อกิจกรรม", { exact: true }).fill("ตัวอย่างทดสอบ: ฟังธรรมวันอาทิตย์");
   await page.getByLabel("วัด / สถานที่").selectOption(temple.key);
+  await page.getByLabel("ลิงก์รูปภาพ", { exact: true }).fill("/assets/images/temple-guide-visit-prep.jpg");
+  await page.getByLabel("คำอธิบายภาพ", { exact: true }).fill("ภาพกิจกรรมทดสอบ");
+  await expect(page.locator("[data-activity-preview]")).toBeVisible();
+  await expect(page.locator("[data-activity-upload]")).toBeDisabled();
   await submit("บันทึกกิจกรรม");
   await expect(page.locator("#activity-feedback")).toContainText("ไม่แสดงบนหน้าวัด");
   await page.reload();
   await page.getByRole("button", { name: /กิจกรรมและงานบุญ/ }).click();
   await page.locator("[data-activity-filter]").selectOption("draft");
   await page.getByRole("button", { name: "แก้ไข ตัวอย่างทดสอบ: ฟังธรรมวันอาทิตย์" }).click();
+  await expect(page.getByLabel("ลิงก์รูปภาพ", { exact: true })).toHaveValue("/assets/images/temple-guide-visit-prep.jpg");
   await page.getByRole("combobox", { name: "สถานะ", exact: true }).selectOption("published");
   await submit("บันทึกและเผยแพร่กิจกรรม");
   await expect(page.locator("#activity-feedback")).toContainText("ก่อนเผยแพร่");
@@ -54,6 +59,12 @@ test("Admin saves draft, reloads, validates, publishes and preserves conflicting
   await expect(page.locator("#activity-feedback")).toHaveText("เผยแพร่กิจกรรมแล้ว");
   const published = await (await page.request.get(`${base}/api/temple-activities?templeId=${encodeURIComponent(temple.key)}`)).json();
   expect(published.events).toHaveLength(1);
+  expect(published.events[0].imageAlt).toBe("ภาพกิจกรรมทดสอบ");
+  await page.getByRole("button", { name: "นำภาพออก", exact: true }).click();
+  await submit("บันทึกและเผยแพร่กิจกรรม");
+  await expect(page.locator("#activity-feedback")).toHaveText("เผยแพร่กิจกรรมแล้ว");
+  const removed = await (await page.request.get(`${base}/api/temple-activities?templeId=${encodeURIComponent(temple.key)}`)).json();
+  expect(removed.events[0].imageUrl).toBe("");
   const current = (await (await page.request.get(`${base}/api/admin/activities`)).json()).events[0];
   await page.request.post(`${base}/api/admin/activities`, { data: { id: current.id, expectedVersion: current.version, event: { ...current, title: "แก้ไขจากหน้าต่างอื่น" } } });
   await page.getByLabel("ชื่อกิจกรรม", { exact: true }).fill("ข้อความที่ต้องไม่หาย");
@@ -61,6 +72,35 @@ test("Admin saves draft, reloads, validates, publishes and preserves conflicting
   await expect(page.locator("#activity-feedback")).toContainText("อีกหน้าต่าง");
   await expect(page.getByLabel("ชื่อกิจกรรม", { exact: true })).toHaveValue("ข้อความที่ต้องไม่หาย");
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+});
+
+test("Admin activity photo upload remains unsaved until save and recovers from errors", async ({ page }) => {
+  let failUpload = true;
+  await page.route("**/api/admin/media", r => r.fulfill({ json: { ok: true, media: { provider: "cloudinary", cloudinary: { enabled: true, cloudName: "test-only", uploadPreset: "test-only" } } } }));
+  await page.route("https://api.cloudinary.com/**", r => r.fulfill(failUpload ? { status: 503, json: {} } : { json: { secure_url: "/assets/images/temple-guide-visit-prep.jpg" } }));
+  await page.goto(`${base}/admin/`);
+  await page.getByRole("button", { name: /กิจกรรมและงานบุญ/ }).click();
+  await page.getByRole("button", { name: "เพิ่มกิจกรรม", exact: true }).click();
+  await page.getByLabel("ชื่อกิจกรรม", { exact: true }).fill("ทดสอบการอัปโหลดรูปกิจกรรม");
+  await page.getByLabel("วัด / สถานที่").selectOption(temple.key);
+  const upload = page.locator("[data-activity-upload]");
+  await expect(upload).toBeEnabled();
+  await upload.setInputFiles({ name: "invalid.txt", mimeType: "text/plain", buffer: Buffer.from("test") });
+  await expect(page.locator("[data-activity-image-feedback]")).toContainText("ไม่เกิน 8 MB");
+  await upload.setInputFiles("public/assets/images/temple-guide-visit-prep.jpg");
+  await expect(page.locator("[data-activity-image-feedback]")).toContainText("อัปโหลดรูปไม่สำเร็จ");
+  await expect(page.getByLabel("ชื่อกิจกรรม", { exact: true })).toHaveValue("ทดสอบการอัปโหลดรูปกิจกรรม");
+  await expect(upload).toBeEnabled();
+  failUpload = false;
+  await upload.setInputFiles("public/assets/images/temple-guide-visit-prep.jpg");
+  await expect(page.locator("[data-activity-image-feedback]")).toContainText("อัปโหลดแล้ว");
+  await expect(page.locator("[data-activity-preview]")).toBeVisible();
+  expect((await (await page.request.get(`${base}/api/admin/activities`)).json()).events).toHaveLength(0);
+  await page.getByRole("button", { name: "บันทึกกิจกรรม", exact: true }).click();
+  await expect(page.locator("#activity-feedback")).toContainText("บันทึกแล้ว");
+  const saved = (await (await page.request.get(`${base}/api/admin/activities`)).json()).events[0];
+  expect(saved.imageUrl).toBe("/assets/images/temple-guide-visit-prep.jpg");
+  expect(saved.status).toBe("draft");
 });
 
 test("public list, details, past, refresh, error/retry and responsive snapshots", async ({ page }, testInfo) => {

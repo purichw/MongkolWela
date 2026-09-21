@@ -19,6 +19,14 @@ export function safeActivityUrl(value) {
   } catch { return ""; }
 }
 
+export function safeActivityImageUrl(value) {
+  if (typeof value !== "string") return "";
+  const url = value.trim();
+  if (url.startsWith("/assets/") && !url.includes("\\") && !/[\u0000-\u001f]/.test(url)) return url;
+  const absolute = safeActivityUrl(url);
+  return absolute.startsWith("https://") ? absolute : "";
+}
+
 export function validateActivity(input, { templeIds, today = bangkokToday() } = {}) {
   const fail = (message) => { throw Object.assign(new Error(message), { statusCode: 422 }); };
   if (!input || typeof input !== "object" || Array.isArray(input)) fail("ข้อมูลกิจกรรมไม่ถูกต้อง");
@@ -32,6 +40,7 @@ export function validateActivity(input, { templeIds, today = bangkokToday() } = 
     ["timeMode", 20], ["startTime", 5], ["endTime", 5], ["venue", 200], ["description", 4000],
     ["participation", 2000], ["cost", 200], ["preparation", 2000], ["sourceUrl", 2000],
     ["registrationUrl", 2000], ["verifiedAt", 10], ["statusNote", 500],
+    ["imageUrl", 2000], ["imageAlt", 200],
   ].map(([key, max]) => [key, text(key, max)]));
   if (!event.title) fail("กรุณาระบุชื่อกิจกรรม");
   if (!event.templeId || (templeIds && !templeIds.has(event.templeId))) fail("กรุณาเลือกสถานที่ที่เปิดใช้งาน");
@@ -48,6 +57,11 @@ export function validateActivity(input, { templeIds, today = bangkokToday() } = 
   } else { event.startTime = ""; event.endTime = ""; }
   for (const field of ["sourceUrl", "registrationUrl"]) {
     if (event[field] && !safeActivityUrl(event[field])) fail("ลิงก์ต้องขึ้นต้นด้วย https:// หรือ http://");
+  }
+  if (event.imageUrl) {
+    const imageUrl = safeActivityImageUrl(event.imageUrl);
+    if (!imageUrl) fail("รูปภาพต้องใช้ลิงก์ https:// หรือไฟล์ใน /assets/");
+    event.imageUrl = imageUrl;
   }
   if (visibleStatuses.has(event.status)) {
     if (!event.startDate || !event.sourceUrl || !event.verifiedAt) fail("ก่อนเผยแพร่ กรุณาระบุวันเริ่ม แหล่งประกาศ และวันที่ตรวจสอบ");
@@ -67,7 +81,7 @@ export function activityIsPast(event, now = new Date()) {
 
 export function publicActivities(events, templeId, now = new Date()) {
   return events.filter((event) => event.templeId === templeId && visibleStatuses.has(event.status)).map((event) => {
-    const fields = ["id", "templeId", "title", "type", "status", "startDate", "endDate", "timeMode", "startTime", "endTime", "timeZone", "venue", "description", "participation", "cost", "preparation", "sourceUrl", "registrationUrl", "verifiedAt", "statusNote", "updatedAt"];
+    const fields = ["id", "templeId", "title", "type", "status", "startDate", "endDate", "timeMode", "startTime", "endTime", "timeZone", "venue", "description", "participation", "cost", "preparation", "sourceUrl", "registrationUrl", "verifiedAt", "statusNote", "updatedAt", "imageUrl", "imageAlt"];
     const publicEvent = Object.fromEntries(fields.map((key) => [key, event[key]]));
     return { ...publicEvent, past: activityIsPast(event, now) };
   }).sort((a, b) => Number(a.past) - Number(b.past) || (a.past ? -1 : 1) * `${a.startDate}${a.startTime}`.localeCompare(`${b.startDate}${b.startTime}`) || a.id.localeCompare(b.id));

@@ -2059,6 +2059,6 @@ const { imageFieldFromButton, setTempleImage, useTempleImageUrl, verifyImageLoad
 
 const { setPublishControlsDisabled, setPublishProgress, hidePublishProgress, publishedContentMatches, waitForPublishedContent, publish } = createAdminPublishing({ queryAll: (selector) => document.querySelectorAll(selector), $, api, sleep, state, setStatus, renderAdmin });
 
-const activityEditor = createActivityEditor({ state, $, api, escapeHtml, setTitle, setTopActions, setStatus });
+const activityEditor = createActivityEditor({ state, $, api, escapeHtml, setTitle, setTopActions, setStatus, uploadMedia: uploadAdminMedia });
 
 boot();

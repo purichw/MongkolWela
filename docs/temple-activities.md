@@ -50,6 +50,14 @@ GitHub CMS fallback is not an activity-storage fallback.
 - `sourceUrl` and `verifiedAt` required before publication. Verification date
   cannot be in the future. Only HTTP(S) links are accepted.
 - `registrationUrl` optional; hidden for postponed, cancelled and past events.
+- `imageUrl` and `imageAlt` optional. Image URLs must be HTTPS or local `/assets/`
+  paths. Existing records without images remain text-only cards; a failed image
+  falls back to the text layout. Images and alt text share the event's existing
+  save, publish, version and refresh contract; no database migration is needed.
+- The activity editor supports URL entry, preview, removal and uploads through
+  the existing configured Cloudinary/ImageKit provider (JPG/PNG/WebP/AVIF, 8 MB).
+  Uploading does not save or publish the activity. Without a configured provider,
+  the upload control is disabled while URL entry remains available.
 - `statusNote` required for postponed/cancelled events.
 - Past boundary: explicit end time, otherwise end of the final date in Bangkok.
   Postponed notices remain upcoming with original date and status note until
@@ -66,6 +74,13 @@ optimistic concurrency with Admin clients.
 
 A load failure displays retry, not an empty list or stale registration links.
 Successful zero results display: `ยังไม่มีประกาศกิจกรรมที่ยืนยันในระบบ`.
+
+Temple detail cards show a compact photo/date/venue summary, with three activity
+columns and four product columns on desktop and two columns on mobile. Closed
+cards share a fixed responsive height, including text-only announcements.
+Time, participation, sources and registration remain in expandable details.
+The neighboring temple shop uses its own scoped product cards, not marketplace
+CSS overrides. Related temples and all earlier detail-page sections are unchanged.
 
 ## Acceptance / QA Matrix
 

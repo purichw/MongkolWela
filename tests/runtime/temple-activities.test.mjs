@@ -13,6 +13,9 @@ test("activities require verified sources, safe URLs, real dates and Bangkok tim
   assert.equal(bangkokToday(new Date("2026-09-20T18:00:00Z")), "2026-09-21");
   for (const invalid of [{ sourceUrl: "" }, { verifiedAt: "2099-01-01" }, { startDate: "2026-02-30" }, { sourceUrl: "javascript:alert(1)" }, { registrationUrl: "data:text/html,test" }, { endDate: "2000-01-01" }, { status: "cancelled", statusNote: "" }, { timeMode: "timed", startTime: "" }, { timeMode: "timed", startTime: "10:00", endTime: "09:00" }]) assert.throws(() => validateActivity(input(invalid)), { statusCode: 422 });
   assert.doesNotThrow(() => validateActivity(input({ status: "draft", startDate: "", sourceUrl: "", verifiedAt: "" })));
+  for (const imageUrl of ["javascript:alert(1)", "data:image/svg+xml,test", "http://example.org/image.jpg", "//example.org/image.jpg", "https://user:pass@example.org/image.jpg"]) assert.throws(() => validateActivity(input({ imageUrl })), { statusCode: 422 });
+  assert.equal(validateActivity(input()).imageUrl, "");
+  assert.equal(validateActivity(input({ imageUrl: "/assets/images/test.jpg", imageAlt: "ภาพกิจกรรม" })).imageAlt, "ภาพกิจกรรม");
   assert.throws(() => validateActivity(input(), { templeIds: new Set() }), { statusCode: 422 });
   const event = validateActivity(input({ startDate: "2026-09-21", timeMode: "allDay" }));
   assert.equal(activityIsPast(event, new Date("2026-09-21T16:59:59Z")), false);
@@ -75,7 +78,7 @@ test("private persistence, publish, revision refresh, CAS, auth, cancellation an
     assert.equal(draft.ok, true);
     assert.equal((await (await read()).json()).events.length, 0);
     assert.equal(documents.get(`activity:${draft.event.id}`).status, "draft", "document remains private even when its event is published");
-    const body = { id: draft.event.id, expectedVersion: draft.event.version, event: input() };
+    const body = { id: draft.event.id, expectedVersion: draft.event.version, event: input({ imageUrl: "https://example.org/event.jpg", imageAlt: "ภาพกิจกรรม" }) };
     const [first, conflict] = await Promise.all([save(body), save(body)]);
     assert.deepEqual([first.status, conflict.status].sort(), [200, 409]);
     const saved = await (first.status === 200 ? first : conflict).json();
@@ -83,6 +86,8 @@ test("private persistence, publish, revision refresh, CAS, auth, cancellation an
     assert.equal(response.headers.get("cache-control"), "no-store");
     const publicData = await response.json();
     assert.equal(publicData.events.length, 1);
+    assert.equal(publicData.events[0].imageUrl, "https://example.org/event.jpg");
+    assert.equal(publicData.events[0].imageAlt, "ภาพกิจกรรม");
     assert.equal(publicData.events[0].history, undefined);
     assert.equal(publicData.events[0].updatedBy, undefined);
     assert.equal((await (await read(`&revision=${publicData.revision}`)).json()).unchanged, true);
@@ -90,6 +95,7 @@ test("private persistence, publish, revision refresh, CAS, auth, cancellation an
     assert.equal(cancelled.event.status, "cancelled");
     const changed = await (await read(`&revision=${publicData.revision}`)).json();
     assert.equal(changed.events[0].status, "cancelled");
+    assert.equal(changed.events[0].imageUrl, "");
     assert.notEqual(changed.revision, publicData.revision);
     documents.get(`activity:${saved.event.id}`).content.title = "Direct database update";
     assert.equal((await (await read()).json()).events[0].title, "Direct database update");

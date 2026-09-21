@@ -1,6 +1,6 @@
-import { ACTIVITY_TYPES, ACTIVITY_STATUSES, TIME_MODES, bangkokToday, activityDateLabel, activityIsPast, validateActivity } from "../../lib/temple-activities.js";
+import { ACTIVITY_TYPES, ACTIVITY_STATUSES, TIME_MODES, bangkokToday, activityDateLabel, activityIsPast, safeActivityImageUrl, validateActivity } from "../../lib/temple-activities.js";
 
-export function createActivityEditor({ state, $, api, escapeHtml: esc, setTitle, setTopActions, setStatus }) {
+export function createActivityEditor({ state, $, api, escapeHtml: esc, setTitle, setTopActions, setStatus, uploadMedia }) {
   let events = [];
   let loaded = false;
   let loading = false;
@@ -55,6 +55,15 @@ export function createActivityEditor({ state, $, api, escapeHtml: esc, setTitle,
         <div class="mw-activity-fields"><label>ประเภท<select name="type">${options(ACTIVITY_TYPES, editing.type)}</select></label><label>สถานะ<select name="status">${options(ACTIVITY_STATUSES, editing.status)}</select></label></div>
         <div data-activity-status-note ${["postponed", "cancelled"].includes(editing.status) ? "" : "hidden"}>${field("รายละเอียดการเลื่อน / ยกเลิก", "statusNote", { max: 500, textarea: true })}</div>
       </fieldset>
+      <fieldset><legend>ภาพกิจกรรม <small>ไม่บังคับ</small></legend>
+        ${field("ลิงก์รูปภาพ", "imageUrl")}
+        ${field("คำอธิบายภาพ", "imageAlt", { max: 200 })}
+        <div class="mw-activity-photo"><img data-activity-preview alt="" hidden><div>
+          <label>อัปโหลดรูปภาพ<input type="file" data-activity-upload accept="image/jpeg,image/png,image/webp,image/avif"></label>
+          <p data-activity-upload-note></p><p data-activity-image-feedback role="status"></p>
+          <button class="mw-admin-btn" type="button" data-activity-image-remove>นำภาพออก</button>
+        </div></div>
+      </fieldset>
       <fieldset><legend>กำหนดการ <small>เวลาไทย</small></legend>
         <div class="mw-activity-fields">${field("วันเริ่ม", "startDate", { type: "date" })}${field("วันสิ้นสุด (ถ้ามี)", "endDate", { type: "date" })}</div>
         <label>เวลา<select name="timeMode">${options(TIME_MODES, editing.timeMode)}</select></label>
@@ -75,7 +84,72 @@ export function createActivityEditor({ state, $, api, escapeHtml: esc, setTitle,
       <div class="mw-activity-editor-actions"><button class="mw-admin-btn" type="button" data-activity-back>กลับรายการ</button><button class="mw-admin-btn mw-admin-btn-primary" type="submit" data-activity-save>บันทึกกิจกรรม</button></div>
     </form>`;
     const form = $("#activity-form");
-    form.addEventListener("input", () => { dirty = true; editing = { ...editing, ...Object.fromEntries(new FormData(form)) }; });
+    const upload = $("[data-activity-upload]", form);
+    const imageFeedback = $("[data-activity-image-feedback]", form);
+    const canUpload = Boolean(uploadMedia && state.media?.provider && state.media[state.media.provider]?.enabled);
+    $("[data-activity-upload-note]", form).textContent = canUpload ? "JPG, PNG, WebP หรือ AVIF ขนาดไม่เกิน 8 MB" : "ยังไม่ได้ตั้งค่าระบบอัปโหลด สามารถระบุลิงก์รูปภาพได้";
+    function previewImage() {
+      const image = $("[data-activity-preview]", form);
+      const url = safeActivityImageUrl(form.elements.imageUrl.value);
+      image.hidden = !url;
+      if (url) image.src = url;
+      else image.removeAttribute("src");
+      image.alt = form.elements.imageAlt.value;
+      $("[data-activity-image-remove]", form).hidden = !form.elements.imageUrl.value;
+    }
+    function unlockControls() {
+      form.querySelectorAll("button, input, select, textarea").forEach((control) => { control.disabled = false; });
+      upload.disabled = !canUpload;
+    }
+    $("[data-activity-preview]", form).addEventListener("error", (event) => {
+      event.target.hidden = true;
+      imageFeedback.textContent = "โหลดภาพตัวอย่างไม่ได้ โปรดตรวจสอบลิงก์รูปภาพ";
+    });
+    $("[data-activity-image-remove]", form).addEventListener("click", () => {
+      form.elements.imageUrl.value = "";
+      form.elements.imageAlt.value = "";
+      editing = { ...editing, imageUrl: "", imageAlt: "" };
+      dirty = true;
+      imageFeedback.textContent = "นำภาพออกจากฉบับแก้ไขแล้ว กรุณาบันทึกกิจกรรม";
+      previewImage();
+    });
+    upload.addEventListener("change", async () => {
+      const file = upload.files?.[0];
+      if (!file || busy || !canUpload) return;
+      if (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type) || file.size > 8 * 1024 * 1024) {
+        imageFeedback.textContent = "เลือกรูป JPG, PNG, WebP หรือ AVIF ขนาดไม่เกิน 8 MB";
+        upload.value = "";
+        return;
+      }
+      busy = true;
+      form.querySelectorAll("button, input, select, textarea").forEach((control) => { control.disabled = true; });
+      imageFeedback.textContent = "กำลังอัปโหลดรูปภาพ…";
+      try {
+        const url = safeActivityImageUrl(await uploadMedia(file, `activity-${editing.id || "draft"}-${Date.now()}`));
+        if (!url) throw new Error("ระบบอัปโหลดไม่ได้ส่งกลับลิงก์รูปภาพที่รองรับ");
+        form.elements.imageUrl.value = url;
+        editing = { ...editing, imageUrl: url };
+        dirty = true;
+        imageFeedback.textContent = "อัปโหลดแล้ว กรุณาบันทึกกิจกรรมเพื่อใช้ภาพนี้";
+        previewImage();
+      } catch (cause) {
+        imageFeedback.textContent = cause.message;
+      } finally {
+        busy = false;
+        upload.value = "";
+        unlockControls();
+      }
+    });
+    previewImage();
+    unlockControls();
+    form.addEventListener("input", (event) => {
+      dirty = true;
+      editing = { ...editing, ...Object.fromEntries(new FormData(form)) };
+      if (["imageUrl", "imageAlt"].includes(event.target.name)) {
+        imageFeedback.textContent = "";
+        previewImage();
+      }
+    });
     form.addEventListener("change", (event) => {
       dirty = true;
       editing = { ...editing, ...Object.fromEntries(new FormData(form)) };
@@ -115,7 +189,7 @@ export function createActivityEditor({ state, $, api, escapeHtml: esc, setTitle,
         if (cause.status === 409) feedback.textContent += " (ข้อความที่กรอกยังอยู่ในฟอร์ม)";
       } finally {
         busy = false;
-        form.querySelectorAll("button, input, select, textarea").forEach((control) => { control.disabled = false; });
+        unlockControls();
       }
     });
   }

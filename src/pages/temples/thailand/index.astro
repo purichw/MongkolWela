@@ -3,6 +3,9 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import TempleSearchHero from "../../../components/TempleSearchHero.astro";
 import templePageBanners from "../../../data/temple-page-banners.json";
 import { absoluteUrl } from "../../../lib/seo.js";
+import SiteIcon from "../../../components/icons/SiteIcon.astro";
+import IconMedallion from "../../../components/IconMedallion.astro";
+import { iconAttributes } from "../../../lib/ui-markup.js";
 
 const pageDescription =
   "ค้นหารายการวัดทั่วประเทศไทยจากระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ พร้อมตัวกรองชื่อวัด ประเภทวัด นิกาย ภาค จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา";
@@ -59,20 +62,33 @@ const datasetJsonLd = {
       ]}
       kicker="ทะเบียนวัด"
       title="วัดทั่วประเทศไทย"
+      description="ค้นหาและตรวจสอบข้อมูลทะเบียนวัดจากฐานข้อมูลอย่างเป็นทางการ ทั้งประเภทวัด นิกาย และที่ตั้ง"
     >
+      <Fragment slot="quote">“ทุกวัด<br />คือรากของความศรัทธา”</Fragment>
       <section slot="panel" class="temple-search-panel" aria-label="ค้นหาวัดทั่วประเทศไทย">
+        <header class="registry-search-heading">
+          <h2><IconMedallion class="registry-medallion"><SiteIcon name="search" /></IconMedallion>ค้นหาวัดจากทะเบียน</h2>
+          <details class="registry-source-info">
+            <summary><SiteIcon name="info" /><span>เกี่ยวกับข้อมูลนี้</span></summary>
+            <div class="registry-source-popover">
+              <strong>ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ</strong>
+              <p>ข้อมูลทะเบียนจากชุดข้อมูลที่นำเข้าระบบ ไม่ใช่ข้อมูลเวลาเปิดทำการหรือประกาศกิจกรรมของวัด</p>
+              <p data-temple-dataset-date></p>
+            </div>
+          </details>
+        </header>
         <form class="temple-search-form" data-temple-form>
-          <label class="temple-field temple-field-wide">
+          <label class="temple-field temple-field-wide registry-primary-field">
             <span>ชื่อวัด</span>
-            <input type="search" name="name" placeholder="ค้นหาจากชื่อวัด" autocomplete="off" data-temple-name />
+            <span class="registry-search-input"><SiteIcon name="search" /><input type="search" name="name" placeholder="พิมพ์ชื่อวัด เช่น พระธาตุ บางจาก" autocomplete="off" data-temple-name /></span>
           </label>
 
-          <label class="temple-field">
+          <label class="temple-field registry-primary-field">
             <span>ประเภทวัด</span>
             <select name="type" data-temple-type></select>
           </label>
 
-          <label class="temple-field">
+          <label class="temple-field registry-primary-field">
             <span>นิกาย</span>
             <select name="sect" data-temple-sect></select>
           </label>
@@ -112,37 +128,26 @@ const datasetJsonLd = {
           </label>
 
           <div class="temple-actions">
-            <button class="temple-search-button" type="submit">ค้นหา</button>
-            <button class="temple-clear-button" type="button" data-temple-clear>ล้างตัวกรอง</button>
+            <button class="temple-search-button" type="submit"><SiteIcon name="search" />ค้นหา</button>
+            <button class="temple-clear-button" type="button" data-temple-clear><span {...iconAttributes("rotate-ccw", "registry-icon")}></span>ล้างตัวกรอง</button>
           </div>
         </form>
+        <div class="registry-search-art" aria-hidden="true"><SiteIcon name="stupa" /><SiteIcon name="temple" /></div>
       </section>
     </TempleSearchHero>
 
-    <section class="temple-results" aria-live="polite">
+    <section class="temple-results" aria-labelledby="registry-results-title">
       <div class="temple-results-head">
         <div>
-          <p class="section-kicker">ผลการค้นหา</p>
-          <h2 data-temple-count>กำลังโหลดข้อมูลวัด</h2>
+          <p class="section-kicker"><IconMedallion class="registry-medallion"><SiteIcon name="temple" /></IconMedallion>ผลการค้นหา</p>
+          <h2 id="registry-results-title" data-temple-count role="status">กำลังโหลดข้อมูลวัด</h2>
         </div>
-        <p data-temple-source>แหล่งที่มา: ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ</p>
+        <div class="registry-results-meta"><p data-temple-source>แหล่งที่มา: ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ</p><p data-temple-dataset-date></p></div>
       </div>
 
       <div class="temple-table-wrap" tabindex="0" role="region" aria-label="ตารางผลการค้นหาวัดทั่วประเทศไทย">
         <table class="temple-table">
-          <colgroup>
-            <col class="temple-col-order" />
-            <col class="temple-col-name" />
-            <col class="temple-col-type" />
-            <col class="temple-col-sect" />
-            <col class="temple-col-register" />
-            <col class="temple-col-found-date" />
-            <col class="temple-col-wisung-date" />
-            <col class="temple-col-subdistrict" />
-            <col class="temple-col-district" />
-            <col class="temple-col-province" />
-            <col class="temple-col-postal" />
-          </colgroup>
+          <caption class="registry-sr-only">ผลการค้นหาจากทะเบียนวัด กดปุ่มข้อมูลวัดเพื่อดูรายละเอียดทะเบียนและที่ตั้ง</caption>
           <thead data-temple-table-head></thead>
           <tbody data-temple-table-body>
             <tr>
@@ -153,6 +158,7 @@ const datasetJsonLd = {
       </div>
 
       <div class="temple-pagination" data-temple-pagination></div>
+      <button class="registry-load-all" type="button" data-temple-load-all hidden><span {...iconAttributes("list-filter", "registry-icon")}></span><span data-temple-load-label>ดูผลการค้นหาทั้งหมด</span></button>
     </section>
   </main>
 
