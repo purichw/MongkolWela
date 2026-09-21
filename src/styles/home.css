@@ -1,6 +1,6 @@
 /* Home owns this composition; shared navigation, CMS and route styles stay intact. */
 body.home-reconstructed {
-  --home-container: min(1220px, calc(100% - 64px));
+  --home-container: var(--page-width);
   --home-paper: #fbf6eb;
   --home-card: #fffdf7;
   --home-ink: #192027;
@@ -341,7 +341,6 @@ body.home-reconstructed {
 }
 @media (max-width: 899px) {
   body.home-reconstructed {
-    --home-container: calc(100% - 48px);
     .hero { padding: 36px 0 76px; }
     .home-hero-shell { grid-template-columns: 1fr; gap: 28px; }
     .home-hero-copy { max-width: 720px; }
@@ -365,7 +364,6 @@ body.home-reconstructed {
 }
 @media (max-width: 720px) {
   body.home-reconstructed {
-    --home-container: calc(100% - 24px);
     .hero { display: grid; grid-template-areas: "banner" "today"; grid-template-columns: minmax(0, 1fr); padding: 0; background: var(--home-paper); }
     .home-hero-shell { display: contents; }
     .home-hero-copy { grid-area: banner; position: relative; width: var(--home-container); max-width: none; margin: auto; padding: 12px 0 10px; }
@@ -486,7 +484,6 @@ body.home-reconstructed {
 }
 @media (max-width: 359px) {
   body.home-reconstructed {
-    --home-container: calc(100% - 24px);
     .home-hero-subtitle { font-size: 20px; }
     .hero-links a { grid-template-columns: 1fr; justify-items: center; gap: 4px; padding: 8px 5px; text-align: center; }
     .hero-links .home-symbol { width: 28px; height: 28px; }

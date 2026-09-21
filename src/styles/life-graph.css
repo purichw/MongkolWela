@@ -5,7 +5,7 @@
 .life-graph-hero,
 .life-graph-tool,
 .life-graph-principles {
-  width: min(var(--container), calc(100% - 40px));
+  width: var(--page-width);
   margin: 0 auto;
 }
 
@@ -627,7 +627,7 @@
   .life-graph-hero,
   .life-graph-tool,
   .life-graph-principles {
-    width: min(100% - 28px, var(--container));
+    width: var(--page-width);
   }
 
   .life-graph-hero,

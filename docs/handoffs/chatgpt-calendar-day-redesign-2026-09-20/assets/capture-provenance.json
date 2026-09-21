@@ -1,0 +1,55 @@
+{
+  "capturedAt": "2026-09-20",
+  "requestedUrl": "https://mongkolwela.vercel.app/calendar/day/",
+  "captureUrl": "https://mongkolwela.vercel.app/calendar/day/?date=2026-09-20",
+  "selectedDate": "2026-09-20",
+  "browser": "Codex in-app browser",
+  "consentOverlay": "not visible in this session",
+  "verifiedInteraction": "Next day changed URL and heading to 2026-09-21; browser back returned to 2026-09-20",
+  "captures": [
+    {
+      "file": "calendar-day-part-1.png",
+      "dpr": 2,
+      "height": 2203,
+      "title": "วันที่ 20 กันยายน 2569",
+      "viewport": [
+        1280,
+        720
+      ],
+      "y": 0
+    },
+    {
+      "file": "calendar-day-part-2.png",
+      "dpr": 2,
+      "height": 2203,
+      "title": "วันที่ 20 กันยายน 2569",
+      "viewport": [
+        1280,
+        720
+      ],
+      "y": 540
+    },
+    {
+      "file": "calendar-day-part-3.png",
+      "dpr": 2,
+      "height": 2203,
+      "title": "วันที่ 20 กันยายน 2569",
+      "viewport": [
+        1280,
+        720
+      ],
+      "y": 1080
+    },
+    {
+      "file": "calendar-day-part-4.png",
+      "dpr": 2,
+      "height": 2203,
+      "title": "วันที่ 20 กันยายน 2569",
+      "viewport": [
+        1280,
+        720
+      ],
+      "y": 1483
+    }
+  ]
+}

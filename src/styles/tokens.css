@@ -12,7 +12,23 @@
   --line: rgba(77, 56, 41, 0.18);
   --shadow: 0 18px 50px rgba(39, 29, 20, 0.16);
   --container: 1220px;
+  --page-gutter: 32px;
+  --page-width: min(var(--container), calc(100% - var(--page-gutter) * 2));
+  --page-inset: max(var(--page-gutter), calc((100% - var(--container)) / 2));
+  --page-title-size: 48px;
+  --section-title-size: 28px;
+  --page-lead-size: 16px;
   --radius: 8px;
   --font-thai: "Noto Sans Thai", system-ui, sans-serif;
   --font-english: Helvetica, Arial, sans-serif;
+}
+
+@media (max-width: 999px) {
+  :root { --page-gutter: 20px; --page-title-size: 40px; }
+}
+@media (max-width: 720px) {
+  :root { --page-gutter: 12px; --page-title-size: 28px; --section-title-size: 22px; --page-lead-size: 14px; }
+}
+@media (max-width: 359px) {
+  :root { --page-gutter: 8px; }
 }

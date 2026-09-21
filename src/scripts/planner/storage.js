@@ -17,9 +17,12 @@ function persistState(state, elements) {
         start: elements.start.value,
         originText: elements.originText?.value || "",
         tripCriteria: state.tripCriteria,
+        manualSelectionOrder: state.manualSelectionOrder,
+        workspace: { view: state.view, query: elements.pickerSearch?.value || "", trayExpanded: state.trayExpanded, visibleCount: state.visibleCount },
       }),
     );
-  } catch {}
+    return true;
+  } catch { return false; }
 }
 
 function restoreState(state, elements) {
@@ -31,13 +34,14 @@ function restoreState(state, elements) {
     if (saved.startDate && elements.startDate) elements.startDate.value = saved.startDate;
     if (saved.startTime) elements.startTime.value = saved.startTime;
     if ("radius" in saved && elements.radius) elements.radius.value = saved.radius ?? "100";
-    (saved.regions || (saved.region ? [saved.region] : [])).forEach((region) => state.activeRegions.add(region));
-    (saved.purposes || (saved.purpose ? [saved.purpose] : [])).forEach((purpose) => state.activePurposes.add(purpose));
+    if (saved.regions || saved.region) state.activeRegions = new Set(saved.regions || [saved.region]);
+    if (saved.purposes || saved.purpose) state.activePurposes = new Set(saved.purposes || [saved.purpose]);
     if (saved.start && state.itemById.has(saved.start)) elements.start.value = saved.start;
     if (saved.originText && elements.originText) elements.originText.value = saved.originText;
-    (saved.provinces || (saved.province ? [saved.province] : [])).forEach((province) => state.activeProvinces.add(province));
-    state.selected = (saved.selected || []).filter((id) => state.itemById.has(id)).slice(0, getTargetCount(elements));
+    if (saved.provinces || saved.province) state.activeProvinces = new Set(saved.provinces || [saved.province]);
+    state.selected = [...new Set(saved.selected || [])].filter((id) => state.itemById.has(id));
     state.plan = (saved.plan || []).map((id) => state.itemById.get(id)).filter(Boolean);
+    state.manualSelectionOrder = Boolean(saved.manualSelectionOrder);
     if (saved.tripCriteria) state.tripCriteria = saved.tripCriteria;
     return saved;
   } catch {

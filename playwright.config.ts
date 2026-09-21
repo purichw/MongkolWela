@@ -28,7 +28,7 @@ export default defineConfig({
   projects: [
     {
       name: "chromium-desktop",
-      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 1000 } }
+      use: { ...devices["Desktop Chrome"], channel: process.env.PLAYWRIGHT_CHROMIUM_CHANNEL, viewport: { width: 1440, height: 1000 } }
     },
     {
       name: "firefox-desktop",
@@ -40,7 +40,7 @@ export default defineConfig({
     },
     {
       name: "chromium-mobile",
-      use: { ...devices["Pixel 7"] }
+      use: { ...devices["Pixel 7"], channel: process.env.PLAYWRIGHT_CHROMIUM_CHANNEL }
     },
     {
       name: "webkit-mobile",

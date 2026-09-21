@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageBanner from "../../components/PageBanner.astro";
 import popularTemples from "../../data/popular-temples.json";
 import sacredTemples from "../../data/sacred-temples.json";
 import muTemples from "../../data/mu-temples.json";
@@ -70,8 +71,9 @@ const supportingLinks = [
   ]}
 >
   <main class="temples-hub temple-hub-v2" data-cms-preserve-section-order>
-    <section class="temple-hub-v2-hero" aria-labelledby="temple-page-title">
+    <PageBanner titleId="temple-page-title">
       <img
+        slot="media"
         class="temple-hub-v2-hero-image"
         src="/assets/images/hero-temple-red.jpg"
         alt=""
@@ -79,16 +81,15 @@ const supportingLinks = [
         decoding="async"
         fetchpriority="high"
       />
-      <div class="temple-hub-v2-hero-shade" aria-hidden="true"></div>
-      <div class="temple-hub-v2-hero-content">
-        <nav class="temple-breadcrumb temple-hub-v2-breadcrumb" aria-label="breadcrumb">
+      <div class="page-banner__copy">
+        <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง">
           <a href="/">หน้าแรก</a>
           <span>/</span>
           <span>วัดดังเสริมมงคล</span>
         </nav>
-        <p class="section-kicker">คู่มือวางแผนเดินทางมงคล</p>
+        <p class="page-banner__kicker">คู่มือวางแผนเดินทางมงคล</p>
         <h1 id="temple-page-title">{templeHubContent.heading}</h1>
-        <p>
+        <p class="page-banner__description">
           เลือกเส้นทางจากวัดยอดนิยม วัดศักดิ์สิทธิ์ และสถานที่มงคล
           หรือค้นหาวัดทั่วประเทศไทยด้วยพิกัดจริง แล้วใช้เครื่องมือช่วยจัดลำดับการเดินทาง
         </p>
@@ -102,7 +103,7 @@ const supportingLinks = [
           <button type="submit">ค้นหา</button>
         </form>
       </div>
-    </section>
+    </PageBanner>
 
     <section class="temple-hub-v2-section temple-hub-v2-collections" id="collections" aria-labelledby="temple-collections-title">
       <div class="temple-hub-v2-section-head">

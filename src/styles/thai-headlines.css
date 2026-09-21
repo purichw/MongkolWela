@@ -29,3 +29,18 @@
     margin-top: 12px;
   }
 }
+
+/* Secondary tools share a title scale; their working areas keep domain layouts. */
+:is(.feature-hero, .tarot-hero, .tarot-result-copy, .seamsi-hero, .life-graph-hero, .thai-astro-hero, .palm-hero, .commerce-heading) h1 {
+  font-family: var(--font-thai);
+  font-size: var(--page-title-size);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+:is(.feature-hero__lead, .tarot-hero-copy),
+:is(.seamsi-hero, .life-graph-hero, .thai-astro-hero) > div:first-child > p:not(.section-kicker) {
+  font-size: var(--page-lead-size);
+  line-height: 1.65;
+}

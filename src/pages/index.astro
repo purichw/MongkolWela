@@ -149,7 +149,7 @@ const tools = [
       <div class="home-intent-grid">
         {intentLinks.map(item => (
           <a class:list={["home-intent-card", `is-${item.id}`]} href={item.href}>
-            <div class="home-intent-media"><CmsImage slot={`home-intent-${item.id}`} image={media(`home-intent-${item.id}`)} width={720} height={440} /></div>
+            <div class="home-intent-media"><CmsImage mediaId={`home-intent-${item.id}`} image={media(`home-intent-${item.id}`)} width={720} height={440} /></div>
             <div class="home-intent-body">
               <IconMedallion class="home-intent-icon"><SiteIcon name={item.icon} /></IconMedallion>
               <strong>{item.label.split(" ").map((part, index) => <>{index > 0 && " "}<span>{part}</span></>)}</strong><p>{item.description}</p><LinkArrow class="home-card-arrow" />
@@ -160,7 +160,7 @@ const tools = [
     </section>
 
     <section class="home-planner-spotlight" id="temple-routes" aria-labelledby="planner-title">
-      <CmsImage class="home-planner-background" slot="home-planner-background" image={media("home-planner-background")} width={1600} height={900} />
+      <CmsImage class="home-planner-background" mediaId="home-planner-background" image={media("home-planner-background")} width={1600} height={900} />
       <BrandOrnament /><BrandOrnament mirrored />
       <div class="home-planner-inner">
         <div class="home-planner-copy">
@@ -173,7 +173,7 @@ const tools = [
           <header><h3 id="sample-plan-title">ตัวอย่างเส้นทาง 1 วัน</h3><a href="/temples/planner/">จัดแผนของคุณ <SiteIcon name="arrow-right" /></a></header>
           <div class="home-sample-content"><ol aria-label="ตัวอย่างไหว้พระริมน้ำ 3 วัด กรุงเทพฯ">
             {planStops.map(stop => (
-              <li><time>{stop.time}</time><CmsImage slot={`home-stop-${stop.id}`} image={media(`home-stop-${stop.id}`)} width={120} height={90} /><div><strong>{stop.title}</strong><p>{stop.detail}</p></div></li>
+              <li><time>{stop.time}</time><CmsImage mediaId={`home-stop-${stop.id}`} image={media(`home-stop-${stop.id}`)} width={120} height={90} /><div><strong>{stop.title}</strong><p>{stop.detail}</p></div></li>
             ))}
           </ol><blockquote class="home-plan-quote"><SiteIcon name="quote" /><p>เส้นทางบุญ<br />ไม่ใช่แค่การไปถึงวัด<br />แต่คือการได้พบ<br />สิ่งที่ดีกว่าในใจเรา</p><BrandOrnament class="home-quote-flower" mirrored /></blockquote></div>
           <p class="home-plan-note">เวลาเป็นตัวอย่าง ไม่รวมสภาพจราจร ควรตรวจสอบเวลาเปิด–ปิดก่อนเดินทาง <a href="/assets/images/home-media-credits.txt" target="_blank" rel="noopener noreferrer">เครดิตภาพ</a></p>
@@ -190,13 +190,13 @@ const tools = [
         <div class="home-collection-grid">
           {collections.map(card => (
             <a class:list={["home-collection-card", "is-" + card.variant]} href={card.href}>
-              <div class="home-collection-media"><CmsImage slot={`home-collection-${card.variant}`} image={media(`home-collection-${card.variant}`)} width={360} height={480} /></div>
+              <div class="home-collection-media"><CmsImage mediaId={`home-collection-${card.variant}`} image={media(`home-collection-${card.variant}`)} width={360} height={480} /></div>
               <div class="home-collection-body"><strong>{card.title}</strong><p>{card.description}</p><LinkArrow class="home-card-arrow" /></div>
             </a>
           ))}
         </div>
         <aside class="home-database-panel" id="directory" aria-labelledby="directory-title">
-          <CmsImage slot="home-directory-map" image={media("home-directory-map")} width={100} height={160} />
+          <CmsImage mediaId="home-directory-map" image={media("home-directory-map")} width={100} height={160} />
           <div><h3 id="directory-title">ค้นหาวัดทั่วประเทศไทย</h3><p><strong data-temple-count>{templeCount}</strong> รายการในฐานข้อมูล<br />ค้นหาตามจังหวัด อำเภอ และตำบล</p><a href="/temples/thailand/">เปิดฐานข้อมูล <span aria-hidden="true">→</span></a></div>
         </aside>
       </div>

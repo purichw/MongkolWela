@@ -1,142 +1,36 @@
-export function createPlannerPicker({ getPickerItems, getStartPoint, renderPickerContext, haversineKm, formatDistance, getPickerRecommendationText, escapeHtml, prefersReducedMotion }) {
-function renderPicker(state, elements) {
-  const filtered = getPickerItems(state, elements);
-  const visible = filtered.slice(0, state.visibleCount);
-  const selectedIds = new Set(state.selected);
-  const origin = getStartPoint(state, elements);
-  const previousVisibleIds = new Set(
-    [...elements.grid.querySelectorAll("[data-planner-place-card]")].map((card) => card.dataset.plannerPlaceCard),
-  );
+import { renderIcon } from "../../lib/ui-markup.js";
+import { renderPlannerPlaceCard } from "./place-card.js";
 
-  renderPickerContext(state, elements, filtered.length);
-  elements.grid.innerHTML = visible
-    .map((item) => {
-      const selected = selectedIds.has(item.id);
-      const distance = origin ? haversineKm(origin, item) : null;
-      const distanceBadge = Number.isFinite(distance)
-        ? `<span class="planner-place-card__distance">${formatDistance(distance)}</span>`
-        : "";
-      const recommendation = getPickerRecommendationText(state, elements, item);
-      return `
-        <article class="planner-place-card${selected ? " is-selected" : ""}" data-planner-place-card="${escapeHtml(item.id)}">
-          <figure>
-            <picture>
-              ${item.imageMobileUrl && item.imageMobileUrl !== item.imageUrl ? `<source media="(max-width: 767px)" srcset="${escapeHtml(item.imageMobileUrl)}">` : ""}
-              <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.imageAlt)}" loading="lazy" decoding="async">
-            </picture>
-            <span>${escapeHtml(item.region)}</span>
-            ${distanceBadge}
-          </figure>
-          <div class="planner-place-card__body">
-            <div>
-              <h3>${escapeHtml(item.name)}</h3>
-              <p>${escapeHtml([item.province, item.district].filter(Boolean).join(" / "))}</p>
-            </div>
-            <p class="planner-place-card__blessing">${escapeHtml(item.blessings.slice(0, 2).join(" · ") || "ไหว้พระและเสริมสิริมงคล")}</p>
-            ${recommendation ? `<p class="planner-place-card__reason">${escapeHtml(recommendation)}</p>` : ""}
-            <button
-              type="button"
-              class="${selected ? "planner-remove-button" : "planner-add-button"}"
-              data-planner-toggle-place="${escapeHtml(item.id)}"
-              aria-pressed="${selected}"
-            >${selected ? "อยู่ในแผน" : "เพิ่มลงแผน"}</button>
-          </div>
-        </article>`;
-    })
-    .join("");
-
-  revealPlannerPlaceCards(elements, previousVisibleIds);
-  elements.moreButton.hidden = filtered.length <= state.visibleCount;
-  elements.empty.hidden = filtered.length > 0;
-}
-
-function revealPlannerPlaceCards(elements, previousVisibleIds) {
-  const cards = [...elements.grid.querySelectorAll("[data-planner-place-card]")];
-  const revealCards = [];
-
-  cards.forEach((card) => {
-    const wasVisible = previousVisibleIds.has(card.dataset.plannerPlaceCard);
-    if (wasVisible) {
-      card.classList.add("is-revealed");
-      return;
+export function createPlannerPicker({ getPickerItems, renderPickerContext, escapeHtml, prefersReducedMotion }) {
+  function renderPicker(state, elements) {
+    const filtered = getPickerItems(state, elements);
+    const before = new Set([...elements.grid.children].map(node => node.dataset.plannerPlaceCard));
+    const target = Number(elements.countInputs.find(input => input.checked)?.value || 3);
+    renderPickerContext(state, elements, filtered.length);
+    elements.grid.innerHTML = filtered.slice(0, state.visibleCount).map(item => {
+      const selected = state.selected.includes(item.id);
+      return renderPlannerPlaceCard(item, { selected, disabled: !selected && state.selected.length >= target && !state.replacement });
+    }).join("");
+    for (const card of elements.grid.children) {
+      if (!before.has(card.dataset.plannerPlaceCard) && !prefersReducedMotion()) card.classList.add("is-new");
     }
-    revealCards.push(card);
-  });
-
-  queuePlannerCardReveal(revealCards);
-}
-
-function queuePlannerCardReveal(revealCards) {
-  if (!revealCards.length) return;
-
-  if (prefersReducedMotion()) {
-    revealCards.forEach((card) => {
-      card.classList.add("is-revealed");
-    });
-    return;
+    elements.moreButton.hidden = filtered.length <= state.visibleCount;
+    elements.empty.hidden = filtered.length > 0;
   }
 
-  revealCards.forEach((card) => {
-    card.classList.add("is-reveal-ready");
-    card.classList.remove("is-revealed");
-  });
-
-  window.requestAnimationFrame(() => {
-    assignPlannerRevealDelays(revealCards);
-    window.requestAnimationFrame(() => {
-      revealCards.forEach((card) => {
-        card.classList.add("is-revealed");
-      });
-    });
-  });
-}
-
-function assignPlannerRevealDelays(revealCards) {
-  const sortedCards = [...revealCards].sort((a, b) => {
-    const aRect = a.getBoundingClientRect();
-    const bRect = b.getBoundingClientRect();
-    if (Math.abs(aRect.top - bRect.top) > 8) return aRect.top - bRect.top;
-    return aRect.left - bRect.left;
-  });
-  let rowTop = null;
-  let rowIndex = -1;
-  let columnIndex = 0;
-
-  sortedCards.forEach((card) => {
-    const rect = card.getBoundingClientRect();
-    if (rowTop === null || Math.abs(rect.top - rowTop) > 8) {
-      rowTop = rect.top;
-      rowIndex += 1;
-      columnIndex = 0;
-    }
-
-    const delay = rowIndex * 120 + columnIndex * 24;
-    card.style.setProperty("--planner-card-reveal-delay", `${delay}ms`);
-    columnIndex += 1;
-  });
-}
-
-function renderSelected(state, elements) {
-  elements.selectedCount.textContent = state.selected.length.toLocaleString("th-TH");
-  elements.selectedTray.classList.toggle("is-empty", !state.selected.length);
-  if (!state.selected.length) {
-    elements.selectedTray.innerHTML = "<p>ยังไม่ได้เลือกสถานที่ ระบบสามารถแนะนำให้ครบตามจำนวนที่กำหนดได้</p>";
-    return;
-  }
-
-  elements.selectedTray.innerHTML = state.selected
-    .map((id, index) => {
+  function renderSelected(state, elements) {
+    elements.selectedCount.textContent = state.selected.length;
+    const ids = state.trayExpanded ? state.selected : state.selected.slice(0,3);
+    elements.selectedTray.dataset.expanded = String(state.trayExpanded);
+    elements.selectedTray.innerHTML = ids.map((id, index) => {
       const item = state.itemById.get(id);
       if (!item) return "";
-      return `
-        <span class="planner-selected-chip" draggable="true" data-planner-selected-id="${escapeHtml(id)}">
-          <b>${(index + 1).toLocaleString("th-TH")}</b>
-          <span class="planner-selected-chip__label">${escapeHtml(item.name)}</span>
-          <button type="button" draggable="false" data-planner-remove-selected="${escapeHtml(id)}" aria-label="นำ ${escapeHtml(item.name)} ออกจากแผน">×</button>
-        </span>`;
-    })
-    .join("");
-}
-
-return { renderPicker, revealPlannerPlaceCards, queuePlannerCardReveal, assignPlannerRevealDelays, renderSelected };
+      const name = escapeHtml(item.name), safeId = escapeHtml(id);
+      const move = (direction, label, disabled) => '<button type="button" data-planner-move-selected="' + direction + '" data-planner-id="' + safeId + '" aria-label="' + label + ' ' + name + '" title="' + label + '" ' + (disabled ? "disabled" : "") + '>' + renderIcon(direction < 0 ? "arrow-left" : "arrow-right", "planner-order-icon") + '</button>';
+      return `<div class="planner-selected-chip" data-planner-selected-id="${safeId}"><b>${index + 1}</b><span class="planner-selected-chip__label" title="${name}">${name}${state.outsideIds?.includes(id) ? '<small>นอกตัวกรองปัจจุบัน</small>' : ""}</span>
+      ${state.trayExpanded ? move(-1, "เลื่อนขึ้น", index === 0) + move(1, "เลื่อนลง", index === state.selected.length - 1) : ""}
+      <button type="button" data-planner-remove-selected="${safeId}" aria-label="นำ ${name} ออกจากรายการที่เลือก" title="นำออก">${renderIcon("x")}</button></div>`;
+    }).join("");
+  }
+  return { renderPicker, renderSelected };
 }

@@ -15,7 +15,7 @@
 .temples-section,
 .temples-feature-grid,
 .temple-results {
-  width: min(var(--container), calc(100% - 40px));
+  width: var(--page-width);
   margin: 0 auto;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .temple-page-hero-content {
-  width: min(var(--container), calc(100% - 40px));
+  width: var(--page-width);
   margin: 0 auto;
   color: #fff7e6;
 }
@@ -985,7 +985,7 @@
   .temples-section,
   .temples-feature-grid,
   .temple-results {
-    width: min(100% - 28px, var(--container));
+    width: var(--page-width);
   }
 
   .temple-page-hero {
@@ -998,7 +998,7 @@
   }
 
   .temple-page-hero-content {
-    width: min(100% - 28px, var(--container));
+    width: var(--page-width);
   }
 
   .temple-page-hero-panel {
@@ -1077,7 +1077,7 @@
 }
 
 body[data-cms-page="temples"] {
-  --temple-hub-container: min(1180px, calc(100% - 48px));
+  --temple-hub-container: var(--page-width);
   --temple-hub-card: #fffdf7;
   --temple-hub-paper: #fbf6eb;
   --temple-hub-paper-deep: #f7edd6;
@@ -1239,15 +1239,15 @@ body[data-cms-page="temples"] {
 }
 
 .temple-hub-v2-collections {
-  padding: 78px 0 24px;
+  padding: 28px 0 24px;
 }
 
 .temple-hub-v2-section-head {
   display: flex;
   align-items: baseline;
   gap: 16px;
-  margin-bottom: 34px;
-  padding-bottom: 18px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
   border-bottom: 1px solid rgba(194, 141, 53, 0.4);
 }
 
@@ -1264,16 +1264,16 @@ body[data-cms-page="temples"] {
   font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace;
   font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
 .temple-hub-v2-section-head h2 {
   margin: 0;
   color: #251d1a;
-  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
-  font-weight: 900;
-  line-height: 1.15;
+  font-size: var(--section-title-size);
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .temple-hub-v2-card-grid {
@@ -1285,14 +1285,14 @@ body[data-cms-page="temples"] {
 .temple-hub-v2-card {
   position: relative;
   display: flex;
-  min-height: 320px;
+  min-height: 260px;
   flex-direction: column;
   overflow: hidden;
-  padding: 26px;
+  padding: 20px;
   color: #251d1a;
   background: #fffdf7;
   border: 1px solid rgba(194, 141, 53, 0.3);
-  border-radius: 16px;
+  border-radius: var(--radius);
   text-decoration: none;
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
@@ -1360,9 +1360,9 @@ body[data-cms-page="temples"] {
   display: block;
   margin: 16px 0 10px;
   color: inherit;
-  font-size: 1.55rem;
-  font-weight: 900;
-  line-height: 1.22;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .temple-hub-v2-card p {
@@ -1744,7 +1744,7 @@ body[data-cms-page="temples"] .site-footer--temple-hub-v2 {
 
 @media (max-width: 720px) {
   body[data-cms-page="temples"] {
-    --temple-hub-container: min(100% - 32px, 1180px);
+    --temple-hub-container: var(--page-width);
   }
 
   .temple-hub-v2-hero {
@@ -1786,27 +1786,29 @@ body[data-cms-page="temples"] .site-footer--temple-hub-v2 {
   }
 
   .temple-hub-v2-collections {
-    padding-top: 56px;
+    padding-top: 24px;
   }
 
   .temple-hub-v2-section-head {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
 
   .temple-hub-v2-section-head h2 {
-    font-size: clamp(1.85rem, 10vw, 2.45rem);
+    font-size: var(--section-title-size);
   }
 
   .temple-hub-v2-card,
   .temple-hub-v2-tool-card,
   .temple-hub-v2-confidence {
-    border-radius: 14px;
+    border-radius: var(--radius);
   }
 
   .temple-hub-v2-card,
   .temple-hub-v2-tool-card {
-    padding: 22px;
+    padding: 16px;
   }
+
+  .temple-hub-v2-card { min-height: 0; }
 
   .temple-hub-v2-tool-card b {
     width: 100%;
@@ -1841,7 +1843,7 @@ body[data-cms-page="temples"] .site-footer--temple-hub-v2 {
 }
 
 .temples-collection-v2-page {
-  --temple-hub-container: min(1180px, calc(100% - 48px));
+  --temple-hub-container: var(--page-width);
   --temple-hub-card: #fffdf7;
   --temple-hub-paper: #fbf6eb;
   --temple-hub-paper-deep: #f7edd6;
@@ -1901,8 +1903,8 @@ body[data-cms-page="temples"] .site-footer--temple-hub-v2 {
 .temple-collection-v2-tabs {
   display: inline-flex;
   gap: 4px;
-  margin-bottom: 24px;
-  padding: 5px;
+  margin-bottom: 12px;
+  padding: 3px;
   background: rgba(36, 15, 10, 0.34);
   border: 1px solid rgba(244, 207, 120, 0.34);
   border-radius: 999px;
@@ -1910,19 +1912,22 @@ body[data-cms-page="temples"] .site-footer--temple-hub-v2 {
 
 .temple-collection-v2-tabs a {
   display: inline-flex;
-  min-height: 40px;
+  min-height: 36px;
   align-items: center;
   justify-content: center;
   padding: 0 18px;
   color: #f4cf78;
   border-radius: 999px;
-  font-weight: 900;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .temple-collection-v2-tabs a.is-active {
   color: #3b1b0f;
   background: linear-gradient(135deg, #f9df97, #e7b64a);
 }
+
+.page-banner .temple-collection-v2-total { margin: 10px 0 0; color: #f1d794; font-size: 12px; line-height: 1.5; }
 
 .temple-collection-v2-hero .section-kicker {
   margin: 0 0 10px;
@@ -2785,7 +2790,7 @@ body.temples-collection-v2-page .site-footer--temple-hub-v2 {
 
 @media (max-width: 720px) {
   .temples-collection-v2-page {
-    --temple-hub-container: min(100% - 32px, 1180px);
+    --temple-hub-container: var(--page-width);
   }
 
   .temple-collection-v2-hero__inner {

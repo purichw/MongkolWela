@@ -1,0 +1,17 @@
+Mongkol Wela - Planner fallback banner
+
+planner-wat-arun-evening.webp (current fallback)
+Wat Arun, Bangkok, Vasant Jain / Unsplash.
+Unsplash License. Downloaded and encoded as WebP; responsive display crop.
+https://unsplash.com/photos/wcghi5PGJcI
+https://unsplash.com/license
+
+hero-wat-mahathat-sukhothai.webp (previous fallback, retained asset)
+Wat Mahathat Sukhothai at sunset, Supanut Arunoprayote.
+Licensed under Creative Commons Attribution 4.0 (CC BY 4.0).
+Resized, encoded as WebP, and responsively cropped for display.
+https://commons.wikimedia.org/wiki/File:Wat_Mahathat_Sukhothai_at_sunset.jpg
+https://creativecommons.org/licenses/by/4.0/
+
+This credits the bundled fallback asset. Published CMS replacement images
+retain their own source and licensing requirements.

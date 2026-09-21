@@ -7,14 +7,14 @@
 .tarot-result-shell,
 .tarot-note,
 .tarot-related {
-  width: min(var(--container), calc(100% - 40px));
+  width: var(--page-width);
   margin: 0 auto;
 }
 
 .tarot-meanings-index,
 .tarot-meaning-section,
 .tarot-meaning-detail {
-  width: min(var(--container), calc(100% - 40px));
+  width: var(--page-width);
   margin: 0 auto;
 }
 
@@ -1160,7 +1160,7 @@
   .tarot-meanings-index,
   .tarot-meaning-section,
   .tarot-meaning-detail {
-    width: min(100% - 28px, var(--container));
+    width: var(--page-width);
   }
 
   .tarot-hero,

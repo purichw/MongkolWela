@@ -495,7 +495,7 @@ option {
 .tradition-section,
 .learn-strip,
 .site-footer {
-  width: min(var(--container), calc(100% - 40px));
+  width: var(--page-width);
   margin: 0 auto;
 }
 

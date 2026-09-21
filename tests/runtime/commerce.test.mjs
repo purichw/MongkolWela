@@ -52,7 +52,8 @@ test("inventory confirmation is atomic with expiry, conflict, cancellation and p
   s.run({ op: "transition", table: "orders", id: first.id, expectedVersion: accepted.version, action: "cancel", note: "ยกเลิก" });
   assert.equal(availableStock(s.state, s.product.id, now), 2);
 });
-test("fund capacity, host approvals and receipts are separate from reservations", () => {
+test("fund capacity, host approvals and receipts are separate from reservations", (t) => {
+  t.mock.timers.enable({ apis: ["Date"], now });
   const s = scenario();
   const command = guestCommand("booking.create", { name: "test", contact: "test", campaignId: s.campaign.id, version: s.campaign.version, quantity: 2 });
   const booking = s.run(command, {});

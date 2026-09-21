@@ -22,13 +22,6 @@ const config = siteConfig[locale] || siteConfig.th;
 const footerCopy = config.copy?.footer || {};
 const pages = config.pages as Record<string, PageConfig>;
 const pageConfig = pages[page] || pages.home;
-const isPopularDirectory = page === "templesPopular";
-const isPlaceDetail = /^\/temples\/(popular|sacred|mu)\/[^/]+\/?$/.test(Astro.url.pathname);
-const usesEditorialFooter = ["home", "calendar", "calendarDay"].includes(page) || isPlaceDetail;
-const isTempleHubPage = page === "temples";
-const isTemplePlannerPage = page === "templesPlanner";
-const isTempleCollectionPage = ["templesPopular", "templesSacred", "templesMu"].includes(page);
-const isTempleV2Page = isTempleHubPage || isTempleCollectionPage || isTemplePlannerPage;
 
 function resolveHref(href = "") {
   if (!href) return "/";
@@ -38,9 +31,7 @@ function resolveHref(href = "") {
   return `/${href}`;
 }
 
-const footerLinks = pageConfig.footerLinks || [
-  { label: config.footer.contact, href: "#consult" },
-];
+const footerLinks = pageConfig.footerLinks || [];
 const templeRouteLinks = footerCopy.templeRoutes || [
   { label: "วางแผนไหว้พระ", href: "/temples/planner/" },
   { label: "เส้นทางไหว้พระ ๙ วัด", href: "/temples/popular/" },
@@ -54,14 +45,6 @@ const toolLinks = footerCopy.tools || [
 ];
 ---
 
-{isPopularDirectory && !isTempleCollectionPage ? (
-  <footer class="site-footer site-footer--popular-directory" id="consult">
-    <div class="site-footer-popular-brand">
-      <BrandMark class="site-footer-brand-lockup" variant="lockup" loading="lazy" />
-    </div>
-    <p>ค้นหาวัดดัง สถานที่ศักดิ์สิทธิ์ และเส้นทางไหว้พระเสริมมงคลสำหรับผู้ใช้ไทย</p>
-  </footer>
-) : usesEditorialFooter ? (
   <footer class:list={["site-footer", "site-footer--home-v2", { "site-footer--ivory": page === "calendarDay" }]} id="consult">
     <BrandOrnament /><BrandOrnament mirrored />
     <div class="site-footer-home-grid">
@@ -83,6 +66,9 @@ const toolLinks = footerCopy.tools || [
             {toolLinks.map((item: FooterLink) => (
               <a href={resolveHref(item.href)}>{item.label}</a>
             ))}
+            {footerLinks.map((item: FooterLink) => (
+              <a href={resolveHref(item.href)}>{item.label}</a>
+            ))}
           </nav>
         </div>
       </details>
@@ -94,42 +80,6 @@ const toolLinks = footerCopy.tools || [
     </div>
     <div class="site-footer-home-bottom"><small>© {new Date().getFullYear() + 543} มงคลเวลา</small><small>ควรตรวจสอบข้อมูลสถานที่ก่อนออกเดินทาง</small></div>
   </footer>
-) : isTempleV2Page ? (
-  <footer class="site-footer site-footer--temple-hub-v2" id="consult">
-    <div class="site-footer-temple-hub-grid">
-      <div class="site-footer-temple-hub-brand">
-        <BrandMark class="site-footer-brand-lockup" variant="lockup" loading="lazy" />
-        <p>{footerCopy.templeDescription || config.footer.description}</p>
-      </div>
-      <nav aria-label={footerCopy.templeRoutesLabel || "เส้นทางและสถานที่"}>
-        <strong>{footerCopy.templeRoutesLabel || "เส้นทางและสถานที่"}</strong>
-        {templeRouteLinks.map((item: FooterLink) => (
-          <a href={resolveHref(item.href)}>{item.label}</a>
-        ))}
-      </nav>
-      <nav aria-label={footerCopy.toolsLabel || "เครื่องมือเสริม"}>
-        <strong>{footerCopy.toolsLabel || "เครื่องมือเสริม"}</strong>
-        {toolLinks.map((item: FooterLink) => (
-          <a href={resolveHref(item.href)}>{item.label}</a>
-        ))}
-        <a href="#consult">ติดต่อมงคลเวลา</a>
-      </nav>
-    </div>
-    <p class="credits">{footerCopy.templeCreditNote || "ควรตรวจสอบเวลาเปิด-ปิดก่อนเดินทาง"}</p>
-  </footer>
-) : (
-  <footer class="site-footer" id="consult">
-    <div>
-      <BrandMark class="site-footer-brand-lockup" variant="lockup" loading="lazy" />
-      <p>{config.footer.description}</p>
-    </div>
-    <div class="footer-links">
-      {footerLinks.map((item: FooterLink) => (
-        <a href={resolveHref(item.href)}>{item.label}</a>
-      ))}
-    </div>
-  </footer>
-)}
 
 <script>
   const links = document.querySelector<HTMLDetailsElement>("[data-home-footer-links]");

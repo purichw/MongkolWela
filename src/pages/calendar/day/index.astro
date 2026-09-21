@@ -3,7 +3,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import cmsSeed from "../../../../public/admin/content/live.json";
 import CmsImage from "../../../components/CmsImage.astro";
 import SiteIcon from "../../../components/icons/SiteIcon.astro";
-import BrandOrnament from "../../../components/BrandOrnament.astro";
+import PageBanner from "../../../components/PageBanner.astro";
 import "../../../styles/calendar-day.css";
 const hero = cmsSeed.pages.find(page => page.id === "calendarDay")?.patches?.find(patch => patch.id === "calendar-day-hero-image" && patch.enabled !== false);
 ---
@@ -20,14 +20,14 @@ const hero = cmsSeed.pages.find(page => page.id === "calendarDay")?.patches?.fin
     {(["calendar-days", "arrow-left", "arrow-right", "chevron-down", "leaf", "ban", "lightbulb", "book-open", "compass", "orbit", "moon-star", "coins", "layers-2", "maximize-2"] as const).map(name => (
       <template data-day-symbol={name}><SiteIcon name={name} /></template>
     ))}
-    <section class="day-hero" aria-labelledby="day-title">
-      <CmsImage slot="calendar-day-hero-image" image={hero} width={1920} height={1280} loading="eager" fetchpriority="high" class="day-hero-image" />
-      <BrandOrnament /><BrandOrnament mirrored />
-      <div class="day-container day-hero-content" data-day-hero>
+    <PageBanner titleId="day-title" class="day-hero">
+      <CmsImage slot="media" mediaId="calendar-day-hero-image" image={hero} width={1920} height={1280} loading="eager" fetchpriority="high" class="day-hero-image" />
+      <div data-day-hero>
         <h1 id="day-title">รายละเอียดวัน</h1>
         <p role="status">กำลังเตรียมข้อมูลปฏิทิน</p>
       </div>
-    </section>
+      <Fragment slot="quote">“เส้นทางแห่งศรัทธา<br />เริ่มได้ในทุกวัน”</Fragment>
+    </PageBanner>
     <div class="day-container day-content" data-day-content></div>
     <noscript><p class="day-container">โปรดเปิด JavaScript เพื่ออ่านข้อมูลของวันที่เลือก <a href="/calendar/">กลับสู่ปฏิทิน</a></p></noscript>
   </main>

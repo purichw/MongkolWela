@@ -1,0 +1,237 @@
+{
+  "date": "2026-09-20",
+  "url": "https://mongkolwela.vercel.app/",
+  "captures": [
+    {
+      "file": "home-part-1.png",
+      "dpr": 2,
+      "title": "มงคลเวลา",
+      "viewport": [
+        1280,
+        720
+      ],
+      "visibleSections": [],
+      "y": 0
+    },
+    {
+      "file": "home-part-2.png",
+      "dpr": 2,
+      "title": "มงคลเวลา",
+      "viewport": [
+        1280,
+        720
+      ],
+      "visibleSections": [
+        {
+          "label": "๙ เส้นทางไหว้พระยอดน",
+          "opacity": "1"
+        },
+        {
+          "label": "๔๔,๗๐๔ วัดทั่วไทยพร้",
+          "opacity": "1"
+        },
+        {
+          "label": "พิกัดสำหรับตรวจสอบเส",
+          "opacity": "1"
+        },
+        {
+          "label": "วางแผน ๓ / ๕ / ๙ แห่",
+          "opacity": "1"
+        },
+        {
+          "label": "๐๑ วัตถุประสงค์ด้านม",
+          "opacity": "1"
+        },
+        {
+          "label": "๐๑ / โชคลาภ เสริมโชค",
+          "opacity": "1"
+        },
+        {
+          "label": "๐๒ / การงาน การงาน ค",
+          "opacity": "1"
+        },
+        {
+          "label": "๐๓ / ความรัก ความรัก",
+          "opacity": "1"
+        },
+        {
+          "label": "๐๔ / ครอบครัว สุขภาพ",
+          "opacity": "1"
+        }
+      ],
+      "y": 540
+    },
+    {
+      "file": "home-part-3.png",
+      "dpr": 2,
+      "title": "มงคลเวลา",
+      "viewport": [
+        1280,
+        720
+      ],
+      "visibleSections": [
+        {
+          "label": "๐๑ / โชคลาภ เสริมโชค",
+          "opacity": "1"
+        },
+        {
+          "label": "๐๒ / การงาน การงาน ค",
+          "opacity": "1"
+        },
+        {
+          "label": "๐๓ / ความรัก ความรัก",
+          "opacity": "1"
+        },
+        {
+          "label": "๐๔ / ครอบครัว สุขภาพ",
+          "opacity": "1"
+        },
+        {
+          "label": "๐๕ / เริ่มใหม่ เริ่ม",
+          "opacity": "1"
+        },
+        {
+          "label": "๐๖ / แก้ชง แก้ชง สะเ",
+          "opacity": "1"
+        }
+      ],
+      "y": 1080
+    },
+    {
+      "file": "home-part-4.png",
+      "dpr": 2,
+      "title": "มงคลเวลา",
+      "viewport": [
+        1280,
+        720
+      ],
+      "visibleSections": [
+        {
+          "label": "๐๒ เครื่องมือวางแผน ",
+          "opacity": "1"
+        },
+        {
+          "label": "ตัวอย่างแผนเดินทาง ไ",
+          "opacity": "1"
+        }
+      ],
+      "y": 1620
+    },
+    {
+      "file": "home-part-5.png",
+      "dpr": 2,
+      "title": "มงคลเวลา",
+      "viewport": [
+        1280,
+        720
+      ],
+      "visibleSections": [
+        {
+          "label": "ตัวอย่างแผนเดินทาง ไ",
+          "opacity": "1"
+        },
+        {
+          "label": "๐๓ หมวดการค้นหา  เลื",
+          "opacity": "1"
+        },
+        {
+          "label": "เส้นทาง · ยอดนิยม สา",
+          "opacity": "1"
+        },
+        {
+          "label": "ศรัทธา · ข้อมูลประกอ",
+          "opacity": "1"
+        },
+        {
+          "label": "มงคล · กำลังใจ สถานท",
+          "opacity": "1"
+        }
+      ],
+      "y": 2160
+    },
+    {
+      "file": "home-part-6.png",
+      "dpr": 2,
+      "title": "มงคลเวลา",
+      "viewport": [
+        1280,
+        720
+      ],
+      "visibleSections": [
+        {
+          "label": "เส้นทาง · ยอดนิยม สา",
+          "opacity": "1"
+        },
+        {
+          "label": "ศรัทธา · ข้อมูลประกอ",
+          "opacity": "1"
+        },
+        {
+          "label": "มงคล · กำลังใจ สถานท",
+          "opacity": "1"
+        },
+        {
+          "label": "ฐานข้อมูลวัดทั่วประเ",
+          "opacity": "1"
+        },
+        {
+          "label": "เครื่องมือเสริม",
+          "opacity": "1"
+        },
+        {
+          "label": "วันพระและปฏิทินไทย",
+          "opacity": "1"
+        },
+        {
+          "label": "คำเซียมซี",
+          "opacity": "1"
+        },
+        {
+          "label": "ไพ่ยิปซีรายวัน",
+          "opacity": "1"
+        },
+        {
+          "label": "อ่านลายมือ",
+          "opacity": "1"
+        }
+      ],
+      "y": 2700
+    },
+    {
+      "file": "home-part-7.png",
+      "dpr": 2,
+      "title": "มงคลเวลา",
+      "viewport": [
+        1280,
+        720
+      ],
+      "visibleSections": [
+        {
+          "label": "ฐานข้อมูลวัดทั่วประเ",
+          "opacity": "1"
+        },
+        {
+          "label": "เครื่องมือเสริม",
+          "opacity": "1"
+        },
+        {
+          "label": "วันพระและปฏิทินไทย",
+          "opacity": "1"
+        },
+        {
+          "label": "คำเซียมซี",
+          "opacity": "1"
+        },
+        {
+          "label": "ไพ่ยิปซีรายวัน",
+          "opacity": "1"
+        },
+        {
+          "label": "อ่านลายมือ",
+          "opacity": "1"
+        }
+      ],
+      "y": 2926.5
+    }
+  ]
+}

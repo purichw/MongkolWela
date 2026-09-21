@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mockup To Product"
+  short_description: "Adapt mockups faithfully to real product constraints"
+  default_prompt: "Use $mockup-to-product to adapt this mockup to the real product, preserving its composition and design details across desktop and mobile while reviewing the whole requested surface proactively."

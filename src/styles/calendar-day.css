@@ -1,7 +1,7 @@
 .calendar-day-page { background: #f8f5eb; }
 .day-detail { --day-green: #145546; --day-red: #a52c27; --day-gold: #a37422; --day-ink: #202320; --day-muted: #605f5b; color: var(--day-ink); }
 .day-detail *, .day-detail *::before, .day-detail *::after { box-sizing: border-box; letter-spacing: 0; }
-.day-container { width: min(1220px, calc(100% - 64px)); margin-inline: auto; }
+.day-container { width: var(--page-width); margin-inline: auto; }
 .day-detail h1, .day-detail h2, .day-detail h3, .day-detail p, .day-detail figure, .day-detail blockquote { margin: 0; }
 .day-detail h2, .day-detail h3 { color: var(--day-ink); }
 .day-detail a { text-decoration: none; }
@@ -9,19 +9,7 @@
 .day-detail summary { list-style: none; cursor: pointer; }
 .day-detail summary::-webkit-details-marker { display: none; }
 .day-detail .site-icon { --site-icon-color: currentColor; }
-.day-hero { position: relative; isolation: isolate; overflow: hidden; color: #fffbed; background: #073f34; }
-.day-hero .day-hero-image { position: absolute; z-index: -3; inset: 0 0 0 auto; width: 64%; height: 100%; max-width: none; object-fit: cover; mask-image: linear-gradient(90deg, transparent, black 24%); }
-.day-hero::before { content: ""; position: absolute; z-index: -2; inset: 0; background: linear-gradient(90deg, #073b31 0%, #073b31f5 31%, #073b31b8 53%, #073b3120 80%), linear-gradient(0deg, #053b32c7, transparent 45%); }
-.day-hero > .brand-ornament { z-index: -1; --ornament-width: 105px; --ornament-opacity: .28; }
-.day-hero-content { position: relative; padding: 28px 0 24px; min-height: 324px; }
-.day-breadcrumb { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; color: #f8efdb; font-size: 13px; margin-bottom: 20px; }
-.day-breadcrumb a { color: inherit; }
-.day-breadcrumb a:hover { text-decoration: underline; }
-.day-eyebrow { display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 600; }
 .day-hero .day-eyebrow .site-icon { width: 32px; height: 32px; color: #edcf86; }
-.day-hero h1 { color: #fffdf5; font-size: 64px; line-height: 1.3; font-weight: 800; margin: 2px 0; max-width: 850px; text-shadow: 0 2px 12px #07352c60; }
-.day-lunar-title { color: #fff9e9; font-size: 24px; line-height: 1.5; }
-.day-scene-quote { position: absolute; top: 40px; right: 27%; text-align: center; font-size: 19px; line-height: 1.6; font-style: italic; color: #ffe1a2; text-shadow: 0 1px 8px #163b2f; }
 .day-hero-bottom { display: flex; align-items: center; justify-content: space-between; gap: 28px; margin-top: 24px; }
 .day-reflection { display: flex; gap: 14px; align-items: center; color: #f2d589; font-size: 19px; font-style: italic; line-height: 1.5; }
 .day-reflection::before, .day-reflection::after { content: ""; flex: 0 0 34px; height: 1px; background: #d5af54; }
@@ -30,7 +18,7 @@
 .day-nav a:hover { background: #285f4cb5; }
 .day-nav .site-icon { width: 22px; height: 22px; }
 .day-nav .day-nav-disabled { opacity: .5; }
-.day-content { width: min(1320px, calc(100% - 64px)); padding: 22px 0 26px; }
+.day-content { padding: 22px 0 26px; }
 .day-primary-grid { display: grid; grid-template-columns: .95fr 1.05fr; gap: 18px; align-items: stretch; }
 .day-panel, .day-omen { border: 1px solid #e7dfce; border-radius: 8px; background: #fffefaec; box-shadow: 0 10px 32px #54411c08; }
 .day-reading-panel, .day-wheel-panel { padding: 20px; min-width: 0; }
@@ -102,11 +90,14 @@
 .day-omen ul { margin: 17px 0 0; padding-left: 22px; color: var(--day-muted); font-size: 16px; line-height: 1.75; }
 .day-omen li + li { margin-top: 5px; }
 .day-omen li::marker { color: var(--omen-color); font-size: 18px; }
-.day-source { margin-top: 20px; padding: 20px; }
-.day-source[open] { display: grid; grid-template-columns: .58fr 1fr; gap: 24px; }
-.day-source > summary { display: flex; gap: 16px; align-items: flex-start; cursor: default; }
-.day-source h2 { font-size: 23px; line-height: 1.4; margin-top: 4px; }
-.day-source-body { border-left: 1px solid #e7dabc; padding-left: 24px; }
+.day-source { --source-icon-size: 64px; --source-glyph-size: 34px; margin-top: 20px; padding: 20px; border-color: #eee5d5; }
+.day-source[open] { display: grid; grid-template-columns: minmax(0, .54fr) minmax(0, 1fr); gap: 28px; }
+.day-source > summary { display: flex; gap: 18px; align-items: center; align-self: start; cursor: default; }
+.day-source > summary > span:not(.day-medallion) { min-width: 0; }
+.day-source .day-medallion { width: var(--source-icon-size); height: var(--source-icon-size); background: linear-gradient(135deg, #ecd6aa, #f6e6c3); color: #80591c; }
+.day-detail .day-source .day-medallion .site-icon { width: var(--source-glyph-size); height: var(--source-glyph-size); }
+.day-source h2 { font-size: 28px; font-weight: 700; line-height: 1.4; margin-top: 3px; }
+.day-source-body { min-width: 0; border-left: 1px solid #e7dabc; padding-left: 28px; }
 .day-source-body p { color: var(--day-muted); font-size: 15px; line-height: 1.75; }
 .day-source-method { margin-top: 10px; }
 .day-source-method > summary { color: #a02a24; display: flex; gap: 10px; align-items: center; font-size: 14px; font-weight: 600; }
@@ -117,9 +108,6 @@
 .day-media-credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .day-input-note { padding: 10px 14px; margin-bottom: 16px !important; color: #704d17; background: #fff0c9; border-radius: 6px; font-size: 14px; }
 @media (min-width: 761px) and (max-width: 1199px) {
-  .day-container { width: calc(100% - 48px); }
-  .day-hero h1 { font-size: 46px; }
-  .day-scene-quote { right: 22%; font-size: 16px; }
   .day-reflection { font-size: 16px; }
   .day-reflection::after { display: none; }
   .day-nav { flex-basis: 500px; gap: 10px; }
@@ -144,7 +132,8 @@
   .day-omen h3 { font-size: 17px; }
   .day-omen > summary { gap: 10px; }
   .day-omen > summary > span > span { font-size: 12px; }
-  .day-source h2 { font-size: 20px; }
+  .day-source { --source-icon-size: 52px; --source-glyph-size: 29px; }
+  .day-source h2 { font-size: 22px; }
 }
 @media (min-width: 761px) and (max-width: 950px) {
   .day-primary-grid { grid-template-columns: 1fr; }
@@ -160,27 +149,17 @@
   .day-source[open] { display: block; }
   .day-source > summary { cursor: pointer; align-items: center; }
   .day-source-body { border: 0; padding: 16px 0 0; }
-  .day-scene-quote { display: none; }
 }
 @media (max-width: 760px) {
-  .day-container { width: calc(100% - 22px); }
-  .day-hero-content { width: calc(100% - 30px); min-height: 0; padding: 10px 0 12px; }
-  .day-hero .day-hero-image { width: 145%; right: -40%; }
-  .day-hero::before { background: linear-gradient(90deg, #073b31f5, #073b31bf 40%, #073b3120), linear-gradient(0deg, #073b31ef, transparent 85%); }
-  .day-hero > .brand-ornament { --ornament-width: 46px; --ornament-opacity: .32; }
-  .day-breadcrumb { font-size: 10px; gap: 8px; margin-bottom: 8px; }
-  .day-eyebrow { font-size: 14px; gap: 9px; }
+  .day-hero .page-banner__quote { display: none; }
   .day-hero .day-eyebrow .site-icon { width: 22px; height: 22px; }
-  .day-hero h1 { font-size: 28px; line-height: 1.3; margin-top: 3px; }
-  .day-lunar-title { font-size: 14px; line-height: 1.55; }
-  .day-scene-quote { display: none; }
   .day-hero-bottom { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
   .day-reflection { justify-content: center; text-align: center; font-size: 13px; gap: 8px; }
   .day-reflection::before, .day-reflection::after { flex-basis: 20px; }
   .day-nav { width: 100%; flex: auto; gap: 8px; }
   .day-nav :is(a, .day-nav-disabled) { min-height: 36px; padding: 6px; font-size: 12px; gap: 7px; }
   .day-nav .site-icon { width: 17px; height: 17px; }
-  .day-content { width: calc(100% - 22px); padding: 10px 0 14px; }
+  .day-content { padding: 10px 0 14px; }
   .day-primary-grid { grid-template-columns: 1fr; gap: 10px; }
   .day-reading-panel, .day-wheel-panel { padding: 9px; border-color: #ebe4d6; }
   .day-panel-heading { gap: 9px; }
@@ -227,7 +206,7 @@
   .day-omen > summary > .site-icon, .day-source > summary > .site-icon { display: inline-grid; width: 15px; height: 15px; color: #916719; margin-left: auto; }
   .day-omen[open] > summary > .site-icon, .day-source[open] > summary > .site-icon { transform: rotate(180deg); }
   .day-omen ul { padding: 0 10px 0 25px; margin: 12px 0; font-size: 13px; line-height: 1.7; }
-  .day-source { margin-top: 10px; padding: 11px; }
+  .day-source { --source-icon-size: 40px; --source-glyph-size: 25px; margin-top: 10px; padding: 12px; }
   .day-source[open] { display: block; }
   .day-source > summary { align-items: center; cursor: pointer; gap: 10px; }
   .day-source h2 { font-size: 15px; line-height: 1.4; margin-top: 0; }
@@ -235,8 +214,6 @@
   .day-source-body p, .day-source-method > summary { font-size: 12px; }
 }
 @media (max-width: 359px) {
-  .day-hero h1 { font-size: 25px; }
-  .day-lunar-title { font-size: 14px; }
   .day-nav :is(a, .day-nav-disabled) { font-size: 11px; gap: 4px; }
   .day-nav .site-icon { width: 14px; height: 14px; }
   .day-reflection { font-size: 12px; }

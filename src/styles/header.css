@@ -16,7 +16,7 @@
   justify-content: space-between;
   gap: 18px;
   min-height: 26px;
-  padding: 3px max(32px, calc((100% - 1220px) / 2));
+  padding: 3px var(--page-inset);
   color: #f7ead2;
   background: #0d4439;
   font-family: var(--header-utility-font);
@@ -65,7 +65,7 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas: "brand menu actions";
   gap: 28px;
-  width: min(1220px, calc(100% - 64px));
+  width: var(--page-width);
   min-height: 62px;
   padding: 0;
 }
@@ -373,7 +373,7 @@
 }
 
 @media (min-width: 721px) and (max-width: 999px) {
-  .site-header .navbar--shared-site { width: calc(100% - 40px); gap: 12px; }
+  .site-header .navbar--shared-site { gap: 12px; }
   .navbar--shared-site .brand { min-width: 138px; gap: 8px; }
   .navbar--shared-site .brand strong { font-size: 17px; }
   .navbar--shared-site .nav-menu { gap: 8px 18px; }
@@ -382,7 +382,7 @@
 
 @media (max-width: 720px) {
   .site-header .topbar { display: none; }
-  .site-header .navbar--shared-site { width: calc(100% - 24px); grid-template-columns: minmax(0, 1fr) auto 32px; grid-template-areas: "brand actions toggle"; gap: 6px; min-height: 44px; padding: 0; }
+  .site-header .navbar--shared-site { grid-template-columns: minmax(0, 1fr) auto 32px; grid-template-areas: "brand actions toggle"; gap: 6px; min-height: 44px; padding: 0; }
   .site-header .navbar--shared-site .brand { gap: 7px; min-width: 0; max-width: none; }
   .site-header .navbar--shared-site .brand-mark { flex-basis: 30px; width: 30px; height: 30px; }
   .site-header .navbar--shared-site .brand strong { font-size: 15px; line-height: 1.2; }
@@ -396,7 +396,7 @@
 }
 
 @media (max-width: 359px) {
-  .site-header .navbar--shared-site { width: calc(100% - 16px); gap: 3px; grid-template-columns: minmax(0, 1fr) auto 30px; }
+  .site-header .navbar--shared-site { gap: 3px; grid-template-columns: minmax(0, 1fr) auto 30px; }
   .site-header .navbar--shared-site .brand { gap: 4px; }
   .site-header .navbar--shared-site .brand-mark { flex-basis: 27px; width: 27px; height: 27px; }
   .site-header .navbar--shared-site .brand strong { font-size: 13px; }

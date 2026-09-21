@@ -48,13 +48,13 @@
           "label": "Hero image 1",
           "selector": ".hero-slide:nth-child(1) img",
           "kind": "image",
-          "src": "/assets/images/hero-doi-suthep-gold.webp",
-          "alt": "พระธาตุดอยสุเทพสีทองมองผ่านซุ้มลายไทย เชียงใหม่",
-          "position": "50% 28%",
-          "credit": "Nat Weerawong",
-          "sourceUrl": "https://unsplash.com/photos/ZmvuHreuHdo",
-          "license": "Unsplash License",
-          "licenseUrl": "https://unsplash.com/license"
+          "src": "/assets/images/home-hero-golden-sanctuary.webp",
+          "alt": "ภาพประกอบพระพุทธรูปและหมู่วัดในหุบเขา ท่ามกลางป่าเขียวและแสงอาทิตย์สีทอง",
+          "position": "100% 50%",
+          "credit": "",
+          "sourceUrl": "",
+          "license": "",
+          "licenseUrl": ""
         },
         {
           "id": "home-hero-image-2",

@@ -2,6 +2,7 @@ export function createPlannerMaps({ getPickerItems, getStartPoint, toggleSelecti
 function refreshSelectionMap(state, elements) {
   if (!state.selectionMap || !state.selectionCluster) return;
   const filteredIds = new Set(getPickerItems(state, elements).map((item) => item.id));
+  const filterKey = JSON.stringify([...filteredIds].sort());
   const origin = getStartPoint(state, elements);
   state.selectionCluster.clearLayers();
   state.selectionMarkers.forEach((marker, id) => {
@@ -9,9 +10,10 @@ function refreshSelectionMap(state, elements) {
     updateSelectionMarker(marker, state.selected.indexOf(id), origin);
     state.selectionCluster.addLayer(marker);
   });
-  if (state.selectionCluster.getLayers().length) {
-    state.selectionMap.fitBounds(state.selectionCluster.getBounds(), { padding: [30, 30], maxZoom: 13 });
+  if (state.selectionCluster.getLayers().length && filterKey !== state.selectionFilterKey) {
+    state.selectionMap.fitBounds(state.selectionCluster.getBounds(), { padding: [30, 30], maxZoom: 13, animate: false });
   }
+  state.selectionFilterKey = filterKey;
 }
 
 async function ensureSelectionMap(state, elements) {
@@ -21,9 +23,9 @@ async function ensureSelectionMap(state, elements) {
   }
   await ensureLeaflet();
   if (state.selectionMap) return;
-  const map = window.L.map(elements.selectionMap, { minZoom: 5, maxZoom: 18, scrollWheelZoom: true }).setView([13.7563, 100.5018], 6);
-  addTiles(map);
-  const cluster = window.L.markerClusterGroup({ maxClusterRadius: 48, showCoverageOnHover: false });
+  const map = window.L.map(elements.selectionMap, { minZoom: 5, maxZoom: 18, scrollWheelZoom: false }).setView([13.7563, 100.5018], 6);
+  addTiles(map, elements.selectionMap);
+  const cluster = window.L.markerClusterGroup({ maxClusterRadius: 48, showCoverageOnHover: false, animate: !window.matchMedia("(prefers-reduced-motion: reduce)").matches });
   state.items.forEach((item) => {
     const marker = window.L.marker([item.latitude, item.longitude], {
       icon: createSelectionIcon(state.selected.indexOf(item.id)),
@@ -42,7 +44,7 @@ async function ensureSelectionMap(state, elements) {
     cluster.addLayer(marker);
   });
   cluster.addTo(map);
-  if (cluster.getLayers().length) map.fitBounds(cluster.getBounds(), { padding: [30, 30], maxZoom: 7 });
+  if (cluster.getLayers().length) map.fitBounds(cluster.getBounds(), { padding: [30, 30], maxZoom: 7, animate: false });
   state.selectionMap = map;
   state.selectionCluster = cluster;
   elements.selectionMap._plannerContext = { state, elements };
@@ -80,9 +82,13 @@ function renderSelectionPopup(item, selected, origin) {
 
 function renderRouteMap(state, elements) {
   if (!window.L || !elements.routeMap || !state.plan.length) return;
+  if (state.routeMap && state.renderedRoute === state.plan) {
+    state.routeMap.invalidateSize();
+    return;
+  }
   if (!state.routeMap) {
-    state.routeMap = window.L.map(elements.routeMap, { minZoom: 5, maxZoom: 18, scrollWheelZoom: true }).setView([13.7563, 100.5018], 6);
-    addTiles(state.routeMap);
+    state.routeMap = window.L.map(elements.routeMap, { minZoom: 5, maxZoom: 18, scrollWheelZoom: false }).setView([13.7563, 100.5018], 6);
+    addTiles(state.routeMap, elements.routeMap);
   }
   if (state.routeLayer) state.routeLayer.remove();
   const group = window.L.layerGroup();
@@ -90,25 +96,48 @@ function renderRouteMap(state, elements) {
   state.plan.forEach((item, index) => {
     window.L.marker([item.latitude, item.longitude], { icon: createSelectionIcon(index) })
       .bindPopup(`<strong>${(index + 1).toLocaleString("th-TH")}. ${escapeHtml(item.name)}</strong>`)
+      .on("click", () => {
+        const stop = [...elements.timeline.querySelectorAll("[data-planner-stop]")].find(node => node.dataset.plannerStop === item.id);
+        if (!stop) return;
+        elements.timeline.querySelectorAll(".is-map-focused").forEach(node => node.classList.remove("is-map-focused"));
+        stop.classList.add("is-map-focused");
+        stop.setAttribute("tabindex", "-1");
+        stop.focus({ preventScroll: true });
+      })
       .addTo(group);
   });
   window.L.polyline(coordinates, { color: "#8e2d24", weight: 4, opacity: 0.78, dashArray: "8 10" }).addTo(group);
   group.addTo(state.routeMap);
   state.routeLayer = group;
+  state.renderedRoute = state.plan;
   setTimeout(() => {
     state.routeMap.invalidateSize();
-    state.routeMap.fitBounds(window.L.latLngBounds(coordinates), { padding: [36, 36], maxZoom: 13 });
+    state.routeMap.fitBounds(window.L.latLngBounds(coordinates), { padding: [36, 36], maxZoom: 15, animate: false });
   }, 40);
 }
 
-function addTiles(map) {
-  window.L.tileLayer(
+function addTiles(map, container) {
+  const tiles = window.L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
     {
       attribution: "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ",
       maxZoom: 18,
     },
   ).addTo(map);
+  let failed = false;
+  tiles.on("tileerror", () => {
+    if (failed || !container) return;
+    failed = true;
+    const note = document.createElement("p");
+    note.className = "planner-map-tile-error";
+    note.textContent = "โหลดพื้นแผนที่บางส่วนไม่ได้ ยังใช้รายการสถานที่ได้ ";
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.textContent = "ลองอีกครั้ง";
+    retry.onclick = () => { failed = false; note.remove(); tiles.redraw(); };
+    note.append(retry);
+    container.append(note);
+  });
 }
 
 let leafletPromise;
@@ -144,7 +173,7 @@ function loadStylesheet(href) {
     link.rel = "stylesheet";
     link.href = href;
     link.onload = resolve;
-    link.onerror = reject;
+    link.onerror = event => { link.remove(); reject(event); };
     document.head.appendChild(link);
   });
 }
@@ -157,7 +186,7 @@ function loadScript(src) {
     const script = document.createElement("script");
     script.src = src;
     script.onload = resolve;
-    script.onerror = reject;
+    script.onerror = event => { script.remove(); reject(event); };
     document.head.appendChild(script);
   });
 }

@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import cmsSeed from "../../../public/admin/content/live.json";
 import CmsImage from "../../components/CmsImage.astro";
 import SiteIcon from "../../components/icons/SiteIcon.astro";
-import BrandOrnament from "../../components/BrandOrnament.astro";
+import PageBanner from "../../components/PageBanner.astro";
 import { createYearOptions, thaiMonthNames } from "../../scripts/thai-calendar-core.js";
 import { monthShortNames } from "../../scripts/calendar-view-model.js";
 
@@ -23,19 +23,18 @@ const media = (id: string) => patches.find(patch => patch.id === id && patch.ena
     {(["lotus", "stupa", "calendar-days", "chevron-left", "chevron-right", "arrow-right"] as const).map(name => (
       <template data-calendar-symbol={name}><SiteIcon name={name} /></template>
     ))}
-    <section class="cal-hero thai-calendar-hero" aria-labelledby="calendar-title">
-      <CmsImage slot="calendar-hero-image" image={media("calendar-hero-image")} width={1920} height={1080} loading="eager" fetchpriority="high" class="cal-hero-image" />
-      <BrandOrnament /><BrandOrnament mirrored />
-      <div class="cal-container cal-hero-copy">
-        <nav class="cal-breadcrumb" aria-label="เส้นทางนำทาง">
+    <PageBanner titleId="calendar-title" class="cal-hero thai-calendar-hero">
+      <CmsImage slot="media" mediaId="calendar-hero-image" image={media("calendar-hero-image")} width={1920} height={1080} loading="eager" fetchpriority="high" class="cal-hero-image" />
+      <div class="page-banner__copy">
+        <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง">
           <a href="/">หน้าแรก</a><span aria-hidden="true">/</span><span aria-current="page">ปฏิทินไทย</span>
         </nav>
         <h1 id="calendar-title" data-calendar-title>ปฏิทินไทย</h1>
-        <p class="cal-hero-subtitle">เช็กวันพระ วันสำคัญ และรายละเอียดรายวัน</p>
-        <p class="cal-hero-description">วางแผนชีวิต เดินทางไหว้พระ ทำบุญ<br />และกิจกรรมมงคลตลอดทั้งปี</p>
+        <p class="page-banner__subtitle">เช็กวันพระ วันสำคัญ และรายละเอียดรายวัน</p>
+        <p class="page-banner__description">วางแผนชีวิต เดินทางไหว้พระ ทำบุญ และกิจกรรมมงคลตลอดทั้งปี</p>
       </div>
-      <blockquote class="cal-hero-quote">“เวลา...<br />ก็เป็นมงคลได้<br />หากเราเลือกใช้ด้วยใจที่ดี”</blockquote>
-    </section>
+      <Fragment slot="quote">“เวลา... ก็เป็นมงคลได้<br />หากเราเลือกใช้ด้วยใจที่ดี”</Fragment>
+    </PageBanner>
 
     <div class="cal-toolbar-wrap" data-calendar-toolbar>
       <div class="cal-toolbar cal-container">
@@ -79,7 +78,7 @@ const media = (id: string) => patches.find(patch => patch.id === id && patch.ena
       <section class="cal-guide" data-calendar-guide hidden aria-labelledby="cal-guide-title">
         <h2 id="cal-guide-title">เกร็ดความรู้</h2>
         <a href="/calendar/day/">
-          <CmsImage slot="calendar-guide-image" image={media("calendar-guide-image")} width={240} height={180} />
+          <CmsImage mediaId="calendar-guide-image" image={media("calendar-guide-image")} width={240} height={180} />
           <span><strong>อ่านวันพระและจันทรคติ</strong><small>ดูข้างขึ้น ข้างแรม และข้อมูลประกอบของแต่ละวัน</small></span>
           <SiteIcon name="arrow-right" />
         </a>

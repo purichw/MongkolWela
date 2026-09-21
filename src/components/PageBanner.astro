@@ -1,0 +1,21 @@
+---
+import BrandOrnament from "./BrandOrnament.astro";
+import "../styles/page-banner.css";
+
+interface Props {
+  titleId: string;
+  class?: string;
+  adminKey?: string;
+}
+const { titleId, class: className, adminKey } = Astro.props;
+---
+
+<section class:list={["page-banner", className]} aria-labelledby={titleId} data-admin-banner-key={adminKey}>
+  <div class="page-banner__media"><slot name="media" /></div>
+  <div class="page-banner__shade" aria-hidden="true"></div>
+  <BrandOrnament /><BrandOrnament mirrored />
+  <div class="page-banner__inner">
+    <slot />
+    {Astro.slots.has("quote") && <blockquote class="page-banner__quote"><slot name="quote" /></blockquote>}
+  </div>
+</section>

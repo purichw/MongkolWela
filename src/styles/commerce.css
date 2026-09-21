@@ -1,5 +1,5 @@
 .commerce-page,.temple-commerce,.commerce-console { font-family:var(--font-thai); color:var(--ink); letter-spacing:0; }
-.commerce-page { max-width:1220px; margin:auto; padding:28px 32px 80px; }
+.commerce-page { width:var(--page-width); margin:auto; padding:28px 0 80px; }
 .commerce-page *,.temple-commerce *,.commerce-console * { box-sizing:border-box; }
 .commerce-console [hidden] { display:none !important; }
 .commerce-page a,.temple-commerce a,.commerce-console a { color:var(--jade-dark); text-underline-offset:4px; }
@@ -11,9 +11,6 @@
 .commerce-heading { margin:32px 0 24px; }
 .commerce-heading h1 { font-size:36px; line-height:1.55; margin:4px 0; }
 .commerce-page .section-kicker { font-size:14px; color:var(--ink-soft); }
-body[data-cms-page="shop"] .site-footer,body[data-cms-page="merit"] .site-footer { width:100%; max-width:none; padding:32px max(24px,calc((100% - 1156px)/2)); background:var(--ink); color:#e4d5bc; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:24px; }
-body[data-cms-page="shop"] .site-footer p,body[data-cms-page="merit"] .site-footer p { max-width:580px; font-size:14px; }
-body[data-cms-page="shop"] .site-footer a,body[data-cms-page="merit"] .site-footer a { color:#e4d5bc; }
 .commerce-page h2,.temple-commerce h2,.commerce-console h2 { font-size:23px; line-height:1.6; margin:0 0 12px; }
 .commerce-page h3,.temple-commerce h3,.commerce-console h3 { font-size:18px; line-height:1.6; }
 .commerce-page p,.temple-commerce p,.commerce-console p { line-height:1.8; overflow-wrap:anywhere; }
@@ -112,7 +109,7 @@ body[data-cms-page="shop"] .site-footer a,body[data-cms-page="merit"] .site-foot
   .commerce-campaign>.commerce-button { grid-column:2; justify-self:start; }
 }
 @media (max-width:600px) {
-  .commerce-page { padding:20px 20px 48px; }
+  .commerce-page { padding:20px 0 48px; }
   .commerce-nav { gap:4px 16px; }
   .commerce-nav a:last-child { margin-left:0; }
   .commerce-heading h1 { font-size:28px; }

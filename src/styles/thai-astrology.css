@@ -6,7 +6,7 @@
 .thai-astro-tool,
 .thai-astro-section,
 .thai-astro-sources {
-  width: min(var(--container), calc(100% - 40px));
+  width: var(--page-width);
   margin: 0 auto;
 }
 
@@ -545,7 +545,7 @@
   .thai-astro-tool,
   .thai-astro-section,
   .thai-astro-sources {
-    width: min(100% - 28px, var(--container));
+    width: var(--page-width);
   }
 
   .thai-astro-hero,

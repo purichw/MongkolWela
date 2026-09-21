@@ -2,6 +2,9 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import TempleMapOverlay from "./TempleMapOverlay.astro";
 import TempleResponsiveImage from "./TempleResponsiveImage.astro";
+import PageBanner from "./PageBanner.astro";
+import CmsImage from "./CmsImage.astro";
+import templePageBanners from "../data/temple-page-banners.json";
 import { templePlaceholderImage } from "../data/temple-images.js";
 import { getTempleDetailUrl } from "../data/temple-slugs.js";
 
@@ -109,6 +112,7 @@ const plannerHrefFor = (temple: TempleCard) =>
   `/temples/planner/?start=${encodeURIComponent(temple.name)}&province=${encodeURIComponent(temple.province)}`;
 const collectionDataSrc = `/assets/data/temple-collections/${collection}.json`;
 const initialTemples = rankedTemples.slice(0, initialCount);
+const banner = templePageBanners[collection];
 const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
 ---
 
@@ -137,9 +141,10 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
       placeholderImage={templePlaceholderImage}
     />
 
-    <section class="temple-collection-v2-hero" aria-labelledby="temple-collection-title">
-      <div class="temple-collection-v2-hero__inner">
-        <nav class="temple-collection-v2-breadcrumb" aria-label="breadcrumb">
+    <PageBanner titleId="temple-collection-title" adminKey={banner.adminKey}>
+      <CmsImage slot="media" mediaId={`temple-${collection}-banner`} image={{ src: banner.imageUrl, alt: banner.imageAlt, position: banner.focalPoint, credit: banner.imageSourceLabel, sourceUrl: banner.imageSourceUrl }} width={1920} height={1080} loading="eager" fetchpriority="high" />
+      <div class="page-banner__copy">
+        <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง">
           {breadcrumbs.map((item, index) => (
             <>
               {item.href ? <a href={item.href}>{item.label}</a> : <span>{item.label}</span>}
@@ -154,14 +159,14 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
           ))}
         </div>
 
-        <p class="section-kicker">{meta.kicker}</p>
+        <p class="page-banner__kicker">{meta.kicker}</p>
         <h1 id="temple-collection-title">{meta.title}</h1>
-        <p>{meta.description}</p>
+        <p class="page-banner__description">{meta.description}</p>
         <p class="temple-collection-v2-total">
           พบ {thaiNumber(rankedTemples.length)} สถานที่ในหมวดนี้ · แสดงรายการเด่นก่อน แล้วค่อยแสดงเพิ่มเติม
         </p>
       </div>
-    </section>
+    </PageBanner>
 
     <section
       class="temple-collection-v2-filter"

@@ -1,6 +1,6 @@
 /* Place detail owns its geometry; shared header, footer and data components keep their owners. */
 body.temples-hub-page.place-detail-page { padding-bottom: 0; }
-.temple-detail.place-detail { --pd-red: #912b24; --pd-green: #104c40; --pd-gold: #946725; --pd-line: #e7decc; color: #24221f; width: min(1220px, calc(100% - 48px)); margin: 0 auto; padding: 16px 0 28px; display: block; font-size: 16px; line-height: 1.6; letter-spacing: 0; }
+.temple-detail.place-detail { --pd-red: #912b24; --pd-green: #104c40; --pd-gold: #946725; --pd-line: #e7decc; color: #24221f; width: var(--page-width); margin: 0 auto; padding: 16px 0 28px; display: block; font-size: 16px; line-height: 1.6; letter-spacing: 0; }
 .place-detail *, .pd-dialog * { box-sizing: border-box; }
 .place-detail [hidden], .pd-dialog [hidden] { display: none !important; }
 .place-detail :is(h1,h2,h3,h4,p,figure,ul,ol,dl) { margin: 0; }
@@ -192,7 +192,7 @@ body.temples-hub-page.place-detail-page { padding-bottom: 0; }
   .pd-rail-controls button:disabled { opacity: .4; cursor: default; }
 }
 @media (max-width: 599px) {
-  .temple-detail.place-detail { width: calc(100% - 32px); padding-top: 8px; padding-bottom: 16px; }
+  .temple-detail.place-detail { padding-top: 8px; padding-bottom: 16px; }
   .pd-back { margin-bottom: 6px; }
   .pd-back > a { min-height: 36px; }
   .pd-hero { margin-bottom: 16px; }
@@ -244,7 +244,6 @@ body.temples-hub-page.place-detail-page { padding-bottom: 0; }
   .pd-dialog h2 { font-size: 18px; }
 }
 @media (max-width: 359px) {
-  .temple-detail.place-detail { width: calc(100% - 24px); }
   .pd-surface, .pd-hero-copy { padding: 12px; }
   .pd-location { padding: 6px; }
   .place-detail .pd-hero h1 { font-size: 28px; }

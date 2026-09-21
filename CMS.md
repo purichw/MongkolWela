@@ -76,6 +76,25 @@ published removal or disabled entry must remain authoritative.
 
 ## Admin Media
 
+Home Banner uses the five existing `home-hero-image-1` through
+`home-hero-image-5` image patches. Each slot accepts `src`, `alt`, `position`
+(CSS object-position), `credit`, `sourceUrl`, `license`, and `licenseUrl`.
+The Home image editor exposes these fields; the existing page save/publish
+flow stores them without a database migration. Only the first image loads
+initially. Later slides load their current published URL when selected.
+Credits follow the active slide, and credit links allow only HTTP(S).
+
+An explicit empty `src` clears that slot, including its deferred image, so
+carousel navigation cannot resurrect an old image. Older patches without
+metadata clear seed credits/crops rather than attributing a different photo.
+Deleting a patch restores the build-time value, as with other page patches.
+Production source failures still follow the error/retry contract above.
+
+Photo choices and licenses are recorded in [Home Banner Media](docs/home-banner-media.md).
+The bundled photo set is a local/build seed only. To adopt it on production,
+publish the five Home image patches against the latest Admin document after
+the assets are deployed; never replace the whole published document with a seed.
+
 Temple image uploads go directly from the browser to the configured media provider so the image bytes do not pass through Vercel Functions.
 
 Cloudinary:

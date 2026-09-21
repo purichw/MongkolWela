@@ -50,17 +50,16 @@ function initDayDetail() {
 
   document.title = `${formatThaiDate(info)} | ปฏิทินไทย มงคลเวลา`;
   detailRoot.querySelector("[data-day-hero]").innerHTML = `
-      <nav class="day-breadcrumb" aria-label="เส้นทางนำทาง">
+      <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง">
         <a href="/">หน้าแรก</a><span aria-hidden="true">/</span>
         <a href="${calendarHref}">ปฏิทินไทย</a><span aria-hidden="true">/</span>
         <span aria-current="page">${formatThaiDate(info)}</span>
       </nav>
-      <div class="day-hero-title">
-        <p class="day-eyebrow">${icon("calendar-days")} รายละเอียดวัน</p>
+      <div class="page-banner__copy">
+        <p class="day-eyebrow page-banner__kicker">${icon("calendar-days")} รายละเอียดวัน</p>
         <h1 id="day-title">วันที่ ${formatThaiDate(info)}</h1>
-        <p class="day-lunar-title">${info.weekdayName} ${formatLunarLabel(info.lunar, info.zodiac.name)}</p>
+        <p class="page-banner__subtitle">${info.weekdayName} ${formatLunarLabel(info.lunar, info.zodiac.name)}</p>
       </div>
-      <p class="day-scene-quote">“เส้นทางแห่งศรัทธา<br />เริ่มได้ในทุกวัน”</p>
       <div class="day-hero-bottom">
         <p class="day-reflection">“ทุกวัน คือ โอกาสดีในการทำสิ่งดี”</p>
         <nav class="day-nav" aria-label="เลือกวัน">

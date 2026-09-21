@@ -27,7 +27,8 @@ export function formatClock(totalMinutes) {
   const normalized = ((Math.round(totalMinutes) % 1440) + 1440) % 1440;
   const hours = Math.floor(normalized / 60);
   const minutes = normalized % 60;
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} น.`;
+  const days = Math.floor(totalMinutes / 1440);
+  return `${days > 0 ? (days === 1 ? "วันถัดไป " : "+" + days + " วัน ") : ""}${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} น.`;
 }
 
 export function formatMinutes(minutes) {
