@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
-import { readJsonBody, requireAdmin, requireSameOrigin, sendJson } from "./_shared.js";
+import { readJsonBody, requireSameOrigin, sendJson } from "./_shared.js";
+import { requireAdmin } from "./_auth.js";
 
 function mediaConfig() {
   const cloudinary = {
@@ -30,7 +31,7 @@ function mediaConfig() {
 
 export default async function handler(req, res) {
   try {
-    const session = requireAdmin(req, res);
+    const session = await requireAdmin(req, res);
     if (!session) return;
 
     const config = mediaConfig();

@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   try {
     if (req.method === "DELETE") { res.setHeader("Set-Cookie", sellerCookie("", 0)); return sendJson(res, 200, { ok: true }); }
     requireCommerceEnabled();
-    if (req.method === "GET") { const actor = await commerceActor(req); privateCommerce(await readCommerce(), actor); return sendJson(res, 200, { ok: true, admin: Boolean(actor.admin) }); }
+    if (req.method === "GET") { const actor = await commerceActor(req, res); privateCommerce(await readCommerce(), actor); return sendJson(res, 200, { ok: true, admin: Boolean(actor.admin) }); }
     if (req.method !== "POST") return sendJson(res, 405, { ok: false, error: "Method not allowed" });
     const body = await readJsonBody(req, { maxBytes: 12000 });
     if (isLocalCommercePreview()) {

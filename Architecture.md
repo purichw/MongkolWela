@@ -443,7 +443,7 @@ Data source constraint:
 
 ## API And Admin Hardening
 
-Admin APIs under `/api/admin/` are intentionally no-store and noindex. Production sessions fail closed when no admin session secret or password is configured, unsafe admin mutations require a same-origin request when an `Origin` header is present, and JSON request bodies are size-limited before parsing. Public analytics POSTs are non-blocking for visitors, but obvious bot/cross-site/rate-limit traffic is ignored instead of being recorded.
+Admin APIs under `/api/admin/` are intentionally no-store and noindex. Production sessions use Supabase Auth plus a fresh active-membership check in `admin_portal_members`, and fail closed if Auth configuration or membership verification is unavailable. See [Admin authentication](docs/admin-supabase-auth.md). Unsafe admin mutations require a same-origin request when an `Origin` header is present, and JSON request bodies are size-limited before parsing. Public analytics POSTs are non-blocking for visitors, but obvious bot/cross-site/rate-limit traffic is ignored instead of being recorded.
 
 The temple planner keeps its interactive picker/map helpers in the browser, but its planner payload comes from `/api/temple-planner/data` instead of a static asset. Automatic route selection, manual route ordering, travel-time summary, and route warnings are calculated by `/api/temple-planner/plan`. These endpoints are public because visitors use them, but they are no-store/noindex and only return the data needed for the current request.
 

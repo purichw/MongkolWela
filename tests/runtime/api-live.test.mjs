@@ -4,7 +4,8 @@ import http from "node:http";
 import contentHandler from "../../api/admin/content.js";
 import dataHandler from "../../api/temple-planner/data.js";
 import planHandler from "../../api/temple-planner/plan.js";
-import { createSessionCookie, COOKIE_NAME } from "../../api/admin/_shared.js";
+import { ADMIN_ACCESS_COOKIE } from "../../api/admin/_auth.js";
+import { createAuthFixture, testAccessToken } from "../helpers/supabase-auth-fixture.mjs";
 
 const listen = (server) => new Promise((resolve) => server.listen(0, "127.0.0.1", () => resolve(`http://127.0.0.1:${server.address().port}`)));
 const close = (server) => new Promise((resolve) => { server.closeAllConnections(); server.close(resolve); });
@@ -14,7 +15,9 @@ test("authenticated publish -> persisted HTTP read -> planner, with outage and c
   let published = fixture();
   let unavailable = false;
   let reads = 0;
+  const auth = createAuthFixture();
   const database = http.createServer(async (req, res) => {
+    if (await auth.handle(req, res)) return;
     res.setHeader("Content-Type", "application/json");
     if (unavailable) { res.statusCode = 503; res.end('{"message":"test outage"}'); return; }
     if (req.method === "GET") { reads++; res.end(JSON.stringify({ content: published })); return; }
@@ -27,11 +30,11 @@ test("authenticated publish -> persisted HTTP read -> planner, with outage and c
   const databaseUrl = await listen(database);
   const keys = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY", "ADMIN_SESSION_SECRET", "VERCEL_ENV"];
   const previous = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
-  Object.assign(process.env, { SUPABASE_URL: databaseUrl, SUPABASE_ANON_KEY: "test", SUPABASE_SERVICE_ROLE_KEY: "test", ADMIN_SESSION_SECRET: "isolated-test-secret", VERCEL_ENV: "production" });
+  Object.assign(process.env, { SUPABASE_URL: databaseUrl, SUPABASE_ANON_KEY: "test", SUPABASE_SERVICE_ROLE_KEY: "test-service-key", ADMIN_SESSION_SECRET: "isolated-test-secret", VERCEL_ENV: "production" });
   const handlers = { "/api/admin/content": contentHandler, "/api/temple-planner/data": dataHandler, "/api/temple-planner/plan": planHandler };
   const app = http.createServer((req, res) => handlers[new URL(req.url, "http://localhost").pathname](req, res));
   const base = await listen(app);
-  const headers = { "Content-Type": "application/json", Cookie: `${COOKIE_NAME}=${createSessionCookie("Test editor")}` };
+  const headers = { "Content-Type": "application/json", Cookie: `${ADMIN_ACCESS_COOKIE}=${testAccessToken()}` };
   const send = (path, body, extra = headers) => fetch(`${base}${path}`, { method: "POST", headers: extra, body: JSON.stringify(body) });
   try {
     assert.equal((await send("/api/admin/content", { content: published }, {})).status, 401);

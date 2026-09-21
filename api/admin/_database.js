@@ -9,8 +9,8 @@ function env(name) {
 export function databaseConfig() {
   return {
     url: env("SUPABASE_URL") || env("PUBLIC_SUPABASE_URL"),
-    anonKey: env("SUPABASE_ANON_KEY") || env("PUBLIC_SUPABASE_ANON_KEY"),
-    serviceRoleKey: env("SUPABASE_SERVICE_ROLE_KEY") || env("SUPABASE_SERVICE_KEY"),
+    anonKey: env("SUPABASE_PUBLISHABLE_KEY") || env("SUPABASE_ANON_KEY") || env("PUBLIC_SUPABASE_ANON_KEY"),
+    serviceRoleKey: env("SUPABASE_SECRET_KEY") || env("SUPABASE_SERVICE_ROLE_KEY") || env("SUPABASE_SERVICE_KEY"),
   };
 }
 

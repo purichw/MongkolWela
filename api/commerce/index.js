@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       if (templeId && !templeIds.has(templeId)) fail("ไม่พบวัดที่เปิดใช้งาน", 404);
       return sendJson(res, 200, { ok: true, ...publicCommerce(await readCommerce({ publicOnly: true }), { templeId, templeIds }) });
     }
-    const actor = await commerceActor(req);
+    const actor = await commerceActor(req, res);
     if (req.method === "GET") {
       const data = privateCommerce(await readCommerce(), actor);
       const temples = (await loadTempleCatalog()).map(t => ({ id: t.key, name: t.temple.name, province: t.temple.province }));

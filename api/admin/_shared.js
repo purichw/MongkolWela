@@ -112,20 +112,6 @@ export function verifySessionCookie(token) {
   }
 }
 
-export function requireAdmin(req, res) {
-  if (isProductionRuntime() && !sessionSecret()) {
-    sendJson(res, 503, { ok: false, error: "Admin session secret is not configured" });
-    return null;
-  }
-
-  const session = verifySessionCookie(parseCookies(req)[COOKIE_NAME]);
-  if (!session) {
-    sendJson(res, 401, { ok: false, error: "Admin session required" });
-    return null;
-  }
-  return session;
-}
-
 export function requireSameOrigin(req, res) {
   const method = String(req.method || "GET").toUpperCase();
   if (["GET", "HEAD", "OPTIONS"].includes(method)) return true;

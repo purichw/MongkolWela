@@ -1,4 +1,5 @@
-import { requireAdmin, requireSameOrigin, readJsonBody, sendJson } from "./_shared.js";
+import { requireSameOrigin, readJsonBody, sendJson } from "./_shared.js";
+import { requireAdmin } from "./_auth.js";
 import { readActivities, saveActivity } from "./_activities.js";
 import { loadTempleCatalog } from "./temples.js";
 import { validateActivity } from "../../src/lib/temple-activities.js";
@@ -6,7 +7,7 @@ import { validateActivity } from "../../src/lib/temple-activities.js";
 export default async function handler(req, res) {
   if (!["GET", "POST"].includes(req.method)) return sendJson(res, 405, { ok: false, error: "Method not allowed" }, { Allow: "GET, POST" });
   if (!requireSameOrigin(req, res)) return;
-  const session = requireAdmin(req, res);
+  const session = await requireAdmin(req, res);
   if (!session) return;
   try {
     if (req.method === "GET") return sendJson(res, 200, { ok: true, events: await readActivities() });

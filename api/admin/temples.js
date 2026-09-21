@@ -1,4 +1,5 @@
-import { requireAdmin, sendJson } from "./_shared.js";
+import { sendJson } from "./_shared.js";
+import { requireAdmin } from "./_auth.js";
 import popularTemples from "../../src/data/popular-temples.json" with { type: "json" };
 import muTemples from "../../src/data/mu-temples.json" with { type: "json" };
 import sacredTemples from "../../src/data/sacred-temples.json" with { type: "json" };
@@ -92,7 +93,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const session = requireAdmin(req, res);
+  const session = await requireAdmin(req, res);
   if (!session) return;
 
   try {

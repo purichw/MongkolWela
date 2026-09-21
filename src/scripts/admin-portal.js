@@ -187,13 +187,15 @@ async function boot() {
   try {
     state.secondaryReady = false;
     state.session = await api("/api/admin/session");
+    $(".mw-admin-profile strong").textContent = state.session.email || state.session.actor || "ผู้ดูแลระบบ";
+    $(".mw-admin-profile > span").textContent = (state.session.email || "A").charAt(0).toUpperCase();
     setStatus("กำลังโหลดข้อมูลหลัก...", "info");
     await loadContent();
     renderAdmin();
     setStatus("กำลังโหลดข้อมูลเสริม...", "info");
     void loadSecondaryAdminData();
-  } catch {
-    renderLogin();
+  } catch (error) {
+    renderLogin(error.status === 401 ? "" : error.message);
   }
 }
 
@@ -208,8 +210,9 @@ function renderAppShell() {
         <button class="mw-admin-btn mw-admin-btn-preview" type="button" data-action="preview">↗ เปิดหน้าเว็บผู้ใช้</button>
         <div class="mw-admin-profile">
           <span>ก</span>
-          <div><strong>${escapeHtml(state.session?.actor || "กมล (แอดมิน)")}</strong><small>ผู้ดูแลระบบ</small></div>
+          <div><strong>${escapeHtml(state.session?.email || state.session?.actor || "ผู้ดูแลระบบ")}</strong><small>ผู้ดูแลระบบ</small></div>
         </div>
+        <button class="mw-admin-btn" type="button" data-action="logout">ออกจากระบบ</button>
         <div class="mw-admin-header-actions">
           <span id="adminStatus" class="mw-admin-status">พร้อมใช้งาน</span>
           <button class="mw-admin-btn" type="button" data-action="save-draft">บันทึกฉบับร่าง</button>
@@ -274,7 +277,7 @@ function renderSideNav() {
     navButton("dates", "กิจกรรมและงานบุญ", "dates", ""),
     `<a class="mw-admin-ghost mw-commerce-admin-link" href="/seller/" title="ร้านค้า กฐิน และ e-Donation"><span>${icon("section")}</span><strong>ร้านค้าและร่วมบุญ</strong></a>`,
     navButton("media", "คลังสื่อ", "media", "๕"),
-    navButton("users", "ผู้ดูแล", "users", "๓"),
+    navButton("users", "ผู้ดูแล", "users"),
     navButton("settings", "ตั้งค่า / อนุกรมวิธาน", "settings"),
   ].join("");
 }
@@ -299,33 +302,40 @@ function toggleSidebar() {
   syncSidebarState();
 }
 
-function renderLogin() {
+function renderLogin(message = "") {
   const brand = adminBrand();
   $("#adminApp").innerHTML = `<main class="mw-admin-login">
     <form class="mw-admin-login-card" id="loginForm">
       ${adminLogoImageMarkup("mw-admin-login-mark")}
       <h1>ระบบจัดการเว็บ</h1>
       <p>แก้หน้าเว็บ เนื้อหา เมนู รูปภาพ และดูสถิติของ${escapeHtml(brand.name)}</p>
-      <label>ชื่อผู้แก้ไข<input name="actor" autocomplete="username" value="Admin"></label>
+      <label>อีเมล<input name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" required></label>
       <label>รหัสผ่าน<input name="password" type="password" autocomplete="current-password" placeholder="รหัสผ่านผู้ดูแล" required></label>
       <button class="mw-admin-btn mw-admin-btn-primary" type="submit">เข้าสู่ระบบ</button>
-      <small id="loginError"></small>
+      <small id="loginError" role="alert">${escapeHtml(message)}</small>
     </form>
   </main>`;
   $("#loginForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
+    const button = event.currentTarget.querySelector('button[type="submit"]');
+    button.disabled = true;
+    button.textContent = "กำลังเข้าสู่ระบบ...";
+    $("#loginError").textContent = "";
     try {
       await api("/api/admin/session", {
         method: "POST",
         body: JSON.stringify({
-          actor: form.get("actor"),
+          email: form.get("email"),
           password: form.get("password"),
         }),
       });
       await boot();
     } catch (error) {
       $("#loginError").textContent = error.message;
+    } finally {
+      button.disabled = false;
+      button.textContent = "เข้าสู่ระบบ";
     }
   });
 }
@@ -1040,11 +1050,9 @@ function renderMedia() {
 }
 
 function renderUsers() {
-  setTitle("ผู้ดูแล", "ระบบ");
+  setTitle("บัญชีที่กำลังใช้งาน", "ระบบ");
   const users = [
-    ["กมล ศรีสุข", "kamol@mongkolwela.co", "ผู้ดูแลระบบ", "ใช้งาน"],
-    ["ปิยะ วัฒนา", "piya@mongkolwela.co", "บรรณาธิการเนื้อหา", "ใช้งาน"],
-    ["สุดา แสงทอง", "suda@mongkolwela.co", "ผู้ตรวจข้อมูล", "รอยืนยัน"],
+    [state.session?.email || "ผู้ดูแลระบบ", state.session?.userId || "", "ผู้ดูแลระบบ", "ใช้งาน"],
   ];
   $("#adminContent").innerHTML = `<div class="mw-admin-table-card">
     <div class="mw-admin-user-table">
@@ -1053,7 +1061,7 @@ function renderUsers() {
         <div class="mw-admin-user-cell"><span>${escapeHtml(name.charAt(0))}</span><div><strong>${escapeHtml(name)}</strong><small>${escapeHtml(email)}</small></div></div>
         <strong>${escapeHtml(role)}</strong>
         <mark class="${status === "รอยืนยัน" ? "is-draft" : ""}">${escapeHtml(status)}</mark>
-        <button class="mw-admin-btn mw-admin-btn-icon mw-admin-btn-danger" type="button" disabled title="จัดการผู้ดูแลต้องเชื่อม backend">▧</button>
+        <button class="mw-admin-btn" type="button" data-action="logout">ออกจากระบบ</button>
       </div>`).join("")}
     </div>
   </div>`;
@@ -1382,6 +1390,13 @@ function handleGlobalClick(event) {
 }
 
 function deleteConfirmMessage(button) {
+  if (button.dataset.action === "logout") {
+    return {
+      title: "ออกจากระบบโดยยังไม่บันทึก?",
+      detail: "มีการแก้ไขที่ยังไม่ได้บันทึก กรุณาบันทึกงานก่อน หรือยืนยันออกจากระบบโดยไม่บันทึก",
+      confirmLabel: "ออกจากระบบ",
+    };
+  }
   const label = button.textContent.trim() || "รายการนี้";
   if (button.dataset.action === "clear-temple-image") {
     return {
@@ -1607,9 +1622,23 @@ function saveDraft() {
 }
 
 
-async function logout() {
-  await api("/api/admin/session", { method: "DELETE" }).catch(() => {});
-  renderLogin();
+async function logout(button, confirmed = false) {
+  if (state.publishing || activityEditor.isBusy()) {
+    setStatus("กรุณารอให้บันทึกหรือเผยแพร่เสร็จก่อนออกจากระบบ", "warn");
+    return;
+  }
+  if (!confirmed && (state.dirty || activityEditor.isDirty())) {
+    showDeleteConfirm(button, () => logout(button, true));
+    return;
+  }
+  try {
+    await api("/api/admin/session", { method: "DELETE" });
+    state.session = null;
+    state.dirty = false;
+    window.location.reload();
+  } catch {
+    renderLogin("ไม่สามารถยืนยันการออกจากระบบกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่");
+  }
 }
 
 function addPage() {
@@ -2018,6 +2047,7 @@ function moveArrayItem(array, index, direction) {
 }
 
 window.addEventListener("beforeunload", (event) => {
+  if (!state.session) return;
   if (!state.dirty && !activityEditor.isDirty() && !activityEditor.isBusy()) return;
   event.preventDefault();
   event.returnValue = "";

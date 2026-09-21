@@ -2,10 +2,10 @@ import {
   readLiveAnalytics,
   readAnalyticsStore,
   readJsonBody,
-  requireAdmin,
   sendJson,
   writeAnalyticsStore,
 } from "./_shared.js";
+import { requireAdmin } from "./_auth.js";
 import { recordDatabaseAnalyticsEvent } from "./_database.js";
 
 const ANALYTICS_BODY_LIMIT_BYTES = 16 * 1024;
@@ -24,7 +24,7 @@ function safeKey(value, fallback = "unknown") {
 export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
-      const session = requireAdmin(req, res);
+      const session = await requireAdmin(req, res);
       if (!session) return;
       const data = await readLiveAnalytics();
       sendJson(res, 200, { ok: true, analytics: data });

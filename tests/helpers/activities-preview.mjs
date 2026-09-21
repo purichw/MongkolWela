@@ -10,6 +10,7 @@ import publicActivities from "../../api/temple-activities.js";
 
 export function createActivitiesPreview({ astroBase = process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:4324", extraHandlers = {} } = {}) {
   if (process.env.VERCEL || process.env.NODE_ENV === "production" || ["SUPABASE_URL", "PUBLIC_SUPABASE_URL", "MONGKOLWELA_GITHUB_TOKEN", "GITHUB_CONTENT_TOKEN"].some((key) => process.env[key])) throw new Error("Preview requires an isolated local environment");
+  process.env.MONGKOLWELA_ADMIN_PREVIEW = "1";
   const handlers = { "/api/admin/session": session, "/api/admin/temples": temples, "/api/admin/activities": activities, "/api/temple-activities": publicActivities, ...extraHandlers };
   return http.createServer(async (req, res) => {
     const pathname = new URL(req.url, "http://localhost").pathname;

@@ -1,8 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import { databaseConfig } from "../admin/_database.js";
-import { parseCookies, verifySessionCookie, COOKIE_NAME, createSessionCookie, isProductionRuntime } from "../admin/_shared.js";
+import { parseCookies, verifySessionCookie, createSessionCookie, isProductionRuntime } from "../admin/_shared.js";
 import { isLocalCommercePreview } from "./_store.js";
 import { fail } from "./_domain.js";
+import { readAdminSession } from "../admin/_auth.js";
 
 export const SELLER_COOKIE = "mw_seller_session";
 export function sellerAuthClient() {
@@ -13,11 +14,10 @@ export function sellerAuthClient() {
 export function sellerCookie(value, maxAge = 3600) {
   return `${SELLER_COOKIE}=${encodeURIComponent(value)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${process.env.VERCEL || isProductionRuntime() ? "; Secure" : ""}`;
 }
-export async function commerceActor(req) {
+export async function commerceActor(req, res) {
   let cookies;
   try { cookies = parseCookies(req); } catch { fail("เซสชันไม่ถูกต้อง", 401); }
-  const adminConfigured = isLocalCommercePreview() || Boolean(process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_PASSWORD);
-  const admin = adminConfigured ? verifySessionCookie(cookies[COOKIE_NAME]) : null;
+  const admin = await readAdminSession(req, res);
   if (admin) return { admin: true, actor: admin.actor };
   const token = cookies[SELLER_COOKIE];
   if (!token) return {};

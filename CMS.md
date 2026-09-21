@@ -1,5 +1,9 @@
 # CMS Content
 
+Admin identity, membership checks and rollout steps are documented in
+[Admin Supabase Auth](docs/admin-supabase-auth.md). Auth accounts alone do not
+grant portal access.
+
 Temple activities are a separate, private per-record store with their own
 Admin save/publish action and public projection. They never replace the live
 page document. See [Temple Activities](docs/temple-activities.md) for event

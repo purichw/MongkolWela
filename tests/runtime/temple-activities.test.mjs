@@ -4,7 +4,8 @@ import http from "node:http";
 import { validateActivity, activityIsPast, publicActivities, bangkokToday } from "../../src/lib/temple-activities.js";
 import adminHandler from "../../api/admin/activities.js";
 import publicHandler from "../../api/temple-activities.js";
-import { createSessionCookie, COOKIE_NAME } from "../../api/admin/_shared.js";
+import { ADMIN_ACCESS_COOKIE } from "../../api/admin/_auth.js";
+import { createAuthFixture, testAccessToken } from "../helpers/supabase-auth-fixture.mjs";
 
 const input = (overrides = {}) => ({ templeId: "popular:test-activity", title: "กิจกรรมทดสอบ", type: "ceremony", status: "published", startDate: "2099-10-01", endDate: "", timeMode: "unknown", sourceUrl: "https://example.org/announcement", verifiedAt: "2026-09-01", ...overrides });
 
@@ -32,7 +33,9 @@ test("private persistence, publish, revision refresh, CAS, auth, cancellation an
   const documents = new Map();
   const live = { pages: [], navigation: { tabs: [], utility: [] }, temples: { records: { "popular:test-activity": { collection: "popular", slug: "test-activity", fields: { name: "วัดทดสอบ", province: "ทดสอบ" } } } } };
   let outage = false;
+  const auth = createAuthFixture();
   const database = http.createServer(async (req, res) => {
+    if (await auth.handle(req, res)) return;
     res.setHeader("Content-Type", "application/json");
     if (outage) { res.statusCode = 503; res.end('{"message":"test outage"}'); return; }
     const url = new URL(req.url, "http://localhost");
@@ -56,10 +59,10 @@ test("private persistence, publish, revision refresh, CAS, auth, cancellation an
   const databaseUrl = await listen(database);
   const keys = ["SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY", "ADMIN_SESSION_SECRET", "VERCEL_ENV"];
   const previous = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
-  Object.assign(process.env, { SUPABASE_URL: databaseUrl, SUPABASE_ANON_KEY: "test", SUPABASE_SERVICE_ROLE_KEY: "test", ADMIN_SESSION_SECRET: "activity-test", VERCEL_ENV: "production" });
+  Object.assign(process.env, { SUPABASE_URL: databaseUrl, SUPABASE_ANON_KEY: "test", SUPABASE_SERVICE_ROLE_KEY: "test-service-key", ADMIN_SESSION_SECRET: "activity-test", VERCEL_ENV: "production" });
   const app = http.createServer((req, res) => (req.url.startsWith("/api/admin/activities") ? adminHandler : publicHandler)(req, res));
   const base = await listen(app);
-  const headers = { "Content-Type": "application/json", Cookie: `${COOKIE_NAME}=${createSessionCookie("Test editor")}` };
+  const headers = { "Content-Type": "application/json", Cookie: `${ADMIN_ACCESS_COOKIE}=${testAccessToken()}` };
   const save = (body, extra = headers) => fetch(`${base}/api/admin/activities`, { method: "POST", headers: extra, body: JSON.stringify(body) });
   const read = (query = "") => fetch(`${base}/api/temple-activities?templeId=popular:test-activity${query}`);
   try {

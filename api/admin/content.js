@@ -3,10 +3,10 @@ import {
   publishLiveContent,
   readJsonBody,
   readLiveContent,
-  requireAdmin,
   requireSameOrigin,
   sendJson,
 } from "./_shared.js";
+import { requireAdmin } from "./_auth.js";
 import { publicContentForPath } from "../../src/lib/public-content.js";
 import { contentRevision } from "../../src/lib/content-revision.js";
 
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
 
     if (!requireSameOrigin(req, res)) return;
 
-    const session = requireAdmin(req, res);
+    const session = await requireAdmin(req, res);
     if (!session) return;
 
     const body = await readJsonBody(req);

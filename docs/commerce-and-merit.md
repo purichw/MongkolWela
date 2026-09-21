@@ -131,8 +131,11 @@ test data, and their product images are explicitly placeholders, not real goods.
 
 - Local seller: `seller@example.test`, password `preview-only-password`.
 - Local temple seller: `temple@example.test`, same password.
-- Local platform Admin: sign in at `/admin/` with password `admin`, then open
-  `/seller/`. These development credentials cannot grant deployed commerce access.
+- Local platform Admin: the credential-free loopback harness explicitly enables
+  `MONGKOLWELA_ADMIN_PREVIEW=1`. Use `admin@example.test` / `admin`, then open
+  `/seller/`. This adapter cannot grant deployed commerce access.
+- Deployed platform Admin uses Supabase Auth and active
+  `admin_portal_members` membership; see [Admin Auth](admin-supabase-auth.md).
 
 Tests use separate `.local/commerce-tests/run-*` directories, never production.
 No emails, charges, shipments or donations are sent by these tests.
@@ -142,7 +145,7 @@ No emails, charges, shipments or donations are sent by these tests.
 1. Review/apply the additive migration to an authorized UAT database first;
    verify actual Supabase RLS, service RPCs, backups and outage behavior there.
 2. Configure server-only `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, the existing
-   supported anon-key variable, `ADMIN_SESSION_SECRET`, and HTTPS
+   supported anon-key variable, active Admin membership, and HTTPS
    `MONGKOLWELA_SITE_URL`. Verify Supabase email templates, redirect allowlist,
    account invitation/recovery and seller sign-in end to end with test accounts.
 3. Keep `MONGKOLWELA_COMMERCE_ENABLED` unset until launch is approved. Only `1`
