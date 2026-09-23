@@ -6,6 +6,7 @@ import { initRealtimeTopbar } from "./realtime-topbar.js";
 import { initScrollProgress } from "./scroll-progress.js";
 import { initPublicSelects } from "./public-select.js";
 import { initMediaMotion } from "./media-motion.js";
+import { initTempleSearch } from "./temple-search.js";
 
 initPageLoader();
 initMediaMotion();
@@ -14,4 +15,5 @@ initRealtimeTopbar();
 initScrollProgress();
 initHeroCarousel();
 initMobileNavigation();
+initTempleSearch();
 initPublicSelects();

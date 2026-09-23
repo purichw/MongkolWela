@@ -290,7 +290,6 @@ export function initMobileNavigation() {
     const searchLink = event.target.closest?.("[data-header-search]");
     if (searchLink) {
       if (dialog.open) closeDrawer(false);
-      if (focusSearch()) event.preventDefault();
     }
   });
   toggle.addEventListener("click", openDrawer);

@@ -67,7 +67,7 @@
 .pf__applied dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; padding: 8px 0; margin: 0; }
 .pf__applied dt { font-weight: 600; }
 .pf__applied dd { margin: 0; color: var(--pf-muted); overflow-wrap: anywhere; }
-.temples-collection-v2-page--popular .temple-collection-v2-results { padding-top: 10px; scroll-margin-top: calc(var(--site-header-sticky-height, 80px) + 16px); }
+.temples-collection-v2 .pf ~ .temple-collection-v2-results { padding-top: 10px; scroll-margin-top: calc(var(--site-header-sticky-height, 80px) + 16px); }
 
 .pf-editor {
   position: fixed; z-index: 150; margin: 0; padding: 16px; border: 1px solid #d9cbb8;

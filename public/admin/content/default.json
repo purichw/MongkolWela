@@ -698,6 +698,16 @@
       "blocks": []
     },
     {
+      "id": "templeSearch",
+      "kind": "existing",
+      "label": "ค้นหาวัดและสถานที่",
+      "route": "/search/",
+      "blocks": [],
+      "enabled": true,
+      "patches": [],
+      "sections": []
+    },
+    {
       "id": "templesPlanner",
       "label": "วางแผนไหว้พระ",
       "route": "/temples/planner/",

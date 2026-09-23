@@ -18,9 +18,9 @@ const { regions, purposes } = Astro.props as { regions: string[]; purposes: stri
     <div class="pf__panel">
       <form class="pf__search" data-popular-temple-filter-form>
         <label class="pf__input">
-          <span class="sr-only">ค้นหาชื่อวัด วัดดัง สถานที่ หรือจังหวัด</span>
+          <span class="sr-only">ค้นหาชื่อวัด สถานที่ หรือจังหวัด</span>
           <SiteIcon name="search" />
-          <input type="search" name="name" placeholder="ค้นหาชื่อวัด วัดดัง หรือจังหวัด" autocomplete="off" data-popular-temple-filter-name disabled />
+          <input type="search" name="name" placeholder="ค้นหาชื่อวัด สถานที่ หรือจังหวัด" autocomplete="off" data-popular-temple-filter-name disabled />
         </label>
         <button class="pf__primary" type="submit" disabled>ค้นหา</button>
         <button class="pf__nearby" type="button" data-popular-temple-nearby aria-pressed="false" disabled><SiteIcon name="map-pin" /><span>ใกล้ตำแหน่งปัจจุบัน</span></button>

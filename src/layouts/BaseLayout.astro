@@ -1,5 +1,6 @@
 ---
 import Header from "../components/Header.astro";
+import TempleSearchDialog from "../components/TempleSearchDialog.astro";
 import Footer from "../components/Footer.astro";
 import LoadingScreen from "../components/LoadingScreen.astro";
 import PageEntrance from "../components/PageEntrance.astro";
@@ -132,6 +133,7 @@ const jsonLd = toJsonLdGraph([
       <span data-scroll-progress-bar></span>
     </div>
     <Header locale={locale} page={page} />
+    <TempleSearchDialog />
     <slot />
     <Footer locale={locale} page={page} />
 

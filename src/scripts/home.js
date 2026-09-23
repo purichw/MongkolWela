@@ -1,8 +1,6 @@
 import { homeHeroMetadata, imageCreditUrl } from "../lib/home-hero-media.js";
 import { getHomeToday } from "../lib/home-today.js";
 
-const form = document.querySelector(".home-temple-search");
-const input = form?.querySelector("input[name='q']");
 const weekday = document.querySelector("[data-home-weekday]");
 const lunar = document.querySelector("[data-home-lunar]");
 const moon = document.querySelector("[data-home-moon]");
@@ -10,17 +8,6 @@ const today = getHomeToday();
 if (weekday) weekday.textContent = today.weekday;
 if (lunar) lunar.textContent = today.lunarLabel;
 if (moon) moon.dataset.homeMoon = today.moon;
-
-if (form && input instanceof HTMLInputElement) {
-  input.addEventListener("input", () => input.setCustomValidity(""));
-  form.addEventListener("submit", (event) => {
-    input.value = input.value.trim();
-    if (input.value) return;
-    event.preventDefault();
-    input.setCustomValidity("กรุณาระบุชื่อวัด จังหวัด หรือเรื่องที่ต้องการค้นหา");
-    input.reportValidity();
-  });
-}
 
 // Remove responsive candidates before switching to the existing generic fallback.
 function handleMediaError(image) {
