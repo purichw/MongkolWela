@@ -29,8 +29,13 @@ export async function createAdminAuthPreview({ astroBase }) {
       } else {
         const chunks = [];
         for await (const chunk of req) chunks.push(chunk);
-        published = JSON.parse(Buffer.concat(chunks).toString()).content;
-        res.end("[]");
+        const body = JSON.parse(Buffer.concat(chunks).toString());
+        const expected = new URL(req.url, "http://localhost").searchParams.get("content->>publishedAt");
+        if (req.method === "PATCH" && expected !== (published.publishedAt ? `eq.${published.publishedAt}` : "is.null")) {
+          res.end("null"); return;
+        }
+        published = body.content;
+        res.end(JSON.stringify({ id: body.id }));
       }
     } else { res.end("[]"); }
   });
