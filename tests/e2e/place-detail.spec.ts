@@ -76,21 +76,24 @@ test("travel filters, disclosure state, live CMS coordinates and map dialog", as
   await page.goto(route); await settle(page);
   await page.locator('[data-pd-mode="rail"]').click();
   await expect(page.locator("[data-pd-stop]:visible")).toHaveCount(2);
-  await page.locator('[data-pd-disclosure="visit-sources"] summary').click();
+  await page.locator('[data-pd-disclosure="hours"] summary').click();
   const placeKey = await page.locator("[data-place-detail]").getAttribute("data-place-key");
   await page.locator("[data-map-open]").click();
   await expect(page.locator("dialog[open]")).toBeVisible();
   await expect(page.locator("[data-dialog-close]")).toBeFocused();
   await expect(page.locator(".pd-dialog-map .pd-marker")).toHaveCount(1);
   await page.evaluate(() => { window.__detailMini = document.querySelector("[data-temple-detail-map]"); });
-  content.temples.records[placeKey] = { key: placeKey, status: "published", fields: { name: "วัดระฆังโฆสิตาราม ทดสอบการอัปเดต", latitude: 13.8, longitude: 100.5, plusCode: "", coordinateAddress: "ที่อยู่ที่อัปเดตสำหรับ QA" } };
+  content.temples.records[placeKey] = { key: placeKey, status: "published", fields: { name: "วัดระฆังโฆสิตาราม ทดสอบการอัปเดต", latitude: 13.8, longitude: 100.5, plusCode: "", coordinateAddress: "ที่อยู่ที่อัปเดตสำหรับ QA" }, visitInfo: { notice: "ตรวจสอบเวลาเข้าชมก่อนเดินทาง", sources: [{ label: "QA internal source", url: "https://example.com/qa-source" }] } };
   await refresh(page);
   await expect(page.locator("h1")).toContainText("ทดสอบการอัปเดต");
   await expect(page.locator("[data-map-recenter]")).toBeVisible();
   await expect(page.locator("[data-modal-external]")).toHaveAttribute("href", /13.8%2C100.5/);
   expect(await page.evaluate(() => window.__detailMini === document.querySelector("[data-temple-detail-map]"))).toBe(true);
   await expect(page.locator('[data-pd-mode="rail"]')).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator('[data-pd-disclosure="visit-sources"]')).toHaveAttribute("open", "");
+  await expect(page.locator('[data-pd-disclosure="hours"]')).toHaveAttribute("open", "");
+  await expect(page.locator('[data-pd-disclosure$="-sources"]')).toHaveCount(0);
+  await expect(page.locator(".pd-visit-notice")).toHaveText("ตรวจสอบเวลาเข้าชมก่อนเดินทาง");
+  await expect(page.locator(".pd-visit")).not.toContainText("QA internal source");
   content.temples.records[placeKey].fields.latitude = null;
   content.temples.records[placeKey].fields.longitude = null;
   await refresh(page);
@@ -98,7 +101,7 @@ test("travel filters, disclosure state, live CMS coordinates and map dialog", as
   await expect(page.locator("[data-modal-external]")).toBeHidden();
   await expect(page.locator("[data-modal-status]")).toContainText("ยังไม่มีจุดที่ยืนยัน");
   await page.keyboard.press("Escape");
-  await expect(page.locator("dialog")).toHaveCount(0);
+  await expect(page.locator(".pd-dialog")).toHaveCount(0);
 });
 
 test("missing/long content, mobile image overrides and unknown visit data", async ({ page }) => {
@@ -177,8 +180,8 @@ test("map failure recovers, no-JS content and accessibility", async ({ page, bro
   await expect(nojs.locator("h1")).not.toBeEmpty();
   expect(await nojs.locator("[data-pd-stop]:visible").count()).toBeGreaterThan(4);
   await expect(nojs.locator("[data-temple-detail-share]")).toBeHidden();
-  await nojs.locator('[data-pd-disclosure="visit-sources"] summary').click();
-  await expect(nojs.locator('[data-pd-disclosure="visit-sources"] a').first()).toBeVisible();
+  await expect(nojs.locator('[data-pd-disclosure$="-sources"]')).toHaveCount(0);
+  await expect(nojs.locator(".pd-visit-notice")).toBeVisible();
   await context.close();
 });
 

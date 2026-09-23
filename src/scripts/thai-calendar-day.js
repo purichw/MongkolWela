@@ -3,7 +3,6 @@ import {
   formatLunarLabel,
   formatLunarMonthName,
   formatThaiDate,
-  getCalendarSourceNote,
   parseIsoDate,
   thaiMonthNames,
   toThaiNumeral,
@@ -111,16 +110,10 @@ function initDayDetail() {
         ${renderOmenCard("คำแนะนำสำหรับวันที่เลือก", "แนวทางการใช้วันอย่างสมดุล", getAdvice(info), "neutral", "lightbulb")}
       </div>
     </section>
-    <details class="day-source day-panel" id="day-source" data-day-disclosure open>
-      <summary>${medallion("book-open")}<span><span class="day-fact-label">ที่มาของข้อมูล</span><h2>ใช้เป็นปฏิทินมงคลเบื้องต้น</h2></span>${icon("chevron-down")}</summary>
-      <div class="day-source-body">
-        <p>ข้อมูลคำนวณจากรอบจันทรคติเฉลี่ยและกฎปฏิทินไทย ใช้ประกอบการวางแผนเบื้องต้น ไม่ใช่คำทำนายเฉพาะบุคคล ควรตรวจสอบวันพระ วันสำคัญ และฤกษ์กับแหล่งข้อมูลที่เชื่อถือได้ก่อนใช้งานจริง</p>
-        <details class="day-source-method"><summary>รายละเอียดการคำนวณและข้อจำกัด ${icon("arrow-right")}</summary>
-          <p>${getCalendarSourceNote()} กฎดิถีใช้โครงดิถีพิฆาต ดิถีเรียงหมอน วันทรธึก และวันลอยวันจมวันฟู ระบบยังไม่ได้เชื่อมฐานตำแหน่งดาวที่ผ่านการตรวจสอบ จึงไม่ใช้แผนภาพนี้ตัดสินฤกษ์เฉพาะบุคคล</p>
-        </details>
-        <p class="day-media-credit" data-day-media-credit hidden></p>
-      </div>
-    </details>
+    <aside class="day-use-note" aria-label="ข้อควรทราบ">
+      <p>ใช้ประกอบการวางแผนเบื้องต้น ไม่ใช่คำทำนายเฉพาะบุคคล ควรตรวจสอบวันพระและวันสำคัญกับปฏิทินหรือประกาศทางการก่อนใช้งานจริง</p>
+      <p class="day-media-credit" data-day-media-credit hidden></p>
+    </aside>
   `;
   const desktop = matchMedia("(min-width: 951px)");
   const syncDisclosures = () => {

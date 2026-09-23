@@ -1,6 +1,7 @@
 ---
 import ToolsLayout from "../../../layouts/ToolsLayout.astro";
-import ToolsHero from "../../../components/ToolsHero.astro";
+import { renderIcon } from "../../../lib/ui-markup.js";
+import { getTarotCardById } from "../../../scripts/tarot-data.js";
 import { tarotMeaningCards, tarotMeaningGroups } from "../../../data/tarot-meanings.js";
 
 export function getStaticPaths() {
@@ -23,6 +24,21 @@ const relatedCards = (card.relatedCards || []).map((relatedCard) => {
     href: related ? `/tarot/meanings/${related.slug}/` : "",
   };
 });
+const groupLabel = group?.id === "major" ? "ไพ่ชุดใหญ่ (Major Arcana)" : `${group?.thTitle} (${group?.title})`;
+const advice = "advice" in card ? card.advice : getTarotCardById(card.slug)?.advice;
+const caution = "caution" in card ? card.caution : "";
+const number = "number" in card ? card.number : null;
+const astrology = "astrology" in card ? card.astrology || card.rulingPlanet : "";
+const keywords = "keywordsUpright" in card ? card.keywordsUpright : card.keywords;
+const uprightDetails = "uprightDetails" in card ? card.uprightDetails : null;
+const topics = [
+  ...(uprightDetails?.career || uprightDetails?.finance ? [
+    { label: "การงาน", text: uprightDetails.career },
+    { label: "การเงิน", text: uprightDetails.finance },
+  ] : [{ label: "การงานและการเงิน", text: card.workMoney }]),
+  { label: "ความรัก", text: card.love },
+  { label: "สุขภาพและพลังชีวิต", text: card.health },
+].filter(topic => topic.text);
 ---
 
 <ToolsLayout
@@ -31,7 +47,7 @@ const relatedCards = (card.relatedCards || []).map((relatedCard) => {
   lang="th"
   locale="th"
   page="tarotMeanings"
-  bodyClass="tarot-page"
+  bodyClass="tarot-page tarot-card-detail-page"
   canonicalPath={`/tarot/meanings/${card.slug}/`}
   image={card.image}
   imageAlt={`${card.thName} ${card.name}`}
@@ -41,118 +57,56 @@ const relatedCards = (card.relatedCards || []).map((relatedCard) => {
     { label: card.thName, href: `/tarot/meanings/${card.slug}/` },
   ]}
 >
-  <main>
-<ToolsHero title={card.thName} kicker={group?.title || "Tarot Meaning"} lead={card.name} breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ความหมายไพ่ยิปซี",href:"/tarot/meanings/"},{label:card.thName}]} />
-    <section class="tarot-meaning-detail">
-      <div class="tarot-meaning-card-large">
-        <img src={card.image} alt={`${card.thName} ${card.name}`} loading="eager" decoding="async" fetchpriority="high" />
-        <strong>{card.name}</strong>
-        <span>{card.thName}</span>
-      </div>
-
+  <main data-meaning-detail>
+    <div class="tarot-detail-navigation">
+      <nav class="tools-breadcrumb" aria-label="เส้นทางนำทาง">
+        <a href="/">หน้าแรก</a><span aria-hidden="true">/</span><a href="/tarot/daily/">ไพ่ยิปซี</a><span aria-hidden="true">/</span>
+        <a href="/tarot/meanings/" data-meaning-context-link>ความหมายไพ่</a><span aria-hidden="true">/</span><span aria-current="page">{card.name}</span>
+      </nav>
+      <nav class="tarot-card-pagination" aria-label="เลือกไพ่ใบอื่น">
+        <a href={`/tarot/meanings/${previousCard.slug}/`} data-meaning-context-link rel="prev"><Fragment set:html={renderIcon("arrow-left")} />ไพ่ก่อนหน้า</a>
+        <a href={`/tarot/meanings/${nextCard.slug}/`} data-meaning-context-link rel="next">ไพ่ถัดไป<Fragment set:html={renderIcon("arrow-right")} /></a>
+      </nav>
+    </div>
+    <section class="tarot-meaning-detail" aria-labelledby="tarot-card-title">
+      <figure class="tarot-meaning-card-large">
+        <div class="tarot-detail-image"><img src={card.image} alt={`${card.thName} ${card.name}`} width="340" height="560" loading="eager" decoding="async" fetchpriority="high" /></div>
+        <figcaption><h1 id="tarot-card-title">{card.name}</h1><p>{number != null ? `${number} ` : ""}{card.thName}</p></figcaption>
+      </figure>
       <article class="tarot-meaning-copy">
-        <p class="tarot-meaning-lead">{card.overview}</p>
-
-        <div class="tarot-meaning-tags">
-          {card.keywords.map((keyword) => <span>{keyword}</span>)}
-        </div>
-
-        <dl class="tarot-reading-list">
-          <div>
-            <dt>ความหมายโดยรวม</dt>
-            <dd>{card.upright}</dd>
-          </div>
-          <div>
-            <dt>เมื่อไพ่กลับหัว</dt>
-            <dd>{card.reversed}</dd>
-          </div>
-          <div>
-            <dt>ความรักและความสัมพันธ์</dt>
-            <dd>{card.love}</dd>
-          </div>
-          <div>
-            <dt>การงาน การเงิน และชีวิตประจำวัน</dt>
-            <dd>{card.workMoney}</dd>
-          </div>
-          {card.health && (
-            <div>
-              <dt>สุขภาพและพลังชีวิต</dt>
-              <dd>{card.health}</dd>
-            </div>
-          )}
-          <div>
-            <dt>มุม Western ที่เสริมการอ่าน</dt>
-            <dd>{card.western}</dd>
-          </div>
+        <dl class="tarot-card-facts">
+          <div><dt>หมวดไพ่</dt><dd><a href={`/tarot/meanings/?group=${card.group}`}>{groupLabel}</a></dd></div>
+          {card.element && <div><dt>ธาตุ</dt><dd>{card.element}</dd></div>}
+          {astrology && <div><dt>ดาวเคราะห์ / ราศี</dt><dd>{astrology}</dd></div>}
+          <div><dt>คีย์เวิร์ด</dt><dd>{keywords.join(" · ")}</dd></div>
         </dl>
-
-        {(card.keywordsReversed?.length > 0 || card.symbolism?.length > 0 || card.closingSummary) && (
-          <dl class="tarot-reading-list compact">
-            {card.keywordsReversed?.length > 0 && (
-              <div>
-                <dt>คำสำคัญเมื่อกลับหัว</dt>
-                <dd>{card.keywordsReversed.join(" · ")}</dd>
-              </div>
-            )}
-            {card.symbolism?.length > 0 && (
-              <div>
-                <dt>สัญลักษณ์บนหน้าไพ่</dt>
-                <dd>
-                  <ul>
-                    {card.symbolism.map((item) => (
-                      <li>
-                        <strong>{item.symbol}</strong>: {item.meaning}
-                      </li>
-                    ))}
-                  </ul>
-                </dd>
-              </div>
-            )}
-            {card.closingSummary && (
-              <div>
-                <dt>สรุปใจความ</dt>
-                <dd>{card.closingSummary}</dd>
-              </div>
-            )}
-          </dl>
-        )}
-
-        {(relatedCards.length > 0 || card.reflectionQuestions?.length > 0) && (
-          <dl class="tarot-reading-list compact">
-            {relatedCards.length > 0 && (
-              <div>
-                <dt>ไพ่ที่สัมพันธ์กัน</dt>
-                <dd>
-                  <ul>
-                    {relatedCards.map((item) => (
-                      <li>
-                        {item.href ? <a href={item.href}>{item.label}</a> : <strong>{item.label}</strong>}:{" "}
-                        {item.relationship}
-                      </li>
-                    ))}
-                  </ul>
-                </dd>
-              </div>
-            )}
-            {card.reflectionQuestions?.length > 0 && (
-              <div>
-                <dt>คำถามทบทวนตัวเอง</dt>
-                <dd>
-                  <ul>
-                    {card.reflectionQuestions.map((question) => <li>{question}</li>)}
-                  </ul>
-                </dd>
-              </div>
-            )}
-          </dl>
-        )}
-
-        <div class="tarot-result-actions">
-          <a class="secondary-action" href={`/tarot/meanings/${previousCard.slug}/`}>ไพ่ก่อนหน้า</a>
-          <a class="primary-action" href="/tarot/meanings/">กลับไปรายการ 78 ใบ</a>
-          <a class="secondary-action" href={`/tarot/meanings/${nextCard.slug}/`}>ไพ่ถัดไป</a>
+        <section class="tarot-card-prose"><h2>ความหมายโดยรวม</h2><p>{card.upright}</p></section>
+        {advice && <section class="tarot-card-prose"><h2>คำแนะนำ</h2><p>{advice}</p></section>}
+        <section class="tarot-card-topics" aria-labelledby="tarot-topics-title">
+          <h2 id="tarot-topics-title">ในด้านต่าง ๆ</h2>
+          <div class="tarot-detail-disclosures">{topics.map(topic => <details><summary>{topic.label}<Fragment set:html={renderIcon("chevron-down")} /></summary><p>{topic.text}</p></details>)}</div>
+        </section>
+        <details class="tarot-detail-more">
+          <summary>เมื่อไพ่กลับหัว และความหมายเพิ่มเติม<Fragment set:html={renderIcon("chevron-down")} /></summary>
+          <div class="tarot-detail-expanded">
+            <section><h2>เรื่องราวของไพ่</h2><p>{card.overview}</p></section>
+            <section><h2>เมื่อไพ่กลับหัว</h2><p>{card.reversed}</p>
+              {card.keywordsReversed?.length > 0 && <p><strong>คำสำคัญเมื่อกลับหัว: </strong>{card.keywordsReversed.join(" · ")}</p>}
+            </section>
+            <section><h2>มุม Western ที่เสริมการอ่าน</h2><p>{card.western}</p></section>
+            {caution && <section><h2>ข้อควรระวัง</h2><p>{caution}</p></section>}
+            {card.symbolism?.length > 0 && <section><h2>สัญลักษณ์บนหน้าไพ่</h2><ul>{card.symbolism.map(item => <li><strong>{item.symbol}</strong>: {item.meaning}</li>)}</ul></section>}
+            {card.closingSummary && <section><h2>สรุปใจความ</h2><p>{card.closingSummary}</p></section>}
+            {relatedCards.length > 0 && <section><h2>ไพ่ที่สัมพันธ์กัน</h2><ul>{relatedCards.map(item => <li>{item.href ? <a href={item.href}>{item.label}</a> : <strong>{item.label}</strong>}: {item.relationship}</li>)}</ul></section>}
+            {card.reflectionQuestions?.length > 0 && <section><h2>คำถามทบทวนตัวเอง</h2><ul>{card.reflectionQuestions.map(question => <li>{question}</li>)}</ul></section>}
+          </div>
+        </details>
+        <div class="tarot-detail-actions">
+          <a class="primary-action" href="/tarot/meanings/" data-meaning-context-link><Fragment set:html={renderIcon("arrow-left")} />กลับไปหน้ารายการ</a>
+          <a class="secondary-action" href={`/tarot/meanings/${nextCard.slug}/`} data-meaning-context-link>ไพ่ถัดไป<Fragment set:html={renderIcon("arrow-right")} /></a>
         </div>
       </article>
     </section>
   </main>
+  <script>import "../../../scripts/tarot-library.js";</script>
 </ToolsLayout>

@@ -33,9 +33,9 @@ const state = {
 
 
 const TEMPLE_COLLECTIONS = [
-  { key: "popular", label: "สายไหว้พระ 9 วัด" },
-  { key: "mu", label: "สถานที่มงคล" },
-  { key: "sacred", label: "วัดศักดิ์สิทธิ์" },
+  { key: "popular", label: "วัดดังน่าไป" },
+  { key: "mu", label: "พิกัดสายมู" },
+  { key: "sacred", label: "วัดเด่นขอพร" },
 ];
 
 const TEMPLE_IMAGE_FIELDS = [

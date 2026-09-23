@@ -16,9 +16,9 @@ import { homeDirectorySummary } from "../../data/home-directory-summary.js";
 const formatNumber = (value: number) => value.toLocaleString("th-TH");
 const banner = banners.hub;
 const collectionCards = [
-  { variant: "popular", title: "สายไหว้พระ ๙ วัด", description: "วัดยอดนิยมกับเส้นทางไหว้พระต่อเนื่อง เพื่อความเป็นสิริมงคลตลอดเส้นทาง", href: "/temples/popular/", count: popularTemples.length, image: null },
-  { variant: "sacred", title: "วัดศักดิ์สิทธิ์", description: "ค้นหาวัดที่มีเรื่องเล่าศรัทธาและความเชื่อ พร้อมข้อมูลประกอบการเดินทาง", href: "/temples/sacred/", count: sacredTemples.length, image: templeHubMedia.sacred },
-  { variant: "mu", title: "สถานที่มงคล", description: "รวมศาลและสถานที่เคารพ สักการะสิ่งศักดิ์สิทธิ์ทั่วไทย", href: "/temples/mu/", count: muTemples.length, image: templeHubMedia.mu },
+  { variant: "popular", title: "วัดดังน่าไป", description: "วัดยอดนิยมกับเส้นทางไหว้พระต่อเนื่อง เพื่อความเป็นสิริมงคลตลอดเส้นทาง", href: "/temples/popular/", count: popularTemples.length, image: null },
+  { variant: "sacred", title: "วัดเด่นขอพร", description: "ค้นหาวัดที่มีเรื่องเล่าศรัทธาและความเชื่อ พร้อมข้อมูลประกอบการเดินทาง", href: "/temples/sacred/", count: sacredTemples.length, image: templeHubMedia.sacred },
+  { variant: "mu", title: "พิกัดสายมู", description: "รวมศาลและสถานที่เคารพ สักการะสิ่งศักดิ์สิทธิ์ทั่วไทย", href: "/temples/mu/", count: muTemples.length, image: templeHubMedia.mu },
 ];
 const intentLinks = [
   { icon: "coins", tone: "gold", lines: ["เสริมโชคลาภ", "เงินทอง"], href: "/temples/sacred/?name=โชคลาภ" },
@@ -56,7 +56,7 @@ const supportingLinks = [
             <input id="temple-hub-search" type="search" name="name" placeholder="ค้นหาวัด จังหวัด หรือวัตถุประสงค์ด้านมงคล" autocomplete="off" aria-describedby="temple-hub-search-scope" />
             <button type="submit">ค้นหา</button>
           </form>
-          <p id="temple-hub-search-scope">ค้นหาเฉพาะหมวดวัดศักดิ์สิทธิ์ ไม่รวมทะเบียนวัดทั่วประเทศไทย</p>
+          <p id="temple-hub-search-scope">ค้นหาเฉพาะหมวดวัดเด่นขอพร ไม่รวมทะเบียนวัดทั่วประเทศไทย</p>
         </div>
       </div>
       <span slot="quote">“ทุกเส้นทาง<br />มีเรื่องราวแห่งศรัทธา”</span>

@@ -15,9 +15,9 @@ const DATASETS = {
 };
 
 const COLLECTION_LABELS = {
-  popular: "สายไหว้พระ 9 วัด",
-  mu: "สายมู",
-  sacred: "วัดศักดิ์สิทธิ์",
+  popular: "วัดดังน่าไป",
+  mu: "พิกัดสายมู",
+  sacred: "วัดเด่นขอพร",
 };
 
 const COLLECTION_ORDER = {

@@ -68,33 +68,33 @@ const purposeTags = Array.from(new Set(rankedTemples.flatMap((temple) => splitTa
     return a.localeCompare(b, "th");
   },
 );
-const pageTitle = "สายไหว้พระ ๙ วัด | มงคลเวลา";
-const pageDescription = "รวมเส้นทางไหว้พระ ๙ วัด วัดดังทั่วไทย และพิกัดทำบุญพร้อมตัวกรองภาค จังหวัด วัตถุประสงค์ แผนที่ และรายละเอียดการเดินทาง";
+const pageTitle = "วัดดังน่าไป | มงคลเวลา";
+const pageDescription = "รวมวัดดังน่าไปทั่วไทยและพิกัดทำบุญ พร้อมตัวกรองภาค จังหวัด วัตถุประสงค์ แผนที่ และรายละเอียดการเดินทาง";
 const breadcrumbs = [
   { label: "หน้าแรก", href: "/" },
   { label: "วัดดังเสริมมงคล", href: "/temples/" },
-  { label: "สายไหว้พระ ๙ วัด", href: "/temples/popular/" },
+  { label: "วัดดังน่าไป", href: "/temples/popular/" },
 ];
 const collectionMeta = {
   key: "popular",
-  label: "สายไหว้พระ ๙ วัด",
-  shortLabel: "๙ วัด",
-  kicker: "POPULAR · เส้นทางยอดนิยม",
-  title: "สายไหว้พระ ๙ วัด",
+  label: "วัดดังน่าไป",
+  shortLabel: "วัดดังน่าไป",
+  kicker: "POPULAR · วัดยอดนิยม",
+  title: "วัดดังน่าไป",
   description: "วัดดังที่คนรู้จัก จัดเรียงตามความนิยม พร้อมจัดเป็นเส้นทางไหว้พระต่อเนื่องได้ในคลิกเดียว",
   intro: "รวมวัดดังทั่วประเทศไทยสำหรับวางแผนเส้นทางไหว้พระ ทำบุญ และเลือกสถานที่เสริมมงคลให้เหมาะกับจังหวะชีวิต",
   accent: "#8e2d24",
   heroBg: "radial-gradient(circle at 18% 0%, #7a2620, #3d130f 70%)",
-  mapTitle: "สายไหว้พระ 9 วัด",
+  mapTitle: "วัดดังน่าไป",
   mapSearchPlaceholder: "ค้นหาวัดในแผนที่",
   searchLabel: "ค้นหาพิกัดวัดยอดนิยม",
-  searchPlaceholder: "ค้นหาในสายไหว้พระ ๙ วัด",
+  searchPlaceholder: "ค้นหาในวัดดังน่าไป",
   gridLabel: "พิกัดไหว้พระยอดนิยม",
-  emptyText: "ไม่พบสายไหว้พระ 9 วัดที่ตรงกับคำค้นหา",
-  imageAlt: "สายไหว้พระ 9 วัดและวัดดังทั่วไทย",
+  emptyText: "ไม่พบวัดดังน่าไปที่ตรงกับคำค้นหา",
+  imageAlt: "วัดดังน่าไปทั่วไทย",
 } as const;
 const itemListJsonLd = createItemListJsonLd({
-  name: "สายไหว้พระ ๙ วัดยอดนิยม",
+  name: "วัดดังน่าไปทั่วไทย",
   description: pageDescription,
   url: "/temples/popular/",
   items: rankedTemples.slice(0, 8).map((temple) => ({

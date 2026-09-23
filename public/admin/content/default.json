@@ -34,19 +34,19 @@
           },
           {
             "id": "popular-temples",
-            "label": "วัดดัง",
+            "label": "วัดดังน่าไป",
             "href": "temples/popular/",
             "enabled": true
           },
           {
             "id": "mu-temples",
-            "label": "สถานที่มงคล",
+            "label": "พิกัดสายมู",
             "href": "temples/mu/",
             "enabled": true
           },
           {
             "id": "sacred-temples",
-            "label": "วัดศักดิ์สิทธิ์",
+            "label": "วัดเด่นขอพร",
             "href": "temples/sacred/",
             "enabled": true
           },
@@ -417,7 +417,7 @@
         },
         {
           "id": "home-collection-popular",
-          "label": "หมวด: เส้นทาง 9 วัด",
+          "label": "หมวด: วัดดังน่าไป",
           "selector": "#home-collection-popular",
           "kind": "image",
           "enabled": true,
@@ -431,7 +431,7 @@
         },
         {
           "id": "home-collection-sacred",
-          "label": "หมวด: วัดศักดิ์สิทธิ์",
+          "label": "หมวด: วัดเด่นขอพร",
           "selector": "#home-collection-sacred",
           "kind": "image",
           "enabled": true,
@@ -445,7 +445,7 @@
         },
         {
           "id": "home-collection-mu",
-          "label": "หมวด: สถานที่มงคล",
+          "label": "หมวด: พิกัดสายมู",
           "selector": "#home-collection-mu",
           "kind": "image",
           "enabled": true,
@@ -709,7 +709,7 @@
     },
     {
       "id": "templesPopular",
-      "label": "สายไหว้พระ 9 วัด",
+      "label": "วัดดังน่าไป",
       "route": "/temples/popular/",
       "enabled": true,
       "kind": "existing",
@@ -719,7 +719,7 @@
     },
     {
       "id": "templesMu",
-      "label": "สถานที่มงคล",
+      "label": "พิกัดสายมู",
       "route": "/temples/mu/",
       "enabled": true,
       "kind": "existing",
@@ -729,7 +729,7 @@
     },
     {
       "id": "templesSacred",
-      "label": "วัดศักดิ์สิทธิ์",
+      "label": "วัดเด่นขอพร",
       "route": "/temples/sacred/",
       "enabled": true,
       "kind": "existing",

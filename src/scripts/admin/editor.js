@@ -189,7 +189,7 @@ function renderTempleEditor(record, edit) {
       <label>พิกัด LNG<input type="number" step="0.0001" data-temple-field="longitude" value="${escapeHtml(templeValue(record, edit, "longitude"))}"></label>
       <label class="mw-admin-form-grid--span">พรที่นิยมขอ<input data-temple-field="blessings" value="${escapeHtml(templeValue(record, edit, "blessings"))}" placeholder="เมตตามหานิยม, ชื่อเสียง"></label>
       <label class="mw-admin-form-grid--span">สิ่งที่นิยมสักการะ<input data-temple-field="objectHero" value="${escapeHtml(templeValue(record, edit, "objectHero"))}" placeholder="พระประธาน, ระฆังมงคล"></label>
-      <label class="mw-admin-form-grid--span">คำอธิบาย<textarea data-temple-field="imageAlt" placeholder="หนึ่งในสายไหว้พระ ๙ วัด ริมแม่น้ำเจ้าพระยา">${escapeHtml(templeValue(record, edit, "imageAlt"))}</textarea></label>
+      <label class="mw-admin-form-grid--span">คำอธิบาย<textarea data-temple-field="imageAlt" placeholder="วัดริมแม่น้ำเจ้าพระยา">${escapeHtml(templeValue(record, edit, "imageAlt"))}</textarea></label>
     </div>
   </div>
   <div class="mw-admin-temple-section">

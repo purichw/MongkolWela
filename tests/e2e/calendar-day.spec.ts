@@ -10,7 +10,7 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("mongkolwela.pdpa.analytics", "declined"));
 });
 
-test("real day fields, symbolic chart, sources and exposed desktop advice", async ({ page }) => {
+test("real day fields, symbolic chart, concise caution and exposed desktop advice", async ({ page }) => {
   await page.goto("/calendar/day/?date=2026-09-20");
   await expect(page.locator(root)).toHaveAttribute("data-state", "ready");
   await expect(page.locator("#day-title")).toHaveText("วันที่ 20 กันยายน 2569");
@@ -20,7 +20,8 @@ test("real day fields, symbolic chart, sources and exposed desktop advice", asyn
   await expect(page.locator(".wheel-label")).toHaveCount(12);
   await expect(page.locator(".day-wheel-explanation")).toContainText("ไม่ใช่ตำแหน่งดาวจริง");
   await expect(page.locator(".day-omen[open]")).toHaveCount(3);
-  await expect(page.locator(".day-source")).toHaveAttribute("open", "");
+  await expect(page.locator(".day-source, .day-source-method")).toHaveCount(0);
+  await expect(page.locator(".day-use-note")).toContainText("ไม่ใช่คำทำนายเฉพาะบุคคล");
   await expect(page.locator(".day-omen.is-avoid")).toContainText("อัคนิโรธ");
   await expect(page.locator(".site-footer--ivory")).toHaveCount(1);
   expect(await page.locator('link[href*="thai-calendar.css"], link[href*="calendar-overview"]').count()).toBe(0);
@@ -68,11 +69,10 @@ test("mobile disclosures work with touch and keyboard and recompose on resize", 
   await page.locator(".day-omen.is-avoid > summary").focus();
   await page.keyboard.press("Enter");
   await expect(page.locator(".day-omen.is-avoid ul")).toBeHidden();
-  await page.locator(".day-source > summary").click();
-  await page.locator(".day-source-method > summary").click();
-  await expect(page.locator(".day-source-method p")).toBeVisible();
+  await expect(page.locator(".day-use-note")).toBeVisible();
+  await expect(page.locator(".day-source, .day-source-method")).toHaveCount(0);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await expect(page.locator("[data-day-disclosure][open]")).toHaveCount(4);
+  await expect(page.locator("[data-day-disclosure][open]")).toHaveCount(3);
   await page.setViewportSize({ width: 320, height: 800 });
   await expect(page.locator("[data-day-disclosure][open]")).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

@@ -41,9 +41,9 @@ const planStops = [
   { id: "kalayanamit", time: "11:20", title: "วัดกัลยาณมิตรฯ", detail: "กรุงเทพฯ · ธนบุรี" },
 ];
 const collections = [
-  { variant: "popular", title: "สายไหว้พระ ๙ วัด", description: "จัดเส้นทางไหว้พระต่อเนื่อง", href: "/temples/popular/" },
-  { variant: "sacred", title: "วัดศักดิ์สิทธิ์", description: "เลือกตามจังหวัดและความตั้งใจ", href: "/temples/sacred/" },
-  { variant: "mu", title: "สถานที่มงคล", description: "สักการะ ทำบุญ เสริมกำลังใจ", href: "/temples/mu/" },
+  { variant: "popular", title: "วัดดังน่าไป", description: "จัดเส้นทางไหว้พระต่อเนื่อง", href: "/temples/popular/" },
+  { variant: "sacred", title: "วัดเด่นขอพร", description: "เลือกตามจังหวัดและความตั้งใจ", href: "/temples/sacred/" },
+  { variant: "mu", title: "พิกัดสายมู", description: "สักการะ ทำบุญ เสริมกำลังใจ", href: "/temples/mu/" },
 ];
 const tools = [
   { label: "ปฏิทินไทย", compactLabel: "ปฏิทินไทย", description: "วันสำคัญและรายละเอียด", compactDescription: "ดูวันสำคัญ", href: "/calendar/", icon: "calendar-days" },
@@ -55,7 +55,7 @@ const tools = [
 ---
 
 <BaseLayout
-  title="มงคลเวลา | วางแผนไหว้พระ วัดศักดิ์สิทธิ์ และข้อมูลมงคล"
+  title="มงคลเวลา | วางแผนไหว้พระ วัดเด่นขอพร และข้อมูลมงคล"
   description="มงคลเวลาเป็นคู่มือค้นหาวัด สถานที่ศักดิ์สิทธิ์ เส้นทางไหว้พระ 9 วัด วัดทั่วไทย และเครื่องมือวางแผนเดินทางมงคลสำหรับผู้ใช้ไทย"
   lang="th" locale="th" page="home" bodyClass="home-v2-page home-reconstructed" canonicalPath="/"
   image={heroSlides[0].src} imageAlt={heroSlides[0].alt}
@@ -107,7 +107,7 @@ const tools = [
             <span class="home-today-moon" data-home-moon={moon} aria-hidden="true"></span>
             <div class="home-today-details">
               <div class="home-today-meta">
-                <a class="home-today-lunar" href="/calendar/day/" title="ดูรายละเอียดและที่มาของข้อมูลจันทรคติ">
+                <a class="home-today-lunar" href="/calendar/day/" title="ดูรายละเอียดปฏิทินจันทรคติ">
                   <span data-home-lunar>{lunarLabel}</span>
                   <small>คำนวณเบื้องต้น</small>
                 </a>

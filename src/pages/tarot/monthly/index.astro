@@ -1,6 +1,7 @@
 ---
 import ToolsLayout from "../../../layouts/ToolsLayout.astro";
 import ToolsHero from "../../../components/ToolsHero.astro";
+import TarotDraw from "../../../components/tarot/TarotDraw.astro";
 ---
 
 <ToolsLayout
@@ -12,53 +13,11 @@ import ToolsHero from "../../../components/ToolsHero.astro";
   bodyClass="tarot-page"
 >
   <main id="monthly-tarot">
-    <ToolsHero title="อ่านไพ่ยิปซีรายเดือน" kicker="Monthly Tarot" lead="เลือกไพ่ 10 ใบเพื่ออ่านภาพรวมเดือนแบบ Celtic Cross ทั้งสิ่งท้าทาย โอกาส และแนวทางที่ควรใส่ใจ" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ไพ่ยิปซีรายเดือน"}]} />
+    <ToolsHero ornamentSrc="/assets/images/life-graph-watercolor.webp" quote="ทุกไพ่มีคำตอบ เพียงคุณเปิดใจ" title="อ่านไพ่ยิปซีรายเดือน" kicker="Monthly Tarot" lead="เลือกไพ่ 10 ใบเพื่ออ่านภาพรวมเดือนแบบ Celtic Cross ทั้งสิ่งท้าทาย โอกาส และแนวทางที่ควรใส่ใจ" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ไพ่ยิปซีรายเดือน"}]} />
 
-    <section class="tarot-oracle tools-workspace">
-      <aside class="tarot-intention tools-panel">
-        <p class="section-kicker">ตั้งจิต</p>
-        <h2>ก่อนเลือกไพ่</h2>
-        <p>
-          การอ่านรายเดือนเหมาะกับการมองภาพรวม ไม่ควรใช้ตัดสินเรื่องเร่งด่วนเพียงอย่างเดียว
-          ให้รับคำทำนายเป็นแผนที่สำหรับทบทวนและจัดลำดับชีวิตในเดือนนี้
-        </p>
-        <div class="tarot-warning">เลือกให้ครบ 10 ใบตามลำดับที่ใจสะดุด</div>
-      <aside class="tarot-ritual-panel" aria-label="ขั้นตอนการดูไพ่รายเดือน">
-        <ol>
-          <li><span>1</span>ตั้งใจถามภาพรวมเดือนนี้อย่างสงบ</li>
-          <li><span>2</span>สับไพ่หรือตัดไพ่เพื่อเปลี่ยนจังหวะพลังงาน</li>
-          <li><span>3</span>เลือกไพ่ 10 ใบตามความรู้สึกทีละใบ</li>
-          <li><span>4</span>กดเปิดคำทำนายเพื่ออ่าน spread รายเดือน</li>
-        </ol>
-      </aside></aside>
-
-      <form
-        class="tarot-deck-stage tools-panel"
-        data-tarot-spread-form
-        data-spread-type="monthly"
-        data-required-count="10"
-        data-storage-key="monkolMonthlyTarot"
-      >
-        <div class="tarot-deck-head">
-          <div>
-            <p class="section-kicker">สำรับ 78 ใบ</p>
-            <h2>เลือกไพ่ 10 ใบ แล้วกดเปิดคำทำนาย</h2>
-            <p class="tarot-status" data-tarot-status aria-live="polite"></p>
-          </div>
-          <div class="tarot-deck-actions">
-            <button class="tarot-control" type="button" data-tarot-shuffle>สับไพ่</button>
-            <button class="tarot-control" type="button" data-tarot-cut>ตัดไพ่</button>
-            <button class="tarot-read-button btn-disable" type="submit" data-tarot-read disabled>
-              เปิดคำทำนาย
-            </button>
-          </div>
-        </div>
-
-        <input type="hidden" data-tarot-selected name="tarot_cards_selected" />
-        <input type="hidden" data-tarot-count name="tarot_card_count" value="0" />
-        <div class="tarot-deck-grid" data-tarot-deck aria-label="สำรับไพ่ยิปซี 78 ใบ"></div>
-      </form>
-    </section>
+    <TarotDraw spreadType="monthly" requiredCount={10} deckCount={78} storageKey="monkolMonthlyTarot"
+      intentionCopy="การอ่านรายเดือนเหมาะกับการมองภาพรวม ให้รับคำทำนายเป็นแผนที่สำหรับทบทวนและจัดลำดับชีวิตในเดือนนี้"
+      warning="เลือกให้ครบ 10 ใบตามลำดับที่ใจสะดุด ไม่ใช้ไพ่ตัดสินเรื่องเร่งด่วนเพียงอย่างเดียว" />
 
     <section class="tarot-note tools-section">
       <p class="section-kicker">แนวคิดของเรา</p>
@@ -70,7 +29,4 @@ import ToolsHero from "../../../components/ToolsHero.astro";
     </section>
   </main>
 
-  <script>
-    import "../../../scripts/tarot-spread.js";
-  </script>
 </ToolsLayout>

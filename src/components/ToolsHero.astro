@@ -5,8 +5,9 @@ interface Props {
   lead: string;
   breadcrumbs: { label: string; href?: string }[];
   quote?: string;
+  ornamentSrc?: string;
 }
-const { title, kicker, lead, breadcrumbs, quote } = Astro.props;
+const { title, kicker, lead, breadcrumbs, quote, ornamentSrc = "/assets/images/ornament-lotus-bodhi.webp" } = Astro.props;
 ---
 
 <section class="tools-hero" aria-labelledby="tools-title">
@@ -25,7 +26,7 @@ const { title, kicker, lead, breadcrumbs, quote } = Astro.props;
       <p class="tools-hero__lead">{lead}</p>
     </div>
     {quote && <blockquote class="tools-hero__quote">{quote}</blockquote>}
-    <img class="tools-hero__ornament" src="/assets/images/ornament-lotus-bodhi.webp"
+    <img class="tools-hero__ornament" src={ornamentSrc}
       alt="" width="640" height="960" aria-hidden="true" />
   </div>
 </section>

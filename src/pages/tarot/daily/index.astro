@@ -1,6 +1,7 @@
 ---
 import ToolsLayout from "../../../layouts/ToolsLayout.astro";
 import ToolsHero from "../../../components/ToolsHero.astro";
+import TarotDraw from "../../../components/tarot/TarotDraw.astro";
 
 const seoBreadcrumbs = [
   { label: "หน้าแรก", href: "/" },
@@ -19,60 +20,20 @@ const seoBreadcrumbs = [
   breadcrumbs={seoBreadcrumbs}
 >
   <main id="daily-tarot">
-    <ToolsHero title="อ่านไพ่ยิปซีรายวัน" kicker="Daily Tarot" lead="ตั้งจิต สับไพ่ แล้วเลือกไพ่ 1 ใบ เพื่ออ่านคำทำนายประจำวัน พร้อมคำแนะนำ ข้อควรระวัง สีและเวลามงคล" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ไพ่ยิปซีรายวัน"}]} />
+    <ToolsHero ornamentSrc="/assets/images/life-graph-watercolor.webp" quote="ทุกไพ่มีคำตอบ เพียงคุณเปิดใจ" title="อ่านไพ่ยิปซีรายวัน" kicker="Daily Tarot" lead="ตั้งจิต สับไพ่ แล้วเลือกไพ่ 1 ใบ เพื่ออ่านคำทำนายประจำวัน พร้อมคำแนะนำ ข้อควรระวัง สีและเวลามงคล" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ไพ่ยิปซีรายวัน"}]} />
 
-    <section class="tarot-oracle tools-workspace">
-      <aside class="tarot-intention tools-panel">
-        <p class="section-kicker">ตั้งจิต</p>
-        <h2>ก่อนเลือกไพ่</h2>
-        <p>
-          โปรดใช้ไพ่ด้วยความเคารพ ไม่ต้องถามซ้ำเพื่อเอาคำตอบที่ถูกใจ
-          คำทำนายเป็นกระจกให้ทบทวน ไม่ใช่นายเหนือชีวิต
-        </p>
-        <div class="tarot-warning">ไม่ควรดูไพ่รายวันเกินวันละครั้ง</div>
-      <aside class="tarot-ritual-panel">
-        <ol>
-          <li><span>1</span>หายใจเข้าออกลึก ๆ แล้วตั้งคำถามในใจ</li>
-          <li><span>2</span>สับไพ่หรือตัดไพ่เพื่อเปลี่ยนจังหวะพลังงาน</li>
-          <li><span>3</span>เลือกไพ่ที่เรียกสายตาหรือใจของคุณ 1 ใบ</li>
-          <li><span>4</span>กดทำนายเพื่อเปิดคำพยากรณ์</li>
-        </ol>
-      </aside></aside>
-
-      <form class="tarot-deck-stage tools-panel" data-tarot-form>
-        <div class="tarot-deck-head">
-          <div>
-            <p class="section-kicker">สำรับ 78 ใบ</p>
-            <h2>เลือกไพ่ 1 ใบ แล้วกดทำนาย</h2>
-            <p class="tarot-status" data-tarot-status aria-live="polite"></p>
-          </div>
-          <div class="tarot-deck-actions">
-            <button class="tarot-control" type="button" data-tarot-shuffle>สับไพ่</button>
-            <button class="tarot-control" type="button" data-tarot-cut>ตัดไพ่</button>
-            <button class="tarot-read-button btn-disable" type="submit" data-tarot-read disabled>
-              ทำนาย
-            </button>
-          </div>
-        </div>
-
-        <input type="hidden" data-tarot-selected name="tarot_card_selected">
-        <input type="hidden" data-tarot-count name="tarot_card_count" value="0">
-        <div class="tarot-deck-grid" data-tarot-deck aria-label="สำรับไพ่ยิปซี 78 ใบ"></div>
-      </form>
-    </section>
+    <TarotDraw spreadType="daily" requiredCount={1} deckCount={78} storageKey="monkolDailyTarot"
+      intentionCopy="โปรดใช้ไพ่ด้วยสติและความเคารพ ไม่ต้องถามซ้ำเพื่อเอาคำตอบที่ถูกใจ ให้ไพ่เป็นพื้นที่ทบทวนใจของคุณ"
+      warning="ไม่ควรถามเรื่องเดิมซ้ำหลายครั้งในวันเดียว" />
 
     <section class="tarot-note tools-section">
       <p class="section-kicker">แนวคิดของเรา</p>
       <h2>ไพ่เป็นพื้นที่สนทนากับใจ ไม่ใช่คำสั่งตายตัว</h2>
       <p>
-        ไพ่แต่ละใบถูกออกแบบเป็นศิลปะเชิงสัญลักษณ์ของมงคลเวลาเอง
-        ไม่อ้างอิงแอปภายนอกและไม่ใช้ภาพไพ่ลิขสิทธิ์จากสำรับอื่น
-        เพื่อให้ประสบการณ์ดูร่วมสมัย แต่ยังสงบ ขลัง และเคารพธรรมเนียมการพยากรณ์
+        ภาพไพ่ Rider-Waite-Smith โดย Pamela Colman Smith เป็นสัญลักษณ์ให้เราทบทวนใจ
+        อ่านคำทำนายร่วมกับข้อมูลจริงและวิจารณญาณ การตัดสินใจยังเป็นของคุณเสมอ
       </p>
     </section>
   </main>
 
-  <script>
-    import "../../../scripts/tarot-daily.js";
-  </script>
 </ToolsLayout>

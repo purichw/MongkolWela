@@ -583,21 +583,6 @@ function applyTempleDetailOverride(content) {
       renderVisitSection(normalizeVisitSection(visit.contact, "ช่องทางติดต่อ")),
     ].join("");
   }
-  const sourceList = root.querySelector(".temple-detail-visit-sources ul");
-  if (sourceList && Array.isArray(visit.sources)) {
-    sourceList.innerHTML = visit.sources
-      .map((source) => `<li><a href="${escapeHtml(source.url || "#")}" target="_blank" rel="noopener">${escapeHtml(source.label || source.url || "แหล่งข้อมูล")}</a></li>`)
-      .join("");
-  } else if (Array.isArray(visit.sources) && visit.sources.length) {
-    root.querySelector(".temple-detail-visit__notice")?.remove();
-    root.querySelector(".temple-detail-visit__grid")?.insertAdjacentHTML(
-      "afterend",
-      `<details class="temple-detail-visit-sources"><summary>แหล่งข้อมูลที่ใช้ยืนยัน</summary><ul>${visit.sources
-        .map((source) => `<li><a href="${escapeHtml(source.url || "#")}" target="_blank" rel="noopener">${escapeHtml(source.label || source.url || "แหล่งข้อมูล")}</a></li>`)
-        .join("")}</ul></details>`,
-    );
-  }
-
   if (mapElement) {
     mapElement.dataset.lat = String(latitude);
     mapElement.dataset.lng = String(longitude);

@@ -32,7 +32,7 @@ test.describe("Mongkol Wela smoke regression", () => {
     const openButton = page.getByRole("button", { name: /เปิดแผนที่/ });
     await openButton.click();
 
-    const dialog = page.getByRole("dialog", { name: /แผนที่สายไหว้พระ 9 วัด/ });
+    const dialog = page.getByRole("dialog", { name: /แผนที่วัดดังน่าไป/ });
     await expect(dialog).toBeVisible();
     await expect(page.getByRole("searchbox", { name: /ค้นหาพิกัด/ })).toBeFocused();
 

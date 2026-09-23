@@ -29,7 +29,7 @@ const { topic } = Astro.props;
   ]}
 >
   <main>
-<ToolsHero title={topic.resultTitle.replace(" | มงคลเวลา","")} kicker="Tarot Reading" lead="อ่านคำทำนายเป็นแนวทางประกอบการตัดสินใจ ไม่ใช่การรับรองผลลัพธ์ล่วงหน้า" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:topic.breadcrumb,href:"/tarot/"+topic.slug+"/"},{label:"ผลคำทำนาย"}]} />
+<ToolsHero ornamentSrc="/assets/images/life-graph-watercolor.webp" title={topic.resultTitle.replace(" | มงคลเวลา","")} kicker="Tarot Reading" lead="อ่านคำทำนายเป็นแนวทางประกอบการตัดสินใจ ไม่ใช่การรับรองผลลัพธ์ล่วงหน้า" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:topic.breadcrumb,href:"/tarot/"+topic.slug+"/"},{label:"ผลคำทำนาย"}]} />
     <section
       class="tarot-result-shell"
       data-tarot-spread-result

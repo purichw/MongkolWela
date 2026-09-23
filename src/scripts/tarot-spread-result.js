@@ -1,4 +1,5 @@
-import { getCardArtClass, getTarotCardById } from "./tarot-data.js";
+import { getTarotCardById } from "./tarot-data.js";
+import { renderCardFace, renderReadingSections, renderSingleReading, renderReadingActions, renderEmptyReading } from "./tarot-view.js";
 
 const monthlyPositions = [
   {
@@ -217,267 +218,46 @@ const topicResults = {
 initSpreadResult();
 
 function initSpreadResult() {
-  const resultRoot = document.querySelector("[data-tarot-spread-result]");
-  if (!resultRoot) return;
-
-  const spreadType = resultRoot.dataset.spreadType || "monthly";
-  const storageKey = resultRoot.dataset.storageKey || "monkolTarotSpread";
-  const cards = readCardsFromRequest(storageKey);
-
-  if (spreadType === "luck") {
-    renderLuckResult(resultRoot, cards);
+  const root = document.querySelector("[data-tarot-spread-result]");
+  if (!root) return;
+  const type = root.dataset.spreadType;
+  const params = new URLSearchParams(location.search);
+  let stored;
+  try { stored = JSON.parse(localStorage.getItem(root.dataset.storageKey)); } catch { /* URL readings work without storage. */ }
+  const ids = params.has("cards") ? params.get("cards").split(",").filter(Boolean) : stored?.cardIds;
+  const cards = Array.isArray(ids) ? ids.map(getTarotCardById).filter(Boolean) : [];
+  const required = type === "monthly" ? 10 : 1;
+  if (cards.length !== required || new Set(cards.map(c => c.id)).size !== required || (type !== "monthly" && cards.some(c => c.suit))) {
+    root.innerHTML = renderEmptyReading("ยังไม่มีไพ่ครบสำหรับคำทำนาย", `กลับไปเลือกไพ่ ${required} ใบก่อน เพื่อเปิดคำทำนายของคุณ`);
     return;
   }
-
-  if (topicResults[spreadType]) {
-    renderTopicResult(resultRoot, cards, spreadType);
+  if (type === "monthly") {
+    root.innerHTML = `<header class="tarot-spread-overview"><h2>ไพ่ทั้ง 10 ตำแหน่งของเดือนนี้</h2><p>อ่านตามลำดับที่เลือก เพื่อทบทวนภาพรวม สิ่งท้าทาย และก้าวต่อไปของคุณ</p></header>
+      <div class="tarot-spread-grid">${cards.map((card, i) => renderMonthlyCard(card, monthlyPositions[i], i)).join("")}</div>
+      ${renderReadingActions()}`;
     return;
   }
-
-  renderMonthlyResult(resultRoot, cards);
-}
-
-function renderTopicResult(resultRoot, cards, spreadType) {
-  const topic = topicResults[spreadType];
   const card = cards[0];
-  if (!card) {
-    renderFallback(resultRoot, {
-      kicker: topic.kicker,
-      title: topic.fallbackTitle,
-      copy: topic.fallbackCopy,
-      href: "../",
-      label: topic.emptyLabel,
+  const topic = topicResults[type];
+  if (topic) {
+    const verdict = topic.levels.find(level => level.ids.has(card.id)) || topic.levels[1];
+    root.innerHTML = renderSingleReading(card, {
+      verdict, labels: topic.labels, drawAgain: topic.drawAgain,
+      reading: `${verdict.copy} ไพ่ ${card.thName} ชี้ธีม “${card.theme}” จึงควรอ่านสถานการณ์ผ่านทั้งสัญญาณภายนอกและความรู้สึกภายในของคุณ`,
+      advice: `${verdict.advice} ${card.advice}`,
+      caution: `${verdict.caution} ${card.caution}`,
     });
-    return;
+  } else {
+    const verdict = Object.values(luckLevels).find(level => level.ids.has(card.id)) || luckLevels.steady;
+    root.innerHTML = renderSingleReading(card, { verdict, labels: { advice: "คำแนะนำก่อนเสี่ยง", color: "สีเสริมจังหวะ", time: "เวลาตั้งจิต" } });
   }
-
-  const verdict = getTopicVerdict(topic, card);
-  resultRoot.innerHTML = `
-    <div class="tarot-result-card-wrap">
-      ${renderCardFace(card, "result")}
-    </div>
-    <div class="tarot-result-copy tarot-luck-result">
-      <p class="section-kicker">${topic.kicker}</p>
-      <h2>${card.thName}</h2>
-      <p class="tarot-result-name">${card.name}</p>
-      <div class="tarot-luck-verdict tarot-luck-verdict-${verdict.key}">
-        <span>${topic.labels.verdict}</span>
-        <strong>${verdict.label}</strong>
-        <p>${verdict.copy}</p>
-      </div>
-      <dl class="tarot-reading-list">
-        <div>
-          <dt>${topic.labels.rhythm}</dt>
-          <dd>${card.theme}</dd>
-        </div>
-        <div>
-          <dt>${topic.labels.reading}</dt>
-          <dd>${buildTopicReading(card, verdict)}</dd>
-        </div>
-        <div>
-          <dt>${topic.labels.advice}</dt>
-          <dd>${verdict.advice} ${card.advice}</dd>
-        </div>
-        <div>
-          <dt>${topic.labels.caution}</dt>
-          <dd>${verdict.caution} ${card.caution}</dd>
-        </div>
-      </dl>
-      <div class="tarot-auspicious-grid">
-        <article>
-          <span>${topic.labels.color}</span>
-          <strong>${card.color}</strong>
-        </article>
-        <article>
-          <span>${topic.labels.time}</span>
-          <strong>${card.time}</strong>
-        </article>
-      </div>
-      <div class="tarot-prayer">
-        <span>${topic.labels.mantra}</span>
-        <p>${card.mantra}</p>
-      </div>
-      <div class="tarot-result-actions">
-        <a class="primary-action" href="../">${topic.drawAgain}</a>
-        <a class="secondary-action" href="/">${topic.home}</a>
-      </div>
-    </div>
-  `;
 }
 
-function getTopicVerdict(topic, card) {
-  return topic.levels.find((level) => level.ids.has(card.id)) || topic.levels[1] || topic.levels[0];
-}
-
-function buildTopicReading(card, verdict) {
-  return `${verdict.copy} ไพ่ ${card.thName} ชี้ธีม “${card.theme}” จึงควรอ่านสถานการณ์ผ่านทั้งสัญญาณภายนอกและความรู้สึกภายในของคุณ`;
-}
-
-function readCardsFromRequest(storageKey) {
-  const params = new URLSearchParams(window.location.search);
-  const cardParam = params.get("cards");
-  const cardIds = cardParam
-    ? cardParam.split(",").map((id) => id.trim()).filter(Boolean)
-    : readStoredReading(storageKey)?.cardIds || [];
-
-  return cardIds.map((id) => getTarotCardById(id)).filter(Boolean);
-}
-
-function renderMonthlyResult(resultRoot, cards) {
-  if (cards.length < monthlyPositions.length) {
-    renderFallback(resultRoot, {
-      kicker: "Monthly Tarot",
-      title: "ยังไม่มีไพ่สำหรับคำทำนายรายเดือน",
-      copy: "กลับไปเลือกไพ่ 10 ใบก่อน เพื่อเปิดคำทำนายรายเดือนของคุณ",
-      href: "../",
-      label: "กลับไปเลือกไพ่",
-    });
-    return;
-  }
-
-  resultRoot.innerHTML = `
-    <div class="tarot-result-copy tarot-spread-overview">
-      <p class="section-kicker">Monthly Tarot</p>
-      <h2>คำทำนายไพ่ยิปซีรายเดือน</h2>
-      <p>
-        อ่านไพ่ตามลำดับที่เลือกไว้ ไพ่แต่ละใบคือมุมมองหนึ่งของเดือนนี้
-        ใช้ร่วมกับสติ ข้อมูลจริง และการตัดสินใจของตัวคุณเอง
-      </p>
-      <div class="tarot-result-actions">
-        <a class="primary-action" href="../">จับไพ่ใหม่</a>
-        <a class="secondary-action" href="/">กลับหน้าหลัก</a>
-      </div>
-    </div>
-    <div class="tarot-spread-grid">
-      ${monthlyPositions.map((position, index) => renderMonthlyCard(cards[index], position, index)).join("")}
-    </div>
-  `;
-}
-
-function renderMonthlyCard(card, position, index) {
-  return `
-    <article class="tarot-spread-card">
-      <div class="tarot-spread-card-media">
-        <span class="tarot-spread-number">${index + 1}</span>
-        ${renderCardFace(card, "spread")}
-      </div>
-      <div>
-        <p class="section-kicker">${position.focus}</p>
-        <h2>${position.title}</h2>
-        <h3>${card.thName}</h3>
-        <p class="tarot-result-name">${card.name}</p>
-        <dl class="tarot-reading-list compact">
-          <div>
-            <dt>ธีม</dt>
-            <dd>${card.theme}</dd>
-          </div>
-          <div>
-            <dt>คำแนะนำ</dt>
-            <dd>${card.advice}</dd>
-          </div>
-        </dl>
-      </div>
-    </article>
-  `;
-}
-
-function renderLuckResult(resultRoot, cards) {
-  const card = cards[0];
-  if (!card) {
-    renderFallback(resultRoot, {
-      kicker: "Luck Tarot",
-      title: "ยังไม่มีไพ่สำหรับคำทำนายโชคลาภ",
-      copy: "กลับไปเลือกไพ่ 1 ใบก่อน เพื่อเปิดคำทำนายโชคลาภของคุณ",
-      href: "../",
-      label: "กลับไปเลือกไพ่",
-    });
-    return;
-  }
-
-  const verdict = getLuckVerdict(card);
-  resultRoot.innerHTML = `
-    <div class="tarot-result-card-wrap">
-      ${renderCardFace(card, "result")}
-    </div>
-    <div class="tarot-result-copy tarot-luck-result">
-      <p class="section-kicker">Luck Tarot</p>
-      <h2>${card.thName}</h2>
-      <p class="tarot-result-name">${card.name}</p>
-      <div class="tarot-luck-verdict tarot-luck-verdict-${verdict.key}">
-        <span>ผลโดยรวม</span>
-        <strong>${verdict.label}</strong>
-        <p>${verdict.copy}</p>
-      </div>
-      <dl class="tarot-reading-list">
-        <div>
-          <dt>จังหวะของไพ่</dt>
-          <dd>${card.theme}</dd>
-        </div>
-        <div>
-          <dt>คำแปลความ</dt>
-          <dd>${card.interpretation}</dd>
-        </div>
-        <div>
-          <dt>คำแนะนำก่อนเสี่ยง</dt>
-          <dd>${card.advice}</dd>
-        </div>
-        <div>
-          <dt>ข้อควรระวัง</dt>
-          <dd>${card.caution}</dd>
-        </div>
-      </dl>
-      <div class="tarot-auspicious-grid">
-        <article>
-          <span>สีเสริมจังหวะ</span>
-          <strong>${card.color}</strong>
-        </article>
-        <article>
-          <span>เวลาตั้งจิต</span>
-          <strong>${card.time}</strong>
-        </article>
-      </div>
-      <div class="tarot-prayer">
-        <span>คำอธิษฐาน</span>
-        <p>${card.mantra}</p>
-      </div>
-      <div class="tarot-result-actions">
-        <a class="primary-action" href="../">จับไพ่ใหม่</a>
-        <a class="secondary-action" href="/">กลับหน้าหลัก</a>
-      </div>
-    </div>
-  `;
-}
-
-function getLuckVerdict(card) {
-  if (luckLevels.open.ids.has(card.id)) return { key: "open", ...luckLevels.open };
-  if (luckLevels.caution.ids.has(card.id)) return { key: "caution", ...luckLevels.caution };
-  return { key: "steady", ...luckLevels.steady };
-}
-
-function renderFallback(resultRoot, content) {
-  resultRoot.innerHTML = `
-    <div class="tarot-result-copy tarot-empty-result">
-      <p class="section-kicker">${content.kicker}</p>
-      <h2>${content.title}</h2>
-      <p>${content.copy}</p>
-      <a class="primary-action" href="${content.href}">${content.label}</a>
-    </div>
-  `;
-}
-
-function renderCardFace(card, size = "result") {
-  return `
-    <div class="tarot-card-face ${size} ${getCardArtClass(card)}">
-      <img class="tarot-card-image" src="${card.image}" alt="${card.thName} (${card.name})" loading="eager" decoding="async" fetchpriority="high">
-      <span class="tarot-card-label" aria-hidden="true">${card.name}</span>
-    </div>
-  `;
-}
-
-function readStoredReading(storageKey) {
-  try {
-    return JSON.parse(localStorage.getItem(storageKey));
-  } catch {
-    return undefined;
-  }
+function renderMonthlyCard(card, position, i) {
+  return `<article class="tarot-monthly-card">
+    <header><span class="tarot-position-number">${String(i + 1).padStart(2, "0")}</span><div><h3>${position.title}</h3><p>${position.focus}</p></div></header>
+    <div class="tarot-monthly-content"><a class="tarot-monthly-image" href="/tarot/meanings/${card.id}/" aria-label="ความหมายไพ่ ${card.thName}">${renderCardFace(card, "spread")}</a>
+      <div><h4>${card.thName}</h4><p class="tarot-result-name">${card.name}</p><p class="tarot-card-theme">${card.theme}</p>
+      ${renderReadingSections([{ label: "คำแนะนำ", text: card.advice, icon: "lightbulb" }], `position-${i}`)}</div></div>
+  </article>`;
 }

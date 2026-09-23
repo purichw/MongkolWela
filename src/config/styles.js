@@ -6,6 +6,8 @@ import publicUi from "../styles/public-ui.css?url";
 import home from "../styles/home.css?url";
 import feature from "../styles/feature-template.css?url";
 import tarot from "../styles/tarot.css?url";
+import tarotExperience from "../styles/tarot-experience.css?url";
+import tarotLibrary from "../styles/tarot-library.css?url";
 import seamsi from "../styles/seamsi.css?url";
 import life from "../styles/life-graph.css?url";
 import astrology from "../styles/thai-astrology.css?url";
@@ -41,5 +43,5 @@ export function stylesForPath(path) {
     : path.startsWith("/temples/") ? [temples, map]
     : [];
   const isTool = path.startsWith("/tarot/") || /^\/horoscope\/(life-graph|palmistry|seamsi|thai-astrology)\//.test(path);
-  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : []), ...(path === "/temples/thailand/" ? [thailand] : []), publicSelect, ...(isTool ? [tools] : []), ...(path === "/temples/popular/" ? [popularFilters] : [])];
+  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : []), ...(path === "/temples/thailand/" ? [thailand] : []), publicSelect, ...(isTool ? [tools] : []), ...(path.startsWith("/tarot/") ? [tarotExperience] : []), ...(path.startsWith("/tarot/meanings/") ? [tarotLibrary] : []), ...(path === "/temples/popular/" ? [popularFilters] : [])];
 }

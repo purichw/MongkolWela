@@ -1,6 +1,7 @@
 ---
 import ToolsLayout from "../../../layouts/ToolsLayout.astro";
 import ToolsHero from "../../../components/ToolsHero.astro";
+import { renderIcon } from "../../../lib/ui-markup.js";
 import { tarotMeaningCards, tarotMeaningGroups, getTarotMeaningGroupCards } from "../../../data/tarot-meanings.js";
 import { createItemListJsonLd } from "../../../lib/seo.js";
 
@@ -13,6 +14,10 @@ const structuredData = createItemListJsonLd({
     url: `/tarot/meanings/${card.slug}/`,
   })),
 });
+const groups = tarotMeaningGroups.map(group => ({ ...group,
+  label: group.id === "major" ? "ไพ่ชุดใหญ่ (Major Arcana)" : `${group.thTitle} (${group.title})`,
+  cards: getTarotMeaningGroupCards(group.id),
+}));
 ---
 
 <ToolsLayout
@@ -21,7 +26,7 @@ const structuredData = createItemListJsonLd({
   lang="th"
   locale="th"
   page="tarotMeanings"
-  bodyClass="tarot-page"
+  bodyClass="tarot-page tarot-library-page"
   canonicalPath="/tarot/meanings/"
   image="/assets/images/tarot/rws-jpg/the-world.jpg"
   imageAlt="ความหมายไพ่ยิปซี 78 ใบ"
@@ -32,48 +37,56 @@ const structuredData = createItemListJsonLd({
   structuredData={structuredData}
 >
   <main id="tarot-meanings">
-    <ToolsHero title="ความหมายไพ่ยิปซี 78 ใบ" kicker="Tarot Card Meanings" lead="สำรวจภาพไพ่ Rider-Waite-Smith พร้อมความหมายตรงและกลับหัว ความรัก การงาน และมุมมองสำหรับทบทวนชีวิต" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ความหมายไพ่ยิปซี"}]} />
-<details class="tarot-meanings-guide"><summary>แนวทางอ่านความหมายไพ่</summary><aside class="tarot-ritual-panel" aria-label="แนวทางอ่านความหมายไพ่">
-        <ol>
-          <li><span>1</span>เริ่มจากภาพหน้าไพ่ก่อนจำคำแปล</li>
-          <li><span>2</span>อ่านความหมายตรงและกลับหัวเป็นคู่กัน</li>
-          <li><span>3</span>ดูบริบทคำถามก่อนสรุปผล</li>
-          <li><span>4</span>ใช้คำทำนายเป็นแนวทาง ไม่ใช่คำสั่งตายตัว</li>
-        </ol>
-      </aside></details>
-
-    <section class="tarot-meanings-index" aria-label="หมวดไพ่ยิปซี">
-      {tarotMeaningGroups.map((group) => (
-        <article>
-          <a href={`#${group.id}`}>{group.thTitle}</a>
-          <span>{group.title}</span>
-        </article>
-      ))}
-    </section>
-
-    {tarotMeaningGroups.map((group) => {
-      const cards = getTarotMeaningGroupCards(group.id);
-      return (
-        <section class="tarot-meaning-section" id={group.id}>
-          <div class="section-heading">
-            <p class="section-kicker">{group.title}</p>
-            <h2>{group.thTitle}</h2>
-            <p>{group.copy}</p>
-          </div>
-
+    <ToolsHero title="ความหมายไพ่ยิปซี 78 ใบ" kicker="Tarot Card Meanings"
+      lead="สำรวจความหมายไพ่ Rider-Waite-Smith พร้อมภาพและคำตีความครบทั้ง 78 ใบ สำหรับการศึกษาและเป็นแนวทางในการใช้ไพ่"
+      quote="ไพ่ทุกใบสะท้อนเรื่องราวในชีวิต ให้เราเข้าใจตัวเองมากขึ้น"
+      breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"ไพ่ยิปซี",href:"/tarot/daily/"},{label:"ความหมายไพ่ยิปซี 78 ใบ"}]} />
+    <div class="tarot-library" data-tarot-library>
+      <aside class="tarot-library-sidebar" aria-label="ค้นหาและเลือกหมวดไพ่">
+        <nav class="tarot-category-nav" aria-label="หมวดไพ่">
+          <h2>เลือกหมวดไพ่</h2>
+          <a href="#tarot-meanings" data-meaning-category="all" aria-current="true"><span>ทั้งหมด</span><span>78 ใบ</span></a>
+          {groups.map(group => <a href={`#${group.id}`} data-meaning-category={group.id}><span>{group.label}</span><span>{group.cards.length}</span></a>)}
+        </nav>
+        <div class="tarot-category-mobile" hidden data-library-enhancement>
+          <label for="tarot-category">เลือกหมวดไพ่</label>
+          <select id="tarot-category" data-native-select>
+            <option value="all">ทั้งหมด 78 ใบ</option>
+            {groups.map(group => <option value={group.id}>{group.label} · {group.cards.length} ใบ</option>)}
+          </select>
+        </div>
+        <form class="tarot-library-search" role="search" hidden data-library-enhancement>
+          <label for="tarot-card-search">ค้นหาไพ่</label>
+          <div><input type="search" id="tarot-card-search" placeholder="ค้นหาชื่อไพ่ หรือคำสำคัญ..." autocomplete="off" />
+            <button type="submit" aria-label="ค้นหาไพ่"><Fragment set:html={renderIcon("search")} /></button></div>
+        </form>
+      </aside>
+      <div class="tarot-library-results">
+        <div class="tarot-library-toolbar" hidden data-library-enhancement>
+          <p role="status" aria-live="polite" data-library-status>ทั้งหมด 78 ใบ</p>
+          <button type="button" data-library-expand><span>ขยายทั้งหมด</span><Fragment set:html={renderIcon("chevron-down")} /></button>
+        </div>
+        {groups.map(group => <details class="tarot-library-group" id={group.id} data-meaning-group open={group.id === "major"}>
+          <summary><h2>{group.label}</h2><span class="tarot-group-count">{group.cards.length} ใบ</span><Fragment set:html={renderIcon("chevron-down")} /></summary>
+          <p class="tarot-group-intro">{group.copy}</p>
           <div class="tarot-meaning-grid">
-            {cards.map((card) => (
-              <a class="tarot-meaning-card" href={`/tarot/meanings/${card.slug}/`}>
-                <span class="tarot-meaning-image">
-                  <img src={card.thumbImage} alt={`${card.thName} ${card.name}`} loading="lazy" decoding="async" />
-                </span>
-                <strong>{card.name}</strong>
-                <span>{card.thName}</span>
-              </a>
-            ))}
+            {group.cards.map((card, index) => <a class="tarot-meaning-card" href={`/tarot/meanings/${card.slug}/`}
+              data-meaning-search={[card.thName,card.name,...card.keywords,card.theme].join(" ")}>
+              <span class="tarot-meaning-image"><img src={card.thumbImage} alt={`${card.thName} ${card.name}`} width="170" height="280"
+                loading={group.id === "major" && index < 6 ? "eager" : "lazy"} decoding="async" /></span>
+              <strong>{card.name}</strong><span>{"number" in card && card.number != null ? `${card.number} ` : ""}{card.thName}</span>
+            </a>)}
           </div>
-        </section>
-      );
-    })}
+        </details>)}
+        <div class="tarot-library-empty" data-library-empty hidden>
+          <Fragment set:html={renderIcon("search")} /><h2>ไม่พบไพ่ที่ตรงกับคำค้น</h2><p>ลองชื่อไพ่หรือคำสำคัญอื่น หรือกลับไปดูไพ่ทั้งหมด</p>
+          <button type="button" class="secondary-action" data-library-reset>ดูไพ่ทั้งหมด 78 ใบ</button>
+        </div>
+        <details class="tarot-library-guide"><summary>แนวทางอ่านความหมายไพ่<Fragment set:html={renderIcon("chevron-down")} /></summary>
+          <ol><li>เริ่มจากภาพหน้าไพ่ก่อนจำคำแปล</li><li>อ่านความหมายตรงและกลับหัวเป็นคู่กัน</li><li>ดูบริบทคำถามก่อนสรุปผล</li><li>ใช้คำทำนายเป็นแนวทาง ไม่ใช่คำสั่งตายตัว</li></ol>
+        </details>
+      </div>
+    </div>
   </main>
+  <script>import "../../../scripts/tarot-library.js";</script>
 </ToolsLayout>

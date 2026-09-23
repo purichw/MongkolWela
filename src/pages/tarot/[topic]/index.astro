@@ -1,6 +1,7 @@
 ---
 import ToolsLayout from "../../../layouts/ToolsLayout.astro";
 import ToolsHero from "../../../components/ToolsHero.astro";
+import TarotDraw from "../../../components/tarot/TarotDraw.astro";
 import { tarotIntentTopics } from "../../../data/tarot-topic-pages.js";
 
 export function getStaticPaths() {
@@ -27,49 +28,10 @@ const { topic } = Astro.props;
   ]}
 >
   <main id={`${topic.slug}-tarot`}>
-    <ToolsHero title={topic.heading} kicker={topic.kicker} lead={topic.lead} breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:topic.breadcrumb}]} />
+    <ToolsHero ornamentSrc="/assets/images/life-graph-watercolor.webp" quote="ทุกไพ่มีคำตอบ เพียงคุณเปิดใจ" title={topic.heading} kicker={topic.kicker} lead={topic.lead} breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:topic.breadcrumb}]} />
 
-    <section class="tarot-oracle tools-workspace">
-      <aside class="tarot-intention tools-panel">
-        <p class="section-kicker">ตั้งจิต</p>
-        <h2>{topic.intentionTitle}</h2>
-        <p>{topic.intentionCopy}</p>
-        <div class="tarot-warning">{topic.warning}</div>
-      <aside class="tarot-ritual-panel" aria-label={`ขั้นตอน${topic.breadcrumb}`}>
-        <ol>
-          {topic.steps.map((step, index) => (
-            <li><span>{index + 1}</span>{step}</li>
-          ))}
-        </ol>
-      </aside></aside>
-
-      <form
-        class="tarot-deck-stage tools-panel"
-        data-tarot-spread-form
-        data-spread-type={topic.spreadType}
-        data-required-count="1"
-        data-storage-key={topic.storageKey}
-      >
-        <div class="tarot-deck-head">
-          <div>
-            <p class="section-kicker">Major Arcana 22 ใบ</p>
-            <h2>{topic.deckTitle}</h2>
-            <p class="tarot-status" data-tarot-status aria-live="polite"></p>
-          </div>
-          <div class="tarot-deck-actions">
-            <button class="tarot-control" type="button" data-tarot-shuffle>สับไพ่</button>
-            <button class="tarot-control" type="button" data-tarot-cut>ตัดไพ่</button>
-            <button class="tarot-read-button btn-disable" type="submit" data-tarot-read disabled>
-              เปิดคำทำนาย
-            </button>
-          </div>
-        </div>
-
-        <input type="hidden" data-tarot-selected name="tarot_cards_selected" />
-        <input type="hidden" data-tarot-count name="tarot_card_count" value="0" />
-        <div class="tarot-deck-grid tarot-deck-grid-compact" data-tarot-deck aria-label="สำรับไพ่ Major Arcana 22 ใบ"></div>
-      </form>
-    </section>
+    <TarotDraw spreadType={topic.spreadType} requiredCount={1} deckCount={22} storageKey={topic.storageKey}
+      intentionTitle={topic.intentionTitle} intentionCopy={topic.intentionCopy} warning={topic.warning} />
 
     <section class="tarot-note tools-section">
       <p class="section-kicker">แนวคิดของเรา</p>
@@ -78,7 +40,4 @@ const { topic } = Astro.props;
     </section>
   </main>
 
-  <script>
-    import "../../../scripts/tarot-spread.js";
-  </script>
 </ToolsLayout>

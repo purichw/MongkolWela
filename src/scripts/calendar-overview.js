@@ -1,4 +1,4 @@
-import { getCalendarSourceNote, thaiMonthNames, toIsoDate, weekdayNames } from "./thai-calendar-core.js";
+import { thaiMonthNames, toIsoDate, weekdayNames } from "./thai-calendar-core.js";
 import { renderIconMedallion } from "../lib/ui-markup.js";
 import { syncPublicSelects } from "./public-select.js";
 import { calendarUrl, createCalendarStore, eventTypes, getImportantDays, getPeriodSummary, monthShortNames, readCalendarState, shiftMonth } from "./calendar-view-model.js";
@@ -252,7 +252,7 @@ function renderEventRow(day) {
 }
 
 function renderDataNote() {
-  return `<section class="cal-data-note" aria-labelledby="cal-note-title"><h2 id="cal-note-title"><span aria-hidden="true">i</span>ข้อควรทราบ</h2><p>ข้อมูลคำนวณเบื้องต้น วันพระและวันสำคัญควรตรวจสอบกับปฏิทินหรือประกาศทางการก่อนใช้วางแผน</p><details><summary>ที่มาของข้อมูล</summary><p>${escapeHtml(getCalendarSourceNote())}</p><p>วันสำคัญมาจากรายการและกฎที่กำหนดในระบบ ยังไม่ครอบคลุมประกาศวันหยุดพิเศษหรือวันหยุดชดเชยทั้งหมด ข้อมูลดิถีใช้ประกอบตามความเชื่อ ไม่ใช่ฤกษ์เฉพาะบุคคล</p></details></section>`;
+  return `<section class="cal-data-note" aria-labelledby="cal-note-title"><h2 id="cal-note-title"><span aria-hidden="true">i</span>ข้อควรทราบ</h2><p>ข้อมูลคำนวณเบื้องต้น วันพระและวันสำคัญควรตรวจสอบกับปฏิทินหรือประกาศทางการก่อนใช้วางแผน</p></section>`;
 }
 
 function renderEvents(year, state) {
@@ -268,5 +268,5 @@ function renderYearOverview(year, state, expanded) {
   const last = year.days.at(-1);
   return `<header class="cal-year-heading"><h2 id="calendar-year-title">ปฏิทินทั้งปี ${year.year}</h2><p>เลือกเดือนเพื่อดูรายละเอียด หรือวางแผนล่วงหน้าตลอดทั้งปี</p><button type="button" class="cal-text-action cal-expand-year" data-expand-year aria-controls="cal-month-tiles cal-year-facts" aria-expanded="${expanded}">${expanded ? "ย่อรายการ" : "ดูทั้งหมด"}</button></header>
     <div class="cal-month-tiles" id="cal-month-tiles">${year.months.map(month => `<button type="button" id="month-${month.month}" class="cal-month-tile" data-month="${month.month}" data-month-tile="true" aria-pressed="${month.month === state.month}"><strong>${month.name}</strong><span>${month.days.length} วัน</span><small>วันพระ ${month.holyDayCount} วัน</small><span class="cal-tile-arrow" aria-hidden="true">→</span></button>`).join("")}</div>
-    <details class="cal-year-facts" id="cal-year-facts"><summary>ข้อมูลปีและระบบศักราช</summary><p>พ.ศ. ${year.year} / ค.ศ. ${year.year - 543} · จ.ศ. ${first.chulaSakarat}${first.chulaSakarat !== last.chulaSakarat ? `–${last.chulaSakarat}` : ""}</p><p>ต้นปี: ปี${first.zodiac.name} · ${first.yearType} / ปลายปี: ปี${last.zodiac.name} · ${last.yearType}</p><p>${escapeHtml(getCalendarSourceNote())}</p></details>`;
+    <details class="cal-year-facts" id="cal-year-facts"><summary>ข้อมูลปีและระบบศักราช</summary><p>พ.ศ. ${year.year} / ค.ศ. ${year.year - 543} · จ.ศ. ${first.chulaSakarat}${first.chulaSakarat !== last.chulaSakarat ? `–${last.chulaSakarat}` : ""}</p><p>ต้นปี: ปี${first.zodiac.name} · ${first.yearType} / ปลายปี: ปี${last.zodiac.name} · ${last.yearType}</p></details>`;
 }

@@ -5,17 +5,17 @@ import { createTempleSlug } from "./temple-slugs.js";
 export const templeCollectionConfig = {
   popular: {
     key: "popular",
-    label: "สายไหว้พระ 9 วัด",
+    label: "วัดดังน่าไป",
     href: "/temples/popular/",
   },
   mu: {
     key: "mu",
-    label: "สถานที่มงคล",
+    label: "พิกัดสายมู",
     href: "/temples/mu/",
   },
   sacred: {
     key: "sacred",
-    label: "วัดศักดิ์สิทธิ์",
+    label: "วัดเด่นขอพร",
     href: "/temples/sacred/",
   },
 };

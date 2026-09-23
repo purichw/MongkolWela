@@ -85,6 +85,7 @@ body.temples-hub-page.place-detail-page { padding-bottom: 0; }
 .pd-facts dt { color: #766a5a; }
 .pd-reviewed { color: #756b5e; font-size: 13px; margin-top: -8px !important; margin-bottom: 12px !important; }
 .pd-visit-columns { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; }
+.pd-visit-notice { margin-top: 16px !important; padding-top: 12px; border-top: 1px solid var(--pd-line); color: #756b5e; font-size: 13px; line-height: 1.6; }
 .pd-visit-summary { border-right: 1px solid var(--pd-line); padding-right: 16px; }
 .pd-info-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px; }
 .pd-info-row:last-child { margin-bottom: 0; }

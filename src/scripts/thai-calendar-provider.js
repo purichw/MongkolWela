@@ -32,7 +32,7 @@ const zodiacNames = [
 ];
 
 export class ThaiCalendarProvider {
-  constructor({ endpoint = readCalendarEndpoint(), apiKey = readCalendarApiKey(), fetcher = fetch } = {}) {
+  constructor({ endpoint = readCalendarEndpoint(), apiKey = readCalendarApiKey(), fetcher = (...args) => globalThis.fetch(...args) } = {}) {
     this.endpoint = endpoint;
     this.apiKey = apiKey;
     this.fetcher = fetcher;

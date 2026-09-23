@@ -86,25 +86,12 @@
 .day-omen > summary > span:not(.day-medallion) { min-width: 0; }
 .day-omen h3 { font-size: 23px; line-height: 1.4; font-weight: 700; }
 .day-omen > summary > span > span { display: block; font-size: 13px; line-height: 1.5; color: var(--day-muted); }
-.day-omen > summary > .site-icon, .day-source > summary > .site-icon { display: none; }
+.day-omen > summary > .site-icon { display: none; }
 .day-omen ul { margin: 17px 0 0; padding-left: 22px; color: var(--day-muted); font-size: 16px; line-height: 1.75; }
 .day-omen li + li { margin-top: 5px; }
 .day-omen li::marker { color: var(--omen-color); font-size: 18px; }
-.day-source { --source-icon-size: 64px; --source-glyph-size: 34px; margin-top: 20px; padding: 20px; border-color: #eee5d5; }
-.day-source[open] { display: grid; grid-template-columns: minmax(0, .54fr) minmax(0, 1fr); gap: 28px; }
-.day-source > summary { display: flex; gap: 18px; align-items: center; align-self: start; cursor: default; }
-.day-source > summary > span:not(.day-medallion) { min-width: 0; }
-.day-source .day-medallion { width: var(--source-icon-size); height: var(--source-icon-size); background: linear-gradient(135deg, #ecd6aa, #f6e6c3); color: #80591c; }
-.day-detail .day-source .day-medallion .site-icon { width: var(--source-glyph-size); height: var(--source-glyph-size); }
-.day-source h2 { font-size: 28px; font-weight: 700; line-height: 1.4; margin-top: 3px; }
-.day-source-body { min-width: 0; border-left: 1px solid #e7dabc; padding-left: 28px; }
-.day-source-body p { color: var(--day-muted); font-size: 15px; line-height: 1.75; }
-.day-source-method { margin-top: 10px; }
-.day-source-method > summary { color: #a02a24; display: flex; gap: 10px; align-items: center; font-size: 14px; font-weight: 600; }
-.day-source-method > summary .site-icon { width: 16px; height: 16px; }
-.day-source-method[open] > summary .site-icon { transform: rotate(90deg); }
-.day-source-method p { margin-top: 10px; }
-.day-source-body .day-media-credit { margin-top: 10px; font-size: 11px; color: #746448; }
+.day-use-note { margin-top: 20px; padding-top: 16px; border-top: 1px solid #e7dabc; color: var(--day-muted); font-size: 14px; line-height: 1.75; }
+.day-media-credit { margin-top: 10px !important; font-size: 11px; color: #746448; }
 .day-media-credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .day-input-note { padding: 10px 14px; margin-bottom: 16px !important; color: #704d17; background: #fff0c9; border-radius: 6px; font-size: 14px; }
 @media (min-width: 761px) and (max-width: 1199px) {
@@ -132,8 +119,6 @@
   .day-omen h3 { font-size: 17px; }
   .day-omen > summary { gap: 10px; }
   .day-omen > summary > span > span { font-size: 12px; }
-  .day-source { --source-icon-size: 52px; --source-glyph-size: 29px; }
-  .day-source h2 { font-size: 22px; }
 }
 @media (min-width: 761px) and (max-width: 950px) {
   .day-primary-grid { grid-template-columns: 1fr; }
@@ -144,11 +129,8 @@
   .day-omen-grid { grid-template-columns: 1fr; gap: 8px; }
   .day-omen { padding: 10px 14px; border-top-width: 1px; }
   .day-omen > summary { cursor: pointer; }
-  .day-omen > summary > .site-icon, .day-source > summary > .site-icon { display: inline-grid; margin-left: auto; width: 20px; height: 20px; color: #916719; }
-  .day-omen[open] > summary > .site-icon, .day-source[open] > summary > .site-icon { transform: rotate(180deg); }
-  .day-source[open] { display: block; }
-  .day-source > summary { cursor: pointer; align-items: center; }
-  .day-source-body { border: 0; padding: 16px 0 0; }
+  .day-omen > summary > .site-icon { display: inline-grid; margin-left: auto; width: 20px; height: 20px; color: #916719; }
+  .day-omen[open] > summary > .site-icon { transform: rotate(180deg); }
 }
 @media (max-width: 760px) {
   .day-hero .page-banner__quote { display: none; }
@@ -160,6 +142,7 @@
   .day-nav :is(a, .day-nav-disabled) { min-height: 36px; padding: 6px; font-size: 12px; gap: 7px; }
   .day-nav .site-icon { width: 17px; height: 17px; }
   .day-content { padding: 10px 0 14px; }
+  .day-use-note { margin-top: 12px; padding-top: 12px; font-size: 12px; }
   .day-primary-grid { grid-template-columns: 1fr; gap: 10px; }
   .day-reading-panel, .day-wheel-panel { padding: 9px; border-color: #ebe4d6; }
   .day-panel-heading { gap: 9px; }
@@ -203,15 +186,9 @@
   .day-omen .day-medallion { width: 36px; height: 36px; }
   .day-omen h3 { font-size: 14px; line-height: 1.4; }
   .day-omen > summary > span > span { font-size: 11px; }
-  .day-omen > summary > .site-icon, .day-source > summary > .site-icon { display: inline-grid; width: 15px; height: 15px; color: #916719; margin-left: auto; }
-  .day-omen[open] > summary > .site-icon, .day-source[open] > summary > .site-icon { transform: rotate(180deg); }
+  .day-omen > summary > .site-icon { display: inline-grid; width: 15px; height: 15px; color: #916719; margin-left: auto; }
+  .day-omen[open] > summary > .site-icon { transform: rotate(180deg); }
   .day-omen ul { padding: 0 10px 0 25px; margin: 12px 0; font-size: 13px; line-height: 1.7; }
-  .day-source { --source-icon-size: 40px; --source-glyph-size: 25px; margin-top: 10px; padding: 12px; }
-  .day-source[open] { display: block; }
-  .day-source > summary { align-items: center; cursor: pointer; gap: 10px; }
-  .day-source h2 { font-size: 15px; line-height: 1.4; margin-top: 0; }
-  .day-source-body { padding: 12px 0 0; border: 0; }
-  .day-source-body p, .day-source-method > summary { font-size: 12px; }
 }
 @media (max-width: 359px) {
   .day-nav :is(a, .day-nav-disabled) { font-size: 11px; gap: 4px; }
@@ -228,5 +205,4 @@
   .day-wheel-layout { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 6px; }
   .day-wheel-explanation { padding: 8px; }
   .day-wheel-explanation blockquote { font-size: 11px; }
-  .day-source h2 { font-size: 14px; }
 }

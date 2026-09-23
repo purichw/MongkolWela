@@ -4,9 +4,9 @@ const imageUrl =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' viewBox='0 0 1600 1000'%3E%3Crect width='1600' height='1000' fill='%23ead6a7'/%3E%3Cpath d='M300 780h1000L800 180z' fill='%239c3026'/%3E%3C/svg%3E";
 
 const collections = [
-  { key: "popular", label: "สายไหว้พระ 9 วัด", name: "วัดระฆังโฆสิตาราม" },
-  { key: "mu", label: "สายมู", name: "วัดพระแก้ว" },
-  { key: "sacred", label: "วัดศักดิ์สิทธิ์", name: "วัดโสธรวราราม" },
+  { key: "popular", label: "วัดดังน่าไป", name: "วัดระฆังโฆสิตาราม" },
+  { key: "mu", label: "พิกัดสายมู", name: "วัดพระแก้ว" },
+  { key: "sacred", label: "วัดเด่นขอพร", name: "วัดโสธรวราราม" },
 ];
 
 const temples = collections.flatMap((collection) => {
@@ -86,7 +86,7 @@ test.describe("Temple Admin Portal", () => {
   });
 
   test("supports category navigation, live editing, search, and create", async ({ page }) => {
-    await expect(page.getByRole("tab", { name: "สายไหว้พระ 9 วัด 1", exact: true })).toHaveAttribute(
+    await expect(page.getByRole("tab", { name: "วัดดังน่าไป 1", exact: true })).toHaveAttribute(
       "aria-selected",
       "true",
     );
@@ -101,7 +101,7 @@ test.describe("Temple Admin Portal", () => {
     );
     await page.getByRole("button", { name: "บันทึก", exact: true }).click();
 
-    await page.getByRole("tab", { name: "วัดศักดิ์สิทธิ์ 50", exact: true }).click();
+    await page.getByRole("tab", { name: "วัดเด่นขอพร 50", exact: true }).click();
     await page.locator("[data-temple-search]").fill("โสธร");
     await expect(page.locator("[data-temple-row]")).toHaveCount(1);
     await page.locator('[data-edit-temple="sacred:001"]').click();
@@ -149,7 +149,7 @@ test.describe("Temple Admin Portal", () => {
 
   test("opens a row deep in the table without disturbing page scroll", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name.includes("mobile"), "desktop table scrolling is covered once");
-    await page.getByRole("tab", { name: "วัดศักดิ์สิทธิ์ 50", exact: true }).click();
+    await page.getByRole("tab", { name: "วัดเด่นขอพร 50", exact: true }).click();
     const item = page.locator('[data-temple-row="sacred:042"]');
     await item.scrollIntoViewIfNeeded();
     const before = await page.evaluate(() => window.scrollY);

@@ -1,5 +1,3 @@
-import { palmLines } from "./palmistry-data.js";
-
 const diagramNotes = {
   main: "เส้นหลักใช้เริ่มอ่านโครงเรื่องใหญ่ของชีวิต: หัวใจ สมอง และชีวิต",
   minor: "เส้นรองช่วยขยายบริบทเรื่องงาน ชื่อเสียง การสื่อสาร และความสัมพันธ์",
@@ -7,7 +5,6 @@ const diagramNotes = {
 };
 
 initPalmistryDiagram();
-renderLineGuide(document.querySelector("[data-palm-line-guide]"));
 
 function initPalmistryDiagram() {
   const diagram = document.querySelector("[data-palm-diagram]");
@@ -37,33 +34,4 @@ function initPalmistryDiagram() {
       if (mountLegend) mountLegend.hidden = view !== "mounts";
     });
   });
-}
-
-function renderLineGuide(container) {
-  if (!container) return;
-
-  container.innerHTML = palmLines
-    .map(
-      (line) => `
-        <article class="palm-guide-card" data-guide-line="${escapeAttribute(line.id)}">
-          <span>${escapeHtml(line.shortLabel)}</span>
-          <h3>${escapeHtml(line.label)}</h3>
-          <p>${escapeHtml(line.guide)}</p>
-        </article>
-      `,
-    )
-    .join("");
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-function escapeAttribute(value) {
-  return escapeHtml(value).replace(/`/g, "&#096;");
 }

@@ -59,6 +59,20 @@ Run `nfr:cms` after local registry changes. Verify published contracts with
 `cms:verify:production` or `smoke:production` after deployment. Schema versions
 describe data shape; they do not determine which document is newest.
 
+## Temple Collection Labels
+
+The collection display names are `วัดดังน่าไป` (`popular`), `วัดเด่นขอพร`
+(`sacred`), and `พิกัดสายมู` (`mu`). Routes, collection keys, temple IDs and
+original dataset category memberships are unchanged.
+
+The 2026-09-23 rename updates source copy and both build/development seeds.
+Production CMS publication is a separate step: read the latest Admin document
+and update only the three collection navigation labels, matching page labels,
+and Home collection image-field labels. Update the Home intro or page text
+patches only where they still use the old collection names. Preserve customized
+copy, links, visibility, order, assets and temple records; never publish a seed
+over the current document or hardcode labels over published CMS choices.
+
 ## Commerce And Merit
 
 Commerce and merit reservations use separate private tables, not CMS JSON.

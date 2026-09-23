@@ -171,6 +171,7 @@ function createMinorCards() {
         thumbImage: cardThumbImage(id),
         suit,
         rank,
+        element: suitInfo.element,
         theme,
         overview: overviewText,
         upright: `${overviewText} อ่านแบบไทยคือให้ดูสถานการณ์จริงตรงหน้าและถามว่าเราควรประคองพลังของ${suitInfo.label}อย่างไรให้พอดี`,

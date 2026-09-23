@@ -26,6 +26,22 @@ points. A different task layout must still sit on the same site frame.
 
 ## Usage
 
+### Tarot Family
+
+All six tarot draw modes use `tarot/TarotDraw.astro` and `scripts/tarot-draw.js`.
+Spread type/count/storage key remain page-owned; the shared controller preserves
+ordered selections, paging, keyboard focus, shuffle/cut and explicit submission.
+`scripts/tarot-view.js` shares card imagery, reading disclosures and single-card
+results while topic verdicts/monthly positions retain their domain owners.
+`tarot-experience.css` is loaded only for `/tarot/` and also aligns the meanings
+library/detail family. See `tarot-redesign.md` for preserved contracts and QA.
+
+The meanings sub-family has a route-local `tarot-library.css` layer and
+`tarot-library.js` controller for category/search/URL context. Its static detail
+template serves all 78 cards; native disclosures and metadata use existing
+content fields. Do not merge its browse/read behavior into `TarotDraw` or copy
+library-specific density back into draw/result screens.
+
 ### Choice Chips
 
 `ChoiceChip.astro` accepts `label`, `selected` and native button attributes
@@ -194,6 +210,11 @@ suite samples Calendar, Planner, registry, horoscope and commerce controls.
 header, footer, navigation, SEO or CMS runtime. `ToolsHero.astro` owns the tool
 title, breadcrumb, lead and optional quote. `tools.css` is loaded only on Tarot
 and the four horoscope tool routes, after existing route styles.
+
+`ToolsHero.ornamentSrc` optionally replaces its decorative bitmap; omitting it
+keeps the existing lotus asset. It does not change layout defaults or CMS data.
+Life Graph supplies its watercolor asset and scopes crop, type and responsive
+composition to `.life-graph-page`; other tool consumers are unchanged.
 
 Use `.tools-workspace` for an input rail with a result surface, `.tools-form` for
 the input surface, and `.tools-section` for unframed supporting content. Route

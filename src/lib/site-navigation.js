@@ -97,7 +97,7 @@ function templePanel(item, options) {
       if (group.items.length === 1 && group.items[0].href === "/temples/thailand/") {
         return link(group.items[0], { ...options, className: "mw-directory-link", symbol: "map-pin", description: "ค้นหาวัดทุกจังหวัด พร้อมข้อมูลการเดินทาง" });
       }
-      return `<section class="mw-temple-group"${key(`group-${group.id}`)}><div class="mw-group-heading">${icon("temple", options.assets)}<div><h3>${navEscape(group.label)}</h3><p>วัดดัง วัดศักดิ์สิทธิ์ และสถานที่มงคล</p></div></div><div class="mw-collection-links">${childrenMarkup(group.items, options)}</div></section>`;
+      return `<section class="mw-temple-group"${key(`group-${group.id}`)}><div class="mw-group-heading">${icon("temple", options.assets)}<div><h3>${navEscape(group.label)}</h3><p>วัดดังน่าไป วัดเด่นขอพร และพิกัดสายมู</p></div></div><div class="mw-collection-links">${childrenMarkup(group.items, options)}</div></section>`;
     }
     return link(group, options);
   }).join("");
