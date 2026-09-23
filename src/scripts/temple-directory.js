@@ -1,3 +1,4 @@
+import { applyImageFallback as setImageFallback } from "../lib/image-placeholder.js";
 import { renderIcon } from "../lib/ui-markup.js";
 import { initializePopularFilters, filterSnapshotKey } from "./popular-filters.js";
 
@@ -788,7 +789,6 @@ function initializePopularTempleGrid(grid) {
     const hasTempleImage = Boolean(item.hasTempleImage) && item.imageUrl && item.imageUrl !== placeholderSrc;
     const imageUrl = hasTempleImage ? String(item.imageUrl) : placeholderSrc;
     const mobileSrc = String(item.imageMobileUrl || imageUrl);
-    const confidence = item.confidence || { key: "check", label: "ควรตรวจสอบ" };
     const card = document.createElement("article");
     card.className = `popular-temple-card temple-collection-v2-card${hasTempleImage ? "" : " is-placeholder"}`;
     card.dataset.rank = String(item.rank || "");
@@ -819,11 +819,6 @@ function initializePopularTempleGrid(grid) {
           />
         </picture>
         <figcaption>${Number(item.rank || 0).toLocaleString("th-TH-u-nu-thai")}</figcaption>
-        <span class="temple-collection-v2-confidence is-${escapeHtml(confidence.key || "check")}">
-          <span aria-hidden="true"></span>
-          ${escapeHtml(confidence.label || "ควรตรวจสอบ")}
-        </span>
-        <span class="popular-temple-distance" data-popular-temple-distance hidden></span>
       </figure>
       <div class="popular-temple-card-body">
         <span>${escapeHtml(item.province || "")}</span>
@@ -880,22 +875,15 @@ function initializePopularTempleGrid(grid) {
 
     cards.forEach((card) => {
       const distance = getCardDistance(userLocation, card);
-      const distanceNode = card.querySelector("[data-popular-temple-distance]");
-      if (!Number.isFinite(distance) || !distanceNode) return;
+      if (!Number.isFinite(distance)) return;
 
       card.dataset.distanceKm = String(distance);
-      distanceNode.textContent = formatDistance(distance);
-      distanceNode.hidden = false;
     });
   }
 
   function clearCardDistances() {
     cards.forEach((card) => {
       delete card.dataset.distanceKm;
-      const distanceNode = card.querySelector("[data-popular-temple-distance]");
-      if (!distanceNode) return;
-      distanceNode.textContent = "";
-      distanceNode.hidden = true;
     });
   }
 
@@ -982,11 +970,7 @@ function initializePopularTempleGrid(grid) {
   }
 
   function applyImageFallback(image) {
-    const fallbackSrc = image.dataset.fallbackSrc || placeholderSrc;
-    if (!fallbackSrc || image.dataset.fallbackApplied === "true") return;
-
-    image.dataset.fallbackApplied = "true";
-    image.src = fallbackSrc;
+    setImageFallback(image);
     image.closest("[data-popular-temple-card]")?.classList.add("is-placeholder");
   }
 
@@ -1043,12 +1027,6 @@ function haversineDistance(fromLatitude, fromLongitude, toLatitude, toLongitude)
 
 function toRadians(value) {
   return (value * Math.PI) / 180;
-}
-
-function formatDistance(distanceKm) {
-  if (distanceKm < 1) return `${Math.round(distanceKm * 1000).toLocaleString("th-TH")} ม.`;
-  if (distanceKm < 10) return `${distanceKm.toLocaleString("th-TH", { maximumFractionDigits: 1 })} กม.`;
-  return `${Math.round(distanceKm).toLocaleString("th-TH")} กม.`;
 }
 
 async function fetchTempleThailandIndex() {

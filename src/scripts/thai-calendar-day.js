@@ -130,14 +130,6 @@ function initDayDetail() {
     detailRoot.querySelector(".day-wheel-layout").classList.toggle("is-expanded", expanded);
   });
   const hero = detailRoot.querySelector("[data-cms-media]");
-  const fallback = () => {
-    if (hero && !hero.src.endsWith(hero.dataset.fallbackSrc)) {
-      hero.removeAttribute("srcset");
-      hero.src = hero.dataset.fallbackSrc;
-    }
-  };
-  hero?.addEventListener("error", fallback);
-  if (hero?.complete && !hero.naturalWidth) fallback();
   const syncCredit = () => {
     const credit = detailRoot.querySelector("[data-day-media-credit]");
     credit.replaceChildren();

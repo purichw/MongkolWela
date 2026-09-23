@@ -1,5 +1,6 @@
 ---
 import { homeHeroAttributes } from "../lib/home-hero-media.js";
+import { sitePlaceholderImage, normalizePlaceholderImage } from "../lib/image-placeholder.js";
 
 export interface Props {
   mediaId: string;
@@ -11,9 +12,9 @@ export interface Props {
   fetchpriority?: "high" | "low" | "auto";
 }
 const { mediaId, image = {}, width, height, class: className, loading = "lazy", fetchpriority = "auto" } = Astro.props;
-const fallback = "/assets/images/temple-placeholder-auspicious.png";
+const fallback = sitePlaceholderImage;
 ---
-<img id={mediaId} class={className} src={image.src || fallback} alt={image.alt || ""}
+<img id={mediaId} class={className} src={normalizePlaceholderImage(image.src) || fallback} alt={image.src ? image.alt || "" : "ภาพประกอบแทนรูปที่ยังไม่มี"}
   width={width} height={height} loading={loading} fetchpriority={fetchpriority} decoding="async"
   style={{ objectPosition: image.position || "50% 50%" }} {...homeHeroAttributes(image)}
   data-cms-media data-home-media data-fallback-src={fallback} />

@@ -3,7 +3,7 @@ import { startContentRefresh } from "./content-refresh.js";
 import { ACTIVITY_TYPES, activityDateLabel, safeActivityUrl, safeActivityImageUrl } from "../lib/temple-activities.js";
 import { icon } from "../lib/place-detail-view.js";
 
-const ACTIVITY_PLACEHOLDER_IMAGE = "/assets/images/temple-placeholder-auspicious.png";
+import { sitePlaceholderImage, applyImageFallback } from "../lib/image-placeholder.js";
 const esc = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 
 document.querySelectorAll("[data-temple-activities]").forEach((root) => {
@@ -28,7 +28,7 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
     const registration = safeActivityUrl(event.registrationUrl);
     const image = safeActivityImageUrl(event.imageUrl);
     return `<article class="temple-activity" data-status="${esc(event.status)}" data-has-image="${Boolean(image)}">
-      <figure class="temple-activity-media"><img src="${esc(image || ACTIVITY_PLACEHOLDER_IMAGE)}" alt="${image ? esc(event.imageAlt || event.title) : ""}" width="600" height="240" loading="lazy" decoding="async" data-activity-image /></figure>
+      <figure class="temple-activity-media"><img src="${esc(image || sitePlaceholderImage)}" alt="${image ? esc(event.imageAlt || event.title) : "ภาพประกอบแทนรูปที่ยังไม่มี"}" width="600" height="240" loading="lazy" decoding="async" data-fallback-src="${sitePlaceholderImage}" data-activity-image /></figure>
       ${changed || event.past ? `<span class="temple-activity-status">${status}</span>` : ""}
       <div class="temple-activity-body">
         <h3 title="${esc(event.title)}">${esc(event.title)}</h3>
@@ -61,9 +61,7 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
     }
     result.querySelectorAll("[data-activity-image]").forEach(img => {
       const showPlaceholder = () => {
-        if (img.getAttribute("src") === ACTIVITY_PLACEHOLDER_IMAGE) return;
-        img.alt = "";
-        img.src = ACTIVITY_PLACEHOLDER_IMAGE;
+        applyImageFallback(img);
         img.closest("article").dataset.hasImage = "false";
       };
       img.addEventListener("error", showPlaceholder, { once: true });

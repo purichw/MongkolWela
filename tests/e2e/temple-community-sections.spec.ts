@@ -1,3 +1,4 @@
+import { sitePlaceholderImage } from "../../src/lib/image-placeholder.js";
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import fs from "node:fs/promises";
@@ -105,8 +106,8 @@ test("populated cards retain details, inventory, refresh, and donation destinati
   await expect(activities.locator('[data-has-image="true"]')).toHaveCount(2);
   await expect(activities.locator('[data-has-image="false"]')).toHaveCount(1);
   const placeholder = activities.locator('[data-has-image="false"] [data-activity-image]');
-  await expect(placeholder).toHaveAttribute("src", "/assets/images/temple-placeholder-auspicious.png");
-  await expect(placeholder).toHaveAttribute("alt", "");
+  await expect(placeholder).toHaveAttribute("src", sitePlaceholderImage);
+  await expect(placeholder).toHaveAttribute("alt", "ภาพประกอบแทนรูปที่ยังไม่มี");
   await expect(shop.locator(".temple-shop-product")).toHaveCount(4);
   await expect(shop.locator(".temple-shop-product").nth(3)).toContainText("สินค้าหมด");
   await expect(shop.locator(".temple-shop-action").first()).toHaveAttribute("href", "/shop/?product=qa-product-0");
@@ -153,8 +154,8 @@ test("populated cards retain details, inventory, refresh, and donation destinati
   const missingImage = activities.locator('[data-activity-details="qa-event-3"]').locator("xpath=../..");
   await missingImage.scrollIntoViewIfNeeded();
   await expect(missingImage).toHaveAttribute("data-has-image", "false");
-  await expect(missingImage.locator("[data-activity-image]")).toHaveAttribute("src", "/assets/images/temple-placeholder-auspicious.png");
-  await expect(missingImage.locator("[data-activity-image]")).toHaveAttribute("alt", "");
+  await expect(missingImage.locator("[data-activity-image]")).toHaveAttribute("src", sitePlaceholderImage);
+  await expect(missingImage.locator("[data-activity-image]")).toHaveAttribute("alt", "ภาพประกอบแทนรูปที่ยังไม่มี");
   await expect.poll(() => missingImage.locator("[data-activity-image]").evaluate(image => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   await expectCompactCards();
   const cancelled = activities.locator('[data-status="cancelled"]');

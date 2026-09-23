@@ -1,4 +1,5 @@
 ---
+import { sitePlaceholderImage } from "../../../lib/image-placeholder.js";
 import ToolsLayout from "../../../layouts/ToolsLayout.astro";
 import ToolsHero from "../../../components/ToolsHero.astro";
 import { renderIcon } from "../../../lib/ui-markup.js";
@@ -72,7 +73,7 @@ const groups = tarotMeaningGroups.map(group => ({ ...group,
           <div class="tarot-meaning-grid">
             {group.cards.map((card, index) => <a class="tarot-meaning-card" href={`/tarot/meanings/${card.slug}/`}
               data-meaning-search={[card.thName,card.name,...card.keywords,card.theme].join(" ")}>
-              <span class="tarot-meaning-image"><img src={card.thumbImage} alt={`${card.thName} ${card.name}`} width="170" height="280"
+              <span class="tarot-meaning-image"><img src={card.thumbImage || sitePlaceholderImage} data-fallback-src={sitePlaceholderImage} alt={`${card.thName} ${card.name}`} width="170" height="280"
                 loading={group.id === "major" && index < 6 ? "eager" : "lazy"} decoding="async" /></span>
               <strong>{card.name}</strong><span>{"number" in card && card.number != null ? `${card.number} ` : ""}{card.thName}</span>
             </a>)}

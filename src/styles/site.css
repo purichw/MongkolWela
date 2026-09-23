@@ -1,3 +1,13 @@
+/* Keep missing-image artwork muted and edge-to-edge, with its camera centered. */
+body img:is([src*="/site-placeholder-camera-20260923.webp"], [src*="/site-placeholder-20260923.webp"], [src*="/temple-placeholder-auspicious.png"]) {
+  object-fit: cover !important;
+  object-position: center !important;
+  background: #fff;
+  filter: grayscale(1) opacity(0.65) !important;
+  transform: none !important;
+  mix-blend-mode: normal !important;
+}
+
 body select:not([multiple]),
 .admin-page select:not([multiple]) {
   padding-right: var(--ui-select-padding-end, 44px);

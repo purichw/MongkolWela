@@ -1,44 +1,83 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SiteIcon from "./icons/SiteIcon.astro";
 import { iconAttributes } from "../lib/ui-markup.js";
+import { loginEntryHref } from "../config/auth-entry-points";
 
 interface Props {
-  status: 403 | 404 | 500;
+  status: 401 | 403 | 404 | 429 | 500 | 502 | 503 | 504;
 }
 
+type Action = { label: string; href?: string; icon?: string; retry?: boolean };
+
 const { status } = Astro.props;
-const pages = {
-  404: {
-    title: "ไม่พบหน้านี้ในมงคลเวลาแล้ว",
-    heading: ["ไม่พบหน้านี้", "ในมงคลเวลาแล้ว"],
+const home: Action = { label: "กลับหน้าหลัก", href: "/" };
+const homePrimary: Action = { ...home, icon: "house" };
+const retry: Action = { label: "ลองใหม่อีกครั้ง", icon: "rotate-ccw", retry: true };
+const pages: Record<Props["status"], { title: string; description: string[]; actions: Action[] }> = {
+  401: {
+    title: "กรุณาเข้าสู่ระบบเพื่อใช้งานหน้านี้",
     description: [
-      "อาจเป็นไปได้ว่าหน้านี้ถูกย้าย เปลี่ยนแปลง หรืออาจไม่มีอยู่อีกต่อไป",
-      "แต่ยังมีเส้นทางดี ๆ รอคุณอยู่ในมงคลเวลา",
+      "หน้านี้สำหรับผู้ใช้งานที่เข้าสู่ระบบแล้วเท่านั้น",
+      "กรุณาเข้าสู่ระบบก่อน เพื่อดำเนินการต่อ",
     ],
-    quote: ["แม้จะไม่พบหน้านี้ แต่ทุกการค้นหายังคงมีความหมายเสมอ"],
-    aside: ["ทุก", "เส้นทาง", "ยังนำไปสู่", "สิ่งดีงามได้เสมอ"],
-  },
-  500: {
-    title: "ขออภัย ระบบขัดข้องชั่วคราว",
-    heading: ["ขออภัย", "ระบบขัดข้องชั่วคราว"],
-    description: [
-      "ขณะนี้ระบบของมงคลเวลามีปัญหาชั่วคราว",
-      "กรุณาลองใหม่อีกครั้งในภายหลัง หรือเลือกไปยังส่วนอื่นของเว็บไซต์ได้ตามปกติ",
-    ],
-    quote: ["แม้จะมีอุปสรรคในบางเวลา", "แต่ทุกการรอคอย นำไปสู่สิ่งที่ดีกว่าเสมอ"],
-    aside: ["ทุก", "เส้นทาง", "ยังนำไปสู่", "สิ่งดีงามได้เสมอ"],
+    actions: [{ label: "เข้าสู่ระบบ", href: loginEntryHref, icon: "user-round" }, home],
   },
   403: {
-    title: "หน้านี้ต้องมีสิทธิ์เข้าถึง",
-    heading: ["หน้านี้ต้องมีสิทธิ์เข้าถึง"],
+    title: "คุณไม่มีสิทธิ์เข้าถึงหน้านี้",
     description: [
-      "คุณอาจยังไม่มีสิทธิ์เข้าถึงหน้านี้ อาจต้องเข้าสู่ระบบ",
-      "หรือมีสิทธิ์การใช้งานเฉพาะสำหรับบางส่วนของเว็บไซต์",
-      "กรุณากลับหน้าแรก หรือเลือกเมนูอื่นเพื่อใช้งานต่อ",
+      "หน้านี้ถูกจำกัดการเข้าถึงสำหรับผู้ที่มีสิทธิ์เท่านั้น",
+      "กรุณาตรวจสอบสิทธิ์การใช้งานของคุณ",
+      "หรือติดต่อทีมงานหากคุณคิดว่านี่เป็นความผิดพลาด",
     ],
-    quote: ["บางสิ่งอาจยังไม่ถึงเวลา", "แต่เส้นทางแห่งสิ่งดี ๆ ยังรอคุณอยู่เสมอ"],
-    aside: ["ทุก", "เส้นทาง", "มีจังหวะที่เหมาะสม", "เสมอ"],
+    actions: [homePrimary, { label: "ติดต่อทีมงาน", href: "/#consult", icon: "headset" }],
+  },
+  404: {
+    title: "ไม่พบหน้านี้ในมงคลเวลาแล้ว",
+    description: [
+      "หน้าที่คุณกำลังมองหาอาจถูกย้าย ลบ หรือไม่มีอยู่",
+      "ลองกลับไปหน้าแรก หรือค้นหาเส้นทางที่คุณสนใจอีกครั้ง",
+    ],
+    actions: [{ label: "ค้นหาวัดหรือสถานที่", href: "/#site-search", icon: "search" }, home],
+  },
+  429: {
+    title: "กรุณารอสักครู่ แล้วลองอีกครั้ง",
+    description: [
+      "มีการส่งคำขอจำนวนมากเกินไปในช่วงเวลาสั้น ๆ",
+      "เพื่อความเสถียรของระบบ กรุณารอสักครู่แล้วลองใหม่อีกครั้ง",
+    ],
+    actions: [homePrimary, { ...retry, icon: undefined }],
+  },
+  500: {
+    title: "เกิดข้อผิดพลาดภายในระบบ",
+    description: [
+      "ขออภัยในความไม่สะดวก ขณะนี้ระบบของเราพบปัญหา",
+      "บางอย่างชั่วคราว กรุณาลองใหม่อีกครั้งในภายหลัง",
+    ],
+    actions: [retry, home],
+  },
+  502: {
+    title: "เกิดปัญหาระหว่างเชื่อมต่อบริการ",
+    description: [
+      "ระบบได้รับการตอบกลับที่ไม่ถูกต้องจากเซิร์ฟเวอร์",
+      "ของบริการปลายทาง กรุณาลองใหม่อีกครั้ง",
+    ],
+    actions: [retry, home],
+  },
+  503: {
+    title: "ระบบยังไม่พร้อมให้บริการชั่วคราว",
+    description: [
+      "ขณะนี้ระบบไม่สามารถให้บริการได้ชั่วคราว",
+      "กรุณารอสักครู่ แล้วลองใหม่อีกครั้งในภายหลัง",
+    ],
+    actions: [retry, home],
+  },
+  504: {
+    title: "ระบบตอบกลับไม่ทันเวลา",
+    description: [
+      "บริการจากเซิร์ฟเวอร์ภายนอกใช้เวลาตอบกลับนานเกินไป",
+      "กรุณาลองใหม่อีกครั้งในภายหลัง",
+    ],
+    actions: [retry, home],
   },
 };
 const content = pages[status];
@@ -49,70 +88,53 @@ const content = pages[status];
   description={content.description.join(" ")}
   page={`error-${status}`}
   bodyClass="error-page"
-  canonicalPath={status === 403 ? "/403/" : `/${status}.html`}
+  canonicalPath={status === 404 || status === 500 ? `/${status}.html` : `/${status}/`}
   robots="noindex, follow"
   analytics={false}
 >
   <main class="error-screen" aria-labelledby="error-title" data-error-status={status}>
-    <img class="error-screen__landscape" src="/assets/images/error-temple-landscape.webp" width="1774" height="887" alt="" aria-hidden="true" decoding="async" />
     <div class="error-screen__inner">
+      <div class="error-screen__artwork" aria-hidden="true">
+        <img
+          src={`/assets/images/errors/error-${status}.webp`}
+          srcset={`/assets/images/errors/error-${status}-600.webp 600w, /assets/images/errors/error-${status}.webp 1200w`}
+          sizes="(max-width: 720px) 370px, (max-width: 1280px) 50vw, 621px"
+          width="1200"
+          height="900"
+          alt=""
+          decoding="async"
+          fetchpriority="high"
+        />
+      </div>
       <div class="error-screen__content">
-        <p class="error-screen__code" role="img" aria-label={`รหัสข้อผิดพลาด ${status}`}>
-          <img class="error-screen__cloud error-screen__cloud--left" src="/assets/images/error-cloud-reference.webp" width="400" height="222" alt="" aria-hidden="true" />
-          <span class="error-screen__digits" aria-hidden="true">
-            {String(status).split("").map((digit, index) => (
-              <span class="error-screen__digit">
-                <span class="error-screen__number">{digit}</span>
-                {index === 1 && <img class="error-screen__zero-lotus" src="/assets/images/error-lotus-layered.webp" width="192" height="192" alt="" />}
-              </span>
-            ))}
-          </span>
-          <img class="error-screen__cloud error-screen__cloud--right" src="/assets/images/error-cloud-reference.webp" width="400" height="222" alt="" aria-hidden="true" />
-        </p>
-
-        <h1 id="error-title">{content.heading.map((line, index) => <span>{index > 0 && status === 500 ? " " : ""}{line}</span>)}</h1>
+        <p class="error-screen__code"><span class="sr-only">รหัสข้อผิดพลาด </span>{status}</p>
+        <h1 id="error-title">{content.title}</h1>
         <p class="error-screen__description">
           {content.description.map(line => <span>{line}</span>)}
         </p>
-
-        <nav class="error-screen__actions" aria-label="ไปยังส่วนอื่นของมงคลเวลา">
-          <a class="error-screen__action error-screen__action--primary" href="/">
-            <span {...iconAttributes("house")}></span>กลับหน้าแรก
-          </a>
-          {status === 500 ? <>
-            <button class="error-screen__action" type="button" data-error-retry hidden>
-              <span {...iconAttributes("rotate-ccw")}></span>ลองใหม่อีกครั้ง
-            </button>
-            <noscript>
-              <a class="error-screen__action" href="">
-                <span {...iconAttributes("rotate-ccw")}></span>ลองใหม่อีกครั้ง
+        <nav class="error-screen__actions" aria-label="ดำเนินการต่อ">
+          {content.actions.map((action, index) => {
+            const className = `error-screen__action${index === 0 ? " error-screen__action--primary" : ""}`;
+            return action.retry ? <>
+              <button class={className} type="button" data-error-retry hidden>
+                {action.icon && <span {...iconAttributes(action.icon)}></span>}{action.label}
+              </button>
+              <noscript>
+                <a class={className} href="">
+                  {action.icon && <span {...iconAttributes(action.icon)}></span>}{action.label}
+                </a>
+              </noscript>
+            </> : (
+              <a class={className} href={action.href}>
+                {action.icon && <span {...iconAttributes(action.icon)}></span>}{action.label}
               </a>
-            </noscript>
-          </> : (
-            <a class="error-screen__action" href="/temples/thailand/">
-              <SiteIcon name="stupa" />วัดทั่วประเทศไทย
-            </a>
-          )}
-          {status === 403 ? (
-            <a class="error-screen__action" href="/#consult">
-              <span {...iconAttributes("phone")}></span>ติดต่อมงคลเวลา
-            </a>
-          ) : (
-            <a class="error-screen__action" href="/calendar/">
-              <span {...iconAttributes("calendar-days")}></span>ดูปฏิทินไทย
-            </a>
-          )}
+            );
+          })}
         </nav>
-
-        <div class="error-screen__divider" aria-hidden="true"><img src="/assets/images/error-lotus-layered.webp" width="192" height="192" alt="" /></div>
-        <blockquote class="error-screen__quote">
-          {content.quote.map(line => <span>{line}</span>)}
-        </blockquote>
+        <a class="error-screen__back" href="/" data-error-back>
+          <span {...iconAttributes("arrow-left")}></span>กลับไปหน้าก่อนหน้า
+        </a>
       </div>
-
-      <p class="error-screen__aside" aria-hidden="true">
-        {content.aside.map(line => <span>{line}</span>)}
-      </p>
     </div>
   </main>
 </BaseLayout>
@@ -123,4 +145,15 @@ const content = pages[status];
     retry.hidden = false;
     retry.addEventListener("click", () => window.location.reload());
   }
+
+  const back = document.querySelector<HTMLAnchorElement>("[data-error-back]");
+  back?.addEventListener("click", (event) => {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    // Direct visits and external referrers recover to Home instead of leaving the site.
+    const previous = document.referrer ? new URL(document.referrer) : null;
+    if (window.history.length > 1 && previous?.origin === window.location.origin && previous.href !== window.location.href) {
+      event.preventDefault();
+      window.history.back();
+    }
+  });
 </script>

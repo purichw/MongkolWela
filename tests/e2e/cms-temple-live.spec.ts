@@ -1,3 +1,4 @@
+import { sitePlaceholderImage } from "../../src/lib/image-placeholder.js";
 import { expect, test } from "@playwright/test";
 import { watArunPopularRoute } from "../../src/data/nfr-key-routes.js";
 
@@ -8,7 +9,7 @@ test("published image clears and deleted places override built pages", async ({ 
   await page.route("**/api/admin/content?*", (route) => route.fulfill({ json: { ok: true, content } }));
   await page.goto(watArunPopularRoute);
   await expect(page.locator("#temple-detail-title")).toHaveText(record.fields.name);
-  await expect(page.locator(".temple-detail-hero__media img")).toHaveAttribute("src", /temple-placeholder-auspicious\.png/);
+  await expect(page.locator(".temple-detail-hero__media img")).toHaveAttribute("src", sitePlaceholderImage);
   await expect(page.locator(".temple-detail-hero__media img")).toHaveAttribute("alt", "");
   record.enabled = false;
   record.status = "deleted";

@@ -39,12 +39,6 @@ function trackImageErrors() {
     const image = event.target;
     if (!(image instanceof HTMLImageElement)) return;
 
-    const fallbackSrc = image.dataset.fallbackSrc;
-    if (fallbackSrc && image.dataset.fallbackApplied !== "true") {
-      image.dataset.fallbackApplied = "true";
-      image.src = fallbackSrc;
-    }
-
     sendEvent("image_error", {
       path: window.location.pathname,
       src: image.currentSrc || image.src,

@@ -1,3 +1,4 @@
+import { sitePlaceholderImage } from "../../src/lib/image-placeholder.js";
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { chooseOption } from "./select-helpers";
@@ -229,7 +230,7 @@ test("CMS calendar media survive view changes and the shared footer renders on b
   await expect(page.locator('#calendar-guide-image')).toHaveCSS('object-position', '60% 40%');
   await page.route('**/assets/images/calendar-test-unavailable.webp', route => route.fulfill({ status: 404, body: '' }));
   await page.locator('#calendar-hero-image').evaluate(image => image.setAttribute('src', '/assets/images/calendar-test-unavailable.webp'));
-  await expect(page.locator('#calendar-hero-image')).toHaveAttribute('src', '/assets/images/temple-placeholder-auspicious.png');
+  await expect(page.locator('#calendar-hero-image')).toHaveAttribute('src', sitePlaceholderImage);
   for (const route of ['/calendar/', '/']) {
     await page.goto(route);
     await expect(page.locator('.site-footer--home-v2')).toHaveCSS('background-color', 'rgb(26, 16, 11)');

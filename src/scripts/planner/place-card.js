@@ -1,7 +1,8 @@
+import { sitePlaceholderImage } from "../../lib/image-placeholder.js";
 import { renderIcon } from "../../lib/ui-markup.js";
 import { escapeHtml } from "./format.js";
 
-const placeholder = "/assets/images/temple-placeholder-auspicious.png";
+const placeholder = sitePlaceholderImage;
 const blessingLabels = {
   "ความสำเร็จ/ก้าวหน้า": "ก้าวหน้า", "แคล้วคลาด/คุ้มครอง": "คุ้มครอง",
   "ความรัก/คู่ครอง": "ความรัก", "สติปัญญา/การเรียน": "ปัญญา",
@@ -20,7 +21,7 @@ export function renderPlannerPlaceCard(item, { selected = false, disabled = fals
   return `<article class="planner-place-card ${selected ? "is-selected" : ""}" data-planner-place-card="${id}">
     <figure class="${noImage ? "is-placeholder" : ""}">
       <picture>${item.imageMobileUrl && !noImage ? '<source media="(max-width: 599px)" srcset="' + escapeHtml(item.imageMobileUrl) + '">' : ""}
-      <img width="320" height="200" src="${escapeHtml(image)}" alt="${noImage ? "ยังไม่มีภาพสถานที่" : escapeHtml(item.imageAlt || item.name)}" loading="lazy" decoding="async"></picture>
+      <img width="320" height="200" src="${escapeHtml(image)}" alt="${noImage ? "ยังไม่มีภาพสถานที่" : escapeHtml(item.imageAlt || item.name)}" loading="lazy" decoding="async" data-fallback-src="${sitePlaceholderImage}"></picture>
       <span class="planner-place-card__area">${province}</span>
       <span class="planner-place-card__missing">ยังไม่มีภาพสถานที่</span>
     </figure>

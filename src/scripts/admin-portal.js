@@ -1,3 +1,4 @@
+import { applyImageFallback } from "../lib/image-placeholder.js";
 import { createAdminPublishing } from "./admin/publishing.js";
 import { createActivityEditor } from "./admin/activities.js";
 import { createAdminMedia } from "./admin/media.js";
@@ -824,6 +825,10 @@ function renderPatchEditor(patch, index) {
 function handleAdminImageError(event) {
   const image = event.target.closest?.("[data-admin-temple-image]");
   if (!image) return;
+  if (image.matches("[data-fallback-src]")) {
+    applyImageFallback(image);
+    return;
+  }
   const overview = image.closest(".mw-overview-thumb");
   if (overview) {
     overview.innerHTML = icon("component");

@@ -11,7 +11,8 @@ points. A different task layout must still sit on the same site frame.
 | --- | --- | --- |
 | `tokens.css` page tokens | 1220px maximum, 32/20/12/8px responsive gutters; 56/44/32/30px page-title scale; 64/52/36/32px editorial display role | Public content/footer, Home, Calendar/Day, planner, temple hub/collections/directory/details, tarot and horoscope tools, shop/merit |
 | `Header.astro`, `Footer.astro` | One public shell; Footer keeps only the approved ivory Day variant and contextual links | All public routes through `BaseLayout.astro`; admin/seller workspaces remain separate |
-| `ErrorPage.astro`, `error-pages.css` | Shared status artwork, copy, recovery actions and responsive composition inside the existing public shell | 404, 500 and 403 views; see `docs/error-pages-redesign.md` for static-hosting boundaries |
+| `ErrorPage.astro`, `error-pages.css` | Shared status illustration, copy, recovery actions and responsive composition inside the existing public shell | 401, 403, 404, 429, 500, 502, 503 and 504; see `docs/error-pages-redesign.md` for static-hosting boundaries |
+| `auth-entry-points.ts`, `login.astro` | Role-neutral login entry rendering configured real portal destinations; authentication remains portal-owned | 401 recovery and future role entry points |
 | `Topbar.astro`, `lib/site-navigation.js`, `scripts/navigation.js`, `header.css` | One published navigation model for SSR/CMS; split links/disclosures, opaque panels, compact dialog drawer and intrinsic fit guard | Every shared Header consumer |
 | `PageBanner.astro`, `page-banner.css` | Shared full-width image layer, shade, motifs, breadcrumb/copy scale, quote and content alignment | Calendar, Day, temple hub, three temple collections, planner and Thailand directory via `TempleSearchHero` |
 | `scripts/planner/place-card.js` | One escaped, semantic place-selection renderer for desktop tiles and mobile rows | Planner list in picker-only and combined views |
@@ -259,6 +260,38 @@ flow. Keep admin/seller widths, full-screen maps, reading-column constraints and
 the Home composition separate unless a new request changes those contracts.
 
 ## Regression Gate
+
+### Missing Content Images
+
+`src/lib/image-placeholder.js` owns `sitePlaceholderImage` and the guarded
+responsive-image fallback. `src/scripts/image-fallback.js` initializes it from
+the shared site entry point for `img[data-fallback-src]`, including dynamically
+inserted media and later CMS updates. Failed `picture/source` and `img/srcset`
+candidates are cleared before the replacement is loaded; the same failed
+placeholder is not requested repeatedly.
+
+The user-supplied Thai temple illustration is served as
+`/assets/images/site-placeholder-camera-20260923.webp` (1536 x 980).
+Its source is the attachment `codex-clipboard-75cf6472-f408-4aec-a24d-4550b35d8014.png`,
+provided on 2026-09-23. The built-in image editor removed both text lines,
+centered the camera, and extended the illustration to all edges while retaining
+the supplied style and scenery. The export trims 44 bottom pixels to center
+the camera exactly. No stock imagery was used. The versioned URL avoids the
+existing immutable asset cache. Legacy CMS references to
+`temple-placeholder-auspicious.png` and `site-placeholder-20260923.webp`
+normalize to the new asset; both files also contain the new artwork for older consumers.
+
+Content slots retain their existing dimensions and use `cover` for the
+placeholder, matching real-image crops, with the camera centered in every slot.
+The artwork has no baked-in text, white margin, or rounded border. The shared image rule
+grays out placeholders with `grayscale(1) opacity(0.65)`; real photos keep their
+existing colors and crops. Consumers include CMS/Home/calendar media, temple collections,
+details/maps/planner, activities, products, tarot/palm reference images, and
+admin list thumbnails. Logos, decorative icons, map tiles, empty upload slots,
+and upload validation previews retain their own behavior.
+
+Targeted proof: `tests/e2e/image-placeholders.spec.ts`. This change does not
+alter CMS content, stored product/temple data, uploads, or server permissions.
 
 Acceptance: no geometry/typography/color drift, working select change/focus,
 working travel filter/disclosure, no runtime errors or horizontal overflow.

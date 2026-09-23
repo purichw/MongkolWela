@@ -1,4 +1,5 @@
 ---
+import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 interface Props {
   desktopSrc: string;
   mobileSrc?: string;
@@ -16,15 +17,15 @@ const {
   loading = "lazy",
   decoding = "async",
   fetchpriority,
-  fallbackSrc,
+  fallbackSrc = sitePlaceholderImage,
 } = Astro.props as Props;
 ---
 
 <picture class="temple-responsive-picture">
   {mobileSrc && mobileSrc !== desktopSrc && <source media="(max-width: 767px)" srcset={mobileSrc} data-temple-mobile-source />}
   <img
-    src={desktopSrc}
-    alt={alt}
+    src={desktopSrc || fallbackSrc}
+    alt={desktopSrc && desktopSrc !== fallbackSrc ? alt : "ภาพประกอบแทนรูปที่ยังไม่มี"}
     loading={loading}
     decoding={decoding}
     fetchpriority={fetchpriority}

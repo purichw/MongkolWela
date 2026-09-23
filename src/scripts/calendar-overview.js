@@ -4,13 +4,6 @@ import { syncPublicSelects } from "./public-select.js";
 import { calendarUrl, createCalendarStore, eventTypes, getImportantDays, getPeriodSummary, monthShortNames, readCalendarState, shiftMonth } from "./calendar-view-model.js";
 
 export function mountCalendar(root) {
-  const mediaFallback = image => {
-    if (!(image instanceof HTMLImageElement) || !image.matches('[data-cms-media]')) return;
-    const fallback = image.dataset.fallbackSrc;
-    if (fallback && image.getAttribute('src') !== fallback) { image.removeAttribute('srcset'); image.src = fallback; }
-  };
-  root.addEventListener('error', event => mediaFallback(event.target), true);
-  root.querySelectorAll('[data-cms-media]').forEach(image => { if (image.complete && !image.naturalWidth) mediaFallback(image); });
   const yearSelect = root.querySelector("[data-calendar-year]");
   const summary = root.querySelector("[data-calendar-summary]");
   const workspace = root.querySelector("[data-calendar-workspace]");

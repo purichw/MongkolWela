@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { authEntryPoints, loginEntryHref } from "../config/auth-entry-points";
+import { iconAttributes } from "../lib/ui-markup.js";
+---
+
+<BaseLayout title="เข้าสู่ระบบ | มงคลเวลา" page="login" canonicalPath={loginEntryHref} robots="noindex, follow" analytics={false}>
+  <main class="login-entry" aria-labelledby="login-title">
+    <div class="login-entry__inner">
+      <span {...iconAttributes("user-round", "login-entry__mark")}></span>
+      <h1 id="login-title">เข้าสู่ระบบ</h1>
+      <nav aria-label="ช่องทางเข้าสู่ระบบ" class="login-entry__destinations">
+        {authEntryPoints.map(entry => (
+          <a href={entry.href} data-login-entry={entry.id}>
+            <span {...iconAttributes(entry.icon)}></span>
+            <span>{entry.label}</span>
+            <span {...iconAttributes("arrow-right")}></span>
+          </a>
+        ))}
+      </nav>
+      <a href="/" class="login-entry__home">กลับหน้าหลัก</a>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .login-entry { padding: 64px 20px; background: #fcf9f1; text-align: center; font-family: var(--font-thai); }
+  .login-entry__inner { max-width: 440px; margin: 0 auto; }
+  .login-entry__mark { display: inline-block; width: 40px; height: 40px; color: #89151c; }
+  h1 { margin: 12px 0 28px; font: 700 32px/1.4 var(--font-thai); letter-spacing: 0; }
+  .login-entry__destinations { display: grid; gap: 12px; }
+  .login-entry__destinations a { display: grid; grid-template-columns: 24px 1fr 24px; align-items: center; gap: 16px; min-height: 64px; padding: 16px 20px; border: 1px solid #caa17b; border-radius: 8px; color: var(--ink); background: #fffdf8; font-weight: 600; text-decoration: none; text-align: left; }
+  .login-entry__destinations .ui-icon-mask { width: 24px; height: 24px; color: var(--jade-dark); }
+  .login-entry__destinations a:hover { background: #f4ebdc; }
+  .login-entry a:focus-visible { outline: 3px solid var(--jade); outline-offset: 4px; }
+  .login-entry__home { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 20px; color: #584733; }
+  @media (max-width: 720px) { .login-entry { padding-block: 40px; } }
+</style>

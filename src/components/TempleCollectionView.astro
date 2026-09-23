@@ -23,9 +23,6 @@ type TempleCard = {
   objectHero?: string;
   latitude?: number;
   longitude?: number;
-  travelDetail?: {
-    confidence?: string;
-  };
 };
 
 type CollectionMeta = {
@@ -100,15 +97,6 @@ const splitTags = (value?: string) =>
     .split(";")
     .map((item) => item.trim())
     .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
-const confidenceFor = (temple: TempleCard, hasTempleImage: boolean) => {
-  const value = String(temple.travelDetail?.confidence || "").toLowerCase();
-  if (value === "high") return { key: "high", label: "มั่นใจสูง" };
-  if (value === "medium") return { key: "medium", label: "ปานกลาง" };
-  if (Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude)) && hasTempleImage) {
-    return { key: "medium", label: "ปานกลาง" };
-  }
-  return { key: "check", label: "ควรตรวจสอบ" };
-};
 const plannerHrefFor = (temple: TempleCard) =>
   `/temples/planner/?start=${encodeURIComponent(temple.name)}&province=${encodeURIComponent(temple.province)}`;
 const collectionDataSrc = `/assets/data/temple-collections/${collection}.json`;
@@ -277,7 +265,6 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
           const imageUrl = hasTempleImage ? String(temple.imageUrl) : templePlaceholderImage;
           const imageAlt = temple.imageAlt || `${temple.name} ${temple.province}`;
           const intent = splitTags(temple.blessings)[0] || splitTags(temple.objectHero)[0] || temple.placeType || "สิริมงคล";
-          const confidence = confidenceFor(temple, hasTempleImage);
           const detailHref = getTempleDetailUrl(collection, temple);
 
           return (
@@ -307,11 +294,6 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
                   fallbackSrc={templePlaceholderImage}
                 />
                 <figcaption>{thaiNumber(temple.rank)}</figcaption>
-                <span class={`temple-collection-v2-confidence is-${confidence.key}`}>
-                  <span aria-hidden="true"></span>
-                  {confidence.label}
-                </span>
-                <span class="popular-temple-distance" data-popular-temple-distance hidden></span>
               </figure>
               <div class="popular-temple-card-body">
                 <span>{temple.province}</span>
@@ -336,13 +318,6 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
       <button class="popular-temple-load-more" type="button" data-popular-temple-more hidden>
         แสดงเพิ่มเติม
       </button>
-
-      <div class="temple-collection-v2-legend" aria-label="คำอธิบายระดับข้อมูล">
-        <span><i class="is-high"></i> ข้อมูลมั่นใจสูง</span>
-        <span><i class="is-medium"></i> ปานกลาง</span>
-        <span><i class="is-check"></i> ควรตรวจสอบก่อนไป</span>
-        <span>เลือกสถานที่แล้วใช้ “วางแผนเส้นทาง” เพื่อจัดลำดับการเดินทาง</span>
-      </div>
 
       <aside class="temple-collection-v2-planner" aria-label="วางแผนเส้นทางจากสถานที่ที่เลือก">
         <div>

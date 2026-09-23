@@ -1,3 +1,4 @@
+import { sitePlaceholderImage } from "../../src/lib/image-placeholder.js";
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 const content = JSON.parse(readFileSync(new URL("../../public/admin/content/live.json", import.meta.url), "utf8"));
@@ -111,7 +112,7 @@ test("published CMS media wins and an unavailable image falls back without block
   patch.src = "/unavailable-day-image.webp";
   await page.route("**/unavailable-day-image.webp", route => route.fulfill({ status: 404 }));
   await page.reload();
-  await expect(hero).toHaveAttribute("src", "/assets/images/temple-placeholder-auspicious.png");
+  await expect(hero).toHaveAttribute("src", sitePlaceholderImage);
   await expect(page.locator(root)).toHaveAttribute("data-state", "ready");
   await expect(page.locator("[data-day-next]")).toBeVisible();
   await expect(page.locator("[data-day-media-credit]")).toBeHidden();

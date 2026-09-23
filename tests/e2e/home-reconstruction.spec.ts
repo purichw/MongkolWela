@@ -1,3 +1,4 @@
+import { sitePlaceholderImage } from "../../src/lib/image-placeholder.js";
 import { expect, test, type Page } from "@playwright/test";
 import fs from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
@@ -464,12 +465,12 @@ test("image failures preserve fixed media geometry and a readable hero", async (
     e.removeAttribute("srcset");
     e.src = "/missing-home-qa-image.jpg";
   });
-  await expect(image).toHaveAttribute("src", "/assets/images/temple-placeholder-auspicious.png");
+  await expect(image).toHaveAttribute("src", sitePlaceholderImage);
   await expect(image).not.toHaveAttribute("srcset");
   const after = await page.locator(".home-intent-media").first().boundingBox();
   expect(after!.height).toBe(before!.height);
   await page.locator(".hero-slide img").first().evaluate((e: HTMLImageElement) => { e.src = "/missing-hero-qa.jpg"; });
-  await expect(page.locator(".hero-slide img").first()).toHaveClass(/home-media-failed/);
+  await expect(page.locator(".hero-slide img").first()).toHaveAttribute("src", sitePlaceholderImage);
   await expect(page.locator("#hero-title")).toBeVisible();
   await expect(page.locator("#site-search")).toBeVisible();
 });

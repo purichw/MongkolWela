@@ -1,0 +1,71 @@
+{
+  "tool": "built-in image_gen",
+  "promptPrefix": "Use case: illustration-story. Create one standalone production website illustration asset, not a webpage or mockup. The attached screenshot is the visual reference: reproduce ONLY the large illustration at the LEFT of its DESKTOP view. Match its hand-painted watercolor/gouache storybook rendering closely: refined thin brown linework, intricate golden Thai gables, muted sage foliage, red wood trim, warm pale stone, cream clouds, soft sand grounding. Preserve the reference's arrangement, scale and character. ",
+  "promptSuffix": " Landscape canvas 4:3. Center the COMPLETE illustration, filling about 94% of the canvas width and 92% height with a little breathing room. Entire scene is a clean isolated vignette with a TRANSPARENT alpha background, no opaque rectangle, no border, no UI, no error number, no buttons, no header/footer, no watermark, no new extra decorative subjects. Retain the small pale clouds and ground wash within the vignette. The only permitted words are the wooden sign text requested above, correctly spelled Thai. This is one coherent illustration.",
+  "assets": [
+    {
+      "status": 404,
+      "reference": "codex-clipboard-3c9edb2d-b2da-4095-ab03-ee4a1b91c15a.png",
+      "source": "exec-66085bdc-2edf-4950-80fd-01e7cd1a1290.png",
+      "output": "public/assets/images/errors/error-404.webp",
+      "mobileOutput": "public/assets/images/errors/error-404-600.webp",
+      "prompt": "A traditional Thai temple pavilion with an open empty doorway, ornate golden gable with red trim, small brown bird perched on a wooden sign in the foreground. The sign text in Thai is exactly two lines: \"เส้นทางนี้\" and \"ไม่พบแล้ว\"."
+    },
+    {
+      "status": 401,
+      "reference": "codex-clipboard-5025caa5-11ee-4ea4-ab49-a1a9a8b566c3.png",
+      "source": "exec-ab3b139d-5eda-4704-8390-ba8550b1decf.png",
+      "output": "public/assets/images/errors/error-401.webp",
+      "mobileOutput": "public/assets/images/errors/error-401-600.webp",
+      "prompt": "An ornate golden and red Thai temple gateway between white stone columns, two tall wooden gate doors slightly ajar but secured by a small golden padlock. Sage trees flank the gateway. Wooden sign lower left with exactly two Thai lines: \"เข้าสู่ระบบ\" and \"เพื่อใช้งาน\"."
+    },
+    {
+      "status": 504,
+      "reference": "codex-clipboard-5419fbc7-6b71-41e8-8e43-90eaf59a4bbc.png",
+      "source": "exec-29c06a47-2a09-4d4c-ab37-6269aeb74ee1.png",
+      "output": "public/assets/images/errors/error-504.webp",
+      "mobileOutput": "public/assets/images/errors/error-504-600.webp",
+      "prompt": "A traditional Thai temple pavilion with gold and red ornate gable in the background, a large ornate carved wooden standing clock to its right, a friendly small green and gold tortoise sitting in the foreground. Sage green trees and cream clouds. A wooden sign foreground left with exactly two Thai lines: \"กำลัง\" and \"รอสักครู่\"."
+    },
+    {
+      "status": 403,
+      "reference": "codex-clipboard-c134ae21-0292-4686-923b-607f4587cb0d.png",
+      "source": "exec-6c7e2b31-ff64-4987-beb4-5b84b0982cf3.png",
+      "output": "public/assets/images/errors/error-403.webp",
+      "mobileOutput": "public/assets/images/errors/error-403-600.webp",
+      "prompt": "A traditional Thai temple entrance with a tall closed red wooden double door and a clearly visible golden padlock at its center, ornate golden and red gable, white stone columns and a low white stone wall, trees and potted plants. No wooden sign and no text."
+    },
+    {
+      "status": 503,
+      "reference": "codex-clipboard-2bb18561-9f44-45bc-af74-cf9345f548e8.png",
+      "source": "exec-d4d77887-f6e3-4083-972a-93d07059a1e7.png",
+      "output": "public/assets/images/errors/error-503.webp",
+      "mobileOutput": "public/assets/images/errors/error-503-600.webp",
+      "prompt": "A traditional Thai temple pavilion with gold and red ornate gable, under renovation with thin bamboo scaffolding around its front, two orange and white traffic cones near its stone steps, sage green trees on both sides. A wooden sign foreground left with exactly two Thai lines: \"อยู่ระหว่าง\" and \"ปรับปรุงระบบ\"."
+    },
+    {
+      "status": 500,
+      "reference": "codex-clipboard-da283dbf-53e9-4c33-be25-368da7da9a00.png",
+      "source": "exec-5ae71659-d99d-4263-829e-958b3c923f3d.png",
+      "output": "public/assets/images/errors/error-500.webp",
+      "mobileOutput": "public/assets/images/errors/error-500-600.webp",
+      "prompt": "A small Thai temple pavilion with golden ornate gable and red trim undergoing a minor repair. Wooden ladder leans against its right side, a green toolbox on ground, a small orange and white cat asleep beside it. Wooden sign foreground left with exactly three Thai lines: \"กำลัง\" and \"ปรับปรุงระบบ\" and \"ชั่วคราว\"."
+    },
+    {
+      "status": 429,
+      "reference": "codex-clipboard-c867fc70-47fd-46cc-8efa-c21203c79233.png",
+      "source": "exec-90117a17-7220-4207-b3c7-88bf586d3554.png",
+      "output": "public/assets/images/errors/error-429.webp",
+      "mobileOutput": "public/assets/images/errors/error-429-600.webp",
+      "prompt": "A very large ornate carved wooden hourglass containing golden sand, a small golden Thai crest on top. Large sage green tree to the left, small gold-roofed red Thai temple to the right, little white flowers and rocks. Wooden sign foreground left with exactly two Thai lines: \"กรุณารอสักครู่\" and \"แล้วลองอีกครั้ง\"."
+    },
+    {
+      "status": 502,
+      "reference": "codex-clipboard-76a822db-f0dc-45f5-88ef-cb21e827afa2.png",
+      "source": "exec-5ad75788-82bd-4d10-bdfe-29d0a0f57e03.png",
+      "output": "public/assets/images/errors/error-502.webp",
+      "mobileOutput": "public/assets/images/errors/error-502-600.webp",
+      "prompt": "Two ornate golden-roofed red Thai temple pavilions atop the two halves of a broken pale stone bridge, turquoise river running between them. A few loose stone pieces in the central gap, one small round dark red exclamation symbol suspended above the gap. Sage green trees on both outer banks, pale cream clouds. No wooden sign and no text except the exclamation mark."
+    }
+  ]
+}

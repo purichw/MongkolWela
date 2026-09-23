@@ -1,3 +1,4 @@
+import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 import { renderIcon } from "../lib/ui-markup.js";
 
 export function renderCardBack() {
@@ -5,7 +6,7 @@ export function renderCardBack() {
 }
 
 export function renderCardFace(card, size = "result") {
-  return `<span class="tarot-face tarot-face-${size}"><img class="tarot-card-image" src="${card.image}" alt="${card.thName} (${card.name})" decoding="async" loading="${size === "thumbnail" ? "lazy" : "eager"}"></span>`;
+  return `<span class="tarot-face tarot-face-${size}"><img class="tarot-card-image" src="${card.image || sitePlaceholderImage}" data-fallback-src="${sitePlaceholderImage}" alt="${card.thName} (${card.name})" decoding="async" loading="${size === "thumbnail" ? "lazy" : "eager"}"></span>`;
 }
 
 export function renderReadingSections(sections, prefix) {

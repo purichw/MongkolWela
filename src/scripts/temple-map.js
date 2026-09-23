@@ -1,3 +1,4 @@
+import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 const TEMPLE_MAP_CONFIG = {
   thailandBounds: [[5.2, 96.6], [21.2, 106.5]],
   thailandCenter: [13.7563, 100.5018],
@@ -250,15 +251,13 @@ function collectTempleCardData() {
   );
 }
 
-function renderTemplePopup(item, cardImages = {}, placeholderImage = "") {
-  const desktopImage = item.imageUrl || cardImages.desktop || placeholderImage;
+function renderTemplePopup(item, cardImages = {}, placeholderImage = sitePlaceholderImage) {
+  const desktopImage = item.imageUrl || cardImages.desktop || placeholderImage || sitePlaceholderImage;
   const mobileImage = item.imageMobileUrl || cardImages.mobile || desktopImage;
-  const img = desktopImage
-    ? `<picture class="temple-responsive-picture">
+  const img = `<picture class="temple-responsive-picture">
         ${mobileImage && mobileImage !== desktopImage ? `<source media="(max-width: 767px)" srcset="${escapeHtml(mobileImage)}">` : ""}
-        <img src="${escapeHtml(desktopImage)}" alt="${escapeHtml(item.imageAlt || item.name)}" loading="lazy">
-      </picture>`
-    : `<div class="temple-map-popup__image-placeholder"></div>`;
+        <img src="${escapeHtml(desktopImage)}" alt="${escapeHtml(item.imageAlt || item.name)}" loading="lazy" data-fallback-src="${sitePlaceholderImage}">
+      </picture>`;
   const place = [item.province, item.district].filter(Boolean).join(" / ");
   return `
     <article class="temple-map-popup">

@@ -1,4 +1,5 @@
 ---
+import { sitePlaceholderImage } from "../../../lib/image-placeholder.js";
 import ToolsLayout from "../../../layouts/ToolsLayout.astro";
 import { renderIcon } from "../../../lib/ui-markup.js";
 import { getTarotCardById } from "../../../scripts/tarot-data.js";
@@ -70,7 +71,7 @@ const topics = [
     </div>
     <section class="tarot-meaning-detail" aria-labelledby="tarot-card-title">
       <figure class="tarot-meaning-card-large">
-        <div class="tarot-detail-image"><img src={card.image} alt={`${card.thName} ${card.name}`} width="340" height="560" loading="eager" decoding="async" fetchpriority="high" /></div>
+        <div class="tarot-detail-image"><img src={card.image || sitePlaceholderImage} data-fallback-src={sitePlaceholderImage} alt={`${card.thName} ${card.name}`} width="340" height="560" loading="eager" decoding="async" fetchpriority="high" /></div>
         <figcaption><h1 id="tarot-card-title">{card.name}</h1><p>{number != null ? `${number} ` : ""}{card.thName}</p></figcaption>
       </figure>
       <article class="tarot-meaning-copy">

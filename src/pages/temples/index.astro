@@ -117,14 +117,4 @@ const supportingLinks = [
       </div>
     </section>
   </main>
-  <script>
-    // CMS replacements use the same elements, so listeners also cover refreshed media.
-    document.querySelectorAll<HTMLImageElement>(".temple-hub-v2 img[data-cms-media]").forEach(image => {
-      const fallback = () => {
-        if (image.getAttribute("src") !== image.dataset.fallbackSrc) image.src = image.dataset.fallbackSrc || "";
-      };
-      image.addEventListener("error", fallback);
-      if (image.complete && !image.naturalWidth) fallback();
-    });
-  </script>
 </BaseLayout>

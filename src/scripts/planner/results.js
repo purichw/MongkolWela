@@ -1,3 +1,4 @@
+import { sitePlaceholderImage } from "../../lib/image-placeholder.js";
 import { renderIcon } from "../../lib/ui-markup.js";
 
 export function createPlannerResults({ formatDistance, formatMinutes, formatClock, escapeHtml, formatDistanceRange, formatMinutesRange, buildSingleMapUrl }) {
@@ -25,7 +26,7 @@ export function createPlannerResults({ formatDistance, formatMinutes, formatCloc
       <span class="planner-stop-number">${index + 1}</span>
       <article>
         <div class="planner-stop-main">
-          <img width="64" height="64" src="${escapeHtml(item.imageUrl || "/assets/images/temple-placeholder-auspicious.png")}" alt="${escapeHtml(item.imageAlt || item.name)}" loading="lazy">
+          <img width="64" height="64" data-fallback-src="${sitePlaceholderImage}" src="${escapeHtml(item.imageUrl || sitePlaceholderImage)}" alt="${escapeHtml(item.imageAlt || item.name)}" loading="lazy">
           <div><h3>${name}</h3><p>${escapeHtml([item.province,item.district].filter(Boolean).join(" · "))}</p></div>
         </div>
         <div class="planner-stop-times"><strong>ถึง ${formatClock(stop.arrival)} · ออก ${formatClock(stop.departure)}</strong><span>แวะ ${formatMinutes(stop.visitMinutes)}</span></div>

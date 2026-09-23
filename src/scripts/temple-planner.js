@@ -1,3 +1,4 @@
+import { applyImageFallback } from "../lib/image-placeholder.js";
 import { createPlannerPicker } from "./planner/picker.js";
 import { createPlannerResults } from "./planner/results.js";
 import { createPlannerMaps } from "./planner/maps.js";
@@ -146,10 +147,7 @@ function initialize(payload) {
   root.addEventListener("error", event => {
     const image = event.target;
     if (!(image instanceof HTMLImageElement) || !image.closest(".planner-place-card,.planner-timeline")) return;
-    if (!image.src.includes("temple-placeholder")) {
-      image.closest("picture")?.querySelectorAll("source").forEach(source => source.remove());
-      image.src = "/assets/images/temple-placeholder-auspicious.png";
-    }
+    applyImageFallback(image);
     image.alt = "ยังไม่มีภาพสถานที่";
     image.closest("figure")?.classList.add("is-placeholder");
   }, true);

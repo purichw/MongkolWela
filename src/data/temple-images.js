@@ -1,8 +1,7 @@
-import templeImageOverrides from "./temple-image-overrides.json" with { type: "json" };
+import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 import { applyTempleCmsRecords } from "./temple-cms.js";
 
-export const templePlaceholderImage =
-  templeImageOverrides._meta?.placeholderImage || "/assets/images/temple-placeholder-auspicious.png";
+export const templePlaceholderImage = sitePlaceholderImage;
 
 export function applyTempleImageOverrides(collection, temples) {
   return applyTempleCmsRecords(collection, temples);

@@ -6,8 +6,10 @@ import { initRealtimeTopbar } from "./realtime-topbar.js";
 import { initScrollProgress } from "./scroll-progress.js";
 import { initPublicSelects } from "./public-select.js";
 import { initMediaMotion } from "./media-motion.js";
+import { initImageFallbacks } from "./image-fallback.js";
 
 initPageLoader();
+initImageFallbacks();
 initMediaMotion();
 initObservability();
 initRealtimeTopbar();

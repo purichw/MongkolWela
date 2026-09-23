@@ -1,4 +1,5 @@
 import { renderIcon } from "../../lib/ui-markup.js";
+import { sitePlaceholderImage } from "../../lib/image-placeholder.js";
 
 const names = { dashboard: "house", page: "file-text", nav: "list-filter", section: "route", component: "map-pin", chart: "chart-no-axes-combined", dates: "sparkles", media: "image", users: "users", settings: "settings", alert: "info", publish: "upload" };
 export const adminIcon = name => renderIcon(names[name] || name, "mw-admin-icon");
@@ -18,7 +19,7 @@ export function createAdminDesign({ state, $, escapeHtml: e, dashboardSummary, t
   const metric = (label, value, detail, name, tone) => `<article class="mw-overview-stat ${tone}"><span class="mw-overview-stat-icon">${adminIcon(name)}</span><div><p>${e(label)}</p><strong>${e(number(value))}</strong><small>${e(detail)}</small></div></article>`;
   const image = item => {
     const src = item?.temple?.images?.card?.desktop?.url || item?.temple?.imageUrl;
-    return src ? `<span class="mw-overview-thumb"><img src="${e(src)}" alt="" width="50" height="46" data-admin-temple-image></span>` : `<span class="mw-overview-thumb">${adminIcon("component")}</span>`;
+    return `<span class="mw-overview-thumb"><img src="${e(src || sitePlaceholderImage)}" alt="" width="50" height="46" data-admin-temple-image data-fallback-src="${sitePlaceholderImage}"></span>`;
   };
   function chartPanel() {
     const rows = paths().slice(0, 7);

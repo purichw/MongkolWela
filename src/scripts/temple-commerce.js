@@ -1,14 +1,14 @@
 import { commerceApi, campaignMarkup, channelMarkup, e, money, orgName } from "./commerce-ui.js";
 import { startContentRefresh } from "./content-refresh.js";
 import { renderIcon } from "../lib/ui-markup.js";
+import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 
 const icon = name => renderIcon(name, "pd-icon");
 function templeProductMarkup(product, data) {
   const href = `/shop/?product=${encodeURIComponent(product.id)}`;
   return `<article class="temple-shop-product" data-temple-product="${e(product.id)}">
     <a class="temple-shop-media" href="${e(href)}" aria-label="${e(product.title)}">
-      ${renderIcon("shopping-bag", "temple-product-placeholder")}
-      ${product.imageUrl ? `<img src="${e(product.imageUrl)}" alt="${e(product.imageAlt || product.title)}" width="320" height="320" loading="lazy" decoding="async" />` : ""}
+      <img src="${e(product.imageUrl || sitePlaceholderImage)}" alt="${product.imageUrl ? e(product.imageAlt || product.title) : "ภาพประกอบแทนรูปที่ยังไม่มี"}" width="320" height="320" loading="lazy" decoding="async" data-fallback-src="${sitePlaceholderImage}" />
       ${product.available ? "" : '<span class="temple-shop-stock">สินค้าหมด</span>'}
     </a>
     <div class="temple-shop-copy">
@@ -41,13 +41,6 @@ for (const root of document.querySelectorAll("[data-temple-commerce]")) {
       content.querySelector("[data-empty-description]").textContent = "เมื่อมีสินค้าจากสถานที่นี้ จะแสดงรายละเอียดที่นี่";
     }
     meritLink.href = "#temple-merit-details";
-    content.querySelectorAll(".temple-shop-media img").forEach(img => {
-      const showFallback = () => { img.hidden = true; };
-      const showImage = () => { img.previousElementSibling.hidden = true; };
-      img.addEventListener("error", showFallback, { once: true });
-      img.addEventListener("load", showImage, { once: true });
-      if (img.complete) { if (img.naturalWidth) showImage(); else showFallback(); }
-    });
   }
 
   async function refresh() {

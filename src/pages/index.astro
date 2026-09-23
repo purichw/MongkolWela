@@ -1,5 +1,6 @@
 ---
 import { homeDirectorySummary } from "../data/home-directory-summary.js";
+import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 import cmsSeed from "../../public/admin/content/live.json";
 import { homeHeroAttributes, imageCreditUrl } from "../lib/home-hero-media.js";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -66,10 +67,10 @@ const tools = [
       <div class="hero-carousel" data-carousel>
         {heroSlides.map((slide, i) => (
           <div class:list={["hero-slide", { "is-active": i === 0 }]} aria-hidden={i !== 0}>
-            <img src={i === 0 && slide.src ? slide.src : undefined} data-carousel-src={slide.src}
+            <img src={i === 0 ? slide.src || sitePlaceholderImage : undefined} data-carousel-src={slide.src || sitePlaceholderImage}
               {...homeHeroAttributes(slide)} data-home-hero-image style={{ objectPosition: slide.position }}
               alt={slide.alt} width="1920" height="1080" fetchpriority={i === 0 ? "high" : "low"}
-              decoding="async" data-home-media />
+              decoding="async" data-home-media data-fallback-src={sitePlaceholderImage} />
           </div>
         ))}
       </div>

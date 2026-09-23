@@ -44,5 +44,5 @@ export function stylesForPath(path, page = "") {
     : path.startsWith("/temples/") ? [temples, map]
     : [];
   const isTool = path.startsWith("/tarot/") || /^\/horoscope\/(life-graph|palmistry|seamsi|thai-astrology)\//.test(path);
-  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : []), ...(path === "/temples/thailand/" ? [thailand] : []), publicSelect, ...(isTool ? [tools] : []), ...(path.startsWith("/tarot/") ? [tarotExperience] : []), ...(path.startsWith("/tarot/meanings/") ? [tarotLibrary] : []), ...(path === "/temples/popular/" ? [popularFilters] : []), ...(/^error-(403|404|500)$/.test(page) ? [errorPages] : [])];
+  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : []), ...(path === "/temples/thailand/" ? [thailand] : []), publicSelect, ...(isTool ? [tools] : []), ...(path.startsWith("/tarot/") ? [tarotExperience] : []), ...(path.startsWith("/tarot/meanings/") ? [tarotLibrary] : []), ...(path === "/temples/popular/" ? [popularFilters] : []), ...(/^error-(401|403|404|429|500|502|503|504)$/.test(page) ? [errorPages] : [])];
 }

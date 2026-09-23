@@ -1,3 +1,4 @@
+import { applyImageFallback } from "../lib/image-placeholder.js";
 import { coordinates, esc, icon } from "../lib/place-detail-view.js";
 
 const root = document.querySelector("[data-place-detail]");
@@ -36,9 +37,7 @@ function initializeImages(page) {
   }
   function fallback(image) {
     if (!(image instanceof HTMLImageElement) || !image.dataset.fallbackSrc) return;
-    image.closest("picture")?.querySelectorAll("source").forEach(source => source.remove());
-    if (image.getAttribute("src") !== image.dataset.fallbackSrc) image.src = image.dataset.fallbackSrc;
-    image.dataset.fallbackApplied = "true";
+    applyImageFallback(image);
     if (image.closest("[data-place-media]")) credit.hidden = true;
   }
   page.addEventListener("error", event => fallback(event.target), true);

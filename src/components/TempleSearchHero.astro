@@ -1,5 +1,6 @@
 ---
 import PageBanner from "./PageBanner.astro";
+import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 
 type BreadcrumbItem = {
   label: string;
@@ -28,7 +29,7 @@ const hasPanel = Astro.slots.has("panel");
 ---
 
 <PageBanner titleId="temple-page-title" adminKey={banner.adminKey}>
-  <img slot="media" class="temple-page-hero-image" src={banner.imageUrl} alt="" style={`object-position: ${banner.focalPoint || "center"}`} loading="eager" decoding="async" fetchpriority="high" />
+  <img slot="media" class="temple-page-hero-image" src={banner.imageUrl || sitePlaceholderImage} data-fallback-src={sitePlaceholderImage} alt="" style={`object-position: ${banner.focalPoint || "center"}`} loading="eager" decoding="async" fetchpriority="high" />
     <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง">
       {breadcrumbs.map((item, index) => (
         <>

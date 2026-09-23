@@ -170,6 +170,7 @@ import { iconAttributes } from "../lib/ui-markup.js";
 </section>
 
 <script>
+import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 import { renderIcon } from "../lib/ui-markup.js";
 // ─────────────────────────────────────────────────────────────
 //  DATA
@@ -513,9 +514,7 @@ function handImageClass(role?: HandRole) {
 }
 
 function renderHandImage(src: string | null, alt: string, role?: HandRole) {
-  return src
-    ? `<img src="${src}" alt="${escapeHtml(alt)}" loading="lazy" class="${handImageClass(role)}" />`
-    : `<div class="plw-card-no-img" aria-hidden="true">ไม่มีภาพ</div>`;
+  return `<img src="${src || sitePlaceholderImage}" alt="${src ? escapeHtml(alt) : "ภาพประกอบแทนรูปที่ยังไม่มี"}" loading="lazy" class="${handImageClass(role)}" data-fallback-src="${sitePlaceholderImage}" />`;
 }
 
 function getLineType(lineId: LineTypeId) {

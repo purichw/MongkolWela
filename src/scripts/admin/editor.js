@@ -1,3 +1,4 @@
+import { sitePlaceholderImage } from "../../lib/image-placeholder.js";
 import { adminIcon } from "./design.js";
 import { mediaProviderStatus } from "./data.js";
 
@@ -94,7 +95,7 @@ function renderTempleTableRow(record) {
   const status = record.source === "admin" ? "เพิ่มผ่าน CMS" : "ฐานข้อมูลวัด";
   return `<div class="mw-admin-temple-table-row" role="row" data-temple-row="${escapeHtml(record.key)}">
     <div class="mw-admin-temple-name-cell">
-      <span class="mw-admin-table-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" data-admin-temple-image>` : "<i>ไม่มีรูป</i>"}</span>
+      <span class="mw-admin-table-thumb"><img src="${escapeHtml(image || sitePlaceholderImage)}" alt="" data-admin-temple-image data-fallback-src="${sitePlaceholderImage}"></span>
       <div><strong data-temple-table-title>${escapeHtml(record.temple.name || "ยังไม่มีชื่อ")}</strong><small><i style="--dot:${escapeHtml(confidence.color)}"></i>${escapeHtml(confidence.label)}</small></div>
     </div>
     <div><strong>${escapeHtml(record.temple.region || "ไม่ระบุภูมิภาค")}</strong><small>${escapeHtml([record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง")}</small></div>
@@ -144,7 +145,7 @@ function renderTempleListItem(record) {
       <button type="button" data-temple-move-key="${escapeHtml(record.key)}" data-temple-move-offset="1" aria-label="เลื่อนลงหนึ่งอันดับ" title="${reorderDisabled ? "ล้างคำค้นหาเพื่อจัดลำดับ" : "เลื่อนลงหนึ่งอันดับ"}" ${disableMoveDown ? "disabled" : ""}>↓</button>
     </span>` : ""}
     <button type="button" class="mw-admin-temple-list-select" data-select-temple="${escapeHtml(record.key)}">
-      <span class="mw-admin-temple-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" data-admin-temple-image>` : "<i>ไม่มีรูป</i>"}</span>
+      <span class="mw-admin-temple-list-thumb"><img src="${escapeHtml(image || sitePlaceholderImage)}" alt="" data-admin-temple-image data-fallback-src="${sitePlaceholderImage}"></span>
       <span><strong data-temple-list-title>#${escapeHtml(record.temple.rank || "-")} ${escapeHtml(record.temple.name || "ยังไม่มีชื่อ")}</strong><small>${escapeHtml([record.temple.province, record.temple.district].filter(Boolean).join(" / ") || "ยังไม่มีที่ตั้ง")}</small></span>
       ${record.source === "admin" ? '<b>CMS</b>' : ""}
     </button>

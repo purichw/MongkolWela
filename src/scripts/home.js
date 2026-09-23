@@ -22,24 +22,6 @@ if (form && input instanceof HTMLInputElement) {
   });
 }
 
-// Remove responsive candidates before switching to the existing generic fallback.
-function handleMediaError(image) {
-  const fallback = image.dataset.fallbackSrc;
-  if (fallback && !image.dataset.homeFallbackApplied) {
-    image.dataset.homeFallbackApplied = "true";
-    image.removeAttribute("srcset");
-    image.src = fallback;
-  } else {
-    image.classList.add("home-media-failed");
-  }
-}
-
-document.querySelectorAll("img[data-home-media]").forEach((image) => {
-  image.addEventListener("error", () => handleMediaError(image));
-  image.addEventListener("load", () => image.classList.remove("home-media-failed"));
-  if (image.hasAttribute("src") && image.complete && !image.naturalWidth) handleMediaError(image);
-});
-
 const carousel = document.querySelector("[data-carousel]");
 const credit = document.querySelector("[data-home-hero-credit]");
 if (carousel && credit) {
@@ -54,7 +36,7 @@ if (carousel && credit) {
     if (signature === previous) return;
     previous = signature;
     credit.replaceChildren();
-    const unavailable = !data.imageCredit || !image?.getAttribute("src") || image.classList.contains("home-media-failed");
+    const unavailable = !data.imageCredit || !image?.getAttribute("src") || image.getAttribute("src") === data.fallbackSrc;
     credit.hidden = credit.hasAttribute("data-demo-hidden") || unavailable;
     if (unavailable) return;
     const link = (label, url) => {

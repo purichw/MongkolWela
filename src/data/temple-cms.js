@@ -1,3 +1,4 @@
+import { normalizePlaceholderImage } from "../lib/image-placeholder.js";
 import liveContent from "../../public/admin/content/live.json" with { type: "json" };
 import templeImageOverrides from "./temple-image-overrides.json" with { type: "json" };
 import { createTempleSlug } from "./temple-slugs.js";
@@ -112,12 +113,12 @@ function mergeTempleRecord(baseTemple, record, collection, key) {
     cmsSlug: slug,
     cmsSource: record?.source || (baseTemple ? "dataset" : "admin"),
     cmsImages: images,
-    imageUrl: images.card.desktop.url,
-    imageMobileUrl: images.card.mobile.url,
-    detailImageUrl: images.hero.desktop.url,
-    detailImageMobileUrl: images.hero.mobile.url,
-    mapImageUrl: images.map.desktop.url,
-    mapImageMobileUrl: images.map.mobile.url,
+    imageUrl: normalizePlaceholderImage(images.card.desktop.url),
+    imageMobileUrl: normalizePlaceholderImage(images.card.mobile.url),
+    detailImageUrl: normalizePlaceholderImage(images.hero.desktop.url),
+    detailImageMobileUrl: normalizePlaceholderImage(images.hero.mobile.url),
+    mapImageUrl: normalizePlaceholderImage(images.map.desktop.url),
+    mapImageMobileUrl: normalizePlaceholderImage(images.map.mobile.url),
     imageAlt: fallbackAlt,
     collection,
   };

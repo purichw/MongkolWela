@@ -1,3 +1,4 @@
+import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 import { requestJson, createLatestRequest } from "./request.js";
 import { applyPlaceDetailOverride } from "./place-detail-content.js";
 import { startContentRefresh } from "./content-refresh.js";
@@ -243,7 +244,7 @@ function renderBlock(block) {
   }
   if (block.type === "image") {
     return `<section class="section-shell cms-image-block">
-      <img src="${escapeHtml(props.src || "/assets/images/temple-placeholder-auspicious.png")}" alt="${escapeHtml(props.alt || "")}">
+      <img src="${escapeHtml(props.src || sitePlaceholderImage)}" alt="${escapeHtml(props.alt || "")}" data-fallback-src="${sitePlaceholderImage}">
       ${props.caption ? `<p>${escapeHtml(props.caption)}</p>` : ""}
     </section>`;
   }
@@ -292,7 +293,7 @@ function applyPublishedImage(root, override, slot) {
   if (!image) return;
   const desktop = imageVariantUrl(override.images?.[slot]?.desktop) ?? override.fields?.imageUrl;
   const mobile = imageVariantUrl(override.images?.[slot]?.mobile) ?? desktop;
-  const placeholder = image.dataset.fallbackSrc || "/assets/images/temple-placeholder-auspicious.png";
+  const placeholder = image.dataset.fallbackSrc || sitePlaceholderImage;
   if (desktop !== undefined) {
     image.src = desktop || placeholder;
     image.dataset.fallbackApplied = "";
