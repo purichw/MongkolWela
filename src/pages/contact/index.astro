@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageBanner from "../../components/PageBanner.astro";
+import CmsImage from "../../components/CmsImage.astro";
+import { iconAttributes } from "../../lib/ui-markup.js";
+import { contactDefaults, contactEmailHref, contactLineHref } from "../../config/contact.js";
+
+const title = "ติดต่อมงคลเวลา";
+const banner = "/assets/images/hero-wat-arun-sunset.webp";
+const channels = [
+  { key: "email", label: "อีเมล", icon: "mail", value: contactDefaults.email, description: "สอบถาม ส่งข้อเสนอแนะ หรือแนบรายละเอียดให้ทีมงาน", action: "ส่งอีเมล", href: contactEmailHref(contactDefaults.email, "ติดต่อมงคลเวลา") },
+  { key: "line", label: "LINE", icon: "headset", value: contactDefaults.lineId, description: "พูดคุยกับทีมงานผ่านบัญชี LINE ของมงคลเวลา", action: "เปิด LINE", href: contactLineHref(contactDefaults.lineId) },
+];
+const topics = [
+  { id: "usage", icon: "headset", title: "สอบถามการใช้งาน", description: "ค้นหาสถานที่ วางแผนทริป หรือพบปัญหาในการใช้งานเว็บ", subject: "สอบถามการใช้งานมงคลเวลา" },
+  { id: "corrections", icon: "map-pin", title: "แจ้งแก้ไขข้อมูลสถานที่", description: "แจ้งชื่อสถานที่ ลิงก์หน้าเว็บ และข้อมูลที่ต้องการแก้ไข พร้อมหลักฐานถ้ามี", subject: "แจ้งแก้ไขข้อมูลสถานที่บนมงคลเวลา" },
+  { id: "partnerships", icon: "users", title: "เสนอความร่วมมือ", description: "แนะนำโครงการ เนื้อหา หรือความร่วมมือกับมงคลเวลา", subject: "เสนอความร่วมมือกับมงคลเวลา" },
+];
+---
+
+<BaseLayout title={`${title} | มงคลเวลา`} description="ติดต่อทีมงานมงคลเวลาผ่านอีเมลและ LINE สอบถามการใช้งาน แจ้งแก้ไขข้อมูลสถานที่ หรือเสนอความร่วมมือ" page="contact" bodyClass="contact-page" canonicalPath="/contact/" image={banner} breadcrumbs={[{ label: "หน้าแรก", href: "/" }, { label: title, href: "/contact/" }]}>
+  <main class="contact" data-cms-preserve-section-order>
+    <PageBanner titleId="contact-title" class="contact-banner">
+      <CmsImage slot="media" mediaId="contact-hero-image" image={{ src: banner, alt: "พระปรางค์วัดอรุณในแสงยามเย็น", position: "center 12%", credit: "Haley Hong / Unsplash", sourceUrl: "https://unsplash.com/photos/BVB6A30FI4c" }} width={1920} height={2560} loading="eager" fetchpriority="high" />
+      <div class="page-banner__copy">
+        <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง"><a href="/">หน้าแรก</a><span aria-hidden="true">/</span><span>ติดต่อมงคลเวลา</span></nav>
+        <p class="page-banner__kicker" id="contact-kicker">พูดคุยกับทีมงาน</p>
+        <h1 id="contact-title">ติดต่อมงคลเวลา</h1>
+        <p class="page-banner__description" id="contact-intro">สอบถามการใช้งาน แจ้งข้อมูลที่ควรแก้ไข<br />หรือร่วมสร้างการเดินทางที่มีความหมายไปด้วยกัน</p>
+      </div>
+    </PageBanner>
+
+    <div class="contact-content" id="contact-channel-data" data-email={contactDefaults.email} data-line-id={contactDefaults.lineId}>
+      <section class="contact-channels" aria-labelledby="contact-channels-title">
+        <header class="contact-section-heading"><h2 id="contact-channels-title">เลือกช่องทางที่สะดวก</h2><p id="contact-channels-intro">ส่งข้อความถึงทีมงานมงคลเวลาได้โดยตรง</p></header>
+        <div class="contact-channel-grid">{channels.map(channel => <article class={`contact-channel contact-channel--${channel.key}`} aria-labelledby={`contact-${channel.key}-title`}>
+          <div class="contact-channel-heading"><span class="contact-medallion"><span {...iconAttributes(channel.icon, "contact-icon")} /></span><div><h3 id={`contact-${channel.key}-title`}>{channel.label}</h3><p id={`contact-${channel.key}-description`}>{channel.description}</p></div></div>
+          <div class="contact-channel-address"><p class="contact-value" data-contact-value={channel.key}>{channel.key === "email" ? <>{channel.value.split("@")[0]}@<wbr />{channel.value.split("@")[1]}</> : channel.value}</p><button type="button" class="contact-copy" data-contact-copy={channel.key} aria-label={`คัดลอก${channel.label}`} title={`คัดลอก${channel.label}`} hidden><span {...iconAttributes("layers-2", "contact-icon")} /></button></div>
+          <a class={channel.key === "email" ? "primary-action contact-action" : "contact-line-action contact-action"} href={channel.href} data-contact-link={channel.key} data-email-subject={channel.key === "email" ? "ติดต่อมงคลเวลา" : undefined} target={channel.key === "line" ? "_blank" : undefined} rel={channel.key === "line" ? "noopener noreferrer" : undefined}><span id={`contact-${channel.key}-action-label`}>{channel.action}</span><span {...iconAttributes(channel.key === "email" ? "arrow-right" : "external-link", "contact-icon")} /><span class="sr-only">{channel.key === "email" ? "ในแอปอีเมล" : " (เปิดหน้าต่างใหม่)"}</span></a>
+          <p class="contact-unavailable" data-contact-unavailable={channel.key} hidden>ช่องทางนี้ยังไม่พร้อมให้ติดต่อ กรุณาเลือกอีกช่องทาง</p>
+        </article>)}</div>
+        <p class="contact-status" data-contact-status role="status" aria-live="polite" aria-atomic="true"></p>
+        <p class="contact-all-unavailable" data-contact-all-unavailable hidden>ขณะนี้ยังไม่มีช่องทางติดต่อที่พร้อมใช้งาน กรุณากลับมาตรวจสอบอีกครั้ง</p>
+      </section>
+
+      <section class="contact-topics" aria-labelledby="contact-topics-title">
+        <header class="contact-section-heading"><h2 id="contact-topics-title">อยากติดต่อเรื่องไหน?</h2><p id="contact-topics-intro">เลือกหัวข้อเพื่อเริ่มเขียนอีเมลถึงเรา</p></header>
+        <div class="contact-topic-list">{topics.map(topic => <article class="contact-topic" id={topic.id}>
+          <span {...iconAttributes(topic.icon, "contact-icon")} /><div><h3 id={`contact-${topic.id}-title`}>{topic.title}</h3><p id={`contact-${topic.id}-description`}>{topic.description}</p><a class="contact-topic-link" href={contactEmailHref(contactDefaults.email, topic.subject)} data-contact-link="email" data-email-subject={topic.subject}><span id={`contact-${topic.id}-action-label`}>ส่งอีเมลเรื่องนี้</span><span {...iconAttributes("arrow-right", "contact-icon")} /><span class="sr-only">{topic.title}</span></a><p class="contact-topic-fallback" data-contact-email-fallback hidden>กรุณาติดต่อผ่านช่องทางด้านบน</p></div>
+        </article>)}</div>
+      </section>
+
+      <aside class="contact-notes" aria-label="ข้อมูลก่อนติดต่อ">
+        <div class="contact-privacy"><span {...iconAttributes("shield-check", "contact-icon")} /><div><h2 id="contact-privacy-title">ส่งเฉพาะข้อมูลที่จำเป็น</h2><p id="contact-privacy-description">หากแนบภาพหน้าจอ กรุณาปิดข้อมูลส่วนตัวก่อน และไม่ส่งรหัสผ่าน รหัส OTP หรือข้อมูลบัตรชำระเงิน</p></div></div>
+        <a class="contact-guide" href="/guide/"><span {...iconAttributes("book-open", "contact-icon")} /><span><strong id="contact-guide-title">เริ่มวางแผนทริปด้วยตัวเอง</strong><small id="contact-guide-description">อ่านคู่มือวางแผนเดินทางมงคล</small></span><span {...iconAttributes("arrow-right", "contact-icon")} /></a>
+      </aside>
+    </div>
+  </main>
+  <script>import "../../scripts/contact.js";</script>
+</BaseLayout>

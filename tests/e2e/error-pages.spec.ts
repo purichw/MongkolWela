@@ -33,7 +33,7 @@ for (const status of statuses) {
     await expect(page.locator("main").getByRole("link", { name: "กลับหน้าหลัก", exact: true })).toHaveAttribute("href", "/");
     await expect(page.locator("[data-error-back]")).toHaveAttribute("href", "/");
     if (status === 401) await expect(page.locator("main").getByRole("link", { name: "เข้าสู่ระบบ", exact: true })).toHaveAttribute("href", loginEntryHref);
-    if (status === 403) await expect(page.locator("main").getByRole("link", { name: "ติดต่อทีมงาน", exact: true })).toHaveAttribute("href", "/#consult");
+    if (status === 403) await expect(page.locator("main").getByRole("link", { name: "ติดต่อทีมงาน", exact: true })).toHaveAttribute("href", "/contact/");
     if (status === 404) await expect(page.locator("main").getByRole("link", { name: "ค้นหาวัดหรือสถานที่", exact: true })).toHaveAttribute("href", "/#site-search");
     const actions = await page.locator(".error-screen__action:visible").evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height));
     expect(Math.min(...actions)).toBeGreaterThanOrEqual(44);

@@ -1,5 +1,19 @@
 # CMS Content
 
+## Contact Page
+
+`/contact/` is registered as existing page `contact` in both development seeds.
+It already consumes published page patches through the shared CMS runtime;
+an Admin-specific contact editor is not required for the data connection.
+Email and LINE ID each have one editable attribute on `#contact-channel-data`.
+All displayed values, destinations, topic email recipients and clipboard actions
+derive from those attributes. Explicit clears disable the corresponding actions;
+removing the patch restores the build default. Image and copy slots use stable IDs.
+See [Contact Page](docs/contact-page.md) for the editor contract and focused QA.
+Do not seed over production: append only the missing page to the latest published
+document if needed, preserving all unrelated content. No live publication was
+performed as part of implementing this route.
+
 ## Travel Guide
 
 The `/guide/` route uses page ID `travelGuide`; both build/development seeds

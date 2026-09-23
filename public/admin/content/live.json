@@ -14,6 +14,16 @@
   },
   "pages": [
     {
+      "id": "contact",
+      "kind": "existing",
+      "label": "ติดต่อมงคลเวลา",
+      "route": "/contact/",
+      "blocks": [],
+      "enabled": true,
+      "patches": [],
+      "sections": []
+    },
+    {
       "id": "travelGuide",
       "kind": "existing",
       "label": "คู่มือวางแผนเดินทางมงคล",
