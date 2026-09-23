@@ -254,10 +254,6 @@ function initializePopularTempleGrid(grid) {
     window.setTimeout(repairBrokenCardImages, 250);
   });
 
-  cards.forEach((card) => {
-    card.hidden = true;
-  });
-
   applyPopularFilters();
 
   filterForm?.addEventListener("submit", async (event) => {
@@ -273,7 +269,7 @@ function initializePopularTempleGrid(grid) {
     cards = Array.from(grid.querySelectorAll("[data-popular-temple-card]"));
     catalogRevision++;
     updateFacetOptions();
-    applyPopularFilters();
+    applyPopularFilters({ resetPagination: false });
   });
 
   filterClear?.addEventListener("click", () => {
@@ -462,7 +458,7 @@ function initializePopularTempleGrid(grid) {
     scrollToPopularResults();
   }
 
-  function applyPopularFilters() {
+  function applyPopularFilters({ resetPagination = true } = {}) {
     filteredCards = cards.filter((card) => {
       const matchesQuery = !appliedQuery || normalize(getCardSearchText(card)).includes(appliedQuery);
       const matchesRegion = !appliedRegions.size || appliedRegions.has(card.dataset.region);
@@ -471,8 +467,8 @@ function initializePopularTempleGrid(grid) {
       return matchesQuery && matchesRegion && matchesProvince && matchesPurpose;
     });
     sortFilteredCards();
-    visibleCount = Math.min(initialCount, filteredCards.length);
-    renderVisibleCards({ animateAll: true });
+    visibleCount = Math.min(resetPagination ? initialCount : Math.max(initialCount, visibleCount), filteredCards.length);
+    renderVisibleCards();
     refreshCompactView();
     document.dispatchEvent(new CustomEvent("mw:filter-change", {
       detail: {
@@ -490,31 +486,31 @@ function initializePopularTempleGrid(grid) {
 
   function revealNext(count) {
     visibleCount = Math.min(filteredCards.length, visibleCount + count);
-    renderVisibleCards({ animateAll: false });
+    renderVisibleCards();
   }
 
-  function renderVisibleCards({ animateAll = false } = {}) {
-    const previouslyVisible = new Set(cards.filter((card) => !card.hidden));
-
+  function renderVisibleCards() {
+    // Keep painted pictures in place when hydration/CMS leaves the order unchanged.
+    let nextCard = grid.firstElementChild;
     filteredCards.forEach((card) => {
-      grid.appendChild(card);
-    });
-
-    cards.forEach((card) => {
-      card.hidden = true;
-      card.classList.remove("is-reveal-ready", "is-revealed");
-      card.style.removeProperty("--temple-card-reveal-delay");
+      if (card !== nextCard) grid.insertBefore(card, nextCard);
+      nextCard = card.nextElementSibling;
     });
 
     const visibleCards = filteredCards.slice(0, visibleCount);
+    const visibleSet = new Set(visibleCards);
     const revealCards = [];
 
-    visibleCards.forEach((card) => {
-      card.hidden = false;
-      if (animateAll || !previouslyVisible.has(card)) {
+    cards.forEach((card) => {
+      if (!visibleSet.has(card)) {
+        if (!card.hidden) {
+          card.hidden = true;
+          card.classList.remove("is-reveal-ready", "is-revealed");
+          card.style.removeProperty("--temple-card-reveal-delay");
+        }
+      } else if (card.hidden) {
+        card.hidden = false;
         revealCards.push(card);
-      } else {
-        card.classList.add("is-revealed");
       }
     });
 
@@ -552,7 +548,7 @@ function initializePopularTempleGrid(grid) {
       assignRevealDelays(revealCards);
       window.requestAnimationFrame(() => {
         revealCards.forEach((card) => {
-          card.classList.add("is-revealed");
+          if (!card.hidden) card.classList.add("is-revealed");
         });
       });
     });
@@ -751,7 +747,7 @@ function initializePopularTempleGrid(grid) {
       loadState = "ready";
       if (activeNearby) updateCardDistances();
       updateFacetOptions();
-      if (applyFilters || compact) applyPopularFilters();
+      if (applyFilters || compact) applyPopularFilters({ resetPagination: false });
       else renderVisibleCards();
       return true;
     } catch (error) {

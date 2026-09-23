@@ -48,6 +48,20 @@ cases in `tests/e2e/popular-filters.spec.ts`; captures in
 `artifacts/collection-filters/`. This migration does not change the separate
 Home/Header cross-collection search flow or Planner filters.
 
+Collection loading must preserve already-painted SSR cards. Catalog hydration,
+CMS refresh and Load more keep existing nodes, image sources, reveal state and
+the expanded batch; only newly visible cards receive an entrance animation.
+Actual filter searches reset pagination, and genuine CMS image updates/clears
+remain authoritative. `cms-runtime` writes image `src`/`srcset` only when the
+published URL changes, including normalized legacy placeholders.
+
+P1 regression: `tests/e2e/temple-image-loading.spec.ts` delays catalog and CMS
+independently on all three collections at 1440px/390px, with normal motion.
+Frame sampling must never observe an already-visible card become transparent;
+mutation probes must find no unchanged-card moves or repeated image URL writes.
+It also checks Load more and genuine CMS image changes/clears. Reduced-motion
+screenshots alone cannot detect this loading regression.
+
 ### Shared Temple Search
 
 Home and Header share `GET /api/temple-search` and the `/search/?q=` destination.

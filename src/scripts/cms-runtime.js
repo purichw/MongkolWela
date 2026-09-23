@@ -1,4 +1,4 @@
-import { sitePlaceholderImage } from "../lib/image-placeholder.js";
+import { normalizePlaceholderImage, sitePlaceholderImage } from "../lib/image-placeholder.js";
 import { requestJson, createLatestRequest } from "./request.js";
 import { applyPlaceDetailOverride } from "./place-detail-content.js";
 import { startContentRefresh } from "./content-refresh.js";
@@ -295,12 +295,18 @@ function applyPublishedImage(root, override, slot) {
   const mobile = imageVariantUrl(override.images?.[slot]?.mobile) ?? desktop;
   const placeholder = image.dataset.fallbackSrc || sitePlaceholderImage;
   if (desktop !== undefined) {
-    image.src = desktop || placeholder;
-    image.dataset.fallbackApplied = "";
+    const src = normalizePlaceholderImage(desktop) || placeholder;
+    if (image.getAttribute("src") !== src) {
+      image.src = src;
+      image.dataset.fallbackApplied = "";
+    }
     root.classList.toggle("is-placeholder", !desktop);
   }
   const source = root.querySelector("[data-temple-mobile-source]");
-  if (source && mobile !== undefined) source.srcset = mobile || placeholder;
+  if (source && mobile !== undefined) {
+    const srcset = normalizePlaceholderImage(mobile) || placeholder;
+    if (source.getAttribute("srcset") !== srcset) source.srcset = srcset;
+  }
   if (override.fields?.imageAlt !== undefined) image.alt = override.fields.imageAlt;
 }
 

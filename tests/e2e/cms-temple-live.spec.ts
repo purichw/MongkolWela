@@ -9,8 +9,8 @@ test("published image clears and deleted places override built pages", async ({ 
   await page.route("**/api/admin/content?*", (route) => route.fulfill({ json: { ok: true, content } }));
   await page.goto(watArunPopularRoute);
   await expect(page.locator("#temple-detail-title")).toHaveText(record.fields.name);
-  await expect(page.locator(".temple-detail-hero__media img")).toHaveAttribute("src", sitePlaceholderImage);
-  await expect(page.locator(".temple-detail-hero__media img")).toHaveAttribute("alt", "");
+  await expect(page.locator("[data-place-media] img")).toHaveAttribute("src", sitePlaceholderImage);
+  await expect(page.locator("[data-place-media] img")).toHaveAttribute("alt", "");
   record.enabled = false;
   record.status = "deleted";
   await page.evaluate(async () => { await (window as any).MongkolWelaCMS.reload(); });
