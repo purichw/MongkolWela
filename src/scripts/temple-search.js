@@ -2,6 +2,7 @@ import { requestJson, createLatestRequest } from "./request.js";
 import { iconAttributes } from "../lib/ui-markup.js";
 import { syncPublicSelects } from "./public-select.js";
 import { startContentRefresh } from "./content-refresh.js";
+import { normalizePlaceholderImage, sitePlaceholderImage } from "../lib/image-placeholder.js";
 
 function icon(name) {
   const node = document.createElement("span");
@@ -20,14 +21,11 @@ function resultLink(item) {
   link.href = /^\/temples\/(popular|sacred|mu)\/[^?#]+\/$/.test(item.detailUrl) ? item.detailUrl : "/temples/";
   const media = document.createElement("span");
   media.className = "temple-search__image";
-  media.append(icon("map-pin"));
-  const url = safeImage(item.imageUrl);
-  if (url) {
-    const image = new Image();
-    image.alt = ""; image.loading = "lazy"; image.width = 80; image.height = 70;
-    image.addEventListener("error", () => image.remove(), { once: true });
-    image.src = url; media.append(image);
-  }
+  const image = new Image();
+  image.alt = ""; image.loading = "lazy"; image.width = 80; image.height = 70;
+  image.dataset.fallbackSrc = sitePlaceholderImage;
+  image.src = safeImage(normalizePlaceholderImage(item.imageUrl)) || sitePlaceholderImage;
+  media.append(image);
   const copy = document.createElement("span");
   copy.className = "temple-search__copy";
   const name = document.createElement("strong"); name.textContent = item.name;

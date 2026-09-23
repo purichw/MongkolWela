@@ -71,6 +71,25 @@ test("activities and products share artwork for missing and failed images", asyn
   await page.locator("[data-temple-activities]").screenshot({ path: info.outputPath("activity-placeholders.png") });
 });
 
+test("search suggestions share the same fallback for absent and broken thumbnails", async ({ page }) => {
+  await page.route("**/api/temple-search?**", route => route.fulfill({ json: {
+    items: ["", brokenImage, realImage].map((imageUrl, index) => ({
+      id: `placeholder-search-${index}`, name: `วัดทดสอบ ${index + 1}`,
+      province: "กรุงเทพมหานคร", district: "", blessings: [], imageUrl, detailUrl: detailRoute,
+    })),
+    total: 3, filters: {},
+  } }));
+  await page.goto("/404/");
+  await expect(page.locator(".page-fonts-pending")).toHaveCount(0);
+  await page.locator(".mw-search").click();
+  await page.locator("#header-temple-search").fill("วัดทดสอบ");
+  const images = page.locator("#header-temple-search-list img");
+  await expect(images).toHaveCount(3);
+  await expectPlaceholder(images.nth(0));
+  await expectPlaceholder(images.nth(1));
+  await expect(images.nth(2)).toHaveAttribute("src", new RegExp(realImage + "$"));
+});
+
 test("responsive errors recover across CMS updates and legacy placeholders migrate", async ({ page }) => {
   await page.goto("/");
   await page.locator(".mw-header[data-header-ready]").waitFor();

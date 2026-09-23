@@ -148,8 +148,10 @@ test("401 leads to the role-neutral login entry with real configured destination
 test("shared navigation stays usable on an error page", async ({ page }) => {
   await page.goto("/404/");
   await expect(page.locator(".mw-header")).toHaveAttribute("data-header-ready", "true");
+  await expect(page.locator(".page-fonts-pending")).toHaveCount(0);
   const toggle = page.getByRole("button", { name: "เปิดเมนู", exact: true });
-  if (await toggle.isVisible()) {
+  if (page.viewportSize()!.width <= 720 || await toggle.isVisible()) {
+    await expect(toggle).toBeVisible();
     await toggle.click();
     await expect(page.locator("#mw-navigation-dialog")).toBeVisible();
     await page.keyboard.press("Escape");

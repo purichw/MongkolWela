@@ -334,7 +334,7 @@ Content slots retain their existing dimensions and use `cover` for the
 placeholder, matching real-image crops, with the camera centered in every slot.
 The artwork has no baked-in text or external white margin. The shared image rule
 preserves the artwork's pale cream and muted green colors without a filter; real photos keep their
-existing colors and crops. Consumers include CMS/Home/calendar media, temple collections,
+existing colors and crops. Consumers include CMS/Home/calendar media, temple search and collections,
 details/maps/planner, activities, products, tarot/palm reference images, and
 admin list thumbnails. Logos, decorative icons, map tiles, empty upload slots,
 and upload validation previews retain their own behavior.
