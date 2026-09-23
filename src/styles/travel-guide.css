@@ -1,0 +1,167 @@
+.travel-guide { font-family: var(--font-thai); }
+.travel-guide :is(h2, h3, p) { margin: 0; }
+.travel-guide a { text-decoration: none; }
+.travel-guide :is(a, button, input, summary):focus-visible { outline: 3px solid var(--jade); outline-offset: 4px; }
+.travel-guide [hidden] { display: none !important; }
+.travel-guide .site-icon { --site-icon-color: currentColor; }
+.travel-guide :is(.primary-action, .guide-text-link, .guide-link-label) { display: inline-flex; align-items: center; gap: 10px; }
+.travel-guide :is(.primary-action, .guide-text-link, .guide-link-label) > .site-icon { width: 18px; height: 18px; }
+.travel-guide .primary-action { font-size: 14px; line-height: 1.5; }
+.travel-guide .primary-action:hover { background: var(--lacquer-dark); }
+.travel-guide .guide-banner .page-banner__inner { padding-block: 20px 32px; }
+.travel-guide .guide-banner .page-banner__copy { max-width: 740px; }
+.guide-banner .page-banner__media { inset-inline-start: 35%; }
+.guide-banner .page-banner__kicker .site-icon { width: 20px; height: 20px; }
+.guide-banner .page-banner__description { margin-top: 10px; }
+.guide-step-nav { border-bottom: 1px solid var(--line); background: #fffcf6; }
+.guide-step-nav ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: var(--page-width); padding: 0; margin: 0 auto; list-style: none; }
+.guide-step-nav li + li { border-left: 1px solid var(--line); }
+.guide-step-nav a { display: flex; align-items: center; gap: 12px; min-height: 80px; padding: 14px 20px; color: var(--jade-dark); font-size: 16px; font-weight: 600; }
+.guide-step-nav a:hover { background: #f1eadb; }
+.guide-step-nav__number { color: #9c743b; font-size: 13px; font-weight: 500; }
+.travel-guide .guide-step-nav .site-icon { width: 24px; height: 24px; }
+.travel-guide .guide-step-nav .site-icon:last-child { width: 16px; height: 16px; margin-left: auto; --site-icon-color: #9c743b; }
+.guide-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 320px; align-items: start; gap: 48px; width: var(--page-width); margin: 36px auto 0; }
+.guide-chapter { padding: 0 0 32px; scroll-margin-top: calc(var(--site-header-sticky-height) + 24px); }
+.guide-chapter + .guide-chapter { border-top: 1px solid var(--line); padding-top: 30px; }
+.guide-chapter__heading { display: flex; gap: 16px; align-items: center; margin-bottom: 14px; }
+.guide-number { display: grid; place-items: center; align-self: start; flex: none; width: 44px; height: 52px; border-block: 1px solid #d5b87c; color: var(--lacquer); font-size: 22px; font-weight: 600; }
+.travel-guide .guide-eyebrow { color: #906725; font-size: 12px; line-height: 1.6; font-weight: 500; margin: 0 0 3px; }
+.travel-guide h2 { font-size: var(--section-title-size); line-height: 1.45; font-weight: 700; }
+.travel-guide .guide-lead { color: var(--ink-soft); font-size: 15px; line-height: 1.85; margin: 0 0 18px; max-width: 760px; }
+.guide-collections { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.guide-collection { display: flex; flex-direction: column; align-items: start; min-width: 0; padding: 18px 16px 14px; border: 1px solid var(--line); border-top: 3px solid var(--collection-tone); border-radius: var(--radius); background: #fffcf7; color: var(--ink); }
+.guide-collection--red { --collection-tone: var(--lacquer); }
+.guide-collection--jade { --collection-tone: var(--jade); }
+.guide-collection--gold { --collection-tone: var(--gold); }
+.guide-collection:hover { border-color: var(--collection-tone); background: white; }
+.travel-guide .guide-collection > .site-icon { width: 36px; height: 36px; margin-bottom: 10px; }
+.guide-collection h3 { font-size: 18px; line-height: 1.5; }
+.guide-collection p { flex: 1; margin-top: 5px; font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
+.guide-collection .guide-link-label { margin-top: 14px; font-size: 12px; font-weight: 600; color: var(--collection-tone); }
+.travel-guide .guide-inline-note { display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 13px; color: var(--ink-soft); }
+.travel-guide .guide-inline-note > .site-icon { width: 18px; height: 18px; --site-icon-color: var(--jade); }
+.guide-inline-note svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.guide-inline-note a { color: var(--jade-dark); text-decoration: underline; text-underline-offset: 3px; }
+.guide-tool-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.guide-tool-links a { display: flex; align-items: center; gap: 12px; min-height: 88px; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: #fffcf7; color: var(--jade-dark); }
+.guide-tool-links a:hover { border-color: var(--jade); }
+.guide-tool-links strong { display: block; font-size: 15px; font-weight: 600; }
+.guide-tool-links small { display: block; margin-top: 4px; color: var(--ink-soft); font-size: 12px; line-height: 1.6; }
+.travel-guide .guide-tool-links .site-icon:first-child { --site-icon-color: #a07831; width: 28px; height: 28px; }
+.travel-guide .guide-tool-links .site-icon:last-child { width: 16px; height: 16px; margin-left: auto; }
+.travel-guide .guide-small-note { margin-top: 12px; font-size: 12px; line-height: 1.8; color: var(--ink-soft); }
+.guide-route-steps { display: grid; gap: 16px; padding: 0; margin: 0 0 22px; list-style: none; }
+.guide-route-steps li { display: flex; gap: 12px; align-items: start; }
+.guide-route-steps li > span { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; background: #e0ede6; color: var(--jade-dark); font-size: 13px; font-weight: 600; }
+.guide-route-steps strong { font-size: 15px; font-weight: 600; }
+.guide-route-steps p { margin-top: 3px; font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
+.guide-planner-action { display: flex; align-items: center; gap: 14px; padding: 20px 0; border-block: 1px solid #bfd5ca; }
+.travel-guide .guide-planner-action > .site-icon { --site-icon-color: var(--jade); width: 36px; height: 36px; }
+.guide-planner-action strong { color: var(--jade-dark); font-size: 17px; }
+.guide-planner-action p { font-size: 12px; color: var(--ink-soft); margin-top: 3px; }
+.guide-planner-action .primary-action { margin-left: auto; flex-shrink: 0; }
+.guide-etiquette { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; padding-block: 4px 18px; }
+.guide-etiquette > div { display: grid; grid-template-columns: 24px 1fr; align-content: start; column-gap: 10px; }
+.travel-guide .guide-etiquette .site-icon { width: 24px; height: 24px; --site-icon-color: var(--jade); }
+.guide-etiquette h3 { font-size: 16px; line-height: 1.5; }
+.guide-etiquette p { grid-column: 2; margin-top: 6px; font-size: 13px; line-height: 1.8; color: var(--ink-soft); }
+.guide-text-link { min-height: 44px; color: var(--lacquer); font-size: 14px; font-weight: 600; }
+.guide-text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.guide-checklist { position: sticky; top: calc(var(--site-header-sticky-height) + 20px); padding: 22px; border: 1px solid #d4dece; border-top: 3px solid var(--jade); border-radius: var(--radius); background: #fffdf8; box-shadow: 0 5px 16px #183c2808; scroll-margin-top: calc(var(--site-header-sticky-height) + 20px); }
+.guide-checklist__heading { display: flex; gap: 10px; align-items: center; }
+.travel-guide .guide-checklist__heading > .site-icon { --site-icon-color: var(--jade); width: 28px; height: 28px; }
+.guide-checklist h2 { font-size: 20px; line-height: 1.5; }
+.guide-checklist .guide-eyebrow { font-size: 11px; }
+.guide-checklist__progress { margin-block: 18px 8px; }
+.guide-checklist__progress > div { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-soft); }
+.guide-checklist output { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--jade-dark); }
+.guide-checklist progress { display: block; appearance: none; border: 0; border-radius: 4px; width: 100%; height: 5px; margin-top: 8px; overflow: hidden; background: #e1e9df; color: var(--jade); }
+.guide-checklist progress::-webkit-progress-bar { background: #e1e9df; }
+.guide-checklist progress::-webkit-progress-value { background: var(--jade); border-radius: 4px; }
+.guide-checklist progress::-moz-progress-bar { background: var(--jade); }
+.guide-checklist fieldset { padding: 0; margin: 0; border: 0; min-width: 0; }
+.guide-check { display: flex; align-items: start; gap: 10px; padding-block: 15px; cursor: pointer; border-bottom: 1px solid #e8e5da; }
+.guide-check input { width: 18px; height: 18px; margin: 3px 0 0; flex: none; accent-color: var(--jade); cursor: pointer; }
+.guide-check strong { display: block; font-size: 14px; font-weight: 500; line-height: 1.7; }
+.guide-check small { display: block; margin-top: 3px; font-size: 12px; line-height: 1.6; color: var(--ink-soft); }
+.guide-check:has(input:checked) strong { color: var(--jade); }
+.guide-checklist__footer { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding-top: 10px; }
+.guide-checklist__footer p { color: var(--ink-soft); font-size: 10px; }
+.guide-checklist__footer button { display: inline-flex; align-items: center; justify-content: center; flex: none; gap: 5px; min-height: 44px; padding: 0; background: none; border: 0; color: var(--jade-dark); font: inherit; font-size: 11px; cursor: pointer; }
+.guide-checklist__footer button:disabled { opacity: .5; cursor: default; }
+.guide-reset-icon { display: inline-block; width: 14px; height: 14px; }
+.travel-guide .guide-checklist__complete { margin-top: 12px; color: var(--jade-dark); font-size: 13px; line-height: 1.7; }
+.guide-faq { display: grid; grid-template-columns: 260px 1fr; gap: 48px; width: var(--page-width); margin: 12px auto 0; padding-block: 32px; border-block: 1px solid var(--line); }
+.travel-guide .guide-faq__intro > .site-icon { --site-icon-color: #a17938; width: 32px; height: 32px; margin-bottom: 10px; }
+.guide-faq__intro > p:last-child { color: var(--ink-soft); font-size: 14px; line-height: 1.8; margin-top: 10px; }
+.guide-faq__questions details + details { border-top: 1px solid var(--line); }
+.guide-faq summary { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 60px; padding: 14px 0; font-size: 16px; font-weight: 500; cursor: pointer; list-style: none; }
+.guide-faq summary::-webkit-details-marker { display: none; }
+.travel-guide .guide-faq summary .site-icon { width: 18px; height: 18px; --site-icon-color: var(--jade-dark); }
+.guide-faq details[open] summary .site-icon { transform: rotate(180deg); }
+.guide-faq__questions p { font-size: 14px; line-height: 1.9; color: var(--ink-soft); padding: 0 32px 18px 0; }
+.guide-closing { display: flex; align-items: center; justify-content: center; gap: 24px; width: var(--page-width); margin: 0 auto; padding-block: 36px; }
+.travel-guide .guide-closing > .site-icon { width: 48px; height: 48px; }
+.guide-closing p { font-size: 17px; line-height: 1.7; color: var(--ink-soft); }
+.guide-closing strong { color: var(--jade-dark); font-weight: 600; }
+@media (max-width: 1100px) {
+  .guide-workspace { gap: 28px; grid-template-columns: minmax(0, 1fr) 300px; }
+  .guide-step-nav a { padding-inline: 12px; gap: 8px; font-size: 14px; }
+  .guide-step-nav__number { display: none; }
+  .guide-planner-action { flex-wrap: wrap; }
+  .guide-planner-action .primary-action { margin-left: 50px; }
+}
+@media (max-width: 900px) {
+  .guide-workspace { grid-template-columns: 1fr; }
+  .guide-checklist { position: static; }
+  .guide-checklist fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; }
+  .guide-checklist__footer p { font-size: 12px; }
+  .guide-checklist__footer button { font-size: 13px; }
+  .guide-planner-action .primary-action { margin-left: auto; }
+  .guide-faq { margin-top: 28px; grid-template-columns: 210px 1fr; gap: 28px; }
+}
+@media (max-width: 720px) {
+  .travel-guide .guide-banner .page-banner__inner { padding-block: 12px 24px; }
+  .guide-banner .page-banner__media { inset-inline-start: 0; }
+  .guide-banner .page-banner__description { font-size: 13px; line-height: 1.8; }
+  .guide-step-nav ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .guide-step-nav li:nth-child(3) { border-left: 0; }
+  .guide-step-nav li:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .guide-step-nav a { min-height: 58px; padding: 10px; gap: 8px; font-size: 13px; }
+  .travel-guide .guide-step-nav .site-icon { width: 20px; height: 20px; }
+  .travel-guide .guide-step-nav .site-icon:last-child { width: 14px; height: 14px; }
+  .guide-workspace { margin-top: 24px; gap: 4px; }
+  .guide-chapter { padding-bottom: 24px; }
+  .guide-chapter + .guide-chapter { padding-top: 24px; }
+  .guide-chapter__heading { gap: 12px; margin-bottom: 12px; }
+  .guide-number { width: 32px; height: 44px; font-size: 18px; }
+  .travel-guide .guide-eyebrow { font-size: 11px; }
+  .travel-guide h2 { font-size: 21px; }
+  .travel-guide .guide-lead { font-size: 14px; line-height: 1.8; }
+  .guide-collections { grid-template-columns: 1fr; gap: 8px; }
+  .guide-collection { display: grid; grid-template-columns: 36px minmax(0, 1fr) 18px; gap: 2px 12px; align-items: center; padding: 14px; border-top-width: 1px; border-left: 3px solid var(--collection-tone); }
+  .travel-guide .guide-collection > .site-icon { grid-row: 1 / 3; margin-bottom: 0; }
+  .guide-collection h3 { font-size: 16px; }
+  .guide-collection p { grid-column: 2; margin: 0; font-size: 12px; }
+  .guide-collection .guide-link-label { grid-column: 3; grid-row: 1 / 3; margin: 0; font-size: 0; gap: 0; }
+  .guide-tool-links { grid-template-columns: 1fr; gap: 8px; }
+  .guide-tool-links a { min-height: 76px; }
+  .guide-planner-action { padding-block: 16px; gap: 10px 12px; }
+  .guide-planner-action .primary-action { margin-left: 48px; }
+  .guide-planner-action strong { font-size: 16px; }
+  .guide-route-steps strong { font-size: 14px; }
+  .guide-etiquette { grid-template-columns: 1fr; gap: 18px; }
+  .guide-checklist { padding: 20px; }
+  .guide-checklist h2 { font-size: 20px; }
+  .guide-checklist fieldset { display: block; }
+  .guide-faq { display: block; padding-block: 24px; }
+  .guide-faq__intro { margin-bottom: 8px; }
+  .travel-guide .guide-faq__intro > .site-icon { display: none; }
+  .guide-faq__intro > p:last-child { display: none; }
+  .guide-faq summary { font-size: 14px; min-height: 64px; }
+  .guide-faq__questions p { font-size: 13px; padding-right: 12px; }
+  .guide-closing { flex-wrap: wrap; gap: 14px; padding-block: 28px; }
+  .guide-closing p { font-size: 16px; }
+  .guide-closing .primary-action { margin-inline: 32px; }
+}

@@ -51,7 +51,7 @@ export const siteConfig = {
     openMenuLabel: "เปิดเมนู",
     searchLabel: "ค้นหา",
     topbar: [
-      { label: "คู่มือวางแผนเดินทางมงคล", href: "temples/" },
+      { label: "คู่มือวางแผนเดินทางมงคล", href: "guide/" },
       { label: "ปฏิทินไทย", href: "calendar/" },
       { label: "วันพระ ดิถี ฤกษ์มงคล และรายละเอียดรายวัน", href: "calendar/day/", featured: true },
       { label: "ติดต่อมงคลเวลา", href: "#consult" },
@@ -101,6 +101,7 @@ export const siteConfig = {
         footerVariant: "home",
       },
       calendar: {},
+      travelGuide: {},
       calendarDay: {},
       lifeGraph: {},
       seamsi: {},

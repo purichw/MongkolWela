@@ -182,6 +182,16 @@
   },
   "pages": [
     {
+      "id": "travelGuide",
+      "kind": "existing",
+      "label": "คู่มือวางแผนเดินทางมงคล",
+      "route": "/guide/",
+      "blocks": [],
+      "enabled": true,
+      "patches": [],
+      "sections": []
+    },
+    {
       "id": "home",
       "label": "หน้าแรก",
       "route": "/",

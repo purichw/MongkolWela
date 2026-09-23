@@ -1,0 +1,114 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageBanner from "../../components/PageBanner.astro";
+import CmsImage from "../../components/CmsImage.astro";
+import SiteIcon from "../../components/icons/SiteIcon.astro";
+import { iconAttributes } from "../../lib/ui-markup.js";
+
+const title = "คู่มือวางแผนเดินทางมงคล";
+const banner = "/assets/images/planner-wat-arun-evening.webp";
+const steps = [
+  { id: "places", label: "เลือกสถานที่", icon: "map-pin" },
+  { id: "date", label: "เลือกวันเดินทาง", icon: "calendar-days" },
+  { id: "route", label: "จัดเส้นทาง", icon: "route" },
+  { id: "prepare", label: "เตรียมตัวให้พร้อม", icon: "handbag" },
+] as const;
+const collections = [
+  { title: "วัดดังน่าไป", description: "เริ่มจากวัดยอดนิยมที่อยากไปสักครั้ง", href: "/temples/popular/", icon: "temple", tone: "red" },
+  { title: "วัดเด่นขอพร", description: "เลือกตามเรื่องที่อยากเสริมกำลังใจ", href: "/temples/sacred/", icon: "lotus", tone: "jade" },
+  { title: "พิกัดสายมู", description: "สำรวจศาลและสถานที่สักการะ", href: "/temples/mu/", icon: "stupa", tone: "gold" },
+] as const;
+const checklist = [
+  { id: "hours", label: "เช็กเวลาเปิด–ปิด", detail: "รวมวันหยุดและเวลาของจุดที่อยากเข้าชม" },
+  { id: "travel", label: "เช็กเส้นทางและการเดินทาง", detail: "จุดจอดรถ ท่าเรือ หรือรถสาธารณะ" },
+  { id: "weather", label: "ดูพยากรณ์อากาศ", detail: "เตรียมน้ำดื่ม ร่ม และของใช้จำเป็น" },
+  { id: "clothes", label: "เตรียมการแต่งกาย", detail: "สุภาพ เหมาะกับข้อกำหนดของสถานที่" },
+  { id: "budget", label: "กำหนดงบประมาณ", detail: "ค่าเดินทาง ค่าเข้าชม และทำบุญตามกำลัง" },
+  { id: "plan", label: "เก็บแผนและพิกัดไว้แล้ว", detail: "เผื่อเวลาเดิน พัก และเดินทางกลับ" },
+];
+const questions = [
+  { question: "ต้องไปให้ครบ 9 วัดไหม?", answer: "ไม่จำเป็น เลือกจำนวนที่เหมาะกับเวลาและกำลังของคุณ ไปเพียงแห่งเดียวอย่างไม่เร่งรีบก็ได้ หากใช้ตัววางแผน เลือกจำนวนสูงสุด 3, 5 หรือ 9 แห่ง แล้วปรับรายการตามที่สะดวก" },
+  { question: "ยังไม่รู้จะไปที่ไหน เริ่มอย่างไรดี?", answer: "เริ่มจากจังหวัดที่เดินทางสะดวก แล้วดูวัดดังน่าไป หรือเลือกเรื่องที่สนใจในหมวดวัดเด่นขอพร เปิดรายละเอียดสถานที่ก่อนเลือก เพื่อดูพิกัดและข้อมูลการเข้าชม" },
+  { question: "ตัววางแผนเช็กเวลาเปิด–ปิดให้แล้วหรือยัง?", answer: "ยังไม่ได้ตรวจเวลาเปิด–ปิดหรือจราจรสด แผนใช้พิกัดเพื่อประมาณระยะและเวลา จึงควรตรวจข้อมูลกับสถานที่ และดูเส้นทางจริงในแผนที่ก่อนออกเดินทาง" },
+  { question: "ต้องซื้อของไหว้หรือทำบุญเท่าไร?", answer: "ไม่มีงบที่ต้องใช้เหมือนกันทุกคน ทำตามกำลังและความสมัครใจ ตรวจข้อกำหนดของแต่ละสถานที่ก่อนซื้อของไหว้ และเคารพพื้นที่ที่งดธูป เทียน หรือสิ่งของบางประเภท" },
+];
+---
+
+<BaseLayout title={`${title} | มงคลเวลา`} description="เริ่มวางแผนไหว้พระใน 4 ขั้นตอน เลือกสถานที่ ดูวันเดินทาง จัดเส้นทาง และเช็กความพร้อมก่อนออกเดินทาง" page="travelGuide" bodyClass="travel-guide-page" canonicalPath="/guide/" image={banner} imageAlt="พระปรางค์วัดอรุณในยามเย็น" breadcrumbs={[{ label: "หน้าแรก", href: "/" }, { label: title, href: "/guide/" }]}>
+  <main class="travel-guide" data-cms-preserve-section-order>
+    <PageBanner titleId="guide-title" class="guide-banner">
+      <CmsImage slot="media" mediaId="travel-guide-hero-image" image={{ src: banner, alt: "พระปรางค์วัดอรุณในยามเย็น", position: "center 44%", credit: "Vasant Jain / Unsplash", sourceUrl: "https://unsplash.com/photos/wcghi5PGJcI" }} width={1600} height={900} loading="eager" fetchpriority="high" />
+      <div class="page-banner__copy">
+        <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง"><a href="/">หน้าแรก</a><span aria-hidden="true">/</span><span>คู่มือเดินทางมงคล</span></nav>
+        <p class="page-banner__kicker"><SiteIcon name="compass" />เริ่มต้นการเดินทางของคุณ</p>
+        <h1 id="guide-title">คู่มือวางแผน<br />เดินทางมงคล</h1>
+        <p class="page-banner__description">จากความตั้งใจ สู่ทริปไหว้พระที่เป็นไปได้จริง<br />เลือกสถานที่ ดูวัน จัดเส้นทาง แล้วออกเดินทางอย่างสบายใจ</p>
+      </div>
+    </PageBanner>
+
+    <nav class="guide-step-nav" aria-label="ขั้นตอนวางแผนเดินทาง">
+      <ol>{steps.map((step, index) => <li><a href={`#guide-${step.id}`}><span class="guide-step-nav__number">0{index + 1}</span><SiteIcon name={step.icon} /><span>{step.label}</span><SiteIcon name="chevron-right" /></a></li>)}</ol>
+    </nav>
+
+    <div class="guide-workspace">
+      <div class="guide-chapters">
+        <section class="guide-chapter" id="guide-places" aria-labelledby="guide-places-title">
+          <header class="guide-chapter__heading"><span class="guide-number">01</span><div><p class="guide-eyebrow">เริ่มจากความตั้งใจ</p><h2 id="guide-places-title">อยากไปที่ไหน ขอพรเรื่องอะไร</h2></div></header>
+          <p class="guide-lead">เลือกสถานที่หลักที่อยากไปก่อน แล้วค่อยเติมจุดแวะใกล้กัน ไม่ต้องใส่ทุกแห่งลงในทริปเดียว</p>
+          <div class="guide-collections">{collections.map(collection => <a class={`guide-collection guide-collection--${collection.tone}`} href={collection.href}><SiteIcon name={collection.icon} /><h3>{collection.title}</h3><p>{collection.description}</p><span class="guide-link-label">ดูสถานที่ <SiteIcon name="arrow-right" /></span></a>)}</div>
+          <p class="guide-inline-note"><SiteIcon name="search" /><span>มีชื่อวัดในใจแล้ว? <a href="/search/">ค้นหาวัดหรือจังหวัด</a> ได้เลย</span></p>
+        </section>
+
+        <section class="guide-chapter" id="guide-date" aria-labelledby="guide-date-title">
+          <header class="guide-chapter__heading"><span class="guide-number">02</span><div><p class="guide-eyebrow">เลือกวันที่สะดวกกับชีวิตจริง</p><h2 id="guide-date-title">ดูวันดี พร้อมดูเวลาที่ไปได้</h2></div></header>
+          <p class="guide-lead">เริ่มจากวันว่างและเวลาเปิดของสถานที่ หากอยากไปในวันพระหรือวันสำคัญ ใช้ปฏิทินประกอบการเลือกวัน และเผื่อเวลาสำหรับคนที่มากขึ้น</p>
+          <div class="guide-tool-links">
+            <a href="/calendar/"><SiteIcon name="calendar-days" /><span><strong>ปฏิทินไทย</strong><small>ดูวันพระและวันสำคัญในแต่ละเดือน</small></span><SiteIcon name="arrow-right" /></a>
+            <a href="/calendar/day/"><SiteIcon name="sunrise" /><span><strong>รายละเอียดรายวัน</strong><small>ดูดิถีและข้อมูลมงคลของวันที่เลือก</small></span><SiteIcon name="arrow-right" /></a>
+          </div>
+          <p class="guide-small-note">วันและเวลามงคลเป็นความเชื่อส่วนบุคคล เลือกให้เหมาะกับความพร้อมและความปลอดภัยของคุณ</p>
+        </section>
+
+        <section class="guide-chapter" id="guide-route" aria-labelledby="guide-route-title">
+          <header class="guide-chapter__heading"><span class="guide-number">03</span><div><p class="guide-eyebrow">ให้เวลาแต่ละจุดอย่างพอดี</p><h2 id="guide-route-title">จัดเส้นทางที่ไม่ต้องรีบ</h2></div></header>
+          <p class="guide-lead">รวมสถานที่ในย่านเดียวกันก่อน แล้วจัดลำดับให้ต่อเนื่อง อย่าลืมเวลาเดินเข้าวัด พักรับประทานอาหาร และเดินทางกลับ</p>
+          <ol class="guide-route-steps">
+            <li><span>1</span><div><strong>กำหนดพื้นที่และจำนวนสถานที่</strong><p>เลือกสูงสุด 3, 5 หรือ 9 แห่ง พร้อมเวลาเริ่มเดินทาง</p></div></li>
+            <li><span>2</span><div><strong>เลือกเอง หรือให้ระบบแนะนำ</strong><p>เพิ่มสถานที่ที่สนใจ แล้วปรับลำดับให้เหมาะกับทริป</p></div></li>
+            <li><span>3</span><div><strong>ตรวจแผน แล้วเปิดเส้นทางจริง</strong><p>ดูระยะและเวลาประมาณ บันทึกแผน หรือเปิดใน Google Maps</p></div></li>
+          </ol>
+          <div class="guide-planner-action"><SiteIcon name="route" /><div><strong>พร้อมจัดทริปของคุณแล้ว</strong><p>เริ่มจากไม่กี่แห่ง แล้วค่อยปรับให้ลงตัว</p></div><a class="primary-action" href="/temples/planner/">วางแผนไหว้พระ <SiteIcon name="arrow-right" /></a></div>
+          <p class="guide-small-note">เวลาในแผนเป็นค่าประมาณ ไม่รวมจราจรสด เวลาเปิด–ปิด และขากลับ ควรตรวจสอบอีกครั้งก่อนเดินทาง</p>
+        </section>
+
+        <section class="guide-chapter" id="guide-prepare" aria-labelledby="guide-prepare-title">
+          <header class="guide-chapter__heading"><span class="guide-number">04</span><div><p class="guide-eyebrow">เตรียมพร้อม แล้วไปอย่างสบายใจ</p><h2 id="guide-prepare-title">เคารพสถานที่ ดูแลตัวเอง</h2></div></header>
+          <div class="guide-etiquette">
+            <div><SiteIcon name="hand" /><h3>เคารพวิถีของแต่ละแห่ง</h3><p>แต่งกายสุภาพ อ่านข้อปฏิบัติ งดถ่ายภาพในจุดที่ห้าม และรักษาความสงบ</p></div>
+            <div><SiteIcon name="heart" /><h3>ทำบุญตามกำลัง</h3><p>กำหนดงบที่สบายใจ ไม่จำเป็นต้องซื้อของไหว้ทุกจุด หรือไปให้ครบเพื่อให้ทริปมีความหมาย</p></div>
+          </div>
+          <a class="guide-text-link" href="#guide-checklist">เช็กความพร้อมก่อนออกเดินทาง <SiteIcon name="arrow-right" /></a>
+        </section>
+      </div>
+
+      <aside class="guide-checklist" id="guide-checklist" aria-labelledby="guide-checklist-title" data-travel-checklist>
+        <div class="guide-checklist__heading"><SiteIcon name="shield-check" /><div><p class="guide-eyebrow">เก็บไว้เช็กก่อนออกจากบ้าน</p><h2 id="guide-checklist-title">พร้อมเดินทางหรือยัง?</h2></div></div>
+        <div class="guide-checklist__progress" data-guide-progress hidden>
+          <div><span>เช็กความพร้อม</span><output data-guide-count aria-live="polite">0 / 6</output></div>
+          <progress value="0" max={checklist.length} aria-label="รายการที่ตรวจแล้ว"></progress>
+        </div>
+        <fieldset><legend class="sr-only">รายการเตรียมตัวก่อนเดินทาง</legend>{checklist.map(item => <label class="guide-check"><input type="checkbox" value={item.id} /><span><strong>{item.label}</strong><small>{item.detail}</small></span></label>)}</fieldset>
+        <div class="guide-checklist__footer" data-guide-checklist-footer hidden><p data-guide-storage-note>บันทึกไว้เฉพาะบนอุปกรณ์นี้</p><button type="button" data-guide-reset disabled><span {...iconAttributes("rotate-ccw", "guide-reset-icon")}></span>ล้างรายการ</button></div>
+        <noscript><p class="guide-small-note">เปิด JavaScript เพื่อเก็บรายการที่เช็กไว้เมื่อกลับมาหน้านี้</p></noscript>
+        <p class="guide-checklist__complete" data-guide-complete role="status" hidden>เช็กครบแล้ว ขอให้เดินทางโดยสวัสดิภาพ</p>
+      </aside>
+    </div>
+
+    <section class="guide-faq" aria-labelledby="guide-faq-title">
+      <div class="guide-faq__intro"><SiteIcon name="book-open" /><p class="guide-eyebrow">ก่อนเริ่มทริปแรก</p><h2 id="guide-faq-title">คำถามที่พบบ่อย</h2><p>วางแผนให้พอดีกับคุณ<br />ไม่ต้องทำตามใครทุกขั้นตอน</p></div>
+      <div class="guide-faq__questions">{questions.map(item => <details><summary>{item.question}<SiteIcon name="chevron-down" /></summary><p>{item.answer}</p></details>)}</div>
+    </section>
+    <div class="guide-closing"><SiteIcon name="lotus" /><p>ทริปที่ดี เริ่มจากความตั้งใจ<br /><strong>และแผนที่พอดีกับคุณ</strong></p><a class="primary-action" href="/temples/planner/">เริ่มวางแผนเดินทาง <SiteIcon name="arrow-right" /></a></div>
+  </main>
+  <script>import "../../scripts/travel-guide.js";</script>
+</BaseLayout>

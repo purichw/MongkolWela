@@ -1,5 +1,15 @@
 # CMS Content
 
+## Travel Guide
+
+The `/guide/` route uses page ID `travelGuide`; both build/development seeds
+register it as an existing page. The shared utility link now opens this route.
+The page reuses the public shell, PageBanner and CmsImage without changing their
+CMS ownership. Checklist state stays only in the visitor's local storage.
+Do not seed or replace live content during deployment. If the live page registry
+needs an entry, append only the missing record to the latest published document
+through the existing Admin workflow, preserving all edits. See `docs/travel-guide.md`.
+
 Admin identity, membership checks and rollout steps are documented in
 [Admin Supabase Auth](docs/admin-supabase-auth.md). Auth accounts alone do not
 grant portal access.
