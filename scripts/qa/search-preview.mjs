@@ -1,6 +1,6 @@
 import http from "node:http";
 import content from "../../api/admin/content.js";
-import search from "../../api/temple-search.js";
+import search from "../../api/temple-planner/data.js";
 
 // Loopback-only preview of real GET handlers. No writes or authentication bypass.
 const port = Number(process.env.SEARCH_PREVIEW_PORT || 4371);

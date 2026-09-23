@@ -1,6 +1,6 @@
-import { readLiveContent, sendJson } from "./admin/_shared.js";
-import { getTempleSearchCatalog } from "../src/data/temple-search.js";
-import { searchTemples } from "../src/lib/temple-search.js";
+import { readLiveContent, sendJson } from "../admin/_shared.js";
+import { getTempleSearchCatalog } from "../../src/data/temple-search.js";
+import { searchTemples } from "../../src/lib/temple-search.js";
 
 export default async function handler(req, res) {
   res.setHeader("X-Robots-Tag", "noindex, nofollow");

@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { getTempleSearchCatalog } from "../../src/data/temple-search.js";
 import { searchTemples } from "../../src/lib/temple-search.js";
-import handler from "../../api/temple-search.js";
+import handler from "../../api/temple-planner/data.js";
 import { spawnSync } from "node:child_process";
 
 const catalog = getTempleSearchCatalog({});
@@ -53,13 +53,29 @@ test("GET API exposes only search projection and rejects writes", async () => {
   assert.equal(status, 200); assert.ok(body.items.length <= 5);
   assert.equal(headers["Cache-Control"], "no-store");
   assert.ok(!JSON.stringify(body).includes('"records"'));
+  const direct = body;
+  await handler({ method: "GET", url: "/api/temple-planner/data?view=search&q=การงาน&suggest=1" }, res);
+  assert.deepEqual(body, direct);
   await handler({ method: "POST", url: "/api/temple-search" }, res);
   assert.equal(status, 405); assert.equal(headers.Allow, "GET");
 });
 
+test("shared function preserves planner catalog and revision behavior", async () => {
+  let status, body;
+  const res = { setHeader() {}, set statusCode(value) { status = value; }, end(value) { body = JSON.parse(value); } };
+  await handler({ method: "GET", url: "/api/temple-planner/data" }, res);
+  assert.equal(status, 200);
+  assert.ok(body.items.length > 0);
+  assert.ok(body.revision);
+  const revision = body.revision;
+  await handler({ method: "GET", url: `/api/temple-planner/data?revision=${revision}` }, res);
+  assert.equal(status, 200);
+  assert.deepEqual(body, { revision, unchanged: true });
+});
+
 test("production source failure never returns bundled search results", () => {
   const result = spawnSync(process.execPath, ["--input-type=module", "-e", `
-    import handler from './api/temple-search.js';
+    import handler from './api/temple-planner/data.js';
     let status;
     await handler({ method: 'GET', url: '/api/temple-search?q=การงาน' }, {
       setHeader() {}, set statusCode(value) { status = value; },

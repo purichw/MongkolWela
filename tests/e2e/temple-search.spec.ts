@@ -43,7 +43,7 @@ for (const width of [1440, 390]) {
     await input.press("Escape"); await expect(dialog).toBeVisible();
     await input.press("Escape"); await expect(dialog).toBeHidden();
     await expect(page.locator(".mw-search")).toBeFocused();
-    expect(await page.evaluate(() => document.body.style.overflow)).not.toBe("hidden");
+    await expect.poll(() => page.evaluate(() => document.body.style.overflow)).not.toBe("hidden");
     await page.goto("/tarot/daily/"); await ready(page);
     await page.locator(".mw-search").click(); await input.fill("วัดอรุณ");
     await expect(dialog.getByRole("option").first()).toBeVisible();

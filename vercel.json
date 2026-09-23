@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/temple-search",
+      "destination": "/api/temple-planner/data?view=search"
+    },
+    {
       "source": "/p/:path*/",
       "destination": "/admin/page-shell/"
     },
