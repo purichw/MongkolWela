@@ -320,19 +320,20 @@ placeholder is not requested repeatedly.
 
 The user-supplied Thai temple illustration is served as
 `/assets/images/site-placeholder-camera-20260923.webp` (1536 x 980).
-Its source is the attachment `codex-clipboard-75cf6472-f408-4aec-a24d-4550b35d8014.png`,
-provided on 2026-09-23. The built-in image editor removed both text lines,
-centered the camera, and extended the illustration to all edges while retaining
-the supplied style and scenery. The export trims 44 bottom pixels to center
-the camera exactly. No stock imagery was used. The versioned URL avoids the
+Its source is the original generated asset `exec-698aa5e0-e0a3-4d3c-8ff2-32408e0e55bd.png`,
+explicitly selected by the user on 2026-09-23, not a screenshot of that image.
+The built-in image editor removed both text lines from the user's initial
+reference and extended the illustration to all edges. The export trims 44
+bottom pixels to center the camera, preserving its original pale cream colors.
+No stock imagery was used. The versioned URL avoids the
 existing immutable asset cache. Legacy CMS references to
 `temple-placeholder-auspicious.png` and `site-placeholder-20260923.webp`
 normalize to the new asset; both files also contain the new artwork for older consumers.
 
 Content slots retain their existing dimensions and use `cover` for the
 placeholder, matching real-image crops, with the camera centered in every slot.
-The artwork has no baked-in text, white margin, or rounded border. The shared image rule
-grays out placeholders with `grayscale(1) opacity(0.65)`; real photos keep their
+The artwork has no baked-in text or external white margin. The shared image rule
+preserves the artwork's pale cream and muted green colors without a filter; real photos keep their
 existing colors and crops. Consumers include CMS/Home/calendar media, temple collections,
 details/maps/planner, activities, products, tarot/palm reference images, and
 admin list thumbnails. Logos, decorative icons, map tiles, empty upload slots,

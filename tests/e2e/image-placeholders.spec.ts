@@ -12,7 +12,7 @@ async function expectPlaceholder(image: Locator) {
   await image.scrollIntoViewIfNeeded();
   await expect.poll(() => image.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(1536);
   await expect(image).toHaveCSS("object-fit", "cover");
-  await expect(image).toHaveCSS("filter", "grayscale(1) opacity(0.65)");
+  await expect(image).toHaveCSS("filter", "none");
 }
 
 test.beforeEach(async ({ page }) => {
