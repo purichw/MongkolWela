@@ -1,0 +1,64 @@
+---
+import SiteIcon from "./icons/SiteIcon.astro";
+import "../styles/palm-line-map.css";
+
+const lines = [
+  { id: "heart_line", title: "เส้นหัวใจ", copy: "ความรัก อารมณ์", color: "#b84c60", side: "left", y: 30, point: [330, 210], path: "M334 170 L334 191 Q326 199 314 204 M314 204 Q377 241 461 244" },
+  { id: "head_line", title: "เส้นสมอง", copy: "ความคิด การตัดสินใจ", color: "#88876a", side: "left", y: 48, point: [351, 251], path: "M308 229 Q330 242 351 251 Q407 268 459 285" },
+  { id: "life_line", title: "เส้นชีวิต", copy: "พลังและจังหวะชีวิต", color: "#347767", side: "left", y: 68, point: [377, 304], path: "M310 225 C350 239 374 272 379 311 Q385 343 370 372" },
+  { id: "fate_line", title: "เส้นวาสนา", copy: "เส้นทางชีวิต อาชีพ", color: "#d89b64", stroke: "#b286b4", side: "right", y: 18, point: [382, 223], path: "M421 371 Q405 318 390 277 Q379 246 379 174" },
+  { id: "sun_line", title: "เส้นอาทิตย์", copy: "ผลงาน ชื่อเสียง", color: "#92976a", side: "right", y: 36, point: [418, 265], path: "M400 343 Q417 294 418 265 L421 183" },
+  { id: "mercury_line", title: "เส้นพุธ", copy: "สื่อสาร ปรับตัว", color: "#72a9b2", side: "right", y: 55, point: [417, 302], path: "M361 362 Q409 316 451 261" },
+  { id: "marriage_line", title: "เส้นสมรส", copy: "ความผูกพัน", color: "#c58db2", side: "right", y: 75, point: [456, 226], path: "M448 224 L469 222" },
+];
+---
+
+<section class="plw-map" aria-labelledby="plw-map-title" data-plw-map>
+  <header class="plw-map-header">
+    <div>
+      <h2 id="plw-map-title">คลิกที่เส้นเพื่อดูความหมาย</h2>
+      <p>เลือกเส้นบนมือ หรือดูตัวอย่างลักษณะเส้นด้านล่าง</p>
+    </div>
+    <div class="plw-map-switch" role="group" aria-label="มือที่แสดงในแผนผัง">
+      <button type="button" data-map-hand="left" aria-pressed="false">มือซ้าย</button>
+      <button type="button" data-map-hand="right" aria-pressed="true">มือขวา</button>
+    </div>
+  </header>
+  <div class="plw-map-stage" data-map-side="right">
+    <svg class="plw-map-art" viewBox="0 0 720 435" aria-hidden="true">
+      <defs>
+        <linearGradient id="plw-map-wrist-fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0.88" stop-color="white" />
+          <stop offset="1" stop-color="black" />
+        </linearGradient>
+        <mask id="plw-map-hand-mask"><rect x="0" y="0" width="720" height="435" fill="url(#plw-map-wrist-fade)" /></mask>
+      </defs>
+      <g class="plw-map-compass" fill="none" stroke="currentColor">
+        <circle cx="360" cy="218" r="196" />
+        <circle cx="360" cy="218" r="188" />
+        <circle cx="360" cy="218" r="166" stroke-dasharray="1 12" stroke-width="9" />
+        {[0, 30, 60, 90, 120, 150].map(angle => <path d="M360 33 V403" transform={`rotate(${angle} 360 218)`} />)}
+      </g>
+      <g data-map-palm mask="url(#plw-map-hand-mask)">
+        <image href="/assets/images/palmistry-diagram-hand.webp" x="249" y="14" width="228" height="403" />
+        {lines.map(line => (
+          <g class="plw-map-line" data-map-path={line.id} style={`--line-color:${line.stroke || line.color}`}>
+            <path class="plw-map-line-halo" d={line.path} />
+            <path class="plw-map-line-visible" d={line.path} />
+            <path class="plw-map-line-hit" d={line.path} data-map-select={line.id} />
+          </g>
+        ))}
+      </g>
+      {lines.map(line => (
+        <path class="plw-map-leader" data-map-leader={line.id} data-point={line.point.join(",")} data-side={line.side} data-y={line.y} style={`--line-color:${line.color}`} />
+      ))}
+    </svg>
+    {lines.map(line => (
+      <button type="button" class={`plw-map-label plw-map-label--${line.side}`} style={`--label-y:${line.y}%;--line-color:${line.color}`} data-map-select={line.id} aria-pressed="false" aria-controls="plw-picker-title">
+        <span class="plw-map-dot" aria-hidden="true"></span>
+        <span><strong>{line.title}</strong><small>{line.copy}</small></span>
+      </button>
+    ))}
+  </div>
+  <p class="plw-map-note"><SiteIcon name="info" /><span>คลิกบนเส้นเพื่อดูความหมาย<span class="plw-map-note-more"> หรือเลือกจากรายการด้านล่าง</span></span></p>
+</section>

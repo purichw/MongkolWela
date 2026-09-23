@@ -1,8 +1,15 @@
 ---
 import ToolsLayout from "../../../layouts/ToolsLayout.astro";
 import ToolsHero from "../../../components/ToolsHero.astro";
+import SiteIcon from "../../../components/icons/SiteIcon.astro";
+import { iconAttributes } from "../../../lib/ui-markup.js";
+import { seamsiCategories } from "../../../scripts/seamsi-data.js";
 
-
+const guidance = [
+  { number: "01", icon: "compass", title: "ถามให้ชัด", copy: "ตั้งคำถามหนึ่งเรื่องต่อหนึ่งครั้ง เพื่อทบทวนมุมมองของตัวเอง" },
+  { number: "02", icon: "clock", title: "เว้นจังหวะ", copy: "พักใจแล้วกลับมาอ่านใหม่ แทนการขอคำตอบซ้ำทันที" },
+  { number: "03", icon: "leaf", title: "ใช้ร่วมกับสติ", copy: "ใช้ข้อมูล เหตุผล และความรับผิดชอบประกอบการตัดสินใจ" },
+];
 ---
 
 <ToolsLayout
@@ -14,115 +21,126 @@ import ToolsHero from "../../../components/ToolsHero.astro";
   bodyClass="seamsi-page"
 >
   <main>
-      <ToolsHero title="คำเซียมซี" kicker="Kau Chim Oracle" lead="ตั้งจิตให้สงบ เลือกเรื่องที่ต้องการถาม แล้วเขย่ากระบอกเซียมซีเพื่อรับคำทำนายและข้อคิดสำหรับทบทวนใจ" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"คำเซียมซี"}]} />
+    <ToolsHero
+      title="คำเซียมซี"
+      kicker="KAU CHIM ORACLE"
+      lead="ตั้งจิตให้สงบ เลือกเรื่องที่ต้องการถาม แล้วเขย่ากระบอกเซียมซีเพื่อรับคำทำนายและข้อคิดสำหรับทบทวนใจ"
+      quote="บางคำตอบอาจไม่เปลี่ยนชะตา แต่ช่วยให้เราเห็นทางในใจได้ชัดขึ้น"
+      breadcrumbs={[{ label: "หน้าแรก", href: "/" }, { label: "คำเซียมซี" }]}
+    />
 
-      <section class="seamsi-shell tools-workspace" id="seamsi-oracle">
-        <form class="seamsi-form tools-form" data-seamsi-form>
+    <section class="seamsi-shell tools-workspace" id="seamsi-oracle" aria-label="เสี่ยงเซียมซี">
+      <form class="seamsi-form tools-form" data-seamsi-form>
+        <div class="seamsi-form-heading">
+          <SiteIcon name="lotus" class="seamsi-heading-icon" />
           <div>
-            <p class="section-kicker">ตั้งจิตถาม</p>
-            <h2>เลือกเรื่องเดียวก่อนเขย่า</h2>
+            <h2>ตั้งใจถาม</h2>
+            <p>เลือกเรื่องที่ใจอยากทบทวน</p>
           </div>
-
-          <label>
-            <span>เรื่องที่ต้องการถาม</span>
-            <select name="category" data-seamsi-category></select>
-          </label>
-
-          <label>
-            <span>คำถามในใจ</span>
-            <textarea
-              name="question"
-              maxlength="180"
-              data-seamsi-question
-              placeholder="เขียนสั้น ๆ เช่น งานนี้ควรเดินหน้าต่อไหม"
-            ></textarea>
-          </label>
-
-          <button class="primary-action" type="submit" data-seamsi-shake>เขย่าเซียมซี</button>
-          <p class="seamsi-form-note">
-            ควรถามเฉพาะเรื่องสำคัญ 1-3 เรื่องต่อครั้ง และไม่ควรถามซ้ำเพียงเพื่อได้คำตอบที่ต้องการ
-          </p>
-        </form>
-
-        <div class="seamsi-main">
-          <section class="seamsi-stage tools-panel">
-            <div class="seamsi-stage-copy">
-              <p class="section-kicker">รับคำทำนาย</p>
-              <h2>กดกระบอกเพื่อเขย่าไม้เซียมซี</h2>
-              <p>
-                หายใจเข้าออกลึก ๆ ตั้งคำถามในใจ แล้วกดกระบอกเซียมซี
-                ระบบจะสุ่มใบคำทำนายพร้อม ภาพเคลื่อนไหวของไม้เซียมซีตกจากกระบอก
-              </p>
-              <p class="seamsi-status" data-seamsi-status aria-live="polite">
-                ตั้งจิต เลือกเรื่องที่ถาม แล้วกดกระบอกเซียมซี
-              </p>
-            </div>
-
-            <div class="seamsi-oracle-wrap">
-              <button class="seamsi-oracle" type="button" data-seamsi-oracle aria-label="เขย่ากระบอกเซียมซี">
-                <span class="seamsi-stick" data-stick="๑"></span>
-                <span class="seamsi-stick" data-stick="๗"></span>
-                <span class="seamsi-stick" data-stick="๙"></span>
-                <span class="seamsi-stick" data-stick="๑๒"></span>
-                <span class="seamsi-stick" data-stick="๒๑"></span>
-                <span class="seamsi-stick" data-stick="๒๘"></span>
-                <span class="seamsi-falling-stick"></span>
-                <span class="seamsi-cup"></span>
-              </button>
-              <span class="seamsi-tap-hint">แตะกระบอก หรือกดปุ่มเขย่าเซียมซี</span>
-            </div>
-          </section>
-
-          <section class="seamsi-result" data-seamsi-result aria-live="polite"></section>
         </div>
-      </section>
 
-      <section class="seamsi-prayer-section tools-section">
-        <div class="seamsi-prayer-grid">
-          <div>
-            <p class="section-kicker">บทภาวนา</p>
-            <h2>กล่าวในใจอย่างสุภาพก่อนรับคำเซียมซี</h2>
-          </div>
-          <article class="seamsi-prayer-card">
-            <p>
-              ข้าพเจ้าขอตั้งจิตให้สงบ ระลึกถึงสิ่งศักดิ์สิทธิ์และคุณความดีทั้งหลาย
-              ขอให้การรับคำเซียมซีครั้งนี้เป็นแสงเตือนใจ ให้เห็นทางที่ควรเดิน
-              รู้สิ่งที่ควรระวัง และมีกำลังใจทำสิ่งที่ถูกต้องด้วยเทอญ
-            </p>
-          </article>
-        </div>
-      </section>
+        <label>
+          <span>เรื่องที่ต้องการถาม</span>
+          <select name="category" data-seamsi-category>
+            {seamsiCategories.map(category => <option value={category.id}>{category.label}</option>)}
+          </select>
+        </label>
 
-      <section class="seamsi-notes tools-section">
-        <div class="seamsi-prayer-grid">
-          <div>
-            <p class="section-kicker">วิธีใช้</p>
-            <h2>ใช้ด้วยความเคารพ ไม่ใช่ความร้อนใจ</h2>
+        <label>
+          <span class="seamsi-question-label">คำถามในใจ <small>ไม่จำเป็นต้องกรอก</small></span>
+          <textarea
+            name="question"
+            maxlength="180"
+            rows="3"
+            data-seamsi-question
+            aria-describedby="seamsi-question-hint"
+            placeholder="เขียนสั้น ๆ เช่น งานนี้ควรเดินหน้าต่อไหม"
+          ></textarea>
+          <small id="seamsi-question-hint" class="seamsi-field-hint">เขียนไว้เพื่อทบทวนคำถามของคุณ</small>
+        </label>
+
+        <p class="seamsi-validation" data-seamsi-validation role="alert" hidden></p>
+        <p class="seamsi-intent-notice" data-seamsi-intent-notice hidden></p>
+        <button class="primary-action" type="submit" data-seamsi-shake disabled>
+          <SiteIcon name="hand" />
+          <span data-seamsi-button-label>เขย่าเซียมซี</span>
+          <SiteIcon name="arrow-right" />
+        </button>
+        <p class="seamsi-form-note">
+          <SiteIcon name="info" />
+          <span>ควรถามเฉพาะเรื่องสำคัญ 1-3 เรื่องต่อครั้ง และไม่ควรถามซ้ำเพียงเพื่อได้คำตอบที่ต้องการ</span>
+        </p>
+        <noscript><p class="seamsi-noscript">เปิด JavaScript ในเบราว์เซอร์เพื่อเสี่ยงเซียมซี</p></noscript>
+      </form>
+
+      <div class="seamsi-main">
+        <section class="seamsi-stage tools-panel" aria-labelledby="seamsi-stage-title">
+          <div class="seamsi-stage-copy">
+            <p class="section-kicker">รับคำทำนาย</p>
+            <h2 id="seamsi-stage-title">กดกระบอกเพื่อเขย่าเซียมซี</h2>
+            <p>หายใจเข้าออกลึก ๆ ตั้งคำถามในใจ<br />ให้ใบเซียมซีเป็นอีกมุมมองหนึ่ง<br />สำหรับสิ่งที่กำลังคิดและตัดสินใจ</p>
           </div>
+
+          <div class="seamsi-oracle-wrap">
+            <img class="seamsi-stage-lotus" src="/assets/images/seamsi-lotus-watercolor.webp" alt="" width="960" height="640" aria-hidden="true" />
+            <button class="seamsi-oracle" type="button" data-seamsi-oracle aria-label="เขย่าเซียมซีตามเรื่องที่เลือก" aria-controls="seamsi-result" disabled>
+              <img class="seamsi-cup-image" src="/assets/images/seamsi-fortune-cup.webp" width="640" height="960" alt="" fetchpriority="high" draggable="false" />
+              <span class="seamsi-art-fallback" data-seamsi-art-fallback hidden><SiteIcon name="scroll-text" /><span>เซียมซี</span></span>
+              <span class="seamsi-falling-stick" data-seamsi-stick aria-hidden="true"></span>
+            </button>
+            <p class="seamsi-stage-aside" aria-hidden="true">เสี่ยงทาย<br />เพื่อพิจารณา<br />ไม่ใช่เพื่อตัดสิน</p>
+          </div>
+
+          <div class="seamsi-stage-feedback">
+            <p class="seamsi-status" data-seamsi-status role="status">ตั้งจิต เลือกเรื่องที่ถาม แล้วกดกระบอกเซียมซี</p>
+            <button class="seamsi-skip" type="button" data-seamsi-skip hidden>ข้ามภาพเคลื่อนไหว <SiteIcon name="arrow-right" /></button>
+          </div>
+        </section>
+
+        <section class="seamsi-result" id="seamsi-result" data-seamsi-result aria-labelledby="seamsi-result-title">
+          <div class="seamsi-feedback" data-seamsi-feedback role="alert" hidden></div>
+          <p class="seamsi-previous" data-seamsi-previous hidden></p>
+          <div data-seamsi-reading>
+          <div class="seamsi-empty">
+            <span class="seamsi-empty-symbol"><SiteIcon name="lotus" /></span>
+            <h2 id="seamsi-result-title" tabindex="-1">ยังไม่ได้เสี่ยงทาย</h2>
+            <p>ใบเซียมซีและคำทำนายจะแสดงตรงนี้</p>
+          </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="seamsi-reflection" aria-label="ข้อคิดก่อนเสี่ยงเซียมซี">
+      <article class="seamsi-prayer">
+        <SiteIcon name="temple" class="seamsi-prayer-icon" />
+        <div>
+          <h2>กล่าวในใจอย่างสุภาพก่อนรับคำเซียมซี</h2>
           <p>
-            เซียมซีในหน้านี้เป็นเครื่องมือทบทวนใจและประกอบการตัดสินใจ
-            ไม่ใช่คำสั่งตายตัวหรือการรับรองผลลัพธ์ล่วงหน้า
+            ข้าพเจ้าขอตั้งจิตให้สงบ ระลึกถึงสิ่งศักดิ์สิทธิ์และคุณความดีทั้งหลาย
+            ขอให้การรับคำเซียมซีครั้งนี้เป็นแสงเตือนใจ ให้เห็นทางที่ควรเดิน
+            รู้สิ่งที่ควรระวัง และมีกำลังใจทำสิ่งที่ถูกต้องด้วยเทอญ
           </p>
         </div>
+      </article>
+
+      <div class="seamsi-guidance">
+        <p class="section-kicker">ข้อคิดเตือนใจ</p>
+        <h2>ใช้ด้วยความเคารพ ไม่ใช่ความร้อนใจ</h2>
         <div class="seamsi-note-grid">
-          <article>
-            <span>01</span>
-            <h3>ถามให้ชัด</h3>
-            <p>ตั้งคำถามหนึ่งเรื่องต่อหนึ่งครั้ง คำถามที่ชัดทำให้คำทำนายอ่านได้ตรงประเด็นมากขึ้น</p>
-          </article>
-          <article>
-            <span>02</span>
-            <h3>เว้นจังหวะ</h3>
-            <p>หากยังลังเลหลังได้คำทำนาย ให้พักใจและกลับมาอ่านใหม่ แทนการขอคำตอบซ้ำทันที</p>
-          </article>
-          <article>
-            <span>03</span>
-            <h3>ใช้ร่วมกับสติ</h3>
-            <p>คำทำนายช่วยชี้มุมมอง แต่การตัดสินใจยังควรอาศัยข้อมูล เหตุผล และความรับผิดชอบ</p>
-          </article>
+          {guidance.map(item => (
+            <article>
+              <span class="seamsi-note-number">{item.number}</span>
+              <span {...iconAttributes(item.icon, "seamsi-note-icon")}></span>
+              <h3>{item.title}</h3>
+              <p>{item.copy}</p>
+            </article>
+          ))}
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
+    <p class="seamsi-disclaimer">เซียมซีเป็นเครื่องมือทบทวนใจ ไม่ใช่คำสั่งตายตัวหรือการรับรองผลลัพธ์ล่วงหน้า</p>
+  </main>
 
   <script>
     import "../../../scripts/seamsi.js";

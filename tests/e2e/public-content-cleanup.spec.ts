@@ -20,6 +20,9 @@ for (const width of [1440, 390]) {
       ["day", "/calendar/day/?date=2026-09-20", '[data-calendar-day-detail][data-state="ready"]'],
     ]) {
       await page.goto(route);
+      if (name === "palmistry") {
+        await page.locator(".palm-reference-disclosure > summary").click();
+      }
       await expect(page.locator(ready)).toBeVisible();
       await page.locator("html[data-cms-ready=true]").waitFor();
       await page.locator("[data-page-loader]").waitFor({ state: "hidden" });

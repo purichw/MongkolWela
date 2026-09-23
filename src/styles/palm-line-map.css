@@ -1,0 +1,64 @@
+.plw-map { min-width: 0; padding: 22px 24px 16px; background: var(--tool-surface, #fffdf8); border: 1px solid var(--tool-line); border-radius: 8px; box-shadow: 0 5px 20px #432f1910; }
+.plw-map-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.palmistry-page main .plw-map-header h2 { font-size: 23px; line-height: 1.4; margin: 0; }
+.plw-map-header p { margin: 5px 0 0; font-size: 14px; color: var(--ink-soft); }
+.plw-map-switch { display: flex; flex: none; padding: 2px; border: 1px solid var(--tool-line); border-radius: 6px; background: #f1eee7; }
+.plw-map-switch button { border: 0; border-radius: 4px; min-width: 80px; min-height: 40px; padding: 6px 12px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; background: none; color: var(--ink); }
+.plw-map-switch button[aria-pressed="true"] { color: #fff; background: var(--jade-dark); }
+.plw-map-stage { position: relative; aspect-ratio: 720 / 435; width: 100%; max-width: 780px; margin: 12px auto 0; }
+.plw-map-art { display: block; width: 100%; height: 100%; overflow: visible; }
+.plw-map-compass { color: #c59e5c; opacity: .09; stroke-width: 1.5; }
+.plw-map-line-visible { fill: none; stroke: var(--line-color); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.plw-map-line-halo { fill: none; stroke: #fffdf2; stroke-width: 4.5; opacity: .6; }
+.plw-map-line-hit { fill: none; stroke: transparent; stroke-width: 20; cursor: pointer; pointer-events: stroke; }
+.plw-map-line.is-selected .plw-map-line-visible { stroke-width: 3.5; }
+.plw-map-leader { fill: none; stroke: var(--line-color); stroke-width: 1.2; opacity: .75; pointer-events: none; }
+.plw-map-label { display: flex; align-items: flex-start; gap: 9px; position: absolute; top: var(--label-y); width: 28%; min-height: 48px; padding: 4px 0; border: 0; border-radius: 4px; background: transparent; font: inherit; color: var(--ink); cursor: pointer; text-align: left; }
+.plw-map-label--left { left: 2%; }
+.plw-map-label--right { left: 74%; width: 26%; }
+.plw-map-label strong { display: block; font-size: 16px; font-weight: 650; line-height: 1.4; }
+.plw-map-label small { display: block; font-size: 13px; margin-top: 4px; line-height: 1.4; color: var(--ink-soft); }
+.plw-map-dot { flex: none; width: 13px; height: 13px; margin-top: 5px; padding: 2px; border: 1px solid var(--line-color); border-radius: 50%; background: var(--line-color); background-clip: content-box; opacity: .8; }
+.plw-map-label:hover strong, .plw-map-label[aria-pressed="true"] strong { color: var(--jade-dark); }
+.plw-map-label[aria-pressed="true"] .plw-map-dot { opacity: 1; box-shadow: 0 0 0 3px #c49c5620; }
+.plw-map-label:focus-visible, .plw-map-switch button:focus-visible { outline: 2px solid var(--jade-dark); outline-offset: 3px; }
+.palmistry-page .plw-map-note { display: flex; justify-content: center; align-items: center; gap: 7px; margin: 5px 0 0; color: var(--ink-soft); font-size: 12px; }
+.palmistry-page .plw-map-note .site-icon { width: 16px; height: 16px; }
+
+@media (min-width: 1200px) {
+  .palmistry-page main .plw-map-header h2 { font-size: 27px; }
+  .plw-map-header p { font-size: 16px; }
+  .plw-map-switch button { min-width: 92px; min-height: 44px; font-size: 15px; }
+  .plw-map-label strong { font-size: 20px; }
+  .plw-map-label small { font-size: 16px; }
+  .plw-map-dot { width: 16px; height: 16px; }
+  .palmistry-page .plw-map-note { font-size: 15px; }
+}
+
+@media (max-width: 1199px) and (min-width: 901px) {
+  .plw-map { padding: 18px 16px 14px; }
+  .palmistry-page main .plw-map-header h2 { font-size: 20px; }
+  .plw-map-header p { font-size: 12px; }
+  .plw-map-switch button { min-width: 62px; padding-inline: 8px; }
+  .plw-map-label strong { font-size: 14px; }
+  .plw-map-label small { font-size: 11px; }
+}
+@media (max-width: 600px) {
+  .plw-map { padding: 16px 10px 12px; }
+  .plw-map-header { gap: 8px; padding: 0 3px; }
+  .palmistry-page main .plw-map-header h2 { font-size: 17px; }
+  .plw-map-header p { font-size: 11px; max-width: 220px; }
+  .plw-map-switch { gap: 0; }
+  .plw-map-switch button { min-width: 51px; min-height: 44px; padding: 4px; font-size: 11px; }
+  .plw-map-stage { aspect-ratio: 720 / 485; margin-top: 10px; }
+  .plw-map-art { position: absolute; inset: 0; }
+  .plw-map-label { gap: 5px; width: 30%; min-height: 44px; padding-block: 2px; }
+  .plw-map-label--left { left: 0; }
+  .plw-map-label--right { left: 73%; width: 27%; }
+  .plw-map-label strong { font-size: 13px; }
+  .plw-map-label small { font-size: 10px; line-height: 1.35; margin-top: 3px; }
+  .plw-map-dot { width: 10px; height: 10px; margin-top: 3px; padding: 1px; }
+  .palmistry-page .plw-map-note { font-size: 11px; gap: 4px; }
+  .plw-map-note-more { display: none; }
+  .palmistry-page .plw-map-note .site-icon { width: 13px; height: 13px; }
+}

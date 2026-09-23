@@ -1,15 +1,19 @@
 ---
 // Interactive palm line reading widget. Images are served from /public/images/lines/.
+import SiteIcon from "./icons/SiteIcon.astro";
+import PalmLineMap from "./PalmLineMap.astro";
+import { iconAttributes } from "../lib/ui-markup.js";
 ---
 
 <section id="plw" class="plw-shell" aria-labelledby="plw-title">
+  <div class="plw-intro">
+  <div class="plw-settings">
   <header class="plw-header">
     <div>
-      <p class="section-kicker">อ่านแบบสองชั้น</p>
-      <h2 id="plw-title" class="plw-title">อ่านลายมือจากพื้นฐานและบริบทของมือ</h2>
+      <p class="section-kicker">ตั้งค่าการอ่าน</p>
+      <h2 id="plw-title" class="plw-title">เลือกมือที่ต้องการอ่าน</h2>
       <p class="plw-subtitle">
-        เลือกลักษณะจากภาพ แล้วระบบจะรวมความหมายของเส้นเข้ากับมือถนัด มือไม่ถนัด
-        หรือพัฒนาการระหว่างสองมือ
+        สังเกตเส้นที่เห็นชัด แล้วเทียบกับตัวอย่าง พร้อมอ่านความหมายตามบริบทของมือ
       </p>
     </div>
 
@@ -34,14 +38,18 @@
   </header>
 
   <div class="plw-context" data-plw-context aria-live="polite"></div>
+  <button class="plw-start-reading" type="button" data-plw-start>เริ่มอ่านลายมือ<SiteIcon name="arrow-right" /></button>
+  <p class="plw-settings-note"><SiteIcon name="shield-check" />ใช้ประกอบการทบทวนตัวเอง ไม่ใช่คำทำนายที่ตายตัว</p>
+  </div>
+  <PalmLineMap />
+  </div>
 
   <section class="plw-photos" aria-labelledby="plw-photos-title">
     <div class="plw-photos-head">
       <div>
-        <p class="section-kicker">รูปฝ่ามือของคุณ</p>
-        <h3 id="plw-photos-title">ถ่ายรูปหรือเลือกรูปไว้เทียบกับตัวอย่าง</h3>
+        <h3 id="plw-photos-title">รูปฝ่ามือของคุณ <small>(ไม่บังคับ)</small></h3>
       </div>
-      <p>รูปอยู่ในแท็บนี้เท่านั้น ไม่ส่งขึ้นเซิร์ฟเวอร์ และจะหายเมื่อรีเฟรชหรือปิดหน้า</p>
+      <p><SiteIcon name="shield-check" />รูปใช้เทียบด้วยตัวเอง ไม่วิเคราะห์อัตโนมัติและไม่ส่งขึ้นเซิร์ฟเวอร์</p>
     </div>
 
     <div class="plw-photo-grid">
@@ -57,8 +65,8 @@
 
               <div class="plw-photo-stage" data-photo-dropzone={side} data-photo-empty="true">
                 <div class="plw-photo-empty" data-photo-empty-state={side}>
-                  <span aria-hidden="true">+</span>
-                  <strong>วางฝ่ามือให้เต็มภาพ</strong>
+                  <span aria-hidden="true"><SiteIcon name="plus" /></span>
+                  <strong>วางไฟล์ที่นี่หรือเลือกไฟล์</strong>
                   <small>JPG, PNG หรือ WebP ไม่เกิน 10 MB</small>
                 </div>
                 <img
@@ -70,10 +78,10 @@
 
               <div class="plw-photo-primary-actions">
                 <button type="button" data-photo-trigger={side} data-photo-source="camera">
-                  ถ่ายรูป
+                  <span {...iconAttributes("camera")}></span>ถ่ายรูป
                 </button>
                 <button type="button" data-photo-trigger={side} data-photo-source="library">
-                  เลือกรูป
+                  <span {...iconAttributes("image")}></span>เลือกไฟล์
                 </button>
               </div>
 
@@ -89,8 +97,8 @@
                     data-photo-zoom={side}
                   />
                 </label>
-                <button type="button" data-photo-rotate={side}>หมุน</button>
-                <button type="button" data-photo-remove={side}>ลบรูป</button>
+                <button type="button" data-photo-rotate={side} aria-label={`หมุนรูป${sideLabel}`} title="หมุนรูป"><span {...iconAttributes("rotate-ccw")}></span></button>
+                <button type="button" data-photo-remove={side} aria-label={`ลบรูป${sideLabel}`} title="ลบรูป"><span {...iconAttributes("trash")}></span></button>
               </div>
 
               <input
@@ -100,6 +108,7 @@
                 capture="environment"
                 data-photo-input={side}
                 data-photo-source="camera"
+                aria-label={`ถ่ายรูป${sideLabel}`}
                 tabindex="-1"
               />
               <input
@@ -108,6 +117,7 @@
                 accept="image/jpeg,image/png,image/webp"
                 data-photo-input={side}
                 data-photo-source="library"
+                aria-label={`เลือกไฟล์รูป${sideLabel}`}
                 tabindex="-1"
               />
               <p class="plw-photo-message" data-photo-message={side} aria-live="polite"></p>
@@ -124,7 +134,7 @@
             <p class="section-kicker">ถ่ายรูปฝ่ามือ</p>
             <h4 id="plw-camera-title" data-camera-title>ถ่ายรูปฝ่ามือ</h4>
           </div>
-          <button type="button" data-camera-close aria-label="ปิดกล้อง">ปิด</button>
+          <button type="button" data-camera-close aria-label="ปิดกล้อง" title="ปิดกล้อง"><SiteIcon name="x" /></button>
         </div>
         <div class="plw-camera-frame">
           <video data-camera-video autoplay playsinline muted></video>
@@ -138,6 +148,7 @@
       </div>
     </div>
   </section>
+  <p class="plw-photo-tip"><SiteIcon name="lightbulb" /><span>ถ่ายในแสงสว่าง ให้เห็นทั้งฝ่ามือและแนวเส้นชัด ไม่ใช้ฟิลเตอร์</span></p>
 
   <div class="plw-body">
     <nav id="plw-sidebar" class="plw-sidebar" aria-label="ประเภทเส้นลายมือ"></nav>
@@ -145,12 +156,13 @@
       <section class="plw-picker" aria-labelledby="plw-picker-title">
         <div class="plw-picker-head">
           <div>
-            <p class="section-kicker">เลือกลักษณะที่เห็นชัด</p>
             <h3 id="plw-picker-title" data-plw-line-title>เส้นชีวิต</h3>
+            <p class="plw-picker-description" data-plw-line-description></p>
           </div>
           <div class="plw-hand-key" data-plw-hand-key></div>
         </div>
         <div id="plw-grid" class="plw-grid"></div>
+        <button class="plw-show-all" type="button" data-plw-show-all aria-expanded="false" aria-controls="plw-grid">ดูรูปแบบทั้งหมด<SiteIcon name="chevron-down" /></button>
       </section>
       <aside id="plw-detail" class="plw-detail" aria-live="polite"></aside>
     </div>
@@ -158,6 +170,7 @@
 </section>
 
 <script>
+import { renderIcon } from "../lib/ui-markup.js";
 // ─────────────────────────────────────────────────────────────
 //  DATA
 // ─────────────────────────────────────────────────────────────
@@ -612,6 +625,17 @@ function renderContext() {
   if (!context || !handKey || !lineTitle) return;
 
   lineTitle.textContent = getLineType(activeLine)?.nameTh ?? 'เส้นลายมือ';
+  const description = document.querySelector<HTMLElement>('[data-plw-line-description]');
+  const descriptions: Record<string, string> = {
+    life_line: 'พื้นฐานพลังและจังหวะชีวิต ไม่ใช่การบอกอายุขัย',
+    head_line: 'แนวคิด การตัดสินใจ และมุมมองต่อสิ่งต่าง ๆ',
+    heart_line: 'อารมณ์ ความผูกพัน และความสัมพันธ์',
+    fate_line: 'เส้นทางชีวิต หน้าที่ และการงาน',
+    sun_line: 'ผลงาน การแสดงออก และการยอมรับ',
+    mercury_line: 'การสื่อสารและการปรับตัวตามตำรา',
+    marriage_line: 'แนวทางความผูกพันตามความเชื่อ',
+  };
+  if (description) description.textContent = descriptions[activeLine] || '';
 
   if (readingMode === 'compare') {
     context.innerHTML = `
@@ -645,7 +669,7 @@ function renderGrid() {
     const dominantActive = selections.dominant[activeLine] === v.id;
     const nonDominantActive = selections.nonDominant[activeLine] === v.id;
     const singleActive = readingMode !== 'compare' && selections[readingMode][activeLine] === v.id;
-    const active = dominantActive || nonDominantActive || singleActive ? ' plw-active' : '';
+    const active = (readingMode === 'compare' ? dominantActive || nonDominantActive : singleActive) ? ' plw-active' : '';
 
     if (readingMode === 'compare') {
       return `
@@ -656,10 +680,10 @@ function renderGrid() {
           </div>
           <div class="plw-card-label">${v.nameTh}</div>
           <div class="plw-card-actions">
-            <button class="${nonDominantActive ? 'is-selected' : ''}" type="button" data-select-hand="nonDominant">
+            <button class="${nonDominantActive ? 'is-selected' : ''}" type="button" data-select-hand="nonDominant" aria-pressed="${nonDominantActive}">
               ${escapeHtml(physicalHand('nonDominant'))}
             </button>
-            <button class="${dominantActive ? 'is-selected' : ''}" type="button" data-select-hand="dominant">
+            <button class="${dominantActive ? 'is-selected' : ''}" type="button" data-select-hand="dominant" aria-pressed="${dominantActive}">
               ${escapeHtml(physicalHand('dominant'))}
             </button>
           </div>
@@ -667,7 +691,7 @@ function renderGrid() {
     }
 
     return `
-      <button class="plw-card plw-card--single${active}" type="button" data-variant="${v.id}" data-select-hand="${readingMode}">
+      <button class="plw-card plw-card--single${active}" type="button" data-variant="${v.id}" data-select-hand="${readingMode}" aria-pressed="${singleActive}">
         ${renderHandImage(src, `${v.nameTh}บน${physicalHand(readingMode)}`, readingMode)}
         <div class="plw-card-label">${v.nameTh}</div>
       </button>`;
@@ -698,6 +722,7 @@ function renderDetail() {
   if (!selectedId) {
     detail.innerHTML = `
       <div class="plw-placeholder">
+        ${renderIcon('hand')}
         <strong>เลือกภาพที่ตรงกับมือ</strong>
         <span>คำอ่านจะประกอบจากความหมายพื้นฐานของเส้น และบริบทของ${readingMode === 'dominant' ? 'มือถนัด' : 'มือไม่ถนัด'}</span>
       </div>`;
@@ -1094,11 +1119,76 @@ function initPalmPhotos() {
 }
 
 function renderAll() {
+  const focused = document.activeElement as HTMLElement | null;
+  const focusedLine = focused?.dataset.line;
+  const focusedRole = focused?.dataset.selectHand;
+  const focusedVariant = focused?.closest<HTMLElement>('[data-variant]')?.dataset.variant;
   renderSidebar();
   renderContext();
   renderGrid();
   renderDetail();
+  renderMap();
+  if (focusedLine) document.querySelector<HTMLButtonElement>(`[data-line="${focusedLine}"]`)?.focus({ preventScroll: true });
+  else if (focusedRole && focusedVariant) document.querySelector<HTMLButtonElement>(`[data-variant="${focusedVariant}"][data-select-hand="${focusedRole}"], [data-variant="${focusedVariant}"] [data-select-hand="${focusedRole}"]`)?.focus({ preventScroll: true });
 }
+
+let mapHand: 'left' | 'right' = 'right';
+
+function renderMap() {
+  if (readingMode !== 'compare') mapHand = readingMode === 'dominant' ? handedness : handedness === 'right' ? 'left' : 'right';
+  document.querySelector('[data-map-palm]')?.setAttribute('transform', mapHand === 'left' ? 'translate(700 0) scale(-1 1)' : 'translate(-20 0)');
+  document.querySelectorAll<HTMLElement>('[data-map-hand]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mapHand === mapHand)));
+  document.querySelectorAll<HTMLElement>('.plw-map-label').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mapSelect === activeLine)));
+  document.querySelectorAll<SVGElement>('[data-map-path]').forEach(path => path.classList.toggle('is-selected', path.dataset.mapPath === activeLine));
+  const stage = document.querySelector<HTMLElement>('.plw-map-stage');
+  const drawing = stage?.querySelector('svg');
+  const stageHeight = stage ? 720 * stage.clientHeight / stage.clientWidth : 435;
+  const verticalInset = (stageHeight - 435) / 2;
+  drawing?.setAttribute('viewBox', `0 ${-verticalInset} 720 ${stageHeight}`);
+  document.querySelectorAll<SVGElement>('[data-map-leader]').forEach(leader => {
+    const [originalX, y] = leader.dataset.point!.split(',').map(Number);
+    const x = (mapHand === 'left' ? 720 - originalX : originalX) - 20;
+    const isLeft = leader.dataset.side === 'left';
+    const endX = isLeft ? 142 : 530;
+    const endY = Number(leader.dataset.y) / 100 * stageHeight - verticalInset + 10;
+    const elbowX = isLeft ? Math.min(x - 28, 244) : Math.max(x + 26, 492);
+    leader.setAttribute('d', `M${x} ${y} L${elbowX} ${endY} H${endX}`);
+  });
+}
+
+const mapStage = document.querySelector('.plw-map-stage');
+if (mapStage) new ResizeObserver(renderMap).observe(mapStage);
+
+document.querySelectorAll<HTMLElement | SVGElement>('[data-map-select]').forEach(control => {
+  control.addEventListener('click', () => {
+    activeLine = control.dataset.mapSelect as LineTypeId;
+    renderAll();
+    document.querySelector('.plw-picker')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+    document.querySelector<HTMLButtonElement>(`.plw-line-btn[data-line="${activeLine}"]`)?.focus({ preventScroll: true });
+  });
+});
+
+document.querySelectorAll<HTMLButtonElement>('[data-map-hand]').forEach(button => {
+  button.addEventListener('click', () => {
+    mapHand = button.dataset.mapHand as 'left' | 'right';
+    if (readingMode !== 'compare') readingMode = mapHand === handedness ? 'dominant' : 'nonDominant';
+    document.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach(item => item.setAttribute('aria-pressed', String(item.dataset.mode === readingMode)));
+    renderAll();
+  });
+});
+
+document.querySelector('[data-plw-start]')?.addEventListener('click', () => {
+  document.querySelector('.plw-picker')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+  document.querySelector<HTMLButtonElement>('.plw-card button, button.plw-card')?.focus({ preventScroll: true });
+});
+
+document.querySelector<HTMLButtonElement>('[data-plw-show-all]')?.addEventListener('click', event => {
+  const button = event.currentTarget as HTMLButtonElement;
+  const expanded = button.getAttribute('aria-expanded') !== 'true';
+  button.setAttribute('aria-expanded', String(expanded));
+  button.innerHTML = `${expanded ? 'แสดงแบบเลื่อน' : 'ดูรูปแบบทั้งหมด'}${renderIcon('chevron-down')}`;
+  document.querySelector('#plw-grid')?.classList.toggle('is-expanded', expanded);
+});
 
 document.querySelectorAll<HTMLButtonElement>('[data-handedness]').forEach(button => {
   button.addEventListener('click', () => {

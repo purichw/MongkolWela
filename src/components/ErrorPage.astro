@@ -1,0 +1,126 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteIcon from "./icons/SiteIcon.astro";
+import { iconAttributes } from "../lib/ui-markup.js";
+
+interface Props {
+  status: 403 | 404 | 500;
+}
+
+const { status } = Astro.props;
+const pages = {
+  404: {
+    title: "ไม่พบหน้านี้ในมงคลเวลาแล้ว",
+    heading: ["ไม่พบหน้านี้", "ในมงคลเวลาแล้ว"],
+    description: [
+      "อาจเป็นไปได้ว่าหน้านี้ถูกย้าย เปลี่ยนแปลง หรืออาจไม่มีอยู่อีกต่อไป",
+      "แต่ยังมีเส้นทางดี ๆ รอคุณอยู่ในมงคลเวลา",
+    ],
+    quote: ["แม้จะไม่พบหน้านี้ แต่ทุกการค้นหายังคงมีความหมายเสมอ"],
+    aside: ["ทุก", "เส้นทาง", "ยังนำไปสู่", "สิ่งดีงามได้เสมอ"],
+  },
+  500: {
+    title: "ขออภัย ระบบขัดข้องชั่วคราว",
+    heading: ["ขออภัย", "ระบบขัดข้องชั่วคราว"],
+    description: [
+      "ขณะนี้ระบบของมงคลเวลามีปัญหาชั่วคราว",
+      "กรุณาลองใหม่อีกครั้งในภายหลัง หรือเลือกไปยังส่วนอื่นของเว็บไซต์ได้ตามปกติ",
+    ],
+    quote: ["แม้จะมีอุปสรรคในบางเวลา", "แต่ทุกการรอคอย นำไปสู่สิ่งที่ดีกว่าเสมอ"],
+    aside: ["ทุก", "เส้นทาง", "ยังนำไปสู่", "สิ่งดีงามได้เสมอ"],
+  },
+  403: {
+    title: "หน้านี้ต้องมีสิทธิ์เข้าถึง",
+    heading: ["หน้านี้ต้องมีสิทธิ์เข้าถึง"],
+    description: [
+      "คุณอาจยังไม่มีสิทธิ์เข้าถึงหน้านี้ อาจต้องเข้าสู่ระบบ",
+      "หรือมีสิทธิ์การใช้งานเฉพาะสำหรับบางส่วนของเว็บไซต์",
+      "กรุณากลับหน้าแรก หรือเลือกเมนูอื่นเพื่อใช้งานต่อ",
+    ],
+    quote: ["บางสิ่งอาจยังไม่ถึงเวลา", "แต่เส้นทางแห่งสิ่งดี ๆ ยังรอคุณอยู่เสมอ"],
+    aside: ["ทุก", "เส้นทาง", "มีจังหวะที่เหมาะสม", "เสมอ"],
+  },
+};
+const content = pages[status];
+---
+
+<BaseLayout
+  title={`${status} · ${content.title} | มงคลเวลา`}
+  description={content.description.join(" ")}
+  page={`error-${status}`}
+  bodyClass="error-page"
+  canonicalPath={status === 403 ? "/403/" : `/${status}.html`}
+  robots="noindex, follow"
+  analytics={false}
+>
+  <main class="error-screen" aria-labelledby="error-title" data-error-status={status}>
+    <img class="error-screen__landscape" src="/assets/images/error-temple-landscape.webp" width="1774" height="887" alt="" aria-hidden="true" decoding="async" />
+    <div class="error-screen__inner">
+      <div class="error-screen__content">
+        <p class="error-screen__code" role="img" aria-label={`รหัสข้อผิดพลาด ${status}`}>
+          <img class="error-screen__cloud error-screen__cloud--left" src="/assets/images/error-cloud-reference.webp" width="400" height="222" alt="" aria-hidden="true" />
+          <span class="error-screen__digits" aria-hidden="true">
+            {String(status).split("").map((digit, index) => (
+              <span class="error-screen__digit">
+                <span class="error-screen__number">{digit}</span>
+                {index === 1 && <img class="error-screen__zero-lotus" src="/assets/images/error-lotus-layered.webp" width="192" height="192" alt="" />}
+              </span>
+            ))}
+          </span>
+          <img class="error-screen__cloud error-screen__cloud--right" src="/assets/images/error-cloud-reference.webp" width="400" height="222" alt="" aria-hidden="true" />
+        </p>
+
+        <h1 id="error-title">{content.heading.map((line, index) => <span>{index > 0 && status === 500 ? " " : ""}{line}</span>)}</h1>
+        <p class="error-screen__description">
+          {content.description.map(line => <span>{line}</span>)}
+        </p>
+
+        <nav class="error-screen__actions" aria-label="ไปยังส่วนอื่นของมงคลเวลา">
+          <a class="error-screen__action error-screen__action--primary" href="/">
+            <span {...iconAttributes("house")}></span>กลับหน้าแรก
+          </a>
+          {status === 500 ? <>
+            <button class="error-screen__action" type="button" data-error-retry hidden>
+              <span {...iconAttributes("rotate-ccw")}></span>ลองใหม่อีกครั้ง
+            </button>
+            <noscript>
+              <a class="error-screen__action" href="">
+                <span {...iconAttributes("rotate-ccw")}></span>ลองใหม่อีกครั้ง
+              </a>
+            </noscript>
+          </> : (
+            <a class="error-screen__action" href="/temples/thailand/">
+              <SiteIcon name="stupa" />วัดทั่วประเทศไทย
+            </a>
+          )}
+          {status === 403 ? (
+            <a class="error-screen__action" href="/#consult">
+              <span {...iconAttributes("phone")}></span>ติดต่อมงคลเวลา
+            </a>
+          ) : (
+            <a class="error-screen__action" href="/calendar/">
+              <span {...iconAttributes("calendar-days")}></span>ดูปฏิทินไทย
+            </a>
+          )}
+        </nav>
+
+        <div class="error-screen__divider" aria-hidden="true"><img src="/assets/images/error-lotus-layered.webp" width="192" height="192" alt="" /></div>
+        <blockquote class="error-screen__quote">
+          {content.quote.map(line => <span>{line}</span>)}
+        </blockquote>
+      </div>
+
+      <p class="error-screen__aside" aria-hidden="true">
+        {content.aside.map(line => <span>{line}</span>)}
+      </p>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  const retry = document.querySelector<HTMLButtonElement>("[data-error-retry]");
+  if (retry) {
+    retry.hidden = false;
+    retry.addEventListener("click", () => window.location.reload());
+  }
+</script>

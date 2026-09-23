@@ -3,7 +3,14 @@ import ToolsLayout from "../../../layouts/ToolsLayout.astro";
 import ToolsHero from "../../../components/ToolsHero.astro";
 import PalmistryHandDiagram from "../../../components/PalmistryHandDiagram.astro";
 import PalmLineWidget from "../../../components/PalmLineWidget.astro";
+import SiteIcon from "../../../components/icons/SiteIcon.astro";
 
+const features = [
+  { icon: "hand" as const, title: "ทีละเรื่อง", copy: "สังเกตเส้นที่เห็นชัด" },
+  { icon: "book-open" as const, title: "เข้าใจง่าย", copy: "คำอ่านพร้อมบริบทของมือ" },
+  { icon: "leaf" as const, title: "ใช้เพื่อแนวทาง", copy: "ทบทวนและพัฒนาตัวเอง" },
+  { icon: "shield-check" as const, title: "ข้อมูลเป็นส่วนตัว", copy: "รูปอยู่เฉพาะในแท็บนี้" },
+];
 
 const breadcrumbs = [
   { label: "หน้าแรก", href: "/" },
@@ -23,9 +30,20 @@ const breadcrumbs = [
   breadcrumbs={breadcrumbs}
 >
   <main>
-    <ToolsHero title="อ่านลายมือ" kicker="Palmistry" lead="เลือกมือและลักษณะเส้นที่เห็นชัด เพื่ออ่านพื้นฐานเดิม สิ่งที่พัฒนา และเปรียบเทียบสองมืออย่างมีบริบท" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"อ่านลายมือ"}]} />
+    <div class="palm-hero">
+      <ToolsHero title="อ่านลายมือ" kicker="PALMISTRY" lead="เลือกมือและลักษณะเส้นที่เห็นชัด เพื่ออ่านพื้นฐานเดิม สิ่งที่พัฒนา และเปรียบเทียบสองมืออย่างมีบริบท" quote="เส้นในมือ คือเรื่องราวให้เราเข้าใจตัวเองมากขึ้น" breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"อ่านลายมือ"}]} />
+    </div>
+    <ul class="palm-features" aria-label="แนวทางการอ่าน">
+      {features.map(item => <li><span class="palm-feature-icon"><SiteIcon name={item.icon} /></span><div><strong>{item.title}</strong><p>{item.copy}</p></div></li>)}
+    </ul>
 
-    <div class="palm-reference-intro"><section class="palm-hand-context" aria-labelledby="palm-hand-context-title">
+    <section class="palm-lines-reference" id="palmistry-tool">
+      <PalmLineWidget />
+    </section>
+
+    <details class="palm-reference-disclosure tools-section">
+      <summary><SiteIcon name="hand" />ตำแหน่งเส้น เนินมือ และหลักมือถนัด<SiteIcon name="chevron-down" /></summary>
+      <div class="palm-reference-intro"><section class="palm-hand-context" aria-labelledby="palm-hand-context-title">
       <div class="palm-hand-context__head">
         <div>
           <p class="section-kicker">ก่อนเริ่มอ่าน</p>
@@ -55,10 +73,8 @@ const breadcrumbs = [
       </div>
     </section>
 
-<PalmistryHandDiagram /></div>
-    <section class="palm-lines-reference" id="palmistry-tool">
-      <PalmLineWidget />
-    </section>
+      <PalmistryHandDiagram /></div>
+    </details>
   </main>
 
   <script>
