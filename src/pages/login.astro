@@ -8,17 +8,17 @@ import { iconAttributes } from "../lib/ui-markup.js";
   <main class="login-entry" aria-labelledby="login-title">
     <div class="login-entry__inner">
       <span {...iconAttributes("user-round", "login-entry__mark")}></span>
-      <h1 id="login-title">เข้าสู่ระบบ</h1>
+      <h1 data-cms-field="457bebb1-1" id="login-title">เข้าสู่ระบบ</h1>
       <nav aria-label="ช่องทางเข้าสู่ระบบ" class="login-entry__destinations">
         {authEntryPoints.map(entry => (
           <a href={entry.href} data-login-entry={entry.id}>
             <span {...iconAttributes(entry.icon)}></span>
-            <span>{entry.label}</span>
+            <span data-cms-field="457bebb1-2">{entry.label}</span>
             <span {...iconAttributes("arrow-right")}></span>
           </a>
         ))}
       </nav>
-      <a href="/" class="login-entry__home">กลับหน้าหลัก</a>
+      <a data-cms-field="457bebb1-3" href="/" class="login-entry__home">กลับหน้าหลัก</a>
     </div>
   </main>
 </BaseLayout>

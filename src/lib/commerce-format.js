@@ -10,5 +10,5 @@ export const COMMERCE_STATUS = {
 };
 export const RD_DONATION_DIRECTORY = "https://data.rd.go.th/th/dataset/ds_edonation";
 export function money(satang) { return new Intl.NumberFormat("th-TH", { style: "currency", currency: "THB" }).format(Number(satang || 0) / 100); }
-export function escapeCommerce(value) { return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]); }
+export { escapeHtml as escapeCommerce } from "./ui-markup.js";
 export function thaiCommerceDate(value) { return value ? new Intl.DateTimeFormat("th-TH", { dateStyle: "medium", timeZone: "Asia/Bangkok" }).format(new Date(value.length === 10 ? `${value}T12:00:00+07:00` : value)) : "ยังไม่ระบุ"; }

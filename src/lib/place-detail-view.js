@@ -65,7 +65,7 @@ function expandable(items, count, key, render) {
 export function renderIdentity(vm) {
   const r = vm.record, rank = Number(r.rank);
   const summary = list(r.blessings).length ? `${r.name} นิยมสักการะเพื่อ${list(r.blessings).slice(0, 3).join(" · ")}` : `${r.name} ใน${r.province || vm.collectionLabel}`;
-  return `<p class="pd-kicker">${esc(vm.collectionLabel)}${Number.isFinite(rank) && rank > 0 ? ` · ลำดับ ${String(rank).padStart(2, "0")}` : ""}</p><h1 id="temple-detail-title">${esc(r.name)}</h1><p class="pd-intro">${esc(summary)}</p><p class="pd-area">${icon("map-pin")}${esc([r.district, r.province].filter(Boolean).join(" · "))}</p><div class="pd-tags">${[r.placeType, r.region, r.province].filter(Boolean).map(t => `<span>${esc(t)}</span>`).join("")}</div>`;
+  return `<p class="pd-kicker">${esc(vm.collectionLabel)}${Number.isFinite(rank) && rank > 0 ? ` · ลำดับ ${String(rank).padStart(2, "0")}` : ""}</p><h1 id="temple-detail-title">${esc(r.name)}</h1><p class="pd-intro">${esc(r.summary ?? summary)}</p><p class="pd-area">${icon("map-pin")}${esc([r.district, r.province].filter(Boolean).join(" · "))}</p><div class="pd-tags">${[r.placeType, r.region, r.province].filter(Boolean).map(t => `<span>${esc(t)}</span>`).join("")}</div>`;
 }
 export function renderImageCredit(vm) {
   const { imageSourceLabel, imageSourceUrl } = vm.record;
@@ -75,7 +75,7 @@ export function renderImageCredit(vm) {
 export function renderHighlights(vm) {
   const r = vm.record;
   const objects = list(r.objectHero), topics = list(r.blessings);
-  return `<p>${esc(`${r.name} อยู่ใน${r.province || "ประเทศไทย"}${r.district ? ` เขต/อำเภอ ${r.district}` : ""} เป็นหนึ่งในสถานที่ใน${vm.collectionLabel} สำหรับเลือกเส้นทางไหว้พระและวางแผนการเดินทาง`)}</p>${topics.length ? `<div class="pd-topics">${expandable(topics, 6, "topics", t => `<span>${icon("sparkles")}${esc(t)}</span>`)}</div>` : ""}${objects.length ? `<div class="pd-worship"><h3>สิ่งที่นิยมสักการะ</h3><div class="pd-objects">${expandable(objects, 5, "objects", t => `<span>${esc(t)}</span>`)}</div></div>` : ""}`;
+  return `<p>${esc(r.description ?? `${r.name} อยู่ใน${r.province || "ประเทศไทย"}${r.district ? ` เขต/อำเภอ ${r.district}` : ""} เป็นหนึ่งในสถานที่ใน${vm.collectionLabel} สำหรับเลือกเส้นทางไหว้พระและวางแผนการเดินทาง`)}</p>${topics.length ? `<div class="pd-topics">${expandable(topics, 6, "topics", t => `<span>${icon("sparkles")}${esc(t)}</span>`)}</div>` : ""}${objects.length ? `<div class="pd-worship"><h3>สิ่งที่นิยมสักการะ</h3><div class="pd-objects">${expandable(objects, 5, "objects", t => `<span>${esc(t)}</span>`)}</div></div>` : ""}`;
 }
 export function renderLocation(vm) {
   const r = vm.record;

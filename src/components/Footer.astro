@@ -50,35 +50,35 @@ const toolLinks = footerCopy.tools || [
     <div class="site-footer-home-grid">
       <div class="site-footer-home-brand">
         <BrandMark class="site-footer-brand-lockup" variant="lockup" loading="lazy" />
-        <p>{footerCopy.homeDescription || config.footer.description}</p>
+        <p data-cms-field="9f7d7eae-1">{footerCopy.homeDescription || config.footer.description}</p>
       </div>
       <details class="site-footer-home-links" data-home-footer-links open>
-        <summary>เส้นทางและเครื่องมือ <SiteIcon name="chevron-right" /></summary>
+        <summary data-cms-field="9f7d7eae-2">เส้นทางและเครื่องมือ <SiteIcon name="chevron-right" /></summary>
         <div class="site-footer-home-navs">
           <nav aria-label={footerCopy.templeRoutesLabel || "เส้นทางและสถานที่"}>
-            <strong>{footerCopy.templeRoutesLabel || "เส้นทางและสถานที่"}</strong>
+            <strong data-cms-field="9f7d7eae-3">{footerCopy.templeRoutesLabel || "เส้นทางและสถานที่"}</strong>
             {templeRouteLinks.map((item: FooterLink) => (
-              <a href={resolveHref(item.href)}>{item.label}</a>
+              <a data-cms-field="9f7d7eae-4" href={resolveHref(item.href)}>{item.label}</a>
             ))}
           </nav>
           <nav aria-label={footerCopy.toolsLabel || "เครื่องมือเสริม"}>
-            <strong>{footerCopy.toolsLabel || "เครื่องมือเสริม"}</strong>
+            <strong data-cms-field="9f7d7eae-5">{footerCopy.toolsLabel || "เครื่องมือเสริม"}</strong>
             {toolLinks.map((item: FooterLink) => (
-              <a href={resolveHref(item.href)}>{item.label}</a>
+              <a data-cms-field="9f7d7eae-6" href={resolveHref(item.href)}>{item.label}</a>
             ))}
             {footerLinks.map((item: FooterLink) => (
-              <a href={resolveHref(item.href)}>{item.label}</a>
+              <a data-cms-field="9f7d7eae-7" href={resolveHref(item.href)}>{item.label}</a>
             ))}
           </nav>
         </div>
       </details>
       <div class="site-footer-home-action">
-        <span>เริ่มต้นการเดินทาง</span>
-        <a href="/temples/planner/">วางแผนไหว้พระ <SiteIcon name="arrow-right" /></a>
-        <a class="site-footer-home-calendar" href="/calendar/">ดูปฏิทินไทย <SiteIcon name="arrow-right" /></a>
+        <span data-cms-field="9f7d7eae-8">เริ่มต้นการเดินทาง</span>
+        <a data-cms-field="9f7d7eae-9" href="/temples/planner/">วางแผนไหว้พระ <SiteIcon name="arrow-right" /></a>
+        <a data-cms-field="9f7d7eae-10" class="site-footer-home-calendar" href="/calendar/">ดูปฏิทินไทย <SiteIcon name="arrow-right" /></a>
       </div>
     </div>
-    <div class="site-footer-home-bottom"><small>© {new Date().getFullYear() + 543} มงคลเวลา</small><small>ควรตรวจสอบข้อมูลสถานที่ก่อนออกเดินทาง</small></div>
+    <div class="site-footer-home-bottom"><small data-cms-field="9f7d7eae-11">© {new Date().getFullYear() + 543} มงคลเวลา</small><small data-cms-field="9f7d7eae-12">ควรตรวจสอบข้อมูลสถานที่ก่อนออกเดินทาง</small></div>
   </footer>
 
 <script>

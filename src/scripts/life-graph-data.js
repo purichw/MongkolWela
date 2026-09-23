@@ -1,4 +1,5 @@
-export const lifeHouses = [
+import { managedContent } from "../lib/managed-content.js";
+export const lifeHouses = managedContent("lifeGraph.lifeHouses", [
   {
     id: "fortune-base",
     label: "วาสนา",
@@ -107,10 +108,10 @@ export const lifeHouses = [
     mid: "ทบทวนสิ่งที่ทำมาแล้ว ปรับสิ่งเล็ก ๆ เพื่อให้ผลลัพธ์มั่นคงขึ้น",
     low: "อย่ารีบตัดสินว่าล้มเหลว บางเรื่องต้องปิดรอบก่อนจึงเห็นความหมาย",
   },
-];
+], {"title":"คำอ่านภพ","group":"กราฟชีวิต","routes":["/horoscope/life-graph/"]});
 
-export const levelBands = [
+export const levelBands = managedContent("lifeGraph.levelBands", [
   { min: 10, label: "แรงส่งสูง", tone: "high" },
   { min: 6, label: "ประคองได้", tone: "mid" },
   { min: 1, label: "ควรตั้งหลัก", tone: "low" },
-];
+], {"title":"ชื่อระดับกราฟ","group":"กราฟชีวิต","routes":["/horoscope/life-graph/"]});

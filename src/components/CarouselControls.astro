@@ -7,7 +7,7 @@ const { count, label = "ภาพประกอบ", class: className } = Astro
   <div class="carousel-dots" aria-label="เลือกภาพประกอบ">
     {Array.from({ length: count }, (_, i) => <button class:list={{ "is-active": i === 0 }} type="button" data-carousel-dot aria-label={'ภาพที่ ' + (i + 1)} aria-pressed={i === 0}></button>)}
   </div>
-  <span class="carousel-count" aria-hidden="true"><span data-carousel-current>1</span><span>/</span>{count}</span>
+  <span data-cms-field="ae3662eb-1" class="carousel-count" aria-hidden="true"><span data-carousel-current>1</span><span>/</span>{count}</span>
   <button type="button" data-carousel-next aria-label="ภาพถัดไป" title="ภาพถัดไป"><SiteIcon name="chevron-right" /></button>
   <button type="button" data-carousel-pause aria-label="หยุดเปลี่ยนภาพอัตโนมัติ" aria-pressed="false" title="หยุดเปลี่ยนภาพอัตโนมัติ">
     <span data-carousel-pause-icon><SiteIcon name="pause" /></span>

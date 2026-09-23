@@ -1,4 +1,4 @@
-const escapeAttribute = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+export const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 })[char]);
 
@@ -15,7 +15,7 @@ export function iconAttributes(name, className = "") {
 
 export function renderIcon(name, className = "") {
   const attributes = iconAttributes(name, className);
-  return `<span ${Object.entries(attributes).map(([key, value]) => `${key}="${escapeAttribute(value)}"`).join(" ")}></span>`;
+  return `<span ${Object.entries(attributes).map(([key, value]) => `${key}="${escapeHtml(value)}"`).join(" ")}></span>`;
 }
 
 export function iconMedallionClass(className = "") {
@@ -24,5 +24,5 @@ export function iconMedallionClass(className = "") {
 
 // Content must be trusted icon markup (SiteIcon templates or renderIcon), not CMS text.
 export function renderIconMedallion(iconMarkup, className = "") {
-  return `<span class="${escapeAttribute(iconMedallionClass(className))}">${iconMarkup}</span>`;
+  return `<span class="${escapeHtml(iconMedallionClass(className))}">${iconMarkup}</span>`;
 }

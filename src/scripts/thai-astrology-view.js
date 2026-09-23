@@ -1,4 +1,4 @@
-import { houses, zodiacSigns } from "./thai-astrology-data.js";
+import { houses, zodiacSigns, readingTemplates } from "./thai-astrology-data.js";
 import { renderIcon } from "../lib/ui-markup.js";
 
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
@@ -47,12 +47,12 @@ export function renderChart(chart, origin, reading) {
       <div class="thai-reading-highlight"><h3>${icon("sprout")} ${reading.headline.title}</h3><p>${reading.headline.copy}</p></div>
       <h3>คำอ่านรายเรื่อง</h3>
       <div class="thai-reading-grid">
-        ${renderReadingCard("ภาพรวม", reading.overview, "sunrise")}
-        ${renderReadingCard("การงาน", reading.career, "briefcase-business")}
-        ${renderReadingCard("การเงิน", reading.wealth, "coins")}
-        ${renderReadingCard("ความรัก", reading.relationship, "heart")}
-        ${renderReadingCard("คำแนะนำ", reading.advice, "lightbulb")}
-        ${renderReadingCard("ข้อควรระวัง", reading.caution, "info")}
+        ${renderReadingCard(readingTemplates.overview.title, reading.overview, "sunrise")}
+        ${renderReadingCard(readingTemplates.career.title, reading.career, "briefcase-business")}
+        ${renderReadingCard(readingTemplates.wealth.title, reading.wealth, "coins")}
+        ${renderReadingCard(readingTemplates.relationship.title, reading.relationship, "heart")}
+        ${renderReadingCard(readingTemplates.advice.title, reading.advice, "lightbulb")}
+        ${renderReadingCard(readingTemplates.caution.title, reading.caution, "info")}
       </div>`,
   };
 }
@@ -73,10 +73,10 @@ export function renderWheel(chart) {
     const [x, y] = housePositions[index];
     return `<div class="thai-wheel-house" data-house-id="${house.id}" data-house-number="${index + 1}"
       style="--house-x:${x / 4}%;--house-y:${y / 4}%"
-      aria-label="ภพ ${index + 1} ${house.th} ราศี${sign.th}${planets.length ? ` ดาว${planets.map((p) => p.th).join(" ")}` : " ไม่มีดาว"}">
+      aria-label="${escapeHtml(`ภพ ${index + 1} ${house.th} ราศี${sign.th}${planets.length ? ` ดาว${planets.map((p) => p.th).join(" ")}` : " ไม่มีดาว"}`)}">
       <span class="thai-house-number">${String(index + 1).replace(/\d/g, (n) => "๐๑๒๓๔๕๖๗๘๙"[n])}</span>
       <strong>${house.th}</strong>
-      <span class="thai-house-planets" aria-hidden="true">${planets.slice(0, 2).map((planet) => `<b data-planet-id="${planet.id}" title="${planet.th}">${planet.glyph}</b>`).join("")}${planets.length > 2 ? `<small>+${planets.length - 2}</small>` : ""}</span>
+      <span class="thai-house-planets" aria-hidden="true">${planets.slice(0, 2).map((planet) => `<b data-planet-id="${planet.id}" title="${escapeHtml(planet.th)}">${planet.glyph}</b>`).join("")}${planets.length > 2 ? `<small>+${planets.length - 2}</small>` : ""}</span>
     </div>`;
   }).join("");
 
@@ -119,5 +119,5 @@ function renderPlanetRow(planet) {
 }
 
 function renderReadingCard(title, text, icon) {
-  return `<details class="thai-reading-card"><summary>${renderIcon(icon)}<span>${title}</span>${renderIcon("chevron-down")}</summary><p>${text}</p></details>`;
+  return `<details class="thai-reading-card"><summary>${renderIcon(icon)}<span>${escapeHtml(title)}</span>${renderIcon("chevron-down")}</summary><p>${escapeHtml(text)}</p></details>`;
 }

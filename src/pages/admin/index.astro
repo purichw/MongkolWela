@@ -2,6 +2,10 @@
 import { brandAssets, siteConfig } from "../../config/site.js";
 import { stylesForPath } from "../../config/styles.js";
 import adminDesign from "../../styles/admin-design.css?url";
+import adminContentLibrary from "../../styles/admin-content-library.css?url";
+import commerce from "../../styles/commerce.css?url";
+import adminShared from "../../styles/admin-shared.css?url";
+import publicSelect from "../../styles/public-select.css?url";
 const config = siteConfig.th;
 ---
 
@@ -22,6 +26,10 @@ const config = siteConfig.th;
     <link rel="apple-touch-icon" sizes={brandAssets.appleTouchIcon.sizes} href={brandAssets.appleTouchIcon.src} />
     {stylesForPath("/admin/").map((src) => <link rel="stylesheet" href={src} />)}
     <link rel="stylesheet" href={adminDesign} />
+    <link rel="stylesheet" href={adminContentLibrary} />
+    <link rel="stylesheet" href={commerce} />
+    <link rel="stylesheet" href={publicSelect} />
+    <link rel="stylesheet" href={adminShared} />
   </head>
   <body class="admin-page admin-design">
     <div

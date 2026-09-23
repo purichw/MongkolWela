@@ -37,16 +37,16 @@ const { topic } = Astro.props;
       data-storage-key={topic.storageKey}
     >
       <div class="tarot-result-copy">
-        <p class="section-kicker">{topic.kicker}</p>
-        <h2>กำลังเปิดคำทำนาย</h2>
-        <p>โปรดรอสักครู่...</p>
+        <p data-cms-field="216e7e1a-1" class="section-kicker">{topic.kicker}</p>
+        <h2 data-cms-field="216e7e1a-2">กำลังเปิดคำทำนาย</h2>
+        <p data-cms-field="216e7e1a-3">โปรดรอสักครู่...</p>
       </div>
     </section>
 
     <section class="tarot-related tools-section">
-      <p class="section-kicker">หลังอ่านคำทำนาย</p>
-      <h2>{topic.relatedTitle}</h2>
-      <p>{topic.relatedCopy}</p>
+      <p data-cms-field="216e7e1a-4" class="section-kicker">หลังอ่านคำทำนาย</p>
+      <h2 data-cms-field="216e7e1a-5">{topic.relatedTitle}</h2>
+      <p data-cms-field="216e7e1a-6">{topic.relatedCopy}</p>
     </section>
   </main>
 

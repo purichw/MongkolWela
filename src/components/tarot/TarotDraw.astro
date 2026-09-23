@@ -9,42 +9,43 @@ interface Props {
   intentionTitle?: string;
   intentionCopy: string;
   warning: string;
+  bindings?: Record<string, Record<string, string>>;
 }
-const { spreadType, requiredCount = 1, deckCount = 22, storageKey, intentionTitle = "ก่อนเลือกไพ่", intentionCopy, warning } = Astro.props;
+const { spreadType, requiredCount = 1, deckCount = 22, storageKey, intentionTitle = "ก่อนเลือกไพ่", intentionCopy, warning, bindings = {} } = Astro.props;
 ---
 <section class="tarot-draw" aria-label="เลือกไพ่">
   <ol class="tarot-steps">
-    <li><span>1</span><div><strong>ตั้งจิต</strong><small>สงบใจ ตั้งคำถามในใจ</small></div></li>
-    <li aria-current="step" data-tarot-step-pick><span>2</span><div><strong>เลือกไพ่ {requiredCount} ใบ</strong><small>เลือกตามลำดับที่ใจสะดุด</small></div></li>
-    <li data-tarot-step-read><span>3</span><div><strong>อ่านคำทำนาย</strong><small>เปิดผลพร้อมคำแนะนำ</small></div></li>
+    <li><span>1</span><div><strong data-cms-field="2b94653e-1">ตั้งจิต</strong><small data-cms-field="2b94653e-2">สงบใจ ตั้งคำถามในใจ</small></div></li>
+    <li aria-current="step" data-tarot-step-pick><span>2</span><div><strong data-cms-field="2b94653e-3">เลือกไพ่ {requiredCount} ใบ</strong><small data-cms-field="2b94653e-4">เลือกตามลำดับที่ใจสะดุด</small></div></li>
+    <li data-tarot-step-read><span>3</span><div><strong data-cms-field="2b94653e-5">อ่านคำทำนาย</strong><small data-cms-field="2b94653e-6">เปิดผลพร้อมคำแนะนำ</small></div></li>
   </ol>
   <form data-tarot-draw data-spread-type={spreadType} data-required-count={requiredCount} data-storage-key={storageKey}>
     <div class="tarot-draw-controls">
-      <button type="button" class="tarot-control" data-tarot-shuffle><Fragment set:html={renderIcon("rotate-ccw")} />สับไพ่</button>
-      <button type="button" class="tarot-control" data-tarot-cut><SiteIcon name="layers-2" />ตัดไพ่</button>
-      <button type="submit" class="tarot-read-button" data-tarot-read disabled>ทำนาย<SiteIcon name="arrow-right" /></button>
+      <button data-cms-field="2b94653e-7" type="button" class="tarot-control" data-tarot-shuffle><Fragment set:html={renderIcon("rotate-ccw")} />สับไพ่</button>
+      <button data-cms-field="2b94653e-8" type="button" class="tarot-control" data-tarot-cut><SiteIcon name="layers-2" />ตัดไพ่</button>
+      <button data-cms-field="2b94653e-9" type="submit" class="tarot-read-button" data-tarot-read disabled>ทำนาย<SiteIcon name="arrow-right" /></button>
     </div>
-    <input type="hidden" data-tarot-selected name={spreadType === "daily" ? "tarot_card_selected" : "tarot_cards_selected"} />
-    <input type="hidden" data-tarot-count name="tarot_card_count" value="0" />
+    <input data-cms-field="2b94653e-10" type="hidden" data-tarot-selected name={spreadType === "daily" ? "tarot_card_selected" : "tarot_cards_selected"} />
+    <input data-cms-field="2b94653e-11" type="hidden" data-tarot-count name="tarot_card_count" value="0" />
     <div class="tarot-table" data-tarot-table>
-      <header><p>{deckCount === 78 ? "สำรับไพ่ 78 ใบ" : "Major Arcana 22 ใบ"}</p><h2>เลือกไพ่ {requiredCount} ใบ ที่สะดุดใจคุณ</h2></header>
+      <header><p data-cms-field="2b94653e-12">{deckCount === 78 ? "สำรับไพ่ 78 ใบ" : "Major Arcana 22 ใบ"}</p><h2 data-cms-field="2b94653e-13">เลือกไพ่ {requiredCount} ใบ ที่สะดุดใจคุณ</h2></header>
       <div class="tarot-fan" data-tarot-deck aria-label={`สำรับไพ่ ${deckCount} ใบ`}></div>
       <nav class="tarot-deck-pager" aria-label="หน้าสำรับไพ่">
         <button type="button" data-tarot-prev aria-label="ไพ่ชุดก่อนหน้า"><SiteIcon name="chevron-left" /></button>
         <span data-tarot-page aria-live="polite"></span>
         <button type="button" data-tarot-next aria-label="ไพ่ชุดถัดไป"><SiteIcon name="chevron-right" /></button>
       </nav>
-      <p class="tarot-status" data-tarot-status role="status">ตั้งจิต แล้วเลือกไพ่ {requiredCount} ใบ</p>
+      <p data-cms-field="2b94653e-14" class="tarot-status" data-tarot-status role="status">ตั้งจิต แล้วเลือกไพ่ {requiredCount} ใบ</p>
     </div>
     <div class="tarot-selection" data-tarot-selection hidden aria-label="ไพ่ที่เลือกตามลำดับ"></div>
     <div class="tarot-selection-actions" data-tarot-selection-actions hidden>
-      <span data-tarot-selection-count></span><button type="submit" class="primary-action" data-tarot-read-bottom disabled>เปิดคำทำนาย<SiteIcon name="arrow-right" /></button>
+      <span data-tarot-selection-count></span><button data-cms-field="2b94653e-15" type="submit" class="primary-action" data-tarot-read-bottom disabled>เปิดคำทำนาย<SiteIcon name="arrow-right" /></button>
     </div>
-    <noscript><p class="tarot-no-script">เปิด JavaScript เพื่อเลือกไพ่ หรือ <a href="/tarot/meanings/">อ่านความหมายไพ่ทั้ง 78 ใบ</a></p></noscript>
+    <noscript><p data-cms-field="2b94653e-16" class="tarot-no-script">เปิด JavaScript เพื่อเลือกไพ่ หรือ <a data-cms-field="2b94653e-17" href="/tarot/meanings/">อ่านความหมายไพ่ทั้ง 78 ใบ</a></p></noscript>
   </form>
   <div class="tarot-guidance">
-    <aside class="tarot-before"><SiteIcon name="lotus" /><div><h2>{intentionTitle}</h2><p>{intentionCopy}</p></div></aside>
-    <details class="tarot-tips" open><summary><SiteIcon name="lightbulb" />ข้อแนะนำ<SiteIcon name="chevron-down" /></summary><p>{warning}</p><p>พักใจให้สงบ แล้วนำคำอ่านไปทบทวนร่วมกับสถานการณ์จริง</p></details>
+    <aside class="tarot-before"><SiteIcon name="lotus" /><div><h2 data-cms-field="2b94653e-18" {...bindings.intentionTitle}>{intentionTitle}</h2><p data-cms-field="2b94653e-19" {...bindings.intentionCopy}>{intentionCopy}</p></div></aside>
+    <details class="tarot-tips" open><summary data-cms-field="2b94653e-20"><SiteIcon name="lightbulb" />ข้อแนะนำ<SiteIcon name="chevron-down" /></summary><p data-cms-field="2b94653e-21" {...bindings.warning}>{warning}</p><p data-cms-field="2b94653e-22">พักใจให้สงบ แล้วนำคำอ่านไปทบทวนร่วมกับสถานการณ์จริง</p></details>
   </div>
 </section>
 <script>import "../../scripts/tarot-draw.js";</script>

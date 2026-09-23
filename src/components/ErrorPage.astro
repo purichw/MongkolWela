@@ -95,7 +95,7 @@ const content = pages[status];
   <main class="error-screen" aria-labelledby="error-title" data-error-status={status}>
     <div class="error-screen__inner">
       <div class="error-screen__artwork" aria-hidden="true">
-        <img
+        <img data-cms-field="2e660f27-1"
           src={`/assets/images/errors/error-${status}.webp`}
           srcset={`/assets/images/errors/error-${status}-600.webp 600w, /assets/images/errors/error-${status}.webp 1200w`}
           sizes="(max-width: 720px) 370px, (max-width: 1280px) 50vw, 621px"
@@ -107,31 +107,31 @@ const content = pages[status];
         />
       </div>
       <div class="error-screen__content">
-        <p class="error-screen__code"><span class="sr-only">รหัสข้อผิดพลาด </span>{status}</p>
-        <h1 id="error-title">{content.title}</h1>
-        <p class="error-screen__description">
-          {content.description.map(line => <span>{line}</span>)}
+        <p data-cms-field="2e660f27-2" class="error-screen__code"><span data-cms-field="2e660f27-3" class="sr-only">รหัสข้อผิดพลาด </span>{status}</p>
+        <h1 data-cms-field="2e660f27-4" id="error-title">{content.title}</h1>
+        <p data-cms-field="2e660f27-5" class="error-screen__description">
+          {content.description.map(line => <span data-cms-field="2e660f27-6">{line}</span>)}
         </p>
         <nav class="error-screen__actions" aria-label="ดำเนินการต่อ">
           {content.actions.map((action, index) => {
             const className = `error-screen__action${index === 0 ? " error-screen__action--primary" : ""}`;
             return action.retry ? <>
-              <button class={className} type="button" data-error-retry hidden>
+              <button data-cms-field="2e660f27-7" class={className} type="button" data-error-retry hidden>
                 {action.icon && <span {...iconAttributes(action.icon)}></span>}{action.label}
               </button>
               <noscript>
-                <a class={className} href="">
+                <a data-cms-field="2e660f27-8" class={className} href="">
                   {action.icon && <span {...iconAttributes(action.icon)}></span>}{action.label}
                 </a>
               </noscript>
             </> : (
-              <a class={className} href={action.href}>
+              <a data-cms-field="2e660f27-9" class={className} href={action.href}>
                 {action.icon && <span {...iconAttributes(action.icon)}></span>}{action.label}
               </a>
             );
           })}
         </nav>
-        <a class="error-screen__back" href="/" data-error-back>
+        <a data-cms-field="2e660f27-10" class="error-screen__back" href="/" data-error-back>
           <span {...iconAttributes("arrow-left")}></span>กลับไปหน้าก่อนหน้า
         </a>
       </div>

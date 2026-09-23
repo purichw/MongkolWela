@@ -2,10 +2,11 @@ import { renderLifeGraph, renderLifeChart, createShareText } from "./life-graph-
 import { calculateLifeGraph } from "./life-graph-engine.js";
 import { ThaiCalendarProvider } from "./thai-calendar-provider.js";
 import { renderIcon } from "../lib/ui-markup.js";
+import { onCmsContent } from "./content-ready.js";
 
 const form = document.querySelector("[data-life-graph-form]");
 const output = document.querySelector("[data-life-graph-output]");
-if (form && output) initLifeGraph(form, output);
+onCmsContent(() => { if (form && output) initLifeGraph(form, output); }, { once: true });
 
 function initLifeGraph(form, output) {
   const provider = new ThaiCalendarProvider();

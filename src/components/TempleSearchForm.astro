@@ -6,15 +6,15 @@ const suggestions = variant !== "results";
 ---
 <div class:list={["temple-search", `temple-search--${variant}`]} data-temple-search data-search-mode={variant}>
   <form class:list={["temple-search__form", variant === "home" && "hero-search home-temple-search"]} action="/search/" role="search">
-    <label class="sr-only" for={id}>ค้นหาวัด จังหวัด หรือพรที่อยากขอ</label>
+    <label data-cms-field="e5245a14-1" class="sr-only" for={id}>ค้นหาวัด จังหวัด หรือพรที่อยากขอ</label>
     <span {...iconAttributes("search")} />
-    <input id={id} name="q" type="search" maxlength="120" autocomplete="off" required={suggestions} placeholder="ค้นหาวัด จังหวัด หรือพรที่อยากขอ" data-search-input />
-    <button type="submit">ค้นหา</button>
+    <input data-cms-field="e5245a14-2" id={id} name="q" type="search" maxlength="120" autocomplete="off" required={suggestions} placeholder="ค้นหาวัด จังหวัด หรือพรที่อยากขอ" data-search-input />
+    <button data-cms-field="e5245a14-3" type="submit">ค้นหา</button>
   </form>
   {suggestions && <div class="temple-search__suggestions" data-search-suggestions popover={variant === "home" ? "manual" : undefined} hidden>
     <p class="temple-search__status" data-search-status role="status" aria-live="polite"></p>
     <div data-search-list id={`${id}-list`} role="listbox" aria-label="สถานที่ที่พบ"></div>
-    <button class="temple-search__retry" type="button" data-search-retry hidden>ลองอีกครั้ง</button>
-    <a class="temple-search__all" href="/search/" data-search-all hidden>ดูผลค้นหาทั้งหมด <span {...iconAttributes("arrow-right")} /></a>
+    <button data-cms-field="e5245a14-4" class="temple-search__retry" type="button" data-search-retry hidden>ลองอีกครั้ง</button>
+    <a data-cms-field="e5245a14-5" class="temple-search__all" href="/search/" data-search-all hidden>ดูผลค้นหาทั้งหมด <span {...iconAttributes("arrow-right")} /></a>
   </div>}
 </div>

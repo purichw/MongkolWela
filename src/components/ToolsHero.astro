@@ -6,8 +6,9 @@ interface Props {
   breadcrumbs: { label: string; href?: string }[];
   quote?: string;
   ornamentSrc?: string;
+  bindings?: Record<string, Record<string, string>>;
 }
-const { title, kicker, lead, breadcrumbs, quote, ornamentSrc = "/assets/images/ornament-lotus-bodhi.webp" } = Astro.props;
+const { title, kicker, lead, breadcrumbs, quote, bindings = {}, ornamentSrc = "/assets/images/ornament-lotus-bodhi.webp" } = Astro.props;
 ---
 
 <section class="tools-hero" aria-labelledby="tools-title">
@@ -16,17 +17,17 @@ const { title, kicker, lead, breadcrumbs, quote, ornamentSrc = "/assets/images/o
       {breadcrumbs.map((item, index) => (
         <>
           {index > 0 && <span aria-hidden="true">/</span>}
-          {item.href ? <a href={item.href}>{item.label}</a> : <span aria-current="page">{item.label}</span>}
+          {item.href ? <a data-cms-field="50d8b2d3-1" href={item.href}>{item.label}</a> : <span data-cms-field="50d8b2d3-2" aria-current="page">{item.label}</span>}
         </>
       ))}
     </nav>
     <div class="tools-hero__copy">
-      <p class="section-kicker">{kicker}</p>
-      <h1 id="tools-title">{title}</h1>
-      <p class="tools-hero__lead">{lead}</p>
+      <p data-cms-field="50d8b2d3-3" {...bindings.kicker} class="section-kicker">{kicker}</p>
+      <h1 data-cms-field="50d8b2d3-4" {...bindings.title} id="tools-title">{title}</h1>
+      <p data-cms-field="50d8b2d3-5" {...bindings.lead} class="tools-hero__lead">{lead}</p>
     </div>
-    {quote && <blockquote class="tools-hero__quote">{quote}</blockquote>}
-    <img class="tools-hero__ornament" src={ornamentSrc}
+    {quote && <blockquote data-cms-field="50d8b2d3-6" class="tools-hero__quote">{quote}</blockquote>}
+    <img data-cms-field="50d8b2d3-7" class="tools-hero__ornament" src={ornamentSrc}
       alt="" width="640" height="960" aria-hidden="true" />
   </div>
 </section>

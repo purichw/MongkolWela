@@ -1,3 +1,4 @@
+import { managedContent } from "../lib/managed-content.js";
 import { majorArcanaDetails } from "./tarot-major-arcana-details.js";
 
 const elementLabels = {
@@ -226,7 +227,7 @@ export const tarotMeaningGroups = [
   },
 ];
 
-export const tarotMeaningCards = [...createMajorCards(), ...createMinorCards()];
+export const tarotMeaningCards = managedContent("tarot.tarotMeaningCards", [...createMajorCards(), ...createMinorCards()], {"title":"สารานุกรมไพ่ 78 ใบ","group":"ไพ่ยิปซี","routes":["/tarot/meanings/"]});
 
 export function getTarotMeaningCard(slug) {
   return tarotMeaningCards.find((card) => card.slug === slug);

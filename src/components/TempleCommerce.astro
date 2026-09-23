@@ -10,21 +10,21 @@ const { templeId } = Astro.props;
   <header class="temple-community-heading">
     <div class="temple-community-title">
       <IconMedallion class="temple-community-medallion"><SiteIcon name="coins" /></IconMedallion>
-      <div><h2 id="temple-commerce-heading">ร้านค้าและวัตถุมงคล</h2><p>สินค้าและช่องทางร่วมบุญของสถานที่</p></div>
+      <div><h2 data-cms-field="be8f616d-1" id="temple-commerce-heading">ร้านค้าและวัตถุมงคล</h2><p data-cms-field="be8f616d-2">สินค้าและช่องทางร่วมบุญของสถานที่</p></div>
     </div>
     <nav class="temple-commerce-links" aria-label="ร้านค้าและร่วมบุญ">
-      <a href="/shop/">ดูร้านค้ากลาง <SiteIcon name="arrow-right" /></a>
-      <a href="/merit/" data-temple-merit-link>ดูการร่วมบุญ <SiteIcon name="arrow-right" /></a>
+      <a data-cms-field="be8f616d-3" href="/shop/">ดูร้านค้ากลาง <SiteIcon name="arrow-right" /></a>
+      <a data-cms-field="be8f616d-4" href="/merit/" data-temple-merit-link>ดูการร่วมบุญ <SiteIcon name="arrow-right" /></a>
     </nav>
   </header>
-  <div data-temple-commerce-content aria-live="polite" aria-busy="true"><p class="temple-section-loading">กำลังตรวจสอบรายการของสถานที่นี้</p></div>
+  <div data-temple-commerce-content aria-live="polite" aria-busy="true"><p data-cms-field="be8f616d-5" class="temple-section-loading">กำลังตรวจสอบรายการของสถานที่นี้</p></div>
   <template data-commerce-empty>
     <TempleSectionEmpty kind="shop" title="ร้านค้าและการร่วมบุญออนไลน์ยังไม่เปิดบริการ" description="สินค้าของวัดและช่องทางการร่วมบุญ จะแสดงที่นี่เมื่อเปิดให้บริการในภายหลัง" />
   </template>
   <aside class="temple-merit-note">
     <IconMedallion class="temple-merit-symbol"><SiteIcon name="sprout" /></IconMedallion>
-    <div><h3>ร่วมสร้างบุญได้หลากหลายช่องทาง</h3><p>ติดตามประกาศจากทางวัด เพื่อรับทราบกิจกรรมและช่องทางร่วมบุญ</p></div>
+    <div><h3 data-cms-field="be8f616d-6">ร่วมสร้างบุญได้หลากหลายช่องทาง</h3><p data-cms-field="be8f616d-7">ติดตามประกาศจากทางวัด เพื่อรับทราบกิจกรรมและช่องทางร่วมบุญ</p></div>
   </aside>
-  <noscript><p>กรุณาเปิด JavaScript เพื่อดูสินค้าและช่องทางร่วมบุญล่าสุด</p></noscript>
+  <noscript><p data-cms-field="be8f616d-8">กรุณาเปิด JavaScript เพื่อดูสินค้าและช่องทางร่วมบุญล่าสุด</p></noscript>
 </section>
 <script>import "../scripts/temple-commerce.js";</script>

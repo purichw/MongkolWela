@@ -30,9 +30,9 @@ const isPlanner = mode === "planner";
 
 <div class={`temple-filter-chips temple-filter-chips--${mode}`} data-temple-filter-chips>
   <div class="popular-temple-region-filter">
-    <span>{regionLabel}</span>
+    <span data-cms-field="a745d785-1">{regionLabel}</span>
     <div class="popular-temple-region-tags" aria-label={regionAriaLabel}>
-      <button
+      <button data-cms-field="a745d785-2"
         type="button"
         class="is-active"
         data-popular-region-tag={isPlanner ? undefined : ""}
@@ -40,7 +40,7 @@ const isPlanner = mode === "planner";
         value=""
       >{allLabel}</button>
       {regions.map((region) => (
-        <button
+        <button data-cms-field="a745d785-3"
           type="button"
           data-popular-region-tag={isPlanner ? undefined : ""}
           data-planner-region-tag={isPlanner ? "" : undefined}
@@ -56,8 +56,8 @@ const isPlanner = mode === "planner";
     data-planner-province-filter={isPlanner ? "" : undefined}
   >
     <summary>
-      <span>{provinceLabel}</span>
-      <small data-temple-province-summary>{allLabel}</small>
+      <span data-cms-field="a745d785-4">{provinceLabel}</span>
+      <small data-cms-field="a745d785-5" data-temple-province-summary>{allLabel}</small>
     </summary>
     <div
       class="popular-temple-province-tags"
@@ -69,8 +69,8 @@ const isPlanner = mode === "planner";
 
   <details class="popular-temple-purpose-filter temple-purpose-accordion">
     <summary>
-      <span>{purposeLabel}</span>
-      <small data-temple-purpose-summary>{allLabel}</small>
+      <span data-cms-field="a745d785-6">{purposeLabel}</span>
+      <small data-cms-field="a745d785-7" data-temple-purpose-summary>{allLabel}</small>
     </summary>
     <div
       class="popular-temple-purpose-tags"
@@ -78,7 +78,7 @@ const isPlanner = mode === "planner";
       data-popular-purpose-tags={isPlanner ? undefined : ""}
       data-planner-purpose-tags={isPlanner ? "" : undefined}
     >
-      <button
+      <button data-cms-field="a745d785-8"
         type="button"
         class="is-active"
         data-popular-purpose-tag={isPlanner ? undefined : ""}
@@ -86,7 +86,7 @@ const isPlanner = mode === "planner";
         value=""
       >{allLabel}</button>
       {purposes.map((purpose) => (
-        <button
+        <button data-cms-field="a745d785-9"
           type="button"
           data-popular-purpose-tag={isPlanner ? undefined : ""}
           data-planner-purpose-tag={isPlanner ? "" : undefined}

@@ -1,5 +1,7 @@
-import { houses, planetMeanings, zodiacSigns } from "./thai-astrology-data.js";
+import { houses, planetMeanings, zodiacSigns, readingTemplates } from "./thai-astrology-data.js";
+import { formatContentTemplate } from "../lib/managed-content.js";
 import { renderChart } from "./thai-astrology-view.js";
+import { onCmsContent } from "./content-ready.js";
 
 const selectors = {
   form: "[data-thai-astrology-form]",
@@ -18,7 +20,7 @@ const provinceOffsets = {
   foreign: 10,
 };
 
-if (typeof document !== "undefined") initThaiAstrology();
+if (typeof document !== "undefined") onCmsContent(initThaiAstrology, { once: true });
 
 function initThaiAstrology() {
   const form = document.querySelector(selectors.form);
@@ -219,41 +221,41 @@ export function calculateChart(input) {
 function createHeadline(chart) {
   const first = chart.strongestHouses[0];
   return {
-    title: `ดวงนี้เด่นที่ภพ${first.house.th}`,
-    copy: `พลังหลักไปอยู่ที่เรื่อง${first.house.topic} โดยมีลัคนา${chart.ascSign.th}เป็นประตูของดวง ช่วงจรปัจจุบันกระตุ้นภพ${chart.activeHouse.th} จึงควรอ่านทั้งพื้นดวงและสถานการณ์ปัจจุบันประกอบกัน`,
+    title: formatContentTemplate(readingTemplates.headline.title, { house: first.house.th }),
+    copy: formatContentTemplate(readingTemplates.headline.text, { topic: first.house.topic, ascendant: chart.ascSign.th, activeHouse: chart.activeHouse.th }),
   };
 }
 
 function readOverview(chart) {
-  return `ลัคนา${chart.ascSign.th}ให้บุคลิกแบบ${chart.ascSign.tone} ส่วนจันทร์${chart.moonSign.th}ทำให้โลกด้านในต้องการจังหวะที่สอดคล้องกับธาตุ${chart.moonSign.element} เมื่ออ่านร่วมกัน ดวงนี้ควรเริ่มจากการรู้จังหวะใจตนเองก่อนตัดสินใจเรื่องใหญ่`;
+  return formatContentTemplate(readingTemplates.overview.text, { ascendant: chart.ascSign.th, tone: chart.ascSign.tone, moon: chart.moonSign.th, element: chart.moonSign.element });
 }
 
 function readCareer(chart) {
   const careerHouse = findHouseScore(chart, "career");
   const sun = chart.planets.find((planet) => planet.id === "sun");
-  return `ภพกัมมะมีน้ำหนัก ${careerHouse.score} จุด ดาวอาทิตย์อยู่ภพ${sun.house.th} บอกว่าความสำเร็จมาจากการแสดงบทบาทให้ชัด ถ้างานช่วงนี้ต้องใช้ชื่อเสียงหรือความรับผิดชอบ ควรวางหลักฐาน ผลลัพธ์ และผู้รับผิดชอบให้เป็นระบบ`;
+  return formatContentTemplate(readingTemplates.career.text, { score: careerHouse.score, house: sun.house.th });
 }
 
 function readWealth(chart) {
   const wealthHouse = findHouseScore(chart, "wealth");
   const venus = chart.planets.find((planet) => planet.id === "venus");
-  return `ภพกดุมภะมีน้ำหนัก ${wealthHouse.score} จุด และดาวศุกร์สัมพันธ์กับภพ${venus.house.th} รายได้จึงควรมาจากคุณค่าเฉพาะตัว งานบริการ งานศิลป์ หรือความสัมพันธ์ที่ไว้ใจกัน ระวังใช้เงินเพื่อปลอบใจตัวเอง`;
+  return formatContentTemplate(readingTemplates.wealth.text, { score: wealthHouse.score, house: venus.house.th });
 }
 
 function readRelationship(chart) {
   const partnerHouse = findHouseScore(chart, "partner");
   const moon = chart.planets.find((planet) => planet.id === "moon");
-  return `ภพปัตนิมีน้ำหนัก ${partnerHouse.score} จุด จันทร์อยู่ภพ${moon.house.th} ความสัมพันธ์ต้องการความปลอดภัยทางใจมากกว่าคำสัญญาสวย ๆ ถ้าจะตกลงเรื่องสำคัญ ให้พูดเรื่องขอบเขต เวลา และความคาดหวังให้ตรง`;
+  return formatContentTemplate(readingTemplates.relationship.text, { score: partnerHouse.score, house: moon.house.th });
 }
 
 function readAdvice(chart) {
-  return `ดวงจรปัจจุบันกระตุ้นภพ${chart.activeHouse.th}: ${chart.activeHouse.advice} เหมาะกับการทำสิ่งที่มีพิธี มีลำดับ และมีพยานรู้เห็น เช่น จดบันทึกเจตนา ทำบุญตามกำลัง หรือขอพรครูอาจารย์ก่อนเริ่มเรื่องใหม่`;
+  return formatContentTemplate(readingTemplates.advice.text, { house: chart.activeHouse.th, advice: chart.activeHouse.advice });
 }
 
 function readCaution(chart) {
   const saturn = chart.planets.find((planet) => planet.id === "saturn");
   const rahu = chart.planets.find((planet) => planet.id === "rahu");
-  return `เสาร์อยู่ภพ${saturn.house.th} จึงไม่ควรเร่งผลลัพธ์ก่อนฐานพร้อม ส่วนราหูอยู่ภพ${rahu.house.th} ทำให้เรื่องนั้นดึงดูดใจเป็นพิเศษ ระวังตัดสินใจเพราะความกลัวพลาดหรือความอยากได้เร็ว`;
+  return formatContentTemplate(readingTemplates.caution.text, { saturn: saturn.house.th, rahu: rahu.house.th });
 }
 
 function rankHouses(planets) {

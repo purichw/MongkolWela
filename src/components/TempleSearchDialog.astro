@@ -5,15 +5,15 @@ const intents = [["การงาน", "briefcase-business"], ["โชคลา
 ---
 <dialog class="temple-search-dialog" id="temple-search-dialog" aria-labelledby="temple-search-title">
   <div class="temple-search-dialog__heading">
-    <div><p>มงคลเวลา</p><h2 id="temple-search-title">ค้นหาวัดและสถานที่</h2></div>
+    <div><p data-cms-field="786048e5-1">มงคลเวลา</p><h2 data-cms-field="786048e5-2" id="temple-search-title">ค้นหาวัดและสถานที่</h2></div>
     <button type="button" data-search-close aria-label="ปิดการค้นหา" title="ปิดการค้นหา"><SiteIcon name="x" /></button>
   </div>
   <TempleSearchForm id="header-temple-search" variant="dialog" />
   <div class="temple-search-dialog__explore" data-search-explore>
-    <p>เลือกตามความตั้งใจ</p>
+    <p data-cms-field="786048e5-3">เลือกตามความตั้งใจ</p>
     <nav aria-label="เรื่องที่อยากขอพร">
-      {intents.map(([label, icon]) => <a href={`/search/?q=${encodeURIComponent(label)}`}><SiteIcon name={icon} />{label}</a>)}
+      {intents.map(([label, icon]) => <a data-cms-field="786048e5-4" href={`/search/?q=${encodeURIComponent(label)}`}><SiteIcon name={icon} />{label}</a>)}
     </nav>
-    <a class="temple-search-dialog__browse" href="/search/">ดูวัดและสถานที่ทั้งหมด <SiteIcon name="arrow-right" /></a>
+    <a data-cms-field="786048e5-5" class="temple-search-dialog__browse" href="/search/">ดูวัดและสถานที่ทั้งหมด <SiteIcon name="arrow-right" /></a>
   </div>
 </dialog>

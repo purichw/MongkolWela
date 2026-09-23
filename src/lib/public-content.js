@@ -1,4 +1,5 @@
 import { contentRevision } from "./content-revision.js";
+import { libraryForPath } from "../data/content-catalog.js";
 
 export function publicContentForPath(content, pathname) {
   const route = `/${String(pathname || "").replace(/^\/+|\/+$/g, "")}/`.replace(/^\/\/$/, "/");
@@ -10,6 +11,7 @@ export function publicContentForPath(content, pathname) {
     site: content.site,
     analytics: content.analytics,
     navigation: content.navigation,
+    contentLibrary: libraryForPath(content.contentLibrary, route),
     pages: (content.pages || []).filter((page) => {
       const pageRoute = `/${String(page.route || "").replace(/^\/+|\/+$/g, "")}/`.replace(/^\/\/$/, "/");
       return pageRoute === route;

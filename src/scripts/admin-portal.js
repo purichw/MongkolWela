@@ -1,5 +1,10 @@
 import { applyImageFallback } from "../lib/image-placeholder.js";
 import { createAdminPublishing } from "./admin/publishing.js";
+import { createContentLibrary } from "./admin/content-library.js";
+import { createPageContentEditor } from "./admin/page-content.js";
+import { createCommerceEditor } from "./admin/commerce.js";
+import { initPublicSelects } from "./public-select.js";
+import { updateVisitContent } from "./admin/visit-content.js";
 import { createActivityEditor } from "./admin/activities.js";
 import { createAdminMedia } from "./admin/media.js";
 import { createTempleEditor } from "./admin/editor.js";
@@ -8,8 +13,9 @@ import { adminIcon, createAdminDesign } from "./admin/design.js";
 import { collectAdminMedia, catalogTaxonomy, mediaProviderStatus } from "./admin/data.js";
 const state = {
   content: null,
+  baseRevision: "",
   selectedPageId: "home",
-  section: "dashboard",
+  section: new URLSearchParams(location.search).get("section") === "commerce" ? "commerce" : "dashboard",
   sidebarCollapsed: readStoredFlag("mongkolwela.admin.sidebarCollapsed"),
   mobileNavOpen: false,
   dirty: false,
@@ -150,7 +156,7 @@ function sleep(ms) {
 
 function markDirty() {
   state.dirty = true;
-  setStatus("มี draft ที่ยังไม่ได้ publish", "warn");
+  setStatus("มีการแก้ไขที่ยังไม่ได้เผยแพร่", "warn");
 }
 
 function currentPage() {
@@ -237,6 +243,7 @@ function renderAppShell() {
         <div id="adminTopActions" class="mw-admin-top-actions"></div>
       </div>
       <section id="adminContent" class="mw-admin-content"></section>
+      <div id="adminDraftNotice" class="mw-admin-draft-notice" role="status" hidden></div>
     </main>
     <div id="adminConfirmDialog" class="mw-admin-confirm" data-confirm-overlay hidden>
       <section class="mw-admin-confirm-panel" role="dialog" aria-modal="true" aria-labelledby="adminConfirmTitle">
@@ -251,6 +258,7 @@ function renderAppShell() {
     </div>
   </div>`;
   syncSidebarState();
+  initPublicSelects({ root: $(".mw-admin-main"), includeAdmin: true });
   if ($("#adminApp").dataset.eventsBound) return;
   $("#adminApp").dataset.eventsBound = "true";
   $("#adminApp").addEventListener("click", handleGlobalClick);
@@ -278,8 +286,10 @@ function renderSideNav() {
     navButton("temples", "วัดและสถานที่", "component", templeCount, "สถานที่ศักดิ์สิทธิ์"),
     navButton("collections", "เส้นทาง / คอลเลกชัน", "section", TEMPLE_COLLECTIONS.length),
     navButton("dates", "กิจกรรมและงานบุญ", "dates", ""),
-    `<a class="mw-admin-ghost mw-commerce-admin-link" href="/seller/" title="ร้านค้า กฐิน และ e-Donation"><span>${icon("section")}</span><strong>ร้านค้าและร่วมบุญ</strong></a>`,
+    navButton("commerce", "ร้านค้าและร่วมบุญ", "shopping-bag"),
     navButton("pages", "หน้าและเนื้อหา", "page", "", "หน้าแรก"),
+    navButton("contentLibrary", "คลังคำทำนาย", "book-open"),
+    navButton("siteContent", "ส่วนกลางเว็บไซต์", "section"),
     navButton("navigation", "เมนูนำทาง", "nav", "", "เมนูเว็บไซต์"),
     navButton("media", "คลังสื่อ", "media"),
     '<p class="mw-admin-nav-group">ผู้ใช้งาน</p>',
@@ -361,7 +371,16 @@ function renderLogin(message = "") {
 async function loadContent() {
   const payload = await api("/api/admin/content");
   state.content = payload.content;
+  state.baseRevision = payload.revision || "";
   ensureNavigation();
+  try {
+    const saved = JSON.parse(localStorage.getItem("mongkolwela.admin.draft") || "null");
+    if (saved && Array.isArray(saved.pages)) {
+      const notice = $("#adminDraftNotice");
+      notice.hidden = false;
+      notice.innerHTML = '<span>มีฉบับร่างที่บันทึกไว้ในเบราว์เซอร์นี้</span><button class="mw-admin-btn" data-action="restore-draft">เปิดฉบับร่าง</button><button class="mw-admin-btn" data-action="dismiss-draft">ซ่อน</button>';
+    }
+  } catch { /* An invalid local draft must not block the published content. */ }
 }
 
 async function loadAnalytics() {
@@ -414,7 +433,7 @@ async function loadSecondaryAdminData() {
 function renderAdmin() {
   renderSideNav();
   $("#adminTopActions")?.classList.toggle("mw-activity-top-actions", state.section === "dates");
-  document.querySelectorAll('[data-action="save-draft"], [data-action="publish"]').forEach((button) => { button.hidden = state.section === "dates"; });
+  document.querySelectorAll('[data-action="save-draft"], [data-action="publish"]').forEach((button) => { button.hidden = ["dates", "commerce"].includes(state.section); });
   if (!state.content) {
     renderAdminLoading("ภาพรวม", "กำลังโหลดข้อมูล", "กำลังเตรียมข้อมูลหลักสำหรับระบบจัดการเว็บ");
     return;
@@ -426,6 +445,9 @@ function renderAdmin() {
   const renderers = {
     dashboard: design.renderDashboard,
     pages: renderPages,
+    contentLibrary: contentLibrary.render,
+    commerce: commerceEditor.render,
+    siteContent: pageContentEditor.render,
     temples: renderTemples,
     sections: renderSections,
     navigation: renderNavigation,
@@ -760,6 +782,10 @@ function pageSelector() {
 }
 
 function renderPages() {
+  pageContentEditor.render();
+}
+
+function renderAdvancedPages() {
   setTitle("หน้าและเนื้อหา", "จัดการหน้าเว็บ");
   const page = currentPage();
   if (!page) { renderNoPages(); return; }
@@ -1170,6 +1196,8 @@ function handleTempleReorderKeydown(event) {
 }
 
 function handleGlobalClick(event) {
+  if (contentLibrary.click(event)) return;
+  if (pageContentEditor.click(event)) return;
   if (!event.target.closest(".mw-admin-global-search")) design.closeSearch();
   const confirmAccept = event.target.closest("[data-confirm-accept]");
   if (confirmAccept) {
@@ -1190,6 +1218,8 @@ function handleGlobalClick(event) {
 
   const editTempleButton = event.target.closest("[data-edit-temple]");
   if (editTempleButton) {
+    if (state.section === "commerce" && !commerceEditor.canLeave()) return;
+    if (state.section === "commerce") commerceEditor.destroy();
     if (state.section === "dates" && !activityEditor.canLeave()) return;
     design.closeSearch();
     state.section = "temples";
@@ -1227,6 +1257,9 @@ function handleGlobalClick(event) {
   }
   const sectionButton = event.target.closest("[data-section]");
   if (sectionButton) {
+    if (sectionButton.closest("[data-commerce-console]")) return;
+    if (state.section === "commerce" && !commerceEditor.canLeave()) return;
+    if (state.section === "commerce") commerceEditor.destroy();
     if (state.section === "dates" && !activityEditor.canLeave()) return;
     if (sectionButton.dataset.pageJump) state.selectedPageId = sectionButton.dataset.pageJump;
     if (sectionButton.dataset.collectionJump) {
@@ -1252,6 +1285,20 @@ function handleGlobalClick(event) {
   const action = actionButton.dataset.action;
   const actions = {
     "save-draft": saveDraft,
+    "dismiss-draft": () => { $("#adminDraftNotice").hidden = true; },
+    "restore-draft": () => {
+      if (state.publishing || !commerceEditor.canLeave() || (state.section === "dates" && !activityEditor.canLeave()) || (state.dirty && !confirm("เปิดฉบับร่างที่บันทึกไว้แทนข้อมูลที่กำลังแก้ไข?"))) return;
+      try {
+        const saved = JSON.parse(localStorage.getItem("mongkolwela.admin.draft") || "null");
+        if (!saved || !Array.isArray(saved.pages)) throw new Error();
+        state.content = saved;
+        state.baseRevision = localStorage.getItem("mongkolwela.admin.draftRevision") || "";
+        state.dirty = true;
+        $("#adminDraftNotice").hidden = true;
+        renderAdmin();
+        setStatus("เปิดฉบับร่างแล้ว ยังไม่เผยแพร่", "info");
+      } catch { setStatus("ไม่สามารถเปิดฉบับร่างได้", "error"); }
+    },
     "toggle-sidebar": toggleSidebar,
     publish,
     logout,
@@ -1384,6 +1431,9 @@ function restoreTempleListScroll() {
 }
 
 function handleInput(event) {
+  if (event.target.closest("[data-commerce-console]")) return;
+  if (contentLibrary.input(event)) return;
+  if (pageContentEditor.input(event)) return;
   if (event.target.id === "adminGlobalSearch") {
     if (event.type === "input") design.renderSearch(event.target.value);
     return;
@@ -1418,6 +1468,7 @@ function handleInput(event) {
     markDirty();
     return;
   }
+  if (!target.matches("[data-page-prop], [data-page-enabled], [data-patch-field], [data-patch-rich], [data-section-field], [data-section-enabled], [data-card-field], [data-block-enabled], [data-block-prop], [data-block-rich], [data-block-prop-json]")) return;
   const page = currentPage();
   if (!page) return;
   if (target.matches("[data-page-prop]")) page[target.dataset.pageProp] = target.value;
@@ -1430,9 +1481,13 @@ function handleInput(event) {
 }
 
 function updateTempleFromInput(target) {
-  if (!target.matches("[data-temple-field]")) return false;
+  if (!target.matches("[data-temple-field], [data-temple-visit]")) return false;
   const edit = currentTempleEdit();
   if (!edit) return true;
+  if (target.matches("[data-temple-visit]")) {
+    updateVisitContent(edit, currentTempleRecord(), target.dataset.templeVisit, target.value);
+    return true;
+  }
   edit.fields ||= {};
 
   if (target.matches("[data-temple-field]")) {
@@ -1543,13 +1598,17 @@ function updateBlockFromInput(target, page) {
 }
 
 function saveDraft() {
-  localStorage.setItem("mongkolwela.admin.draft", JSON.stringify(state.content));
-  state.dirty = false;
-  setStatus("บันทึก draft ใน browser แล้ว", "ok");
+  try {
+    localStorage.setItem("mongkolwela.admin.draft", JSON.stringify(state.content));
+    localStorage.setItem("mongkolwela.admin.draftRevision", state.baseRevision);
+    state.dirty = false;
+    setStatus("บันทึกฉบับร่างในเบราว์เซอร์แล้ว ยังไม่เผยแพร่", "ok");
+  } catch { setStatus("บันทึกฉบับร่างไม่ได้ ข้อมูลที่แก้ไขยังอยู่ในหน้านี้", "error"); }
 }
 
 
 async function logout(button, confirmed = false) {
+  if (!confirmed && !commerceEditor.canLeave()) return;
   if (state.publishing || activityEditor.isBusy()) {
     setStatus("กรุณารอให้บันทึกหรือเผยแพร่เสร็จก่อนออกจากระบบ", "warn");
     return;
@@ -1975,7 +2034,7 @@ function moveArrayItem(array, index, direction) {
 
 window.addEventListener("beforeunload", (event) => {
   if (!state.session) return;
-  if (!state.dirty && !activityEditor.isDirty() && !activityEditor.isBusy()) return;
+  if (!state.dirty && !activityEditor.isDirty() && !activityEditor.isBusy() && !commerceEditor.isDirty()) return;
   event.preventDefault();
   event.returnValue = "";
 });
@@ -1987,6 +2046,9 @@ const { imageFieldFromButton, setTempleImage, useTempleImageUrl, verifyImageLoad
 const { setPublishControlsDisabled, setPublishProgress, hidePublishProgress, publishedContentMatches, waitForPublishedContent, publish } = createAdminPublishing({ queryAll: (selector) => document.querySelectorAll(selector), $, api, sleep, state, setStatus, renderAdmin });
 
 const activityEditor = createActivityEditor({ state, $, api, escapeHtml, setTitle, setTopActions, setStatus, uploadMedia: uploadAdminMedia });
+const contentLibrary = createContentLibrary({ state, api, escapeHtml, setTitle, setTopActions, markDirty, setStatus });
+const pageContentEditor = createPageContentEditor({ state, escapeHtml, markDirty, setTitle, setTopActions, setStatus, renderAdvanced: renderAdvancedPages });
+const commerceEditor = createCommerceEditor({ setTitle, setTopActions });
 
 const design = createAdminDesign({ state, $, escapeHtml, dashboardSummary, templeHealthRows, formatDateTime, setTitle, setTopActions });
 window.matchMedia("(max-width: 900px)").addEventListener("change", () => { state.mobileNavOpen = false; syncSidebarState(); });

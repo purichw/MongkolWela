@@ -1,13 +1,14 @@
-export const seamsiCategories = [
+import { managedContent } from "../lib/managed-content.js";
+export const seamsiCategories = managedContent("seamsi.seamsiCategories", [
   { id: "overview", label: "ภาพรวมชีวิต" },
   { id: "work", label: "การงาน" },
   { id: "money", label: "การเงิน" },
   { id: "love", label: "ความรัก" },
   { id: "health", label: "สุขภาพใจและกาย" },
   { id: "luck", label: "โชคลาภและโอกาส" },
-];
+], {"title":"หมวดคำถาม","group":"เซียมซี","routes":["/horoscope/seamsi/"]});
 
-export const seamsiFortunes = [
+export const seamsiFortunes = managedContent("seamsi.seamsiFortunes", [
   {
     number: 1,
     tone: "ดี",
@@ -288,4 +289,4 @@ export const seamsiFortunes = [
     caution: "อย่าจบด้วยการประชดหรือหายไปเฉย ๆ เพราะจะทิ้งเงาให้กลับมาแก้",
     blessing: "สีมงคลคือทองหม่น เวลาเหมาะคือพระอาทิตย์ตก ภาวนาว่า สิ่งใดควรจบขอให้จบด้วยดี",
   },
-];
+], {"title":"ใบเซียมซี","group":"เซียมซี","routes":["/horoscope/seamsi/"]});

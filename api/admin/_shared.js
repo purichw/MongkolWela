@@ -231,15 +231,15 @@ export async function readLiveContent() {
   }
 }
 
-export async function publishLiveContent(content, actor = "admin") {
+export async function publishLiveContent(content, actor = "admin", options = {}) {
   if (hasWritableDatabase()) {
-    const result = await writeDatabaseContent(content, actor, { source: "admin" });
+    const result = await writeDatabaseContent(content, actor, { source: "admin", ...options });
     return { ...result, warnings: [], fast: true };
   }
   if (hasReadableDatabase()) {
     throw Object.assign(new Error("Live source is read-only"), { statusCode: 503 });
   }
-  const result = await publishGithubContent(content, actor);
+  const result = await publishGithubContent(content, actor, options);
   return { ...result, warnings: [], fast: false };
 }
 
@@ -258,7 +258,7 @@ export async function writeLocalLiveContent(content) {
   return { mode: "local-file" };
 }
 
-export async function publishGithubContent(content, actor = "admin") {
+export async function publishGithubContent(content, actor = "admin", options = {}) {
   const config = githubContentConfig();
   if (!config.token) {
     if (!isProductionRuntime()) return writeLocalLiveContent(content);
@@ -279,6 +279,10 @@ export async function publishGithubContent(content, actor = "admin") {
   if (existingResponse.ok) {
     const existing = await existingResponse.json();
     sha = existing.sha;
+    if (Object.hasOwn(options, "expectedPublishedAt")) {
+      const previous = JSON.parse(Buffer.from(existing.content, "base64").toString("utf8"));
+      if ((previous.publishedAt ?? null) !== options.expectedPublishedAt) throw Object.assign(new Error("เนื้อหาถูกแก้ไขโดยผู้ดูแลอื่น กรุณาโหลดเวอร์ชันล่าสุด"), { statusCode: 409 });
+    }
   } else if (existingResponse.status !== 404) {
     throw new Error(`GitHub read failed (${existingResponse.status})`);
   }

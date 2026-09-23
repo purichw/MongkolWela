@@ -1,4 +1,6 @@
+import { escapeHtml } from "../lib/ui-markup.js";
 import { getTarotCardById } from "./tarot-data.js";
+import { onCmsContent } from "./content-ready.js";
 import { renderCardFace, renderReadingSections, renderSingleReading, renderReadingActions, renderEmptyReading } from "./tarot-view.js";
 
 const monthlyPositions = [
@@ -215,7 +217,7 @@ const topicResults = {
   },
 };
 
-initSpreadResult();
+onCmsContent(initSpreadResult);
 
 function initSpreadResult() {
   const root = document.querySelector("[data-tarot-spread-result]");
@@ -256,8 +258,8 @@ function initSpreadResult() {
 function renderMonthlyCard(card, position, i) {
   return `<article class="tarot-monthly-card">
     <header><span class="tarot-position-number">${String(i + 1).padStart(2, "0")}</span><div><h3>${position.title}</h3><p>${position.focus}</p></div></header>
-    <div class="tarot-monthly-content"><a class="tarot-monthly-image" href="/tarot/meanings/${card.id}/" aria-label="ความหมายไพ่ ${card.thName}">${renderCardFace(card, "spread")}</a>
-      <div><h4>${card.thName}</h4><p class="tarot-result-name">${card.name}</p><p class="tarot-card-theme">${card.theme}</p>
+    <div class="tarot-monthly-content"><a class="tarot-monthly-image" href="/tarot/meanings/${card.id}/" aria-label="ความหมายไพ่ ${escapeHtml(card.thName)}">${renderCardFace(card, "spread")}</a>
+      <div><h4>${escapeHtml(card.thName)}</h4><p class="tarot-result-name">${escapeHtml(card.name)}</p><p class="tarot-card-theme">${escapeHtml(card.theme)}</p>
       ${renderReadingSections([{ label: "คำแนะนำ", text: card.advice, icon: "lightbulb" }], `position-${i}`)}</div></div>
   </article>`;
 }

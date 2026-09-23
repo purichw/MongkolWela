@@ -14,9 +14,9 @@ const mountLabels = [
 
 <aside class="palm-diagram-card" data-palm-diagram>
   <div class="palm-view-switcher" aria-label="เปลี่ยนมุมมองแผนภาพฝ่ามือ">
-    <button type="button" data-palm-view="main" aria-pressed="true">เส้นหลัก</button>
-    <button type="button" data-palm-view="minor" aria-pressed="false">เส้นรอง</button>
-    <button type="button" data-palm-view="mounts" aria-pressed="false">เนินมือ</button>
+    <button data-cms-field="b3547393-1" type="button" data-palm-view="main" aria-pressed="true">เส้นหลัก</button>
+    <button data-cms-field="b3547393-2" type="button" data-palm-view="minor" aria-pressed="false">เส้นรอง</button>
+    <button data-cms-field="b3547393-3" type="button" data-palm-view="mounts" aria-pressed="false">เนินมือ</button>
   </div>
 
   <div class="palm-hand-stage">
@@ -196,11 +196,11 @@ const mountLabels = [
 
   <div class="palm-mount-legend" data-palm-mount-legend hidden>
     {mountLabels.map(([number, label]) => (
-      <span><b>{number}</b>{label}</span>
+      <span data-cms-field="b3547393-4"><b>{number}</b>{label}</span>
     ))}
   </div>
 
-  <p class="palm-view-note" data-palm-view-note>
+  <p data-cms-field="b3547393-5" class="palm-view-note" data-palm-view-note>
     เส้นหลักใช้เริ่มอ่านโครงเรื่องใหญ่ของชีวิต: หัวใจ สมอง และชีวิต
   </p>
 </aside>

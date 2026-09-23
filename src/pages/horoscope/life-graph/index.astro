@@ -22,42 +22,42 @@ const guides = [
     <section class="life-graph-tool tools-workspace" aria-label="เครื่องมือกราฟชีวิต">
       <form class="life-graph-form tools-form" data-life-graph-form id="life-graph-form">
         <div class="form-heading">
-          <p class="section-kicker">ข้อมูลผู้ดูดวง</p>
-          <h2 id="life-form-title" tabindex="-1">กรอกวันเกิดและ<br />วันจร</h2>
-          <p>เพื่อสร้างกราฟชีวิต 12 เรื่อง</p>
+          <p data-cms-field="3436ab70-1" class="section-kicker">ข้อมูลผู้ดูดวง</p>
+          <h2 data-cms-field="3436ab70-2" id="life-form-title" tabindex="-1">กรอกวันเกิดและ<br />วันจร</h2>
+          <p data-cms-field="3436ab70-3">เพื่อสร้างกราฟชีวิต 12 เรื่อง</p>
         </div>
-        <label><span>ชื่อ</span><input name="name" type="text" value="ผู้มาเยือน" maxlength="80" autocomplete="off" /></label>
-        <label><span>วันเกิด</span><input name="birthDate" type="date" required /></label>
+        <label><span data-cms-field="3436ab70-4">ชื่อ</span><input data-cms-field="3436ab70-5" name="name" type="text" value="ผู้มาเยือน" maxlength="80" autocomplete="off" /></label>
+        <label><span data-cms-field="3436ab70-6">วันเกิด</span><input data-cms-field="3436ab70-7" name="birthDate" type="date" required /></label>
         <div class="form-row tools-form-row">
-          <label><span>ชั่วโมงเกิด</span><select name="birthHour" required data-hour-options></select></label>
-          <label><span>นาทีเกิด</span><select name="birthMinute" required data-minute-options></select></label>
+          <label><span data-cms-field="3436ab70-8">ชั่วโมงเกิด</span><select name="birthHour" required data-hour-options></select></label>
+          <label><span data-cms-field="3436ab70-9">นาทีเกิด</span><select name="birthMinute" required data-minute-options></select></label>
         </div>
-        <label><span>วันจร / วันที่ต้องการอ่าน</span><input name="transitDate" type="date" required /></label>
-        <button class="primary-action" type="submit">คำนวณกราฟชีวิต <Fragment set:html={renderIcon("arrow-right")} /></button>
-        <p class="form-footnote"><SiteIcon name="shield-check" />ข้อมูลนี้ใช้เพื่อคำนวณคำอ่าน<br />ไม่บันทึกเป็นประวัติการดูดวง</p>
+        <label><span data-cms-field="3436ab70-10">วันจร / วันที่ต้องการอ่าน</span><input data-cms-field="3436ab70-11" name="transitDate" type="date" required /></label>
+        <button data-cms-field="3436ab70-12" class="primary-action" type="submit">คำนวณกราฟชีวิต <Fragment set:html={renderIcon("arrow-right")} /></button>
+        <p data-cms-field="3436ab70-13" class="form-footnote"><SiteIcon name="shield-check" />ข้อมูลนี้ใช้เพื่อคำนวณคำอ่าน<br />ไม่บันทึกเป็นประวัติการดูดวง</p>
         <details class="life-form-method">
-          <summary>เกี่ยวกับข้อมูลที่ใช้ <SiteIcon name="chevron-down" /></summary>
-          <p>สูตรนี้ใช้วันเกิด เดือนจันทรคติ และปีนักษัตร เวลาเกิดแสดงประกอบผล แต่ยังไม่มีผลต่อคะแนน</p>
-          <p>หากเชื่อมบริการปฏิทิน ระบบจะส่งวันที่เพื่อตรวจปฏิทิน หากไม่มีข้อมูลจะระบุว่าเป็นค่าประมาณ</p>
+          <summary data-cms-field="3436ab70-14">เกี่ยวกับข้อมูลที่ใช้ <SiteIcon name="chevron-down" /></summary>
+          <p data-cms-field="3436ab70-15">สูตรนี้ใช้วันเกิด เดือนจันทรคติ และปีนักษัตร เวลาเกิดแสดงประกอบผล แต่ยังไม่มีผลต่อคะแนน</p>
+          <p data-cms-field="3436ab70-16">หากเชื่อมบริการปฏิทิน ระบบจะส่งวันที่เพื่อตรวจปฏิทิน หากไม่มีข้อมูลจะระบุว่าเป็นค่าประมาณ</p>
         </details>
       </form>
       <div class="life-graph-output tools-panel" data-life-graph-output aria-busy="true">
-        <div class="output-empty" role="status"><SiteIcon name="calendar-days" /><strong>กำลังเตรียมกราฟชีวิต</strong><p>กราฟและคำอ่านทั้ง 12 เรื่องจะแสดงที่นี่</p></div>
+        <div class="output-empty" role="status"><SiteIcon name="calendar-days" /><strong data-cms-field="3436ab70-17">กำลังเตรียมกราฟชีวิต</strong><p data-cms-field="3436ab70-18">กราฟและคำอ่านทั้ง 12 เรื่องจะแสดงที่นี่</p></div>
       </div>
     </section>
 
-    <div class="life-closing-quote"><blockquote>“ ทุกช่วงของชีวิต<br />ล้วนมีความหมาย<br />เมื่อเราเข้าใจจังหวะของมัน ”</blockquote></div>
+    <div class="life-closing-quote"><blockquote data-cms-field="3436ab70-19">“ ทุกช่วงของชีวิต<br />ล้วนมีความหมาย<br />เมื่อเราเข้าใจจังหวะของมัน ”</blockquote></div>
     <section class="life-recalculate" aria-labelledby="life-recalculate-title">
-      <h2 id="life-recalculate-title">ทบทวนจังหวะชีวิตของคุณ</h2><p>เปลี่ยนข้อมูลหรือวันจร แล้วอ่านผลอีกครั้ง</p>
-      <button type="button" class="primary-action" data-life-edit>ปรับข้อมูลกราฟชีวิต <SiteIcon name="arrow-right" /></button>
+      <h2 data-cms-field="3436ab70-20" id="life-recalculate-title">ทบทวนจังหวะชีวิตของคุณ</h2><p data-cms-field="3436ab70-21">เปลี่ยนข้อมูลหรือวันจร แล้วอ่านผลอีกครั้ง</p>
+      <button data-cms-field="3436ab70-22" type="button" class="primary-action" data-life-edit>ปรับข้อมูลกราฟชีวิต <SiteIcon name="arrow-right" /></button>
     </section>
     <section class="life-graph-principles tools-section" aria-labelledby="life-guide-title">
-      <div class="life-guide-intro"><p class="section-kicker">เกร็ดความรู้</p><h2 id="life-guide-title">ทำให้กราฟชีวิตอ่านง่ายขึ้น<br />โดยไม่ตัดความขลังออก</h2></div>
+      <div class="life-guide-intro"><p data-cms-field="3436ab70-23" class="section-kicker">เกร็ดความรู้</p><h2 data-cms-field="3436ab70-24" id="life-guide-title">ทำให้กราฟชีวิตอ่านง่ายขึ้น<br />โดยไม่ตัดความขลังออก</h2></div>
       <div class="principle-grid">
-        {guides.map(guide => <article><SiteIcon name={guide.icon} /><div><h3>{guide.title}</h3><p>{guide.text}</p><details><summary>อ่านเพิ่มเติม <SiteIcon name="chevron-down" /></summary><p>{guide.detail}</p></details></div></article>)}
+        {guides.map(guide => <article><SiteIcon name={guide.icon} /><div><h3 data-cms-field="3436ab70-25">{guide.title}</h3><p data-cms-field="3436ab70-26">{guide.text}</p><details><summary data-cms-field="3436ab70-27">อ่านเพิ่มเติม <SiteIcon name="chevron-down" /></summary><p data-cms-field="3436ab70-28">{guide.detail}</p></details></div></article>)}
       </div>
     </section>
-    <p class="life-page-disclaimer">คำอ่านตามความเชื่อ ใช้ประกอบการทบทวนและวางแผน ไม่ใช่คำยืนยันอนาคต</p>
+    <p data-cms-field="3436ab70-29" class="life-page-disclaimer">คำอ่านตามความเชื่อ ใช้ประกอบการทบทวนและวางแผน ไม่ใช่คำยืนยันอนาคต</p>
   </main>
   <script>import "../../../scripts/life-graph.js";</script>
 </ToolsLayout>

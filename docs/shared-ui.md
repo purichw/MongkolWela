@@ -1,5 +1,15 @@
 # Shared Public UI
 
+## Admin Reuse
+
+The central CMS content area reuses public brand tokens and the native-backed
+Choices/Floating UI dropdown controller. Admin text values stay left-aligned;
+long lists remain searchable. `admin-shared.css` is intentionally scoped so it
+cannot recolor the dark-jade/gold sidebar. Shared page/library field layouts live
+in `admin-content-library.css`. Commerce mounts its existing controller inside
+Admin, retaining its separate transactional state and save actions. See
+`cms-workspace-coverage.md` for ownership and verification boundaries.
+
 ## Contract
 
 Reuse shared anatomy, semantics and interaction fixes. The public shell owns
@@ -24,7 +34,7 @@ points. A different task layout must still sit on the same site frame.
 | `IconMedallion.astro` / `renderIconMedallion` | A circular centered icon wrapper; slot/argument is trusted icon markup | Home intent cards, Calendar summaries, Calendar Day facts/guidance, Place Detail headings/activities |
 | `public-ui.css` | Icon mask, medallion anatomy, existing glass material | All public routes via `stylesForPath` |
 | `site.css` field rules | Native single-select appearance/arrow clearance; centered public choices and short numeric/date/time values | Calendar, temple directory/planner, horoscope, shop/merit; admin/seller keep existing alignment |
-| `public-select.js`, `public-select-control.js`, `public-select.css` | Native-backed Choices.js dropdown, searchable long lists, floating popup, keyboard and form synchronization | Visible public single-selects, including asynchronously rendered filters; excludes admin/seller and multi-selects |
+| `public-select.js`, `public-select-control.js`, `public-select.css` | Native-backed Choices.js dropdown, searchable long lists, floating popup, keyboard and form synchronization | Visible public and Admin single-selects, including asynchronously rendered filters; excludes multi-selects |
 | `CarouselControls.astro`, `LinkArrow.astro`, `BrandOrnament.astro` | Existing shared control, link affordance and decorative motif | Existing Home/Calendar/detail/shell consumers |
 
 ## Usage

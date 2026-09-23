@@ -1,5 +1,26 @@
 # CMS Content
 
+## Content Workspace
+
+The central Admin now includes page fields, shared website copy, the reading
+library and embedded commerce. See [CMS workspace coverage](docs/cms-workspace-coverage.md)
+for ownership, design choices, validation, verification and remaining boundaries.
+
+Page editing discovers stable `data-cms-field` bindings from the actual template;
+editors do not need CSS selectors for normal changes. The advanced patch editor
+remains available for existing documents. Missing page registrations are appended
+only when edited; existing published entries and overrides are not replaced.
+
+Reading data is registered through `managedContent`: only declared editorial
+strings can change. IDs, formulas, counts and drawing geometry stay code-owned.
+Published `contentLibrary` overrides are filtered by route, shared with runtime
+tools and applied to SSR markup through `contentBinding`. An explicit empty
+string clears content. An absent override retains the original editorial seed.
+
+Publishing requires the revision read by the editor. Stale or concurrent writes
+return 409 and retain the editor's input. Drafts remain local to the browser;
+the website link opens published content, not a draft preview.
+
 ## Travel Guide
 
 The `/guide/` route uses page ID `travelGuide`; both build/development seeds
@@ -106,8 +127,9 @@ over the current document or hardcode labels over published CMS choices.
 ## Commerce And Merit
 
 Commerce and merit reservations use separate private tables, not CMS JSON.
-The Admin sidebar links to `/seller/` for platform management; seller access is
-scoped by active organization membership. See
+The Admin sidebar opens the embedded commerce workspace in `/admin/` for platform
+management. Authorized platform managers visiting `/seller/` are redirected to
+that workspace; seller access stays scoped by active organization membership. See
 [Commerce And Merit](docs/commerce-and-merit.md) for schema, local preview,
 verification and release gates. The feature is disabled in deployed APIs unless
 explicitly enabled; payment processing remains unavailable even then.

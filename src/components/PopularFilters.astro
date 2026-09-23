@@ -8,39 +8,39 @@ const { regions, purposes } = Astro.props as { regions: string[]; purposes: stri
 <section class="pf" aria-label="ค้นหาและกรองสถานที่" data-popular-temple-filter data-compact-filters data-purpose-order={JSON.stringify(purposes)}>
   <div class="pf__inner">
     <div class="pf__regions">
-      <span class="pf__region-label">กรองพื้นที่</span>
+      <span data-cms-field="29d42b8d-1" class="pf__region-label">กรองพื้นที่</span>
       <div class="pf__region-options" role="group" aria-label="กรองตามภาค">
         <ChoiceChip label="ทั้งหมด" data-popular-region-tag value="" selected disabled />
         {regions.map(region => <ChoiceChip label={region} data-popular-region-tag value={region} disabled />)}
       </div>
-      <a class="pf__planner" href="/temples/planner/">วางแผนเส้นทาง <SiteIcon name="arrow-right" /></a>
+      <a data-cms-field="29d42b8d-2" class="pf__planner" href="/temples/planner/">วางแผนเส้นทาง <SiteIcon name="arrow-right" /></a>
     </div>
     <div class="pf__panel">
       <form class="pf__search" data-popular-temple-filter-form>
         <label class="pf__input">
-          <span class="sr-only">ค้นหาชื่อวัด สถานที่ หรือจังหวัด</span>
+          <span data-cms-field="29d42b8d-3" class="sr-only">ค้นหาชื่อวัด สถานที่ หรือจังหวัด</span>
           <SiteIcon name="search" />
-          <input type="search" name="name" placeholder="ค้นหาชื่อวัด สถานที่ หรือจังหวัด" autocomplete="off" data-popular-temple-filter-name disabled />
+          <input data-cms-field="29d42b8d-4" type="search" name="name" placeholder="ค้นหาชื่อวัด สถานที่ หรือจังหวัด" autocomplete="off" data-popular-temple-filter-name disabled />
         </label>
-        <button class="pf__primary" type="submit" disabled>ค้นหา</button>
-        <button class="pf__nearby" type="button" data-popular-temple-nearby aria-pressed="false" disabled><SiteIcon name="map-pin" /><span>ใกล้ตำแหน่งปัจจุบัน</span></button>
-        <button class="pf__clear" type="button" data-popular-temple-filter-clear disabled><span {...iconAttributes("rotate-ccw")} />ล้างตัวกรอง</button>
+        <button data-cms-field="29d42b8d-5" class="pf__primary" type="submit" disabled>ค้นหา</button>
+        <button class="pf__nearby" type="button" data-popular-temple-nearby aria-pressed="false" disabled><SiteIcon name="map-pin" /><span data-cms-field="29d42b8d-6">ใกล้ตำแหน่งปัจจุบัน</span></button>
+        <button data-cms-field="29d42b8d-7" class="pf__clear" type="button" data-popular-temple-filter-clear disabled><span {...iconAttributes("rotate-ccw")} />ล้างตัวกรอง</button>
       </form>
       <div class="pf__selectors">
         {[{ key: "provinces", label: "จังหวัด", icon: "map-pin" as const }, { key: "purposes", label: "วัตถุประสงค์", icon: "lotus" as const }].map(group => (
           <button class="pf__selector" type="button" data-pf-group={group.key} aria-haspopup="dialog" aria-expanded="false" aria-controls="pf-editor" disabled>
             <SiteIcon name={group.icon} />
-            <span class="pf__selector-copy"><span>{group.label}</span><strong data-pf-summary>ทั้งหมด</strong></span>
+            <span class="pf__selector-copy"><span data-cms-field="29d42b8d-8">{group.label}</span><strong data-cms-field="29d42b8d-9" data-pf-summary>ทั้งหมด</strong></span>
             <SiteIcon name="chevron-down" />
           </button>
         ))}
       </div>
       <div class="pf__status-row">
         <span role="status" data-pf-status></span>
-        <button class="pf__text-button" type="button" data-pf-restore hidden>คืนค่าเงื่อนไขเดิม</button>
-        <button class="pf__text-button" type="button" data-pf-retry hidden>ลองโหลดอีกครั้ง</button>
+        <button data-cms-field="29d42b8d-10" class="pf__text-button" type="button" data-pf-restore hidden>คืนค่าเงื่อนไขเดิม</button>
+        <button data-cms-field="29d42b8d-11" class="pf__text-button" type="button" data-pf-retry hidden>ลองโหลดอีกครั้ง</button>
       </div>
-      <noscript><p>เปิด JavaScript เพื่อค้นหาและกรองสถานที่ หรือดูรายละเอียดจากรายการด้านล่าง</p></noscript>
+      <noscript><p data-cms-field="29d42b8d-12">เปิด JavaScript เพื่อค้นหาและกรองสถานที่ หรือดูรายละเอียดจากรายการด้านล่าง</p></noscript>
     </div>
     <details class="pf__applied" data-pf-applied hidden>
       <summary><span data-pf-applied-summary></span><SiteIcon name="chevron-down" /></summary>
@@ -58,15 +58,15 @@ const { regions, purposes } = Astro.props as { regions: string[]; purposes: stri
   <div class="pf-editor__tools">
     <label class="pf__input">
       <span class="sr-only" data-pf-search-label></span><SiteIcon name="search" />
-      <input type="search" data-pf-option-search autocomplete="off" />
+      <input data-cms-field="29d42b8d-13" type="search" data-pf-option-search autocomplete="off" />
     </label>
-    <div class="pf-editor__view"><span>เลือกได้หลายรายการ</span><button class="pf__text-button" type="button" data-pf-selected-only aria-pressed="false">ดูที่เลือก (0)</button></div>
+    <div class="pf-editor__view"><span data-cms-field="29d42b8d-14">เลือกได้หลายรายการ</span><button data-cms-field="29d42b8d-15" class="pf__text-button" type="button" data-pf-selected-only aria-pressed="false">ดูที่เลือก (0)</button></div>
   </div>
   <div class="pf-editor__choices" role="group" aria-labelledby="pf-editor-title" data-pf-choices></div>
   <p class="pf-editor__message" role="status" data-pf-editor-status hidden></p>
   <footer class="pf-editor__footer">
     <span data-pf-selection-count role="status"></span>
-    <button type="button" class="pf__text-button" data-pf-clear-working>ล้างการเลือก</button>
-    <button type="button" class="pf__primary" data-pf-done>เสร็จสิ้น</button>
+    <button data-cms-field="29d42b8d-16" type="button" class="pf__text-button" data-pf-clear-working>ล้างการเลือก</button>
+    <button data-cms-field="29d42b8d-17" type="button" class="pf__primary" data-pf-done>เสร็จสิ้น</button>
   </footer>
 </dialog>

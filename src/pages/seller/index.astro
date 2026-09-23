@@ -19,6 +19,10 @@ import "../../styles/commerce.css";
       <div class="commerce-message" role="status" aria-live="polite" data-seller-message></div>
       <div data-seller-content aria-busy="true">กำลังตรวจสอบสิทธิ์</div>
     </main>
-    <script>import "../../scripts/commerce-console.js";</script>
+    <script>
+      import { mountCommerceConsole } from "../../scripts/commerce-console.js";
+      const root = document.querySelector("[data-commerce-console]");
+      if (root) mountCommerceConsole(root);
+    </script>
   </body>
 </html>

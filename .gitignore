@@ -8,4 +8,5 @@ outputs
 .env*.local
 playwright-report
 test-results
+test-results-*
 .local

@@ -67,69 +67,69 @@ const datasetJsonLd = {
       <Fragment slot="quote">“ทุกวัด<br />คือรากของความศรัทธา”</Fragment>
       <section slot="panel" class="temple-search-panel" aria-label="ค้นหาวัดทั่วประเทศไทย">
         <header class="registry-search-heading">
-          <h2><IconMedallion class="registry-medallion"><SiteIcon name="search" /></IconMedallion>ค้นหาวัดจากทะเบียน</h2>
+          <h2 data-cms-field="098f361c-1"><IconMedallion class="registry-medallion"><SiteIcon name="search" /></IconMedallion>ค้นหาวัดจากทะเบียน</h2>
           <details class="registry-source-info">
-            <summary><SiteIcon name="info" /><span>เกี่ยวกับข้อมูลนี้</span></summary>
+            <summary><SiteIcon name="info" /><span data-cms-field="098f361c-2">เกี่ยวกับข้อมูลนี้</span></summary>
             <div class="registry-source-popover">
-              <strong>ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ</strong>
-              <p>ข้อมูลทะเบียนจากชุดข้อมูลที่นำเข้าระบบ ไม่ใช่ข้อมูลเวลาเปิดทำการหรือประกาศกิจกรรมของวัด</p>
+              <strong data-cms-field="098f361c-3">ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ</strong>
+              <p data-cms-field="098f361c-4">ข้อมูลทะเบียนจากชุดข้อมูลที่นำเข้าระบบ ไม่ใช่ข้อมูลเวลาเปิดทำการหรือประกาศกิจกรรมของวัด</p>
               <p data-temple-dataset-date></p>
             </div>
           </details>
         </header>
         <form class="temple-search-form" data-temple-form>
           <label class="temple-field temple-field-wide registry-primary-field">
-            <span>ชื่อวัด</span>
-            <span class="registry-search-input"><SiteIcon name="search" /><input type="search" name="name" placeholder="พิมพ์ชื่อวัด เช่น พระธาตุ บางจาก" autocomplete="off" data-temple-name /></span>
+            <span data-cms-field="098f361c-5">ชื่อวัด</span>
+            <span class="registry-search-input"><SiteIcon name="search" /><input data-cms-field="098f361c-6" type="search" name="name" placeholder="พิมพ์ชื่อวัด เช่น พระธาตุ บางจาก" autocomplete="off" data-temple-name /></span>
           </label>
 
           <label class="temple-field registry-primary-field">
-            <span>ประเภทวัด</span>
+            <span data-cms-field="098f361c-7">ประเภทวัด</span>
             <select name="type" data-temple-type></select>
           </label>
 
           <label class="temple-field registry-primary-field">
-            <span>นิกาย</span>
+            <span data-cms-field="098f361c-8">นิกาย</span>
             <select name="sect" data-temple-sect></select>
           </label>
 
           <label class="temple-field">
-            <span>ภาค</span>
+            <span data-cms-field="098f361c-9">ภาค</span>
             <select name="region" data-temple-region></select>
           </label>
 
           <label class="temple-field">
-            <span>จังหวัด</span>
+            <span data-cms-field="098f361c-10">จังหวัด</span>
             <select name="province" data-temple-province></select>
           </label>
 
           <label class="temple-field">
-            <span>อำเภอ / เขต</span>
+            <span data-cms-field="098f361c-11">อำเภอ / เขต</span>
             <select name="district" data-temple-district></select>
           </label>
 
           <label class="temple-field">
-            <span>ตำบล / แขวง</span>
+            <span data-cms-field="098f361c-12">ตำบล / แขวง</span>
             <select name="subdistrict" data-temple-subdistrict></select>
           </label>
 
           <label class="temple-field">
-            <span>รหัสไปรษณีย์</span>
-            <input type="search" name="postalCode" inputmode="numeric" placeholder="เช่น 10150" autocomplete="off" data-temple-postal />
+            <span data-cms-field="098f361c-13">รหัสไปรษณีย์</span>
+            <input data-cms-field="098f361c-14" type="search" name="postalCode" inputmode="numeric" placeholder="เช่น 10150" autocomplete="off" data-temple-postal />
           </label>
 
           <label class="temple-field">
-            <span>ได้รับวิสุงคามสีมา</span>
+            <span data-cms-field="098f361c-15">ได้รับวิสุงคามสีมา</span>
             <select name="wisung" data-temple-wisung>
-              <option value="">-- ทั้งหมด --</option>
-              <option value="ไม่ได้รับ">ไม่ได้รับ</option>
-              <option value="ได้รับ">ได้รับ</option>
+              <option data-cms-field="098f361c-16" value="">-- ทั้งหมด --</option>
+              <option data-cms-field="098f361c-17" value="ไม่ได้รับ">ไม่ได้รับ</option>
+              <option data-cms-field="098f361c-18" value="ได้รับ">ได้รับ</option>
             </select>
           </label>
 
           <div class="temple-actions">
-            <button class="temple-search-button" type="submit"><SiteIcon name="search" />ค้นหา</button>
-            <button class="temple-clear-button" type="button" data-temple-clear><span {...iconAttributes("rotate-ccw", "registry-icon")}></span>ล้างตัวกรอง</button>
+            <button data-cms-field="098f361c-19" class="temple-search-button" type="submit"><SiteIcon name="search" />ค้นหา</button>
+            <button data-cms-field="098f361c-20" class="temple-clear-button" type="button" data-temple-clear><span {...iconAttributes("rotate-ccw", "registry-icon")}></span>ล้างตัวกรอง</button>
           </div>
         </form>
         <div class="registry-search-art" aria-hidden="true"><SiteIcon name="stupa" /><SiteIcon name="temple" /></div>
@@ -139,10 +139,10 @@ const datasetJsonLd = {
     <section class="temple-results" aria-labelledby="registry-results-title">
       <div class="temple-results-head">
         <div>
-          <p class="section-kicker"><IconMedallion class="registry-medallion"><SiteIcon name="temple" /></IconMedallion>ผลการค้นหา</p>
-          <h2 id="registry-results-title" data-temple-count role="status">กำลังโหลดข้อมูลวัด</h2>
+          <p data-cms-field="098f361c-21" class="section-kicker"><IconMedallion class="registry-medallion"><SiteIcon name="temple" /></IconMedallion>ผลการค้นหา</p>
+          <h2 data-cms-field="098f361c-22" id="registry-results-title" data-temple-count role="status">กำลังโหลดข้อมูลวัด</h2>
         </div>
-        <div class="registry-results-meta"><p data-temple-source>แหล่งที่มา: ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ</p><p data-temple-dataset-date></p></div>
+        <div class="registry-results-meta"><p data-cms-field="098f361c-23" data-temple-source>แหล่งที่มา: ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ</p><p data-temple-dataset-date></p></div>
       </div>
 
       <div class="temple-table-wrap" tabindex="0" role="region" aria-label="ตารางผลการค้นหาวัดทั่วประเทศไทย">
@@ -158,7 +158,7 @@ const datasetJsonLd = {
       </div>
 
       <div class="temple-pagination" data-temple-pagination></div>
-      <button class="registry-load-all" type="button" data-temple-load-all hidden><span {...iconAttributes("list-filter", "registry-icon")}></span><span data-temple-load-label>ดูผลการค้นหาทั้งหมด</span></button>
+      <button class="registry-load-all" type="button" data-temple-load-all hidden><span {...iconAttributes("list-filter", "registry-icon")}></span><span data-cms-field="098f361c-24" data-temple-load-label>ดูผลการค้นหาทั้งหมด</span></button>
     </section>
   </main>
 

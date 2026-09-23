@@ -1,6 +1,7 @@
 import { seamsiCategories, seamsiFortunes } from "./seamsi-data.js";
 import { createLocalSeamsiSource, createSeamsiSession } from "../lib/seamsi-session.js";
 import { renderIcon } from "../lib/ui-markup.js";
+import { onCmsContent } from "./content-ready.js";
 
 const lifecycle = new AbortController();
 let mounted;
@@ -11,6 +12,7 @@ const source = createLocalSeamsiSource(seamsiFortunes, {
 });
 
 function mountSeamsi() {
+  if (!window.MongkolWelaCMS?.content) return;
   const form = document.querySelector("[data-seamsi-form]");
   if (mounted?.form === form) return;
   mounted?.dispose();
@@ -285,7 +287,7 @@ function escapeHtml(value) {
   }[char]));
 }
 
-mountSeamsi();
+onCmsContent(mountSeamsi);
 document.addEventListener("astro:page-load", mountSeamsi, { signal: lifecycle.signal });
 document.addEventListener("astro:before-swap", () => { mounted?.dispose(); mounted = undefined; }, { signal: lifecycle.signal });
 window.addEventListener("pagehide", event => {

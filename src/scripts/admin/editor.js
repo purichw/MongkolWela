@@ -1,6 +1,7 @@
 import { sitePlaceholderImage } from "../../lib/image-placeholder.js";
 import { adminIcon } from "./design.js";
 import { mediaProviderStatus } from "./data.js";
+import { renderVisitEditor } from "./visit-content.js";
 
 export function createTempleEditor({ state, rememberTempleListScroll, setTitle, setTopActions, escapeHtml, $, TEMPLE_COLLECTIONS, empty, restoreTempleListScroll, collectionTemples, TEMPLE_IMAGE_FIELDS }) {
 function templeRecords() {
@@ -184,6 +185,11 @@ function renderTempleEditor(record, edit) {
       <label>ชื่อสถานที่<input data-temple-field="name" value="${escapeHtml(templeValue(record, edit, "name"))}" required></label>
       <label>ภูมิภาค<input data-temple-field="region" value="${escapeHtml(templeValue(record, edit, "region"))}" placeholder="ภาคกลาง"></label>
       <label>จังหวัด / เขต<input data-temple-field="province" value="${escapeHtml(templeValue(record, edit, "province"))}" placeholder="กรุงเทพฯ / บางกอกน้อย"></label>
+      <label>อำเภอ / เขต<input data-temple-field="district" value="${escapeHtml(templeValue(record, edit, "district"))}"></label>
+      <label class="mw-admin-form-grid--span">ที่อยู่<input data-temple-field="coordinateAddress" value="${escapeHtml(templeValue(record, edit, "coordinateAddress"))}"></label>
+      <label>Plus Code<input data-temple-field="plusCode" value="${escapeHtml(templeValue(record, edit, "plusCode"))}"></label>
+      <label class="mw-admin-form-grid--span">คำแนะนำสถานที่<textarea data-temple-field="summary">${escapeHtml(templeValue(record, edit, "summary"))}</textarea></label>
+      <label class="mw-admin-form-grid--span">รายละเอียดสถานที่<textarea data-temple-field="description" rows="5">${escapeHtml(templeValue(record, edit, "description"))}</textarea></label>
       <label>ประเภท<input data-temple-field="placeType" value="${escapeHtml(templeValue(record, edit, "placeType"))}" placeholder="ยังไม่ระบุ"></label>
       <label class="mw-admin-form-grid--span">รูปแบบการเดินทาง<input data-temple-field="travelModes" value="${escapeHtml(templeValue(record, edit, "travelModes"))}" placeholder="คั่นแต่ละรูปแบบด้วย ;"></label>
       <label>พิกัด LAT<input type="number" step="0.0001" data-temple-field="latitude" value="${escapeHtml(templeValue(record, edit, "latitude"))}"></label>
@@ -200,6 +206,7 @@ function renderTempleEditor(record, edit) {
       <div><span>การตรวจข้อมูล</span><strong>${escapeHtml(record.visitInfo?.notice || "กรุณาตรวจสอบกับสถานที่โดยตรง")}</strong></div>
       <div><span>แหล่งข้อมูล</span><strong>${escapeHtml((record.visitInfo?.sources || []).length ? `${record.visitInfo.sources.length} แหล่ง` : "ยังไม่มีแหล่งอ้างอิง")}</strong></div>
     </div>
+    ${renderVisitEditor(record, edit, escapeHtml)}
   </div>
   <div class="mw-admin-temple-section">
     <div class="mw-admin-temple-section-head">

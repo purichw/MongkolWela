@@ -23,7 +23,7 @@ const {
 
 <picture class="temple-responsive-picture">
   {mobileSrc && mobileSrc !== desktopSrc && <source media="(max-width: 767px)" srcset={mobileSrc} data-temple-mobile-source />}
-  <img
+  <img data-cms-field="7e9a2a95-1"
     src={desktopSrc || fallbackSrc}
     alt={desktopSrc && desktopSrc !== fallbackSrc ? alt : "ภาพประกอบแทนรูปที่ยังไม่มี"}
     loading={loading}

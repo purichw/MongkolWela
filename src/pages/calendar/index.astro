@@ -27,11 +27,11 @@ const media = (id: string) => patches.find(patch => patch.id === id && patch.ena
       <CmsImage slot="media" mediaId="calendar-hero-image" image={media("calendar-hero-image")} width={1920} height={1080} loading="eager" fetchpriority="high" class="cal-hero-image" />
       <div class="page-banner__copy">
         <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง">
-          <a href="/">หน้าแรก</a><span aria-hidden="true">/</span><span aria-current="page">ปฏิทินไทย</span>
+          <a data-cms-field="6211ed68-1" href="/">หน้าแรก</a><span aria-hidden="true">/</span><span data-cms-field="6211ed68-2" aria-current="page">ปฏิทินไทย</span>
         </nav>
-        <h1 id="calendar-title" data-calendar-title>ปฏิทินไทย</h1>
-        <p class="page-banner__subtitle">เช็กวันพระ วันสำคัญ และรายละเอียดรายวัน</p>
-        <p class="page-banner__description">วางแผนชีวิต เดินทางไหว้พระ ทำบุญ และกิจกรรมมงคลตลอดทั้งปี</p>
+        <h1 data-cms-field="6211ed68-3" id="calendar-title" data-calendar-title>ปฏิทินไทย</h1>
+        <p data-cms-field="6211ed68-4" class="page-banner__subtitle">เช็กวันพระ วันสำคัญ และรายละเอียดรายวัน</p>
+        <p data-cms-field="6211ed68-5" class="page-banner__description">วางแผนชีวิต เดินทางไหว้พระ ทำบุญ และกิจกรรมมงคลตลอดทั้งปี</p>
       </div>
       <Fragment slot="quote">“เวลา... ก็เป็นมงคลได้<br />หากเราเลือกใช้ด้วยใจที่ดี”</Fragment>
     </PageBanner>
@@ -39,26 +39,26 @@ const media = (id: string) => patches.find(patch => patch.id === id && patch.ena
     <div class="cal-toolbar-wrap" data-calendar-toolbar>
       <div class="cal-toolbar cal-container">
         <div class="cal-year-control">
-          <label for="calendar-year">เลือกปี</label>
+          <label data-cms-field="6211ed68-6" for="calendar-year">เลือกปี</label>
           <select id="calendar-year" name="year" data-calendar-year>
-            {createYearOptions().map(year => <option value={year}>{year} / {year - 543}</option>)}
+            {createYearOptions().map(year => <option data-cms-field="6211ed68-7" value={year}>{year} / {year - 543}</option>)}
           </select>
         </div>
         <nav class="cal-month-nav" data-calendar-months aria-label="เลือกเดือน">
           {thaiMonthNames.map((month, i) => (
-            <button type="button" data-month={i + 1} aria-label={month} aria-pressed="false" title={month}>{monthShortNames[i]}</button>
+            <button data-cms-field="6211ed68-8" type="button" data-month={i + 1} aria-label={month} aria-pressed="false" title={month}>{monthShortNames[i]}</button>
           ))}
         </nav>
         <div class="cal-view-switch" role="group" aria-label="มุมมองปฏิทิน">
-          <button type="button" data-view="overview" aria-pressed="true"><SiteIcon name="calendar-days" />ภาพรวม</button>
-          <button type="button" data-view="month" aria-pressed="false"><SiteIcon name="calendar-days" />รายเดือน</button>
-          <button type="button" data-view="events" aria-pressed="false"><SiteIcon name="calendar-days" />วันสำคัญ</button>
+          <button data-cms-field="6211ed68-9" type="button" data-view="overview" aria-pressed="true"><SiteIcon name="calendar-days" />ภาพรวม</button>
+          <button data-cms-field="6211ed68-10" type="button" data-view="month" aria-pressed="false"><SiteIcon name="calendar-days" />รายเดือน</button>
+          <button data-cms-field="6211ed68-11" type="button" data-view="events" aria-pressed="false"><SiteIcon name="calendar-days" />วันสำคัญ</button>
         </div>
         <select class="cal-mobile-view" data-calendar-view aria-label="มุมมองปฏิทิน">
-          <option value="overview">ภาพรวม</option><option value="month">รายเดือน</option><option value="events">วันสำคัญ</option>
+          <option data-cms-field="6211ed68-12" value="overview">ภาพรวม</option><option data-cms-field="6211ed68-13" value="month">รายเดือน</option><option data-cms-field="6211ed68-14" value="events">วันสำคัญ</option>
         </select>
         <a class="cal-today cal-button" data-calendar-today href="/calendar/day/" aria-label="รายละเอียดวันนี้" title="รายละเอียดวันนี้">
-          <SiteIcon name="calendar-days" /><span>วันนี้</span>
+          <SiteIcon name="calendar-days" /><span data-cms-field="6211ed68-15">วันนี้</span>
         </a>
       </div>
     </div>
@@ -72,19 +72,19 @@ const media = (id: string) => patches.find(patch => patch.id === id && patch.ena
         <div class="cal-grid-skeleton" aria-hidden="true">
           {Array.from({ length: 35 }, () => <span></span>)}
         </div>
-        <p class="sr-only">กำลังเตรียมข้อมูลปฏิทิน</p>
+        <p data-cms-field="6211ed68-16" class="sr-only">กำลังเตรียมข้อมูลปฏิทิน</p>
       </section>
       <section class="cal-year-overview" data-calendar-overview aria-labelledby="calendar-year-title"></section>
       <section class="cal-guide" data-calendar-guide hidden aria-labelledby="cal-guide-title">
-        <h2 id="cal-guide-title">เกร็ดความรู้</h2>
+        <h2 data-cms-field="6211ed68-17" id="cal-guide-title">เกร็ดความรู้</h2>
         <a href="/calendar/day/">
           <CmsImage mediaId="calendar-guide-image" image={media("calendar-guide-image")} width={240} height={180} />
-          <span><strong>อ่านวันพระและจันทรคติ</strong><small>ดูข้างขึ้น ข้างแรม และข้อมูลประกอบของแต่ละวัน</small></span>
+          <span><strong data-cms-field="6211ed68-18">อ่านวันพระและจันทรคติ</strong><small data-cms-field="6211ed68-19">ดูข้างขึ้น ข้างแรม และข้อมูลประกอบของแต่ละวัน</small></span>
           <SiteIcon name="arrow-right" />
         </a>
       </section>
       <noscript>
-        <p class="cal-data-note">โปรดเปิด JavaScript เพื่อเลือกปี เดือน และอ่านรายละเอียดปฏิทิน</p>
+        <p data-cms-field="6211ed68-20" class="cal-data-note">โปรดเปิด JavaScript เพื่อเลือกปี เดือน และอ่านรายละเอียดปฏิทิน</p>
       </noscript>
     </div>
   </main>

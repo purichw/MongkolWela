@@ -1,0 +1,57 @@
+/* Content-area brand aliases deliberately leave the sidebar palette untouched. */
+.admin-design .mw-admin-main {
+  --admin-paper: var(--paper);
+  --admin-ink: var(--ink);
+  --admin-ink-soft: var(--ink-soft);
+  --admin-lacquer: var(--lacquer);
+  --admin-jade: var(--jade-dark);
+  --admin-gold: var(--gold);
+  --admin-line: var(--line);
+  font-family: var(--font-thai);
+}
+.admin-design .mw-admin-main .mw-admin-btn-primary {
+  background: var(--lacquer); border-color: var(--lacquer); color: white;
+}
+.admin-design .mw-admin-main .mw-admin-btn-primary:hover:not(:disabled) {
+  background: var(--lacquer-dark); border-color: var(--lacquer-dark); color: white;
+}
+.admin-design .mw-admin-main :focus-visible { outline-color: var(--jade); }
+.admin-design .mw-select { width: 100%; min-width: 0; font-family: var(--font-thai); }
+.admin-design .mw-select .choices__inner { text-align: left; min-height: 42px; }
+.admin-design .mw-select .choices__item { text-align: left; }
+.admin-design .mw-admin-commerce { background: transparent; }
+.admin-design :is(#adminContent, .mw-admin-commerce, [data-seller-content], [data-management-view], .commerce-table-wrap) { min-width: 0; max-width: 100%; }
+.admin-design .mw-admin-main :is(.mw-page-content-field, .mw-library-field) :is(input, textarea) { font-size: 14px; font-weight: 400; line-height: 1.65; }
+.admin-design .mw-page-content-image { display: block; width: 100%; max-width: 320px; height: 160px; object-fit: contain; object-position: left center; margin: 0 0 12px; background: var(--admin-paper); border: 1px solid var(--admin-line); border-radius: 6px; }
+.mw-admin-commerce .commerce-message[data-tone="success"] { color: var(--jade-dark); background: #edf5f0; border-color: #c3d8cd; }
+.mw-admin-commerce .commerce-message[data-tone="error"] { color: var(--lacquer-dark); background: #fff2ef; border-color: #e6c1bc; }
+.mw-admin-commerce-caption { color: var(--ink-soft); font-size: 14px; margin: 0 0 20px; }
+.mw-admin-visit-editor { border-top: 1px solid var(--admin-line); padding: 16px 0; }
+.mw-admin-visit-editor summary { font-weight: 650; cursor: pointer; padding: 8px 0; }
+.mw-admin-visit-editor[open] summary { margin-bottom: 14px; }
+.mw-admin-draft-notice { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; position: fixed; bottom: 16px; right: 16px; max-width: calc(100vw - 32px); padding: 14px 18px; background: var(--admin-surface); border: 1px solid var(--admin-line-strong); border-radius: 8px; box-shadow: var(--admin-shadow); z-index: 40; }
+.mw-admin-commerce .commerce-console-title h1 { font-size: 22px; margin-bottom: 12px; }
+.mw-admin-commerce .commerce-console-title p { font-size: 12px; }
+.mw-admin-commerce .commerce-console-tabs { border-color: var(--line); }
+.mw-admin-commerce .commerce-console-tabs [aria-current=page] { color: var(--lacquer); border-color: var(--lacquer); }
+.mw-admin-commerce .commerce-table { background: var(--admin-surface); }
+.mw-admin-commerce .commerce-table th { background: var(--paper-deep); color: var(--ink); }
+.mw-admin-commerce :is(.commerce-table-wrap,.commerce-editor,.commerce-table td) { border-color: var(--line); }
+.mw-admin-commerce .commerce-editor { background: var(--admin-surface); box-shadow: none; }
+.mw-admin-commerce :is(input,textarea) { background: var(--admin-surface-strong); border-color: var(--admin-line-strong); }
+.commerce-service-state { padding: 48px 24px; border-block: 1px solid var(--line); text-align: center; }
+.commerce-service-symbol { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto 20px; background: var(--paper-deep); border-radius: 8px; color: var(--jade-dark); }
+.commerce-service-symbol .ui-icon-mask { width: 30px; height: 30px; }
+.commerce-service-state h2 { margin: 0 0 12px; font-size: 22px; }
+.commerce-service-state p { max-width: 520px; margin: 0 auto 24px; color: var(--ink-soft); }
+.commerce-service-state .commerce-actions { justify-content: center; }
+.commerce-service-state .ui-icon-mask { display: inline-block; width: 18px; height: 18px; background: currentColor; mask-size: contain; mask-position: center; mask-repeat: no-repeat; }
+@media (max-width: 600px) {
+  .commerce-service-state { padding: 36px 12px; }
+  .commerce-service-state h2 { font-size: 19px; }
+  .commerce-service-state .commerce-actions { flex-direction: column; align-items: stretch; }
+  .mw-admin-commerce .commerce-console-tabs { flex-wrap: nowrap; overflow-x: auto; }
+  .mw-admin-commerce .commerce-console-tabs button { white-space: nowrap; }
+  .mw-admin-commerce .commerce-table { min-width: 680px; }
+  .mw-admin-commerce .commerce-table-wrap { overflow-x: auto; scrollbar-width: thin; }
+}

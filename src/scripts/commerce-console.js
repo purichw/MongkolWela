@@ -1,9 +1,10 @@
 import { COMMERCE_TYPES, COMMERCE_STATUS } from "../lib/commerce-format.js";
 import { commerceApi, e, money, thaiCommerceDate } from "./commerce-ui.js";
+import { renderIcon } from "../lib/ui-markup.js";
 
-const root = document.querySelector("[data-commerce-console]");
-if (root) init(root);
-function init(root) {
+export function mountCommerceConsole(root, { embedded = false } = {}) {
+  const lifecycle = new AbortController();
+  const listen = (target, type, handler) => target?.addEventListener(type, handler, { signal: lifecycle.signal });
   const content = root.querySelector("[data-seller-content]");
   const message = root.querySelector("[data-seller-message]");
   let data;
@@ -13,13 +14,13 @@ function init(root) {
   let dirty = false;
   let busy = false;
   let search = "";
-  const hash = new URLSearchParams(location.hash.slice(1));
+  const hash = new URLSearchParams(embedded ? "" : location.hash.slice(1));
   const invitation = hash.get("access_token") ? { accessToken: hash.get("access_token"), refreshToken: hash.get("refresh_token") } : null;
   if (invitation) history.replaceState(null, "", location.pathname);
-  const notice = text => { message.textContent = text; };
+  const notice = (text, tone = "error") => { message.textContent = text; message.dataset.tone = tone; };
   const label = row => row.title || row.name || row.recipientName || row.email || row.campaignTitle || row.sellerName || row.id;
-  const allowLeave = () => !dirty || confirm("มีข้อมูลที่ยังไม่ได้บันทึก ต้องการออกจากแบบฟอร์มนี้หรือไม่?");
-  window.addEventListener("beforeunload", event => { if (dirty) { event.preventDefault(); event.returnValue = ""; } });
+  const allowLeave = () => !busy && (!dirty || confirm("มีข้อมูลที่ยังไม่ได้บันทึก ต้องการออกจากแบบฟอร์มนี้หรือไม่?"));
+  listen(window, "beforeunload", event => { if (dirty || busy) { event.preventDefault(); event.returnValue = ""; } });
   async function session(body, method = "POST") {
     const response = await fetch("/api/commerce/session", { method, headers: { "Content-Type": "application/json" }, ...(body ? { body: JSON.stringify(body) } : {}) });
     const payload = await response.json(); if (!response.ok) throw new Error(payload.error); return payload;
@@ -29,8 +30,32 @@ function init(root) {
     content.setAttribute("aria-busy", "false");
   }
   async function load() {
-    try { data = await commerceApi(null, "?view=manage"); if (!data.organizations.some(o => o.id === selectedOrg)) selectedOrg = data.organizations[0]?.id || ""; document.querySelector("[data-seller-logout]").hidden = data.admin; render(); }
-    catch (error) { if ([401, 403].includes(error.status)) login(); else { content.innerHTML = '<button class="commerce-button secondary" data-reload>ลองใหม่</button>'; } notice(error.message); }
+    content.setAttribute("aria-busy", "true");
+    notice("");
+    try {
+      const result = await commerceApi(null, "?view=manage");
+      if (lifecycle.signal.aborted) return;
+      if (!embedded && result.admin) { location.replace("/admin/?section=commerce"); return; }
+      data = result;
+      if (!data.organizations.some(o => o.id === selectedOrg)) selectedOrg = data.organizations[0]?.id || "";
+      const logout = document.querySelector("[data-seller-logout]");
+      if (logout) logout.hidden = data.admin;
+      render();
+    } catch (error) {
+      if (lifecycle.signal.aborted) return;
+      if ([401, 403].includes(error.status) && !embedded) login();
+      else {
+        const disabled = error.code === "COMMERCE_DISABLED";
+        const denied = [401, 403].includes(error.status);
+        content.innerHTML = `<section class="commerce-service-state" data-commerce-state="${disabled ? "disabled" : denied ? "denied" : "error"}">
+          <div class="commerce-service-symbol">${renderIcon(disabled ? "shopping-bag" : "info")}</div>
+          <h2>${disabled ? "ร้านค้าและร่วมบุญยังไม่เปิดบริการ" : denied ? "ไม่สามารถเข้าถึงส่วนจัดการร้านค้า" : "ยังโหลดข้อมูลร้านค้าไม่ได้"}</h2>
+          <p>${disabled ? "ยังไม่มีการเปิดรับคำสั่งซื้อหรือการจองร่วมบุญผ่านระบบ" : e(error.message)}</p>
+          <div class="commerce-actions"><button class="commerce-button secondary" data-reload>${renderIcon("rotate-ccw")}ลองใหม่</button><a class="commerce-button secondary" href="/shop/">${renderIcon("external-link")}ดูหน้าร้าน</a></div>
+        </section>`;
+      }
+      content.setAttribute("aria-busy", "false");
+    }
   }
   function render() {
     content.setAttribute("aria-busy", "false");
@@ -72,9 +97,9 @@ function init(root) {
     editing = { orgId: selectedOrg, status: section === "members" ? "active" : section === "channels" && !data.admin ? "review" : "draft", kind: section === "organizations" ? "shop" : "fund", capacity: 1, stock: 0, destinationKind: "temple", ...row, priceBaht: (row.priceSatang || 0) / 100, shippingBaht: (row.shippingSatang || 0) / 100, amountBaht: (row.amountSatang || 0) / 100 };
     dirty = false; renderEditor();
   }
-  content.addEventListener("input", event => { if (event.target.matches("[data-search]")) { search = event.target.value; if (!editing) renderRows(); } else if (event.target.closest("form")) dirty = true; });
-  content.addEventListener("change", event => { if (event.target.matches("[data-organization]")) { if (!allowLeave()) { event.target.value = selectedOrg; return; } selectedOrg = event.target.value; editing = null; dirty = false; render(); } });
-  content.addEventListener("click", async event => {
+  listen(content, "input", event => { if (event.target.matches("[data-search]")) { search = event.target.value; if (!editing) renderRows(); } else if (event.target.closest("form")) dirty = true; });
+  listen(content, "change", event => { if (event.target.matches("[data-organization]")) { if (!allowLeave()) { event.target.value = selectedOrg; return; } selectedOrg = event.target.value; editing = null; dirty = false; render(); } else if (event.target.closest("form")) dirty = true; });
+  listen(content, "click", async event => {
     const button = event.target.closest("button"); if (!button || busy) return;
     if (button.dataset.section) { if (!allowLeave()) return; section = button.dataset.section; editing = null; dirty = false; search = ""; render(); }
     if (button.hasAttribute("data-create")) { if (!allowLeave()) return; edit(); }
@@ -85,10 +110,10 @@ function init(root) {
       const email = content.querySelector('[name="email"]').value;
       if (!confirm(`ส่งอีเมลเชิญ ${email} เข้าร้านค้านี้?`)) return;
       busy = true; button.disabled = true;
-      try { await commerceApi({ op: "invite", orgId: selectedOrg, email }); dirty = false; editing = null; await load(); notice("ส่งคำเชิญแล้ว"); } catch (error) { notice(error.message); } finally { busy = false; button.disabled = false; }
+      try { await commerceApi({ op: "invite", orgId: selectedOrg, email }); dirty = false; editing = null; await load(); notice("ส่งคำเชิญแล้ว", "success"); } catch (error) { notice(error.message); } finally { busy = false; button.disabled = false; }
     }
   });
-  content.addEventListener("submit", async event => {
+  listen(content, "submit", async event => {
     event.preventDefault(); if (busy) return; const form = event.target;
     const values = Object.fromEntries(new FormData(form));
     if (form.matches("[data-editor]") && section === "channels" && values.status === "published" && !values.reviewConfirmed) { notice("กรุณายืนยันการตรวจสอบก่อนเผยแพร่"); return; }
@@ -102,14 +127,15 @@ function init(root) {
         for (const [source, dest] of [["priceBaht", "priceSatang"], ["shippingBaht", "shippingSatang"], ["amountBaht", "amountSatang"]]) if (source in payload) payload[dest] = Math.round(Number(payload[source]) * 100);
         if (section === "organizations") payload.templeIds = new FormData(form).getAll("templeIds");
         await commerceApi({ op: "save", table: section, id: editing.id, expectedVersion: editing.version, data: payload });
-        dirty = false; editing = null; await load(); notice("บันทึกแล้ว");
+        dirty = false; editing = null; await load(); notice("บันทึกแล้ว", "success");
       } else if (form.matches("[data-transition]")) {
         await commerceApi({ op: "transition", table: section, id: editing.id, expectedVersion: editing.version, action, note: values.note, reference: values.reference, receivedSatang: Math.round(Number(values.receivedBaht) * 100) });
-        dirty = false; editing = null; await load(); notice("บันทึกสถานะแล้ว");
+        dirty = false; editing = null; await load(); notice("บันทึกสถานะแล้ว", "success");
       }
     } catch (error) { notice(error.message); }
     finally { busy = false; if (submit) submit.disabled = false; }
   });
-  document.querySelector("[data-seller-logout]").addEventListener("click", async () => { if (!allowLeave()) return; try { await session(null, "DELETE"); dirty = false; location.reload(); } catch (error) { notice(error.message); } });
+  if (!embedded) listen(document.querySelector("[data-seller-logout]"), "click", async () => { if (!allowLeave()) return; try { await session(null, "DELETE"); dirty = false; location.reload(); } catch (error) { notice(error.message); } });
   if (invitation) login(); else load();
+  return { canLeave: allowLeave, isDirty: () => dirty || busy, destroy: () => lifecycle.abort() };
 }

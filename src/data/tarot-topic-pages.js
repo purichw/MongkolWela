@@ -1,4 +1,5 @@
-export const tarotIntentTopics = [
+import { managedContent } from "../lib/managed-content.js";
+export const tarotIntentTopics = managedContent("tarot.tarotIntentTopics", [
   {
     slug: "love",
     spreadType: "love",
@@ -101,7 +102,7 @@ export const tarotIntentTopics = [
     relatedCopy:
       "จดหนึ่งเรื่องที่ควรเดินหน้า หนึ่งเรื่องที่ควรระวัง และหนึ่งคนที่ควรคุยให้ชัด การงานมักคลี่คลายจากจังหวะเล็ก ๆ ที่ลงมือถูกเวลา",
   },
-];
+], {"title":"หัวข้อการอ่านไพ่","group":"ไพ่ยิปซี","routes":["/tarot/"]});
 
 export function getTarotIntentTopic(slug) {
   return tarotIntentTopics.find((topic) => topic.slug === slug);

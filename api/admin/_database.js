@@ -74,8 +74,16 @@ export async function writeDatabaseContent(content, actor = "admin", meta = {}) 
     updated_at: now,
   };
 
-  const { error: upsertError } = await supabase.from("cms_documents").upsert(document, { onConflict: "id" });
-  if (upsertError) throw new Error(`Supabase content upsert failed: ${upsertError.message}`);
+  if (Object.hasOwn(meta, "expectedPublishedAt")) {
+    let update = supabase.from("cms_documents").update(document).eq("id", LIVE_DOCUMENT_ID);
+    update = meta.expectedPublishedAt === null ? update.is("content->>publishedAt", null) : update.eq("content->>publishedAt", meta.expectedPublishedAt);
+    const { data, error } = await update.select("id").maybeSingle();
+    if (error) throw new Error(`Supabase content update failed: ${error.message}`);
+    if (!data) throw Object.assign(new Error("เนื้อหาถูกแก้ไขโดยผู้ดูแลอื่น กรุณาโหลดเวอร์ชันล่าสุด"), { statusCode: 409 });
+  } else {
+    const { error: upsertError } = await supabase.from("cms_documents").upsert(document, { onConflict: "id" });
+    if (upsertError) throw new Error(`Supabase content upsert failed: ${upsertError.message}`);
+  }
 
   const { error: revisionError } = await supabase.from("cms_revisions").insert({
     document_id: LIVE_DOCUMENT_ID,

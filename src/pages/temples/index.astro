@@ -45,33 +45,33 @@ const supportingLinks = [
         image={{ src: banner.imageUrl, alt: "", position: banner.focalPoint, credit: banner.imageSourceLabel }}
         width={2164} height={727} loading="eager" fetchpriority="high" />
       <div class="page-banner__copy">
-        <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง"><a href="/">หน้าแรก</a><span aria-hidden="true">/</span><span>วัดดังเสริมมงคล</span></nav>
-        <p class="page-banner__kicker">คู่มือวางแผนเดินทางมงคล</p>
-        <h1 id="temple-page-title">{templeHubContent.heading}</h1>
-        <p class="page-banner__description">ค้นหาวัดและสถานที่ศักดิ์สิทธิ์ทั่วไทย<br />เลือกตามพื้นที่ ความตั้งใจ หรือวางแผนการเดินทางของคุณ</p>
+        <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง"><a data-cms-field="7bd75ba1-1" href="/">หน้าแรก</a><span aria-hidden="true">/</span><span data-cms-field="7bd75ba1-2">วัดดังเสริมมงคล</span></nav>
+        <p data-cms-field="7bd75ba1-3" class="page-banner__kicker">คู่มือวางแผนเดินทางมงคล</p>
+        <h1 data-cms-field="7bd75ba1-4" id="temple-page-title">{templeHubContent.heading}</h1>
+        <p data-cms-field="7bd75ba1-5" class="page-banner__description">ค้นหาวัดและสถานที่ศักดิ์สิทธิ์ทั่วไทย<br />เลือกตามพื้นที่ ความตั้งใจ หรือวางแผนการเดินทางของคุณ</p>
         <div class="temple-hub-v2-search-panel">
           <form class="temple-hub-v2-search" action="/temples/sacred/" method="get" role="search">
-            <label class="sr-only" for="temple-hub-search">ค้นหาวัด จังหวัด หรือวัตถุประสงค์ด้านมงคล</label>
+            <label data-cms-field="7bd75ba1-6" class="sr-only" for="temple-hub-search">ค้นหาวัด จังหวัด หรือวัตถุประสงค์ด้านมงคล</label>
             <SiteIcon name="search" />
-            <input id="temple-hub-search" type="search" name="name" placeholder="ค้นหาวัด จังหวัด หรือวัตถุประสงค์ด้านมงคล" autocomplete="off" aria-describedby="temple-hub-search-scope" />
-            <button type="submit">ค้นหา</button>
+            <input data-cms-field="7bd75ba1-7" id="temple-hub-search" type="search" name="name" placeholder="ค้นหาวัด จังหวัด หรือวัตถุประสงค์ด้านมงคล" autocomplete="off" aria-describedby="temple-hub-search-scope" />
+            <button data-cms-field="7bd75ba1-8" type="submit">ค้นหา</button>
           </form>
-          <p id="temple-hub-search-scope">ค้นหาเฉพาะหมวดวัดเด่นขอพร ไม่รวมทะเบียนวัดทั่วประเทศไทย</p>
+          <p data-cms-field="7bd75ba1-9" id="temple-hub-search-scope">ค้นหาเฉพาะหมวดวัดเด่นขอพร ไม่รวมทะเบียนวัดทั่วประเทศไทย</p>
         </div>
       </div>
-      <span slot="quote">“ทุกเส้นทาง<br />มีเรื่องราวแห่งศรัทธา”</span>
+      <span data-cms-field="7bd75ba1-10" slot="quote">“ทุกเส้นทาง<br />มีเรื่องราวแห่งศรัทธา”</span>
     </PageBanner>
 
     <section class="temple-hub-v2-section temple-hub-v2-collections" id="collections" aria-labelledby="temple-collections-title">
-      <div class="temple-hub-v2-section-head"><span aria-hidden="true">01</span><div><h2 id="temple-collections-title">เลือกหมวดสถานที่</h2><p>สำรวจวัดและสถานที่คัดสรรในแต่ละหมวด พร้อมข้อมูลประกอบการเดินทาง</p></div></div>
+      <div class="temple-hub-v2-section-head"><span aria-hidden="true">01</span><div><h2 data-cms-field="7bd75ba1-11" id="temple-collections-title">เลือกหมวดสถานที่</h2><p data-cms-field="7bd75ba1-12">สำรวจวัดและสถานที่คัดสรรในแต่ละหมวด พร้อมข้อมูลประกอบการเดินทาง</p></div></div>
       <div class="temple-hub-v2-card-grid" aria-label={templeHubContent.cardsLabel}>
         {collectionCards.map(card => (
-          <a class={`temple-hub-v2-card temple-hub-v2-card--${card.variant}`} href={card.href}>
+          <a data-cms-field="7bd75ba1-13" class={`temple-hub-v2-card temple-hub-v2-card--${card.variant}`} href={card.href}>
             <div class="temple-hub-v2-card-media">
               {card.image ? <CmsImage mediaId={`temple-hub-collection-${card.variant}`} image={card.image} width={180} height={240} /> : <SiteIcon name="temple" />}
             </div>
             {card.variant === "popular" && <BrandOrnament mirrored />}
-            <div class="temple-hub-v2-card-copy"><strong>{card.title}</strong><p>{card.description}</p><small><b>{formatNumber(card.count)}</b> สถานที่ในหมวด</small></div>
+            <div class="temple-hub-v2-card-copy"><strong data-cms-field="7bd75ba1-14">{card.title}</strong><p data-cms-field="7bd75ba1-15">{card.description}</p><small data-cms-field="7bd75ba1-16"><b>{formatNumber(card.count)}</b> สถานที่ในหมวด</small></div>
             <LinkArrow class="temple-hub-v2-card-link" />
           </a>
         ))}
@@ -79,41 +79,41 @@ const supportingLinks = [
     </section>
 
     <section class="temple-hub-v2-section temple-hub-v2-tools" aria-labelledby="temple-tools-title">
-      <div class="temple-hub-v2-section-head"><span aria-hidden="true">02</span><div><h2 id="temple-tools-title">เครื่องมือสำหรับการเดินทาง</h2><p>วางแผนเส้นทาง ค้นหาข้อมูล หรือเตรียมตัวให้พร้อมก่อนออกเดินทาง</p></div></div>
+      <div class="temple-hub-v2-section-head"><span aria-hidden="true">02</span><div><h2 data-cms-field="7bd75ba1-17" id="temple-tools-title">เครื่องมือสำหรับการเดินทาง</h2><p data-cms-field="7bd75ba1-18">วางแผนเส้นทาง ค้นหาข้อมูล หรือเตรียมตัวให้พร้อมก่อนออกเดินทาง</p></div></div>
       <div class="temple-hub-v2-tool-grid">
         <a class="temple-hub-v2-tool-card temple-hub-v2-tool-card--planner" href="/temples/planner/">
           <SiteIcon name="route" class="temple-hub-v2-tool-icon" /><BrandOrnament mirrored />
-          <div><strong>วางแผนไหว้พระ</strong><p>เลือก 3 / 5 / 9 แห่ง จัดลำดับการเดินทาง<span class="hub-tool-secondary"><br />พร้อมพิจารณาเวลาเปิด–ปิดของสถานที่</span></p><span class="temple-hub-v2-tool-cta">เริ่มวางแผน <SiteIcon name="arrow-right" /></span></div>
+          <div><strong data-cms-field="7bd75ba1-19">วางแผนไหว้พระ</strong><p data-cms-field="7bd75ba1-20">เลือก 3 / 5 / 9 แห่ง จัดลำดับการเดินทาง<span data-cms-field="7bd75ba1-21" class="hub-tool-secondary"><br />พร้อมพิจารณาเวลาเปิด–ปิดของสถานที่</span></p><span data-cms-field="7bd75ba1-22" class="temple-hub-v2-tool-cta">เริ่มวางแผน <SiteIcon name="arrow-right" /></span></div>
         </a>
         <a class="temple-hub-v2-tool-card temple-hub-v2-tool-card--database" href="/temples/thailand/">
           <SiteIcon name="map" class="temple-hub-v2-tool-icon" />
-          <div><strong>ค้นหาวัดทั่วประเทศไทย</strong><p>ค้นข้อมูลทะเบียนวัด {formatNumber(homeDirectorySummary.templeCount)} วัด<span class="hub-tool-secondary"><br />พร้อมพิกัดสำหรับนำทาง</span></p><span class="temple-hub-v2-tool-cta">เปิดฐานข้อมูล <SiteIcon name="arrow-right" /></span></div>
+          <div><strong data-cms-field="7bd75ba1-23">ค้นหาวัดทั่วประเทศไทย</strong><p data-cms-field="7bd75ba1-24">ค้นข้อมูลทะเบียนวัด {formatNumber(homeDirectorySummary.templeCount)} วัด<span data-cms-field="7bd75ba1-25" class="hub-tool-secondary"><br />พร้อมพิกัดสำหรับนำทาง</span></p><span data-cms-field="7bd75ba1-26" class="temple-hub-v2-tool-cta">เปิดฐานข้อมูล <SiteIcon name="arrow-right" /></span></div>
         </a>
       </div>
     </section>
 
     <section class="temple-hub-v2-section temple-hub-v2-intents" id="intent" aria-labelledby="temple-intent-title">
-      <div class="temple-hub-v2-section-head"><span aria-hidden="true">03</span><div><h2 id="temple-intent-title">เลือกเรื่องที่ต้องการเสริมมงคล</h2><p>ค้นหาสถานที่ที่เหมาะกับความตั้งใจของคุณ</p></div></div>
+      <div class="temple-hub-v2-section-head"><span aria-hidden="true">03</span><div><h2 data-cms-field="7bd75ba1-27" id="temple-intent-title">เลือกเรื่องที่ต้องการเสริมมงคล</h2><p data-cms-field="7bd75ba1-28">ค้นหาสถานที่ที่เหมาะกับความตั้งใจของคุณ</p></div></div>
       <div class="temple-hub-v2-intent-list" aria-label="เลือกตามความตั้งใจ">
-        {intentLinks.map(item => <a href={item.href} data-tone={item.tone}><SiteIcon name={item.icon} /><span>{item.lines.map(line => <span>{line}</span>)}</span></a>)}
+        {intentLinks.map(item => <a href={item.href} data-tone={item.tone}><SiteIcon name={item.icon} /><span data-cms-field="7bd75ba1-29">{item.lines.map(line => <span data-cms-field="7bd75ba1-30">{line}</span>)}</span></a>)}
       </div>
     </section>
 
     <section class="temple-hub-v2-section temple-hub-v2-information" aria-labelledby="temple-information-title">
-      <div class="temple-hub-v2-section-head"><span aria-hidden="true">04</span><div><h2 id="temple-information-title">ข้อมูลที่ควรรู้ก่อนออกเดินทาง</h2></div></div>
+      <div class="temple-hub-v2-section-head"><span aria-hidden="true">04</span><div><h2 data-cms-field="7bd75ba1-31" id="temple-information-title">ข้อมูลที่ควรรู้ก่อนออกเดินทาง</h2></div></div>
       <div class="temple-hub-v2-information-grid">
         <details class="temple-hub-v2-notice">
-          <summary><span class="temple-hub-v2-info-icon"><SiteIcon name="info" /></span><span><strong>โปรดตรวจสอบข้อมูลก่อนเดินทาง</strong><span class="temple-hub-v2-notice-preview">เวลาเปิด–ปิด ค่าเข้าชม และการเดินทางอาจเปลี่ยนแปลงได้</span></span><SiteIcon name="chevron-down" /></summary>
+          <summary><span class="temple-hub-v2-info-icon"><SiteIcon name="info" /></span><span><strong data-cms-field="7bd75ba1-32">โปรดตรวจสอบข้อมูลก่อนเดินทาง</strong><span data-cms-field="7bd75ba1-33" class="temple-hub-v2-notice-preview">เวลาเปิด–ปิด ค่าเข้าชม และการเดินทางอาจเปลี่ยนแปลงได้</span></span><SiteIcon name="chevron-down" /></summary>
           <div class="temple-hub-v2-notice-content">ข้อมูลนี้ใช้ประกอบการวางแผนเบื้องต้น กรุณาตรวจสอบเวลาเปิด–ปิด ค่าใช้จ่าย และการเดินทางจากช่องทางของสถานที่ก่อนออกเดินทาง โดยเฉพาะวันหยุดหรือช่วงที่มีกิจกรรมพิเศษ</div>
         </details>
-        <aside class="temple-hub-v2-confidence" aria-label="ระดับความมั่นใจของข้อมูล"><strong>ระดับความมั่นใจของข้อมูล</strong><ul><li><span class="is-high"></span>มั่นใจสูง</li><li><span class="is-medium"></span>ปานกลาง</li><li><span class="is-check"></span>ควรตรวจสอบก่อนไป</li></ul></aside>
+        <aside class="temple-hub-v2-confidence" aria-label="ระดับความมั่นใจของข้อมูล"><strong data-cms-field="7bd75ba1-34">ระดับความมั่นใจของข้อมูล</strong><ul><li data-cms-field="7bd75ba1-35"><span class="is-high"></span>มั่นใจสูง</li><li data-cms-field="7bd75ba1-36"><span class="is-medium"></span>ปานกลาง</li><li data-cms-field="7bd75ba1-37"><span class="is-check"></span>ควรตรวจสอบก่อนไป</li></ul></aside>
       </div>
     </section>
 
     <section class="temple-hub-v2-section temple-hub-v2-supporting" id="supporting-tools" aria-labelledby="temple-supporting-title">
-      <div class="temple-hub-v2-section-head"><span aria-hidden="true">05</span><div><h2 id="temple-supporting-title">เครื่องมือเสริม</h2></div></div>
+      <div class="temple-hub-v2-section-head"><span aria-hidden="true">05</span><div><h2 data-cms-field="7bd75ba1-38" id="temple-supporting-title">เครื่องมือเสริม</h2></div></div>
       <div class="temple-hub-v2-supporting-grid">
-        {supportingLinks.map(item => <a href={item.href}><SiteIcon name={item.icon} /><span><strong><span class="hub-label-desktop">{item.label}</span><span class="hub-label-mobile">{item.short}</span></strong><small>{item.description}</small></span><SiteIcon name="chevron-right" /></a>)}
+        {supportingLinks.map(item => <a href={item.href}><SiteIcon name={item.icon} /><span><strong><span data-cms-field="7bd75ba1-39" class="hub-label-desktop">{item.label}</span><span data-cms-field="7bd75ba1-40" class="hub-label-mobile">{item.short}</span></strong><small data-cms-field="7bd75ba1-41">{item.description}</small></span><SiteIcon name="chevron-right" /></a>)}
       </div>
     </section>
   </main>

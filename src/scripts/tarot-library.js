@@ -82,6 +82,10 @@ if (library) {
   groups.forEach(group => group.addEventListener('toggle', updateExpand));
   window.addEventListener('popstate', restore);
   window.addEventListener('hashchange', restore);
+  document.addEventListener('mw:cms-content-ready', () => {
+    cards.forEach(card => searchable.set(card, normalize(`${card.dataset.meaningSearch} ${card.textContent}`)));
+    apply(false);
+  });
   library.querySelectorAll('[data-library-enhancement]').forEach(el => { el.hidden = false; });
   restore();
 }

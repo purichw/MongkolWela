@@ -4,6 +4,7 @@ import ToolsHero from "../../../components/ToolsHero.astro";
 import SiteIcon from "../../../components/icons/SiteIcon.astro";
 import { iconAttributes } from "../../../lib/ui-markup.js";
 import { seamsiCategories } from "../../../scripts/seamsi-data.js";
+import { contentBinding } from "../../../lib/content-bindings.js";
 
 const guidance = [
   { number: "01", icon: "compass", title: "ถามให้ชัด", copy: "ตั้งคำถามหนึ่งเรื่องต่อหนึ่งครั้ง เพื่อทบทวนมุมมองของตัวเอง" },
@@ -34,21 +35,21 @@ const guidance = [
         <div class="seamsi-form-heading">
           <SiteIcon name="lotus" class="seamsi-heading-icon" />
           <div>
-            <h2>ตั้งใจถาม</h2>
-            <p>เลือกเรื่องที่ใจอยากทบทวน</p>
+            <h2 data-cms-field="f713c15a-1">ตั้งใจถาม</h2>
+            <p data-cms-field="f713c15a-2">เลือกเรื่องที่ใจอยากทบทวน</p>
           </div>
         </div>
 
         <label>
-          <span>เรื่องที่ต้องการถาม</span>
+          <span data-cms-field="f713c15a-3">เรื่องที่ต้องการถาม</span>
           <select name="category" data-seamsi-category>
-            {seamsiCategories.map(category => <option value={category.id}>{category.label}</option>)}
+            {seamsiCategories.map(category => <option {...contentBinding("seamsi.seamsiCategories", category.id, "label")} value={category.id}>{category.label}</option>)}
           </select>
         </label>
 
         <label>
-          <span class="seamsi-question-label">คำถามในใจ <small>ไม่จำเป็นต้องกรอก</small></span>
-          <textarea
+          <span data-cms-field="f713c15a-5" class="seamsi-question-label">คำถามในใจ <small data-cms-field="f713c15a-6">ไม่จำเป็นต้องกรอก</small></span>
+          <textarea data-cms-field="f713c15a-7"
             name="question"
             maxlength="180"
             rows="3"
@@ -56,44 +57,44 @@ const guidance = [
             aria-describedby="seamsi-question-hint"
             placeholder="เขียนสั้น ๆ เช่น งานนี้ควรเดินหน้าต่อไหม"
           ></textarea>
-          <small id="seamsi-question-hint" class="seamsi-field-hint">เขียนไว้เพื่อทบทวนคำถามของคุณ</small>
+          <small data-cms-field="f713c15a-8" id="seamsi-question-hint" class="seamsi-field-hint">เขียนไว้เพื่อทบทวนคำถามของคุณ</small>
         </label>
 
         <p class="seamsi-validation" data-seamsi-validation role="alert" hidden></p>
         <p class="seamsi-intent-notice" data-seamsi-intent-notice hidden></p>
         <button class="primary-action" type="submit" data-seamsi-shake disabled>
           <SiteIcon name="hand" />
-          <span data-seamsi-button-label>เขย่าเซียมซี</span>
+          <span data-cms-field="f713c15a-9" data-seamsi-button-label>เขย่าเซียมซี</span>
           <SiteIcon name="arrow-right" />
         </button>
         <p class="seamsi-form-note">
           <SiteIcon name="info" />
-          <span>ควรถามเฉพาะเรื่องสำคัญ 1-3 เรื่องต่อครั้ง และไม่ควรถามซ้ำเพียงเพื่อได้คำตอบที่ต้องการ</span>
+          <span data-cms-field="f713c15a-10">ควรถามเฉพาะเรื่องสำคัญ 1-3 เรื่องต่อครั้ง และไม่ควรถามซ้ำเพียงเพื่อได้คำตอบที่ต้องการ</span>
         </p>
-        <noscript><p class="seamsi-noscript">เปิด JavaScript ในเบราว์เซอร์เพื่อเสี่ยงเซียมซี</p></noscript>
+        <noscript><p data-cms-field="f713c15a-11" class="seamsi-noscript">เปิด JavaScript ในเบราว์เซอร์เพื่อเสี่ยงเซียมซี</p></noscript>
       </form>
 
       <div class="seamsi-main">
         <section class="seamsi-stage tools-panel" aria-labelledby="seamsi-stage-title">
           <div class="seamsi-stage-copy">
-            <p class="section-kicker">รับคำทำนาย</p>
-            <h2 id="seamsi-stage-title">กดกระบอกเพื่อเขย่าเซียมซี</h2>
-            <p>หายใจเข้าออกลึก ๆ ตั้งคำถามในใจ<br />ให้ใบเซียมซีเป็นอีกมุมมองหนึ่ง<br />สำหรับสิ่งที่กำลังคิดและตัดสินใจ</p>
+            <p data-cms-field="f713c15a-12" class="section-kicker">รับคำทำนาย</p>
+            <h2 data-cms-field="f713c15a-13" id="seamsi-stage-title">กดกระบอกเพื่อเขย่าเซียมซี</h2>
+            <p data-cms-field="f713c15a-14">หายใจเข้าออกลึก ๆ ตั้งคำถามในใจ<br />ให้ใบเซียมซีเป็นอีกมุมมองหนึ่ง<br />สำหรับสิ่งที่กำลังคิดและตัดสินใจ</p>
           </div>
 
           <div class="seamsi-oracle-wrap">
-            <img class="seamsi-stage-lotus" src="/assets/images/seamsi-lotus-watercolor.webp" alt="" width="960" height="640" aria-hidden="true" />
+            <img data-cms-field="f713c15a-15" class="seamsi-stage-lotus" src="/assets/images/seamsi-lotus-watercolor.webp" alt="" width="960" height="640" aria-hidden="true" />
             <button class="seamsi-oracle" type="button" data-seamsi-oracle aria-label="เขย่าเซียมซีตามเรื่องที่เลือก" aria-controls="seamsi-result" disabled>
-              <img class="seamsi-cup-image" src="/assets/images/seamsi-fortune-cup.webp" width="640" height="960" alt="" fetchpriority="high" draggable="false" />
-              <span class="seamsi-art-fallback" data-seamsi-art-fallback hidden><SiteIcon name="scroll-text" /><span>เซียมซี</span></span>
+              <img data-cms-field="f713c15a-16" class="seamsi-cup-image" src="/assets/images/seamsi-fortune-cup.webp" width="640" height="960" alt="" fetchpriority="high" draggable="false" />
+              <span class="seamsi-art-fallback" data-seamsi-art-fallback hidden><SiteIcon name="scroll-text" /><span data-cms-field="f713c15a-17">เซียมซี</span></span>
               <span class="seamsi-falling-stick" data-seamsi-stick aria-hidden="true"></span>
             </button>
-            <p class="seamsi-stage-aside" aria-hidden="true">เสี่ยงทาย<br />เพื่อพิจารณา<br />ไม่ใช่เพื่อตัดสิน</p>
+            <p data-cms-field="f713c15a-18" class="seamsi-stage-aside" aria-hidden="true">เสี่ยงทาย<br />เพื่อพิจารณา<br />ไม่ใช่เพื่อตัดสิน</p>
           </div>
 
           <div class="seamsi-stage-feedback">
-            <p class="seamsi-status" data-seamsi-status role="status">ตั้งจิต เลือกเรื่องที่ถาม แล้วกดกระบอกเซียมซี</p>
-            <button class="seamsi-skip" type="button" data-seamsi-skip hidden>ข้ามภาพเคลื่อนไหว <SiteIcon name="arrow-right" /></button>
+            <p data-cms-field="f713c15a-19" class="seamsi-status" data-seamsi-status role="status">ตั้งจิต เลือกเรื่องที่ถาม แล้วกดกระบอกเซียมซี</p>
+            <button data-cms-field="f713c15a-20" class="seamsi-skip" type="button" data-seamsi-skip hidden>ข้ามภาพเคลื่อนไหว <SiteIcon name="arrow-right" /></button>
           </div>
         </section>
 
@@ -103,8 +104,8 @@ const guidance = [
           <div data-seamsi-reading>
           <div class="seamsi-empty">
             <span class="seamsi-empty-symbol"><SiteIcon name="lotus" /></span>
-            <h2 id="seamsi-result-title" tabindex="-1">ยังไม่ได้เสี่ยงทาย</h2>
-            <p>ใบเซียมซีและคำทำนายจะแสดงตรงนี้</p>
+            <h2 data-cms-field="f713c15a-21" id="seamsi-result-title" tabindex="-1">ยังไม่ได้เสี่ยงทาย</h2>
+            <p data-cms-field="f713c15a-22">ใบเซียมซีและคำทำนายจะแสดงตรงนี้</p>
           </div>
           </div>
         </section>
@@ -115,8 +116,8 @@ const guidance = [
       <article class="seamsi-prayer">
         <SiteIcon name="temple" class="seamsi-prayer-icon" />
         <div>
-          <h2>กล่าวในใจอย่างสุภาพก่อนรับคำเซียมซี</h2>
-          <p>
+          <h2 data-cms-field="f713c15a-23">กล่าวในใจอย่างสุภาพก่อนรับคำเซียมซี</h2>
+          <p data-cms-field="f713c15a-24">
             ข้าพเจ้าขอตั้งจิตให้สงบ ระลึกถึงสิ่งศักดิ์สิทธิ์และคุณความดีทั้งหลาย
             ขอให้การรับคำเซียมซีครั้งนี้เป็นแสงเตือนใจ ให้เห็นทางที่ควรเดิน
             รู้สิ่งที่ควรระวัง และมีกำลังใจทำสิ่งที่ถูกต้องด้วยเทอญ
@@ -125,21 +126,21 @@ const guidance = [
       </article>
 
       <div class="seamsi-guidance">
-        <p class="section-kicker">ข้อคิดเตือนใจ</p>
-        <h2>ใช้ด้วยความเคารพ ไม่ใช่ความร้อนใจ</h2>
+        <p data-cms-field="f713c15a-25" class="section-kicker">ข้อคิดเตือนใจ</p>
+        <h2 data-cms-field="f713c15a-26">ใช้ด้วยความเคารพ ไม่ใช่ความร้อนใจ</h2>
         <div class="seamsi-note-grid">
           {guidance.map(item => (
             <article>
-              <span class="seamsi-note-number">{item.number}</span>
+              <span data-cms-field="f713c15a-27" class="seamsi-note-number">{item.number}</span>
               <span {...iconAttributes(item.icon, "seamsi-note-icon")}></span>
-              <h3>{item.title}</h3>
-              <p>{item.copy}</p>
+              <h3 data-cms-field="f713c15a-28">{item.title}</h3>
+              <p data-cms-field="f713c15a-29">{item.copy}</p>
             </article>
           ))}
         </div>
       </div>
     </section>
-    <p class="seamsi-disclaimer">เซียมซีเป็นเครื่องมือทบทวนใจ ไม่ใช่คำสั่งตายตัวหรือการรับรองผลลัพธ์ล่วงหน้า</p>
+    <p data-cms-field="f713c15a-30" class="seamsi-disclaimer">เซียมซีเป็นเครื่องมือทบทวนใจ ไม่ใช่คำสั่งตายตัวหรือการรับรองผลลัพธ์ล่วงหน้า</p>
   </main>
 
   <script>

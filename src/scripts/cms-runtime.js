@@ -4,6 +4,10 @@ import { applyPlaceDetailOverride } from "./place-detail-content.js";
 import { startContentRefresh } from "./content-refresh.js";
 import { updateHeaderNavigation } from "./navigation.js";
 import { homeHeroAttributes, homeHeroMetadata } from "../lib/home-hero-media.js";
+import { applyContentLibrary } from "../lib/managed-content.js";
+import { applyContentBindings } from "../lib/content-bindings.js";
+import { prepareContentFields } from "../lib/page-content-fields.js";
+import { contentPatchNodes, safeContentHtml, validContentPatch } from "../lib/content-patches.js";
 
 const CMS_CONTENT_URL = "/api/admin/content";
 const CMS_CONSENT_KEY = "mongkolwela.pdpa.analytics";
@@ -79,18 +83,7 @@ function escapeHtml(value = "") {
 }
 
 function safeHtml(value = "") {
-  const template = document.createElement("template");
-  template.innerHTML = String(value || "");
-  template.content.querySelectorAll("script,iframe,object,embed,link,meta").forEach((node) => node.remove());
-  template.content.querySelectorAll("*").forEach((node) => {
-    [...node.attributes].forEach((attr) => {
-      const name = attr.name.toLowerCase();
-      const val = attr.value || "";
-      if (name.startsWith("on")) node.removeAttribute(attr.name);
-      if ((name === "href" || name === "src") && /^javascript:/i.test(val)) node.removeAttribute(attr.name);
-    });
-  });
-  return template.innerHTML;
+  return safeContentHtml(document, value);
 }
 
 function applyNavigation(content) {
@@ -99,14 +92,19 @@ function applyNavigation(content) {
 
 function applyPatch(patch) {
   if (!patch?.selector || patch.enabled === false) return;
-  document.querySelectorAll(patch.selector).forEach((node) => {
+  contentPatchNodes(document, patch.selector).forEach((node) => {
+    if (patch.kind === "text-node") {
+      const child = node.childNodes[patch.nodeIndex];
+      if (child?.nodeType === Node.TEXT_NODE) child.textContent = patch.value ?? "";
+      return;
+    }
     if (patch.kind === "image") {
       if (node.hasAttribute("data-home-hero-image")) {
         node.setAttribute("data-carousel-src", patch.src || "");
         if (!patch.src) node.removeAttribute("src");
         else if (node.hasAttribute("src") || node.closest(".is-active")) node.setAttribute("src", patch.src);
         for (const [attr, value] of Object.entries(homeHeroAttributes(patch))) node.setAttribute(attr, value);
-      } else if ("src" in node && patch.src) node.setAttribute("src", patch.src);
+      } else if ("src" in node) { node.removeAttribute("srcset"); node.setAttribute("src", patch.src || sitePlaceholderImage); }
       if (node.hasAttribute("data-cms-media")) {
         node.style.objectPosition = patch.position || "50% 50%";
         for (const [attr, value] of Object.entries(homeHeroAttributes(patch))) node.setAttribute(attr, value);
@@ -127,20 +125,26 @@ function applyPatch(patch) {
 }
 
 function applyPagePatches(patches = []) {
-  const key = (patch) => JSON.stringify([patch.selector, patch.kind, patch.attr]);
-  const next = new Map(patches.filter((patch) => patch.selector && patch.enabled !== false).map((patch) => [key(patch), patch]));
+  prepareContentFields(document);
+  const key = (patch) => JSON.stringify([patch.selector, patch.kind, patch.attr, patch.nodeIndex]);
+  const next = new Map(patches.filter((patch) => validContentPatch(patch) && patch.enabled !== false).map((patch) => [key(patch), patch]));
   for (const [id, previous] of appliedPatches) {
     if (unchanged(previous.patch, next.get(id))) continue;
     previous.restore.forEach((restore) => restore());
     appliedPatches.delete(id);
   }
   for (const [id, patch] of next) {
-    const nodes = [...document.querySelectorAll(patch.selector)];
+    const nodes = contentPatchNodes(document, patch.selector);
     const previous = appliedPatches.get(id);
     if (previous && nodes.length === previous.nodes.length && nodes.every((node, index) => node === previous.nodes[index])) continue;
     const restore = nodes.map((node) => {
+      if (patch.kind === "text-node") {
+        const child = node.childNodes[patch.nodeIndex];
+        const value = child?.textContent;
+        return () => { if (child?.nodeType === Node.TEXT_NODE) child.textContent = value; };
+      }
       if (patch.kind === "image" || (patch.kind === "attr" && patch.attr)) {
-        const attributes = patch.kind === "image" ? ["src", "alt", ...(node.hasAttribute("data-home-hero-image") ? ["data-carousel-src", ...Object.values(homeHeroMetadata)] : []), ...(node.hasAttribute("data-cms-media") ? ["style", ...Object.values(homeHeroMetadata)] : [])] : [patch.attr];
+        const attributes = patch.kind === "image" ? ["src", "srcset", "alt", ...(node.hasAttribute("data-home-hero-image") ? ["data-carousel-src", ...Object.values(homeHeroMetadata)] : []), ...(node.hasAttribute("data-cms-media") ? ["style", ...Object.values(homeHeroMetadata)] : [])] : [patch.attr];
         const values = attributes.map((name) => [name, node.getAttribute(name)]);
         return () => {
           values.forEach(([name, value]) => value === null ? node.removeAttribute(name) : node.setAttribute(name, value));
@@ -685,15 +689,17 @@ async function bootCmsRuntime() {
       return;
     }
     const { content } = payload;
+    applyContentLibrary(content.contentLibrary);
+    applyContentBindings(document, content.contentLibrary);
     const previous = activeContent;
     if (!previous || !unchanged(previous.navigation, content.navigation)) applyNavigation(content);
     if (!previous || !unchanged(previous.temples, content.temples)) applyTempleOverrides(content);
     const page = pageForRoute(content);
     const previousPage = pageForRoute(previous);
-    if (!previous || !unchanged(previousPage, page)) {
+    if (!previous || !unchanged(previousPage, page) || !unchanged(previous.site?.patches, content.site?.patches)) {
       if (!renderCustomPage(content) && !disablePage(page)) {
         if (page && (!previous || !unchanged(previousPage?.sections, page.sections))) applySections(page);
-        applyPagePatches(page?.patches);
+        applyPagePatches([...(content.site?.patches || []), ...(page?.patches || [])]);
       }
     }
     if (!previous || !unchanged(previous.site?.pdpa, content.site?.pdpa)) renderPdpaBanner(content);

@@ -23,101 +23,101 @@ const guides = [
     <TempleSearchHero banner={banner} breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"วัด",href:"/temples/"},{label:"วางแผนไหว้พระ"}]} kicker="เครื่องมือหลักของมงคลเวลา" title="วางแผนไหว้พระ" description="กำหนดจำนวนสถานที่ พื้นที่ เวลา และวัตถุประสงค์ด้านมงคล แล้วจัดลำดับเส้นทางจากพิกัด พร้อมระยะและเวลาโดยประมาณ">
       <Fragment slot="quote">“ทุกเส้นทาง<br />อาจพาคุณไปพบสิ่งที่ดีขึ้น”</Fragment>
     </TempleSearchHero>
-    <noscript><p class="planner-noscript">เปิด JavaScript เพื่อเลือกสถานที่และคำนวณแผน หรือ <a href="/temples/">ค้นหาสถานที่</a> เพื่อวางแผนด้วยตนเอง</p><style>.planner-workspace,.planner-mobile-bar{display:none!important}</style></noscript>
+    <noscript><p data-cms-field="370ae036-1" class="planner-noscript">เปิด JavaScript เพื่อเลือกสถานที่และคำนวณแผน หรือ <a data-cms-field="370ae036-2" href="/temples/">ค้นหาสถานที่</a> เพื่อวางแผนด้วยตนเอง</p><style>.planner-workspace,.planner-mobile-bar{display:none!important}</style></noscript>
     <div class="planner-workspace">
       <div class="planner-workspace-toolbar">
       <nav class="planner-view-control" aria-label="มุมมองพื้นที่วางแผน" data-planner-view-control hidden>
-        <button type="button" data-planner-view="plan"><SiteIcon name="route" />แผนเส้นทาง</button>
-        <button type="button" data-planner-view="picker"><SiteIcon name="map-pin" />เลือกสถานที่</button>
-        <button type="button" data-planner-view="both"><SiteIcon name="layers-2" />แสดงทั้งคู่</button>
+        <button data-cms-field="370ae036-3" type="button" data-planner-view="plan"><SiteIcon name="route" />แผนเส้นทาง</button>
+        <button data-cms-field="370ae036-4" type="button" data-planner-view="picker"><SiteIcon name="map-pin" />เลือกสถานที่</button>
+        <button data-cms-field="370ae036-5" type="button" data-planner-view="both"><SiteIcon name="layers-2" />แสดงทั้งคู่</button>
       </nav>
       <div class="planner-workspace-summary" data-planner-workspace-summary hidden>
         <p data-planner-workspace-count></p>
-        <a href="#planner-pick" data-planner-jump="picker">เลือกรายการ <SiteIcon name="arrow-right" /></a>
-        <a href="#planner-result" data-planner-jump="plan">ดูแผน <SiteIcon name="arrow-right" /></a>
+        <a data-cms-field="370ae036-6" href="#planner-pick" data-planner-jump="picker">เลือกรายการ <SiteIcon name="arrow-right" /></a>
+        <a data-cms-field="370ae036-7" href="#planner-result" data-planner-jump="plan">ดูแผน <SiteIcon name="arrow-right" /></a>
       </div>
       </div>
       <div class="planner-workspace-grid">
         <div class="planner-editing">
           <details class="planner-setup" open>
-            <summary><span class="planner-step">ขั้นตอนที่ 1 · กำหนดเงื่อนไข</span><span class="planner-setup-title">กำหนดจำนวนสถานที่และพื้นที่</span><SiteIcon name="chevron-down" /></summary>
+            <summary><span data-cms-field="370ae036-8" class="planner-step">ขั้นตอนที่ 1 · กำหนดเงื่อนไข</span><span data-cms-field="370ae036-9" class="planner-setup-title">กำหนดจำนวนสถานที่และพื้นที่</span><SiteIcon name="chevron-down" /></summary>
             <div class="planner-setup__body">
               <div class="planner-setup__grid">
-                <fieldset class="planner-field planner-field--count"><legend>จำนวนสถานที่สูงสุด</legend><div class="planner-segmented">
-                  {[3,5,9].map(count=><label><input type="radio" name="planner-count" value={count} checked={count===3} /><span>{count} แห่ง</span></label>)}
+                <fieldset class="planner-field planner-field--count"><legend data-cms-field="370ae036-10">จำนวนสถานที่สูงสุด</legend><div class="planner-segmented">
+                  {[3,5,9].map(count=><label><input data-cms-field="370ae036-11" type="radio" name="planner-count" value={count} checked={count===3} /><span data-cms-field="370ae036-12">{count} แห่ง</span></label>)}
                 </div></fieldset>
-                <label class="planner-field"><span>พื้นที่เดินทาง</span><select data-planner-area>{areas.map(([label,value])=><option value={value}>{label}</option>)}</select></label>
-                <label class="planner-field"><span>เวลาเริ่ม</span><input type="time" value="09:00" required data-planner-start-time /></label>
-                <fieldset class="planner-field planner-field--wide"><legend>วัตถุประสงค์ด้านมงคล</legend><div class="planner-wish-chips">
-                  {purposes.map(([label,value])=><button type="button" data-planner-purpose-tag value={value} aria-pressed={value==="การงาน"}>{label}</button>)}
+                <label class="planner-field"><span data-cms-field="370ae036-13">พื้นที่เดินทาง</span><select data-planner-area>{areas.map(([label,value])=><option data-cms-field="370ae036-14" value={value}>{label}</option>)}</select></label>
+                <label class="planner-field"><span data-cms-field="370ae036-15">เวลาเริ่ม</span><input data-cms-field="370ae036-16" type="time" value="09:00" required data-planner-start-time /></label>
+                <fieldset class="planner-field planner-field--wide"><legend data-cms-field="370ae036-17">วัตถุประสงค์ด้านมงคล</legend><div class="planner-wish-chips">
+                  {purposes.map(([label,value])=><button data-cms-field="370ae036-18" type="button" data-planner-purpose-tag value={value} aria-pressed={value==="การงาน"}>{label}</button>)}
                 </div></fieldset>
                 <div class="planner-field planner-field--wide">
-                  <label for="planner-origin">จุดเริ่มต้นจากรายชื่อสถานที่ <span class="planner-muted">(ไม่บังคับ)</span></label>
-                  <div class="planner-origin-input"><input id="planner-origin" type="text" placeholder="ค้นหาชื่อสถานที่ในระบบ" autocomplete="off" data-planner-origin-text aria-describedby="planner-origin-status" /><button type="button" data-planner-origin-clear aria-label="ล้างจุดเริ่มต้น" title="ล้างจุดเริ่มต้น"><SiteIcon name="x" /></button></div>
+                  <label data-cms-field="370ae036-19" for="planner-origin">จุดเริ่มต้นจากรายชื่อสถานที่ <span data-cms-field="370ae036-20" class="planner-muted">(ไม่บังคับ)</span></label>
+                  <div class="planner-origin-input"><input data-cms-field="370ae036-21" id="planner-origin" type="text" placeholder="ค้นหาชื่อสถานที่ในระบบ" autocomplete="off" data-planner-origin-text aria-describedby="planner-origin-status" /><button type="button" data-planner-origin-clear aria-label="ล้างจุดเริ่มต้น" title="ล้างจุดเริ่มต้น"><SiteIcon name="x" /></button></div>
                   <div class="planner-origin-matches" data-planner-origin-matches></div>
-                  <small id="planner-origin-status" data-planner-start-warning>เมื่อไม่ระบุจุดเริ่มต้น เวลาเริ่มหมายถึงเริ่มที่สถานที่แรก</small>
+                  <small data-cms-field="370ae036-22" id="planner-origin-status" data-planner-start-warning>เมื่อไม่ระบุจุดเริ่มต้น เวลาเริ่มหมายถึงเริ่มที่สถานที่แรก</small>
                 </div>
               </div>
-              <details class="planner-advanced"><summary><SiteIcon name="calendar-days" /><span data-planner-advanced-summary>วันที่เดินทางและงบเวลาอ้างอิง</span><SiteIcon name="chevron-down" /></summary>
+              <details class="planner-advanced"><summary><SiteIcon name="calendar-days" /><span data-cms-field="370ae036-23" data-planner-advanced-summary>วันที่เดินทางและงบเวลาอ้างอิง</span><SiteIcon name="chevron-down" /></summary>
                 <div class="planner-advanced__fields">
-                  <label class="planner-field"><span>วันที่เดินทาง</span><input type="date" required data-planner-start-date /></label>
-                  <label class="planner-field"><span>งบเวลาอ้างอิง</span><select data-planner-budget><option value="300">5 ชั่วโมง</option><option value="600">10 ชั่วโมง</option><option value="720">12 ชั่วโมง</option></select></label>
-                  <small>ใช้เตือนเมื่อแผนยาวเกินเวลา ไม่รับประกันว่าจะเดินทางครบภายในเวลานี้</small>
+                  <label class="planner-field"><span data-cms-field="370ae036-24">วันที่เดินทาง</span><input data-cms-field="370ae036-25" type="date" required data-planner-start-date /></label>
+                  <label class="planner-field"><span data-cms-field="370ae036-26">งบเวลาอ้างอิง</span><select data-planner-budget><option data-cms-field="370ae036-27" value="300">5 ชั่วโมง</option><option data-cms-field="370ae036-28" value="600">10 ชั่วโมง</option><option data-cms-field="370ae036-29" value="720">12 ชั่วโมง</option></select></label>
+                  <small data-cms-field="370ae036-30">ใช้เตือนเมื่อแผนยาวเกินเวลา ไม่รับประกันว่าจะเดินทางครบภายในเวลานี้</small>
                 </div>
               </details>
               <div class="planner-search-actions">
-                <div class="planner-search-actions__manual"><strong>เลือกสถานที่ด้วยตนเอง</strong><button type="button" class="planner-secondary-button" data-planner-filter-search>เปิดรายการสถานที่ <SiteIcon name="arrow-right" /></button></div>
-                <span class="planner-search-actions__or">หรือ</span>
-                <div class="planner-search-actions__auto"><strong><span>แนะนำ</span> จัดเส้นทางแนะนำ</strong><p>เลือกและจัดลำดับตามพื้นที่ ความสนใจ และระยะทางประมาณ</p><button type="button" class="planner-gold-button" data-planner-auto disabled>จัดเส้นทางแนะนำ <SiteIcon name="arrow-right" /></button></div>
+                <div class="planner-search-actions__manual"><strong data-cms-field="370ae036-31">เลือกสถานที่ด้วยตนเอง</strong><button data-cms-field="370ae036-32" type="button" class="planner-secondary-button" data-planner-filter-search>เปิดรายการสถานที่ <SiteIcon name="arrow-right" /></button></div>
+                <span data-cms-field="370ae036-33" class="planner-search-actions__or">หรือ</span>
+                <div class="planner-search-actions__auto"><strong data-cms-field="370ae036-34"><span data-cms-field="370ae036-35">แนะนำ</span> จัดเส้นทางแนะนำ</strong><p data-cms-field="370ae036-36">เลือกและจัดลำดับตามพื้นที่ ความสนใจ และระยะทางประมาณ</p><button data-cms-field="370ae036-37" type="button" class="planner-gold-button" data-planner-auto disabled>จัดเส้นทางแนะนำ <SiteIcon name="arrow-right" /></button></div>
               </div>
-              <div class="planner-criteria-notice" data-planner-criteria-notice hidden><p>มีการเปลี่ยนเงื่อนไขหรือรายการที่เลือก แผนนี้ยังเป็นแผนก่อนแก้ไข</p><div><button type="button" class="planner-primary-button" data-planner-criteria-rebuild>อัปเดตแผน</button><button type="button" class="planner-secondary-button" data-planner-criteria-restore>คืนค่าแผนเดิม</button></div></div>
-              <div hidden><input data-planner-start /><input data-planner-search /><select data-planner-radius><option value="100">100</option><option value="50">50</option><option value="200">200</option><option value="500">500</option><option value="">ทั้งหมด</option></select></div>
+              <div class="planner-criteria-notice" data-planner-criteria-notice hidden><p data-cms-field="370ae036-38">มีการเปลี่ยนเงื่อนไขหรือรายการที่เลือก แผนนี้ยังเป็นแผนก่อนแก้ไข</p><div><button data-cms-field="370ae036-39" type="button" class="planner-primary-button" data-planner-criteria-rebuild>อัปเดตแผน</button><button data-cms-field="370ae036-40" type="button" class="planner-secondary-button" data-planner-criteria-restore>คืนค่าแผนเดิม</button></div></div>
+              <div hidden><input data-cms-field="370ae036-41" data-planner-start /><input data-cms-field="370ae036-42" data-planner-search /><select data-planner-radius><option value="100">100</option><option value="50">50</option><option value="200">200</option><option value="500">500</option><option data-cms-field="370ae036-43" value="">ทั้งหมด</option></select></div>
             </div>
           </details>
           <p class="planner-recovery-notice" data-planner-recovery-notice role="status" hidden></p>
-          <p class="planner-location-status" role="status" aria-live="polite" data-planner-location-status>กำลังโหลดรายชื่อสถานที่…</p>
-          <button type="button" class="planner-text-button" data-planner-cancel hidden>ยกเลิกการคำนวณ</button>
-          <button type="button" class="planner-secondary-button" data-planner-retry hidden>ลองจัดแผนอีกครั้ง</button>
+          <p data-cms-field="370ae036-44" class="planner-location-status" role="status" aria-live="polite" data-planner-location-status>กำลังโหลดรายชื่อสถานที่…</p>
+          <button data-cms-field="370ae036-45" type="button" class="planner-text-button" data-planner-cancel hidden>ยกเลิกการคำนวณ</button>
+          <button data-cms-field="370ae036-46" type="button" class="planner-secondary-button" data-planner-retry hidden>ลองจัดแผนอีกครั้ง</button>
           <section class="planner-pick" id="planner-pick" aria-labelledby="planner-pick-title" hidden>
-            <div class="planner-section-head"><h2 id="planner-pick-title" tabindex="-1">เลือกจากรายการหรือแผนที่</h2><button type="button" class="planner-selection-count" data-planner-tray-toggle aria-controls="planner-selected-panel" aria-expanded="false" title="จัดการรายการที่เลือก">เลือกแล้ว <b data-planner-selected-count>0</b>/<span data-planner-target-count>3</span></button></div>
-            <div class="planner-replacement" data-planner-replacement hidden><p></p><button type="button" class="planner-secondary-button" data-planner-replacement-cancel>ยกเลิกการเปลี่ยน</button></div>
+            <div class="planner-section-head"><h2 data-cms-field="370ae036-47" id="planner-pick-title" tabindex="-1">เลือกจากรายการหรือแผนที่</h2><button data-cms-field="370ae036-48" type="button" class="planner-selection-count" data-planner-tray-toggle aria-controls="planner-selected-panel" aria-expanded="false" title="จัดการรายการที่เลือก">เลือกแล้ว <b data-planner-selected-count>0</b>/<span data-planner-target-count>3</span></button></div>
+            <div class="planner-replacement" data-planner-replacement hidden><p></p><button data-cms-field="370ae036-49" type="button" class="planner-secondary-button" data-planner-replacement-cancel>ยกเลิกการเปลี่ยน</button></div>
             <div class="planner-picker-toolbar">
-              <div class="planner-picker-mode" aria-label="โหมดรายการ"><button type="button" data-planner-picker-mode="recommended" aria-pressed="true">รายการแนะนำ</button><button type="button" data-planner-picker-mode="browse" aria-pressed="false">ค้นหาชื่อวัด</button></div>
-              <button type="button" class="planner-secondary-button" data-planner-picker-toggle-scope aria-pressed="false">แสดงทั้งหมด</button>
+              <div class="planner-picker-mode" aria-label="โหมดรายการ"><button data-cms-field="370ae036-50" type="button" data-planner-picker-mode="recommended" aria-pressed="true">รายการแนะนำ</button><button data-cms-field="370ae036-51" type="button" data-planner-picker-mode="browse" aria-pressed="false">ค้นหาชื่อวัด</button></div>
+              <button data-cms-field="370ae036-52" type="button" class="planner-secondary-button" data-planner-picker-toggle-scope aria-pressed="false">แสดงทั้งหมด</button>
               <div class="planner-tabs" aria-label="วิธีเลือกสถานที่"><button type="button" data-planner-picker-tab="list" aria-pressed="true" aria-label="ดูรายการสถานที่" title="ดูรายการสถานที่"><SiteIcon name="scroll-text" /></button><button type="button" data-planner-picker-tab="map" aria-pressed="false" aria-label="เลือกจากแผนที่" title="เลือกจากแผนที่"><SiteIcon name="map-pin" /></button></div>
-              <label class="planner-search" hidden><SiteIcon name="search" /><input type="search" placeholder="ค้นหาในรายการ…" aria-label="ค้นหาในรายการสถานที่" data-planner-picker-search /></label>
+              <label class="planner-search" hidden><SiteIcon name="search" /><input data-cms-field="370ae036-53" type="search" placeholder="ค้นหาในรายการ…" aria-label="ค้นหาในรายการสถานที่" data-planner-picker-search /></label>
             </div>
             <p class="planner-picker-note" data-planner-picker-note aria-live="polite" hidden></p>
-            <details class="planner-tray-wrap" id="planner-selected-panel"><summary>จัดการรายการที่เลือก <SiteIcon name="chevron-down" /></summary><p data-planner-order-label></p><div class="planner-selected-tray" data-planner-selected-tray></div><button type="button" class="planner-text-button" data-planner-tray-expand hidden>ดูรายการที่เลือกทั้งหมด</button></details>
-            <div data-planner-picker-panel="list"><div class="planner-place-grid" data-planner-place-grid></div><p class="planner-empty" data-planner-empty hidden>ยังไม่พบสถานที่ตามเงื่อนไขนี้ ลองล้างคำค้นหรือเลือกแสดงทั้งหมด</p><button type="button" class="planner-more-button" data-planner-more hidden>ดูเพิ่มเติม <SiteIcon name="arrow-right" /></button></div>
-            <div data-planner-picker-panel="map" hidden><div class="planner-map" data-planner-selection-map aria-label="แผนที่เลือกสถานที่"></div><p class="planner-map-note">แตะหมุดเพื่อเพิ่มหรือนำสถานที่ออกจากรายการที่เลือก</p><div data-planner-map-error="picker" hidden></div></div>
-            <div class="planner-pick__actions"><button type="button" class="planner-primary-button" data-planner-build disabled>จัดจากที่เลือก</button><button type="button" class="planner-text-button" data-planner-clear-selection>ล้างรายการที่เลือก</button></div>
+            <details class="planner-tray-wrap" id="planner-selected-panel"><summary data-cms-field="370ae036-54">จัดการรายการที่เลือก <SiteIcon name="chevron-down" /></summary><p data-planner-order-label></p><div class="planner-selected-tray" data-planner-selected-tray></div><button data-cms-field="370ae036-55" type="button" class="planner-text-button" data-planner-tray-expand hidden>ดูรายการที่เลือกทั้งหมด</button></details>
+            <div data-planner-picker-panel="list"><div class="planner-place-grid" data-planner-place-grid></div><p data-cms-field="370ae036-56" class="planner-empty" data-planner-empty hidden>ยังไม่พบสถานที่ตามเงื่อนไขนี้ ลองล้างคำค้นหรือเลือกแสดงทั้งหมด</p><button data-cms-field="370ae036-57" type="button" class="planner-more-button" data-planner-more hidden>ดูเพิ่มเติม <SiteIcon name="arrow-right" /></button></div>
+            <div data-planner-picker-panel="map" hidden><div class="planner-map" data-planner-selection-map aria-label="แผนที่เลือกสถานที่"></div><p data-cms-field="370ae036-58" class="planner-map-note">แตะหมุดเพื่อเพิ่มหรือนำสถานที่ออกจากรายการที่เลือก</p><div data-planner-map-error="picker" hidden></div></div>
+            <div class="planner-pick__actions"><button data-cms-field="370ae036-59" type="button" class="planner-primary-button" data-planner-build disabled>จัดจากที่เลือก</button><button data-cms-field="370ae036-60" type="button" class="planner-text-button" data-planner-clear-selection>ล้างรายการที่เลือก</button></div>
           </section>
         </div>
         <section class="planner-result" id="planner-result" data-planner-result aria-labelledby="planner-result-title" hidden>
-          <div class="planner-section-head"><h2 id="planner-result-title" tabindex="-1"><SiteIcon name="route" />แผนเส้นทาง</h2><button type="button" class="planner-text-button" data-planner-edit>แก้สถานที่</button></div>
-          <div class="planner-freshness" data-planner-freshness hidden><p></p><button type="button" class="planner-primary-button" data-planner-update>อัปเดตแผน</button><button type="button" class="planner-text-button" data-planner-revert>คืนค่าแผนเดิม</button></div>
-          <p data-planner-unplanned>ยังไม่ได้จัดเส้นทาง</p>
+          <div class="planner-section-head"><h2 data-cms-field="370ae036-61" id="planner-result-title" tabindex="-1"><SiteIcon name="route" />แผนเส้นทาง</h2><button data-cms-field="370ae036-62" type="button" class="planner-text-button" data-planner-edit>แก้สถานที่</button></div>
+          <div class="planner-freshness" data-planner-freshness hidden><p></p><button data-cms-field="370ae036-63" type="button" class="planner-primary-button" data-planner-update>อัปเดตแผน</button><button data-cms-field="370ae036-64" type="button" class="planner-text-button" data-planner-revert>คืนค่าแผนเดิม</button></div>
+          <p data-cms-field="370ae036-65" data-planner-unplanned>ยังไม่ได้จัดเส้นทาง</p>
           <div class="planner-route-layout">
-            <details class="planner-route-map" data-planner-route-disclosure><summary><SiteIcon name="map-pin" />แผนที่เส้นทาง <SiteIcon name="chevron-down" /></summary><div class="planner-map planner-map--route" data-planner-route-map aria-label="แผนที่ลำดับการเดินทาง"></div><p class="planner-map-note">เส้นเชื่อมแสดงลำดับสถานที่ ไม่ใช่แนวถนน ระยะและเวลาเป็นค่าประมาณ</p><div data-planner-map-error="route" hidden></div></details>
+            <details class="planner-route-map" data-planner-route-disclosure><summary data-cms-field="370ae036-66"><SiteIcon name="map-pin" />แผนที่เส้นทาง <SiteIcon name="chevron-down" /></summary><div class="planner-map planner-map--route" data-planner-route-map aria-label="แผนที่ลำดับการเดินทาง"></div><p data-cms-field="370ae036-67" class="planner-map-note">เส้นเชื่อมแสดงลำดับสถานที่ ไม่ใช่แนวถนน ระยะและเวลาเป็นค่าประมาณ</p><div data-planner-map-error="route" hidden></div></details>
             <div class="planner-route-facts">
               <div class="planner-summary" data-planner-summary></div>
-              <details class="planner-trip-source" data-planner-trip-source hidden><summary>เงื่อนไขที่ใช้จัดแผน <SiteIcon name="chevron-down" /></summary><div></div></details>
+              <details class="planner-trip-source" data-planner-trip-source hidden><summary data-cms-field="370ae036-68">เงื่อนไขที่ใช้จัดแผน <SiteIcon name="chevron-down" /></summary><div></div></details>
               <div class="planner-warnings" data-planner-warnings hidden></div>
             </div>
-            <div class="planner-route-stops"><h3 class="planner-timeline-title">ลำดับสถานที่ <span>เวลาโดยประมาณ</span></h3><ol class="planner-timeline" data-planner-timeline></ol></div>
+            <div class="planner-route-stops"><h3 data-cms-field="370ae036-69" class="planner-timeline-title">ลำดับสถานที่ <span data-cms-field="370ae036-70">เวลาโดยประมาณ</span></h3><ol class="planner-timeline" data-planner-timeline></ol></div>
           </div>
-          <div class="planner-result__actions"><a class="planner-primary-button" target="_blank" rel="noopener" data-planner-google>เปิดใน Google Maps <SiteIcon name="arrow-right" /></a><button type="button" class="planner-secondary-button" data-planner-save>บันทึกบนอุปกรณ์นี้</button><button type="button" class="planner-text-button" data-planner-clear-trip>ล้างแผนนี้</button></div>
-          <p class="planner-maps-limit" data-planner-maps-limit hidden>Google Maps บางอุปกรณ์รองรับจุดแวะจำกัด โปรดตรวจจำนวนจุด หรือเปิดพิกัดแต่ละสถานที่จากรายการ</p>
-          <p class="planner-disclaimer"><SiteIcon name="info" />ระยะและเวลาเป็นค่าประมาณ ไม่รวมจราจรสด เวลาเปิด–ปิด หรือขากลับ ตรวจสอบกับสถานที่ก่อนเดินทาง</p>
+          <div class="planner-result__actions"><a data-cms-field="370ae036-71" class="planner-primary-button" target="_blank" rel="noopener" data-planner-google>เปิดใน Google Maps <SiteIcon name="arrow-right" /></a><button data-cms-field="370ae036-72" type="button" class="planner-secondary-button" data-planner-save>บันทึกบนอุปกรณ์นี้</button><button data-cms-field="370ae036-73" type="button" class="planner-text-button" data-planner-clear-trip>ล้างแผนนี้</button></div>
+          <p data-cms-field="370ae036-74" class="planner-maps-limit" data-planner-maps-limit hidden>Google Maps บางอุปกรณ์รองรับจุดแวะจำกัด โปรดตรวจจำนวนจุด หรือเปิดพิกัดแต่ละสถานที่จากรายการ</p>
+          <p data-cms-field="370ae036-75" class="planner-disclaimer"><SiteIcon name="info" />ระยะและเวลาเป็นค่าประมาณ ไม่รวมจราจรสด เวลาเปิด–ปิด หรือขากลับ ตรวจสอบกับสถานที่ก่อนเดินทาง</p>
         </section>
       </div>
-      <section class="planner-guides" aria-label="คำแนะนำการวางแผน">{guides.map(([icon,title,description])=><details class="planner-guide" open><summary><IconMedallion><SiteIcon name={icon} /></IconMedallion><h2>{title}</h2><SiteIcon name="chevron-down" /></summary><p>{description}</p></details>)}</section>
-      <nav class="planner-supporting-tools" aria-label="เครื่องมือเสริม"><span>เครื่องมือเสริม</span><a href="/calendar/">วันพระและปฏิทินไทย</a><a href="/horoscope/seamsi/">คำเซียมซี</a><a href="/tarot/daily/">ไพ่ยิปซีรายวัน</a></nav>
-      <a class="planner-media-credit" href="/assets/images/planner-media-credits.txt" target="_blank" rel="noopener">ที่มาภาพประกอบ</a>
+      <section class="planner-guides" aria-label="คำแนะนำการวางแผน">{guides.map(([icon,title,description])=><details class="planner-guide" open><summary><IconMedallion><SiteIcon name={icon} /></IconMedallion><h2 data-cms-field="370ae036-76">{title}</h2><SiteIcon name="chevron-down" /></summary><p data-cms-field="370ae036-77">{description}</p></details>)}</section>
+      <nav class="planner-supporting-tools" aria-label="เครื่องมือเสริม"><span data-cms-field="370ae036-78">เครื่องมือเสริม</span><a data-cms-field="370ae036-79" href="/calendar/">วันพระและปฏิทินไทย</a><a data-cms-field="370ae036-80" href="/horoscope/seamsi/">คำเซียมซี</a><a data-cms-field="370ae036-81" href="/tarot/daily/">ไพ่ยิปซีรายวัน</a></nav>
+      <a data-cms-field="370ae036-82" class="planner-media-credit" href="/assets/images/planner-media-credits.txt" target="_blank" rel="noopener">ที่มาภาพประกอบ</a>
     </div>
     <div class="planner-mobile-bar" data-planner-mobile-bar hidden><span data-planner-mobile-status></span><button type="button" class="planner-primary-button" data-planner-mobile-primary></button><button type="button" class="planner-text-button" data-planner-mobile-secondary></button></div>
-    <div class="planner-dialog" data-planner-dialog hidden aria-hidden="true"><div class="planner-dialog__overlay"></div><section class="planner-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="planner-dialog-title" aria-describedby="planner-dialog-message"><h2 id="planner-dialog-title" data-planner-dialog-title></h2><p id="planner-dialog-message" data-planner-dialog-message></p><div data-planner-dialog-options></div><div class="planner-dialog__actions"><button type="button" class="planner-secondary-button" data-planner-dialog-cancel>ยกเลิก</button><button type="button" class="planner-primary-button" data-planner-dialog-confirm>ยืนยัน</button></div></section></div>
+    <div class="planner-dialog" data-planner-dialog hidden aria-hidden="true"><div class="planner-dialog__overlay"></div><section class="planner-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="planner-dialog-title" aria-describedby="planner-dialog-message"><h2 id="planner-dialog-title" data-planner-dialog-title></h2><p id="planner-dialog-message" data-planner-dialog-message></p><div data-planner-dialog-options></div><div class="planner-dialog__actions"><button data-cms-field="370ae036-83" type="button" class="planner-secondary-button" data-planner-dialog-cancel>ยกเลิก</button><button data-cms-field="370ae036-84" type="button" class="planner-primary-button" data-planner-dialog-confirm>ยืนยัน</button></div></section></div>
   </main>
   <script>import "../../../scripts/temple-planner.js";</script>
 </BaseLayout>

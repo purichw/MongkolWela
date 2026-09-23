@@ -9,6 +9,8 @@ import {
 import { requireAdmin } from "./_auth.js";
 import { publicContentForPath } from "../../src/lib/public-content.js";
 import { contentRevision } from "../../src/lib/content-revision.js";
+import { contentCatalog, validateContentLibrary } from "../../src/data/content-catalog.js";
+import { validateContentPatches } from "../../src/lib/content-patches.js";
 
 function normalizeContent(content, actor) {
   const now = new Date().toISOString();
@@ -26,7 +28,13 @@ export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const content = await readLiveContent();
+      validateContentLibrary(content.contentLibrary);
       const params = new URL(req.url, "http://localhost").searchParams;
+      if (params.get("view") === "catalog") {
+        if (!await requireAdmin(req, res)) return;
+        sendJson(res, 200, { ok: true, catalog: contentCatalog() });
+        return;
+      }
       const pathname = params.get("path");
       const projected = pathname ? publicContentForPath(content, pathname) : content;
       // Publication timestamps alone do not indicate changes to the current page.
@@ -54,8 +62,16 @@ export default async function handler(req, res) {
       return;
     }
 
+    validateContentLibrary(body.content.contentLibrary);
+    validateContentPatches(body.content);
+    const current = await readLiveContent();
+    const { publishedAt: oldPublishedAt, updatedAt: oldUpdatedAt, ...currentFields } = current;
+    if (!body.expectedRevision || body.expectedRevision !== contentRevision(currentFields)) {
+      sendJson(res, 409, { ok: false, error: "เนื้อหามีเวอร์ชันใหม่แล้ว กรุณาบันทึกฉบับร่างและโหลดข้อมูลล่าสุดก่อนเผยแพร่" });
+      return;
+    }
     const content = normalizeContent(body.content, session.actor);
-    const publish = await publishLiveContent(content, session.actor);
+    const publish = await publishLiveContent(content, session.actor, { expectedPublishedAt: current.publishedAt ?? null });
     sendJson(res, 200, {
       ok: true,
       content,

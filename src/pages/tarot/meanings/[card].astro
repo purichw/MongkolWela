@@ -1,4 +1,5 @@
 ---
+import { contentBinding } from "../../../lib/content-bindings.js";
 import { sitePlaceholderImage } from "../../../lib/image-placeholder.js";
 import ToolsLayout from "../../../layouts/ToolsLayout.astro";
 import { renderIcon } from "../../../lib/ui-markup.js";
@@ -34,11 +35,11 @@ const keywords = "keywordsUpright" in card ? card.keywordsUpright : card.keyword
 const uprightDetails = "uprightDetails" in card ? card.uprightDetails : null;
 const topics = [
   ...(uprightDetails?.career || uprightDetails?.finance ? [
-    { label: "การงาน", text: uprightDetails.career },
-    { label: "การเงิน", text: uprightDetails.finance },
-  ] : [{ label: "การงานและการเงิน", text: card.workMoney }]),
-  { label: "ความรัก", text: card.love },
-  { label: "สุขภาพและพลังชีวิต", text: card.health },
+    { path: "uprightDetails/career", label: "การงาน", text: uprightDetails.career },
+    { path: "uprightDetails/finance", label: "การเงิน", text: uprightDetails.finance },
+  ] : [{ path: "workMoney", label: "การงานและการเงิน", text: card.workMoney }]),
+  { path: "love", label: "ความรัก", text: card.love },
+  { path: "health", label: "สุขภาพและพลังชีวิต", text: card.health },
 ].filter(topic => topic.text);
 ---
 
@@ -61,50 +62,50 @@ const topics = [
   <main data-meaning-detail>
     <div class="tarot-detail-navigation">
       <nav class="tools-breadcrumb" aria-label="เส้นทางนำทาง">
-        <a href="/">หน้าแรก</a><span aria-hidden="true">/</span><a href="/tarot/daily/">ไพ่ยิปซี</a><span aria-hidden="true">/</span>
-        <a href="/tarot/meanings/" data-meaning-context-link>ความหมายไพ่</a><span aria-hidden="true">/</span><span aria-current="page">{card.name}</span>
+        <a data-cms-field="55ff47f2-1" href="/">หน้าแรก</a><span aria-hidden="true">/</span><a data-cms-field="55ff47f2-2" href="/tarot/daily/">ไพ่ยิปซี</a><span aria-hidden="true">/</span>
+        <a data-cms-field="55ff47f2-3" href="/tarot/meanings/" data-meaning-context-link>ความหมายไพ่</a><span aria-hidden="true">/</span><span data-cms-field="55ff47f2-4" {...contentBinding("tarot.tarotMeaningCards", card.slug, "name")} aria-current="page">{card.name}</span>
       </nav>
       <nav class="tarot-card-pagination" aria-label="เลือกไพ่ใบอื่น">
-        <a href={`/tarot/meanings/${previousCard.slug}/`} data-meaning-context-link rel="prev"><Fragment set:html={renderIcon("arrow-left")} />ไพ่ก่อนหน้า</a>
-        <a href={`/tarot/meanings/${nextCard.slug}/`} data-meaning-context-link rel="next">ไพ่ถัดไป<Fragment set:html={renderIcon("arrow-right")} /></a>
+        <a data-cms-field="55ff47f2-5" href={`/tarot/meanings/${previousCard.slug}/`} data-meaning-context-link rel="prev"><Fragment set:html={renderIcon("arrow-left")} />ไพ่ก่อนหน้า</a>
+        <a data-cms-field="55ff47f2-6" href={`/tarot/meanings/${nextCard.slug}/`} data-meaning-context-link rel="next">ไพ่ถัดไป<Fragment set:html={renderIcon("arrow-right")} /></a>
       </nav>
     </div>
     <section class="tarot-meaning-detail" aria-labelledby="tarot-card-title">
       <figure class="tarot-meaning-card-large">
-        <div class="tarot-detail-image"><img src={card.image || sitePlaceholderImage} data-fallback-src={sitePlaceholderImage} alt={`${card.thName} ${card.name}`} width="340" height="560" loading="eager" decoding="async" fetchpriority="high" /></div>
-        <figcaption><h1 id="tarot-card-title">{card.name}</h1><p>{number != null ? `${number} ` : ""}{card.thName}</p></figcaption>
+        <div class="tarot-detail-image"><img data-cms-field="55ff47f2-7" {...contentBinding("tarot.tarotMeaningCards", card.slug, "image", { attr: "src" })} src={card.image || sitePlaceholderImage} data-fallback-src={sitePlaceholderImage} alt={`${card.thName} ${card.name}`} width="340" height="560" loading="eager" decoding="async" fetchpriority="high" /></div>
+        <figcaption><h1 data-cms-field="55ff47f2-8" {...contentBinding("tarot.tarotMeaningCards", card.slug, "name")} id="tarot-card-title">{card.name}</h1><p data-cms-field="55ff47f2-9" {...contentBinding("tarot.tarotMeaningCards", card.slug, "thName", { prefix: number != null ? `${number} ` : "" })}>{number != null ? `${number} ` : ""}{card.thName}</p></figcaption>
       </figure>
       <article class="tarot-meaning-copy">
         <dl class="tarot-card-facts">
-          <div><dt>หมวดไพ่</dt><dd><a href={`/tarot/meanings/?group=${card.group}`}>{groupLabel}</a></dd></div>
-          {card.element && <div><dt>ธาตุ</dt><dd>{card.element}</dd></div>}
-          {astrology && <div><dt>ดาวเคราะห์ / ราศี</dt><dd>{astrology}</dd></div>}
-          <div><dt>คีย์เวิร์ด</dt><dd>{keywords.join(" · ")}</dd></div>
+          <div><dt data-cms-field="55ff47f2-10">หมวดไพ่</dt><dd><a data-cms-field="55ff47f2-11" href={`/tarot/meanings/?group=${card.group}`}>{groupLabel}</a></dd></div>
+          {card.element && <div><dt data-cms-field="55ff47f2-12">ธาตุ</dt><dd data-cms-field="55ff47f2-13">{card.element}</dd></div>}
+          {astrology && <div><dt data-cms-field="55ff47f2-14">ดาวเคราะห์ / ราศี</dt><dd data-cms-field="55ff47f2-15" {...contentBinding("tarot.tarotMeaningCards", card.slug, "astrology" in card && card.astrology ? "astrology" : "rulingPlanet")}>{astrology}</dd></div>}
+          <div><dt data-cms-field="55ff47f2-16">คีย์เวิร์ด</dt><dd data-cms-field="55ff47f2-17" {...contentBinding("tarot.tarotMeaningCards", card.slug, "keywordsUpright" in card ? "keywordsUpright" : "keywords", { join: " · ", seed: keywords })}>{keywords.join(" · ")}</dd></div>
         </dl>
-        <section class="tarot-card-prose"><h2>ความหมายโดยรวม</h2><p>{card.upright}</p></section>
-        {advice && <section class="tarot-card-prose"><h2>คำแนะนำ</h2><p>{advice}</p></section>}
+        <section class="tarot-card-prose"><h2 data-cms-field="55ff47f2-18">ความหมายโดยรวม</h2><p data-cms-field="55ff47f2-19" {...contentBinding("tarot.tarotMeaningCards", card.slug, "upright")}>{card.upright}</p></section>
+        {advice && <section class="tarot-card-prose"><h2 data-cms-field="55ff47f2-20">คำแนะนำ</h2><p data-cms-field="55ff47f2-21">{advice}</p></section>}
         <section class="tarot-card-topics" aria-labelledby="tarot-topics-title">
-          <h2 id="tarot-topics-title">ในด้านต่าง ๆ</h2>
-          <div class="tarot-detail-disclosures">{topics.map(topic => <details><summary>{topic.label}<Fragment set:html={renderIcon("chevron-down")} /></summary><p>{topic.text}</p></details>)}</div>
+          <h2 data-cms-field="55ff47f2-22" id="tarot-topics-title">ในด้านต่าง ๆ</h2>
+          <div class="tarot-detail-disclosures">{topics.map(topic => <details><summary data-cms-field="55ff47f2-23">{topic.label}<Fragment set:html={renderIcon("chevron-down")} /></summary><p data-cms-field="55ff47f2-24" {...contentBinding("tarot.tarotMeaningCards", card.slug, topic.path)}>{topic.text}</p></details>)}</div>
         </section>
         <details class="tarot-detail-more">
-          <summary>เมื่อไพ่กลับหัว และความหมายเพิ่มเติม<Fragment set:html={renderIcon("chevron-down")} /></summary>
+          <summary data-cms-field="55ff47f2-25">เมื่อไพ่กลับหัว และความหมายเพิ่มเติม<Fragment set:html={renderIcon("chevron-down")} /></summary>
           <div class="tarot-detail-expanded">
-            <section><h2>เรื่องราวของไพ่</h2><p>{card.overview}</p></section>
-            <section><h2>เมื่อไพ่กลับหัว</h2><p>{card.reversed}</p>
-              {card.keywordsReversed?.length > 0 && <p><strong>คำสำคัญเมื่อกลับหัว: </strong>{card.keywordsReversed.join(" · ")}</p>}
+            <section><h2 data-cms-field="55ff47f2-26">เรื่องราวของไพ่</h2><p data-cms-field="55ff47f2-27" {...contentBinding("tarot.tarotMeaningCards", card.slug, "overview")}>{card.overview}</p></section>
+            <section><h2 data-cms-field="55ff47f2-28">เมื่อไพ่กลับหัว</h2><p data-cms-field="55ff47f2-29" {...contentBinding("tarot.tarotMeaningCards", card.slug, "reversed")}>{card.reversed}</p>
+              {card.keywordsReversed?.length > 0 && <p data-cms-field="55ff47f2-30"><strong data-cms-field="55ff47f2-31">คำสำคัญเมื่อกลับหัว: </strong><span {...contentBinding("tarot.tarotMeaningCards", card.slug, "keywordsReversed", { join: " · ", seed: card.keywordsReversed })}>{card.keywordsReversed.join(" · ")}</span></p>}
             </section>
-            <section><h2>มุม Western ที่เสริมการอ่าน</h2><p>{card.western}</p></section>
-            {caution && <section><h2>ข้อควรระวัง</h2><p>{caution}</p></section>}
-            {card.symbolism?.length > 0 && <section><h2>สัญลักษณ์บนหน้าไพ่</h2><ul>{card.symbolism.map(item => <li><strong>{item.symbol}</strong>: {item.meaning}</li>)}</ul></section>}
-            {card.closingSummary && <section><h2>สรุปใจความ</h2><p>{card.closingSummary}</p></section>}
-            {relatedCards.length > 0 && <section><h2>ไพ่ที่สัมพันธ์กัน</h2><ul>{relatedCards.map(item => <li>{item.href ? <a href={item.href}>{item.label}</a> : <strong>{item.label}</strong>}: {item.relationship}</li>)}</ul></section>}
-            {card.reflectionQuestions?.length > 0 && <section><h2>คำถามทบทวนตัวเอง</h2><ul>{card.reflectionQuestions.map(question => <li>{question}</li>)}</ul></section>}
+            <section><h2 data-cms-field="55ff47f2-32">มุม Western ที่เสริมการอ่าน</h2><p data-cms-field="55ff47f2-33" {...contentBinding("tarot.tarotMeaningCards", card.slug, "western")}>{card.western}</p></section>
+            {caution && <section><h2 data-cms-field="55ff47f2-34">ข้อควรระวัง</h2><p data-cms-field="55ff47f2-35" {...contentBinding("tarot.tarotMeaningCards", card.slug, "caution")}>{caution}</p></section>}
+            {card.symbolism?.length > 0 && <section><h2 data-cms-field="55ff47f2-36">สัญลักษณ์บนหน้าไพ่</h2><ul>{card.symbolism.map((item, i) => <li data-cms-field="55ff47f2-37"><strong data-cms-field="55ff47f2-38" {...contentBinding("tarot.tarotMeaningCards", card.slug, `symbolism/${i}/symbol`)}>{item.symbol}</strong>: <span {...contentBinding("tarot.tarotMeaningCards", card.slug, `symbolism/${i}/meaning`)}>{item.meaning}</span></li>)}</ul></section>}
+            {card.closingSummary && <section><h2 data-cms-field="55ff47f2-39">สรุปใจความ</h2><p data-cms-field="55ff47f2-40" {...contentBinding("tarot.tarotMeaningCards", card.slug, "closingSummary")}>{card.closingSummary}</p></section>}
+            {relatedCards.length > 0 && <section><h2 data-cms-field="55ff47f2-41">ไพ่ที่สัมพันธ์กัน</h2><ul>{relatedCards.map((item, i) => <li data-cms-field="55ff47f2-42">{item.href ? <a data-cms-field="55ff47f2-43" href={item.href}>{item.label}</a> : <strong data-cms-field="55ff47f2-44">{item.label}</strong>}: <span {...contentBinding("tarot.tarotMeaningCards", card.slug, `relatedCards/${i}/relationship`)}>{item.relationship}</span></li>)}</ul></section>}
+            {card.reflectionQuestions?.length > 0 && <section><h2 data-cms-field="55ff47f2-45">คำถามทบทวนตัวเอง</h2><ul>{card.reflectionQuestions.map((question, i) => <li data-cms-field="55ff47f2-46" {...contentBinding("tarot.tarotMeaningCards", card.slug, `reflectionQuestions/${i}`)}>{question}</li>)}</ul></section>}
           </div>
         </details>
         <div class="tarot-detail-actions">
-          <a class="primary-action" href="/tarot/meanings/" data-meaning-context-link><Fragment set:html={renderIcon("arrow-left")} />กลับไปหน้ารายการ</a>
-          <a class="secondary-action" href={`/tarot/meanings/${nextCard.slug}/`} data-meaning-context-link>ไพ่ถัดไป<Fragment set:html={renderIcon("arrow-right")} /></a>
+          <a data-cms-field="55ff47f2-47" class="primary-action" href="/tarot/meanings/" data-meaning-context-link><Fragment set:html={renderIcon("arrow-left")} />กลับไปหน้ารายการ</a>
+          <a data-cms-field="55ff47f2-48" class="secondary-action" href={`/tarot/meanings/${nextCard.slug}/`} data-meaning-context-link>ไพ่ถัดไป<Fragment set:html={renderIcon("arrow-right")} /></a>
         </div>
       </article>
     </section>

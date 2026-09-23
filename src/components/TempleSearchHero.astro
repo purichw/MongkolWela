@@ -29,19 +29,19 @@ const hasPanel = Astro.slots.has("panel");
 ---
 
 <PageBanner titleId="temple-page-title" adminKey={banner.adminKey}>
-  <img slot="media" class="temple-page-hero-image" src={banner.imageUrl || sitePlaceholderImage} data-fallback-src={sitePlaceholderImage} alt="" style={`object-position: ${banner.focalPoint || "center"}`} loading="eager" decoding="async" fetchpriority="high" />
+  <img data-cms-field="b982eed0-1" slot="media" class="temple-page-hero-image" src={banner.imageUrl || sitePlaceholderImage} data-fallback-src={sitePlaceholderImage} alt="" style={`object-position: ${banner.focalPoint || "center"}`} loading="eager" decoding="async" fetchpriority="high" />
     <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง">
       {breadcrumbs.map((item, index) => (
         <>
           {index > 0 && <span>/</span>}
-          {item.href ? <a href={item.href}>{item.label}</a> : <span>{item.label}</span>}
+          {item.href ? <a data-cms-field="b982eed0-2" href={item.href}>{item.label}</a> : <span data-cms-field="b982eed0-3">{item.label}</span>}
         </>
       ))}
     </nav>
     <div class="page-banner__copy">
-      <p class="page-banner__kicker">{kicker}</p>
-      <h1 id="temple-page-title">{title}</h1>
-      {description && <p class="page-banner__description">{description}</p>}
+      <p data-cms-field="b982eed0-4" class="page-banner__kicker">{kicker}</p>
+      <h1 data-cms-field="b982eed0-5" id="temple-page-title">{title}</h1>
+      {description && <p data-cms-field="b982eed0-6" class="page-banner__description">{description}</p>}
     </div>
   {Astro.slots.has("quote") && <Fragment slot="quote"><slot name="quote" /></Fragment>}
 </PageBanner>

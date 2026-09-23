@@ -1,14 +1,15 @@
 let manager;
 let loading;
 let scheduled = false;
+const observedRoots = new WeakSet();
 
 export function syncPublicSelects(root = document) {
   manager?.sync(root);
 }
 
-export function initPublicSelects() {
-  const root = document.querySelector("main");
-  if (!root || document.body.matches(".admin-page, .commerce-console")) return;
+export function initPublicSelects({ root = document.querySelector("main"), includeAdmin = false } = {}) {
+  if (!root || observedRoots.has(root) || (!includeAdmin && document.body.matches(".admin-page, .commerce-console"))) return;
+  observedRoots.add(root);
 
   const enhance = () => {
     if (scheduled) return;

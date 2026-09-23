@@ -69,7 +69,7 @@ test("media references link to real CMS owners and settings use catalog values",
   await expect(page.locator(".mw-admin-media-card")).toContainText("อ้างอิง 8 ตำแหน่ง");
   await page.locator(".mw-admin-media-references summary").click();
   await page.locator(".mw-admin-media-references [data-page-jump]").first().click();
-  await expect(page.locator("[data-field=selectedPage]")).toHaveValue("media-test");
+  await expect(page.locator("[data-page-content-select]")).toHaveValue("media-test");
   await section(page, "settings");
   await expect(page.locator("#adminContent")).toContainText("ภาคตะวันตก");
   await expect(page.locator("#adminContent")).not.toContainText("ภาคอีสาน");

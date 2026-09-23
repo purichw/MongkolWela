@@ -1,3 +1,4 @@
+import { managedContent } from "../lib/managed-content.js";
 const majorCards = [
   {
     id: "the-fool",
@@ -405,7 +406,7 @@ function withCardImage(card) {
   };
 }
 
-export const tarotCards = [...majorCards, ...createMinorCards()].map(withCardImage);
+export const tarotCards = managedContent("tarot.tarotCards", [...majorCards, ...createMinorCards()].map(withCardImage), {"title":"คำทำนายไพ่ 78 ใบ","group":"ไพ่ยิปซี","routes":["/tarot/"]});
 
 export function getTarotCardById(id) {
   return tarotCards.find((card) => card.id === id);

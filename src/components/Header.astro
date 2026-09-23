@@ -27,31 +27,31 @@ const planner = findNavigationLink(model.tabs, "/temples/planner/");
   <div class="mw-header-row">
     <a class="mw-brand" href="/" aria-label={config.brandLabel}>
       <BrandMark decorative fetchpriority="high" />
-      <span><strong>{config.brandName}</strong><small>{config.brandSubtitle}</small></span>
+      <span><strong data-cms-field="cef92c86-1">{config.brandName}</strong><small data-cms-field="cef92c86-2">{config.brandSubtitle}</small></span>
     </a>
     <nav class="mw-desktop-nav" data-header-desktop aria-label={config.navLabel} set:html={renderDesktopNavigation(model, options)} />
     <div class="mw-header-actions">
       <a class="mw-search mw-round-control" data-header-search href="/search/" aria-haspopup="dialog" aria-controls="temple-search-dialog" aria-label="ค้นหาวัดและสถานที่" title="ค้นหาวัดและสถานที่"><SiteIcon name="search" /></a>
       <div data-header-cta>
         {planner && <a class="mw-planner-cta" data-nav-key="planner-cta" data-nav-cta="temple-planner" href={planner.href!} aria-label={planner.label}>
-          <span class="mw-cta-full">{planner.label}</span><span class="mw-cta-short" aria-hidden="true">วางแผน</span><SiteIcon name="arrow-right" />
+          <span data-cms-field="cef92c86-3" class="mw-cta-full">{planner.label}</span><span data-cms-field="cef92c86-4" class="mw-cta-short" aria-hidden="true">วางแผน</span><SiteIcon name="arrow-right" />
         </a>}
       </div>
       <button class="mw-menu-toggle mw-round-control" type="button" aria-expanded="false" aria-controls="mw-navigation-dialog" aria-label="เปิดเมนู"><MenuIcon /></button>
     </div>
   </div>
   <details class="mw-fallback">
-    <summary>เมนูหลัก</summary>
+    <summary data-cms-field="cef92c86-5">เมนูหลัก</summary>
     <div class="mw-drawer-content" data-header-drawer-content>
       <div class="mw-drawer-intro">
-        <div class="mw-drawer-eyebrow"><span class="mw-eyebrow">MONGKOL WELA</span><div data-header-mobile-hub set:html={renderMobileHub(model, options)} /></div>
-        <h2 id="mw-drawer-title">เดินทางสายบุญ<br />ให้ทุกก้าวมีความหมาย</h2>
-        <p>ค้นหาวัดและเส้นทางมงคล วางแผนการเดินทางได้ง่าย ๆ</p>
+        <div class="mw-drawer-eyebrow"><span data-cms-field="cef92c86-6" class="mw-eyebrow">MONGKOL WELA</span><div data-header-mobile-hub set:html={renderMobileHub(model, options)} /></div>
+        <h2 data-cms-field="cef92c86-7" id="mw-drawer-title">เดินทางสายบุญ<br />ให้ทุกก้าวมีความหมาย</h2>
+        <p data-cms-field="cef92c86-8">ค้นหาวัดและเส้นทางมงคล วางแผนการเดินทางได้ง่าย ๆ</p>
       </div>
-      <a class="mw-drawer-search mw-mobile-row" data-header-search href="/search/" aria-haspopup="dialog" aria-controls="temple-search-dialog"><SiteIcon name="search" /><span>ค้นหาวัดและสถานที่</span><SiteIcon name="chevron-right" /></a>
+      <a class="mw-drawer-search mw-mobile-row" data-header-search href="/search/" aria-haspopup="dialog" aria-controls="temple-search-dialog"><SiteIcon name="search" /><span data-cms-field="cef92c86-9">ค้นหาวัดและสถานที่</span><SiteIcon name="chevron-right" /></a>
       <nav data-header-mobile aria-label="เมนูหลักบนมือถือ" set:html={renderMobileNavigation(model, options)} />
       <nav class="mw-drawer-utility" data-header-mobile-utility aria-label="ลิงก์เพิ่มเติม" set:html={renderUtilityNavigation(drawerUtilities(model, utility), options)} />
-      <div class="mw-drawer-quote" aria-hidden="true"><SiteIcon name="sparkles" /><p>“ เพราะทุกการเดินทาง<br />คือการเติมพลังใจให้ชีวิต ”</p></div>
+      <div class="mw-drawer-quote" aria-hidden="true"><SiteIcon name="sparkles" /><p data-cms-field="cef92c86-10">“ เพราะทุกการเดินทาง<br />คือการเติมพลังใจให้ชีวิต ”</p></div>
     </div>
   </details>
   <dialog class="mw-drawer" id="mw-navigation-dialog" aria-labelledby="mw-drawer-title">

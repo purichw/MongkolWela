@@ -18,79 +18,79 @@ import ToolsHero from "../../../components/ToolsHero.astro";
 
       <section class="thai-astro-tool" id="thai-astrology-tool" data-thai-astrology-output data-state="empty">
         <header class="thai-reading-head" data-astro-heading>
-          <h2 id="thai-result-title" tabindex="-1">แผนผังดวง</h2>
-          <p>กรอกข้อมูลเพื่อแสดงแผนผัง</p>
+          <h2 data-cms-field="86277e23-1" id="thai-result-title" tabindex="-1">แผนผังดวง</h2>
+          <p data-cms-field="86277e23-2">กรอกข้อมูลเพื่อแสดงแผนผัง</p>
         </header>
         <div class="thai-chart-stage" data-astro-wheel></div>
         <form class="thai-astro-form tools-form" id="thai-birth-form" data-thai-astrology-form novalidate>
           <div>
-            <p class="section-kicker">ข้อมูลผูกดวง</p>
-            <h2 id="thai-form-title" tabindex="-1">กรอกวันเวลาเกิด</h2>
+            <p data-cms-field="86277e23-3" class="section-kicker">ข้อมูลผูกดวง</p>
+            <h2 data-cms-field="86277e23-4" id="thai-form-title" tabindex="-1">กรอกวันเวลาเกิด</h2>
           </div>
 
           <label>
-            <span>ชื่อสำหรับแสดงผล</span>
-            <input name="name" type="text" value="เจ้าชะตา" autocomplete="name" maxlength="80">
+            <span data-cms-field="86277e23-5">ชื่อสำหรับแสดงผล</span>
+            <input data-cms-field="86277e23-6" name="name" type="text" value="เจ้าชะตา" autocomplete="name" maxlength="80">
           </label>
 
           <label>
-            <span>วันเดือนปีเกิด</span>
-            <input name="birthDate" type="date" required>
+            <span data-cms-field="86277e23-7">วันเดือนปีเกิด</span>
+            <input data-cms-field="86277e23-8" name="birthDate" type="date" required>
           </label>
 
           <div class="thai-astro-form-row tools-form-row">
             <label>
-              <span>ชั่วโมงเกิด</span>
+              <span data-cms-field="86277e23-9">ชั่วโมงเกิด</span>
               <select name="birthHour" required data-hour-options></select>
             </label>
             <label>
-              <span>นาทีเกิด</span>
+              <span data-cms-field="86277e23-10">นาทีเกิด</span>
               <select name="birthMinute" required data-minute-options></select>
             </label>
           </div>
 
           <label>
-            <span>สถานที่เกิด</span>
+            <span data-cms-field="86277e23-11">สถานที่เกิด</span>
             <select name="birthPlace">
-              <option value="bangkok">กรุงเทพมหานคร</option>
-              <option value="chiangmai">เชียงใหม่</option>
-              <option value="khonkaen">ขอนแก่น</option>
-              <option value="songkhla">สงขลา</option>
-              <option value="phuket">ภูเก็ต</option>
-              <option value="foreign">ต่างประเทศ / ระบุภายหลัง</option>
+              <option data-cms-field="86277e23-12" value="bangkok">กรุงเทพมหานคร</option>
+              <option data-cms-field="86277e23-13" value="chiangmai">เชียงใหม่</option>
+              <option data-cms-field="86277e23-14" value="khonkaen">ขอนแก่น</option>
+              <option data-cms-field="86277e23-15" value="songkhla">สงขลา</option>
+              <option data-cms-field="86277e23-16" value="phuket">ภูเก็ต</option>
+              <option data-cms-field="86277e23-17" value="foreign">ต่างประเทศ / ระบุภายหลัง</option>
             </select>
           </label>
 
           <div class="thai-astro-form-row tools-form-row thai-astro-mode-row">
             <label>
-              <span>ชนิดดวง</span>
+              <span data-cms-field="86277e23-18">ชนิดดวง</span>
               <select name="chartType">
-                <option value="natal">ดวงกำเนิด</option>
-                <option value="transit">ดวงจร</option>
-                <option value="newmoon">ดวงอมาวสี</option>
-                <option value="fullmoon">ดวงปูรณมี</option>
+                <option data-cms-field="86277e23-19" value="natal">ดวงกำเนิด</option>
+                <option data-cms-field="86277e23-20" value="transit">ดวงจร</option>
+                <option data-cms-field="86277e23-21" value="newmoon">ดวงอมาวสี</option>
+                <option data-cms-field="86277e23-22" value="fullmoon">ดวงปูรณมี</option>
               </select>
             </label>
             <label>
-              <span>ระบบคำนวณ</span>
+              <span data-cms-field="86277e23-23">ระบบคำนวณ</span>
               <select name="calculationSystem">
-                <option value="suriyayatra">สุริยยาตร์ไทย</option>
-                <option value="lahiri">นิรายนะ ลาหิรี</option>
+                <option data-cms-field="86277e23-24" value="suriyayatra">สุริยยาตร์ไทย</option>
+                <option data-cms-field="86277e23-25" value="lahiri">นิรายนะ ลาหิรี</option>
               </select>
             </label>
           </div>
 
           <label>
-            <span>วันจร / วันที่ทำนาย</span>
-            <input name="transitDate" type="date" required data-transit-date>
+            <span data-cms-field="86277e23-26">วันจร / วันที่ทำนาย</span>
+            <input data-cms-field="86277e23-27" name="transitDate" type="date" required data-transit-date>
           </label>
 
-          <button class="primary-action" type="submit">ผูกดวง</button>
+          <button data-cms-field="86277e23-28" class="primary-action" type="submit">ผูกดวง</button>
           <p class="thai-astro-feedback" data-astro-feedback role="status" aria-live="polite"></p>
-          <p class="thai-astro-form-note">
+          <p data-cms-field="86277e23-29" class="thai-astro-form-note">
             ข้อมูลวันเวลาเกิดใช้ประกอบการผูกดวงตามระบบที่เลือก ผลเป็นการประมาณเบื้องต้น ไม่ใช่คำทำนายที่แน่นอน
           </p>
-          <noscript><p>โปรดเปิด JavaScript เพื่อคำนวณและแสดงแผนผังดวง</p></noscript>
+          <noscript><p data-cms-field="86277e23-30">โปรดเปิด JavaScript เพื่อคำนวณและแสดงแผนผังดวง</p></noscript>
         </form>
 
         <aside class="thai-chart-summary" data-astro-overview></aside>

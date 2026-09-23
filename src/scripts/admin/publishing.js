@@ -50,7 +50,10 @@ async function waitForPublishedContent(expectedContent) {
       cache: "no-store",
       headers: { "Cache-Control": "no-cache" },
     });
-    if (publishedContentMatches(expectedContent, payload.content)) return payload.content;
+    if (publishedContentMatches(expectedContent, payload.content)) {
+      state.baseRevision = payload.revision;
+      return payload.content;
+    }
     await sleep(PUBLISH_VERIFY_INTERVAL_MS);
   }
   throw new Error("Publish สำเร็จแล้ว แต่ยังตรวจไม่พบเวอร์ชันใหม่บนหน้าเว็บ");
@@ -59,25 +62,27 @@ async function waitForPublishedContent(expectedContent) {
 async function publish() {
   if (state.publishing) return;
   state.publishing = true;
+  const submitted = structuredClone(state.content);
+  const draftSignature = JSON.stringify(submitted);
   setPublishControlsDisabled(true);
   try {
     setStatus("กำลัง publish...", "info");
     setPublishProgress(8, "กำลังส่งข้อมูล", "กำลังบันทึกข้อมูลใหม่");
     const payload = await api("/api/admin/content", {
       method: "POST",
-      body: JSON.stringify({ content: state.content }),
+      body: JSON.stringify({ content: submitted, expectedRevision: state.baseRevision }),
     });
     setPublishProgress(
       payload.meta?.fast ? 52 : 42,
       "บันทึก publish แล้ว",
       payload.meta?.fast ? "กำลังตรวจว่า visitor อ่านข้อมูลใหม่ได้แล้ว" : "กำลังตรวจข้อมูล live",
     );
-    state.content = payload.content;
     const verifiedContent = await waitForPublishedContent(payload.content);
-    state.content = verifiedContent;
-    state.dirty = false;
+    const editedDuringPublish = JSON.stringify(state.content) !== draftSignature;
+    if (!editedDuringPublish) state.content = verifiedContent;
+    state.dirty = editedDuringPublish;
     setPublishProgress(100, "หน้าเว็บอัปเดตแล้ว", "visitor จะเห็นข้อมูลเวอร์ชันล่าสุดเมื่อเปิดหรือรีโหลดหน้า");
-    setStatus("เผยแพร่แล้ว", "ok");
+    setStatus(editedDuringPublish ? "เผยแพร่แล้ว ยังมีการแก้ไขใหม่ที่ไม่ได้เผยแพร่" : "เผยแพร่แล้ว", "ok");
     renderAdmin();
     setPublishControlsDisabled(true);
     setTimeout(() => {
