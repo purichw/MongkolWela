@@ -71,6 +71,27 @@ test("page text edits preserve markup, publish and survive visitor reload", asyn
   await expect(page.getByText("ข้อความทดสอบจาก CMS", { exact: true })).toBeVisible();
 });
 
+test("contact editor keeps email and LINE separate and publishes their shared destinations", async ({ page }) => {
+  await page.goto("/admin/");
+  await section(page, "pages");
+  await page.locator('.mw-select[role="combobox"][aria-label="หน้าเว็บไซต์"]').click();
+  await page.getByRole("searchbox", { name: "ค้นหาหน้าเว็บไซต์", exact: true }).fill("ติดต่อ");
+  await page.getByRole("option", { name: "ติดต่อมงคลเวลา", exact: true }).click();
+  const email = page.locator('[data-page-content-id="contact-data-email"] input');
+  const line = page.locator('[data-page-content-id="contact-data-line-id"] input');
+  await expect(email).toHaveValue("mongkolwela@mongkolwela.com");
+  await expect(line).toHaveValue("@MongkolWela");
+  await email.fill("support@example.com");
+  await line.fill("@support.line");
+  await page.locator('[data-action="publish"]').first().click();
+  await expect(page.locator("#adminStatus")).toHaveText("เผยแพร่แล้ว", { timeout: 15000 });
+  await expect(email).toHaveValue("support@example.com");
+  await expect(line).toHaveValue("@support.line");
+  await page.goto("/contact/");
+  await expect(page.locator("[data-contact-value='email']")).toHaveText("support@example.com");
+  await expect(page.locator("[data-contact-link='line']")).toHaveAttribute("href", "https://line.me/R/ti/p/%40support.line");
+});
+
 test("reading library searches, edits and publishes to the tarot reference page", async ({ page }, testInfo) => {
   await page.goto("/admin/");
   await section(page, "contentLibrary");

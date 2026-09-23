@@ -78,7 +78,9 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
   }
 
   function fieldEditor(field) {
-    const patch = patches().find(item => item.id === field.id || (item.selector === field.selector && item.kind === field.kind && item.nodeIndex === field.nodeIndex)) || field;
+    const patch = patches().find(item => item.id === field.id)
+      || patches().find(item => item.selector === field.selector && item.kind === field.kind && item.nodeIndex === field.nodeIndex && item.attr === field.attr)
+      || field;
     return `<div class="mw-page-content-field" data-page-content-id="${e(field.id)}"><div><small>${e(field.context)}</small><strong>${e(field.label)}</strong><span>${field.kind === "image" ? "รูปภาพ" : field.attr === "href" ? "ลิงก์" : "ข้อความ"}</span></div><div>${field.kind === "image"
       ? `${patch.src && safeContentUrl(patch.src) ? `<img class="mw-page-content-image" src="${e(patch.src)}" alt="${e(patch.alt || "ภาพตัวอย่าง")}" loading="lazy">` : ""}<label>ลิงก์รูปภาพ<input data-page-content-value="src" value="${e(patch.src || "")}"></label><label>คำอธิบายภาพ<input data-page-content-value="alt" value="${e(patch.alt || "")}"></label>`
       : `<label><span class="mw-admin-sr-only">${e(field.label)}</span>${field.attr ? `<input data-page-content-value="value" value="${e(patch.value ?? "")}">` : `<textarea data-page-content-value="value" rows="${String(patch.value || "").length > 150 ? 4 : 2}">${e(patch.value ?? "")}</textarea>`}</label>`}</div></div>`;

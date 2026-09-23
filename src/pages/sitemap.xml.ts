@@ -23,6 +23,7 @@ const staticEntries: SitemapEntry[] = [
   { path: "/", priority: "1.0", changefreq: "daily", image: imageEntry("/assets/images/hero-temple-red.jpg", "มงคลเวลา") },
   { path: "/calendar/", priority: "0.78", changefreq: "weekly" },
   { path: "/guide/", priority: "0.7", changefreq: "monthly" },
+  { path: "/contact/", priority: "0.5", changefreq: "monthly" },
   { path: "/calendar/day/", priority: "0.58", changefreq: "weekly" },
   { path: "/horoscope/life-graph/", priority: "0.72", changefreq: "weekly" },
   { path: "/horoscope/seamsi/", priority: "0.72", changefreq: "weekly" },

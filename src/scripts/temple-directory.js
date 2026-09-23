@@ -823,7 +823,7 @@ function initializePopularTempleGrid(grid) {
         <strong>${escapeHtml(item.intent || item.placeType || "สิริมงคล")}</strong>
         <div class="temple-collection-v2-card-meta">
           <small>ข้อมูลชุดปัจจุบัน</small>
-          <a href="#consult">แจ้งแก้ไขข้อมูล</a>
+          <a href="/contact/#corrections">แจ้งแก้ไขข้อมูล</a>
         </div>
         <div class="temple-collection-v2-card-actions">
           <a class="temple-collection-v2-card-plan" href="${escapeHtml(item.plannerUrl || "/temples/planner/")}">เพิ่มลงแผน</a>

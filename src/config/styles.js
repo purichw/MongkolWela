@@ -30,12 +30,14 @@ import tools from "../styles/tools.css?url";
 import errorPages from "../styles/error-pages.css?url";
 import templeSearch from "../styles/temple-search.css?url";
 import travelGuide from "../styles/travel-guide.css?url";
+import contact from "../styles/contact.css?url";
 
 // Keep the existing cascade order while loading only the route's feature styles.
 export function stylesForPath(path, page = "") {
   if (path === "/admin/") return [tokens, base, pdpa, admin, site, adminActivities];
   const featureStyles = path.startsWith("/tarot/") ? [tarot]
     : path === "/guide/" ? [travelGuide]
+    : path === "/contact/" ? [contact]
     : path === "/calendar/" ? [calendarOverview]
     : path === "/calendar/day/" ? []
     : path.startsWith("/calendar/") ? [calendar]

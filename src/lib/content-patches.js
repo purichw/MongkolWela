@@ -1,4 +1,4 @@
-const attributes = new Set(["href", "src", "alt", "title", "placeholder", "aria-label", "content", "target", "rel"]);
+const attributes = new Set(["href", "src", "alt", "title", "placeholder", "aria-label", "content", "target", "rel", "data-email", "data-line-id", "data-email-subject"]);
 
 export function safeContentUrl(value, { link = false } = {}) {
   if (typeof value !== "string" || /[\\\u0000-\u0020]/.test(value)) return false;

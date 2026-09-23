@@ -54,7 +54,7 @@ export const siteConfig = {
       { label: "คู่มือวางแผนเดินทางมงคล", href: "guide/" },
       { label: "ปฏิทินไทย", href: "calendar/" },
       { label: "วันพระ ดิถี ฤกษ์มงคล และรายละเอียดรายวัน", href: "calendar/day/", featured: true },
-      { label: "ติดต่อมงคลเวลา", href: "#consult" },
+      { label: "ติดต่อมงคลเวลา", href: "contact/" },
     ],
     footer: {
       title: "มงคลเวลา",
@@ -102,6 +102,7 @@ export const siteConfig = {
       },
       calendar: {},
       travelGuide: {},
+      contact: {},
       calendarDay: {},
       lifeGraph: {},
       seamsi: {},
@@ -117,7 +118,7 @@ export const siteConfig = {
       tarotResult: {
         footerLinks: [
           { label: "จับไพ่ใหม่", href: "tarot/daily/" },
-          { label: "ติดต่อมงคลเวลา", href: "#consult" },
+          { label: "ติดต่อมงคลเวลา", href: "contact/" },
         ],
       },
       temples: {},

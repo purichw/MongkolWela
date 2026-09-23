@@ -31,5 +31,11 @@ export function scanContentFields(root) {
   for (const node of root.querySelectorAll("img[data-cms-media][id], img[data-home-hero-image][id]")) {
     fields.push({ id: node.id, selector: `#${node.id}`, kind: "image", label: node.getAttribute("alt") || "ภาพแบนเนอร์", src: node.getAttribute("data-carousel-src") || node.getAttribute("src") || "", alt: node.getAttribute("alt") || "", context: "ภาพประกอบ" });
   }
+  const contact = root.querySelector("#contact-channel-data");
+  if (contact) {
+    for (const [attr, label] of [["data-email", "อีเมลติดต่อ"], ["data-line-id", "LINE ID"]]) {
+      fields.push({ id: `contact-${attr}`, selector: "#contact-channel-data", kind: "attr", attr, label, value: contact.getAttribute(attr) || "", context: "ช่องทางติดต่อ" });
+    }
+  }
   return fields;
 }

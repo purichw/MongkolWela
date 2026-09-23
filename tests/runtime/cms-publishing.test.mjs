@@ -45,6 +45,11 @@ test("CMS publish validates content, checks current membership and prevents stal
     const original = await (await fetch(base)).json();
     const edited = structuredClone(original.content);
     edited.contentLibrary = { "seamsi.seamsiFortunes": { "1": { title: "Published reading" } } };
+    edited.pages.find(page => page.id === "contact").patches = [
+      { selector: "#contact-channel-data", kind: "attr", attr: "data-email", value: "support@example.com" },
+      { selector: "#contact-channel-data", kind: "attr", attr: "data-line-id", value: "@support" },
+      { selector: "#usage a", kind: "attr", attr: "data-email-subject", value: "สอบถามการใช้งาน" },
+    ];
     assert.equal((await post({ content: edited, expectedRevision: "stale" })).status, 409);
     assert.equal(writes, 0);
     const unsafe = structuredClone(edited);
@@ -56,6 +61,7 @@ test("CMS publish validates content, checks current membership and prevents stal
     assert.equal((await post({ content: edited, expectedRevision: original.revision })).status, 200);
     assert.equal(writes, 1); assert.equal(revisions, 1);
     assert.equal(live.contentLibrary["seamsi.seamsiFortunes"]["1"].title, "Published reading");
+    assert.equal(live.pages.find(page => page.id === "contact").patches[0].value, "support@example.com");
     assert.equal((await post({ content: edited, expectedRevision: original.revision })).status, 409);
     const latest = await (await fetch(base)).json();
     race = true;

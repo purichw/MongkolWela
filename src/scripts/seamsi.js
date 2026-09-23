@@ -251,7 +251,7 @@ function renderReading({ intent, reading }) {
         <p class="seamsi-reading-note">ใช้เป็นข้อคิดตามความเชื่อ ไม่ใช่การยืนยันอนาคต ควรพิจารณาร่วมกับข้อมูลจริงก่อนตัดสินใจ</p>
         <div class="seamsi-result-actions">
           <button class="secondary-action" type="button" data-seamsi-reset>${renderIcon("rotate-ccw")}ตั้งคำถามใหม่</button>
-          <a class="primary-action" href="/#consult">ติดต่อมงคลเวลา${renderIcon("arrow-right")}</a>
+          <a class="primary-action" href="/contact/">ติดต่อมงคลเวลา${renderIcon("arrow-right")}</a>
         </div>
       </div>
     </article>`;

@@ -24,7 +24,14 @@ test("authenticated publish -> persisted HTTP read -> planner, with outage and c
     const chunks = [];
     for await (const chunk of req) chunks.push(chunk);
     const body = JSON.parse(Buffer.concat(chunks).toString() || "{}");
-    if (req.url.startsWith("/rest/v1/cms_documents")) published = body.content;
+    if (req.url.startsWith("/rest/v1/cms_documents")) {
+      const expected = new URL(req.url, "http://localhost").searchParams.get("content->>publishedAt");
+      if (req.method === "PATCH" && expected !== (published.publishedAt ? `eq.${published.publishedAt}` : "is.null")) {
+        res.end("null"); return;
+      }
+      published = body.content;
+      res.end(JSON.stringify({ id: body.id })); return;
+    }
     res.end("[]");
   });
   const databaseUrl = await listen(database);
@@ -40,9 +47,10 @@ test("authenticated publish -> persisted HTTP read -> planner, with outage and c
     assert.equal((await send("/api/admin/content", { content: published }, {})).status, 401);
     assert.equal((await send("/api/admin/content", { content: published }, { ...headers, Origin: "https://cross-site.invalid" })).status, 403);
     const initial = await fetch(`${base}/api/temple-planner/data`).then((response) => response.json());
+    const initialContent = await fetch(`${base}/api/admin/content`).then((response) => response.json());
     const changed = structuredClone(published);
     changed.temples.records["popular:test-1"].fields.name = "Published replacement";
-    assert.equal((await send("/api/admin/content", { content: changed })).status, 200);
+    assert.equal((await send("/api/admin/content", { content: changed, expectedRevision: initialContent.revision })).status, 200);
     const response = await fetch(`${base}/api/temple-planner/data`);
     assert.equal(response.headers.get("cache-control"), "no-store");
     const latest = await response.json();
@@ -79,7 +87,8 @@ test("authenticated publish -> persisted HTTP read -> planner, with outage and c
     const sameCatalog = await fetch(`${base}/api/temple-planner/data?revision=${latest.revision}`).then((response) => response.json());
     assert.deepEqual(sameCatalog, { revision: latest.revision, unchanged: true });
     changed.temples.records["popular:test-1"].status = "deleted";
-    await send("/api/admin/content", { content: changed });
+    const beforeDeletion = await fetch(`${base}/api/admin/content`).then((response) => response.json());
+    assert.equal((await send("/api/admin/content", { content: changed, expectedRevision: beforeDeletion.revision })).status, 200);
     const deleted = await fetch(`${base}/api/temple-planner/data`).then((response) => response.json());
     assert.ok(!deleted.items.some((item) => item.id === "popular:test-1"));
     unavailable = true;
