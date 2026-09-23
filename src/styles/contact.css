@@ -11,15 +11,15 @@
 .contact-section-heading h2 { font-size: var(--section-title-size); line-height: 1.5; }
 .contact-section-heading p { color: var(--ink-soft); font-size: 14px; line-height: 1.7; }
 .contact-channel-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
-.contact-channel { min-width: 0; padding: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: #fffdf8; box-shadow: 0 4px 16px #372b1c05; }
-.contact-channel-heading { display: flex; align-items: center; gap: 14px; }
+.contact-channel { min-width: 0; padding: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: #fffdf8; box-shadow: 0 4px 16px #372b1c05; text-align: center; }
+.contact-channel-heading { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .contact-medallion { display: grid; place-items: center; flex: none; width: 48px; height: 48px; border-radius: 50%; background: #f5e7d9; color: var(--lacquer); }
 .contact-medallion .contact-icon { width: 25px; height: 25px; }
 .contact-channel--line .contact-medallion { background: #e3eee5; color: var(--jade-dark); }
 .contact-channel h3 { font-size: 20px; line-height: 1.5; }
 .contact-channel-heading p { color: var(--ink-soft); font-size: 13px; line-height: 1.7; margin-top: 3px; }
-.contact-channel-address { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-block: 18px; }
-.contact .contact-value { min-width: 0; color: var(--jade-dark); font-size: 23px; line-height: 1.5; font-weight: 600; overflow-wrap: anywhere; user-select: all; }
+.contact-channel-address { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; min-height: 44px; margin-block: 18px; }
+.contact .contact-value { grid-column: 2; min-width: 0; color: var(--jade-dark); font-size: 23px; line-height: 1.5; font-weight: 600; overflow-wrap: anywhere; user-select: all; }
 .contact-copy { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--ink-soft); cursor: pointer; }
 .contact-copy:hover { background: #f2ecdf; color: var(--jade-dark); }
 .contact .contact-action { display: inline-flex; justify-content: center; align-items: center; gap: 20px; min-height: 44px; min-width: 180px; padding: 11px 22px; border-radius: 6px; font-size: 14px; font-weight: 600; line-height: 1.5; }
