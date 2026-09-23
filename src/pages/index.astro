@@ -4,7 +4,7 @@ import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 import cmsSeed from "../../public/admin/content/live.json";
 import { homeHeroAttributes, imageCreditUrl } from "../lib/home-hero-media.js";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SearchIcon from "../components/icons/SearchIcon.astro";
+import TempleSearchForm from "../components/TempleSearchForm.astro";
 import HomeSymbol from "../components/HomeSymbol.astro";
 import CarouselControls from "../components/CarouselControls.astro";
 import SiteIcon from "../components/icons/SiteIcon.astro";
@@ -82,12 +82,7 @@ const tools = [
           <h1 id="hero-title">มงคลเวลา</h1>
           <p class="home-hero-subtitle">ค้นหาวัด สร้างเส้นทางบุญ วางแผนไหว้พระในวันมงคล</p>
           <p class="hero-copy">ค้นหาวัด สร้างเส้นทางบุญ วางแผนไหว้พระอย่างรอบคอบ<br />พร้อมข้อมูลสถานที่และปฏิทินไทยสำหรับตรวจสอบก่อนเดินทาง</p>
-          <form class="hero-search home-temple-search" action="/temples/sacred/" role="search">
-            <label class="sr-only" for="site-search">ค้นหาวัด จังหวัด หรือวัตถุประสงค์ในการไหว้พระ</label>
-            <SearchIcon />
-            <input id="site-search" name="q" type="search" placeholder="ค้นหาวัด จังหวัด หรือวัตถุประสงค์" required />
-            <button type="submit">ค้นหา</button>
-          </form>
+          <TempleSearchForm id="site-search" variant="home" />
           <nav class="hero-links" aria-label="ทางลัดหน้าแรก">
             {quickActions.map((item, i) => (
               <a class:list={["ui-glass", { "is-primary": i === 0 }]} href={item.href}>

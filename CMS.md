@@ -61,6 +61,26 @@ describe data shape; they do not determine which document is newest.
 
 ## Temple Collection Labels
 
+### Shared Search Projection
+
+`GET /api/temple-search` reads the current configured CMS once per request and
+applies the same temple merge rules before ranking. Disabled collections/records,
+custom labels, edited fields and explicit image clears remain authoritative.
+It returns only public search fields, facets and paging metadata, with `no-store`;
+source failures return 503 rather than seed results or a false empty count.
+Vercel rewrites this URL to the existing Planner data function with `view=search`;
+the isolated `_search.js` handler keeps the deployment within its 12-function
+limit. Ordinary Planner requests and revision checks are unchanged.
+Home/Header suggestions refresh on search/focus; the results page also uses the
+shared visible-page refresh lifecycle without clearing an unsubmitted query.
+
+`templeSearch` (`/search/`) is registered in both local seeds. On release, register
+only this missing page in the latest live Admin document if Admin page management
+is needed; do not replace the published document with either seed. Search needs
+no CMS migration and uses the existing detail URL/static page publication contract.
+
+### Display Names
+
 The collection display names are `วัดดังน่าไป` (`popular`), `วัดเด่นขอพร`
 (`sacred`), and `พิกัดสายมู` (`mu`). Routes, collection keys, temple IDs and
 original dataset category memberships are unchanged.

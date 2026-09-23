@@ -122,6 +122,7 @@ export const siteConfig = {
       temples: {},
       templesPopular: {},
       templesPlanner: {},
+      templeSearch: {},
       templesMu: {},
       templesSacred: {},
       templesThailand: {},

@@ -31,7 +31,7 @@ const planner = findNavigationLink(model.tabs, "/temples/planner/");
     </a>
     <nav class="mw-desktop-nav" data-header-desktop aria-label={config.navLabel} set:html={renderDesktopNavigation(model, options)} />
     <div class="mw-header-actions">
-      <a class="mw-search mw-round-control" data-header-search href="/#site-search" aria-label="ค้นหาวัด" title="ค้นหาวัด"><SiteIcon name="search" /></a>
+      <a class="mw-search mw-round-control" data-header-search href="/search/" aria-haspopup="dialog" aria-controls="temple-search-dialog" aria-label="ค้นหาวัดและสถานที่" title="ค้นหาวัดและสถานที่"><SiteIcon name="search" /></a>
       <div data-header-cta>
         {planner && <a class="mw-planner-cta" data-nav-key="planner-cta" data-nav-cta="temple-planner" href={planner.href!} aria-label={planner.label}>
           <span class="mw-cta-full">{planner.label}</span><span class="mw-cta-short" aria-hidden="true">วางแผน</span><SiteIcon name="arrow-right" />
@@ -48,7 +48,7 @@ const planner = findNavigationLink(model.tabs, "/temples/planner/");
         <h2 id="mw-drawer-title">เดินทางสายบุญ<br />ให้ทุกก้าวมีความหมาย</h2>
         <p>ค้นหาวัดและเส้นทางมงคล วางแผนการเดินทางได้ง่าย ๆ</p>
       </div>
-      <a class="mw-drawer-search mw-mobile-row" data-header-search href="/#site-search"><SiteIcon name="search" /><span>ค้นหาวัด</span><SiteIcon name="chevron-right" /></a>
+      <a class="mw-drawer-search mw-mobile-row" data-header-search href="/search/" aria-haspopup="dialog" aria-controls="temple-search-dialog"><SiteIcon name="search" /><span>ค้นหาวัดและสถานที่</span><SiteIcon name="chevron-right" /></a>
       <nav data-header-mobile aria-label="เมนูหลักบนมือถือ" set:html={renderMobileNavigation(model, options)} />
       <nav class="mw-drawer-utility" data-header-mobile-utility aria-label="ลิงก์เพิ่มเติม" set:html={renderUtilityNavigation(drawerUtilities(model, utility), options)} />
       <div class="mw-drawer-quote" aria-hidden="true"><SiteIcon name="sparkles" /><p>“ เพราะทุกการเดินทาง<br />คือการเติมพลังใจให้ชีวิต ”</p></div>

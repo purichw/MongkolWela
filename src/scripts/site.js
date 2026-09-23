@@ -7,6 +7,7 @@ import { initScrollProgress } from "./scroll-progress.js";
 import { initPublicSelects } from "./public-select.js";
 import { initMediaMotion } from "./media-motion.js";
 import { initImageFallbacks } from "./image-fallback.js";
+import { initTempleSearch } from "./temple-search.js";
 
 initPageLoader();
 initImageFallbacks();
@@ -16,4 +17,5 @@ initRealtimeTopbar();
 initScrollProgress();
 initHeroCarousel();
 initMobileNavigation();
+initTempleSearch();
 initPublicSelects();

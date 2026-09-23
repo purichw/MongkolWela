@@ -23,14 +23,64 @@ async function setup(page: Page, path = "/temples/popular/") {
   await page.evaluate(() => document.fonts.ready);
   return errors;
 }
-async function ready(page: Page) {
-  await expect(page.locator("[data-popular-temple-count]")).toContainText("243");
+async function ready(page: Page, total = 243) {
+  await expect(page.locator("[data-popular-temple-count]")).toContainText(String(total));
   await page.locator(".pf").evaluate(e => window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 160));
 }
 const ids = (page: Page) => page.locator(cards).evaluateAll(nodes => nodes.map(node => (node as HTMLElement).dataset.cardKey));
 const choose = (page: Page, name: string) => page.getByRole("checkbox", { name, exact: true }).check();
 const done = (page: Page) => page.locator("[data-pf-done]").click();
 const search = (page: Page) => page.locator(".pf__search button[type=submit]").click();
+
+for (const [collection, total] of [["popular", 243], ["sacred", 217], ["mu", 165]] as const) {
+  for (const width of [1440, 390]) {
+    test(`shared collection filters: ${collection} at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 960 });
+      const errors = await setup(page, `/temples/${collection}/`); await ready(page, total);
+      await expect(page.locator("[data-compact-filters]")).toHaveCount(1);
+      await expect(page.locator(".temple-collection-v2-advanced-filter")).toHaveCount(0);
+      await expect(page.locator("[data-popular-temple-grid]")).toHaveAttribute("data-collection", collection);
+      const panel = await page.locator(".pf__panel").boundingBox();
+      expect(panel!.height).toBeLessThan(width > 720 ? 220 : 450);
+      expect(await page.locator(".pf").evaluate(node => getComputedStyle(node).fontFamily)).toContain("IBM Plex Sans Thai");
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+      const before = await ids(page);
+      const target = await page.locator('[data-popular-temple-card][data-province="กรุงเทพมหานคร"]').first().evaluate(node => ({ name: (node as HTMLElement).dataset.name!, purpose: (node as HTMLElement).dataset.blessings!.split(";")[0].trim() }));
+      fs.mkdirSync("artifacts/collection-filters", { recursive: true });
+      await page.screenshot({ path: `artifacts/collection-filters/${collection}-${width}.png` });
+      await page.locator(province).click();
+      await choose(page, "กรุงเทพมหานคร"); await choose(page, "เชียงใหม่");
+      await expect(page.locator("[data-pf-selection-count]")).toContainText("2 จังหวัด");
+      const editor = await page.locator(dialog).boundingBox();
+      expect(editor!.x).toBeGreaterThanOrEqual(0);
+      expect(editor!.x + editor!.width).toBeLessThanOrEqual(width + 1);
+      expect(editor!.y + editor!.height).toBeLessThanOrEqual(961);
+      if (width < 720) await expect(page.locator(dialog)).toHaveAttribute("data-mode", "sheet");
+      if (collection !== "popular") await page.screenshot({ path: `artifacts/collection-filters/${collection}-editor-${width}.png` });
+      await page.locator(optionQuery).fill("เชียง");
+      await expect(page.getByRole("checkbox", { name: "เชียงใหม่", exact: true })).toBeVisible();
+      await done(page);
+      expect(await ids(page)).toEqual(before);
+      await page.locator(purpose).click(); await choose(page, target.purpose);
+      await page.keyboard.press("Escape");
+      await expect(page.locator(purpose)).toBeFocused();
+      await expect(page.locator(purpose)).toContainText("ทั้งหมด");
+      await page.locator(purpose).click(); await choose(page, target.purpose); await done(page);
+      await page.locator(mainQuery).fill(target.name); await search(page);
+      await expect(page.locator(cards).first()).toBeVisible();
+      expect(await page.locator(cards).evaluateAll((nodes, target) => nodes.every(node => {
+        const d = (node as HTMLElement).dataset;
+        return ["กรุงเทพมหานคร", "เชียงใหม่"].includes(d.province!) && d.blessings?.split(";").map(value => value.trim()).includes(target.purpose) && d.searchText?.includes(target.name);
+      }), target)).toBe(true);
+      await expect(page.locator(cards).first().locator("[data-popular-temple-detail]")).toHaveAttribute("href", new RegExp(`/temples/${collection}/`));
+      await page.locator("[data-popular-temple-filter-clear]").click();
+      await expect(page.locator(mainQuery)).toHaveValue("");
+      await expect(page.locator(province)).toContainText("ทั้งหมด");
+      expect(await ids(page)).toEqual(before);
+      expect(errors).toEqual([]);
+    });
+  }
+}
 
 test("working, draft, applied: multi-selection, local search, cancel, restore and clear", async ({ page }) => {
   const errors = await setup(page); await ready(page);

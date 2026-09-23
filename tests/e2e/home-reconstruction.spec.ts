@@ -86,7 +86,8 @@ test("mobile hero keeps three shortcuts, readable symbols and the daily card bel
   }
   await page.locator(".mw-menu-toggle").click();
   await page.locator(".mw-drawer-search").click();
-  await expect(page.locator("#site-search")).toBeFocused();
+  await expect(page.locator("#header-temple-search")).toBeFocused();
+  await page.getByRole("button", { name: "ปิดการค้นหา" }).click();
   await expect(page.locator(".home-today-date")).toBeVisible();
   await expect(page.locator(".home-today-date")).toHaveAttribute("href", "/calendar/day/");
   await page.locator(".mw-menu-toggle").click();
@@ -263,7 +264,7 @@ test("shared public header keeps the same geometry, search and menu across route
       expect(geometry.overflow, `${path} / ${width}`).toBe(false);
       expect(geometry.brandRight).toBeLessThanOrEqual(geometry.actionsLeft);
       if (width >= 390) expect(geometry.iconWidth).toBe(22);
-      await expect(page.locator(".mw-search")).toHaveAttribute("href", "/#site-search");
+      await expect(page.locator(".mw-search")).toHaveAttribute("href", "/search/");
       await expect(page.locator(".mw-planner-cta")).toBeVisible();
       if (width <= 720) {
         expect(geometry.menuLeft).toBeGreaterThan(geometry.brandRight);
@@ -278,8 +279,8 @@ test("shared public header keeps the same geometry, search and menu across route
   }
   await page.locator(".mw-menu-toggle").click();
   await page.locator(".mw-drawer-search").click();
-  await expect(page).toHaveURL(/\/#site-search$/);
-  await expect(page.locator("#site-search")).toBeFocused();
+  await expect(page.locator("#temple-search-dialog")).toBeVisible();
+  await expect(page.locator("#header-temple-search")).toBeFocused();
   expect(errors).toEqual([]);
 });
 
@@ -338,10 +339,10 @@ test("search trims Thai text, keeps q contract and does not navigate on whitespa
   await page.locator("#site-search").press("Enter");
   await expect(page).toHaveURL(/\/$/);
   expect(await page.locator("#site-search").evaluate((e: HTMLInputElement) => e.validity.valid)).toBe(false);
-  await page.route("**/temples/sacred/?q=*", r => r.fulfill({ body: "<html lang='th'><h1>ปลายทางค้นหา</h1></html>", contentType: "text/html" }));
+  await page.route("**/search/?q=*", r => r.fulfill({ body: "<html lang='th'><h1>ปลายทางค้นหา</h1></html>", contentType: "text/html" }));
   await page.locator("#site-search").fill("  วัดอรุณ  ");
   await page.locator("#site-search").press("Enter");
-  await expect(page).toHaveURL(/\/temples\/sacred\/\?q=/);
+  await expect(page).toHaveURL(/\/search\/\?q=/);
   expect(new URL(page.url()).searchParams.get("q")).toBe("วัดอรุณ");
 });
 

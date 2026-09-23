@@ -16,8 +16,9 @@ points. A different task layout must still sit on the same site frame.
 | `Topbar.astro`, `lib/site-navigation.js`, `scripts/navigation.js`, `header.css` | One published navigation model for SSR/CMS; split links/disclosures, opaque panels, compact dialog drawer and intrinsic fit guard | Every shared Header consumer |
 | `PageBanner.astro`, `page-banner.css` | Shared full-width image layer, shade, motifs, breadcrumb/copy scale, quote and content alignment | Calendar, Day, temple hub, three temple collections, planner and Thailand directory via `TempleSearchHero` |
 | `scripts/planner/place-card.js` | One escaped, semantic place-selection renderer for desktop tiles and mobile rows | Planner list in picker-only and combined views |
-| `PopularFilters.astro`, `scripts/popular-filters.js`, `popular-filters.css` | Feature-local compact selectors and one responsive editor; adapts the existing collection matcher rather than duplicating it | Popular only; Sacred/Mu intentionally keep their current filter UI |
-| `ChoiceChip.astro`, `lib/choice-chip.js`, `public-ui.css` | Centered toggle-button/native-checkbox chips; balanced check inset, 44px target, wrapping, focus and disabled states | Popular regions, province/purpose options and All; legacy Planner/Sacred/Mu chips retain their own contracts |
+| `PopularFilters.astro`, `scripts/popular-filters.js`, `popular-filters.css` | Shared collection search panel, compact selectors and one responsive editor; adapts the existing collection matcher rather than duplicating it | Popular, Sacred and Mu through `TempleCollectionView`; historical Popular filenames/hooks remain stable |
+| `ChoiceChip.astro`, `lib/choice-chip.js`, `public-ui.css` | Centered toggle-button/native-checkbox chips; balanced check inset, 44px target, wrapping, focus and disabled states | Popular/Sacred/Mu regions, province/purpose options and All; Planner chips retain their own contract |
+| `TempleSearchForm.astro`, `TempleSearchDialog.astro`, `scripts/temple-search.js`, `temple-search.css` | One search form, suggestion/result row renderer and responsive overlay; fresh CMS-backed search | Home hero, Header on all public routes, `/search/` |
 | `icons/SiteIcon.astro` | Decorative heritage raster or Lucide icon; parent provides the accessible action name | Header/footer, Home, Calendar, Calendar Day, Place Detail |
 | `lib/ui-markup.js` | Same Lucide glyph attributes for Astro and runtime-rendered HTML | `SiteIcon`, place detail SSR, CMS refresh, travel controls, map markers |
 | `IconMedallion.astro` / `renderIconMedallion` | A circular centered icon wrapper; slot/argument is trusted icon markup | Home intent cards, Calendar summaries, Calendar Day facts/guidance, Place Detail headings/activities |
@@ -27,6 +28,53 @@ points. A different task layout must still sit on the same site frame.
 | `CarouselControls.astro`, `LinkArrow.astro`, `BrandOrnament.astro` | Existing shared control, link affordance and decorative motif | Existing Home/Calendar/detail/shell consumers |
 
 ## Usage
+
+### Collection Filters
+
+All three collection routes render the same `PopularFilters` instance through
+`TempleCollectionView`. Its `regions` and `purposes` come from each collection;
+the existing directory engine owns loaded records, CMS overrides, draft/applied
+filters, matching, result counts, nearby ordering and map integration. The view
+adapter owns only the editor's working selection, local option search and focus.
+Done commits to the draft; Search applies it; Escape/outside/close cancels the
+working selection. Desktop uses a bounded popover when space permits, while
+mobile uses the same editor as a bottom sheet. Route CSS is enabled for exactly
+the three collection index pages, not detail pages or the Thailand directory.
+
+Acceptance: each collection retains its own inventory and detail URLs; province
+and purpose choices filter together; cancel/clear restore state; desktop/mobile
+geometry and Thai chip alignment match. Covered by the `shared collection filters`
+cases in `tests/e2e/popular-filters.spec.ts`; captures in
+`artifacts/collection-filters/`. This migration does not change the separate
+Home/Header cross-collection search flow or Planner filters.
+
+### Shared Temple Search
+
+Home and Header share `GET /api/temple-search` and the `/search/?q=` destination.
+Header opens a native modal on the current route: compact desktop panel, full
+viewport mobile sheet, autofocus, Escape dismissal and opener focus restoration.
+Home keeps its existing `#site-search` CMS placeholder target and opens suggestions
+in a positioned top-layer popover. No page redirect is needed to start searching.
+
+`TempleSearchForm` accepts a unique `id` and `variant` (`home`, `dialog`, `results`).
+The controller owns debouncing, IME composition, cancellation, keyboard selection
+and status/retry states. Up/down highlights suggestions; Enter opens the highlighted
+place or submits the query. Both views share `resultLink`, not Planner's selectable
+card. Results preserve query, collection, province, purpose and pagination in the
+URL; back/reload restores the same state. Filters use existing public selects.
+
+The server matcher combines Popular/Sacred/Mu after authoritative CMS merges and
+deduplicates stable place identities. It includes places without coordinates,
+unlike Planner. The all-Thailand registry and other content types remain separate.
+Full results are paged at 24 and suggestions at 5 with the same ranking. Explicit
+CMS image clears render a neutral pin, never an unrelated replacement photo.
+
+Local API preview: start Astro on 4363, then `node scripts/qa/search-preview.mjs`
+and open `http://127.0.0.1:4371/`. It binds loopback and exposes only the real GET
+content/search handlers; it does not write CMS data. Tests: runtime
+`temple-search.test.mjs` and E2E `temple-search.spec.ts` at 1440/390px, including
+Home/Header parity, detail navigation, URL history, paging, stale response rejection,
+empty/error/retry, focus and accessibility. Captures: `artifacts/temple-search/`.
 
 ### Tarot Family
 
