@@ -64,8 +64,40 @@ test("shared desktop shell, search, sections, and keyboard controls", async ({ p
   await expect(page.locator(".mw-admin-drawer")).not.toBeVisible();
   await page.locator("#adminGlobalSearch").fill("ปฏิทินไทย");
   await page.locator("#adminSearchResults [data-page-jump='calendar']").click();
-  await expect(page.locator("[data-field='selectedPage']")).toHaveValue("calendar");
+  await expect(page.locator("[data-page-content-select]")).toHaveValue("calendar");
+  await expect(page.getByRole("link", { name: "เปิดหน้าเว็บ", exact: true })).toHaveAttribute("href", "/calendar/");
   expect(errors).toEqual([]);
+});
+
+test("collapsed sidebar keeps every menu reachable above its footer on short screens", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 640 });
+  await mock(page);
+  await ready(page);
+  await page.locator(".mw-admin-nav-toggle").click();
+  const settings = page.locator('#adminNav [data-section="settings"]');
+  await settings.focus();
+  await expect(settings).toBeInViewport();
+  const geometry = await page.evaluate(() => {
+    const sidebar = document.querySelector(".mw-admin-sidebar")!.getBoundingClientRect();
+    const nav = document.querySelector("#adminNav")!;
+    const navRect = nav.getBoundingClientRect();
+    const footer = document.querySelector(".mw-admin-sidebar-foot")!.getBoundingClientRect();
+    const last = nav.querySelector('[data-section="settings"]')!.getBoundingClientRect();
+    return {
+      centered: [...nav.querySelectorAll("button")].every(button => {
+        const rect = button.getBoundingClientRect();
+        return rect.left >= sidebar.left && rect.right <= sidebar.right
+          && Math.abs(rect.left + rect.width / 2 - sidebar.left - sidebar.width / 2) < 1;
+      }),
+      scrolled: nav.scrollTop > 0,
+      lastVisible: last.top >= navRect.top && last.bottom <= navRect.bottom,
+      footerClear: navRect.bottom <= footer.top && footer.bottom <= innerHeight,
+    };
+  });
+  expect(geometry).toEqual({ centered: true, scrolled: true, lastVisible: true, footerClear: true });
+  await settings.click();
+  await expect(page.locator("#adminTitle")).toHaveText("ตั้งค่า / อนุกรมวิธาน");
+  await snapshot(page, "collapsed-sidebar-bottom", false);
 });
 
 test("mobile navigation, focus, responsive sections, and editing", async ({ page }) => {
