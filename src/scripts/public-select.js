@@ -1,6 +1,5 @@
 let manager;
 let loading;
-let scheduled = false;
 const observedRoots = new WeakSet();
 
 export function syncPublicSelects(root = document) {
@@ -10,6 +9,8 @@ export function syncPublicSelects(root = document) {
 export function initPublicSelects({ root = document.querySelector("main"), includeAdmin = false } = {}) {
   if (!root || observedRoots.has(root) || (!includeAdmin && document.body.matches(".admin-page, .commerce-console"))) return;
   observedRoots.add(root);
+  // Replacing an admin shell must not share the old root's pending update.
+  let scheduled = false;
 
   const enhance = () => {
     if (scheduled) return;

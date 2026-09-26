@@ -2,6 +2,7 @@ import { applyImageFallback } from "../lib/image-placeholder.js";
 import { createAdminPublishing } from "./admin/publishing.js";
 import { createContentLibrary } from "./admin/content-library.js";
 import { createPageContentEditor } from "./admin/page-content.js";
+import { createNavigationEditor } from "./admin/navigation-editor.js";
 import { createCommerceEditor } from "./admin/commerce.js";
 import { initPublicSelects } from "./public-select.js";
 import { updateVisitContent } from "./admin/visit-content.js";
@@ -287,7 +288,7 @@ function renderSideNav() {
     navButton("collections", "เส้นทาง / คอลเลกชัน", "section", TEMPLE_COLLECTIONS.length),
     navButton("dates", "กิจกรรมและงานบุญ", "dates", ""),
     navButton("commerce", "ร้านค้าและร่วมบุญ", "shopping-bag"),
-    navButton("pages", "หน้าและเนื้อหา", "page", "", "หน้าแรก"),
+    navButton("pages", "จัดการหน้าแรก", "page", "", "หน้าและเนื้อหา"),
     navButton("contentLibrary", "คลังคำทำนาย", "book-open"),
     navButton("siteContent", "ส่วนกลางเว็บไซต์", "section"),
     navButton("navigation", "เมนูนำทาง", "nav", "", "เมนูเว็บไซต์"),
@@ -463,6 +464,7 @@ function renderAdmin() {
 }
 
 function setTitle(title, kicker = "ระบบจัดการเว็บ") {
+  $(".mw-admin-main")?.classList.remove("is-home-editor", "is-menu-editor", "is-commerce-editor");
   $("#adminContent").classList.remove("is-overview");
   $("#adminTitle").textContent = title;
   $("#adminDescription").textContent = "";
@@ -899,6 +901,10 @@ function renderSectionEditor(section, index) {
 }
 
 function renderNavigation() {
+  navigationEditor.render();
+}
+
+function renderLegacyNavigation() {
   setTitle("เมนูนำทาง (Navigation)", "จัดการหน้าเว็บ");
   const nav = ensureNavigation();
   setTopActions(`<button class="mw-admin-btn mw-admin-btn-primary" type="button" data-action="save-draft">บันทึกเมนูนำทาง</button>`);
@@ -1196,6 +1202,7 @@ function handleTempleReorderKeydown(event) {
 }
 
 function handleGlobalClick(event) {
+  if (navigationEditor.click(event)) return;
   if (contentLibrary.click(event)) return;
   if (pageContentEditor.click(event)) return;
   if (!event.target.closest(".mw-admin-global-search")) design.closeSearch();
@@ -1262,6 +1269,7 @@ function handleGlobalClick(event) {
     if (state.section === "commerce") commerceEditor.destroy();
     if (state.section === "dates" && !activityEditor.canLeave()) return;
     if (sectionButton.dataset.pageJump) state.selectedPageId = sectionButton.dataset.pageJump;
+    else if (sectionButton.dataset.section === "pages") state.selectedPageId = "home";
     if (sectionButton.dataset.collectionJump) {
       state.templeCollectionFilter = sectionButton.dataset.collectionJump;
       state.templeSearch = "";
@@ -1431,6 +1439,7 @@ function restoreTempleListScroll() {
 }
 
 function handleInput(event) {
+  if (navigationEditor.input(event)) return;
   if (event.target.closest("[data-commerce-console]")) return;
   if (contentLibrary.input(event)) return;
   if (pageContentEditor.input(event)) return;
@@ -2047,7 +2056,8 @@ const { setPublishControlsDisabled, setPublishProgress, hidePublishProgress, pub
 
 const activityEditor = createActivityEditor({ state, $, api, escapeHtml, setTitle, setTopActions, setStatus, uploadMedia: uploadAdminMedia });
 const contentLibrary = createContentLibrary({ state, api, escapeHtml, setTitle, setTopActions, markDirty, setStatus });
-const pageContentEditor = createPageContentEditor({ state, escapeHtml, markDirty, setTitle, setTopActions, setStatus, renderAdvanced: renderAdvancedPages });
+const pageContentEditor = createPageContentEditor({ state, escapeHtml, markDirty, setTitle, setTopActions, setStatus, renderAdvanced: renderAdvancedPages, uploadMedia: uploadAdminMedia });
+const navigationEditor = createNavigationEditor({ state, escapeHtml, markDirty, setTitle, setTopActions, setStatus, uploadMedia: uploadAdminMedia });
 const commerceEditor = createCommerceEditor({ setTitle, setTopActions });
 
 const design = createAdminDesign({ state, $, escapeHtml, dashboardSummary, templeHealthRows, formatDateTime, setTitle, setTopActions });

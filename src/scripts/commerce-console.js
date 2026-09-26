@@ -1,6 +1,7 @@
 import { COMMERCE_TYPES, COMMERCE_STATUS } from "../lib/commerce-format.js";
 import { commerceApi, e, money, thaiCommerceDate } from "./commerce-ui.js";
 import { renderIcon } from "../lib/ui-markup.js";
+import { commerceDashboardHeader, commercePreparation, commerceSetupGuide } from "./admin/commerce-dashboard.js";
 
 export function mountCommerceConsole(root, { embedded = false } = {}) {
   const lifecycle = new AbortController();
@@ -8,6 +9,7 @@ export function mountCommerceConsole(root, { embedded = false } = {}) {
   const content = root.querySelector("[data-seller-content]");
   const message = root.querySelector("[data-seller-message]");
   let data;
+  let serviceDisabled = false;
   let section = "products";
   let selectedOrg = "";
   let editing;
@@ -37,6 +39,7 @@ export function mountCommerceConsole(root, { embedded = false } = {}) {
       if (lifecycle.signal.aborted) return;
       if (!embedded && result.admin) { location.replace("/admin/?section=commerce"); return; }
       data = result;
+      serviceDisabled = false;
       if (!data.organizations.some(o => o.id === selectedOrg)) selectedOrg = data.organizations[0]?.id || "";
       const logout = document.querySelector("[data-seller-logout]");
       if (logout) logout.hidden = data.admin;
@@ -46,6 +49,8 @@ export function mountCommerceConsole(root, { embedded = false } = {}) {
       if ([401, 403].includes(error.status) && !embedded) login();
       else {
         const disabled = error.code === "COMMERCE_DISABLED";
+        serviceDisabled = disabled;
+        data = undefined;
         const denied = [401, 403].includes(error.status);
         content.innerHTML = `<section class="commerce-service-state" data-commerce-state="${disabled ? "disabled" : denied ? "denied" : "error"}">
           <div class="commerce-service-symbol">${renderIcon(disabled ? "shopping-bag" : "info")}</div>
@@ -53,6 +58,7 @@ export function mountCommerceConsole(root, { embedded = false } = {}) {
           <p>${disabled ? "ยังไม่มีการเปิดรับคำสั่งซื้อหรือการจองร่วมบุญผ่านระบบ" : e(error.message)}</p>
           <div class="commerce-actions"><button class="commerce-button secondary" data-reload>${renderIcon("rotate-ccw")}ลองใหม่</button><a class="commerce-button secondary" href="/shop/">${renderIcon("external-link")}ดูหน้าร้าน</a></div>
         </section>`;
+        if (embedded && disabled) content.innerHTML = commercePreparation(section);
       }
       content.setAttribute("aria-busy", "false");
     }
@@ -63,6 +69,10 @@ export function mountCommerceConsole(root, { embedded = false } = {}) {
     if (!tabs.some(([key]) => key === section)) section = "products";
     content.innerHTML = `<header class="commerce-console-title"><div><p>${data.admin ? "ผู้ดูแลส่วนกลาง" : "พื้นที่ผู้ขาย"}${data.localPreview ? " · ข้อมูลทดสอบในเครื่อง" : ""}</p><h1>${COMMERCE_TYPES[section]}</h1></div><div class="commerce-actions"><button class="commerce-button secondary" data-reload>โหลดล่าสุด</button>${!["orders", "bookings"].includes(section) ? `<button class="commerce-button" data-create ${!selectedOrg && section !== "organizations" ? "disabled" : ""}>เพิ่ม${section === "organizations" ? "ร้านค้า / วัด" : "รายการ"}</button>` : ""}</div></header><nav class="commerce-console-tabs" aria-label="ส่วนจัดการ">${tabs.map(([key, title]) => `<button type="button" data-section="${key}" aria-current="${section === key ? "page" : "false"}">${title}</button>`).join("")}</nav><div class="commerce-filters"><label>ร้านค้า / ผู้จัด<select data-organization><option value="">${data.admin ? "ทุกร้าน" : "เลือกร้าน"}</option>${data.organizations.map(o => `<option value="${o.id}" ${selectedOrg === o.id ? "selected" : ""}>${e(o.name)}</option>`).join("")}</select></label><label>ค้นหา<input type="search" data-search value="${e(search)}" /></label></div><div data-management-view></div>`;
     if (editing) renderEditor(); else renderRows();
+    if (embedded) {
+      content.insertAdjacentHTML("afterbegin", commerceDashboardHeader(data, section));
+      content.insertAdjacentHTML("beforeend", '<div data-commerce-guide-panel></div>');
+    }
   }
   function renderRows() {
     const rows = data[section].filter(row => (!selectedOrg || (section === "organizations" ? row.id : row.orgId) === selectedOrg) && `${label(row)} ${row.contact || ""}`.toLowerCase().includes(search.toLowerCase()));
@@ -101,6 +111,23 @@ export function mountCommerceConsole(root, { embedded = false } = {}) {
   listen(content, "change", event => { if (event.target.matches("[data-organization]")) { if (!allowLeave()) { event.target.value = selectedOrg; return; } selectedOrg = event.target.value; editing = null; dirty = false; render(); } else if (event.target.closest("form")) dirty = true; });
   listen(content, "click", async event => {
     const button = event.target.closest("button"); if (!button || busy) return;
+    if (button.hasAttribute("data-commerce-guide")) {
+      const value = button.dataset.commerceGuide;
+      const step = value === "all" ? "all" : Number(value);
+      if (serviceDisabled) content.innerHTML = commercePreparation(section, step);
+      else if (data) content.querySelector("[data-commerce-guide-panel]").innerHTML = commerceSetupGuide(data, step);
+      const details = content.querySelector(`[data-commerce-step="${step === "all" ? 0 : step}"]`);
+      details?.scrollIntoView({ block: "center", behavior: "smooth" });
+      details?.querySelector("summary")?.focus({ preventScroll: true });
+      return;
+    }
+    if (button.dataset.commerceSection) {
+      if (!allowLeave()) return;
+      section = button.dataset.commerceSection; editing = null; dirty = false; search = "";
+      if (serviceDisabled) content.innerHTML = commercePreparation(section);
+      else if (data) render();
+      return;
+    }
     if (button.dataset.section) { if (!allowLeave()) return; section = button.dataset.section; editing = null; dirty = false; search = ""; render(); }
     if (button.hasAttribute("data-create")) { if (!allowLeave()) return; edit(); }
     if (button.dataset.edit) { if (!allowLeave()) return; edit(data[section].find(r => r.id === button.dataset.edit)); }

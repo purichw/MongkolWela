@@ -11,6 +11,8 @@ import { publicContentForPath } from "../../src/lib/public-content.js";
 import { contentRevision } from "../../src/lib/content-revision.js";
 import { contentCatalog, validateContentLibrary } from "../../src/data/content-catalog.js";
 import { validateContentPatches } from "../../src/lib/content-patches.js";
+import { validateHomepageContent } from "../../src/lib/homepage-content.js";
+import { validateNavigation } from "../../src/lib/site-navigation.js";
 
 function normalizeContent(content, actor) {
   const now = new Date().toISOString();
@@ -64,6 +66,8 @@ export default async function handler(req, res) {
 
     validateContentLibrary(body.content.contentLibrary);
     validateContentPatches(body.content);
+    validateHomepageContent(body.content);
+    validateNavigation(body.content.navigation);
     const current = await readLiveContent();
     const { publishedAt: oldPublishedAt, updatedAt: oldUpdatedAt, ...currentFields } = current;
     if (!body.expectedRevision || body.expectedRevision !== contentRevision(currentFields)) {

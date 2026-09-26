@@ -3,13 +3,16 @@ import { projectContentPatches, safeContentUrl } from "../../lib/content-patches
 import { adminIcon } from "./design.js";
 import defaults from "../../../public/admin/content/default.json";
 import { tarotMeaningCards } from "../../data/tarot-meanings.js";
+import { createHomepageEditor } from "./homepage-editor.js";
 
 const additionalPages = [401, 403, 404, 429, 500, 502, 503, 504].map(code => ({ id: `error${code}`, route: [404, 500].includes(code) ? `/${code}.html` : `/${code}/`, label: `หน้าข้อผิดพลาด ${code}` }));
 additionalPages.push(...tarotMeaningCards.map(card => ({ id: `meaning-${card.slug}`, route: `/tarot/meanings/${card.slug}/`, label: `ความหมายไพ่ ${card.thName}` })));
 for (const name of ["daily", "monthly", "love", "money", "career", "luck"]) additionalPages.push({ id: `tarot-${name}-result`, route: `/tarot/${name}/result/`, label: `ผลไพ่ ${name}` });
 additionalPages.push({ id: "login", route: "/login/", label: "เลือกช่องทางเข้าสู่ระบบ" });
 
-export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTitle, setTopActions, setStatus, renderAdvanced }) {
+export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTitle, setTopActions, setStatus, renderAdvanced, uploadMedia }) {
+  const homepageEditor = createHomepageEditor({ state, escapeHtml: e, markDirty, setTitle, setTopActions, setStatus, uploadMedia });
+  const documents = new Map();
   const blueprints = new Map();
   const failures = new Map();
   const pending = new Set();
@@ -42,6 +45,7 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
       const document = new DOMParser().parseFromString(await response.text(), "text/html");
       if (!document.querySelector("[data-cms-page]")) throw new Error("หน้านี้ไม่มีแม่แบบเนื้อหาที่รองรับ");
       prepareContentFields(document);
+      documents.set(cacheKey, document.cloneNode(true));
       projectContentPatches(document, [...(state.content.site?.patches || []), ...(state.content.pages.find(page => page.route === route)?.patches || [])]);
       const fields = scanContentFields(document);
       blueprints.set(cacheKey, fields.filter(field => {
@@ -56,6 +60,12 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
   function render() {
     const page = current();
     if (!page) return renderAdvanced();
+    if (!shared() && page.id === "home" && documents.has(key())) {
+      if (!state.content.pages.some(item => item.id === "home")) state.content.pages.push(structuredClone(page));
+      homepageEditor.render(documents.get(key()), registry());
+      return;
+    }
+    document.querySelector(".mw-admin-main")?.classList.remove("is-home-editor");
     setTitle(shared() ? "ส่วนกลางเว็บไซต์" : "หน้าและเนื้อหา", shared() ? "ส่วนหัวและส่วนท้าย" : "เนื้อหารายหน้า");
     setTopActions("");
     const root = document.querySelector("#adminContent");
@@ -87,6 +97,7 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
   }
 
   function click(event) {
+    if (homepageEditor.click(event)) return true;
     const pagination = event.target.closest("[data-page-content-page]");
     if (pagination) { pageNumber = Number(pagination.dataset.pageContentPage); render(); document.querySelector(".mw-page-content-filters")?.scrollIntoView({ block: "start" }); return true; }
     if (event.target.closest("[data-page-content-retry]")) { load(); return true; }
@@ -98,6 +109,7 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
   }
   function input(event) {
     const target = event.target;
+    if (homepageEditor.input(event)) return true;
     if (target.matches("[data-page-content-select]")) { state.selectedPageId = target.value; search = ""; group = "all"; pageNumber = 1; render(); return true; }
     if (target.matches("[data-page-content-group]")) { group = target.value; pageNumber = 1; render(); return true; }
     if (target.matches("[data-page-content-search]")) { search = target.value; pageNumber = 1; render(); document.querySelector("[data-page-content-search]")?.focus(); return true; }

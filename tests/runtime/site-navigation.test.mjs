@@ -1,9 +1,38 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { navigationHref, navigationModel, navigationGroups, navigationState, navigationUtilities, drawerUtilities, renderDesktopNavigation, renderMobileNavigation, renderMobileHub } from "../../src/lib/site-navigation.js";
+import { editableNavigationGroups, validateNavigation, navigationHref, navigationModel, navigationGroups, navigationState, navigationUtilities, drawerUtilities, renderDesktopNavigation, renderMobileNavigation, renderMobileHub, renderUtilityNavigation } from "../../src/lib/site-navigation.js";
 
 const seed = JSON.parse(readFileSync(new URL("../../public/admin/content/live.json", import.meta.url))).navigation;
+
+test("editor grouping is reversible, preserves empty groups and keeps children with their parent", () => {
+  const flat = [{ id: "feature", label: "Feature", href: "/" }, { id: "group", label: "Group", section: true }, { id: "one", label: "One", href: "/one/" }, { id: "two", label: "Two", href: "/two/" }];
+  const grouped = editableNavigationGroups(flat);
+  assert.deepEqual(grouped[1].items.map(item => item.id), ["one", "two"]);
+  grouped.reverse();
+  assert.deepEqual(editableNavigationGroups(grouped), grouped);
+  assert.equal(editableNavigationGroups([{ id: "empty", label: "Empty", section: true, items: [] }, flat[0]]).length, 2);
+  assert.deepEqual(flat.map(item => item.id), ["feature", "group", "one", "two"]);
+});
+
+test("device gates and labels apply to the same visitor renderers, including disabled parent groups", () => {
+  const model = navigationModel({ tabs: [{ id: "main", label: "Main", href: "/main/", desktopLabel: "Desktop name", mobileLabel: "Mobile name", items: [
+    { id: "hidden-group", label: "Hidden", section: true, enabled: false }, { id: "hidden-child", label: "Hidden child", href: "/hidden/" },
+    { id: "group", label: "Group", section: true }, { id: "desktop-only", label: "Desktop only", href: "/desktop/", mobile: false },
+  ] }] });
+  assert.match(renderDesktopNavigation(model), /Desktop name/);
+  assert.match(renderDesktopNavigation(model), /Desktop only/);
+  assert.doesNotMatch(renderDesktopNavigation(model), /Hidden child/);
+  assert.match(renderMobileNavigation(model), /Mobile name/);
+  assert.doesNotMatch(renderMobileNavigation(model), /Desktop only|Hidden child/);
+});
+
+test("navigation validation accepts legacy seed and rejects unsafe or malformed additions", () => {
+  assert.doesNotThrow(() => validateNavigation(seed));
+  for (const item of [{ label: "Unsafe", href: "javascript:alert(1)" }, { label: "Unsafe", image: "//untrusted.test/image.png" }, { label: "Bad", mobile: "false" }]) {
+    assert.throws(() => validateNavigation({ tabs: [item] }), error => error.statusCode === 400);
+  }
+});
 
 test("navigation sanitizes href protocols without losing query/hash or external links", () => {
   for (const input of ["javascript:alert(1)", "data:text/html,bad", "//evil.example", "java\nscript:bad", "\\evil", ""]) assert.equal(navigationHref(input), null);
@@ -58,6 +87,18 @@ test("direct calendar remains direct; disabled commerce is not reconstructed", (
 test("utilities retain configured contact and add only distinct published routes", () => {
   const items = navigationUtilities(navigationModel({ utility: [{ id: "contact", label: "Contact", href: "#consult" }, { id: "new", label: "New", href: "/new/" }] }), [{ label: "ติดต่อ", href: "#consult" }]);
   assert.deepEqual(items.map(item => item.href), ["/#consult", "/new/"]);
+});
+
+test("utility visibility follows its device and hidden main links do not suppress mobile utilities", () => {
+  const model = navigationModel({ tabs: [{ id: "main", label: "Main", href: "/main/", mobile: false }], utility: [
+    { id: "one", label: "One", href: "/main/", desktop: false, mobileLabel: "Mobile utility" },
+    { id: "two", label: "Two", href: "/two/", mobile: false },
+  ] });
+  const utility = navigationUtilities(model);
+  assert.doesNotMatch(renderUtilityNavigation(utility), /Mobile utility|One/);
+  const mobile = renderUtilityNavigation(drawerUtilities(model, utility), { device: "mobile" });
+  assert.match(mobile, /Mobile utility/);
+  assert.doesNotMatch(mobile, /Two/);
 });
 
 test("compact drawer removes only duplicate destinations, preserving all unique utility paths", () => {

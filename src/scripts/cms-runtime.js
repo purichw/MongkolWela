@@ -8,6 +8,7 @@ import { applyContentLibrary } from "../lib/managed-content.js";
 import { applyContentBindings } from "../lib/content-bindings.js";
 import { prepareContentFields } from "../lib/page-content-fields.js";
 import { contentPatchNodes, safeContentHtml, validContentPatch } from "../lib/content-patches.js";
+import { applyHomepageCollections, resetHomepageCollections } from "../lib/homepage-content.js";
 
 const CMS_CONTENT_URL = "/api/admin/content";
 const CMS_CONSENT_KEY = "mongkolwela.pdpa.analytics";
@@ -699,7 +700,9 @@ async function bootCmsRuntime() {
     if (!previous || !unchanged(previousPage, page) || !unchanged(previous.site?.patches, content.site?.patches)) {
       if (!renderCustomPage(content) && !disablePage(page)) {
         if (page && (!previous || !unchanged(previousPage?.sections, page.sections))) applySections(page);
+        if (page?.id === "home") resetHomepageCollections(document);
         applyPagePatches([...(content.site?.patches || []), ...(page?.patches || [])]);
+        if (page?.id === "home") applyHomepageCollections(document, page.homepage);
       }
     }
     if (!previous || !unchanged(previous.site?.pdpa, content.site?.pdpa)) renderPdpaBanner(content);

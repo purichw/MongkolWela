@@ -1,5 +1,5 @@
 import { siteConfig } from "../config/site.js";
-import { navigationModel, navigationUtilities, drawerUtilities, renderDesktopNavigation, renderMobileNavigation, renderMobileHub, renderUtilityNavigation, findNavigationLink, navEscape } from "../lib/site-navigation.js";
+import { navigationModel, navigationForDevice, navigationUtilities, drawerUtilities, renderDesktopNavigation, renderMobileNavigation, renderMobileHub, renderUtilityNavigation, findNavigationLink, navEscape } from "../lib/site-navigation.js";
 import { renderIcon } from "../lib/ui-markup.js";
 
 let controller;
@@ -63,9 +63,9 @@ export function updateHeaderNavigation(navigation) {
     ["[data-header-mobile]", renderMobileNavigation(model, options)],
     ["[data-header-mobile-hub]", renderMobileHub(model, options)],
     ["[data-header-utility-links]", renderUtilityNavigation(utility, options)],
-    ["[data-header-mobile-utility]", renderUtilityNavigation(drawerUtilities(model, utility), options)],
+    ["[data-header-mobile-utility]", renderUtilityNavigation(drawerUtilities(model, utility), { ...options, device: "mobile" })],
   ];
-  const planner = findNavigationLink(model.tabs, "/temples/planner/");
+  const planner = findNavigationLink(navigationForDevice(model, "desktop").tabs, "/temples/planner/");
   updates.push(["[data-header-cta]", planner ? `<a class="mw-planner-cta" data-nav-key="planner-cta" data-nav-cta="temple-planner" href="${navEscape(planner.href)}" aria-label="${navEscape(planner.label)}"><span class="mw-cta-full">${navEscape(planner.label)}</span><span class="mw-cta-short" aria-hidden="true">วางแผน</span>${renderIcon("arrow-right")}</a>` : ""]);
   for (const [selector, markup] of updates) {
     const parent = document.querySelector(selector);

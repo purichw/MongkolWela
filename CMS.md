@@ -138,6 +138,41 @@ patches only where they still use the old collection names. Preserve customized
 copy, links, visibility, order, assets and temple records; never publish a seed
 over the current document or hardcode labels over published CMS choices.
 
+## Homepage And Navigation Editors
+
+The default page-content screen is now **จัดการหน้าแรก (Homepage)**. Its numbered
+sections edit the existing Home page patches, media and visibility rather than
+replacing the published page with a design seed. Other pages remain available in
+the page selector. Calendar dates and database counts stay source-derived.
+
+Optional `homepage.collections` entries on the page with `id: "home"` manage the order, visibility,
+copy, links and images of `shortcuts`, `daily`, `intents`, `stops`, `categories`
+and `tools`. `src/lib/homepage-content.js` owns the bounded schema and visitor DOM
+projection. Missing collection overrides preserve the existing template. Both
+Admin publish validation and the content API validate the new fields; the usual
+draft, revision-conflict and publish contracts still apply. No database migration
+or automatic production content publication is required.
+
+Navigation now supports grouped children, desktop/mobile visibility and labels,
+menu layout, descriptions, icons and feature imagery. The editor normalizes
+legacy flat section markers into grouped draft items without publishing them.
+The preview uses the same renderers as the visitor header and mobile drawer.
+Disabling a group also hides its children; choosing a direct link keeps its
+stored submenu data for later use. Mobile editing has separate info, submenu
+and preview tabs, plus an explicit return to the menu list.
+
+The central commerce workspace includes service status, preparation steps and
+the existing product, campaign, order and seller controls. A disabled API shows
+unavailable counts, not invented zeros. API failures remain errors with retry;
+they are not treated as a disabled service. The redesign does not enable
+commerce, payments or additional permissions. Media uploads still require a
+configured provider; local preview is read-only and blocks writes.
+
+Focused verification lives in `tests/runtime/homepage-content.test.mjs`,
+`tests/runtime/site-navigation.test.mjs` and
+`tests/e2e/cms-content-coverage.spec.ts`. Browser tests use isolated fixtures,
+not production content.
+
 ## Commerce And Merit
 
 Commerce and merit reservations use separate private tables, not CMS JSON.

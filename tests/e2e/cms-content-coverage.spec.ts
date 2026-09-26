@@ -49,7 +49,7 @@ test("commerce stays in central admin, preserves sidebar colors and recovers fro
   await expect(page.locator('[data-commerce-state="disabled"]')).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("commerce-disabled.png"), fullPage: true });
   await section(page, "pages");
-  await expect(page.locator(".mw-page-content-fields")).toBeVisible();
+  await expect(page.locator(".mw-home-editor")).toBeVisible();
   expect(errors).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
 });
@@ -57,10 +57,10 @@ test("commerce stays in central admin, preserves sidebar colors and recovers fro
 test("page text edits preserve markup, publish and survive visitor reload", async ({ page }, testInfo) => {
   await page.goto("/admin/");
   await section(page, "pages");
-  await expect(page.locator(".mw-page-content-fields")).toBeVisible();
-  await page.locator("[data-page-content-search]").fill("มงคลเวลา");
-  const first = page.locator('[data-page-content-id="95d291e9-4-0-text-0"]');
-  await first.locator("textarea").fill("ข้อความทดสอบจาก CMS");
+  await expect(page.locator(".mw-home-editor")).toBeVisible();
+  const hero = page.locator('[data-home-section="hero"]');
+  if (!await hero.evaluate(el => (el as HTMLDetailsElement).open)) await hero.locator('summary').first().click();
+  await hero.getByLabel("หัวข้อหลัก", { exact: true }).fill("ข้อความทดสอบจาก CMS");
   await page.evaluate(() => scrollTo(0, 0));
   await page.screenshot({ path: testInfo.outputPath("page-editor.png"), fullPage: false });
   await page.locator('[data-action="publish"]').first().click();
@@ -74,6 +74,8 @@ test("page text edits preserve markup, publish and survive visitor reload", asyn
 test("contact editor keeps email and LINE separate and publishes their shared destinations", async ({ page }) => {
   await page.goto("/admin/");
   await section(page, "pages");
+  const settings = page.locator('[data-home-section="settings"]');
+  if (!await settings.evaluate(el => (el as HTMLDetailsElement).open)) await settings.locator('summary').first().click();
   await page.locator('.mw-select[role="combobox"][aria-label="หน้าเว็บไซต์"]').click();
   await page.getByRole("searchbox", { name: "ค้นหาหน้าเว็บไซต์", exact: true }).fill("ติดต่อ");
   await page.getByRole("option", { name: "ติดต่อมงคลเวลา", exact: true }).click();
@@ -90,6 +92,67 @@ test("contact editor keeps email and LINE separate and publishes their shared de
   await page.goto("/contact/");
   await expect(page.locator("[data-contact-value='email']")).toHaveText("support@example.com");
   await expect(page.locator("[data-contact-link='line']")).toHaveAttribute("href", "https://line.me/R/ti/p/%40support.line");
+});
+
+test("homepage cards reorder, validate and publish to the visitor collection", async ({ page }) => {
+  await page.goto("/admin/");
+  await section(page, "pages");
+  const shortcuts = page.locator('[data-home-section="shortcuts"]');
+  if (!await shortcuts.evaluate(el => (el as HTMLDetailsElement).open)) await shortcuts.locator('summary').first().click();
+  const firstCard = shortcuts.locator('[data-home-card]').first();
+  await firstCard.locator('summary').first().click();
+  await firstCard.locator('[data-home-card-prop="title"]').fill("ทางลัดทดสอบจาก CMS");
+  await firstCard.locator('[data-home-card-prop="mobileTitle"]').fill("ทางลัดทดสอบจาก CMS");
+  await firstCard.locator('[data-home-card-prop="href"]').fill("javascript:alert(1)");
+  await page.locator('[data-action="publish"]').first().click();
+  await expect(page.locator("#adminStatus")).not.toHaveText("เผยแพร่แล้ว");
+  await expect(firstCard.locator('[data-home-card-prop="href"]')).toHaveValue("javascript:alert(1)");
+  await firstCard.locator('[data-home-card-prop="href"]').fill("/temples/thailand/?source=cms-test");
+  await firstCard.locator('[data-home-move="1"]').click();
+  await expect(shortcuts.locator('[data-home-card]').nth(1).locator('[data-home-card-title]')).toHaveText("ทางลัดทดสอบจาก CMS");
+  await page.locator('[data-action="publish"]').first().click();
+  await expect(page.locator("#adminStatus")).toHaveText("เผยแพร่แล้ว");
+  await page.goto("/");
+  await expect(page.locator('.hero-links > a').nth(1)).toHaveAttribute("href", "/temples/thailand/?source=cms-test");
+  await expect(page.locator('.hero-links > a').nth(1)).toContainText("ทางลัดทดสอบจาก CMS");
+  await page.reload();
+  await expect(page.locator('.hero-links > a').nth(1)).toHaveAttribute("href", "/temples/thailand/?source=cms-test");
+});
+
+test("navigation editor keeps grouped children and publishes device-specific labels", async ({ page }) => {
+  await page.goto("/admin/");
+  await section(page, "navigation");
+  const editor = page.locator(".mw-menu-editor");
+  const firstMenu = page.locator('[data-menu-open="0"]');
+  if (await page.evaluate(() => innerWidth <= 700)) {
+    await expect(firstMenu).toHaveAttribute("aria-expanded", "false");
+    await firstMenu.click();
+    await editor.getByRole("tab", { name: "ข้อมูลเมนู", exact: true }).press("ArrowRight");
+    await expect(editor.getByRole("tab", { name: "เมนูย่อย", exact: true })).toBeFocused();
+    await editor.getByRole("tab", { name: "เมนูย่อย", exact: true }).press("Home");
+    await expect(editor.getByRole("tab", { name: "ข้อมูลเมนู", exact: true })).toBeFocused();
+  } else {
+    await firstMenu.click();
+    await expect(firstMenu).toHaveAttribute("aria-expanded", "false");
+    await firstMenu.click();
+    await expect(firstMenu).toHaveAttribute("aria-expanded", "true");
+  }
+  await editor.locator('[data-menu-path="tabs.0"][data-menu-field="desktopLabel"]').fill("วัดจาก CMS Desktop");
+  await editor.locator('[data-menu-path="tabs.0"][data-menu-field="mobileLabel"]').fill("วัดจาก CMS Mobile");
+  if (await editor.locator('[data-menu-pane-button="items"]').isVisible()) await editor.locator('[data-menu-pane-button="items"]').click();
+  const group = editor.locator('.mw-menu-group').filter({ has: page.locator('[data-menu-path="tabs.0.items.1"][data-menu-field="label"]') });
+  expect(await group.locator('.mw-menu-item').count()).toBeGreaterThan(0);
+  await group.locator('[data-menu-move="1"][data-menu-path="tabs.0.items.1"]').click();
+  expect(await editor.locator('[data-menu-record="tabs.0.items.2"] .mw-menu-item').count()).toBeGreaterThan(0);
+  await page.locator('[data-action="publish"]:visible').first().click();
+  await expect(page.locator("#adminStatus")).toHaveText("เผยแพร่แล้ว");
+  await page.goto("/");
+  await expect(page.locator('[data-header-desktop]')).toContainText("วัดจาก CMS Desktop");
+  if (await page.locator('.mw-menu-toggle').isVisible()) {
+    await page.locator('.mw-menu-toggle').click();
+    await expect(page.locator('[data-header-mobile-hub] a')).toHaveAttribute("aria-label", "ดูภาพรวม วัดจาก CMS Mobile");
+    await expect(page.locator('[data-header-mobile]')).toContainText("วัดดัง");
+  }
 });
 
 test("reading library searches, edits and publishes to the tarot reference page", async ({ page }, testInfo) => {
@@ -135,7 +198,7 @@ test("central commerce edits real domain records and keeps CMS drafts independen
   await page.evaluate(() => scrollTo(0, 0));
   await page.screenshot({ path: testInfo.outputPath("commerce-central.png"), fullPage: true });
   await section(page, "pages");
-  await expect(page.locator(".mw-page-content-fields")).toBeVisible();
+  await expect(page.locator(".mw-home-editor")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
 });
 

@@ -5,7 +5,7 @@ import BrandMark from "./icons/BrandMark.astro";
 import MenuIcon from "./icons/MenuIcon.astro";
 import SiteIcon from "./icons/SiteIcon.astro";
 import Topbar from "./Topbar.astro";
-import { navigationModel, navigationUtilities, drawerUtilities, renderDesktopNavigation, renderMobileNavigation, renderMobileHub, renderUtilityNavigation, findNavigationLink } from "../lib/site-navigation.js";
+import { navigationModel, navigationForDevice, navigationUtilities, drawerUtilities, renderDesktopNavigation, renderMobileNavigation, renderMobileHub, renderUtilityNavigation, findNavigationLink } from "../lib/site-navigation.js";
 import temple from "../assets/loading/temple.png";
 import lotus from "../assets/loading/lotus.png";
 import liveContent from "../../public/admin/content/live.json" with { type: "json" };
@@ -19,7 +19,7 @@ const lotusImage = await getImage({ src: lotus, width: 128, format: "webp" });
 const assets = { temple: templeImage.src, lotus: lotusImage.src };
 const options = { location: Astro.url.pathname, assets };
 const utility = navigationUtilities(model, config.topbar);
-const planner = findNavigationLink(model.tabs, "/temples/planner/");
+const planner = findNavigationLink(navigationForDevice(model, "desktop").tabs, "/temples/planner/");
 ---
 
 <Topbar items={utility} options={options} />
@@ -50,7 +50,7 @@ const planner = findNavigationLink(model.tabs, "/temples/planner/");
       </div>
       <a class="mw-drawer-search mw-mobile-row" data-header-search href="/search/" aria-haspopup="dialog" aria-controls="temple-search-dialog"><SiteIcon name="search" /><span data-cms-field="cef92c86-9">ค้นหาวัดและสถานที่</span><SiteIcon name="chevron-right" /></a>
       <nav data-header-mobile aria-label="เมนูหลักบนมือถือ" set:html={renderMobileNavigation(model, options)} />
-      <nav class="mw-drawer-utility" data-header-mobile-utility aria-label="ลิงก์เพิ่มเติม" set:html={renderUtilityNavigation(drawerUtilities(model, utility), options)} />
+      <nav class="mw-drawer-utility" data-header-mobile-utility aria-label="ลิงก์เพิ่มเติม" set:html={renderUtilityNavigation(drawerUtilities(model, utility), { ...options, device: "mobile" })} />
       <div class="mw-drawer-quote" aria-hidden="true"><SiteIcon name="sparkles" /><p data-cms-field="cef92c86-10">“ เพราะทุกการเดินทาง<br />คือการเติมพลังใจให้ชีวิต ”</p></div>
     </div>
   </details>

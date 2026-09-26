@@ -67,7 +67,7 @@ const tools = [
       <div class="hero-carousel" data-carousel>
         {heroSlides.map((slide, i) => (
           <div class:list={["hero-slide", { "is-active": i === 0 }]} aria-hidden={i !== 0}>
-            <img data-cms-field="95d291e9-1" src={i === 0 ? slide.src || sitePlaceholderImage : undefined} data-carousel-src={slide.src || sitePlaceholderImage}
+            <img id={`home-hero-image-${i + 1}`} data-cms-field="95d291e9-1" src={i === 0 ? slide.src || sitePlaceholderImage : undefined} data-carousel-src={slide.src || sitePlaceholderImage}
               {...homeHeroAttributes(slide)} data-home-hero-image style={{ objectPosition: slide.position }}
               alt={slide.alt} width="1920" height="1080" fetchpriority={i === 0 ? "high" : "low"}
               decoding="async" data-home-media data-fallback-src={sitePlaceholderImage} />

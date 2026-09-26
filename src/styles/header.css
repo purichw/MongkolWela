@@ -118,6 +118,7 @@
 .mw-eyebrow { display: flex; align-items: center; gap: 16px; color: var(--mw-gold); font-family: "IBM Plex Mono", monospace; font-size: .75rem; line-height: 1.4; font-weight: 400; }
 .mw-eyebrow::after { content: ""; width: 42px; height: 1px; background: #cba36a; }
 .mw-panel-feature { position: relative; padding: 4px 6px 18px; border-bottom: 1px solid var(--mw-line); isolation: isolate; }
+.mw-feature-image { position: absolute; right: 0; top: 0; z-index: -1; width: 100px; height: 90px; object-fit: contain; opacity: .25; }
 .mw-panel-feature::before, .mw-drawer-intro::before {
   content: ""; position: absolute; z-index: -1; right: 0; bottom: 0; width: 135px; height: 120px;
   background: #bb904d; mask: var(--mw-temple-art) center / 170% no-repeat; opacity: .07; pointer-events: none;

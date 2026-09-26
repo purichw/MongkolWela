@@ -5,6 +5,7 @@ import temples from "../../api/admin/temples.js";
 import analytics from "../../api/admin/analytics.js";
 import media from "../../api/admin/media.js";
 import activities from "../../api/admin/activities.js";
+import commerce from "../../api/commerce/index.js";
 
 // Review the real read handlers without bypassing authentication or publishing.
 const handlers = { session, content, temples, analytics, media, activities };
@@ -14,7 +15,7 @@ const server = http.createServer(async (req, res) => {
   const path = new URL(req.url, "http://127.0.0.1").pathname;
   if (path.startsWith("/api/")) {
     const name = path.match(/^\/api\/admin\/([a-z]+)$/)?.[1];
-    const handler = handlers[name];
+    const handler = path === "/api/commerce" ? commerce : handlers[name];
     if (handler && (req.method === "GET" || name === "session")) {
       try { await handler(req, res); }
       catch { res.writeHead(503, { "Content-Type": "application/json", "Cache-Control": "no-store" }); res.end(JSON.stringify({ ok: false, error: "ไม่สามารถโหลดข้อมูลได้" })); }
