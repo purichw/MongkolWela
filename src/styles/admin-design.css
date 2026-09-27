@@ -136,6 +136,8 @@
 .admin-design .mw-admin-login-card { padding: 30px; width: min(430px, calc(100% - 28px)); background: #fffdf6f5; border: 1px solid #e7d1a4; box-shadow: 0 20px 70px #001d1850; border-radius: 8px; }
 .admin-design .mw-admin-login-card h1 { font-size: 28px; }
 .admin-design .mw-admin-login-card p { font-size: 14px; font-weight: 400; }
+.admin-design .mw-admin-auth-pending { text-align: center; }
+.admin-design .mw-admin-auth-pending .mw-admin-login-mark { margin-inline: auto; }
 .admin-design .mw-overview-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 18px; }
 .admin-design .mw-overview-stat { display: flex; align-items: flex-start; gap: 18px; padding: 19px 16px; min-height: 121px; border: 1px solid var(--admin-line); border-radius: 8px; background: #fffdfa; box-shadow: var(--admin-shadow); }
 .admin-design .mw-overview-stat-icon { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 8px; background: #e1eee5; color: #0b5940; flex: none; }
