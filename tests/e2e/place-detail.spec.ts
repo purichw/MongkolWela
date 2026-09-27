@@ -254,7 +254,7 @@ test("shared Home, Calendar, Day and mobile menu smoke", async ({ page }) => {
     expect(await page.locator("[data-place-detail]").count()).toBe(0);
   }
   await page.goto(route); await settle(page);
-  const menu = page.locator(".nav-toggle");
+  const menu = page.locator('button[aria-controls="mw-navigation-dialog"]');
   await menu.click();
   await expect(menu).toHaveAttribute("aria-expanded", "true");
   await page.keyboard.press("Escape");
