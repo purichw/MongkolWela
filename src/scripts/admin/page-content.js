@@ -1,5 +1,6 @@
 import { prepareContentFields, scanContentFields } from "../../lib/page-content-fields.js";
 import { projectContentPatches, safeContentUrl } from "../../lib/content-patches.js";
+import { updateImagePatch } from "../../lib/home-hero-media.js";
 import { adminIcon } from "./design.js";
 import defaults from "../../../public/admin/content/default.json";
 import { tarotMeaningCards } from "../../data/tarot-meanings.js";
@@ -97,11 +98,10 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
   }
 
   function fieldEditor(field) {
-    const patch = patches().find(item => item.id === field.id)
-      || patches().find(item => item.selector === field.selector && item.kind === field.kind && item.nodeIndex === field.nodeIndex && item.attr === field.attr)
+    const patch = patches().findLast(item => item.enabled !== false && sameContentField(item, field))
       || field;
     return `<div class="mw-page-content-field" data-page-content-id="${e(field.id)}"><div><small>${e(field.context)}</small><strong>${e(field.label)}</strong><span>${field.kind === "image" ? "รูปภาพ" : field.attr === "href" ? "ลิงก์" : "ข้อความ"}</span></div><div>${field.kind === "image"
-      ? `${patch.src && safeContentUrl(patch.src) ? `<img class="mw-page-content-image" src="${e(patch.src)}" alt="${e(patch.alt || "ภาพตัวอย่าง")}" loading="lazy">` : ""}<label>ลิงก์รูปภาพ<input data-page-content-value="src" value="${e(patch.src || "")}"></label><label>คำอธิบายภาพ<input data-page-content-value="alt" value="${e(patch.alt || "")}"></label>`
+      ? `${patch.src && safeContentUrl(patch.src) ? `<img class="mw-page-content-image" src="${e(patch.src)}" alt="${e(patch.alt || "ภาพตัวอย่าง")}" loading="lazy">` : ""}<label>ลิงก์รูปภาพ<input data-page-content-value="src" value="${e(patch.src || "")}"></label><label>คำอธิบายภาพ<input data-page-content-value="alt" value="${e(patch.alt || "")}"></label>${Object.hasOwn(field, "position") ? `<details><summary>ตำแหน่งภาพและเครดิต</summary>${[["position", "ตำแหน่งภาพ"], ["credit", "เครดิตภาพ"], ["sourceUrl", "แหล่งที่มา"], ["license", "สัญญาอนุญาต"], ["licenseUrl", "ลิงก์สัญญาอนุญาต"]].map(([prop, label]) => `<label>${label}<input data-page-content-value="${prop}" value="${e(patch[prop] ?? "")}"></label>`).join("")}</details>` : ""}`
       : `<label><span class="mw-admin-sr-only">${e(field.label)}</span>${field.attr ? `<input data-page-content-value="value" value="${e(patch.value ?? "")}">` : `<textarea data-page-content-value="value" rows="${String(patch.value || "").length > 150 ? 4 : 2}">${e(patch.value ?? "")}</textarea>`}</label>`}</div></div>`;
   }
 
@@ -139,7 +139,16 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
       || owner.patches.findLast(item => sameContentField(item, field));
     if (!patch) { patch = { ...field }; delete patch.context; owner.patches.push(patch); }
     if (patch.enabled === false) patch.enabled = true;
-    patch[target.dataset.pageContentValue] = target.value;
+    if (field.kind === "image") {
+      updateImagePatch(patch, { [target.dataset.pageContentValue]: target.value });
+      if (target.dataset.pageContentValue === "src") {
+        for (const prop of ["credit", "sourceUrl", "license", "licenseUrl"]) {
+          const input = target.closest("[data-page-content-id]").querySelector(`[data-page-content-value="${prop}"]`);
+          if (input) input.value = patch[prop] || "";
+        }
+      }
+    }
+    else patch[target.dataset.pageContentValue] = target.value;
     markDirty(); return true;
   }
   return { render, click, input };

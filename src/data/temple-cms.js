@@ -107,6 +107,7 @@ function mergeTempleRecord(baseTemple, record, collection, key) {
   return {
     ...merged,
     cmsKey: key,
+    cmsVisitInfoKey: baseTemple?.name ? imageKey(baseTemple) : "",
     plannerId: baseTemple?.name
       ? `${baseTemple.name}|${baseTemple.province}`.normalize("NFC").replace(/\s+/g, "").toLocaleLowerCase("th")
       : key,

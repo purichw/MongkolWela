@@ -35,6 +35,8 @@ const fallbackCmsContent = {
 
 test("visitor runtime ignores stale local drafts and does not fetch fallback when live API is usable", async ({ page }) => {
   let fallbackRequests = 0;
+  let releaseContent!: () => void;
+  const contentReady = new Promise<void>(resolve => { releaseContent = resolve; });
 
   await page.addInitScript(() => {
     window.localStorage.setItem(
@@ -52,7 +54,7 @@ test("visitor runtime ignores stale local drafts and does not fetch fallback whe
   });
 
   await page.route("**/api/admin/content?*", async (route) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await contentReady;
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -71,18 +73,19 @@ test("visitor runtime ignores stale local drafts and does not fetch fallback whe
 
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  const menu = page.locator("#primary-menu");
+  const menu = page.locator("[data-header-desktop]");
   await expect(page.locator("html")).toHaveClass(/cms-navigation-pending/);
   await expect(menu.locator(":scope > *")).not.toHaveCount(0);
   await expect(menu.locator("a").filter({ hasText: /^ชื่อและตัวเลข$/ })).toHaveCount(0);
   expect(fallbackRequests).toBe(0);
 
+  releaseContent();
   await expect(page.locator("html")).not.toHaveClass(/cms-navigation-pending/);
-  if ((page.viewportSize()?.width || 0) <= 720) {
+  if ((page.viewportSize()?.width || 0) < 1280) {
     await page.getByRole("button", { name: "เปิดเมนู" }).click();
   }
 
-  await expect(menu.getByRole("link", { name: /^วันพระ(?: เปิด)?$/ })).toBeVisible();
+  await expect(page.locator(".mw-header").getByRole("link", { name: /^วันพระ(?: เปิด)?$/ }).filter({ visible: true }).first()).toBeVisible();
   await expect(menu.getByRole("link", { name: "วัดดังเสริมมงคล", exact: true })).toHaveCount(0);
   await expect(menu.getByRole("link", { name: "วางแผนไหว้พระ", exact: true })).toHaveCount(0);
   expect(fallbackRequests).toBe(0);
@@ -113,14 +116,14 @@ test("visitor runtime shows an outage and retries live without falling back", as
   await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "false");
   await expect(page.locator("[data-cms-load-error]")).toBeVisible();
 
-  const menu = page.locator("#primary-menu");
-  if ((page.viewportSize()?.width || 0) <= 720) {
+  const menu = page.locator(".mw-header");
+  if ((page.viewportSize()?.width || 0) < 1280) {
     await page.getByRole("button", { name: "เปิดเมนู" }).click();
   }
 
   await expect(menu.getByRole("link", { name: "เมนูสำรอง", exact: true })).toHaveCount(0);
   expect(fallbackRequests).toBe(0);
-  if ((page.viewportSize()?.width || 0) <= 720) await page.getByRole("button", { name: "ปิดเมนู" }).click();
+  if ((page.viewportSize()?.width || 0) < 1280) await page.getByRole("button", { name: "ปิดเมนู" }).click();
   await page.route("**/api/admin/content?*", (route) => route.fulfill({ json: { ok: true, content: liveCmsContent } }));
   await page.locator("[data-cms-load-error] button").click();
   await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "true");

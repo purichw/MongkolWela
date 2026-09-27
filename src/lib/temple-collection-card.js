@@ -9,7 +9,7 @@ export function collectionIntent(item) {
 export function renderTempleCollectionCard(item, placeholderSrc) {
   const hasImage = Boolean(item.imageUrl) && item.imageUrl !== placeholderSrc;
   const image = hasImage ? item.imageUrl : placeholderSrc;
-  const mobile = hasImage ? item.imageMobileUrl || image : placeholderSrc;
+  const mobile = item.imageMobileUrl === "" ? placeholderSrc : item.imageMobileUrl ?? image;
   const intent = collectionIntent(item);
   const attributes = {
     rank: item.rank, name: item.name, region: item.region, province: item.province,
@@ -24,7 +24,7 @@ export function renderTempleCollectionCard(item, placeholderSrc) {
     <figure>
       <picture class="temple-responsive-picture">
         ${mobile !== image ? `<source media="(max-width: 767px)" srcset="${escapeHtml(mobile)}" data-temple-mobile-source>` : ""}
-        <img src="${escapeHtml(image)}" alt="${escapeHtml(hasImage ? item.imageAlt || `${item.name} ${item.province}` : "ภาพประกอบแทนรูปที่ยังไม่มี")}"
+        <img src="${escapeHtml(image)}" alt="${escapeHtml(hasImage ? item.imageAlt ?? `${item.name} ${item.province}` : "ภาพประกอบแทนรูปที่ยังไม่มี")}"
           loading="lazy" decoding="async" data-fallback-src="${escapeHtml(placeholderSrc)}" data-temple-desktop-image>
       </picture>
       <figcaption aria-label="ลำดับ ${escapeHtml(item.rank)}">${escapeHtml(item.rank)}</figcaption>

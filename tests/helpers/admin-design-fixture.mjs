@@ -1,15 +1,10 @@
 import fs from "node:fs";
-import { applyTempleCmsRecords, templeCollectionConfig } from "../../src/data/temple-cms.js";
-import { createTempleSlug } from "../../src/data/temple-slugs.js";
+import { templeCatalogFromContent } from "../../api/admin/temples.js";
 
 const read = path => JSON.parse(fs.readFileSync(new URL(path, import.meta.url), "utf8"));
 export function adminDesignFixture() {
   const content = read("../../public/admin/content/live.json");
-  const visits = read("../../src/data/temple-visit-info.json");
-  const temples = ["popular", "mu", "sacred"].flatMap(collection => applyTempleCmsRecords(collection, read(`../../src/data/${collection}-temples.json`), content).map(temple => {
-    const slug = temple.cmsSlug || createTempleSlug(temple);
-    return { key: temple.cmsKey || `${collection}:${slug}`, collection, collectionLabel: templeCollectionConfig[collection].label, slug, detailUrl: `/temples/${collection}/${slug}/`, source: temple.cmsSource || "dataset", temple: { ...temple, images: temple.cmsImages || {} }, visitInfo: visits.entries?.[`${temple.name}|${temple.province}`] || { status: "needs-direct-check" } };
-  }));
+  const temples = templeCatalogFromContent(content);
   // Test-only authentication. The preview server must never import this fixture.
   return {
     "/api/admin/session": { ok: true, actor: "UI Test", email: "admin@example.test" },

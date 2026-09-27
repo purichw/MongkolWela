@@ -51,15 +51,17 @@ export function applyPlaceDetailOverride(root, override = {}) {
   const img = picture.querySelector("img");
   const hero = override.images?.hero;
   const hasImage = Object.prototype.hasOwnProperty.call(override.fields || {}, "imageUrl");
-  const desktop = hero && Object.prototype.hasOwnProperty.call(hero, "desktop") ? imageUrl(hero.desktop) : hasImage ? imageUrl(override.fields.imageUrl) : imageUrl(seed.record.detailImageUrl || seed.record.imageUrl);
-  const mobile = hero && Object.prototype.hasOwnProperty.call(hero, "mobile") ? imageUrl(hero.mobile) : hero || hasImage ? desktop : imageUrl(seed.record.detailImageMobileUrl) || desktop;
+  const cardDesktop = override.images?.card?.desktop;
+  const desktop = hero && Object.prototype.hasOwnProperty.call(hero, "desktop") ? imageUrl(hero.desktop) : cardDesktop !== undefined ? imageUrl(cardDesktop) : hasImage ? imageUrl(override.fields.imageUrl) : imageUrl(seed.record.detailImageUrl ?? seed.record.imageUrl);
+  const mobile = hero && Object.prototype.hasOwnProperty.call(hero, "mobile") ? imageUrl(hero.mobile) : hero || cardDesktop !== undefined || hasImage ? desktop : imageUrl(seed.record.detailImageMobileUrl ?? desktop);
   const nextSrc = desktop || seed.placeholderImage;
   if (img.getAttribute("src") !== nextSrc) { img.src = nextSrc; delete img.dataset.fallbackApplied; }
   img.alt = override.fields?.imageAlt ?? hero?.desktop?.alt ?? seed.record.imageAlt ?? vm.record.name;
   let source = picture.querySelector("source");
-  if (mobile && mobile !== desktop) {
+  const nextMobileSrc = mobile || seed.placeholderImage;
+  if (nextMobileSrc !== nextSrc) {
     if (!source) { source = document.createElement("source"); source.media = "(max-width: 767px)"; picture.prepend(source); }
-    source.srcset = mobile;
+    source.srcset = nextMobileSrc;
   } else source?.remove();
   // Current temple image variants have no focal-point field; retain the established centered crop.
   const map = root.querySelector("[data-temple-detail-map]");

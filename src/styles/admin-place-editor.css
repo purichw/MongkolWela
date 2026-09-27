@@ -198,6 +198,10 @@ html.mw-place-editor-open { overflow: hidden; scrollbar-gutter: stable; }
   .mw-place-editor > footer > p:empty { display: none; }
   .admin-design .mw-place-editor > footer .mw-admin-btn { min-height: 44px; }
 }
+.mw-place-timetable { min-width: 0; margin: 12px 0; padding: 12px; border: 1px solid var(--admin-line); border-radius: 6px; }
+.mw-place-timetable legend { font-weight: 600; }
+.mw-place-editor .mw-place-timetable .mw-admin-form-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px; align-items: end; margin-bottom: 8px; }
+.mw-place-timetable .mw-admin-btn-icon { min-height: 44px; }
 @media (max-width: 359px) {
   .mw-place-field-name,.mw-place-field-region { grid-column: 1 / -1; }
   .mw-place-editor-steps button { flex-direction: column; justify-content: center; }

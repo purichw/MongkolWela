@@ -27,7 +27,7 @@ export function mountCalendar(root) {
     root.querySelector("[data-calendar-view]").value = state.view;
     syncPublicSelects(root);
     root.dataset.view = state.view;
-    root.querySelector("[data-calendar-title]").textContent = `ปฏิทินไทย พ.ศ. ${state.year}`;
+    root.querySelector("[data-calendar-title]").textContent = ` พ.ศ. ${state.year}`;
     root.querySelector("[data-calendar-today]").href = `/calendar/day/?date=${toIsoDate(new Date())}`;
     for (const button of root.querySelectorAll("[data-month]")) button.setAttribute("aria-pressed", String(Number(button.dataset.month) === state.month));
     for (const button of root.querySelectorAll(".cal-view-switch [data-view]")) button.setAttribute("aria-pressed", String(button.dataset.view === state.view));

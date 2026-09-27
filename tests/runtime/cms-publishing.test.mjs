@@ -50,6 +50,8 @@ test("CMS publish validates content, checks current membership and prevents stal
       { selector: "#contact-channel-data", kind: "attr", attr: "data-line-id", value: "@support" },
       { selector: "#usage a", kind: "attr", attr: "data-email-subject", value: "สอบถามการใช้งาน" },
     ];
+    edited.temples = { records: { "popular:test-sync": { collection: "popular", fields: { name: "Test", summary: "Published summary", description: "Published description", coordinateAddress: "Published address", imageAlt: "" }, images: { hero: { desktop: { url: "/test.webp" }, mobile: { url: "" } } }, visitInfo: { hours: { status: "verified", summary: "Updated hours", timetable: [{ day: "Monday", time: "10:00-16:00" }] } } } } };
+    edited.pages.find(page => page.id === "travelGuide").patches = [{ selector: "#guide-hero", kind: "image", src: "/test.webp", alt: "Test", position: "30% 50%", credit: "Test credit", sourceUrl: "https://example.com/source", license: "CC", licenseUrl: "https://example.com/license" }];
     assert.equal((await post({ content: edited, expectedRevision: "stale" })).status, 409);
     assert.equal(writes, 0);
     const unsafe = structuredClone(edited);
@@ -62,6 +64,10 @@ test("CMS publish validates content, checks current membership and prevents stal
     assert.equal(writes, 1); assert.equal(revisions, 1);
     assert.equal(live.contentLibrary["seamsi.seamsiFortunes"]["1"].title, "Published reading");
     assert.equal(live.pages.find(page => page.id === "contact").patches[0].value, "support@example.com");
+    const published = await (await fetch(`${base}?path=${encodeURIComponent("/temples/popular/test-sync/")}`)).json();
+    assert.deepEqual(published.content.temples, edited.temples);
+    const guide = await (await fetch(`${base}?path=${encodeURIComponent("/guide/")}`)).json();
+    assert.deepEqual(guide.content.pages[0].patches, edited.pages.find(page => page.id === "travelGuide").patches);
     assert.equal((await post({ content: edited, expectedRevision: original.revision })).status, 409);
     const latest = await (await fetch(base)).json();
     race = true;

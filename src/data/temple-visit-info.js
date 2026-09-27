@@ -1,5 +1,5 @@
-import visitInfoData from "./temple-visit-info.json";
-import watportalData from "./watportal-temple-details.json";
+import visitInfoData from "./temple-visit-info.json" with { type: "json" };
+import watportalData from "./watportal-temple-details.json" with { type: "json" };
 
 const fallbackNotice = visitInfoData.fallbackNotice;
 const entries = visitInfoData.entries || {};
@@ -15,7 +15,7 @@ export function getTempleVisitInfo(temple) {
 }
 
 export function createVisitInfoKey(temple) {
-  return `${cleanText(temple?.name)}|${cleanText(temple?.province)}`;
+  return temple?.cmsVisitInfoKey ?? `${cleanText(temple?.name)}|${cleanText(temple?.province)}`;
 }
 
 function createVisitInfoFromEntry(key, entry) {

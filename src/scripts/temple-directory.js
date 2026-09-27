@@ -825,7 +825,8 @@ function initializePopularTempleGrid(grid) {
         const comparison = String(a.dataset[field] || "").localeCompare(String(b.dataset[field] || ""), "th");
         if (comparison) return comparison;
       }
-      return (originalCardOrder.get(a) ?? 0) - (originalCardOrder.get(b) ?? 0);
+      return (Number(a.dataset.rank) || Number.MAX_SAFE_INTEGER) - (Number(b.dataset.rank) || Number.MAX_SAFE_INTEGER)
+        || (originalCardOrder.get(a) ?? 0) - (originalCardOrder.get(b) ?? 0);
     });
   }
 
@@ -1188,7 +1189,7 @@ async function initializeTempleDirectory(rootElement) {
     renderPagination(pagination, currentPage, totalPages, t, filteredRows.length, isPreview);
     tableWrap.scrollTop = 0;
     loadAll.hidden = !isPreview;
-    rootElement.querySelector("[data-temple-load-label]").textContent = `ค้นหาจากทะเบียนทั้งหมด ${totalRows.toLocaleString("th-TH")} วัด`;
+    rootElement.querySelector("[data-temple-load-label]").textContent = ` ${totalRows.toLocaleString("th-TH")} วัด`;
   }
 
   function showFailure() {

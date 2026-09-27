@@ -12,7 +12,7 @@ export function editableVisitSection(value, kind) {
   for (const [term] of visitFields[kind]) {
     if (!normalized.details.some(detail => detail.term === term)) normalized.details.push({ term, value: "", href: "" });
   }
-  return { ...normalized, status: value?.status || "unknown" };
+  return { ...normalized, timetable: structuredClone(value?.timetable ?? value?.hoursRows ?? normalized.timetable ?? []), status: value?.status || "unknown" };
 }
 
 export function renderVisitSummary(record, edit, e) {
@@ -30,7 +30,7 @@ export function renderVisitEditor(record, edit, e, isOpen = () => false) {
   const statusOptions = value => [["unknown", "ยังไม่ยืนยัน"], ["listed", "มีข้อมูลอ้างอิง"], ["verified", "ตรวจสอบแล้ว"]].map(([id, label]) => `<option value="${id}" ${value === id ? "selected" : ""}>${label}</option>`).join("");
   return `<div class="mw-admin-form-grid"><label>วันที่ตรวจทาน<input type="date" data-temple-visit="reviewedAt" value="${e(visit.reviewedAt || "")}"></label><label>หมายเหตุเข้าชม<input data-temple-visit="notice" value="${e(visit.notice || "")}"></label></div>${Object.entries(visitFields).map(([kind]) => {
     const section = editableVisitSection(visit[kind], kind);
-    return `<details class="mw-admin-visit-editor" data-visit-kind="${kind}" data-editor-panel="visit-${kind}" ${isOpen(`visit-${kind}`) ? "open" : ""}><summary>${adminIcon({ hours: "clock", admission: "ticket", contact: "phone" }[kind])}${{ hours: "เวลาเปิด–ปิด", admission: "ค่าเข้าชม", contact: "ช่องทางติดต่อ" }[kind]}${adminIcon("chevron-down")}</summary><div class="mw-admin-form-grid"><label>สถานะข้อมูล<select data-temple-visit="${kind}/status">${statusOptions(section.status)}</select></label><label>ข้อความสรุป<input data-temple-visit="${kind}/summary" value="${e(section.summary || "")}"></label>${section.details.map((detail, index) => `<label>${e(detail.term)}<input data-temple-visit="${kind}/details/${index}" value="${e(detail.value)}"></label>`).join("")}</div></details>`;
+    return `<details class="mw-admin-visit-editor" data-visit-kind="${kind}" data-editor-panel="visit-${kind}" ${isOpen(`visit-${kind}`) ? "open" : ""}><summary>${adminIcon({ hours: "clock", admission: "ticket", contact: "phone" }[kind])}${{ hours: "เวลาเปิด–ปิด", admission: "ค่าเข้าชม", contact: "ช่องทางติดต่อ" }[kind]}${adminIcon("chevron-down")}</summary><div class="mw-admin-form-grid"><label>สถานะข้อมูล<select data-temple-visit="${kind}/status">${statusOptions(section.status)}</select></label><label>ข้อความสรุป<input data-temple-visit="${kind}/summary" value="${e(section.summary || "")}"></label>${section.details.map((detail, index) => `<label>${e(detail.term)}<input data-temple-visit="${kind}/details/${index}" value="${e(detail.value)}"></label>`).join("")}</div>${kind === "hours" ? `<fieldset class="mw-place-timetable"><legend>เวลาเข้าชมรายวัน</legend>${section.timetable.map((row, index) => `<div class="mw-admin-form-grid"><label>วัน / ช่วงวันที่<input data-temple-visit="hours/timetable/${index}/day" value="${e(row.day)}"></label><label>เวลา<input data-temple-visit="hours/timetable/${index}/time" value="${e(row.time)}"></label><button class="mw-admin-btn mw-admin-btn-icon mw-admin-btn-danger" type="button" data-visit-row="${index}" aria-label="ลบเวลาแถว ${index + 1}" title="ลบเวลาแถว ${index + 1}">${adminIcon("trash")}</button></div>`).join("")}<button class="mw-admin-btn" type="button" data-visit-row="add">${adminIcon("plus")}เพิ่มช่วงเวลา</button></fieldset>` : ""}</details>`;
   }).join("")}<div class="mw-admin-form-grid"><label>ชื่อแหล่งอ้างอิงเพิ่มเติม<input data-temple-visit="sourceLabel" value="${e(visit.sources?.find(source => source.id === "cms-editor")?.label || "")}"></label><label>ลิงก์อ้างอิงเพิ่มเติม<input type="url" data-temple-visit="sourceUrl" value="${e(visit.sources?.find(source => source.id === "cms-editor")?.url || "")}"></label></div>`;
 }
 
@@ -43,12 +43,17 @@ export function updateVisitContent(edit, record, path, value) {
     source[path === "sourceLabel" ? "label" : "url"] = value;
     return;
   }
-  const [kind, field, index] = path.split("/");
+  const [kind, field, index, prop] = path.split("/");
   if (["reviewedAt", "notice"].includes(kind)) { edit.visitInfo[kind] = value; return; }
   if (!visitFields[kind]) return;
   edit.visitInfo[kind] = editableVisitSection(edit.visitInfo[kind] || record.visitInfo?.[kind], kind);
   const section = edit.visitInfo[kind];
   if (["status", "summary"].includes(field)) section[field] = value;
+  else if (kind === "hours" && field === "timetable") {
+    if (index === "add") section.timetable.push({ day: "", time: "" });
+    else if (prop === "remove") section.timetable.splice(Number(index), 1);
+    else if (["day", "time"].includes(prop) && section.timetable[index]) section.timetable[index][prop] = value;
+  }
   else if (field === "details" && section.details[index]) {
     const detail = section.details[index];
     detail.value = value;

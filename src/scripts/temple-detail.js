@@ -130,12 +130,14 @@ function initializeTravel(page) {
 function initializeRelated(page) {
   const rail = page.querySelector("[data-related-rail]");
   if (!rail) return;
-  const cards = [...rail.children];
+  let cards = [...rail.children].filter(card => !card.hidden);
   const controls = page.querySelector("[data-related-controls]");
   const prev = controls.querySelector("[data-related-prev]");
   const next = controls.querySelector("[data-related-next]");
   let current = 0;
   function update() {
+    cards = [...rail.children].filter(card => !card.hidden);
+    if (!cards.length) { controls.hidden = true; return; }
     const left = rail.getBoundingClientRect().left;
     current = cards.reduce((best, card, i) => Math.abs(card.getBoundingClientRect().left - left) < Math.abs(cards[best].getBoundingClientRect().left - left) ? i : best, 0);
     if (rail.scrollLeft >= rail.scrollWidth - rail.clientWidth - 2 && rail.scrollLeft > 0) current = cards.length - 1;
@@ -145,12 +147,14 @@ function initializeRelated(page) {
     controls.querySelector("[data-related-count]").textContent = `${current + 1} / ${cards.length}`;
   }
   function move(delta) {
+    if (!cards.length) return;
     const card = cards[Math.max(0, Math.min(cards.length - 1, current + delta))];
     rail.scrollTo({ left: rail.scrollLeft + card.getBoundingClientRect().left - rail.getBoundingClientRect().left, behavior: reducedMotion() ? "instant" : "smooth" });
   }
   prev.addEventListener("click", () => move(-1));
   next.addEventListener("click", () => move(1));
   rail.addEventListener("scroll", update, { passive: true });
+  rail.addEventListener("mw:related-updated", update);
   new ResizeObserver(update).observe(rail);
   update();
 }
@@ -328,7 +332,7 @@ function initializeMaps(page) {
   });
   retry.addEventListener("click", loadMini);
   page.addEventListener("mw:place-detail-updated", update);
-  page.addEventListener("mw:place-detail-unavailable", () => { state.modal?.close(); state.mini?.remove(); });
+  page.addEventListener("mw:place-detail-unavailable", () => { state.modal?.close(); state.mini?.remove(); state.mini = null; });
   new ResizeObserver(() => { state.mini?.invalidateSize(); state.modalMap?.invalidateSize(); }).observe(canvas);
   update();
 }

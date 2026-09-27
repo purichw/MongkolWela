@@ -10,6 +10,21 @@ export function homeHeroAttributes(patch = {}) {
   return Object.fromEntries(Object.entries(homeHeroMetadata).map(([field, attr]) => [attr, patch[field] || ""]));
 }
 
+export function contentImageValues(node) {
+  return {
+    src: node?.getAttribute("data-carousel-src") ?? node?.getAttribute("src") ?? "",
+    alt: node?.getAttribute("alt") ?? "",
+    ...Object.fromEntries(Object.entries(homeHeroMetadata).map(([field, attr]) => [field, node?.getAttribute(attr) ?? ""])),
+  };
+}
+
+export function updateImagePatch(patch, values) {
+  if (Object.hasOwn(values, "src") && values.src !== patch.src) {
+    for (const field of ["credit", "sourceUrl", "license", "licenseUrl"]) patch[field] = "";
+  }
+  Object.assign(patch, values);
+}
+
 export function imageCreditUrl(value) {
   try {
     const url = new URL(value);

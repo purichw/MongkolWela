@@ -1,5 +1,6 @@
 ---
 import { getTempleDetailUrl } from "../data/temple-slugs.js";
+import { templeMapItems } from "../lib/temple-map-content.js";
 
 interface TempleMapItem {
   rank: number;
@@ -30,35 +31,30 @@ const mapId = `templeMap-${collection}`;
 const modalId = `templeMapModal-${collection}`;
 const payloadId = `templeMapData-${collection}`;
 const mapItems = temples
-  .filter((temple) => Number.isFinite(Number(temple.latitude)) && Number.isFinite(Number(temple.longitude)))
   .map((temple) => {
     const cardImage = temple.imageUrl || "";
-    const mapImage = temple.mapImageUrl && temple.mapImageUrl !== cardImage ? temple.mapImageUrl : "";
-    const cardMobileImage = temple.imageMobileUrl || cardImage;
-    const mapMobileImage =
-      temple.mapImageMobileUrl && temple.mapImageMobileUrl !== (mapImage || cardMobileImage)
-        ? temple.mapImageMobileUrl
-        : "";
+    const cardMobileImage = temple.imageMobileUrl ?? cardImage;
     return {
       rank: temple.rank,
       name: temple.name,
       region: temple.region,
       province: temple.province,
       district: temple.district || "",
-      latitude: Number(temple.latitude),
-      longitude: Number(temple.longitude),
+      latitude: temple.latitude ?? null,
+      longitude: temple.longitude ?? null,
       detailUrl: getTempleDetailUrl(collection, temple),
-      imageAlt: temple.imageAlt || `${temple.name} ${temple.province}`,
-      ...(mapImage ? { imageUrl: mapImage } : {}),
-      ...(mapMobileImage ? { imageMobileUrl: mapMobileImage } : {}),
+      imageAlt: temple.imageAlt ?? `${temple.name} ${temple.province}`,
+      imageUrl: temple.mapImageUrl ?? cardImage,
+      imageMobileUrl: temple.mapImageMobileUrl ?? temple.mapImageUrl ?? cardMobileImage,
     };
   });
+const mappedCount = templeMapItems(mapItems, {}, collection).length;
 const payload = JSON.stringify({
   collection,
   title,
   placeholderImage,
   totalCount: temples.length,
-  mappedCount: mapItems.length,
+  mappedCount,
   items: mapItems,
 }).replace(/</g, "\\u003c");
 ---
@@ -109,7 +105,7 @@ const payload = JSON.stringify({
         <p class="sr-only">แผนที่จะแสดงเมื่อโหลดข้อมูลสำเร็จ หากแผนที่โหลดไม่ได้ยังสามารถใช้ปุ่มเปิดใน Google Maps ในหน้ารายละเอียดได้</p>
       </div>
       <div class="temple-map-status" role="status" aria-live="polite" data-temple-map-status>
-        แสดง {mapItems.length.toLocaleString("th-TH")} จาก {temples.length.toLocaleString("th-TH")} พิกัด
+        แสดง {mappedCount.toLocaleString("th-TH")} จาก {temples.length.toLocaleString("th-TH")} พิกัด
       </div>
     </div>
   </div>

@@ -21,6 +21,11 @@ let contentLoading = false;
 let pageviewTracked = false;
 let disabledPageChildren = null;
 const appliedPatches = new Map();
+const appliedSections = new Map();
+const disabledTempleChildren = new WeakMap();
+const relatedCardSeeds = new WeakMap();
+const templeCardSeeds = new WeakMap();
+const removedTempleCards = new Map();
 const contentRequests = createLatestRequest();
 const unchanged = (before, after) => JSON.stringify(before) === JSON.stringify(after);
 
@@ -163,11 +168,26 @@ function applyPagePatches(patches = []) {
 
 function applySections(page) {
   document.querySelectorAll("[data-cms-duplicate-of]").forEach((node) => node.remove());
-  const sections = (page.sections || []).filter((section) => section.selector);
+  for (const [node, seed] of appliedSections) {
+    if (seed.anchor.parentNode) {
+      const parent = seed.anchor.parentNode;
+      if (parent.moveBefore && node.parentNode === parent) parent.moveBefore(node, seed.anchor.nextSibling);
+      else seed.anchor.after(node);
+      seed.anchor.remove();
+    }
+    for (const [name, value] of seed.attributes) value === null ? node.removeAttribute(name) : node.setAttribute(name, value);
+  }
+  appliedSections.clear();
+  const sections = (page?.sections || []).filter((section) => section.selector);
   const found = sections
     .map((section) => ({ ...section, node: document.querySelector(section.selector) }))
     .filter((section) => section.node);
   found.forEach((section) => {
+    if (!appliedSections.has(section.node)) {
+      const anchor = document.createComment("cms-section");
+      section.node.before(anchor);
+      appliedSections.set(section.node, { anchor, attributes: ["hidden", "style", "data-cms-section-id"].map(name => [name, section.node.getAttribute(name)]) });
+    }
     const isDisabled = section.enabled === false;
     section.node.hidden = isDisabled;
     section.node.style.display = isDisabled ? "none" : "";
@@ -308,12 +328,44 @@ function applyPublishedImage(root, override, slot) {
     }
     root.classList.toggle("is-placeholder", !desktop);
   }
-  const source = root.querySelector("[data-temple-mobile-source]");
-  if (source && mobile !== undefined) {
+  let source = root.querySelector("[data-temple-mobile-source]");
+  if (mobile !== undefined && image.closest("picture")) {
+    if (!source) {
+      source = document.createElement("source");
+      source.media = "(max-width: 767px)";
+      source.dataset.templeMobileSource = "";
+      image.closest("picture").prepend(source);
+    }
     const srcset = normalizePlaceholderImage(mobile) || placeholder;
     if (source.getAttribute("srcset") !== srcset) source.srcset = srcset;
   }
-  if (override.fields?.imageAlt !== undefined) image.alt = override.fields.imageAlt;
+  const alt = override.fields?.imageAlt ?? override.images?.[slot]?.desktop?.alt;
+  if (alt !== undefined) image.alt = alt;
+}
+
+function applyRelatedTempleOverrides(content) {
+  document.querySelectorAll(".pd-related-card").forEach(card => {
+    if (!relatedCardSeeds.has(card)) relatedCardSeeds.set(card, card.innerHTML);
+    card.innerHTML = relatedCardSeeds.get(card);
+    const override = getTempleOverride(content, templeKeyFromHref(card.getAttribute("href")));
+    card.hidden = override?.status === "deleted" || override?.enabled === false;
+    if (!override || card.hidden) return;
+    const fields = override.fields || {};
+    setText(".pd-related-copy strong", fields.name, card);
+    const location = card.querySelector(".pd-related-copy small");
+    const [province = "", district = ""] = location.textContent.split(" · ");
+    location.textContent = [fields.province ?? province, fields.district ?? district].filter(Boolean).join(" · ");
+    if (fields.rank !== undefined) {
+      const badge = card.querySelector(".pd-related-image span");
+      if (badge) { badge.hidden = Number(fields.rank) <= 0; badge.textContent = `#${String(fields.rank).padStart(2, "0")}`; }
+    }
+    applyPublishedImage(card, override, "card");
+  });
+  const rail = document.querySelector("[data-related-rail]");
+  if (rail) {
+    rail.closest(".pd-related").hidden = ![...rail.children].some(card => !card.hidden);
+    rail.dispatchEvent(new CustomEvent("mw:related-updated"));
+  }
 }
 
 function fieldValue(override, field, fallback = "") {
@@ -341,11 +393,23 @@ function metaValue(index, root = document) {
 }
 
 function applyTempleCardOverrides(content) {
+  for (const [card, parent] of removedTempleCards) {
+    if (parent.isConnected) parent.append(card);
+    removedTempleCards.delete(card);
+  }
   document.querySelectorAll("[data-popular-temple-card]").forEach((card) => {
     const detailHref = card.getAttribute("href") || card.querySelector("[data-popular-temple-detail]")?.getAttribute("href");
-    const override = getTempleOverride(content, templeKeyFromHref(detailHref));
-    if (!override) return;
+    const key = templeKeyFromHref(detailHref);
+    const override = getTempleOverride(content, key) || {};
+    const rank = content.temples?.order?.[key.split(":")[0]]?.indexOf(key) ?? -1;
+    const seed = templeCardSeeds.get(card);
+    if (seed) {
+      card.innerHTML = seed.html;
+      Object.assign(card.dataset, seed.data);
+    } else if (Object.keys(override).length || rank >= 0) templeCardSeeds.set(card, { html: card.innerHTML, data: { ...card.dataset } });
+    else return;
     if (override.status === "deleted" || override.enabled === false) {
+      removedTempleCards.set(card, card.parentElement);
       card.remove();
       return;
     }
@@ -364,6 +428,11 @@ function applyTempleCardOverrides(content) {
     card.dataset.blessings = String(blessings);
     card.dataset.latitude = String(latitude);
     card.dataset.longitude = String(longitude);
+    card.dataset.objectHero = fieldValue(override, "objectHero", card.dataset.objectHero || "");
+    card.dataset.placeType = fieldValue(override, "placeType", card.dataset.placeType || "");
+    card.dataset.rank = String(rank >= 0 ? rank + 1 : fieldValue(override, "rank", card.dataset.rank || ""));
+    const badge = card.querySelector("figcaption");
+    if (badge) { badge.textContent = card.dataset.rank; badge.setAttribute("aria-label", `ลำดับ ${card.dataset.rank}`); }
     card.dataset.searchText = `${name} ${region} ${province} ${district} ${blessings}`;
     setText(card.querySelector("[data-collection-province]") ? "[data-collection-province]" : ".popular-temple-card-body span", card.classList.contains("temple-collection-v2-card") ? province : region, card);
     setText(".popular-temple-card-body h3", name, card);
@@ -381,6 +450,7 @@ function applyTempleCardOverrides(content) {
     if (plannerLink) plannerLink.setAttribute("href", `/temples/planner/?start=${encodeURIComponent(name)}&province=${encodeURIComponent(province)}`);
 
     applyPublishedImage(card, override, "card");
+    card.classList.toggle("is-placeholder", card.querySelector("img")?.getAttribute("src") === sitePlaceholderImage);
   });
   document.dispatchEvent(new CustomEvent("mw:temple-overrides-applied"));
 }
@@ -537,13 +607,18 @@ function normalizeVisitTimetable(rows) {
 
 function applyTempleDetailOverride(content) {
   const key = templeKeyFromPath();
-  const override = getTempleOverride(content, key);
+  const override = getTempleOverride(content, key) || {};
   const root = document.querySelector(".temple-detail");
-  if (!override || !root) return;
+  if (!root) return;
   if (override.status === "deleted" || override.enabled === false) {
     root.dispatchEvent(new CustomEvent("mw:place-detail-unavailable"));
+    if (!disabledTempleChildren.has(root)) disabledTempleChildren.set(root, [...root.childNodes]);
     root.innerHTML = '<section class="section-shell" role="status"><h1>สถานที่นี้ไม่เปิดเผยแพร่</h1><a href="/temples/">ดูสถานที่อื่น</a></section>';
     return;
+  }
+  if (disabledTempleChildren.has(root)) {
+    root.replaceChildren(...disabledTempleChildren.get(root));
+    disabledTempleChildren.delete(root);
   }
   if (applyPlaceDetailOverride(root, override)) return;
   const name = fieldValue(override, "name", document.querySelector("#temple-detail-title")?.textContent || "");
@@ -627,9 +702,9 @@ function applyTempleDetailOverride(content) {
 }
 
 function applyTempleOverrides(content) {
-  if (!content?.temples?.records && !content?.temples?.overrides) return;
   applyTempleCardOverrides(content);
   applyTempleDetailOverride(content);
+  applyRelatedTempleOverrides(content);
 }
 
 function shouldTrackAnalytics(content) {
@@ -711,7 +786,7 @@ async function bootCmsRuntime() {
     const previousPage = pageForRoute(previous);
     if (!previous || !unchanged(previousPage, page) || !unchanged(previous.site?.patches, content.site?.patches)) {
       if (!renderCustomPage(content) && !disablePage(page)) {
-        if (page && (!previous || !unchanged(previousPage?.sections, page.sections))) applySections(page);
+        if (!previous || !unchanged(previousPage?.sections, page?.sections)) applySections(page);
         if (page?.id === "home") resetHomepageCollections(document);
         applyPagePatches([...(content.site?.patches || []), ...(page?.patches || [])]);
         if (page?.id === "home") applyHomepageCollections(document, page.homepage);

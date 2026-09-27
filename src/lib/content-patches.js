@@ -11,7 +11,9 @@ export function safeContentUrl(value, { link = false } = {}) {
 
 export function validContentPatch(patch) {
   if (!patch || typeof patch.selector !== "string" || !patch.selector.trim()) return false;
-  if (patch.kind === "image") return safeContentUrl(patch.src ?? "");
+  if (patch.kind === "image") return safeContentUrl(patch.src ?? "")
+    && ["alt", "position", "credit", "license"].every(field => patch[field] === undefined || typeof patch[field] === "string")
+    && ["sourceUrl", "licenseUrl"].every(field => patch[field] === undefined || safeContentUrl(patch[field]));
   if (patch.kind === "text-node") return Number.isInteger(patch.nodeIndex) && patch.nodeIndex >= 0 && typeof patch.value === "string";
   if (patch.kind === "attr") return attributes.has(patch.attr) && typeof patch.value === "string"
     && (!["href", "src"].includes(patch.attr) || safeContentUrl(patch.value, { link: patch.attr === "href" }));
@@ -55,9 +57,14 @@ export function projectContentPatches(root, patches) {
         node.setAttribute("src", patch.src || "");
         if (node.hasAttribute("data-home-hero-image")) node.setAttribute("data-carousel-src", patch.src || "");
         if (patch.alt !== undefined) node.setAttribute("alt", patch.alt);
+        if (node.matches("[data-cms-media], [data-home-hero-image]")) {
+          for (const [attr, value] of Object.entries(homeHeroAttributes(patch))) node.setAttribute(attr, value);
+          node.style.objectPosition = patch.position || "50% 50%";
+        }
       } else if (patch.kind === "attr") node.setAttribute(patch.attr, patch.value);
       else if (patch.kind === "html") node.innerHTML = safeContentHtml(root, patch.value);
       else node.textContent = patch.value;
     }
   }
 }
+import { homeHeroAttributes } from "./home-hero-media.js";

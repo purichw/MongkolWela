@@ -27,7 +27,17 @@ export function createTempleEditorControls({ state, getRecord, getEdit, render, 
         return response.json();
       }).then(data => {
         regions = data.facets?.regions || [];
-        if (state.templeEditorOpen) render();
+        if (state.templeEditorOpen) {
+          // Late lookup data must not replace an open editor or its dropdown.
+          drawer()?.querySelectorAll("select[data-temple-field]").forEach(select => {
+            const field = select.dataset.templeField;
+            if (!["region", "province", "district"].includes(field)) return;
+            const selected = select.value;
+            const empty = [...select.options].find(option => option.value === "")?.cloneNode(true);
+            select.replaceChildren(...(empty ? [empty] : []), ...choices(field).map(option => new Option(option, option, false, option === selected)));
+            select.value = selected;
+          });
+        }
       }).catch(() => { loadingAreas = null; });
     }
   }

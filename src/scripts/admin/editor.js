@@ -176,7 +176,7 @@ function renderTempleEditor(record, edit) {
       ${text("summary", "คำแนะนำสถานที่", "mw-place-field-summary", 3)}${text("description", "รายละเอียดสถานที่", "mw-place-field-description", 3)}
     </div>
     <details class="mw-place-editor-extra" data-editor-panel="extra" ${templeEditorControls.isOpen("extra") ? "open" : ""}><summary>${adminIcon("chevron-down")}<strong>ข้อมูลเพิ่มเติม</strong><small>ประเภท การเดินทาง และข้อมูลประกอบ</small></summary><div class="mw-admin-form-grid">
-      ${field("placeType", "ประเภท")}${field("travelModes", "รูปแบบการเดินทาง")}${field("blessings", "พรที่นิยมขอ")}${field("objectHero", "สิ่งที่นิยมสักการะ")}${text("imageAlt", "คำอธิบาย", "mw-admin-form-grid--span")}
+      ${field("placeType", "ประเภท")}${field("travelModes", "รูปแบบการเดินทาง")}${field("blessings", "พรที่นิยมขอ")}${field("objectHero", "สิ่งที่นิยมสักการะ")}${text("imageAlt", "คำอธิบาย", "mw-admin-form-grid--span")}${field("imageSourceLabel", "เครดิตภาพ")}${field("imageSourceUrl", "ลิงก์แหล่งที่มาของภาพ", "", 'type="url"')}
     </div><div class="mw-place-editor-record-actions">${state.publishedTempleKeys.has(record.key) ? `<a class="mw-admin-btn" target="_blank" rel="noopener" href="${escapeHtml(record.detailUrl)}">${adminIcon("external-link")}เปิดหน้าจริง</a>` : '<span>ฉบับร่างใหม่ · ยังไม่เผยแพร่</span>'}<button class="mw-admin-btn mw-admin-btn-danger" type="button" data-action="delete-temple">${adminIcon("trash")}นำออกจากหมวด</button></div></details>
   </details></section>
   <section class="mw-place-editor-section mw-place-editor-visit"><details id="temple-editor-visit" data-editor-panel="visit" ${templeEditorControls.isOpen("visit") ? "open" : ""}>

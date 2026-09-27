@@ -110,3 +110,65 @@ not a migration to a different CMS:
 Browser fixtures are test-only and must never be imported by deployed endpoints
 or the authenticated local preview bridge. Production content has not been
 published or migrated by this work.
+
+## Field Synchronization Audit (2026-09-27)
+
+The synchronization contract is source -> Admin form -> publication -> public
+projection -> rendered visitor content, including explicit empty values and
+removal of overrides. An empty value must not revive an older image or contact.
+
+| Supported surface | Coverage and ownership |
+| --- | --- |
+| 25 registered visitor pages | Discover actual rendered field bindings, change every discovered field, clear it, then remove the override. Stable IDs and occurrence indexes remain unchanged. |
+| Shared content and navigation | Header/footer copy, grouped links, device-specific labels/visibility and live refresh retain their existing separate owners. |
+| Reading library | All 3,706 registered string fields across 14 groups / 268 records are checked for projection, editing, clearing and restoration. Formula inputs and record identities remain protected. |
+| Place identity and descriptive fields | Name, region, province, district, coordinate address, summary, description, type, blessings, worship objects, transport labels, plus code, coordinates and image attribution use the same catalog as the visitor. |
+| Place images | Card, detail hero and map each retain desktop/mobile slots. Explicit mobile clearing shows a placeholder; it does not silently use an old desktop image. |
+| Visiting information | Section status, summaries, detailed values, daily timetable, review date and notice are editable and rendered. Supplementary verification references stay in the CMS audit data, not the visitor panel. Renaming a place does not change its source-data identity. |
+| Collection/detail/map refresh | Text, location, rank, image changes, disabled/deleted records and removal of overrides propagate without requiring a rebuild of existing routes. Related cards refresh too. |
+| Page section controls | Removing visibility/order overrides restores the original nodes and order, including removal of the page override itself. |
+| Image metadata | Focal position, alt, credit, source and license fields use the same projection in Admin and visitor. Changing image source clears previous-image attribution. |
+| Calendar heading | Editorial title and computed year have separate nodes so selecting a year cannot overwrite the published title. |
+| Location selectors | Late geographical lookup data updates existing options without replacing the editor, closing an open province selector or losing pending edits. |
+
+The Admin temple API previously omitted address, summary and description, and
+used a different visiting-information source. Tests now call its actual catalog
+projection rather than reproducing a richer mock that could conceal omissions.
+
+Loading/error messages, runtime counts, calculation results and expand/collapse
+state labels are not offered as persistent page copy. Their transient values
+must not be mistaken for CMS-owned editorial fields. Activity and commerce data
+still belong to their authenticated domain APIs; this audit does not merge them
+into `pages[].patches`, enable services or modify production records. Media
+registry metadata does not automatically replace attribution on existing content
+references. New static detail routes still require a build.
+
+Regression evidence:
+
+- `tests/runtime/cms-field-sync.test.mjs`: real catalog, visitor/search/planner
+  projections, map values, visit editing and every registered library field.
+- `tests/runtime/cms-publishing.test.mjs`: real authenticated publication handler
+  against an isolated database fixture, including image metadata, visiting rows,
+  public projection, validation, access restrictions and stale-revision rejection.
+- `tests/e2e/cms-field-sync.spec.ts`: rendered page bindings, live refresh,
+  related cards, section restoration, open map updates and Admin timetable
+  editing/publishing/reloading with desktop/mobile screenshots; delayed lookup
+  data is also tested while the province dropdown is open.
+- Existing content-coverage, freshness, navigation and temple-live browser tests
+  exercise representative editor journeys and source-outage behavior.
+
+Browser publication is fixture-backed, not a production write. These checks do
+not claim a production round-trip for every field, nor immediate build-time SEO
+or social-preview updates. Broader performance/SEO audits are outside this pass.
+
+Verification completed locally: all 25 page-field cases and all library fields,
+the 53-test targeted runtime suite, and targeted browser regressions for editing,
+navigation, freshness, maps and collection filters. Initial failures exposed the
+computed calendar/registry labels, transient status bindings and the late area
+lookup race; each was corrected and rerun. Type checks and browser-script binding
+checks passed, and CMS validators covered 625 source place records. The static
+build produces 746 pages; Vite still reports the existing mixed JSON import
+attribute warnings for the shared live-content file.
+
+Mobile form evidence (test-only fixture):
+`artifacts/cms-field-sync-20260927/admin-timetable-mobile.png`.

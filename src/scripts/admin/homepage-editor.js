@@ -1,4 +1,5 @@
 import { adminIcon } from "./design.js";
+import { contentImageValues, updateImagePatch } from "../../lib/home-hero-media.js";
 import { projectContentPatches, safeContentUrl } from "../../lib/content-patches.js";
 import { homepageCollections, readHomepageCollections, validateHomepageContent } from "../../lib/homepage-content.js";
 import { sitePlaceholderImage } from "../../lib/image-placeholder.js";
@@ -42,11 +43,13 @@ export function createHomepageEditor({ state, escapeHtml: e, markDirty, setTitle
     let patch = page.patches.find(item => item.id === definition.id);
     if (!patch && definition.kind === "image") {
       const image = source.querySelector(definition.selector);
-      definition = { src: image?.getAttribute("data-carousel-src") || image?.getAttribute("src") || "", alt: image?.getAttribute("alt") || "", ...definition };
+      definition = { ...contentImageValues(image), ...definition };
     }
     if (!patch) { patch = { ...definition }; page.patches.push(patch); }
-    Object.assign(patch, value);
+    if (definition.kind === "image") updateImagePatch(patch, value);
+    else Object.assign(patch, value);
     markDirty();
+    return patch;
   }
 
   function field(root, selector, label, { attr, rows = 1, max = 300, textNode = false } = {}) {
@@ -63,7 +66,7 @@ export function createHomepageEditor({ state, escapeHtml: e, markDirty, setTitle
 
   function media(root, id, label, compact = false) {
     const node = root.querySelector(`#${id}`);
-    const patch = owner().patches?.find(item => item.id === id) || {};
+    const patch = contentImageValues(node);
     const src = patch.src ?? node?.getAttribute("data-carousel-src") ?? node?.getAttribute("src") ?? "";
     const alt = patch.alt ?? node?.getAttribute("alt") ?? "";
     const providerReady = !!(state.media?.cloudinary?.enabled || state.media?.imagekit?.enabled);
@@ -204,7 +207,10 @@ export function createHomepageEditor({ state, escapeHtml: e, markDirty, setTitle
     }
     if (target.matches("[data-home-media-prop]")) {
       const id = target.closest("[data-home-media]").dataset.homeMedia;
-      writePatch({ id, selector: `#${id}`, kind: "image" }, { [target.dataset.homeMediaProp]: target.value });
+      const patch = writePatch({ id, selector: `#${id}`, kind: "image" }, { [target.dataset.homeMediaProp]: target.value });
+      if (target.dataset.homeMediaProp === "src") {
+        for (const prop of ["credit", "sourceUrl", "license", "licenseUrl"]) target.closest("[data-home-media]").querySelector(`[data-home-media-prop="${prop}"]`).value = patch[prop] || "";
+      }
       if (target.dataset.homeMediaProp === "src" && safeContentUrl(target.value)) target.closest("[data-home-media]").querySelector("img").src = target.value || sitePlaceholderImage;
       return true;
     }

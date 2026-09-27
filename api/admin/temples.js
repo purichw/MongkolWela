@@ -3,7 +3,8 @@ import { requireAdmin } from "./_auth.js";
 import popularTemples from "../../src/data/popular-temples.json" with { type: "json" };
 import muTemples from "../../src/data/mu-temples.json" with { type: "json" };
 import sacredTemples from "../../src/data/sacred-temples.json" with { type: "json" };
-import visitInfoData from "../../src/data/temple-visit-info.json" with { type: "json" };
+import { getTempleVisitInfo } from "../../src/data/temple-visit-info.js";
+import { normalizeVisit } from "../../src/lib/place-detail-view.js";
 import { applyTempleCmsRecords, templeCollectionConfig } from "../../src/data/temple-cms.js";
 import { createTempleSlug } from "../../src/data/temple-slugs.js";
 import { readLiveContent } from "./_shared.js";
@@ -26,24 +27,7 @@ const COLLECTION_ORDER = {
   sacred: 3,
 };
 
-function normalizeVisitInfo(temple, visitInfoData) {
-  const fallbackNotice = visitInfoData.fallbackNotice || "กรุณาตรวจสอบกับสถานที่ดังกล่าว";
-  const key = `${String(temple.name || "").trim()}|${String(temple.province || "").trim()}`;
-  const entry = visitInfoData.entries?.[key] || {};
-  return {
-    key,
-    status: entry.status || "needs-direct-check",
-    notice: entry.notice || fallbackNotice,
-    reviewedAt: entry.reviewedAt || "",
-    sources: Array.isArray(entry.sources) ? entry.sources : [],
-    admission: entry.admission || null,
-    hours: entry.hours || null,
-    contact: entry.contact || null,
-  };
-}
-
-export async function loadTempleCatalog() {
-  const content = await readLiveContent();
+export function templeCatalogFromContent(content) {
   const collections = Object.entries(DATASETS).map(([collection, temples]) =>
     applyTempleCmsRecords(collection, temples, content).map((temple) => {
       const slug = temple.cmsSlug || createTempleSlug(temple);
@@ -61,6 +45,9 @@ export async function loadTempleCatalog() {
           region: temple.region,
           province: temple.province,
           district: temple.district || "",
+          coordinateAddress: temple.coordinateAddress ?? "",
+          summary: temple.summary ?? "",
+          description: temple.description ?? "",
           placeType: temple.placeType || "",
           blessings: temple.blessings || "",
           objectHero: temple.objectHero || "",
@@ -74,7 +61,7 @@ export async function loadTempleCatalog() {
           longitude: temple.longitude ?? "",
           travelModes: temple.travelModes || "",
         },
-        visitInfo: normalizeVisitInfo(temple, visitInfoData),
+        visitInfo: normalizeVisit(getTempleVisitInfo(temple), (content.temples?.records?.[temple.cmsKey] || content.temples?.overrides?.[temple.cmsKey])?.visitInfo),
       };
     }),
   );
@@ -85,6 +72,10 @@ export async function loadTempleCatalog() {
     }
     return (Number(a.temple.rank) || 0) - (Number(b.temple.rank) || 0);
   });
+}
+
+export async function loadTempleCatalog() {
+  return templeCatalogFromContent(await readLiveContent());
 }
 
 export default async function handler(req, res) {

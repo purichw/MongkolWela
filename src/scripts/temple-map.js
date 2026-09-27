@@ -1,4 +1,5 @@
 import { sitePlaceholderImage } from "../lib/image-placeholder.js";
+import { templeMapItems } from "../lib/temple-map-content.js";
 const TEMPLE_MAP_CONFIG = {
   thailandBounds: [[5.2, 96.6], [21.2, 106.5]],
   thailandCenter: [13.7563, 100.5018],
@@ -45,6 +46,7 @@ function initializeTempleMapWidget(root) {
   if (!modal || !openButton || !payloadNode) return;
 
   const payload = readPayload(payloadNode);
+  const seedItems = payload.items;
   const cardData = collectTempleCardData();
   payload.items = payload.items.map((item) => ({ ...(cardData.get(item.detailUrl) || {}), ...item }));
   mapStates.set(modal, {
@@ -72,6 +74,17 @@ function initializeTempleMapWidget(root) {
     const first = searchResults?.querySelector("[data-temple-map-result]");
     first?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
+  const syncContent = content => {
+    const state = mapStates.get(modal);
+    state.payload.items = templeMapItems(seedItems, content, payload.collection);
+    state.payload.mappedCount = state.payload.items.length;
+    openButton.disabled = !state.payload.items.length;
+    if (state.map) renderMarkers(state);
+    updateTempleMapSearch(modal);
+    setMapStatus(state, `แสดง ${state.payload.mappedCount.toLocaleString("th-TH")} พิกัด`);
+  };
+  document.addEventListener("mw:cms-content-ready", event => syncContent(event.detail.content));
+  syncContent(window.MongkolWelaCMS?.content || {});
 }
 
 async function openTempleMap(modal) {
@@ -153,7 +166,6 @@ function initTempleMap(modal, state) {
       setMapStatus(state, "แสดงแผนที่ได้ แต่โหลดเส้นขอบประเทศไม่สำเร็จ");
     });
 
-  const icons = createTempleMarkerIcons();
   const clusterGroup = window.L.markerClusterGroup({
     maxClusterRadius: TEMPLE_MAP_CONFIG.clusterRadius,
     spiderfyOnMaxZoom: true,
@@ -168,6 +180,19 @@ function initTempleMap(modal, state) {
     },
   });
 
+  clusterGroup.addTo(map);
+  state.map = map;
+  state.clusterGroup = clusterGroup;
+  renderMarkers(state);
+  fitThailand(map);
+  setMapStatus(state, `แสดง ${state.payload.mappedCount.toLocaleString("th-TH")} พิกัด`);
+}
+
+function renderMarkers(state) {
+  const icons = createTempleMarkerIcons();
+  state.clusterGroup.clearLayers();
+  state.markers = [];
+  state.activeMarker = null;
   state.payload.items.forEach((item) => {
     const cardImages = state.cardData.get(item.detailUrl);
     const marker = window.L.marker([item.latitude, item.longitude], { icon: icons.defaultIcon })
@@ -181,15 +206,10 @@ function initTempleMap(modal, state) {
     marker._defaultIcon = icons.defaultIcon;
     marker._activeIcon = icons.activeIcon;
     bindTempleMarkerHover(marker, state);
-    clusterGroup.addLayer(marker);
+    state.clusterGroup.addLayer(marker);
     state.markers.push(marker);
   });
 
-  clusterGroup.addTo(map);
-  state.map = map;
-  state.clusterGroup = clusterGroup;
-  fitThailand(map);
-  setMapStatus(state, `แสดง ${state.payload.mappedCount.toLocaleString("th-TH")} จาก ${state.payload.totalCount.toLocaleString("th-TH")} พิกัด`);
 }
 
 function fitThailand(map) {
@@ -252,11 +272,11 @@ function collectTempleCardData() {
 }
 
 function renderTemplePopup(item, cardImages = {}, placeholderImage = sitePlaceholderImage) {
-  const desktopImage = item.imageUrl || cardImages.desktop || placeholderImage || sitePlaceholderImage;
-  const mobileImage = item.imageMobileUrl || cardImages.mobile || desktopImage;
+  const desktopImage = (item.imageUrl ?? cardImages.desktop) || placeholderImage || sitePlaceholderImage;
+  const mobileImage = (item.imageMobileUrl ?? cardImages.mobile ?? desktopImage) || placeholderImage || sitePlaceholderImage;
   const img = `<picture class="temple-responsive-picture">
         ${mobileImage && mobileImage !== desktopImage ? `<source media="(max-width: 767px)" srcset="${escapeHtml(mobileImage)}">` : ""}
-        <img src="${escapeHtml(desktopImage)}" alt="${escapeHtml(item.imageAlt || item.name)}" loading="lazy" data-fallback-src="${sitePlaceholderImage}">
+        <img src="${escapeHtml(desktopImage)}" alt="${escapeHtml(item.imageAlt ?? item.name)}" loading="lazy" data-fallback-src="${sitePlaceholderImage}">
       </picture>`;
   const place = [item.province, item.district].filter(Boolean).join(" / ");
   return `

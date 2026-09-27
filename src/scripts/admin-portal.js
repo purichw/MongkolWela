@@ -1199,6 +1199,15 @@ function handleTempleReorderKeydown(event) {
 
 function handleGlobalClick(event) {
   if (templeEditorControls.click(event)) return;
+  const visitRow = event.target.closest("[data-visit-row]");
+  if (visitRow) {
+    const index = visitRow.dataset.visitRow;
+    updateVisitContent(currentTempleEdit(), currentTempleRecord(), `hours/timetable/${index}${index === "add" ? "" : "/remove"}`, "");
+    markDirty();
+    renderTemples();
+    document.querySelector('[data-visit-row="add"]')?.focus();
+    return;
+  }
   if (templeList.click(event)) return;
   if (navigationEditor.click(event)) return;
   if (contentLibrary.click(event)) return;
