@@ -19,6 +19,12 @@ test("HTTP auth, origin, parallel capacity, fail-closed deployment and independe
     assert.equal(response.headers.get("cache-control"), "no-store");
     const catalog = await response.json();
     assert.equal(catalog.payments.enabled, false);
+    const linked = new Set([...catalog.products, ...catalog.campaigns].map(row => row.templeId));
+    assert.ok(catalog.temples.length > 0);
+    for (const temple of catalog.temples) {
+      assert.ok(linked.has(temple.id));
+      assert.deepEqual(Object.keys(temple).sort(), ["id", "imageUrl", "name", "province"]);
+    }
     assert.equal((await fetch(`${base}/api/commerce?view=manage`)).status, 403);
     assert.equal((await request({ op: "save", table: "organizations", data: {} })).status, 403);
     assert.equal((await request({ op: "checkout" })).status, 503);

@@ -1,5 +1,8 @@
 # Shop Mockup Adaptation
 
+Historical September 21 implementation. The current shop and merit design is
+documented in [Commerce Redesign](commerce-redesign-20260927.md).
+
 Date: 2026-09-21. Route: `/shop/`. Local implementation only; no deployment.
 
 ## Design Authority

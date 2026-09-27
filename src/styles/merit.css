@@ -1,0 +1,102 @@
+body[data-cms-page="merit"] { display: flex; flex-direction: column; min-height: 100svh; }
+.merit-page { flex: 1; }
+.merit-page[data-commerce-state="disabled"] { display: flex; flex-direction: column; }
+.merit-closed { position: relative; flex: 1; min-height: 365px; display: grid; align-items: center; background: #fbf6e9; }
+.merit-closed-art { position: absolute; inset: 0; }
+.merit-closed-art img { width: 100%; height: 100%; object-fit: cover; object-position: center bottom; }
+.merit-closed-content { text-align: center; padding-block: 35px 45px; }
+.merit-closed-content > .site-icon { width: 48px; height: 48px; }
+.merit-closed h1 { margin: 12px auto; font-size: 30px; line-height: 1.4; }
+.merit-closed h1 span { display: block; }
+.merit-closed p { max-width: 450px; margin: 12px auto 22px; font-size: 16px; }
+.merit-closed .commerce-button { gap: 18px; font-size: 14px; }
+.merit-closed .commerce-button .site-icon { width: 18px; height: 18px; --site-icon-color: currentColor; }
+.merit-content { padding-bottom: 40px; }
+.merit-detail-heading { display: none; }
+.merit-page[data-commerce-state="ready"][data-commerce-view="detail"] .merit-detail-heading { display: block; font-size: 32px; margin: 12px 0 20px; }
+.merit-page[data-commerce-state="disabled"] .merit-content { padding: 0; }
+.merit-hero { position: relative; min-height: 280px; display: grid; place-items: center; }
+.merit-hero > img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
+.merit-hero-content { text-align: center; padding-block: 24px 48px; }
+.merit-page .merit-hero .section-kicker { margin: 0 0 4px; color: #2e5145; font-size: 17px; }
+.merit-hero h1 { font-size: 40px; line-height: 1.4; margin: 0; color: #233f32; }
+.merit-page .merit-hero-quote { font-size: 26px; line-height: 1.5; color: #955631; margin: 8px 0 16px; font-weight: 650; }
+.merit-principles { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; padding: 0; margin: 0; }
+.merit-principles li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #3e4638; }
+.merit-principles .ui-icon-mask { color: #976425; }
+.merit-catalog-controls { position: relative; display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, .85fr) minmax(0, .85fr) 110px; gap: 14px; align-items: center; padding: 16px; border: 1px solid #e7ddca; border-radius: 6px; background: #fffdf6; margin-top: -30px; }
+.merit-catalog-controls label { min-width: 0; font-size: 11px; color: #706251; }
+.merit-page .merit-catalog-controls select { border: 0; background-color: #fffdf6; padding-top: 2px; padding-bottom: 2px; min-height: 26px; font-size: 14px; }
+.merit-page .catalog-search { display: flex; align-items: center; position: relative; }
+.merit-page .catalog-search > .ui-icon-mask { position: absolute; left: 12px; color: #85735c; }
+.merit-page .catalog-search input { padding-left: 40px; font-size: 14px; text-align: left; border-color: #e4dccb; }
+.merit-sort { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
+.merit-sort select { font-size: 13px; min-height: 36px; padding-block: 5px; border-color: #e4dccb; }
+.merit-page .commerce-catalog-count { margin-top: 4px; }
+.merit-page .commerce-catalog-count h2 { font-size: 23px; margin: 0; }
+.merit-campaigns { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.merit-campaign { display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e3d7bf; border-radius: 6px; background: #fffdf8; min-width: 0; }
+.merit-campaign-media { position: relative; }
+.merit-campaign-media img { display: block; width: 100%; height: auto; aspect-ratio: 1.8; object-fit: cover; }
+.merit-status { position: absolute; left: 10px; top: 10px; color: #fff; background: #95614d; border-radius: 4px; padding: 5px 9px; font-size: 11px; font-weight: 600; }
+.merit-status.is-open { background: #f8d47b; color: #533710; }
+.merit-campaign .commerce-favorite { width: 32px; height: 32px; top: 6px; right: 6px; }
+.merit-campaign-copy { display: flex; flex-direction: column; flex: 1; padding: 14px; }
+.merit-page .merit-campaign h2 { font-size: 17px; line-height: 1.45; margin: 0 0 10px; }
+.merit-campaign h2 a { color: #242b22; text-decoration: none; }
+.merit-page .merit-campaign-copy > p { display: flex; gap: 7px; align-items: flex-start; margin: 4px 0; font-size: 12px; line-height: 1.5; color: #4a6155; }
+.merit-campaign-copy > p > .ui-icon-mask { width: 15px; height: 17px; color: #9b742f; }
+.merit-capacity { display: grid; gap: 5px; margin-top: 15px; font-size: 12px; color: #566257; }
+.merit-capacity strong { color: #194d40; font-size: 14px; }
+.merit-capacity progress { display: block; width: 100%; height: 6px; border: 0; border-radius: 4px; overflow: hidden; accent-color: #18614a; background: #eee9df; }
+.merit-capacity progress::-webkit-progress-bar { background: #eee9df; }
+.merit-capacity progress::-webkit-progress-value { background: #18614a; border-radius: 4px; }
+.merit-capacity progress::-moz-progress-bar { background: #18614a; }
+.merit-card-actions { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 16px; }
+.merit-card-actions > * { flex: 1; }
+.merit-card-actions .commerce-button { padding: 7px 9px; min-height: 40px; font-size: 12px; }
+.merit-card-actions .commerce-button.secondary { border-color: #cbab77; color: #754c27 !important; }
+.merit-card-actions .ui-icon-mask { width: 15px; height: 15px; }
+.merit-card-actions > span { color: #8a755b; font-size: 12px; text-align: center; }
+.merit-closed-art .merit-closed-mobile { display: none; }
+@media (max-width: 1000px) {
+  .merit-campaigns { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .merit-hero h1 { font-size: 34px; }
+  .merit-hero-content { background: #fff8e675; }
+}
+@media (max-width: 700px) {
+  .merit-campaigns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .merit-catalog-controls { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 80px; gap: 10px; padding: 12px; }
+  .merit-catalog-controls .catalog-search { grid-column: 1 / -1; }
+  .merit-catalog-controls .commerce-button { align-self: end; padding-inline: 8px; font-size: 13px; }
+}
+@media (max-width: 600px) {
+  .merit-closed { display: block; min-height: 0; }
+  .merit-closed-art { display: block; position: relative; width: var(--page-width); margin: auto; height: 215px; }
+  .merit-closed-art img { object-fit: contain; }
+  .merit-closed-art .merit-closed-desktop { display: none; }
+  .merit-closed-art .merit-closed-mobile { display: block; }
+  .merit-closed-content { padding-top: 0; padding-bottom: 28px; }
+  .merit-closed-content > .site-icon { display: none; }
+  .merit-closed h1 { font-size: 24px; margin: 0 0 12px; }
+  .merit-closed p { font-size: 14px; margin: 0 auto 18px; }
+  .merit-hero { min-height: 270px; align-items: end; }
+  .merit-hero > img { object-position: left top; height: 180px; top: 0; }
+  .merit-hero-content { width: 100%; background: linear-gradient(transparent, #fcf7e9 25%); padding: 90px 16px 48px; }
+  .merit-page .merit-hero .section-kicker { font-size: 14px; }
+  .merit-hero h1 { font-size: 28px; }
+  .merit-page .merit-hero-quote { font-size: 20px; margin: 4px 0 12px; }
+  .merit-principles { gap: 7px 14px; }
+  .merit-principles li { font-size: 11px; gap: 5px; }
+  .merit-principles .ui-icon-mask { width: 16px; height: 16px; }
+  .merit-sort { gap: 8px; margin: 12px 0; }
+  .merit-sort label { min-width: 0; flex: 1; }
+  .merit-page .commerce-catalog-count h2 { font-size: 20px; }
+  .merit-campaigns { grid-template-columns: 1fr; gap: 16px; }
+  .merit-campaign-media img { aspect-ratio: 2; }
+  .merit-campaign-copy { padding: 14px; }
+  .merit-page .merit-campaign h2 { font-size: 19px; }
+  .merit-page .merit-campaign-copy > p { font-size: 13px; }
+  .merit-card-actions .commerce-button { font-size: 14px; min-height: 44px; }
+  .merit-capacity { font-size: 13px; }
+}

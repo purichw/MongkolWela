@@ -1,5 +1,8 @@
 # Commerce, Merit Reservations And Donation Links
 
+Current public presentation and optional category support:
+[September 27 commerce redesign](commerce-redesign-20260927.md).
+
 ## Delivery Plan (2026-09-20)
 
 - [x] Private transactional store, tenant authorization and audit trail.

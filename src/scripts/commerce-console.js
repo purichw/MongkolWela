@@ -2,6 +2,7 @@ import { COMMERCE_TYPES, COMMERCE_STATUS } from "../lib/commerce-format.js";
 import { commerceApi, e, money, thaiCommerceDate } from "./commerce-ui.js";
 import { renderIcon } from "../lib/ui-markup.js";
 import { commerceDashboardHeader, commercePreparation, commerceSetupGuide } from "./admin/commerce-dashboard.js";
+import { PRODUCT_CATEGORIES } from "../lib/commerce-catalog.js";
 
 export function mountCommerceConsole(root, { embedded = false } = {}) {
   const lifecycle = new AbortController();
@@ -99,6 +100,7 @@ export function mountCommerceConsole(root, { embedded = false } = {}) {
     if (section === "campaigns") fields = field("title", "ชื่องาน / รายการ") + field("templeId", "วัดที่จัดงาน", "select", { values: templeValues }) + field("kind", "ประเภทการจอง", "select", { values: [["fund", "ร่วมเป็นเจ้าภาพรายกอง"], ["host", "ขอเป็นเจ้าภาพหลัก"]] }) + field("eventDate", "วันที่จัดงาน", "date") + field("closeDate", "วันปิดรับจอง", "date") + field("capacity", "จำนวนกอง / เจ้าภาพหลัก 1 ราย", "number", { min: 1 }) + field("amountBaht", "ยอดร่วมบุญต่อกอง (บาท)", "number", { min: 0, step: "0.01" }) + field("description", "วัตถุประสงค์และรายละเอียด", "textarea") + field("sourceUrl", "URL ประกาศผู้จัด", "url") + field("cancellationPolicy", "เงื่อนไขยกเลิกหรือเลื่อนงาน", "textarea") + field("channelId", "ช่องทางบริจาคที่ผ่านการตรวจสอบ", "select", { required: false, values: [["", "ยังไม่เชื่อมช่องทาง"], ...data.channels.filter(c => c.status === "published").map(c => [c.id, c.recipientName])] });
     if (section === "channels") fields = field("templeId", "วัดผู้รับบริจาค", "select", { values: templeValues }) + field("recipientName", "ชื่อหน่วยรับบริจาค") + field("province", "จังหวัด") + field("recipientId", "เลขหน่วยรับบริจาค 13 หลัก", "text", { required: false, max: 13 }) + field("destinationKind", "ประเภทปลายทาง", "select", { values: [["temple", "หน้ารับบริจาคของวัด"], ["provider", "หน้ารับบริจาคของธนาคาร / หน่วยงาน"], ["registry", "ทะเบียนกลาง: สำหรับตรวจสอบเท่านั้น"]] }) + field("url", "URL ปลายทาง", "url") + field("sourceUrl", "URL หลักฐานยืนยันความเกี่ยวข้อง", "url") + field("verifiedAt", "วันที่ตรวจสอบ", "date", { required: false });
     if (section === "members") fields = field("email", "อีเมล", "email") + field("userId", "รหัสผู้ใช้ Supabase Auth (สำหรับบัญชีเดิม)", "text", { required: false });
+    if (section === "products") fields += field("category", "หมวดสินค้า", "select", { required: false, values: [["", "ยังไม่ระบุหมวด"], ...PRODUCT_CATEGORIES.map(category => [category.id, category.label])] });
     const statuses = { organizations: ["draft", "active", "suspended"], products: ["draft", "published", "archived"], campaigns: ["draft", "published", "paused", "closed", "cancelled", "archived"], channels: data.admin ? ["draft", "review", "published", "archived"] : ["review"], members: ["active", "suspended"] }[section];
     fields += field("status", "สถานะ", "select", { values: statuses.map(s => [s, COMMERCE_STATUS[s]]) });
     target.innerHTML = `<form class="commerce-editor" data-editor><header class="commerce-section-heading"><h2>${editing.id ? "แก้ไขรายการ" : "เพิ่มรายการ"}</h2><button type="button" class="commerce-button secondary" data-close>ยกเลิก</button></header>${section !== "organizations" ? `<p>ร้านค้า / ผู้จัด: <strong>${e(organization?.name || "กรุณาเลือกร้านค้าก่อน")}</strong></p>` : ""}<div class="commerce-form-grid">${fields}</div>${section === "channels" && data.admin ? '<label class="commerce-check"><input type="checkbox" name="reviewConfirmed" /> ตรวจสอบชื่อวัด จังหวัด เลขหน่วยรับบริจาค และปลายทางแล้ว (ต้องยืนยันก่อนเผยแพร่)</label>' : ""}<div class="commerce-actions"><button type="submit" class="commerce-button">บันทึกรายการ</button>${section === "members" && !editing.id ? `<button type="button" class="commerce-button secondary" data-invite ${data.localPreview ? "disabled" : ""}>ส่งอีเมลเชิญ${data.localPreview ? " (ไม่ส่งใน local)" : ""}</button>` : ""}</div></form>`;
@@ -128,7 +130,12 @@ export function mountCommerceConsole(root, { embedded = false } = {}) {
       else if (data) render();
       return;
     }
-    if (button.dataset.section) { if (!allowLeave()) return; section = button.dataset.section; editing = null; dirty = false; search = ""; render(); }
+    if (button.dataset.section) {
+      // These tabs belong to commerce, not the enclosing admin portal router.
+      event.stopPropagation();
+      if (!allowLeave()) return;
+      section = button.dataset.section; editing = null; dirty = false; search = ""; render();
+    }
     if (button.hasAttribute("data-create")) { if (!allowLeave()) return; edit(); }
     if (button.dataset.edit) { if (!allowLeave()) return; edit(data[section].find(r => r.id === button.dataset.edit)); }
     if (button.hasAttribute("data-close")) { if (!allowLeave()) return; editing = null; dirty = false; renderRows(); }
