@@ -79,6 +79,8 @@ test("contact editor keeps email and LINE separate and publishes their shared de
   await page.locator('.mw-select[role="combobox"][aria-label="หน้าเว็บไซต์"]').click();
   await page.getByRole("searchbox", { name: "ค้นหาหน้าเว็บไซต์", exact: true }).fill("ติดต่อ");
   await page.getByRole("option", { name: "ติดต่อมงคลเวลา", exact: true }).click();
+  await page.getByRole("combobox", { name: "ส่วนของหน้า", exact: true }).click();
+  await page.getByRole("option", { name: "ช่องทางติดต่อ", exact: true }).click();
   const email = page.locator('[data-page-content-id="contact-data-email"] input');
   const line = page.locator('[data-page-content-id="contact-data-line-id"] input');
   await expect(email).toHaveValue("mongkolwela@mongkolwela.com");
@@ -239,6 +241,7 @@ test("temple descriptions and visiting information publish to the detail page", 
   await page.locator(`[data-edit-temple="${record.key}"]`).first().click();
   await page.locator('[data-temple-field="summary"]').fill("คำแนะนำสถานที่ที่แก้จาก CMS");
   await page.locator('[data-temple-field="description"]').fill("รายละเอียดสถานที่ที่แก้จาก CMS");
+  await page.locator('[data-editor-jump="visit"]').click();
   await page.locator('[data-temple-visit="notice"]').fill("หมายเหตุเข้าชมที่แก้จาก CMS");
   await page.screenshot({ path: testInfo.outputPath("temple-editor.png"), fullPage: false });
   await page.locator('[data-action="save-temple-editor"]').click();
