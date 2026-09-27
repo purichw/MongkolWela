@@ -171,6 +171,15 @@ Content photography ต้องผ่าน CMS slots เดิมพร้อ�
 
 ## ใช้ซ้ำ
 
+### คู่มือเดินทาง (27 กันยายน 2026)
+
+- Sticky ที่วางใน grid และ span สองแถวไม่ได้รับประกันว่าจะหยุดก่อนแถวถัดไป ต้องมี wrapper ครอบพื้นที่ที่อนุญาต แล้วทดสอบหลัง anchor scroll จบจริงว่า sidebar ไม่ทับ chapter ถัดไป
+- `expect(target.top >= header)` อย่างเดียวอาจผ่านก่อน smooth scroll เริ่ม ต้องตรวจขอบบนและล่างของระยะ landing พร้อมกัน ภาพที่ยังเห็น Hero ไม่ใช่หลักฐานของสถานะ scrolled
+- ภาพเต็มหน้าต้องโหลด lazy images รวม footer ก่อน capture และรอ page loader หาย ไม่ใช่รอ CMS อย่างเดียว; ตรวจ glyph ลูกของ icon หลังเปลี่ยน display ด้วย
+- เก็บ CMS IDs/occurrences/text-node indexes เดิมเมื่อเปลี่ยน wrapper หรือย้าย section และทดสอบ live refresh โดยมี checklist ที่เลือกอยู่ เพื่อไม่ให้การปรับภาพล้าง state ของผู้ใช้
+
+หลักฐานและความต่างที่ตั้งใจเก็บอยู่ใน [Travel guide](travel-guide.md#mockup-redesign-2026-09-27-local-only)
+
 เรียก `$mockup-to-product` สำหรับการดัดแปลง mockup ไปเป็นเว็บจริง Skill กลางตั้งใจไม่ฝังสีไทย-ทอง จำนวนการ์ดสามใบ หรือ breakpoint ของมงคลเวลาเป็นกฎสำหรับทุกโครงการ
 
 ตัวอย่างคำสั่ง:

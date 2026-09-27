@@ -1,4 +1,5 @@
 import { normalizeVisitSection } from "../../lib/place-detail-view.js";
+import { adminIcon } from "./design.js";
 
 export const visitFields = {
   hours: [["เวลาปกติ", "regular"], ["จำหน่ายบัตร", "ticketOffice"], ["วันหยุด", "closed"], ["หมายเหตุ", "notes"]],
@@ -14,12 +15,22 @@ export function editableVisitSection(value, kind) {
   return { ...normalized, status: value?.status || "unknown" };
 }
 
-export function renderVisitEditor(record, edit, e) {
+export function renderVisitSummary(record, edit, e) {
+  const visit = { ...record.visitInfo, ...edit?.visitInfo };
+  return `<div class="mw-place-visit-summary">${[["hours", "clock", "เวลาเปิด–ปิด"], ["admission", "ticket", "ค่าเข้าชม"], ["contact", "phone", "ช่องทางติดต่อ"]].map(([kind, icon, label]) => {
+    const section = editableVisitSection(visit[kind], kind);
+    const details = section.details.filter(item => String(item.value || "").trim());
+    const status = section.status === "verified" ? "ตรวจสอบแล้ว" : section.status === "listed" && details.length ? "มีข้อมูล" : "ยังไม่ยืนยัน";
+    return `<button type="button" data-editor-visit-kind="${kind}">${adminIcon(icon)}<span><strong>${label}<b class="${status === "ยังไม่ยืนยัน" ? "is-unknown" : ""}">${status}</b></strong><small>${e(section.summary || details.map(item => item.value).slice(0, 2).join(" · ") || "ยังไม่มีข้อมูล")}</small></span></button>`;
+  }).join("")}</div>`;
+}
+
+export function renderVisitEditor(record, edit, e, isOpen = () => false) {
   const visit = { ...record.visitInfo, ...edit?.visitInfo };
   const statusOptions = value => [["unknown", "ยังไม่ยืนยัน"], ["listed", "มีข้อมูลอ้างอิง"], ["verified", "ตรวจสอบแล้ว"]].map(([id, label]) => `<option value="${id}" ${value === id ? "selected" : ""}>${label}</option>`).join("");
   return `<div class="mw-admin-form-grid"><label>วันที่ตรวจทาน<input type="date" data-temple-visit="reviewedAt" value="${e(visit.reviewedAt || "")}"></label><label>หมายเหตุเข้าชม<input data-temple-visit="notice" value="${e(visit.notice || "")}"></label></div>${Object.entries(visitFields).map(([kind]) => {
     const section = editableVisitSection(visit[kind], kind);
-    return `<details class="mw-admin-visit-editor" open><summary>${{ hours: "เวลาเปิด–ปิด", admission: "ค่าเข้าชม", contact: "ช่องทางติดต่อ" }[kind]}</summary><div class="mw-admin-form-grid"><label>สถานะข้อมูล<select data-temple-visit="${kind}/status">${statusOptions(section.status)}</select></label><label>ข้อความสรุป<input data-temple-visit="${kind}/summary" value="${e(section.summary || "")}"></label>${section.details.map((detail, index) => `<label>${e(detail.term)}<input data-temple-visit="${kind}/details/${index}" value="${e(detail.value)}"></label>`).join("")}</div></details>`;
+    return `<details class="mw-admin-visit-editor" data-visit-kind="${kind}" data-editor-panel="visit-${kind}" ${isOpen(`visit-${kind}`) ? "open" : ""}><summary>${adminIcon({ hours: "clock", admission: "ticket", contact: "phone" }[kind])}${{ hours: "เวลาเปิด–ปิด", admission: "ค่าเข้าชม", contact: "ช่องทางติดต่อ" }[kind]}${adminIcon("chevron-down")}</summary><div class="mw-admin-form-grid"><label>สถานะข้อมูล<select data-temple-visit="${kind}/status">${statusOptions(section.status)}</select></label><label>ข้อความสรุป<input data-temple-visit="${kind}/summary" value="${e(section.summary || "")}"></label>${section.details.map((detail, index) => `<label>${e(detail.term)}<input data-temple-visit="${kind}/details/${index}" value="${e(detail.value)}"></label>`).join("")}</div></details>`;
   }).join("")}<div class="mw-admin-form-grid"><label>ชื่อแหล่งอ้างอิงเพิ่มเติม<input data-temple-visit="sourceLabel" value="${e(visit.sources?.find(source => source.id === "cms-editor")?.label || "")}"></label><label>ลิงก์อ้างอิงเพิ่มเติม<input type="url" data-temple-visit="sourceUrl" value="${e(visit.sources?.find(source => source.id === "cms-editor")?.url || "")}"></label></div>`;
 }
 

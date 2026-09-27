@@ -7,6 +7,8 @@ const PUBLISH_VERIFY_TIMEOUT_MS = 90000;
 const PUBLISH_VERIFY_INTERVAL_MS = 600;
 
 function setPublishControlsDisabled(disabled) {
+  const dismiss = $('[data-action="dismiss-publish-progress"]');
+  if (dismiss) dismiss.hidden = disabled;
   queryAll('[data-action="publish"]').forEach((button) => {
     button.disabled = disabled;
     button.setAttribute("aria-busy", disabled ? "true" : "false");
@@ -83,6 +85,11 @@ async function publish() {
       payload.meta?.fast ? "กำลังตรวจว่า visitor อ่านข้อมูลใหม่ได้แล้ว" : "กำลังตรวจข้อมูล live",
     );
     const verifiedContent = await waitForPublishedContent(payload.content);
+    state.publishedTempleRecords = structuredClone(verifiedContent.temples?.records || {});
+    state.publishedTempleKeys = new Set(state.templeCatalog.filter(record => {
+      const published = state.publishedTempleRecords[record.key];
+      return (record.source !== "admin" || Boolean(published)) && published?.status !== "deleted" && published?.enabled !== false;
+    }).map(record => record.key));
     const editedDuringPublish = JSON.stringify(state.content) !== draftSignature;
     if (!editedDuringPublish) state.content = verifiedContent;
     state.dirty = editedDuringPublish;

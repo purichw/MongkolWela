@@ -9,6 +9,7 @@ import { applyContentBindings } from "../lib/content-bindings.js";
 import { prepareContentFields } from "../lib/page-content-fields.js";
 import { contentPatchNodes, safeContentHtml, validContentPatch } from "../lib/content-patches.js";
 import { applyHomepageCollections, resetHomepageCollections } from "../lib/homepage-content.js";
+import { collectionIntent } from "../lib/temple-collection-card.js";
 
 const CMS_CONTENT_URL = "/api/admin/content";
 const CMS_CONSENT_KEY = "mongkolwela.pdpa.analytics";
@@ -364,9 +365,20 @@ function applyTempleCardOverrides(content) {
     card.dataset.latitude = String(latitude);
     card.dataset.longitude = String(longitude);
     card.dataset.searchText = `${name} ${region} ${province} ${district} ${blessings}`;
-    setText(".popular-temple-card-body span", card.classList.contains("temple-collection-v2-card") ? province : region, card);
+    setText(card.querySelector("[data-collection-province]") ? "[data-collection-province]" : ".popular-temple-card-body span", card.classList.contains("temple-collection-v2-card") ? province : region, card);
     setText(".popular-temple-card-body h3", name, card);
     setText(".popular-temple-card-body p", `${province}${district ? ` / ${district}` : ""}`, card);
+    const intent = card.querySelector("[data-collection-intent]");
+    if (intent) {
+      intent.textContent = collectionIntent({
+        blessings,
+        objectHero: fieldValue(override, "objectHero", card.dataset.objectHero || ""),
+        placeType: fieldValue(override, "placeType", card.dataset.placeType || ""),
+      });
+      intent.hidden = !intent.textContent;
+    }
+    const plannerLink = card.querySelector(".temple-collection-v2-card-plan");
+    if (plannerLink) plannerLink.setAttribute("href", `/temples/planner/?start=${encodeURIComponent(name)}&province=${encodeURIComponent(province)}`);
 
     applyPublishedImage(card, override, "card");
   });

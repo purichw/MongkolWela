@@ -14,6 +14,21 @@ if (root) {
   initializeRelated(root);
   initializeMaps(root);
   root.querySelector("[data-temple-detail-copy]")?.addEventListener("click", () => copyUrl());
+  root.querySelectorAll(".pd-confidence-help").forEach(details => {
+    let hoverOpened = false;
+    details.addEventListener("pointerenter", event => {
+      if (event.pointerType === "mouse" && matchMedia("(min-width: 768px) and (hover: hover)").matches && !details.open) { hoverOpened = true; details.open = true; }
+    });
+    details.addEventListener("pointerleave", event => {
+      hoverOpened = false;
+      if (event.pointerType === "mouse" && !details.contains(document.activeElement)) details.open = false;
+    });
+    details.querySelector("summary").addEventListener("click", event => {
+      if (hoverOpened) { event.preventDefault(); hoverOpened = false; details.open = true; }
+    });
+    details.querySelector("summary").addEventListener("focus", event => { if (event.target.matches(":focus-visible")) details.open = true; });
+    details.addEventListener("focusout", event => { if (!details.contains(event.relatedTarget)) details.open = false; });
+  });
   root.querySelector("[data-temple-detail-share]")?.addEventListener("click", async () => {
     if (navigator.share) {
       try { await navigator.share({ title: document.title, url: canonicalUrl() }); return; }
@@ -31,14 +46,22 @@ if (root) {
 
 function initializeImages(page) {
   const credit = page.querySelector(".pd-image-credit");
+  const photoOpen = page.querySelector("[data-photo-open]");
+  let photoDialog;
+  let photoSource;
+  const imageSignature = () => {
+    const picture = page.querySelector("[data-place-media] picture");
+    return JSON.stringify([picture.querySelector("img").getAttribute("src"), picture.querySelector("source")?.getAttribute("srcset"), picture.querySelector("img").alt, credit.innerHTML]);
+  };
   function updateCredit(image) {
     if (!image.closest("[data-place-media]")) return;
     credit.hidden = image.currentSrc === new URL(image.dataset.fallbackSrc, location.href).href;
+    photoOpen.hidden = credit.hidden;
   }
   function fallback(image) {
     if (!(image instanceof HTMLImageElement) || !image.dataset.fallbackSrc) return;
     applyImageFallback(image);
-    if (image.closest("[data-place-media]")) credit.hidden = true;
+    if (image.closest("[data-place-media]")) { credit.hidden = true; photoOpen.hidden = true; }
   }
   page.addEventListener("error", event => fallback(event.target), true);
   page.addEventListener("load", event => { if (event.target instanceof HTMLImageElement && event.target.dataset.fallbackSrc) updateCredit(event.target); }, true);
@@ -46,6 +69,27 @@ function initializeImages(page) {
     if (image.complete && !image.naturalWidth) fallback(image);
     else if (image.complete) updateCredit(image);
   });
+  photoOpen.addEventListener("click", () => {
+    const source = page.querySelector("[data-place-media] img");
+    const dialog = createDialog(source.alt || "ภาพสถานที่");
+    photoDialog = dialog;
+    photoSource = imageSignature();
+    dialog.classList.add("pd-photo-dialog");
+    const figure = document.createElement("figure");
+    const image = document.createElement("img");
+    image.src = source.currentSrc || source.src;
+    image.alt = source.alt;
+    figure.append(image);
+    const caption = document.createElement("figcaption");
+    caption.innerHTML = credit.innerHTML;
+    figure.append(caption);
+    dialog.append(figure);
+    dialog.addEventListener("close", () => { photoDialog = null; }, { once: true });
+    dialog.showModal();
+    dialog.querySelector("[data-dialog-close]").focus();
+  });
+  page.addEventListener("mw:place-detail-updated", () => { if (photoSource !== imageSignature()) photoDialog?.close(); });
+  page.addEventListener("mw:place-detail-unavailable", () => { photoDialog?.close(); });
 }
 
 function initializeTravel(page) {
@@ -55,10 +99,11 @@ function initializeTravel(page) {
   const stops = [...page.querySelectorAll("[data-pd-stop]")];
   const more = page.querySelector("[data-pd-stops-more]");
   if (!more) return;
+  const mobile = matchMedia("(max-width: 767px)");
   function apply(announce = false) {
     const candidates = stops.filter(s => selected === "all" || s.dataset.mode === selected);
     const firstModes = new Set();
-    const initial = selected === "all" ? candidates.filter(s => {
+    const initial = selected === "all" ? mobile.matches ? candidates.slice().sort((a, b) => Number(a.dataset.distance) - Number(b.dataset.distance)).slice(0, 1) : candidates.filter(s => {
       if (firstModes.has(s.dataset.mode) || firstModes.size >= 4) return false;
       firstModes.add(s.dataset.mode); return true;
     }) : candidates.slice(0, 2);
@@ -67,7 +112,8 @@ function initializeTravel(page) {
     filters.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pdMode === selected)));
     more.hidden = candidates.length <= initial.length;
     more.setAttribute("aria-expanded", String(Boolean(expanded.get(selected))));
-    more.textContent = expanded.get(selected) ? "แสดงน้อยลง" : `ดูจุดเดินทางทั้งหมด (${candidates.length})`;
+    more.textContent = expanded.get(selected) ? "แสดงน้อยลง" : `ดูทั้งหมด (${candidates.length})`;
+    more.setAttribute("aria-label", expanded.get(selected) ? "แสดงจุดเดินทางน้อยลง" : `ดูจุดเดินทางทั้งหมด (${candidates.length})`);
     if (announce) {
       page.querySelector("[data-pd-travel-status]").textContent = `แสดง ${shown.length} จาก ${candidates.length} จุดเดินทาง`;
       const active = filters.find(button => button.dataset.pdMode === selected);
@@ -76,16 +122,8 @@ function initializeTravel(page) {
     }
   }
   filters.forEach(button => button.addEventListener("click", () => { selected = button.dataset.pdMode; apply(true); }));
-  page.querySelectorAll("[data-pd-quick]").forEach(button => button.addEventListener("click", () => {
-    selected = button.dataset.pdQuick;
-    apply(true);
-    const target = stops.find(s => s.dataset.pdStop === button.dataset.stopKey);
-    if (target?.hidden) { expanded.set(selected, true); apply(true); }
-    const heading = page.querySelector("#pd-results-heading");
-    heading?.focus({ preventScroll: true });
-    (target || heading)?.scrollIntoView({ behavior: reducedMotion() ? "instant" : "smooth", block: "center" });
-  }));
   more.addEventListener("click", () => { expanded.set(selected, !expanded.get(selected)); apply(true); });
+  mobile.addEventListener("change", () => apply());
   apply();
 }
 

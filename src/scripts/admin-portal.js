@@ -8,15 +8,17 @@ import { initPublicSelects } from "./public-select.js";
 import { updateVisitContent } from "./admin/visit-content.js";
 import { createActivityEditor } from "./admin/activities.js";
 import { createAdminMedia } from "./admin/media.js";
+import { createMediaLibrary } from "./admin/media-library.js";
+import { createAdminAnalytics } from "./admin/analytics.js";
 import { createTempleEditor } from "./admin/editor.js";
 import { requestJson } from "./request.js";
 import { adminIcon, createAdminDesign } from "./admin/design.js";
-import { collectAdminMedia, catalogTaxonomy, mediaProviderStatus } from "./admin/data.js";
+import { catalogTaxonomy, mediaProviderStatus } from "./admin/data.js";
 const state = {
   content: null,
   baseRevision: "",
   selectedPageId: "home",
-  section: new URLSearchParams(location.search).get("section") === "commerce" ? "commerce" : "dashboard",
+  section: ["commerce", "analytics"].includes(new URLSearchParams(location.search).get("section")) ? new URLSearchParams(location.search).get("section") : "dashboard",
   sidebarCollapsed: readStoredFlag("mongkolwela.admin.sidebarCollapsed"),
   mobileNavOpen: false,
   dirty: false,
@@ -24,8 +26,9 @@ const state = {
   analytics: null,
   templeLoadError: false,
   mediaLoadError: false,
-  mediaPage: 1,
   templeCatalog: [],
+  publishedTempleRecords: {},
+  publishedTempleKeys: new Set(),
   selectedTempleKey: "",
   templeCollectionFilter: "popular",
   templeSearch: "",
@@ -148,6 +151,8 @@ function setStatus(message, type = "info") {
   if (!el) return;
   el.textContent = message;
   el.dataset.type = type;
+  const editorStatus = $("[data-temple-editor-status]");
+  if (editorStatus) { editorStatus.textContent = message; editorStatus.dataset.type = type; }
 }
 
 function sleep(ms) {
@@ -218,6 +223,7 @@ function renderAppShell() {
       <div class="mw-admin-publish-progress-head">
         <strong data-publish-progress-title>กำลัง publish</strong>
         <span data-publish-progress-value>0%</span>
+        <button class="mw-admin-icon-button" type="button" data-action="dismiss-publish-progress" aria-label="ปิดสถานะการเผยแพร่" title="ปิดสถานะการเผยแพร่" hidden>${icon("x")}</button>
       </div>
       <div class="mw-admin-publish-progress-track"><i data-publish-progress-bar></i></div>
       <p data-publish-progress-detail>กำลังเตรียมข้อมูล</p>
@@ -265,6 +271,7 @@ function renderAppShell() {
   $("#adminApp").addEventListener("click", handleGlobalClick);
   $("#adminApp").addEventListener("input", handleInput);
   $("#adminApp").addEventListener("change", handleInput);
+  $("#adminApp").addEventListener("submit", event => templeList.submit(event));
   $("#adminApp").addEventListener("error", handleAdminImageError, true);
   $("#adminApp").addEventListener("dragstart", handleTempleDragStart);
   $("#adminApp").addEventListener("dragover", handleTempleDragOver);
@@ -308,7 +315,7 @@ function syncSidebarState() {
   shell.classList.toggle("is-sidebar-collapsed", !mobile && state.sidebarCollapsed);
   shell.classList.toggle("is-mobile-nav-open", mobile && state.mobileNavOpen);
   $(".mw-admin-nav-backdrop").hidden = !(mobile && state.mobileNavOpen);
-  $(".mw-admin-sidebar").inert = mobile && !state.mobileNavOpen;
+  $(".mw-admin-sidebar").inert = state.templeEditorOpen || (mobile && !state.mobileNavOpen);
   $(".mw-admin-main").inert = mobile && state.mobileNavOpen;
   document.body.classList.toggle("mw-admin-nav-locked", mobile && state.mobileNavOpen);
   const toggle = $(".mw-admin-nav-toggle");
@@ -372,6 +379,7 @@ function renderLogin(message = "") {
 async function loadContent() {
   const payload = await api("/api/admin/content");
   state.content = payload.content;
+  state.publishedTempleRecords = structuredClone(payload.content.temples?.records || {});
   state.baseRevision = payload.revision || "";
   ensureNavigation();
   try {
@@ -398,6 +406,7 @@ async function loadTemples() {
     const payload = await api("/api/admin/temples");
     state.templeLoadError = false;
     state.templeCatalog = payload.temples || [];
+    state.publishedTempleKeys = new Set(state.templeCatalog.map(record => record.key));
     const currentExists = state.templeCatalog.some((item) => item.key === state.selectedTempleKey);
     if (!currentExists) {
       state.selectedTempleKey =
@@ -434,7 +443,7 @@ async function loadSecondaryAdminData() {
 function renderAdmin() {
   renderSideNav();
   $("#adminTopActions")?.classList.toggle("mw-activity-top-actions", state.section === "dates");
-  document.querySelectorAll('[data-action="save-draft"], [data-action="publish"]').forEach((button) => { button.hidden = ["dates", "commerce"].includes(state.section); });
+  document.querySelectorAll('[data-action="save-draft"], [data-action="publish"]').forEach((button) => { button.hidden = ["dates", "commerce", "media", "analytics"].includes(state.section); });
   if (!state.content) {
     renderAdminLoading("ภาพรวม", "กำลังโหลดข้อมูล", "กำลังเตรียมข้อมูลหลักสำหรับระบบจัดการเว็บ");
     return;
@@ -453,7 +462,7 @@ function renderAdmin() {
     sections: renderSections,
     navigation: renderNavigation,
     components: renderComponents,
-    analytics: design.renderAnalytics,
+    analytics: analyticsView.render,
     collections: renderCollections,
     dates: renderDates,
     media: renderMedia,
@@ -464,7 +473,9 @@ function renderAdmin() {
 }
 
 function setTitle(title, kicker = "ระบบจัดการเว็บ") {
-  $(".mw-admin-main")?.classList.remove("is-home-editor", "is-menu-editor", "is-commerce-editor");
+  document.querySelectorAll('[data-action="save-draft"], [data-action="publish"]').forEach(button => { button.hidden = ["dates", "commerce", "media", "analytics"].includes(state.section); });
+  $(".mw-admin-main")?.classList.remove("is-home-editor", "is-menu-editor", "is-commerce-editor", "is-temple-list", "has-temple-draft", "is-site-content", "is-activity-view", "is-activity-editing", "is-media-library", "is-analytics", "is-library-editor");
+  document.querySelectorAll("[data-site-content-header], [data-activity-header], [data-media-header], [data-analytics-header], [data-library-header]").forEach(node => node.remove());
   $("#adminContent").classList.remove("is-overview");
   $("#adminTitle").textContent = title;
   $("#adminDescription").textContent = "";
@@ -1019,26 +1030,7 @@ function renderDates() {
 }
 
 function renderMedia() {
-  setTitle("คลังสื่อ", "สินทรัพย์");
-  const media = collectAdminMedia(state.content, state.templeCatalog, templeImageValue);
-  const pageSize = 24;
-  const pages = Math.max(1, Math.ceil(media.length / pageSize));
-  state.mediaPage = Math.max(1, Math.min(state.mediaPage, pages));
-  const provider = mediaProviderStatus(state.media, state.mediaLoadError);
-  setTopActions(`<button class="mw-admin-btn" type="button" data-action="refresh-admin-data">${adminIcon("rotate-ccw")}โหลดข้อมูลอีกครั้ง</button>`);
-  $("#adminContent").innerHTML = `<section class="mw-admin-upload-zone">
-    <strong>${escapeHtml(provider)}</strong>
-    <p>รูปในข้อมูลที่กำลังจัดการ ${toThaiNumber(media.length)} รูป · นับตำแหน่งอ้างอิงใน CMS ไม่ใช่ยอดเข้าชม</p>
-    ${state.templeLoadError ? '<p role="status">โหลดรูปจากสถานที่ไม่สำเร็จ ขณะนี้แสดงเฉพาะรูปในเนื้อหาหน้าเว็บ</p>' : !state.secondaryReady ? '<p role="status">กำลังโหลดรูปจากสถานที่</p>' : ""}
-  </section>
-  <div class="mw-admin-media-grid">
-    ${media.slice((state.mediaPage - 1) * pageSize, state.mediaPage * pageSize).map((item) => `<article class="mw-admin-media-card">
-      <div><img src="${escapeHtml(item.src)}" alt="" loading="lazy" data-admin-temple-image></div>
-      <h2>${escapeHtml(item.name)}</h2>
-      <p>อ้างอิง ${toThaiNumber(item.references.length)} ตำแหน่ง</p>
-      <details class="mw-admin-media-references"><summary>ตำแหน่งที่ใช้รูป</summary>${item.references.map(ref => `<button class="mw-admin-text-link" type="button" ${ref.templeKey ? `data-edit-temple="${escapeHtml(ref.templeKey)}"` : `data-section="pages" data-page-jump="${escapeHtml(ref.pageId)}"`}>${escapeHtml(ref.label)} · ${escapeHtml(ref.slot || "รูปภาพ")}${ref.enabled ? "" : " (ปิดไว้)"}${adminIcon("arrow-right")}</button>`).join("")}</details>
-    </article>`).join("") || empty("ยังไม่มีรูปในข้อมูลวัด")}
-  </div>${pages > 1 ? `<nav class="mw-admin-media-pagination" aria-label="หน้าคลังสื่อ"><button class="mw-admin-btn" type="button" data-media-page="${state.mediaPage - 1}" ${state.mediaPage === 1 ? "disabled" : ""} aria-label="หน้าก่อนหน้า">${adminIcon("chevron-left")}</button><span>หน้า ${state.mediaPage} / ${pages}</span><button class="mw-admin-btn" type="button" data-media-page="${state.mediaPage + 1}" ${state.mediaPage === pages ? "disabled" : ""} aria-label="หน้าถัดไป">${adminIcon("chevron-right")}</button></nav>` : ""}`;
+  mediaLibrary.render();
 }
 
 function renderUsers() {
@@ -1190,11 +1182,8 @@ function handleTempleDragEnd() {
 }
 
 function handleTempleReorderKeydown(event) {
-  if (event.key === "Escape" && state.templeEditorOpen) {
-    event.preventDefault();
-    closeTempleEditor();
-    return;
-  }
+  if (templeList.keydown(event)) return;
+  if (state.templeEditorOpen) return;
   const handle = event.target.closest?.("[data-temple-drag-key]");
   if (!handle || !["ArrowUp", "ArrowDown"].includes(event.key)) return;
   event.preventDefault();
@@ -1202,6 +1191,8 @@ function handleTempleReorderKeydown(event) {
 }
 
 function handleGlobalClick(event) {
+  if (templeEditorControls.click(event)) return;
+  if (templeList.click(event)) return;
   if (navigationEditor.click(event)) return;
   if (contentLibrary.click(event)) return;
   if (pageContentEditor.click(event)) return;
@@ -1232,10 +1223,11 @@ function handleGlobalClick(event) {
     state.section = "temples";
     state.selectedTempleKey = editTempleButton.dataset.editTemple;
     state.templeCollectionFilter = state.templeCatalog.find(item => item.key === state.selectedTempleKey)?.collection || state.templeCollectionFilter;
+    templeEditorControls.begin();
     state.templeEditorOpen = true;
+    if (state.mobileNavOpen) { state.mobileNavOpen = false; syncSidebarState(); }
     renderSideNav();
     renderTemples();
-    requestAnimationFrame(() => $(".mw-admin-drawer input, .mw-admin-drawer button")?.focus());
     return;
   }
 
@@ -1281,18 +1273,12 @@ function handleGlobalClick(event) {
     renderAdmin();
     return;
   }
-  const mediaPage = event.target.closest("[data-media-page]");
-  if (mediaPage) {
-    state.mediaPage = Number(mediaPage.dataset.mediaPage);
-    renderMedia();
-    $("#adminTitle")?.scrollIntoView({ block: "start" });
-    return;
-  }
   const actionButton = event.target.closest("[data-action]");
   if (!actionButton) return;
   const action = actionButton.dataset.action;
   const actions = {
     "save-draft": saveDraft,
+    "dismiss-publish-progress": () => { if (!state.publishing) hidePublishProgress(); },
     "dismiss-draft": () => { $("#adminDraftNotice").hidden = true; },
     "restore-draft": () => {
       if (state.publishing || !commerceEditor.canLeave() || (state.section === "dates" && !activityEditor.canLeave()) || (state.dirty && !confirm("เปิดฉบับร่างที่บันทึกไว้แทนข้อมูลที่กำลังแก้ไข?"))) return;
@@ -1439,6 +1425,7 @@ function restoreTempleListScroll() {
 }
 
 function handleInput(event) {
+  if (templeList.input(event)) return;
   if (navigationEditor.input(event)) return;
   if (event.target.closest("[data-commerce-console]")) return;
   if (contentLibrary.input(event)) return;
@@ -1471,6 +1458,7 @@ function handleInput(event) {
   }
   if (updateTempleFromInput(target)) {
     markDirty();
+    if (event.type === "change") templeEditorControls.changed(target);
     return;
   }
   if (updateNavFromInput(target)) {
@@ -1931,6 +1919,7 @@ async function resetTempleOverride() {
 }
 
 function addTemple() {
+  templeEditorControls.begin();
   const collection = state.templeCollectionFilter || "popular";
   const createdAt = Date.now();
   const key = `${collection}:admin-${createdAt}`;
@@ -1984,17 +1973,25 @@ function deleteTemple() {
   persistTempleOrder(record.collection, collectionTemples(record.collection));
   state.selectedTempleKey = state.templeCatalog.find((item) => item.collection === state.templeCollectionFilter)?.key || "";
   state.templeEditorOpen = false;
+  templeEditorControls.finish();
+  syncSidebarState();
   markDirty();
   renderTemples();
 }
 
 function closeTempleEditor() {
   state.templeEditorOpen = false;
+  templeEditorControls.finish(true);
+  syncSidebarState();
+  setStatus(state.dirty ? "มีการแก้ไขที่ยังไม่ได้เผยแพร่" : "ยกเลิกการแก้ไขแล้ว", state.dirty ? "warn" : "ok");
   renderTemples();
 }
 
 function saveTempleEditor() {
+  if (!templeEditorControls.validate()) return;
   state.templeEditorOpen = false;
+  templeEditorControls.finish();
+  syncSidebarState();
   setStatus("บันทึกการแก้ไขไว้ใน draft แล้ว", "ok");
   renderTemples();
 }
@@ -2043,24 +2040,26 @@ function moveArrayItem(array, index, direction) {
 
 window.addEventListener("beforeunload", (event) => {
   if (!state.session) return;
-  if (!state.dirty && !activityEditor.isDirty() && !activityEditor.isBusy() && !commerceEditor.isDirty()) return;
+  if (!state.dirty && !activityEditor.isDirty() && !activityEditor.isBusy() && !commerceEditor.isDirty() && !mediaLibrary.isBusy() && !mediaLibrary.isDirty()) return;
   event.preventDefault();
   event.returnValue = "";
 });
 
-const { templeRecords, templeOrders, currentTempleRecord, currentTempleEdit, templeValue, filteredTempleCatalog, normalizeAdminSearch, renderTemples, renderTempleTableRow, templeConfidence, renderTempleDrawer, renderTempleListItem, renderTempleEmptyState, renderTempleEditor, renderTempleImageGroup, renderTempleImageField, templeImageValue } = createTempleEditor({ state, rememberTempleListScroll, setTitle, setTopActions, escapeHtml, $, TEMPLE_COLLECTIONS, empty, restoreTempleListScroll, collectionTemples, TEMPLE_IMAGE_FIELDS });
+const { templeRecords, templeOrders, currentTempleRecord, currentTempleEdit, templeValue, filteredTempleCatalog, normalizeAdminSearch, renderTemples, renderTempleTableRow, templeConfidence, renderTempleDrawer, renderTempleListItem, renderTempleEmptyState, renderTempleEditor, renderTempleImageGroup, renderTempleImageField, templeImageValue, templeList, templeEditorControls } = createTempleEditor({ state, rememberTempleListScroll, setTitle, setTopActions, setStatus, closeTempleEditor, escapeHtml, $, TEMPLE_COLLECTIONS, empty, restoreTempleListScroll, collectionTemples, TEMPLE_IMAGE_FIELDS });
 
 const { imageFieldFromButton, setTempleImage, useTempleImageUrl, verifyImageLoads, cropTempleImage, reuseTempleImage, clearTempleImage, handleTempleImageUpload, templeImageFilename, detectImageProvider, uploadAdminMedia, openTempleCropper, initializeTempleCrop, bindTempleCropPointerEvents, pickCropBox, moveTempleCrop, resizeTempleCrop, updateTempleCropSelection, applyTempleCrop, closeTempleCropper } = createAdminMedia({ markDirty, setStatus, state, api, $, TEMPLE_IMAGE_FIELDS, escapeHtml, currentTempleEdit, currentTempleRecord, renderTemples, templeImageValue });
 
 const { setPublishControlsDisabled, setPublishProgress, hidePublishProgress, publishedContentMatches, waitForPublishedContent, publish } = createAdminPublishing({ queryAll: (selector) => document.querySelectorAll(selector), $, api, sleep, state, setStatus, renderAdmin });
 
 const activityEditor = createActivityEditor({ state, $, api, escapeHtml, setTitle, setTopActions, setStatus, uploadMedia: uploadAdminMedia });
+const mediaLibrary = createMediaLibrary({ state, api, escapeHtml, setTitle, setTopActions, templeImageValue, uploadMedia: uploadAdminMedia });
 const contentLibrary = createContentLibrary({ state, api, escapeHtml, setTitle, setTopActions, markDirty, setStatus });
 const pageContentEditor = createPageContentEditor({ state, escapeHtml, markDirty, setTitle, setTopActions, setStatus, renderAdvanced: renderAdvancedPages, uploadMedia: uploadAdminMedia });
 const navigationEditor = createNavigationEditor({ state, escapeHtml, markDirty, setTitle, setTopActions, setStatus, uploadMedia: uploadAdminMedia });
 const commerceEditor = createCommerceEditor({ setTitle, setTopActions });
 
 const design = createAdminDesign({ state, $, escapeHtml, dashboardSummary, templeHealthRows, formatDateTime, setTitle, setTopActions });
+const analyticsView = createAdminAnalytics({ state, api, escapeHtml, setTitle, setTopActions, formatDateTime });
 window.matchMedia("(max-width: 900px)").addEventListener("change", () => { state.mobileNavOpen = false; syncSidebarState(); });
 document.addEventListener("keydown", event => {
   if (!$("#adminGlobalSearch")) return;

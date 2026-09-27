@@ -209,7 +209,7 @@ test("shared footer publishes across visitor routes without marking searches dir
   const status = await page.locator("#adminStatus").textContent();
   await page.locator("[data-page-content-search]").fill("ควรตรวจสอบข้อมูลสถานที่ก่อนออกเดินทาง");
   await expect(page.locator("#adminStatus")).toHaveText(status!);
-  await page.locator('[data-page-content-id="9f7d7eae-12-0-text-0"] textarea').fill("ทดสอบ: ตรวจข้อมูลก่อนออกเดินทาง");
+  await page.locator('[data-page-content-id="9f7d7eae-12-0-text-0"] [data-page-content-value="value"]').fill("ทดสอบ: ตรวจข้อมูลก่อนออกเดินทาง");
   await page.locator('[data-action="publish"]').first().click();
   await expect(page.locator("#adminStatus")).toHaveText("เผยแพร่แล้ว");
   for (const path of ["/", "/horoscope/palmistry/"]) {

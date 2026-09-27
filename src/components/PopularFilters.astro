@@ -22,10 +22,7 @@ const { regions, purposes } = Astro.props as { regions: string[]; purposes: stri
           <SiteIcon name="search" />
           <input data-cms-field="29d42b8d-4" type="search" name="name" placeholder="ค้นหาชื่อวัด สถานที่ หรือจังหวัด" autocomplete="off" data-popular-temple-filter-name disabled />
         </label>
-        <button data-cms-field="29d42b8d-5" class="pf__primary" type="submit" disabled>ค้นหา</button>
-        <button class="pf__nearby" type="button" data-popular-temple-nearby aria-pressed="false" disabled><SiteIcon name="map-pin" /><span data-cms-field="29d42b8d-6">ใกล้ตำแหน่งปัจจุบัน</span></button>
-        <button data-cms-field="29d42b8d-7" class="pf__clear" type="button" data-popular-temple-filter-clear disabled><span {...iconAttributes("rotate-ccw")} />ล้างตัวกรอง</button>
-      </form>
+        <button class="pf__primary" type="submit" disabled><SiteIcon name="search" /><span data-cms-field="29d42b8d-5">ค้นหา</span></button>
       <div class="pf__selectors">
         {[{ key: "provinces", label: "จังหวัด", icon: "map-pin" as const }, { key: "purposes", label: "วัตถุประสงค์", icon: "lotus" as const }].map(group => (
           <button class="pf__selector" type="button" data-pf-group={group.key} aria-haspopup="dialog" aria-expanded="false" aria-controls="pf-editor" disabled>
@@ -35,6 +32,9 @@ const { regions, purposes } = Astro.props as { regions: string[]; purposes: stri
           </button>
         ))}
       </div>
+        <button class="pf__nearby" type="button" data-popular-temple-nearby aria-pressed="false" disabled><SiteIcon name="map-pin" /><span data-cms-field="29d42b8d-6">ใกล้ตำแหน่งปัจจุบัน</span></button>
+        <button data-cms-field="29d42b8d-7" class="pf__clear" type="button" data-popular-temple-filter-clear disabled><span {...iconAttributes("rotate-ccw")} />ล้างตัวกรอง</button>
+      </form>
       <div class="pf__status-row">
         <span role="status" data-pf-status></span>
         <button data-cms-field="29d42b8d-10" class="pf__text-button" type="button" data-pf-restore hidden>คืนค่าเงื่อนไขเดิม</button>

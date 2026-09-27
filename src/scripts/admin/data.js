@@ -29,7 +29,7 @@ export function collectAdminMedia(content, catalog, imageValue) {
   for (const page of content?.pages || []) {
     const ref = { pageId: page.id, label: page.label || page.route || page.id, enabled: page.enabled !== false };
     for (const patch of page.patches || []) {
-      if (patch.kind === "image") add(patch.src, { ...ref, slot: patch.label || patch.selector });
+      if (patch.kind === "image") add(patch.src, { ...ref, enabled: ref.enabled && patch.enabled !== false, slot: patch.label || patch.selector });
     }
     for (const block of page.blocks || []) {
       const src = block.type === "hero" ? block.props?.image : block.type === "image" ? block.props?.src : "";

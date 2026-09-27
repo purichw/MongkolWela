@@ -98,17 +98,6 @@ export function createAdminDesign({ state, $, escapeHtml: e, dashboardSummary, t
       ${metric("หน้าเว็บ / เนื้อหา", summary.pages, `${number(summary.livePages)} หน้าเปิดใช้งาน`, "page", "jade")}
     </div><div class="mw-overview-charts">${trendPanel()}${referrerPanel()}</div><div class="mw-overview-lists">${templePanel()}${pagesPanel(summary)}${publishingPanel(summary)}</div>`;
   }
-  function renderAnalytics() {
-    setTitle("สถิติการใช้งาน", "ผู้ใช้งาน");
-    $("#adminDescription").textContent = "ข้อมูลการเข้าชมและเหตุการณ์ที่บันทึกไว้ในระบบ";
-    $("#adminContent").classList.add("is-overview");
-    const events = Object.values(state.analytics?.events || {}).sort((a, b) => b.count - a.count);
-    $("#adminContent").innerHTML = `<div class="mw-overview-stats">${metric("การเข้าชมหน้าเว็บ", state.analytics?.totals?.pageviews ?? null, "ข้อมูลสะสม", "users", "jade")}${metric("กิจกรรมการใช้งาน", state.analytics?.totals?.events ?? null, "ข้อมูลสะสม", "chart", "gold")}${metric("หน้าที่มีการเข้าชม", state.analytics ? paths().length : null, "เส้นทางที่บันทึกไว้", "page", "red")}${metric("ประเภทเหตุการณ์", state.analytics ? events.length : null, "ประเภทที่บันทึกไว้", "dates", "jade")}</div>
-    <div class="mw-overview-charts">${trendPanel()}${referrerPanel()}</div>
-    <div class="mw-overview-charts">${chartPanel()}<section class="mw-admin-card">${heading("dates", "เหตุการณ์การใช้งาน")}${events.length ? `<div class="mw-overview-events">${events.map(row => `<div><strong>${e(row.type)}</strong><b>${number(row.count)}</b><small>${e(formatDateTime(row.lastSeenAt))}</small></div>`).join("")}</div>` : analyticsBlank("dates", "ยังไม่มีเหตุการณ์ที่บันทึกไว้")}</section></div>
-    <div class="mw-overview-charts">${returningPanel()}${qualityPanel()}</div>
-    <section class="mw-admin-card">${heading("info", "ขอบเขตของข้อมูล") }<p>${e(coverage())} · ยอดเข้าชมคือจำนวนการเปิดหน้าเว็บ ไม่ใช่จำนวนคน</p>${state.analytics?.updatedAt ? `<p>อัปเดตล่าสุด ${e(formatDateTime(state.analytics.updatedAt))}</p>` : ""}</section>`;
-  }
   function renderSearch(query) {
     const target = $("#adminSearchResults");
     const input = $("#adminGlobalSearch");
@@ -123,5 +112,5 @@ export function createAdminDesign({ state, $, escapeHtml: e, dashboardSummary, t
   function closeSearch() {
     if ($("#adminSearchResults")) $("#adminSearchResults").hidden = true;
   }
-  return { renderDashboard, renderAnalytics, renderSearch, closeSearch };
+  return { renderDashboard, renderSearch, closeSearch };
 }

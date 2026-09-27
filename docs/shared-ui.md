@@ -10,6 +10,12 @@ in `admin-content-library.css`. Commerce mounts its existing controller inside
 Admin, retaining its separate transactional state and save actions. See
 `cms-workspace-coverage.md` for ownership and verification boundaries.
 
+Admin Popular, Mu and Sacred collections share `admin/temple-list.js`,
+`lib/admin-temple-list.js` and `admin-temples.css`: desktop photo grid/list,
+mobile thumbnail rows, filtering, pagination and truthful draft badges. The
+existing drawer and CMS publication controls remain shared, not copied into
+each collection. See `admin-temple-list.md` for the data and verification contract.
+
 ## Contract
 
 Reuse shared anatomy, semantics and interaction fixes. The public shell owns
@@ -27,6 +33,7 @@ points. A different task layout must still sit on the same site frame.
 | `PageBanner.astro`, `page-banner.css` | Shared full-width image layer, shade, motifs, breadcrumb/copy scale, quote and content alignment | Calendar, Day, temple hub, three temple collections, planner and Thailand directory via `TempleSearchHero` |
 | `scripts/planner/place-card.js` | One escaped, semantic place-selection renderer for desktop tiles and mobile rows | Planner list in picker-only and combined views |
 | `PopularFilters.astro`, `scripts/popular-filters.js`, `popular-filters.css` | Shared collection search panel, compact selectors and one responsive editor; adapts the existing collection matcher rather than duplicating it | Popular, Sacred and Mu through `TempleCollectionView`; historical Popular filenames/hooks remain stable |
+| `TempleCollectionView.astro`, `lib/temple-collection-card.js`, `temple-collection.css` | Collection composition and one escaped card renderer for SSR and incremental results; responsive image, rank, location, intent, plan and detail links | Popular, Sacred and Mu indexes only |
 | `ChoiceChip.astro`, `lib/choice-chip.js`, `public-ui.css` | Centered toggle-button/native-checkbox chips; balanced check inset, 44px target, wrapping, focus and disabled states | Popular/Sacred/Mu regions, province/purpose options and All; Planner chips retain their own contract |
 | `TempleSearchForm.astro`, `TempleSearchDialog.astro`, `scripts/temple-search.js`, `temple-search.css` | One search form, suggestion/result row renderer and responsive overlay; fresh CMS-backed search | Home hero, Header on all public routes, `/search/` |
 | `icons/SiteIcon.astro` | Decorative heritage raster or Lucide icon; parent provides the accessible action name | Header/footer, Home, Calendar, Calendar Day, Place Detail |
@@ -40,6 +47,16 @@ points. A different task layout must still sit on the same site frame.
 ## Usage
 
 ### Collection Filters
+
+The September 2026 Visitor redesign uses the same collection view and card
+renderer on Popular, Sacred and Mu. Initial and additional batches are 16 on
+desktop/tablet and 6 at widths up to 600px. Sorting supports catalog rank, Thai
+name and province; nearby ordering synchronizes the sort label. The map trigger
+sits beside sorting rather than floating over mobile filters. Existing CMS image
+and text hooks, catalog hydration, correction link and planner links remain.
+Heart buttons are deliberately absent until member accounts and account-backed
+favorites exist; see the Member Favorites follow-up in `Roadmap.md`.
+Current visual evidence: `artifacts/visitor-collections/`.
 
 All three collection routes render the same `PopularFilters` instance through
 `TempleCollectionView`. Its `regions` and `purposes` come from each collection;

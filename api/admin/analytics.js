@@ -7,6 +7,7 @@ import {
 } from "./_shared.js";
 import { requireAdmin } from "./_auth.js";
 import { recordDatabaseAnalyticsEvent } from "./_database.js";
+import { analyticsRange } from "../../src/lib/admin-analytics-report.js";
 
 const ANALYTICS_BODY_LIMIT_BYTES = 16 * 1024;
 const ANALYTICS_RATE_LIMIT = 60;
@@ -26,7 +27,9 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       const session = await requireAdmin(req, res);
       if (!session) return;
-      const data = await readLiveAnalytics();
+      const query = new URL(req.url, "http://localhost").searchParams;
+      const range = analyticsRange(query.get("from"), query.get("to"));
+      const data = await readLiveAnalytics(range);
       sendJson(res, 200, { ok: true, analytics: data });
       return;
     }

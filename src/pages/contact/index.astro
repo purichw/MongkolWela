@@ -2,41 +2,62 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageBanner from "../../components/PageBanner.astro";
 import CmsImage from "../../components/CmsImage.astro";
+import BrandOrnament from "../../components/BrandOrnament.astro";
+import SiteIcon from "../../components/icons/SiteIcon.astro";
 import { iconAttributes } from "../../lib/ui-markup.js";
 import { contactDefaults, contactEmailHref, contactLineHref } from "../../config/contact.js";
 
 const title = "ติดต่อมงคลเวลา";
-const banner = "/assets/images/hero-wat-arun-sunset.webp";
+const banner = "/assets/images/contact-sunset-sanctuary-20260927.webp";
 const channels = [
-  { key: "email", label: "อีเมล", icon: "mail", value: contactDefaults.email, description: "สอบถาม ส่งข้อเสนอแนะ หรือแนบรายละเอียดให้ทีมงาน", action: "ส่งอีเมล", href: contactEmailHref(contactDefaults.email, "ติดต่อมงคลเวลา") },
-  { key: "line", label: "LINE", icon: "headset", value: contactDefaults.lineId, description: "พูดคุยกับทีมงานผ่านบัญชี LINE ของมงคลเวลา", action: "เปิด LINE", href: contactLineHref(contactDefaults.lineId) },
+  { key: "email", label: "อีเมล", icon: "mail", value: contactDefaults.email, description: "สอบถาม ส่งข้อเสนอแนะ และรายละเอียด", action: "ส่งอีเมล", href: contactEmailHref(contactDefaults.email, "ติดต่อมงคลเวลา"), note: "สำหรับเรื่องที่มีรายละเอียด", detail: "แนบลิงก์หรือภาพประกอบให้ทีมงานตรวจสอบ" },
+  { key: "line", label: "LINE", icon: "message-circle", value: contactDefaults.lineId, description: "พูดคุยกับทีมงานผ่านบัญชี LINE ของมงคลเวลา", action: "เปิด LINE", href: contactLineHref(contactDefaults.lineId), note: "สำหรับพูดคุยและสอบถามเบื้องต้น", detail: "ส่งหัวข้อและรายละเอียดที่ต้องการสอบถามไว้ในแชตได้เลย" },
 ];
 const topics = [
-  { id: "usage", icon: "headset", title: "สอบถามการใช้งาน", description: "ค้นหาสถานที่ วางแผนทริป หรือพบปัญหาในการใช้งานเว็บ", subject: "สอบถามการใช้งานมงคลเวลา" },
-  { id: "corrections", icon: "map-pin", title: "แจ้งแก้ไขข้อมูลสถานที่", description: "แจ้งชื่อสถานที่ ลิงก์หน้าเว็บ และข้อมูลที่ต้องการแก้ไข พร้อมหลักฐานถ้ามี", subject: "แจ้งแก้ไขข้อมูลสถานที่บนมงคลเวลา" },
-  { id: "partnerships", icon: "users", title: "เสนอความร่วมมือ", description: "แนะนำโครงการ เนื้อหา หรือความร่วมมือกับมงคลเวลา", subject: "เสนอความร่วมมือกับมงคลเวลา" },
+  { id: "usage", icon: "headset", title: "สอบถามการใช้งาน", titleParts: ["สอบถาม", "การใช้งาน"], description: "ค้นหาสถานที่ วางแผนทริป หรือแจ้งปัญหาการใช้งาน", subject: "สอบถามการใช้งานมงคลเวลา", action: "สอบถามทีมงาน" },
+  { id: "corrections", icon: "map-pin", title: "แจ้งแก้ไขข้อมูลสถานที่", titleParts: ["แจ้งแก้ไข", "ข้อมูลสถานที่"], description: "แจ้งชื่อสถานที่ ลิงก์หน้าเว็บ และข้อมูลที่ควรแก้ไข", subject: "แจ้งแก้ไขข้อมูลสถานที่บนมงคลเวลา", action: "ส่งข้อมูลแก้ไข" },
+  { id: "partnerships", icon: "users", title: "เสนอความร่วมมือ", titleParts: ["เสนอ", "ความร่วมมือ"], description: "แนะนำโครงการ เนื้อหา หรือร่วมงานกับมงคลเวลา", subject: "เสนอความร่วมมือกับมงคลเวลา", action: "เสนอร่วมงาน" },
 ];
 ---
 
 <BaseLayout title={`${title} | มงคลเวลา`} description="ติดต่อทีมงานมงคลเวลาผ่านอีเมลและ LINE สอบถามการใช้งาน แจ้งแก้ไขข้อมูลสถานที่ หรือเสนอความร่วมมือ" page="contact" bodyClass="contact-page" canonicalPath="/contact/" image={banner} breadcrumbs={[{ label: "หน้าแรก", href: "/" }, { label: title, href: "/contact/" }]}>
   <main class="contact" data-cms-preserve-section-order>
+    <BrandOrnament class="contact-edge" /><BrandOrnament class="contact-edge" mirrored />
     <PageBanner titleId="contact-title" class="contact-banner">
-      <CmsImage slot="media" mediaId="contact-hero-image" image={{ src: banner, alt: "พระปรางค์วัดอรุณในแสงยามเย็น", position: "center 12%", credit: "Haley Hong / Unsplash", sourceUrl: "https://unsplash.com/photos/BVB6A30FI4c" }} width={1920} height={2560} loading="eager" fetchpriority="high" />
+      <CmsImage slot="media" mediaId="contact-hero-image" image={{ src: banner, alt: "ภาพประกอบพระปรางค์ไทยท่ามกลางขุนเขาและแสงอาทิตย์ยามเย็น", position: "100% 0%", credit: "ภาพประกอบสร้างด้วย AI สำหรับมงคลเวลา" }} width={1920} height={640} loading="eager" fetchpriority="high" />
       <div class="page-banner__copy">
         <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง"><a href="/">หน้าแรก</a><span aria-hidden="true">/</span><span>ติดต่อมงคลเวลา</span></nav>
-        <p class="page-banner__kicker" id="contact-kicker">พูดคุยกับทีมงาน</p>
-        <h1 id="contact-title">ติดต่อมงคลเวลา</h1>
-        <p class="page-banner__description" id="contact-intro">สอบถามการใช้งาน แจ้งข้อมูลที่ควรแก้ไข<br />หรือร่วมสร้างการเดินทางที่มีความหมายไปด้วยกัน</p>
+        <p class="page-banner__kicker" id="contact-kicker" data-cms-field="contact-kicker">พูดคุยกับทีมงาน</p>
+        <h1 id="contact-title" data-cms-field="contact-title">ติดต่อมงคลเวลา</h1>
+        <p class="page-banner__description" id="contact-intro" data-cms-field="contact-intro">เรายินดีรับฟังทุกคำถาม ข้อเสนอแนะ และความร่วมมือ<br />เพื่อสร้างการเดินทางที่มีความหมายไปด้วยกัน</p>
+        <div class="contact-hero-signoff">
+          <div class="contact-flourish" aria-hidden="true"><SiteIcon name="lotus" /></div>
+          <p id="contact-tagline" data-cms-field="contact-tagline">ทุกเส้นทาง...เริ่มต้นจากการแบ่งปัน</p>
+        </div>
       </div>
+      <span slot="quote" id="contact-hero-quote" data-cms-field="contact-hero-quote">เดินทางด้วยศรัทธา<br />สู่ช่วงเวลาที่เป็นมงคล</span>
     </PageBanner>
 
     <div class="contact-content" id="contact-channel-data" data-email={contactDefaults.email} data-line-id={contactDefaults.lineId}>
-      <section class="contact-channels" aria-labelledby="contact-channels-title">
-        <header class="contact-section-heading"><h2 id="contact-channels-title">เลือกช่องทางที่สะดวก</h2><p id="contact-channels-intro">ส่งข้อความถึงทีมงานมงคลเวลาได้โดยตรง</p></header>
+      <section class="contact-channels" id="contact-channels" aria-labelledby="contact-channels-title">
+        <header class="contact-section-heading">
+          <div class="contact-flourish" aria-hidden="true"><SiteIcon name="lotus" /></div>
+          <h2 id="contact-channels-title" data-cms-field="contact-channels-title">ช่องทางการติดต่อ</h2>
+          <p id="contact-channels-intro" data-cms-field="contact-channels-intro">เลือกช่องทางที่สะดวก เราพร้อมรับฟังและดูแลทุกคำถาม</p>
+        </header>
         <div class="contact-channel-grid">{channels.map(channel => <article class={`contact-channel contact-channel--${channel.key}`} aria-labelledby={`contact-${channel.key}-title`}>
-          <div class="contact-channel-heading"><span class="contact-medallion"><span {...iconAttributes(channel.icon, "contact-icon")} /></span><div><h3 id={`contact-${channel.key}-title`}>{channel.label}</h3><p id={`contact-${channel.key}-description`}>{channel.description}</p></div></div>
-          <div class="contact-channel-address"><p class="contact-value" data-contact-value={channel.key}>{channel.key === "email" ? <>{channel.value.split("@")[0]}@<wbr />{channel.value.split("@")[1]}</> : channel.value}</p><button type="button" class="contact-copy" data-contact-copy={channel.key} aria-label={`คัดลอก${channel.label}`} title={`คัดลอก${channel.label}`} hidden><span {...iconAttributes("layers-2", "contact-icon")} /></button></div>
-          <a class={channel.key === "email" ? "primary-action contact-action" : "contact-line-action contact-action"} href={channel.href} data-contact-link={channel.key} data-email-subject={channel.key === "email" ? "ติดต่อมงคลเวลา" : undefined} target={channel.key === "line" ? "_blank" : undefined} rel={channel.key === "line" ? "noopener noreferrer" : undefined}><span id={`contact-${channel.key}-action-label`}>{channel.action}</span><span {...iconAttributes(channel.key === "email" ? "arrow-right" : "external-link", "contact-icon")} /><span class="sr-only">{channel.key === "email" ? "ในแอปอีเมล" : " (เปิดหน้าต่างใหม่)"}</span></a>
+          <div class="contact-channel-heading">
+            <span class={`contact-medallion ${channel.key === "line" ? "contact-line-brand" : ""}`} aria-hidden="true">
+              {channel.key === "line" ? <img src="/assets/brand/LINE_Brand_icon.png" alt="" width="48" height="48" /> : <span {...iconAttributes(channel.icon, "contact-icon")} />}
+            </span>
+            <div><h3 id={`contact-${channel.key}-title`} data-cms-field={`contact-${channel.key}-title`}>{channel.label}</h3><p id={`contact-${channel.key}-description`} data-cms-field={`contact-${channel.key}-description`}>{channel.description}</p></div>
+          </div>
+          <div class="contact-channel-address"><p class="contact-value" data-contact-value={channel.key}>{channel.key === "email" ? <>{channel.value.split("@")[0]}@<wbr />{channel.value.split("@")[1]}</> : channel.value}</p><button type="button" class="contact-copy" data-contact-copy={channel.key} aria-label={`คัดลอก${channel.label}`} title={`คัดลอก${channel.label}`} hidden><span {...iconAttributes("copy", "contact-icon")} /></button></div>
+          <a class={`contact-action contact-${channel.key}-action`} href={channel.href} data-contact-link={channel.key} data-email-subject={channel.key === "email" ? "ติดต่อมงคลเวลา" : undefined} target={channel.key === "line" ? "_blank" : undefined} rel={channel.key === "line" ? "noopener noreferrer" : undefined}>
+            <span {...iconAttributes(channel.icon, "contact-icon")} />
+            <span id={`contact-${channel.key}-action-label`} data-cms-field={`contact-${channel.key}-action-label`}>{channel.action}</span><span {...iconAttributes("arrow-right", "contact-icon")} /><span class="sr-only">{channel.key === "email" ? "ในแอปอีเมล" : " (เปิดหน้าต่างใหม่)"}</span>
+          </a>
+          <div class="contact-channel-note"><span {...iconAttributes("message-circle", "contact-icon")} /><div><strong id={`contact-${channel.key}-note`} data-cms-field={`contact-${channel.key}-note`}>{channel.note}</strong><p id={`contact-${channel.key}-detail`} data-cms-field={`contact-${channel.key}-detail`}>{channel.detail}</p></div></div>
           <p class="contact-unavailable" data-contact-unavailable={channel.key} hidden>ช่องทางนี้ยังไม่พร้อมให้ติดต่อ กรุณาเลือกอีกช่องทาง</p>
         </article>)}</div>
         <p class="contact-status" data-contact-status role="status" aria-live="polite" aria-atomic="true"></p>
@@ -44,16 +65,24 @@ const topics = [
       </section>
 
       <section class="contact-topics" aria-labelledby="contact-topics-title">
-        <header class="contact-section-heading"><h2 id="contact-topics-title">อยากติดต่อเรื่องไหน?</h2><p id="contact-topics-intro">เลือกหัวข้อเพื่อเริ่มเขียนอีเมลถึงเรา</p></header>
+        <header class="contact-section-heading"><h2 id="contact-topics-title" data-cms-field="contact-topics-title">อยากติดต่อเรื่องไหน?</h2><p id="contact-topics-intro" data-cms-field="contact-topics-intro">เลือกหัวข้อเพื่อให้เราดูแลคุณได้ตรงจุดมากขึ้น</p></header>
         <div class="contact-topic-list">{topics.map(topic => <article class="contact-topic" id={topic.id}>
-          <span {...iconAttributes(topic.icon, "contact-icon")} /><div><h3 id={`contact-${topic.id}-title`}>{topic.title}</h3><p id={`contact-${topic.id}-description`}>{topic.description}</p><a class="contact-topic-link" href={contactEmailHref(contactDefaults.email, topic.subject)} data-contact-link="email" data-email-subject={topic.subject}><span id={`contact-${topic.id}-action-label`}>ส่งอีเมลเรื่องนี้</span><span {...iconAttributes("arrow-right", "contact-icon")} /><span class="sr-only">{topic.title}</span></a><p class="contact-topic-fallback" data-contact-email-fallback hidden>กรุณาติดต่อผ่านช่องทางด้านบน</p></div>
+          <span class="contact-topic-medallion"><span {...iconAttributes(topic.icon, "contact-icon")} /></span>
+          <h3 id={`contact-${topic.id}-title`} data-cms-field={`contact-${topic.id}-title`}>{topic.titleParts.map(part => <span class="contact-topic-title-part">{part}</span>)}</h3>
+          <p id={`contact-${topic.id}-description`} data-cms-field={`contact-${topic.id}-description`}>{topic.description}</p>
+          <a class="contact-topic-link" href={contactEmailHref(contactDefaults.email, topic.subject)} data-contact-link="email" data-email-subject={topic.subject}><span id={`contact-${topic.id}-action-label`} data-cms-field={`contact-${topic.id}-action-label`}>{topic.action}</span><span {...iconAttributes("arrow-right", "contact-icon")} /><span class="sr-only">{topic.title}</span></a><p class="contact-topic-fallback" data-contact-email-fallback hidden>กรุณาติดต่อผ่านช่องทางด้านบน</p>
         </article>)}</div>
       </section>
 
       <aside class="contact-notes" aria-label="ข้อมูลก่อนติดต่อ">
-        <div class="contact-privacy"><span {...iconAttributes("shield-check", "contact-icon")} /><div><h2 id="contact-privacy-title">ส่งเฉพาะข้อมูลที่จำเป็น</h2><p id="contact-privacy-description">หากแนบภาพหน้าจอ กรุณาปิดข้อมูลส่วนตัวก่อน และไม่ส่งรหัสผ่าน รหัส OTP หรือข้อมูลบัตรชำระเงิน</p></div></div>
-        <a class="contact-guide" href="/guide/"><span {...iconAttributes("book-open", "contact-icon")} /><span><strong id="contact-guide-title">เริ่มวางแผนทริปด้วยตัวเอง</strong><small id="contact-guide-description">อ่านคู่มือวางแผนเดินทางมงคล</small></span><span {...iconAttributes("arrow-right", "contact-icon")} /></a>
+        <div class="contact-privacy"><span {...iconAttributes("shield-check", "contact-icon")} /><div><h2 id="contact-privacy-title" data-cms-field="contact-privacy-title">เพื่อความปลอดภัยของข้อมูล</h2><p id="contact-privacy-description" data-cms-field="contact-privacy-description">หากแนบภาพหน้าจอ กรุณาปิดข้อมูลส่วนตัวก่อน และไม่ส่งรหัสผ่าน รหัส OTP หรือข้อมูลบัตรชำระเงิน</p></div></div>
+        <a class="contact-guide" href="/guide/"><span {...iconAttributes("book-open", "contact-icon")} /><span><strong id="contact-guide-title" data-cms-field="contact-guide-title">คู่มือการใช้งานเพิ่มเติม</strong><small id="contact-guide-description" data-cms-field="contact-guide-description">เริ่มวางแผนเดินทางมงคลด้วยตัวเอง</small></span><span {...iconAttributes("arrow-right", "contact-icon")} /></a>
       </aside>
+      <div class="contact-closing">
+        <BrandOrnament /><BrandOrnament mirrored />
+        <div><h2 id="contact-closing-title" data-cms-field="contact-closing-title">ร่วมสร้างการเดินทางที่มีความหมาย</h2><p id="contact-closing-description" data-cms-field="contact-closing-description">ทุกข้อเสนอแนะของคุณ มีคุณค่าสำหรับเรา</p></div>
+        <a href="#contact-channels"><span id="contact-closing-action" data-cms-field="contact-closing-action">ติดต่อมงคลเวลา</span><span {...iconAttributes("arrow-right", "contact-icon")} /></a>
+      </div>
     </div>
   </main>
   <script>import "../../scripts/contact.js";</script>

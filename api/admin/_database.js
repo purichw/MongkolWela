@@ -127,12 +127,12 @@ export async function recordDatabaseAnalyticsEvent(event) {
   return { mode: "supabase" };
 }
 
-export async function readDatabaseAnalyticsSummary() {
+export async function readDatabaseAnalyticsSummary(range = null) {
   const supabase = supabaseClient({ service: true });
   if (!supabase) return null;
 
-  const since = new Date(Date.now() - 1000 * 60 * 60 * 24 * 90).toISOString();
-  const now = new Date().toISOString();
+  const since = range?.since || new Date(Date.now() - 1000 * 60 * 60 * 24 * 90).toISOString();
+  const now = range?.until || new Date().toISOString();
   const rows = [];
   // Page below PostgREST's row cap; otherwise a successful response can silently
   // truncate the report. A fixed upper bound prevents moving pages during reads.
@@ -146,5 +146,7 @@ export async function readDatabaseAnalyticsSummary() {
     rows.push(...data);
     if (data.length < 500) break;
   }
-  return summarizeAnalyticsEvents(rows.slice(0, 10000), { since, now, limited: rows.length > 10000 });
+  const summary = summarizeAnalyticsEvents(rows.slice(0, 10000), { since, now, limited: rows.length > 10000 });
+  summary.updatedAt = new Date().toISOString();
+  return summary;
 }

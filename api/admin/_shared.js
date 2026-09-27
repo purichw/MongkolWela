@@ -243,12 +243,13 @@ export async function publishLiveContent(content, actor = "admin", options = {})
   return { ...result, warnings: [], fast: false };
 }
 
-export async function readLiveAnalytics() {
-  const databaseSummary = await readDatabaseAnalyticsSummary();
+export async function readLiveAnalytics(range = null) {
+  const databaseSummary = await readDatabaseAnalyticsSummary(range);
   if (databaseSummary) return databaseSummary;
   if (hasReadableDatabase() || isProductionRuntime()) {
     throw Object.assign(new Error("ยังไม่ได้เชื่อมแหล่งข้อมูลสถิติ"), { statusCode: 503 });
   }
+  if (range) throw Object.assign(new Error("ข้อมูลสะสมเดิมยังไม่รองรับการแยกช่วงวันที่"), { statusCode: 503 });
   return readAnalyticsStore();
 }
 

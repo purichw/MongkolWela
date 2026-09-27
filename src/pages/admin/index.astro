@@ -8,6 +8,11 @@ import adminShared from "../../styles/admin-shared.css?url";
 import adminHomepage from "../../styles/admin-homepage.css?url";
 import adminNavigation from "../../styles/admin-navigation.css?url";
 import adminCommerce from "../../styles/admin-commerce.css?url";
+import adminTemples from "../../styles/admin-temples.css?url";
+import adminPlaceEditor from "../../styles/admin-place-editor.css?url";
+import adminSiteContent from "../../styles/admin-site-content.css?url";
+import adminMediaLibrary from "../../styles/admin-media-library.css?url";
+import adminAnalytics from "../../styles/admin-analytics.css?url";
 import publicSelect from "../../styles/public-select.css?url";
 const config = siteConfig.th;
 ---
@@ -29,6 +34,7 @@ const config = siteConfig.th;
     <link rel="apple-touch-icon" sizes={brandAssets.appleTouchIcon.sizes} href={brandAssets.appleTouchIcon.src} />
     {stylesForPath("/admin/").map((src) => <link rel="stylesheet" href={src} />)}
     <link rel="stylesheet" href={adminDesign} />
+    <link rel="stylesheet" href={adminAnalytics} />
     <link rel="stylesheet" href={adminContentLibrary} />
     <link rel="stylesheet" href={commerce} />
     <link rel="stylesheet" href={publicSelect} />
@@ -36,6 +42,10 @@ const config = siteConfig.th;
     <link rel="stylesheet" href={adminHomepage} />
     <link rel="stylesheet" href={adminNavigation} />
     <link rel="stylesheet" href={adminCommerce} />
+    <link rel="stylesheet" href={adminTemples} />
+    <link rel="stylesheet" href={adminPlaceEditor} />
+    <link rel="stylesheet" href={adminSiteContent} />
+    <link rel="stylesheet" href={adminMediaLibrary} />
   </head>
   <body class="admin-page admin-design">
     <div

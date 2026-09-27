@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import fs from "node:fs";
+import AxeBuilder from "@axe-core/playwright";
 
 const seed = JSON.parse(fs.readFileSync("public/admin/content/live.json", "utf8"));
 const attribute = (attr: string, value: string) => ({ selector: "#contact-channel-data", kind: "attr", attr, value });
@@ -131,4 +132,87 @@ test("native contact links and correction anchor work without JavaScript", async
   await expect(page.locator("[data-contact-copy='email']")).toBeHidden();
   await expect(page.locator("#corrections a")).toHaveAttribute("href", /^mailto:mongkolwela@mongkolwela.com\?/);
   await context.close();
+});
+
+test("contact layout keeps channels, copy controls and topic cards usable across widths", async ({ page }) => {
+  await page.goto("/contact/");
+  await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "true");
+  await page.locator("[data-page-loader]").waitFor({ state: "hidden" });
+  await page.evaluate(() => document.fonts.ready);
+  for (const width of [320, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    const geometry = await page.evaluate(() => {
+      const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
+      const email = box(".contact-channel--email");
+      const line = box(".contact-channel--line");
+      const address = box(".contact-channel-address");
+      const value = box("[data-contact-value='email']");
+      const copy = box("[data-contact-copy='email']");
+      const action = box(".contact-email-action");
+      return {
+        overflow: document.documentElement.scrollWidth > innerWidth,
+        stacked: line.top > email.bottom,
+        aligned: Math.abs(email.top - line.top) < 1,
+        copySize: [copy.width, copy.height],
+        valueFits: value.right <= copy.left && value.left >= address.left && value.bottom <= address.bottom,
+        actionWidth: action.width, addressWidth: address.width,
+      };
+    });
+    expect(geometry.overflow, `${width}px horizontal overflow`).toBe(false);
+    expect(width <= 720 ? geometry.stacked : geometry.aligned, `${width}px channel grouping`).toBe(true);
+    expect(geometry.valueFits, `${width}px email/copy overlap`).toBe(true);
+    expect(geometry.copySize.every(size => size >= 44)).toBe(true);
+    expect(Math.abs(geometry.actionWidth - geometry.addressWidth)).toBeLessThan(1);
+    await expect(page.locator(".contact-topic-link")).toHaveCount(3);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator(".contact-closing a").click();
+  await expect(page).toHaveURL(/#contact-channels$/);
+  await expect.poll(() => page.locator("#contact-channels").evaluate(node => {
+    const top = node.getBoundingClientRect().top;
+    const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--site-header-sticky-height")) || 0;
+    return top >= header && top < header + 40;
+  })).toBe(true);
+});
+
+for (const width of [1440, 390]) {
+  test(`contact accessibility at ${width}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/contact/");
+    await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "true");
+    await page.locator("[data-page-loader]").waitFor({ state: "hidden" });
+    await page.evaluate(() => document.fonts.ready);
+    await page.evaluate(() => Promise.all(document.getAnimations().filter(animation => animation.effect?.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))));
+    // Axe sees the dark fallback behind the negative-z bitmap, not the gold sky.
+    // Review this non-interactive quotation against the rendered image separately.
+    const result = await new AxeBuilder({ page }).include("main.contact").exclude(".page-banner__quote").withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+    expect(result.violations).toEqual([]);
+  });
+}
+
+test("new copy stays CMS-addressable and long published values do not escape mobile cards", async ({ page }) => {
+  const content = structuredClone(seed);
+  const email = "contact.partnerships.and.place.corrections@example.com";
+  content.pages.find((item: { id: string }) => item.id === "contact").patches = [
+    attribute("data-email", email),
+    { selector: "#contact-tagline", kind: "text", value: "ร่วมแบ่งปันข้อมูลเพื่อการเดินทางที่มีความหมาย" },
+    { selector: "#contact-email-note", kind: "text", value: "ข้อความจากผู้ดูแลเว็บไซต์" },
+    { selector: "#contact-hero-image", kind: "image", src: "/assets/images/planner-wat-arun-evening.webp", alt: "ภาพแนวตั้งจาก CMS", position: "center 40%" },
+  ];
+  await page.route("**/api/admin/content?*", route => route.fulfill({ json: { ok: true, content } }));
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/contact/");
+  await expect(page.locator("#contact-email-note")).toHaveText("ข้อความจากผู้ดูแลเว็บไซต์");
+  await expect(page.locator("#contact-tagline")).toHaveAttribute("data-cms-field", "contact-tagline");
+  await expect(page.locator("[data-contact-value='email']")).toHaveText(email);
+  await expect(page.locator("#contact-hero-image")).toHaveAttribute("alt", "ภาพแนวตั้งจาก CMS");
+  const geometry = await page.evaluate(() => {
+    const value = document.querySelector("[data-contact-value='email']")!.getBoundingClientRect();
+    const copy = document.querySelector("[data-contact-copy='email']")!.getBoundingClientRect();
+    const hero = document.querySelector(".contact-banner")!.getBoundingClientRect();
+    return { overflow: document.documentElement.scrollWidth > innerWidth, noOverlap: value.right <= copy.left, heroHeight: hero.height };
+  });
+  expect(geometry.overflow).toBe(false);
+  expect(geometry.noOverlap).toBe(true);
+  expect(geometry.heroHeight).toBeLessThan(350);
 });

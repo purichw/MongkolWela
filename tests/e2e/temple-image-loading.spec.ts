@@ -102,13 +102,13 @@ for (const collection of ["popular", "sacred", "mu"]) {
 
       await watchVisibleCards(page);
       await page.locator("[data-popular-temple-more]").click();
-      await expect(page.locator(`${cardSelector}:visible`)).toHaveCount(16);
+      await expect(page.locator(`${cardSelector}:visible`)).toHaveCount(width > 600 ? 32 : 12);
       await page.waitForTimeout(900);
       const more = await page.evaluate(() => (window as any).__cardLoadingProbe.stop());
       expect.soft(more.minimumOpacity, "load more must preserve the existing batch").toBe(1);
       expect.soft(more.events).toEqual([]);
       await page.evaluate(() => (window as any).MongkolWelaCMS.applyTempleOverrides());
-      await expect(page.locator(`${cardSelector}:visible`)).toHaveCount(16);
+      await expect(page.locator(`${cardSelector}:visible`)).toHaveCount(width > 600 ? 32 : 12);
     });
   }
 }

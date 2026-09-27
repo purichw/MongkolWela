@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { readJsonBody, requireSameOrigin, sendJson } from "./_shared.js";
 import { requireAdmin } from "./_auth.js";
+import { readMediaAssets, saveMediaAsset } from "./_media-library.js";
 
 function mediaConfig() {
   const cloudinary = {
@@ -36,6 +37,10 @@ export default async function handler(req, res) {
 
     const config = mediaConfig();
     if (req.method === "GET") {
+      if (new URL(req.url, "http://localhost").searchParams.get("view") === "library") {
+        sendJson(res, 200, { ok: true, assets: await readMediaAssets() });
+        return;
+      }
       sendJson(res, 200, {
         ok: true,
         media: {
@@ -59,6 +64,11 @@ export default async function handler(req, res) {
     if (!requireSameOrigin(req, res)) return;
 
     const body = await readJsonBody(req, { maxBytes: 8192 });
+    if (body.action === "save-asset") {
+      const asset = await saveMediaAsset(body.asset, { expectedVersion: body.expectedVersion, actor: session.actor });
+      sendJson(res, 200, { ok: true, asset });
+      return;
+    }
     if (body.action !== "imagekit-auth" || !config.imagekitReady) {
       sendJson(res, 400, { ok: false, error: "ImageKit is not configured" });
       return;

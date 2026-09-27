@@ -23,6 +23,9 @@
 .admin-design :is(#adminContent, .mw-admin-commerce, [data-seller-content], [data-management-view], .commerce-table-wrap) { min-width: 0; max-width: 100%; }
 .admin-design .mw-admin-main :is(.mw-page-content-field, .mw-library-field) :is(input, textarea) { font-size: 14px; font-weight: 400; line-height: 1.65; }
 .admin-design .mw-page-content-image { display: block; width: 100%; max-width: 320px; height: 160px; object-fit: contain; object-position: left center; margin: 0 0 12px; background: var(--admin-paper); border: 1px solid var(--admin-line); border-radius: 6px; }
+.admin-design .mw-admin-publish-progress-head > strong { flex: 1; }
+.admin-design .mw-admin-publish-progress-head .mw-admin-icon-button { width: 30px; height: 30px; }
+.admin-design .mw-admin-publish-progress-head .mw-admin-icon-button[hidden] { display: none; }
 .mw-admin-commerce .commerce-message[data-tone="success"] { color: var(--jade-dark); background: #edf5f0; border-color: #c3d8cd; }
 .mw-admin-commerce .commerce-message[data-tone="error"] { color: var(--lacquer-dark); background: #fff2ef; border-color: #e6c1bc; }
 .mw-admin-commerce-caption { color: var(--ink-soft); font-size: 14px; margin: 0 0 20px; }

@@ -28,7 +28,8 @@ progress controls stay hidden.
 ## Consistency Decisions
 
 - Existing shared tokens are authoritative: 1220px maximum width, responsive
-  gutters, 56/44/32/30px page titles, Noto Sans Thai and 8px radii.
+  gutters, Noto Sans Thai and 8px card radii. The illustrated guide hero uses
+  route-owned 48px desktop / 30px mobile display type (26px on narrow phones).
 - Header/footer, banner, CMS image, icons and primary action use existing
   implementations. No shared component API or other page geometry changed.
 - Chapter layout and checklist stay route-owned, separate from place cards
@@ -82,3 +83,63 @@ dependencies or force a test process to exit in order to claim a pass.
   CI supplies the existing runtime regression suite for the exact pushed commit.
 - No production CMS writes. Previous production deployment for recovery:
   `dpl_Hv3pzQcBXqnHn4rj6VfRLFrydLTX` (commit `69b9e28`).
+
+## Mockup Redesign (2026-09-27, Local Only)
+
+The supplied `06_37_51 PM-1` and `06_37_53 PM-2` references guide the desktop
+and mobile composition. Reference crops omit annotation margins and the phone
+frame; they are approximate, not CSS-viewport or pixel-parity measurements.
+
+- New cream/jade illustrated hero, four-step sticky navigation, photographic
+  collection links, gold numbered chapter headings and illustrated closing CTA.
+- Desktop checklist stays beside chapters 1-2. A dedicated grid-area wrapper
+  bounds its sticky position, so it cannot overlap full-width chapters 3-4.
+  Its content remains scrollable on short desktop windows.
+- At 900px and below, checklist, route instructions and preparation details
+  start collapsed using native `details`. They stay expanded without JavaScript.
+  The checklist anchor expands its target; its count remains visible when closed.
+- Mobile places the closing CTA before FAQ, preserves the established shared
+  header/footer and offers horizontal collection browsing instead of shrinking
+  Thai text to fit all three cards.
+- All original `e74aa090-*` CMS keys, repeated occurrences and text-node positions
+  are retained. New image slots and added copy/links are CMS-discoverable. Focus
+  refresh changes published copy/media without resetting checklist state.
+- The six checkbox meanings and `mongkolwela.travel-guide.checklist.v1` storage
+  contract remain unchanged. There is no new membership, tracking or trip state.
+
+### Imagery And Adaptations
+
+`travel-guide-journey-20260927.webp` is generated illustration, not a documentary
+photo of a named temple. Its alt text/credit say so. Collection photographs reuse
+existing Wat Kalayanamit and Khao Kho Hong assets. The illustrated route/mu/closing
+images have independent CMS slots even though their default artwork is shared.
+
+Real product content is retained where the mockup is abbreviated: search link,
+optional route instructions, browser-only checklist saving/reset, opening-hours
+and live-traffic limitations, and voluntary donation guidance. Mobile is therefore
+longer than the mockup. Header/footer, icon artwork and collection photographs
+intentionally use the existing product rather than copying different reference
+assets or adding fake controls. No measured fidelity percentage is claimed.
+
+### Current Verification
+
+- Seven focused Playwright cases passed in installed Chrome: desktop/mobile
+  entry and links, checklist reload/reset, malformed/blocked storage, no-JS,
+  responsive sticky/disclosure geometry, accessibility, and CMS refresh/reload.
+- Overflow checked at 320, 390, 768, 1024 and 1440px. Axe reported no WCAG A/AA
+  violations in the guide main content at 1440/390px. Keyboard disclosures work.
+- `npm run check`: zero errors/warnings/hints across 82 Astro files; browser
+  syntax/binding checks passed for 85 modules. `git diff --check` passed.
+- Read-only local API screenshots at `http://127.0.0.1:4327/guide/`: no overflow,
+  missing main images, failed asset responses or page errors. Source/viewport,
+  reference hashes and crop assumptions are in `artifacts/travel-guide/snapshot-report.json`.
+- Current visual evidence: `comparison-desktop.png`, `comparison-mobile.png`,
+  `preview-1440.png`, `preview-390.png`, their first-viewport counterparts and
+  the scrolled sticky-boundary capture. Desktop/mobile images were inspected.
+- Full-site tests, production build, other browser engines and production smoke
+  were intentionally skipped for this route-scoped pass. Nothing was pushed,
+  deployed or written to production CMS.
+
+To regenerate reference comparisons, run `scripts/qa/travel-guide-snapshots.mjs`
+with desktop and mobile reference paths while Astro and the read-only preview
+are running. The script writes only local evidence under `artifacts/travel-guide`.

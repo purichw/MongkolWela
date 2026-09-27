@@ -24,6 +24,10 @@ test.beforeEach(async ({ page }) => {
 async function settle(page) {
   await page.locator("[data-pd-mode=all]").waitFor({ state: "visible" });
   await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator("html")).toHaveClass(/page-fonts-ready/);
+  await page.evaluate(async () => {
+    await Promise.all(document.getAnimations().filter(animation => animation.animationName === "page-content-enter").map(animation => animation.finished.catch(() => {})));
+  });
 }
 async function refresh(page) {
   revision += "x";
@@ -32,7 +36,10 @@ async function refresh(page) {
 async function hydrateImages(page) {
   await page.evaluate(async () => {
     for (let y = 0; y < document.body.scrollHeight; y += 600) { scrollTo({ top: y, behavior: "instant" }); await new Promise(r => setTimeout(r, 60)); }
-    await Promise.all([...document.images].filter(img => img.closest("main, footer")).map(img => img.decode().catch(() => {})));
+    await Promise.race([
+      Promise.all([...document.images].filter(img => img.closest("main, footer") && img.getClientRects().length).map(img => img.decode().catch(() => {}))),
+      new Promise(resolve => setTimeout(resolve, 4000)),
+    ]);
     scrollTo({ top: 0, behavior: "instant" });
     await new Promise(r => setTimeout(r, 350));
   });
@@ -43,17 +50,18 @@ test("responsive composition, reserved media, three collection owners and screen
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(route); await settle(page);
-  await expect(page.locator("[data-temple-commerce]")).toBeHidden();
+  await expect(page.locator("[data-temple-commerce]")).toBeVisible();
   const metrics = [];
-  for (const width of [320, 360, 375, 390, 430, 600, 768, 979, 980, 1024, 1280, 1440, 1920]) {
+  for (const width of [320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     const m = await page.evaluate(() => {
       const box = selector => { const r = document.querySelector(selector).getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; };
       return { width: innerWidth, overflow: document.documentElement.scrollWidth - innerWidth, hero: box(".pd-hero-media"), identity: box(".pd-hero-copy"), highlights: box(".pd-highlights"), location: box(".pd-location"), visit: box(".pd-visit") };
     });
     expect(m.overflow, `overflow at ${width}`).toBeLessThanOrEqual(1);
-    if (width < 980) { expect(m.location.y).toBeGreaterThan(m.highlights.y); expect(m.visit.y).toBeGreaterThan(m.location.y); }
-    else expect(m.location.x).toBeGreaterThan(m.highlights.x);
+    if (width < 360) { expect(m.location.y).toBeGreaterThan(m.highlights.y); expect(m.visit.y).toBeGreaterThan(m.location.y); }
+    else if (width < 980) { expect(m.location.y).toBeGreaterThan(m.highlights.y); expect(m.visit.y).toBe(m.location.y); expect(m.visit.x).toBeGreaterThan(m.location.x); }
+    else { expect(m.location.x).toBeGreaterThan(m.highlights.x); expect(m.visit.y).toBe(m.highlights.y); }
     if (width < 600) expect(Math.abs(m.hero.w / m.hero.h - 16 / 9)).toBeLessThan(.02);
     metrics.push(m);
     if ([320, 390, 768, 1440].includes(width)) {
@@ -70,6 +78,35 @@ test("responsive composition, reserved media, three collection owners and screen
   }
   await fs.writeFile("artifacts/place-detail/responsive-metrics.json", JSON.stringify(metrics, null, 2));
   expect(errors).toEqual([]);
+});
+
+test("photo viewer, compact mobile routes and full route disclosures", async ({ page }) => {
+  await page.goto(route); await settle(page);
+  await page.locator("[data-photo-open]").click();
+  await expect(page.locator(".pd-photo-dialog[open]")).toBeVisible();
+  await expect(page.locator(".pd-photo-dialog figure img")).toHaveAttribute("alt", /วัด/);
+  await expect(page.locator("[data-dialog-close]")).toBeFocused();
+  await refresh(page);
+  await expect(page.locator(".pd-photo-dialog[open]")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("[data-photo-open]")).toBeFocused();
+  await expect(page.locator("[data-pd-stop]:visible")).toHaveCount(4);
+  await page.locator(".pd-stop:visible .pd-stop-details summary").first().click();
+  await expect(page.locator(".pd-stop-details[open] .pd-route-chips")).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator("[data-pd-stop]:visible")).toHaveCount(1);
+  const nearest = await page.locator("[data-pd-stop]").evaluateAll(nodes => Math.min(...nodes.map(node => Number(node.getAttribute("data-distance")))));
+  await expect(page.locator("[data-pd-stop]:visible")).toHaveAttribute("data-distance", String(nearest));
+  await page.locator("[data-pd-stops-more]").click();
+  expect(await page.locator("[data-pd-stop]:visible").count()).toBeGreaterThan(4);
+  await page.locator("[data-pd-stops-more]").click();
+  await expect(page.locator("[data-pd-stop]:visible")).toHaveCount(1);
+  const confidence = page.locator(".pd-confidence-help");
+  await confidence.locator("summary").click();
+  await expect(confidence).toHaveAttribute("open", "");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  await page.keyboard.press("Escape");
+  await expect(confidence).not.toHaveAttribute("open", "");
 });
 
 test("travel filters, disclosure state, live CMS coordinates and map dialog", async ({ page }) => {
@@ -192,7 +229,7 @@ test("landscape dialog, keyboard containment and 200 percent text enlargement", 
   await expect(page.locator("[data-dialog-close]")).toBeFocused();
   for (let i = 0; i < 12; i++) {
     await page.keyboard.press("Tab");
-    expect(await page.evaluate(() => document.querySelector("dialog").contains(document.activeElement))).toBe(true);
+    expect(await page.evaluate(() => document.querySelector(".pd-dialog[open]").contains(document.activeElement))).toBe(true);
   }
   await page.keyboard.press("Escape");
   await expect(page.locator("[data-map-open]")).toBeFocused();

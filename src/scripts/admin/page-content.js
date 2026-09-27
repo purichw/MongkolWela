@@ -4,6 +4,7 @@ import { adminIcon } from "./design.js";
 import defaults from "../../../public/admin/content/default.json";
 import { tarotMeaningCards } from "../../data/tarot-meanings.js";
 import { createHomepageEditor } from "./homepage-editor.js";
+import { createSiteContentEditor, sameContentField } from "./site-content-editor.js";
 
 const additionalPages = [401, 403, 404, 429, 500, 502, 503, 504].map(code => ({ id: `error${code}`, route: [404, 500].includes(code) ? `/${code}.html` : `/${code}/`, label: `หน้าข้อผิดพลาด ${code}` }));
 additionalPages.push(...tarotMeaningCards.map(card => ({ id: `meaning-${card.slug}`, route: `/tarot/meanings/${card.slug}/`, label: `ความหมายไพ่ ${card.thName}` })));
@@ -12,6 +13,7 @@ additionalPages.push({ id: "login", route: "/login/", label: "เลือกช
 
 export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTitle, setTopActions, setStatus, renderAdvanced, uploadMedia }) {
   const homepageEditor = createHomepageEditor({ state, escapeHtml: e, markDirty, setTitle, setTopActions, setStatus, uploadMedia });
+  const siteEditor = createSiteContentEditor({ state, escapeHtml: e, setTitle });
   const documents = new Map();
   const blueprints = new Map();
   const failures = new Map();
@@ -34,7 +36,8 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
   const patches = () => shared() ? state.content.site?.patches || [] : state.content.pages.find(page => page.id === current()?.id)?.patches || [];
 
   async function load() {
-    const route = shared() ? "/" : current()?.route;
+    const isShared = shared();
+    const route = isShared ? "/" : current()?.route;
     const cacheKey = key();
     if (!route || pending.has(cacheKey)) return;
     pending.add(cacheKey); failures.delete(cacheKey); render();
@@ -46,18 +49,24 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
       if (!document.querySelector("[data-cms-page]")) throw new Error("หน้านี้ไม่มีแม่แบบเนื้อหาที่รองรับ");
       prepareContentFields(document);
       documents.set(cacheKey, document.cloneNode(true));
-      projectContentPatches(document, [...(state.content.site?.patches || []), ...(state.content.pages.find(page => page.route === route)?.patches || [])]);
+      if (!isShared) projectContentPatches(document, [...(state.content.site?.patches || []), ...(state.content.pages.find(page => page.route === route)?.patches || [])]);
       const fields = scanContentFields(document);
       blueprints.set(cacheKey, fields.filter(field => {
         const node = document.querySelector(field.selector);
         const global = !node?.closest("main");
-        return shared() ? global : !global;
+        return isShared ? global : !global;
       }));
     } catch (error) { failures.set(cacheKey, error.message); }
     finally { pending.delete(cacheKey); if (["pages", "siteContent"].includes(state.section)) render(); }
   }
 
   function render() {
+    if (shared()) {
+      const fields = blueprints.get("shared");
+      siteEditor.render({ fields, document: documents.get("shared"), error: failures.get("shared") });
+      if (!fields && !pending.has("shared") && !failures.has("shared")) load();
+      return;
+    }
     const page = current();
     if (!page) return renderAdvanced();
     if (!shared() && page.id === "home" && documents.has(key())) {
@@ -97,6 +106,7 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
   }
 
   function click(event) {
+    if (siteEditor.click(event)) return true;
     if (homepageEditor.click(event)) return true;
     const pagination = event.target.closest("[data-page-content-page]");
     if (pagination) { pageNumber = Number(pagination.dataset.pageContentPage); render(); document.querySelector(".mw-page-content-filters")?.scrollIntoView({ block: "start" }); return true; }
@@ -109,6 +119,7 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
   }
   function input(event) {
     const target = event.target;
+    if (siteEditor.input(event)) return true;
     if (homepageEditor.input(event)) return true;
     if (target.matches("[data-page-content-select]")) { state.selectedPageId = target.value; search = ""; group = "all"; pageNumber = 1; render(); return true; }
     if (target.matches("[data-page-content-group]")) { group = target.value; pageNumber = 1; render(); return true; }
@@ -124,8 +135,10 @@ export function createPageContentEditor({ state, escapeHtml: e, markDirty, setTi
       if (!owner) { owner = structuredClone(current()); state.content.pages.push(owner); }
     }
     owner.patches ||= [];
-    let patch = owner.patches.find(item => item.id === id);
+    let patch = owner.patches.findLast(item => item.enabled !== false && sameContentField(item, field))
+      || owner.patches.findLast(item => sameContentField(item, field));
     if (!patch) { patch = { ...field }; delete patch.context; owner.patches.push(patch); }
+    if (patch.enabled === false) patch.enabled = true;
     patch[target.dataset.pageContentValue] = target.value;
     markDirty(); return true;
   }

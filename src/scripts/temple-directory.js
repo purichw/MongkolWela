@@ -1,6 +1,8 @@
 import { applyImageFallback as setImageFallback } from "../lib/image-placeholder.js";
 import { renderIcon } from "../lib/ui-markup.js";
+import { renderTempleCollectionCard } from "../lib/temple-collection-card.js";
 import { initializePopularFilters, filterSnapshotKey } from "./popular-filters.js";
+import { syncPublicSelects } from "./public-select.js";
 
 const root = document.querySelector("[data-temple-directory]");
 const quickSearchRoot = document.querySelector("[data-temple-quick-search]");
@@ -166,11 +168,15 @@ function initializePopularTempleGrid(grid) {
   const purposeTags = Array.from(filterRoot?.querySelectorAll("[data-popular-purpose-tag]") || []);
   const purposeSummary = filterRoot?.querySelector("[data-temple-purpose-summary]");
   const countNode = document.querySelector("[data-popular-temple-count]");
+  const totalNode = document.querySelector("[data-collection-total]");
+  const sortControl = document.querySelector("[data-collection-sort]");
   const emptyNode = document.querySelector("[data-popular-temple-empty]");
   const loadMoreButton = document.querySelector("[data-popular-temple-more]");
   const placeholderSrc = grid.dataset.placeholderSrc;
-  const initialCount = readPositiveInteger(grid.dataset.initialCount, 9);
-  const batchSize = readPositiveInteger(grid.dataset.batchSize, initialCount);
+  const mobile = window.matchMedia("(max-width: 600px)");
+  const pageCount = () => readPositiveInteger(mobile.matches ? grid.dataset.mobileCount : grid.dataset.initialCount, 8);
+  let initialCount = pageCount();
+  const batchCount = () => mobile.matches ? initialCount : readPositiveInteger(grid.dataset.batchSize, initialCount);
   const useVisibleFilteredCount = grid.dataset.countMode === "visible-filtered";
   let originalCardOrder = new Map(cards.map((card, index) => [card, index]));
   const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
@@ -256,6 +262,18 @@ function initializePopularTempleGrid(grid) {
 
   applyPopularFilters();
 
+  sortControl?.addEventListener("change", () => {
+    activeNearby = false;
+    nearbyStatus = "";
+    clearCardDistances();
+    updateNearbyButton();
+    applyPopularFilters();
+  });
+  mobile.addEventListener("change", () => {
+    initialCount = pageCount();
+    applyPopularFilters({ resetPagination: false });
+  });
+
   filterForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (compact) { await runCompactSearch(false); return; }
@@ -337,7 +355,7 @@ function initializePopularTempleGrid(grid) {
 
   loadMoreButton?.addEventListener("click", async () => {
     await loadCollectionCards({ applyFilters: false });
-    revealNext(batchSize);
+    revealNext(batchCount());
   });
 
   nearbyButton?.addEventListener("click", async () => {
@@ -521,6 +539,7 @@ function initializePopularTempleGrid(grid) {
       const totalCount = useVisibleFilteredCount ? filteredCards.length : cards.length;
       countNode.textContent = `แสดง ${shownCount.toLocaleString("th-TH")} จาก ${totalCount.toLocaleString("th-TH")} พิกัด${activeNearby ? " · เรียงตามใกล้ฉัน" : ""}${nearbyStatus ? ` · ${nearbyStatus}` : ""}`;
     }
+    if (totalNode) totalNode.textContent = `พบ ${filteredCards.length.toLocaleString("th-TH")} ${grid.dataset.resultUnit || "สถานที่"}`;
 
     if (emptyNode) {
       emptyNode.hidden = filteredCards.length > 0;
@@ -782,56 +801,12 @@ function initializePopularTempleGrid(grid) {
   }
 
   function createPopularTempleCard(item) {
-    const hasTempleImage = Boolean(item.hasTempleImage) && item.imageUrl && item.imageUrl !== placeholderSrc;
-    const imageUrl = hasTempleImage ? String(item.imageUrl) : placeholderSrc;
-    const mobileSrc = String(item.imageMobileUrl || imageUrl);
-    const card = document.createElement("article");
-    card.className = `popular-temple-card temple-collection-v2-card${hasTempleImage ? "" : " is-placeholder"}`;
-    card.dataset.rank = String(item.rank || "");
-    card.dataset.name = String(item.name || "");
-    card.dataset.region = String(item.region || "");
-    card.dataset.province = String(item.province || "");
-    card.dataset.district = String(item.district || "");
-    card.dataset.blessings = String(item.blessings || "");
-    card.dataset.placeType = String(item.placeType || "");
-    card.dataset.searchText = String(item.searchText || "");
-    card.dataset.latitude = String(item.latitude ?? "");
-    card.dataset.longitude = String(item.longitude ?? "");
-    card.dataset.cardKey = String(item.key || `${item.collection || grid.dataset.collection}:${item.rank || ""}`);
-    card.setAttribute("data-popular-temple-card", "");
-    if (!hasTempleImage) card.setAttribute("data-image-placeholder", "true");
-
-    card.innerHTML = `
-      <figure>
-        <picture class="temple-responsive-picture">
-          ${mobileSrc && mobileSrc !== imageUrl ? `<source media="(max-width: 767px)" srcset="${escapeHtml(mobileSrc)}" data-temple-mobile-source>` : ""}
-          <img
-            src="${escapeHtml(imageUrl)}"
-            alt="${escapeHtml(item.imageAlt || `${item.name || ""} ${item.province || ""}`)}"
-            loading="lazy"
-            decoding="async"
-            data-fallback-src="${escapeHtml(placeholderSrc || "")}"
-            data-temple-desktop-image
-          />
-        </picture>
-        <figcaption>${Number(item.rank || 0).toLocaleString("th-TH-u-nu-thai")}</figcaption>
-      </figure>
-      <div class="popular-temple-card-body">
-        <span>${escapeHtml(item.province || "")}</span>
-        <h3>${escapeHtml(item.name || "")}</h3>
-        <p>${escapeHtml(`${item.province || ""}${item.district ? ` / ${item.district}` : ""}`)}</p>
-        <strong>${escapeHtml(item.intent || item.placeType || "สิริมงคล")}</strong>
-        <div class="temple-collection-v2-card-meta">
-          <small>ข้อมูลชุดปัจจุบัน</small>
-          <a href="/contact/#corrections">แจ้งแก้ไขข้อมูล</a>
-        </div>
-        <div class="temple-collection-v2-card-actions">
-          <a class="temple-collection-v2-card-plan" href="${escapeHtml(item.plannerUrl || "/temples/planner/")}">เพิ่มลงแผน</a>
-          <a class="temple-collection-v2-card-detail" href="${escapeHtml(item.detailUrl || "#")}" data-popular-temple-detail>รายละเอียด</a>
-        </div>
-      </div>
-    `;
-    return card;
+    const template = document.createElement("template");
+    template.innerHTML = renderTempleCollectionCard({
+      ...item,
+      key: item.key || `${item.collection || grid.dataset.collection}:${item.rank || ""}`,
+    }, placeholderSrc);
+    return template.content.firstElementChild;
   }
 
   function sortFilteredCards() {
@@ -845,11 +820,23 @@ function initializePopularTempleGrid(grid) {
           if (aDistance !== bDistance) return aDistance - bDistance;
         }
       }
+      if (!activeNearby && ["name", "province"].includes(sortControl?.value)) {
+        const field = sortControl.value;
+        const comparison = String(a.dataset[field] || "").localeCompare(String(b.dataset[field] || ""), "th");
+        if (comparison) return comparison;
+      }
       return (originalCardOrder.get(a) ?? 0) - (originalCardOrder.get(b) ?? 0);
     });
   }
 
   function updateNearbyButton() {
+    if (sortControl) {
+      const nearbyOption = sortControl.querySelector('option[value="nearby"]');
+      if (nearbyOption) nearbyOption.disabled = !activeNearby;
+      if (activeNearby) sortControl.value = "nearby";
+      else if (sortControl.value === "nearby") sortControl.value = "rank";
+      syncPublicSelects(sortControl.parentElement);
+    }
     if (!nearbyButton) return;
     nearbyButton.classList.toggle("is-active", activeNearby && !isRequestingLocation);
     nearbyButton.classList.toggle("is-locating", isRequestingLocation);

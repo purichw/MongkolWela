@@ -103,12 +103,13 @@ test.describe("Temple Admin Portal", () => {
 
     await page.getByRole("tab", { name: "วัดเด่นขอพร 50", exact: true }).click();
     await page.locator("[data-temple-search]").fill("โสธร");
+    await page.locator("[data-temple-search]").press("Enter");
     await expect(page.locator("[data-temple-row]")).toHaveCount(1);
     await page.locator('[data-edit-temple="sacred:001"]').click();
     await expect(page.getByLabel("ชื่อสถานที่", { exact: true })).toHaveValue("วัดโสธรวราราม");
     await page.getByRole("button", { name: "บันทึก", exact: true }).click();
 
-    await page.getByRole("button", { name: "+ เพิ่มวัด", exact: true }).click();
+    await page.getByRole("button", { name: "เพิ่มวัด", exact: true }).click();
     const createDrawer = page.getByRole("dialog", { name: /ข้อมูลวัด\/สถานที่/ });
     await expect(createDrawer).toBeVisible();
     await expect(createDrawer.getByLabel("ชื่อสถานที่", { exact: true })).toHaveValue("สถานที่ใหม่");
@@ -125,12 +126,29 @@ test.describe("Temple Admin Portal", () => {
     await page.locator('[data-edit-temple="popular:001"]').click();
     await page.getByLabel("ชื่อสถานที่", { exact: true }).fill("ชื่อที่เผยแพร่ล่าสุด");
     await page.getByRole("button", { name: "บันทึก", exact: true }).click();
+    await expect(page.locator('[data-temple-row="popular:001"] .mw-temple-publication')).toHaveText("มีฉบับร่าง");
     const published = page.waitForRequest((request) => request.url().endsWith("/api/admin/content") && request.method() === "POST");
     await page.locator('[data-action="publish"]').first().click();
     expect((await published).postDataJSON().content.temples.records["popular:001"].fields.name).toBe("ชื่อที่เผยแพร่ล่าสุด");
     await expect(page.locator("[data-publish-progress-title]")).toHaveText("หน้าเว็บอัปเดตแล้ว");
+    await expect(page.locator('[data-temple-row="popular:001"] .mw-temple-publication')).toHaveText("เผยแพร่");
     await expect(page.locator('[data-action="publish"]').first()).toBeEnabled();
     expect(errors).toEqual([]);
+  });
+
+  test("keeps edited temple data and draft status when publishing conflicts", async ({ page }) => {
+    await page.route("**/api/admin/content", route => route.request().method() === "POST"
+      ? route.fulfill({ status: 409, json: { ok: false, error: "Content revision conflict" } })
+      : route.fallback());
+    await page.locator('[data-edit-temple="popular:001"]').click();
+    await page.getByLabel("ชื่อสถานที่", { exact: true }).fill("ฉบับร่างที่ต้องเก็บไว้");
+    await page.getByRole("button", { name: "บันทึก", exact: true }).click();
+    await page.locator('[data-action="publish"]').first().click();
+    await expect(page.locator("[data-publish-progress-title]")).toHaveText("Publish มีปัญหา");
+    await expect(page.locator('[data-temple-row="popular:001"] .mw-temple-publication')).toHaveText("มีฉบับร่าง");
+    await expect(page.locator('[data-action="publish"]').first()).toBeEnabled();
+    await page.locator('[data-edit-temple="popular:001"]').click();
+    await expect(page.getByLabel("ชื่อสถานที่", { exact: true })).toHaveValue("ฉบับร่างที่ต้องเก็บไว้");
   });
 
   test("opens a fixed-ratio crop editor for an existing image", async ({ page }, testInfo) => {
@@ -150,6 +168,7 @@ test.describe("Temple Admin Portal", () => {
   test("opens a row deep in the table without disturbing page scroll", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name.includes("mobile"), "desktop table scrolling is covered once");
     await page.getByRole("tab", { name: "วัดเด่นขอพร 50", exact: true }).click();
+    await page.getByRole("button", { name: "หน้าที่ 3", exact: true }).click();
     const item = page.locator('[data-temple-row="sacred:042"]');
     await item.scrollIntoViewIfNeeded();
     const before = await page.evaluate(() => window.scrollY);

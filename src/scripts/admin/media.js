@@ -1,4 +1,6 @@
 export function createAdminMedia({ markDirty, setStatus, state, api, $, TEMPLE_IMAGE_FIELDS, escapeHtml, currentTempleEdit, currentTempleRecord, renderTemples, templeImageValue }) {
+const editorContext = () => ({ key: currentTempleRecord()?.key, session: state.templeEditorSession });
+const isCurrentEditor = context => state.templeEditorOpen && context.key === currentTempleRecord()?.key && context.session === state.templeEditorSession;
 function imageFieldFromButton(button) {
   const root = button.closest("[data-image-role][data-image-viewport]");
   if (!root) return null;
@@ -27,6 +29,7 @@ function setTempleImage(role, viewport, url, metadata = {}) {
 async function useTempleImageUrl(button) {
   const field = imageFieldFromButton(button);
   if (!field) return;
+  const context = editorContext();
   const input = field.root.querySelector("[data-image-url]");
   const sourceUrl = String(input?.value || "").trim();
   if (!/^https:\/\//iu.test(sourceUrl)) {
@@ -37,7 +40,9 @@ async function useTempleImageUrl(button) {
   try {
     setStatus(state.media.provider ? "กำลังตรวจสอบและนำรูปเข้าระบบ..." : "กำลังตรวจสอบลิงก์รูปภาพ...", "info");
     await verifyImageLoads(sourceUrl);
+    if (!isCurrentEditor(context)) return;
     const result = state.media.provider ? await uploadAdminMedia(sourceUrl, templeImageFilename(field)) : sourceUrl;
+    if (!isCurrentEditor(context)) return;
     setTempleImage(field.role, field.viewport, result, {
       originalUrl: sourceUrl,
       provider: detectImageProvider(result),
@@ -45,6 +50,7 @@ async function useTempleImageUrl(button) {
     setStatus("เพิ่มรูปแล้ว กดครอปรูปเพื่อปรับจุดภาพได้", "ok");
     renderTemples();
   } catch (error) {
+    if (!isCurrentEditor(context)) return;
     field.root.classList.add("is-error");
     setStatus(`ยังไม่บันทึกรูป: ${error.message}`, "error");
   }
@@ -102,14 +108,15 @@ function clearTempleImage(button) {
 function handleTempleImageUpload(input) {
   const field = imageFieldFromButton(input);
   const file = input.files?.[0];
+  const context = editorContext();
   if (!field || !file) return;
   if (!file.type.startsWith("image/")) {
     setStatus("ไฟล์ที่เลือกไม่ใช่รูปภาพ", "error");
     return;
   }
   const reader = new FileReader();
-  reader.onload = () => openTempleCropper(String(reader.result || ""), { ...field, fileName: file.name });
-  reader.onerror = () => setStatus("อ่านไฟล์รูปไม่สำเร็จ", "error");
+  reader.onload = () => { if (isCurrentEditor(context)) openTempleCropper(String(reader.result || ""), { ...field, fileName: file.name }); };
+  reader.onerror = () => { if (isCurrentEditor(context)) setStatus("อ่านไฟล์รูปไม่สำเร็จ", "error"); };
   reader.readAsDataURL(file);
 }
 
@@ -129,13 +136,13 @@ function detectImageProvider(url = "") {
   return "external";
 }
 
-async function uploadAdminMedia(fileValue, fileName) {
+async function uploadAdminMedia(fileValue, fileName, { library = false } = {}) {
   if (state.media.provider === "cloudinary" && state.media.cloudinary?.enabled) {
     const form = new FormData();
     form.append("file", fileValue);
     form.append("upload_preset", state.media.cloudinary.uploadPreset);
-    form.append("folder", "mongkolwela/temples");
-    form.append("context", `source=admin_portal|temple=${currentTempleRecord()?.key || ""}`);
+    form.append("folder", library ? "mongkolwela/library" : "mongkolwela/temples");
+    form.append("context", library ? "source=media_library" : `source=admin_portal|temple=${currentTempleRecord()?.key || ""}`);
     const response = await fetch(`https://api.cloudinary.com/v1_1/${state.media.cloudinary.cloudName}/image/upload`, {
       method: "POST",
       body: form,
@@ -152,7 +159,7 @@ async function uploadAdminMedia(fileValue, fileName) {
     const form = new FormData();
     form.append("file", fileValue);
     form.append("fileName", fileName || "temple-image.jpg");
-    form.append("folder", "/mongkolwela/temples");
+    form.append("folder", library ? "/mongkolwela/library" : "/mongkolwela/temples");
     form.append("useUniqueFileName", "true");
     form.append("publicKey", auth.authentication.publicKey);
     form.append("signature", auth.authentication.signature);
@@ -169,6 +176,7 @@ async function uploadAdminMedia(fileValue, fileName) {
 let templeCropState = null;
 
 function openTempleCropper(src, field) {
+  field = { ...field, editorContext: editorContext() };
   let overlay = $("#templeCropOverlay");
   if (!overlay) {
     overlay = document.createElement("div");
@@ -188,6 +196,7 @@ function openTempleCropper(src, field) {
     <footer><p>ลากกรอบเพื่อเลือกภาพ ระบบจะบันทึกเป็น JPEG ตามสัดส่วนที่กำหนด</p><div><button class="mw-admin-btn" type="button" data-crop-close>ยกเลิก</button><button class="mw-admin-btn mw-admin-btn-primary" type="button" data-crop-apply>ครอปและบันทึก</button></div></footer>
   </div>`;
   overlay.classList.add("is-open");
+  overlay.querySelector("[data-crop-close]")?.focus();
   overlay.querySelectorAll("[data-crop-close]").forEach((button) => button.addEventListener("click", closeTempleCropper));
   overlay.querySelector("[data-crop-apply]")?.addEventListener("click", applyTempleCrop);
   const image = overlay.querySelector("[data-crop-image]");
@@ -200,7 +209,7 @@ function initializeTempleCrop(field, src) {
   const overlay = $("#templeCropOverlay");
   const image = overlay?.querySelector("[data-crop-image]");
   const selection = overlay?.querySelector("[data-crop-selection]");
-  if (!image || !selection) return;
+  if (!image || !selection || !overlay.classList.contains("is-open") || !isCurrentEditor(field.editorContext)) return;
   const width = image.clientWidth;
   const height = image.clientHeight;
   let cropWidth;
@@ -342,6 +351,7 @@ async function applyTempleCrop() {
     );
     const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
     const url = await uploadAdminMedia(dataUrl, state.fileName || templeImageFilename(state));
+    if (!isCurrentEditor(state.editorContext) || templeCropState !== state) return;
     setTempleImage(state.role, state.viewport, url, {
       originalUrl: state.src,
       provider: detectImageProvider(url),
@@ -352,6 +362,7 @@ async function applyTempleCrop() {
     setStatus("ครอปและบันทึกรูปแล้ว", "ok");
     renderTemples();
   } catch (error) {
+    if (!isCurrentEditor(state.editorContext) || templeCropState !== state) return;
     button.disabled = false;
     button.textContent = "ครอปและบันทึก";
     setStatus(`บันทึกรูปไม่สำเร็จ: ${error.message}`, "error");
@@ -360,6 +371,7 @@ async function applyTempleCrop() {
 
 function closeTempleCropper() {
   $("#templeCropOverlay")?.classList.remove("is-open");
+  if (templeCropState && isCurrentEditor(templeCropState.editorContext)) $("[data-editor-jump='images']")?.focus();
   templeCropState = null;
 }
 

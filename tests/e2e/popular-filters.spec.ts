@@ -40,6 +40,9 @@ for (const [collection, total] of [["popular", 243], ["sacred", 217], ["mu", 165
       await expect(page.locator("[data-compact-filters]")).toHaveCount(1);
       await expect(page.locator(".temple-collection-v2-advanced-filter")).toHaveCount(0);
       await expect(page.locator("[data-popular-temple-grid]")).toHaveAttribute("data-collection", collection);
+      await expect(page.locator(cards)).toHaveCount(width > 600 ? 16 : 6);
+      const columns = await page.locator("[data-popular-temple-grid]").evaluate(node => getComputedStyle(node).gridTemplateColumns.split(" ").length);
+      expect(columns).toBe(width > 600 ? 4 : 1);
       const panel = await page.locator(".pf__panel").boundingBox();
       expect(panel!.height).toBeLessThan(width > 720 ? 220 : 450);
       expect(await page.locator(".pf").evaluate(node => getComputedStyle(node).fontFamily)).toContain("IBM Plex Sans Thai");
@@ -101,7 +104,7 @@ test("working, draft, applied: multi-selection, local search, cancel, restore an
   await search(page);
   await expect(page.locator("[data-pf-status]")).toHaveText("");
   await expect(page.locator("[data-pf-applied]")).toBeVisible();
-  const expected = await page.locator("[data-popular-temple-card]").evaluateAll(nodes => nodes.filter(n => ["กรุงเทพมหานคร", "เชียงใหม่"].includes((n as HTMLElement).dataset.province!)).slice(0, 8).map(n => (n as HTMLElement).dataset.cardKey));
+  const expected = await page.locator("[data-popular-temple-card]").evaluateAll(nodes => nodes.filter(n => ["กรุงเทพมหานคร", "เชียงใหม่"].includes((n as HTMLElement).dataset.province!)).slice(0, 16).map(n => (n as HTMLElement).dataset.cardKey));
   expect(await ids(page)).toEqual(expected);
   await page.locator(province).click(); await page.locator("[data-pf-clear-working]").click();
   await page.keyboard.press("Escape");
@@ -115,6 +118,69 @@ test("working, draft, applied: multi-selection, local search, cancel, restore an
   await expect(page.locator(mainQuery)).toHaveValue("");
   await page.locator("[data-popular-temple-filter-clear]").click();
   expect(await ids(page)).toEqual(before);
+  expect(errors).toEqual([]);
+});
+
+test("collection sort, CMS refresh and compact card actions preserve their contracts", async ({ page }) => {
+  const updatedContent = structuredClone(content);
+  const errors = await setup(page);
+  await ready(page);
+  await page.locator("[data-popular-temple-more]").click();
+  await expect(page.locator(cards)).toHaveCount(32);
+  await page.getByRole("combobox", { name: "เรียงตาม", exact: true }).click();
+  await page.getByRole("option", { name: "ชื่อ ก–ฮ", exact: true }).click();
+  const names = await page.locator(cards).evaluateAll(nodes => nodes.map(node => (node as HTMLElement).dataset.name!));
+  expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b, "th")));
+  const firstCard = page.locator('[data-popular-temple-card][data-rank="1"]');
+  const href = await firstCard.locator("[data-popular-temple-detail]").getAttribute("href");
+  const key = decodeURIComponent(href!).split("/").filter(Boolean).slice(-2).join(":");
+  updatedContent.temples ||= { records: {} };
+  updatedContent.temples.records[key] = {
+    enabled: true, status: "published",
+    fields: { name: "วัดทดสอบข้อมูลล่าสุด", province: "เชียงใหม่", blessings: "สุขภาพ/อายุยืน" },
+  };
+  await page.route("**/api/admin/content?*", route => route.fulfill({ json: { ok: true, content: updatedContent } }));
+  await page.evaluate(async () => (window as any).MongkolWelaCMS.reload());
+  await expect(firstCard.locator("[data-collection-province]")).toHaveText("เชียงใหม่");
+  await expect(firstCard.locator(".temple-collection-v2-province .ui-icon-mask")).toHaveCount(1);
+  await expect(firstCard.locator("[data-collection-intent]")).toHaveText("สุขภาพ/อายุยืน");
+  const plannerHref = await firstCard.locator(".temple-collection-v2-card-plan").getAttribute("href");
+  expect(new URL(plannerHref!, "https://example.test").searchParams.get("start")).toBe("วัดทดสอบข้อมูลล่าสุด");
+  expect(new URL(plannerHref!, "https://example.test").searchParams.get("province")).toBe("เชียงใหม่");
+  expect(errors).toEqual([]);
+});
+
+test("collection mobile 320px, tablet and full-page visual evidence", async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors = await setup(page);
+  await ready(page);
+  for (const width of [320, 768]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+    const card = page.locator(cards).first();
+    const plan = await card.locator(".temple-collection-v2-card-plan").boundingBox();
+    const detail = await card.locator(".temple-collection-v2-card-detail").boundingBox();
+    expect(Math.abs(plan!.y - detail!.y)).toBeLessThan(2);
+    expect(plan!.x + plan!.width).toBeLessThanOrEqual(detail!.x);
+  }
+  fs.mkdirSync("artifacts/visitor-collections", { recursive: true });
+  for (const collection of ["popular", "mu", "sacred"]) {
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.goto(`/temples/${collection}/`);
+      await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "true");
+      await expect(page.locator("[data-page-loader]")).toHaveAttribute("aria-hidden", "true");
+      await expect(page.locator(cards)).toHaveCount(width > 600 ? 16 : 6);
+      await page.evaluate(() => document.fonts.ready);
+      for (const card of await page.locator(cards).all()) await card.scrollIntoViewIfNeeded();
+      await page.locator("main").evaluate(() => window.scrollTo(0, 0));
+      await expect.poll(() => page.locator(cards).evaluateAll(nodes => nodes.every(n => {
+        const img = n.querySelector("img")!;
+        return img.complete && img.naturalWidth > 0;
+      }))).toBe(true);
+      await page.screenshot({ path: `artifacts/visitor-collections/${collection}-${width}-full.png`, fullPage: true });
+    }
+  }
   expect(errors).toEqual([]);
 });
 
@@ -237,7 +303,7 @@ test("failed collection keeps initial cards and provides a real retry", async ({
   await page.route("**/assets/data/temple-collections/popular.json?*", route => fail ? route.fulfill({ status: 503, body: "unavailable" }) : route.continue());
   await setup(page);
   await expect(page.locator("[data-pf-status]")).toContainText("โหลดข้อมูลไม่ครบ");
-  await expect(page.locator(cards)).toHaveCount(8);
+  await expect(page.locator(cards)).toHaveCount(16);
   await expect(page.locator(cards).first().locator("[data-popular-temple-detail]")).toHaveAttribute("href", /\/temples\/popular\//);
   fail = false; await page.locator("[data-pf-retry]").click(); await ready(page);
   await expect(page.locator("[data-pf-retry]")).toBeHidden();
@@ -272,10 +338,13 @@ test("nearby late responses cannot undo Clear or newer draft; denied is recovera
   await expect(page.locator("[data-popular-temple-nearby]")).toHaveAttribute("aria-busy", "true");
   await page.evaluate(() => (window as any).locationCallback({ coords: { latitude: 18.7, longitude: 98.9 } }));
   await expect(page.locator("[data-popular-temple-nearby]")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("[data-collection-sort]")).toHaveValue("nearby");
+  await expect(page.getByRole("combobox", { name: "เรียงตาม", exact: true })).toContainText("ใกล้ฉัน");
   await page.locator(mainQuery).fill("วัดอรุณ");
   await page.locator("[data-popular-temple-nearby]").click();
   await expect(page.locator("[data-popular-temple-nearby]")).toHaveAttribute("aria-pressed", "false");
   await page.locator("[data-pf-applied] summary").click();
+  await expect(page.locator("[data-collection-sort]")).toHaveValue("rank");
   await expect(page.locator("[data-pf-applied-details]")).toContainText("เชียงใหม่");
   await expect(page.locator("[data-pf-status]")).toContainText("กดค้นหา");
 });
@@ -310,12 +379,11 @@ test("name precedence, unchanged URL, batch reveal, card destinations and siblin
   await page.locator("[data-popular-temple-filter-clear]").click();
   await ready(page); expect(page.url()).toBe(url);
   await page.locator("[data-popular-temple-more]").click();
-  await expect(page.locator(cards)).toHaveCount(16);
+  await expect(page.locator(cards)).toHaveCount(32);
   await expect(page.locator(cards).first().locator(".temple-collection-v2-card-plan")).toHaveAttribute("href", /\/temples\/planner\/\?start=.+&province=/);
   for (const path of ["/temples/sacred/", "/temples/mu/"]) {
-    await page.goto(path); await expect(page.locator(".pf")).toHaveCount(0);
-    await expect(page.locator(".temple-collection-v2-advanced-filter")).toBeVisible();
-    await page.locator(".temple-collection-v2-advanced-filter > summary").click();
+    await page.goto(path); await expect(page.locator(".pf")).toHaveCount(1);
+    await expect(page.locator(".temple-collection-v2-advanced-filter")).toHaveCount(0);
     await page.locator(mainQuery).fill("วัด");
     await page.locator("[data-popular-temple-filter-form] button[type=submit]").click();
     await expect(page.locator(cards).first()).toBeVisible();
@@ -326,7 +394,7 @@ test("no JS keeps readable initial cards and disables custom filters", async ({ 
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto(`${test.info().project.use.baseURL || process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:4360"}/temples/popular/`);
-  await expect(page.locator("[data-popular-temple-card]")).toHaveCount(8);
+  await expect(page.locator("[data-popular-temple-card]")).toHaveCount(16);
   await expect(page.locator(province)).toBeDisabled();
   await expect(page.locator(".pf")).toContainText("เปิด JavaScript", { useInnerText: true });
   await context.close();

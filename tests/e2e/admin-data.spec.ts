@@ -6,7 +6,8 @@ import { TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD } from "../helpers/supabase-auth-
 async function fixture(page, overrides = {}) {
   const data = { ...adminDesignFixture(), ...overrides };
   await page.route("**/api/**", route => {
-    const body = data[new URL(route.request().url()).pathname];
+    const url = new URL(route.request().url());
+    const body = url.pathname === "/api/admin/media" && url.searchParams.get("view") === "library" ? { ok: true, assets: [] } : data[url.pathname];
     return route.fulfill({ status: body ? 200 : 503, json: body || { ok: false, error: "Unavailable" } });
   });
   await page.goto("/admin/");
@@ -24,19 +25,18 @@ test("empty and unavailable analytics preserve cards and visible guidance on des
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 1086 });
     await section(page, "analytics");
-    for (const selector of [".mw-overview-trend", ".mw-overview-referrers", ".mw-overview-chart", ".mw-overview-returning"]) {
+    for (const selector of [".mw-analytics-trend", ".mw-analytics-sources", ".mw-analytics-pages", ".mw-analytics-returning"]) {
       await expect(page.locator(selector)).toContainText("ยังไม่มีข้อมูล");
-      await expect(page.locator(`${selector} .mw-admin-empty-symbol`)).toBeVisible();
-      expect((await page.locator(selector).boundingBox()).height).toBeGreaterThan(220);
+      await expect(page.locator(`${selector} .mw-admin-icon`).first()).toBeVisible();
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({ path: `artifacts/admin-design/data-empty-${width}.png`, fullPage: true });
   }
   await page.route("**/api/admin/analytics", route => route.fulfill({ status: 503, json: { ok: false, error: "Unavailable" } }));
-  await page.locator(".mw-overview-trend [data-action='refresh-analytics']").click();
-  await expect(page.locator(".mw-overview-trend")).toContainText("ยังไม่สามารถโหลดสถิติได้");
-  await expect(page.locator(".mw-overview-trend").getByRole("button", { name: "ลองอีกครั้ง" })).toBeVisible();
+  await page.locator('[data-analytics-action="refresh"]').click();
+  await expect(page.locator(".mw-analytics-trend")).toContainText("ไม่สามารถแสดงกราฟได้");
+  await expect(page.locator(".mw-analytics-notice").getByRole("button", { name: "ลองอีกครั้ง" })).toBeVisible();
 });
 
 test("one-day data is insufficient, while two days and real referrers render charts", async ({ page }) => {
@@ -65,9 +65,10 @@ test("media references link to real CMS owners and settings use catalog values",
   base["/api/admin/temples"].temples = [{ key: "sacred:source", source: "admin", collection: "sacred", detailUrl: "/temples/sacred/source/", temple: { name: "CMS record", region: "ภาคตะวันตก", travelModes: "เรือ; รถไฟ", imageUrl: src } }];
   await fixture(page, base);
   await section(page, "media");
-  await expect(page.locator(".mw-admin-media-card")).toHaveCount(1);
-  await expect(page.locator(".mw-admin-media-card")).toContainText("อ้างอิง 8 ตำแหน่ง");
-  await page.locator(".mw-admin-media-references summary").click();
+  await expect(page.locator(".mw-media-item")).toHaveCount(1);
+  await expect(page.locator(".mw-media-notices")).not.toContainText("กำลังโหลด");
+  await page.locator(".mw-media-filename").click();
+  await expect(page.locator(".mw-admin-media-references")).toContainText("อ้างอิง 8 ตำแหน่ง");
   await page.locator(".mw-admin-media-references [data-page-jump]").first().click();
   await expect(page.locator("[data-page-content-select]")).toHaveValue("media-test");
   await section(page, "settings");
@@ -76,7 +77,7 @@ test("media references link to real CMS owners and settings use catalog values",
   await section(page, "collections");
   await page.locator("[data-collection-jump=sacred]").click();
   await expect(page.locator("[data-temple-collection=sacred]")).toHaveAttribute("aria-selected", "true");
-  await expect(page.locator("[data-temple-row]")).toContainText("เพิ่มผ่าน CMS");
+  await expect(page.locator('[data-temple-row="sacred:source"]')).toContainText("CMS record");
   await expect(page.locator("[data-temple-row]")).toContainText("ยังไม่ระบุ");
   await page.locator("[data-edit-temple]").first().click();
   await expect(page.locator("[data-temple-field=placeType]")).toHaveValue("");

@@ -1,7 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import TempleMapOverlay from "./TempleMapOverlay.astro";
-import TempleResponsiveImage from "./TempleResponsiveImage.astro";
+import SiteIcon from "./icons/SiteIcon.astro";
+import BrandOrnament from "./BrandOrnament.astro";
+import { renderTempleCollectionCard } from "../lib/temple-collection-card.js";
+import "../styles/temple-collection.css";
 import PageBanner from "./PageBanner.astro";
 import CmsImage from "./CmsImage.astro";
 import PopularFilters from "./PopularFilters.astro";
@@ -61,8 +64,8 @@ const {
   regions,
   purposes,
   structuredData,
-  initialCount = 8,
-  batchSize = 8,
+  initialCount = 16,
+  batchSize = 16,
 } = Astro.props as {
   collection: "popular" | "sacred" | "mu";
   pageKey: string;
@@ -91,12 +94,6 @@ const supportingLinks = [
   { label: "วัดเด่นขอพร", href: "/temples/sacred/" },
   { label: "วัดทั่วประเทศไทย", href: "/temples/thailand/" },
 ];
-const thaiNumber = (value: number) => value.toLocaleString("th-TH-u-nu-thai");
-const splitTags = (value?: string) =>
-  String(value || "")
-    .split(";")
-    .map((item) => item.trim())
-    .filter((item) => item && item !== "0" && item.toLowerCase() !== "nan" && item.toLowerCase() !== "null");
 const plannerHrefFor = (temple: TempleCard) =>
   `/temples/planner/?start=${encodeURIComponent(temple.name)}&province=${encodeURIComponent(temple.province)}`;
 const collectionDataSrc = `/assets/data/temple-collections/${collection}.json`;
@@ -120,17 +117,8 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
 >
   <main
     class="temples-collection-v2"
-    style={`--collection-accent: ${meta.accent}; --collection-hero-bg: ${meta.heroBg};`}
   >
-    <TempleMapOverlay
-      collection={collection}
-      title={meta.mapTitle}
-      searchPlaceholder={meta.mapSearchPlaceholder}
-      temples={rankedTemples}
-      placeholderImage={templePlaceholderImage}
-    />
-
-    <PageBanner titleId="temple-collection-title" adminKey={banner.adminKey}>
+    <PageBanner titleId="temple-collection-title" class="collection-banner" adminKey={banner.adminKey}>
       <CmsImage slot="media" mediaId={`temple-${collection}-banner`} image={{ src: banner.imageUrl, alt: banner.imageAlt, position: banner.focalPoint, credit: banner.imageSourceLabel, sourceUrl: banner.imageSourceUrl }} width={1920} height={1080} loading="eager" fetchpriority="high" />
       <div class="page-banner__copy">
         <nav class="page-banner__breadcrumb" aria-label="เส้นทางนำทาง">
@@ -144,16 +132,15 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
 
         <div class="temple-collection-v2-tabs" aria-label="หมวดวัด">
           {collectionTabs.map((tab) => (
-            <a class={tab.key === collection ? "is-active" : undefined} href={tab.href}>{tab.label}</a>
+            <a class={tab.key === collection ? "is-active" : undefined} aria-current={tab.key === collection ? "page" : undefined} href={tab.href}>{tab.label}</a>
           ))}
         </div>
 
-        <p class="page-banner__kicker">{meta.kicker}</p>
-        <h1 id="temple-collection-title">{meta.title}</h1>
-        <p class="page-banner__description">{meta.description}</p>
-        <p class="temple-collection-v2-total">
-          พบ {thaiNumber(rankedTemples.length)} สถานที่ในหมวดนี้ · แสดงรายการเด่นก่อน แล้วค่อยแสดงเพิ่มเติม
-        </p>
+        <p class="page-banner__kicker" data-cms-field="collection-kicker">{meta.kicker}</p>
+        <h1 id="temple-collection-title" data-cms-field="collection-heading">{meta.title}</h1>
+        <p class="page-banner__description" data-cms-field="collection-description">{meta.description}</p>
+        <p class="collection-quote"><SiteIcon name="quote" /><span data-cms-field="collection-quote">พบวัดดี สถานที่เป็นมงคล และวางแผนเส้นทางได้ในที่เดียว</span></p>
+
       </div>
     </PageBanner>
 
@@ -162,7 +149,26 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
     <section class="temples-section temple-collection-v2-results">
       <div class="temple-collection-v2-results-head">
         <h2 class="sr-only">{meta.gridLabel}</h2>
-        <p class="popular-temple-count" data-popular-temple-count></p>
+        <p class="collection-result-total" data-collection-total>พบ {rankedTemples.length} {collection === "popular" ? "วัด" : "สถานที่"}</p>
+        <div class="collection-result-tools">
+          <TempleMapOverlay
+            collection={collection}
+            title={meta.mapTitle}
+            searchPlaceholder={meta.mapSearchPlaceholder}
+            temples={rankedTemples}
+            placeholderImage={templePlaceholderImage}
+          />
+          <p class="popular-temple-count" data-popular-temple-count></p>
+          <label class="collection-sort">
+            <span class="sr-only">เรียงตาม</span>
+            <select data-collection-sort aria-label="เรียงตาม">
+              <option value="rank">อันดับแนะนำ</option>
+              <option value="name">ชื่อ ก–ฮ</option>
+              <option value="province">จังหวัด ก–ฮ</option>
+              <option value="nearby" disabled>ใกล้ฉัน</option>
+            </select>
+          </label>
+        </div>
       </div>
 
       <div
@@ -171,81 +177,40 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
         data-popular-temple-grid
         data-collection={collection}
         data-collection-data-src={collectionDataSrc}
+        data-result-unit={collection === "popular" ? "วัด" : "สถานที่"}
+        data-mobile-count="6"
         data-initial-count={initialCount}
         data-batch-size={batchSize}
         data-count-mode="visible-filtered"
         data-placeholder-src={templePlaceholderImage}
       >
-        {initialTemples.map((temple) => {
-          const hasTempleImage = Boolean(temple.imageUrl) && temple.imageUrl !== templePlaceholderImage;
-          const imageUrl = hasTempleImage ? String(temple.imageUrl) : templePlaceholderImage;
-          const imageAlt = temple.imageAlt || `${temple.name} ${temple.province}`;
-          const intent = splitTags(temple.blessings)[0] || splitTags(temple.objectHero)[0] || temple.placeType || "สิริมงคล";
-          const detailHref = getTempleDetailUrl(collection, temple);
-
-          return (
-            <article
-              class={`popular-temple-card temple-collection-v2-card${hasTempleImage ? "" : " is-placeholder"}`}
-              data-rank={temple.rank}
-              data-name={temple.name}
-              data-region={temple.region}
-              data-province={temple.province}
-              data-district={temple.district}
-              data-blessings={temple.blessings ?? ""}
-              data-place-type={temple.placeType ?? ""}
-              data-search-text={`${temple.name} ${temple.region} ${temple.province} ${temple.district || ""} ${temple.blessings || ""} ${temple.objectHero || ""}`}
-              data-latitude={temple.latitude}
-              data-longitude={temple.longitude}
-              data-card-key={cardKeyFor(temple)}
-              data-popular-temple-card
-              data-image-placeholder={hasTempleImage ? undefined : "true"}
-            >
-              <figure>
-                <TempleResponsiveImage
-                  desktopSrc={imageUrl}
-                  mobileSrc={temple.imageMobileUrl || imageUrl}
-                  alt={imageAlt}
-                  loading="lazy"
-                  decoding="async"
-                  fallbackSrc={templePlaceholderImage}
-                />
-                <figcaption>{thaiNumber(temple.rank)}</figcaption>
-              </figure>
-              <div class="popular-temple-card-body">
-                <span>{temple.province}</span>
-                <h3>{temple.name}</h3>
-                <p>{temple.province}{temple.district ? ` / ${temple.district}` : ""}</p>
-                <strong>{intent}</strong>
-                <div class="temple-collection-v2-card-meta">
-                  <small>ข้อมูลชุดปัจจุบัน</small>
-                  <a href="/contact/#corrections">แจ้งแก้ไขข้อมูล</a>
-                </div>
-                <div class="temple-collection-v2-card-actions">
-                  <a class="temple-collection-v2-card-plan" href={plannerHrefFor(temple)}>เพิ่มลงแผน</a>
-                  <a class="temple-collection-v2-card-detail" href={detailHref} data-popular-temple-detail>รายละเอียด</a>
-                </div>
-              </div>
-            </article>
-          );
-        })}
+        {initialTemples.map(temple => <Fragment set:html={renderTempleCollectionCard({
+          ...temple,
+          key: cardKeyFor(temple),
+          detailUrl: getTempleDetailUrl(collection, temple),
+          plannerUrl: plannerHrefFor(temple),
+        }, templePlaceholderImage)} />)}
       </div>
 
       <p class="popular-temple-empty" data-popular-temple-empty hidden>{meta.emptyText}</p>
       <button class="popular-temple-load-more" type="button" data-popular-temple-more hidden>
-        แสดงเพิ่มเติม
+        แสดงเพิ่มเติม <SiteIcon name="chevron-down" />
       </button>
 
       <aside class="temple-collection-v2-planner" aria-label="วางแผนเส้นทางจากสถานที่ที่เลือก">
-        <div>
-          <p>วางแผนการเดินทาง</p>
-          <h2>จัดลำดับเส้นทางจากสถานที่ที่เลือก</h2>
-          <span>เพิ่มวัดจากหน้าค้นหา แล้วเปิดเครื่องมือวางแผนเพื่อจัดเส้นทางที่ต่อเนื่องตามพิกัดและเวลาเปิดของสถานที่</span>
+        <BrandOrnament /><BrandOrnament mirrored />
+        <SiteIcon name="route" class="collection-planner-icon" />
+        <div class="collection-planner-copy">
+          <p data-cms-field="collection-planner-kicker">วางแผนการเดินทาง</p>
+          <h2 data-cms-field="collection-planner-heading">จัดลำดับเส้นทางจากสถานที่ที่เลือก</h2>
+          <span data-cms-field="collection-planner-description">เพิ่มวัดจากหน้าค้นหา แล้วเปิดเครื่องมือวางแผนเพื่อจัดเส้นทางที่ต่อเนื่องตามพิกัดและเวลาเปิดของสถานที่</span>
         </div>
-        <a href="/temples/planner/">วางแผนเส้นทาง</a>
+        <a href="/temples/planner/">วางแผนเส้นทาง <SiteIcon name="arrow-right" /></a>
       </aside>
 
       <nav class="temple-collection-v2-supporting" aria-label="หมวดอื่น">
         <span>หมวดอื่น</span>
+        <a href="/contact/#corrections">แจ้งแก้ไขข้อมูล</a>
         {supportingLinks.map((item) => <a href={item.href}>{item.label}</a>)}
       </nav>
 

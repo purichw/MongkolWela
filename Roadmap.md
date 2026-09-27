@@ -4,6 +4,15 @@ Last updated: 2026-06-19
 
 ## Current Status
 
+### Member Favorites Follow-Up (2026-09-27)
+
+- When implementing the member area, restore the heart / favorite action on the
+  shared Visitor collection cards (Popular, Sacred and Mu).
+- Bind saved places to the signed-in member account and provide a member favorites
+  view, with signed-out, saved, unsaved and error states.
+- Until the member feature exists, deliberately omit the heart button. Do not
+  substitute browser-only favorites. This follows the user's explicit decision.
+
 Production is live at:
 
 - `https://mongkolwela.vercel.app`

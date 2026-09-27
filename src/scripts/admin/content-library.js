@@ -2,7 +2,7 @@ import { adminIcon } from "./design.js";
 
 const fieldNames = {
   title: "หัวข้อ", label: "ชื่อที่แสดง", name: "ชื่อ", nameTh: "ชื่อภาษาไทย", thName: "ชื่อภาษาไทย", th: "ชื่อภาษาไทย",
-  shortLabel: "ชื่อย่อ", verse: "บทเซียมซี", interpretation: "คำทำนาย", advice: "คำแนะนำ", caution: "ข้อควรระวัง", blessing: "ข้อคิดส่งท้าย",
+  shortLabel: "ชื่อย่อ", verse: "บทเซียมซี", interpretation: "คำทำนาย", advice: "คำแนะนำ", caution: "ข้อควรระวัง", blessing: "ข้อคิดสำคัญ",
   description: "คำอธิบาย", intro: "บทนำ", reading: "คำอ่าน", text: "เนื้อหา", theme: "ใจความสำคัญ", time: "ช่วงเวลา", mantra: "คำภาวนา",
   image: "รูปภาพ", imageThumb: "ภาพขนาดเล็ก", href: "ลิงก์", field: "เรื่องที่เกี่ยวข้อง", high: "ช่วงคะแนนสูง", mid: "ช่วงคะแนนกลาง", low: "ช่วงคะแนนต่ำ",
   topic: "ความหมายภพ", role: "บทบาทดาว", tone: "ลักษณะเด่น", keywords: "คำสำคัญ", keywordsUpright: "คำสำคัญไพ่ตั้งตรง", keywordsReversed: "คำสำคัญไพ่กลับหัว",
@@ -12,7 +12,10 @@ const fieldNames = {
   fate_line: "เส้นวาสนา", sun_line: "เส้นอาทิตย์", mercury_line: "เส้นพุธ", marriage_line: "เส้นสมรส", long_clear: "ยาวชัดเจน", short: "สั้น", broken: "ขาดตอน",
 };
 
-export function createContentLibrary({ state, api, escapeHtml: e, setTitle, setTopActions, markDirty, setStatus }) {
+const labelFields = ["title", "nameTh", "name_th", "name", "label", "th", "thName"];
+const narrativeFields = new Set(["verse", "interpretation", "advice", "caution", "blessing", "description", "intro", "reading", "text", "overview", "overall", "meaning", "upright", "reversed", "high", "mid", "low"]);
+
+export function createContentLibrary({ state, api, escapeHtml: e, setTitle, setTopActions, markDirty }) {
   let catalog;
   let error = "";
   let loading = false;
@@ -20,12 +23,14 @@ export function createContentLibrary({ state, api, escapeHtml: e, setTitle, setT
   let query = "";
   let selected = null;
   let page = 1;
+  let listScroll = 0;
+  let returnRecord = null;
   const perPage = 20;
   const draft = () => state.content.contentLibrary || {};
   const fieldLabel = path => path.split("/").map(part => fieldNames[part] || (/^\d+$/.test(part) ? String(Number(part) + 1) : part.replaceAll("_", " "))).join(" / ");
   const rows = () => (catalog || []).flatMap(group => group.records.map(record => {
     const overrides = draft()[group.key]?.[record.id] || {};
-    const labelField = ["title", "nameTh", "name_th", "name", "label", "th", "thName"].find(key => record.fields.some(field => field.path === key));
+    const labelField = labelFields.find(key => record.fields.some(field => field.path === key));
     return { ...record, label: overrides[labelField] ?? record.label, fields: record.fields.map(field => ({ ...field, value: overrides[field.path] ?? field.value })), group };
   }));
   const filtered = () => rows().filter(row => (category === "all" || row.group.group === category)
@@ -70,12 +75,21 @@ export function createContentLibrary({ state, api, escapeHtml: e, setTitle, setT
     const group = catalog.find(item => item.key === selected.group);
     const record = group.records.find(item => item.id === selected.id);
     const overrides = draft()[group.key]?.[record.id] || {};
-    root.innerHTML = `<div class="mw-library-editor-head"><button class="mw-admin-btn" type="button" data-library-back>${adminIcon("arrow-left")} กลับรายการ</button><div><p>${e(group.group)} / ${e(group.title)}</p><h2>${e(fieldNames[record.id] || record.label)}</h2></div><a class="mw-admin-btn" href="${e(group.routes[0])}" target="_blank" rel="noopener">${adminIcon("external-link")} เปิดหน้าเว็บ</a></div>
-      <div class="mw-library-editor"><div class="mw-library-fields">${record.fields.map(field => {
+    const labelField = labelFields.find(key => record.fields.some(field => field.path === key));
+    const recordLabel = overrides[labelField] ?? fieldNames[record.id] ?? record.label;
+    document.querySelector(".mw-admin-main").classList.add("is-library-editor");
+    document.querySelector("#adminKicker").textContent = `คลังคำทำนาย / ${group.group} / ${group.title}`;
+    const websiteLink = `<a class="mw-admin-btn" href="${e(group.routes[0])}" target="_blank" rel="noopener" aria-label="เปิดหน้าเว็บ ${e(group.group)} (แท็บใหม่)" title="เปิดหน้าเว็บ (แท็บใหม่)">${adminIcon("external-link")}<span>เปิดหน้าเว็บ</span></a>`;
+    document.querySelector(".mw-admin-header-actions").insertAdjacentHTML("beforeend", `<div data-library-header>${websiteLink}</div>`);
+    root.innerHTML = `<div class="mw-library-editor-head"><button class="mw-admin-btn" type="button" data-library-back aria-label="กลับรายการ" title="กลับรายการ">${adminIcon("arrow-left")}<span>กลับรายการ</span></button><div><p>${e(group.group)} / ${e(group.title)}</p><h2 data-library-title tabindex="-1">${e(recordLabel || "ยังไม่มีชื่อรายการ")}</h2></div><div class="mw-library-mobile-link">${websiteLink}</div></div>
+      <div class="mw-library-editor"><details class="mw-library-form" open><summary><span class="mw-library-section-icon">${adminIcon("file-text")}</span><h3>${group.key === "seamsi.seamsiFortunes" ? "รายละเอียดใบเซียมซี" : "ข้อมูลคำทำนาย"}</h3>${adminIcon("chevron-down")}</summary><div class="mw-library-fields">${record.fields.map((field, index) => {
         const value = overrides[field.path] ?? field.value;
         const isUrl = /(?:^|\/)(?:image|imageThumb|href|url|src)$/.test(field.path);
-        return `<label class="mw-library-field"><span>${e(fieldLabel(field.path))}</span>${isUrl || value.length < 75 ? `<input data-library-field="${e(field.path)}" value="${e(value)}" maxlength="30000">` : `<textarea data-library-field="${e(field.path)}" rows="4" maxlength="30000">${e(value)}</textarea>`}<small>${Object.prototype.hasOwnProperty.call(overrides, field.path) ? "ปรับแต่งแล้ว" : "เนื้อหาต้นฉบับ"}</small></label>`;
-      }).join("")}</div><aside class="mw-library-context"><h3>การเผยแพร่</h3><p>การแก้ไขยังไม่แสดงบนเว็บไซต์จนกว่าจะกดเผยแพร่</p><dl><dt>รหัสรายการ</dt><dd>${e(record.id)}</dd><dt>ช่องที่แก้ไขได้</dt><dd>${record.fields.length}</dd></dl><p>สูตรคำนวณ ลำดับไพ่ และรหัสอ้างอิงไม่เปลี่ยนตามข้อความ</p></aside></div>`;
+        const multiline = !isUrl && (narrativeFields.has(field.path.split("/").at(-1)) || field.value.length >= 75);
+        const customized = Object.prototype.hasOwnProperty.call(overrides, field.path);
+        const fieldRows = ["interpretation", "overview", "description"].includes(field.path) ? 3 : field.value.length >= 100 ? 2 : 1;
+        return `<div class="mw-library-field${customized ? " is-customized" : ""}"><label for="library-field-${index}">${e(fieldLabel(field.path))}</label>${multiline ? `<textarea id="library-field-${index}" data-library-field="${e(field.path)}" rows="${fieldRows}" maxlength="30000" aria-describedby="library-source-${index}">${e(value)}</textarea>` : `<input id="library-field-${index}" data-library-field="${e(field.path)}" value="${e(value)}" maxlength="30000" aria-describedby="library-source-${index}"${isUrl ? ' inputmode="url"' : ""}>`}<small id="library-source-${index}">${customized ? "ปรับแต่งแล้ว" : "เนื้อหาต้นฉบับ"}</small></div>`;
+      }).join("")}</div></details><aside class="mw-library-context"><details class="mw-library-publication" open><summary><span class="mw-library-section-icon">${adminIcon("chart")}</span><h3>ข้อมูลการเผยแพร่</h3>${adminIcon("chevron-down")}</summary><div class="mw-library-publication-body"><p class="mw-library-publication-timing">การแก้ไขยังไม่แสดงบนเว็บไซต์จนกว่าจะกดเผยแพร่</p><dl><div><dt>รหัสรายการ</dt><dd>${e(record.id)}</dd></div><div><dt>ช่องที่แก้ไขได้</dt><dd>${record.fields.length}</dd></div></dl><p class="mw-library-engine-note">${adminIcon("info")}<span>สูตรคำนวณ ลำดับไพ่ และรหัสอ้างอิงไม่เปลี่ยนตามข้อความ</span></p></div></details></aside></div>`;
   }
 
   function click(event) {
@@ -83,11 +97,21 @@ export function createContentLibrary({ state, api, escapeHtml: e, setTitle, setT
     if (!button) return false;
     if (button.hasAttribute("data-library-retry")) { load(); return true; }
     if (button.dataset.libraryCategory) { category = button.dataset.libraryCategory; page = 1; }
-    if (button.dataset.libraryRecord) selected = { group: button.dataset.libraryGroup, id: button.dataset.libraryRecord };
+    if (button.dataset.libraryRecord) {
+      listScroll = window.scrollY;
+      selected = { group: button.dataset.libraryGroup, id: button.dataset.libraryRecord };
+      returnRecord = selected;
+    }
     if (button.hasAttribute("data-library-back")) selected = null;
     if (button.dataset.libraryPage) page = Number(button.dataset.libraryPage);
     render();
-    if (selected) document.querySelector("[data-library-field]")?.focus();
+    if (selected) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+      document.querySelector("[data-library-title]")?.focus({ preventScroll: true });
+    } else if (button.hasAttribute("data-library-back")) {
+      window.scrollTo({ top: listScroll, behavior: "instant" });
+      [...document.querySelectorAll("[data-library-record]")].find(item => item.dataset.libraryRecord === returnRecord?.id && item.dataset.libraryGroup === returnRecord?.group)?.focus({ preventScroll: true });
+    }
     return true;
   }
 
@@ -104,7 +128,11 @@ export function createContentLibrary({ state, api, escapeHtml: e, setTitle, setT
     state.content.contentLibrary[selected.group] ||= {};
     state.content.contentLibrary[selected.group][selected.id] ||= {};
     state.content.contentLibrary[selected.group][selected.id][target.dataset.libraryField] = target.value;
-    target.closest("label").querySelector("small").textContent = "ปรับแต่งแล้ว";
+    target.closest(".mw-library-field").querySelector("small").textContent = "ปรับแต่งแล้ว";
+    target.closest(".mw-library-field").classList.add("is-customized");
+    const record = catalog.find(group => group.key === selected.group).records.find(item => item.id === selected.id);
+    const labelField = labelFields.find(key => record.fields.some(field => field.path === key));
+    if (target.dataset.libraryField === labelField) document.querySelector("[data-library-title]").textContent = target.value || "ยังไม่มีชื่อรายการ";
     markDirty();
     return true;
   }

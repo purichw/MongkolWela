@@ -5,6 +5,7 @@ import TempleActivities from "./TempleActivities.astro";
 import TempleCommerce from "./TempleCommerce.astro";
 import SiteIcon from "./icons/SiteIcon.astro";
 import IconMedallion from "./IconMedallion.astro";
+import BrandOrnament from "./BrandOrnament.astro";
 import { getTempleTravel } from "../data/temple-travel.js";
 import { getTempleVisitInfo } from "../data/temple-visit-info.js";
 import { getTempleCmsRecordMap } from "../data/temple-cms.js";
@@ -90,7 +91,8 @@ const rank = Number(temple.rank);
 <BaseLayout title={title} description={detailDescription} lang="th" locale="th" page="temples" bodyClass="temples-hub-page place-detail-page"
   canonicalPath={detailUrl} image={imageUrl} imageAlt={temple.imageAlt || temple.name} breadcrumbs={detailBreadcrumbs} structuredData={templeJsonLd}>
   <main class="temple-detail place-detail" data-place-key={key} data-place-detail>
-    <script type="application/json" data-place-seed set:html={JSON.stringify(seed).replace(/</g, "\\u003c")} />
+    <div class="pd-page-ornaments" aria-hidden="true"><BrandOrnament /><BrandOrnament mirrored /></div>
+    <script is:inline type="application/json" data-place-seed set:html={JSON.stringify(seed).replace(/</g, "\\u003c")} />
     <nav class="pd-back" aria-label="เส้นทางนำทาง">
       <a href={collectionHref}><SiteIcon name="arrow-left" />กลับไป{collectionLabel}</a>
       <ol><li><a href="/">หน้าแรก</a></li><li><a href="/temples/">วัดดังเสริมมงคล</a></li><li><a href={collectionHref}>{collectionLabel}</a></li><li aria-current="page" data-place-breadcrumb>{temple.name}</li></ol>
@@ -100,8 +102,10 @@ const rank = Number(temple.rank);
         <TempleResponsiveImage desktopSrc={imageUrl} mobileSrc={imageMobileUrl} alt={temple.imageAlt || temple.name} loading="eager" decoding="async" fetchpriority="high" fallbackSrc={placeholderImage} />
         <figcaption data-place-rank hidden={!Number.isFinite(rank) || rank <= 0}>#{String(rank).padStart(2, "0")} {collectionLabel}</figcaption>
         <span class="pd-image-credit" data-pd-domain="imageCredit" set:html={renderImageCredit(vm)} />
+        <button class="pd-photo-open" type="button" data-photo-open data-pd-enhanced hidden><SiteIcon name="maximize-2" />ดูภาพขนาดใหญ่</button>
       </figure>
       <div class="pd-hero-copy">
+        <SiteIcon name="temple" class="pd-title-mark" />
         <div data-pd-domain="identity" set:html={renderIdentity(vm)} />
         <div class="pd-actions" aria-label="การทำงานของหน้า">
           <a class="pd-button pd-button--primary" href={vm.mapHref} hidden={!vm.mapHref} data-place-map-link target="_blank" rel="noopener"><Fragment set:html={icon("map-pin")} />เปิดแผนที่</a>
@@ -116,10 +120,12 @@ const rank = Number(temple.rank);
         <div class="pd-highlight-copy" data-pd-domain="highlights" set:html={renderHighlights(vm)} />
       </section>
       <section class="pd-location pd-surface" aria-label="พิกัดและที่อยู่">
+        <header class="pd-section-heading"><IconMedallion class="pd-medallion"><SiteIcon name="map-pin" /></IconMedallion><h2>ตำแหน่งที่ตั้ง</h2></header>
         <div class="pd-map-frame" data-place-map-frame>
           <div class="pd-map-canvas" data-temple-detail-map data-lat={vm.coords?.[0] ?? ""} data-lng={vm.coords?.[1] ?? ""} data-title={vm.record.name} data-map-url={vm.mapHref} data-address={vm.record.coordinateAddress || ""} aria-hidden="true"></div>
           <p class="pd-map-status" data-map-status role="status">{vm.coords ? "เปิดพิกัดผ่าน Google Maps ด้านล่าง" : "ยังไม่มีพิกัดสำหรับแผนที่ภายใน"}</p>
           <button type="button" class="pd-map-expand" data-map-open data-pd-enhanced hidden><span class="pd-button"><SiteIcon name="maximize-2" />ขยายแผนที่</span></button>
+          <a class="pd-map-external pd-button pd-button--jade" href={vm.mapHref} hidden={!vm.mapHref} data-place-map-link target="_blank" rel="noopener">Google Maps <SiteIcon name="arrow-right" /></a>
           <button type="button" class="pd-map-retry pd-button" data-map-retry hidden>ลองโหลดแผนที่ใหม่</button>
           <small class="pd-map-attribution">Map tiles © Esri</small>
           <noscript><p class="pd-map-noscript">เปิดพิกัดผ่าน Google Maps ด้านล่าง</p></noscript>
@@ -127,19 +133,26 @@ const rank = Number(temple.rank);
         <div data-pd-domain="location" set:html={renderLocation(vm)} />
       </section>
       <section class="pd-visit pd-surface" aria-labelledby="pd-visit-title">
-        <header class="pd-section-heading"><h2 id="pd-visit-title">ข้อมูลเข้าชมและติดต่อ</h2></header>
+        <header class="pd-section-heading"><IconMedallion class="pd-medallion"><SiteIcon name="altar" /></IconMedallion><h2 id="pd-visit-title">ข้อมูลเข้าชมและติดต่อ</h2></header>
         <div data-pd-domain="visit" set:html={renderVisit(vm)} />
       </section>
     </div>
     <section class="pd-travel" aria-label="ข้อมูลการเดินทาง" data-pd-domain="travel" set:html={renderTravel(getTempleTravel(temple.travelDetail), vm.record)} />
-    <TempleActivities templeId={key} />
-    <TempleCommerce templeId={key} />
+    <div class="pd-community">
+      <TempleActivities templeId={key} />
+      <TempleCommerce templeId={key} />
+    </div>
+    <aside class="pd-merit-banner">
+      <SiteIcon name="lotus" class="pd-merit-icon" />
+      <div><h2 data-cms-field="be8f616d-6">ร่วมสร้างบุญได้หลากหลายช่องทาง</h2><p data-cms-field="be8f616d-7">ติดตามประกาศจากทางวัด เพื่อรับทราบกิจกรรมและช่องทางร่วมบุญ</p></div>
+      <a href="/merit/">ดูช่องทางร่วมบุญ <SiteIcon name="arrow-right" /></a>
+    </aside>
     {relatedTemples.length > 0 && <section class="pd-related" aria-labelledby="pd-related-title">
       <header class="pd-section-heading"><IconMedallion class="pd-medallion"><SiteIcon name="temple" /></IconMedallion><div><h2 id="pd-related-title">แนะนำในชุดเดียวกัน</h2><p>{collectionLabel}</p></div><a class="pd-all-link" href={collectionHref}>ดูทั้งหมด <SiteIcon name="arrow-right" /></a></header>
       <div class="pd-related-rail" data-related-rail>
         {relatedTemples.slice(0, 3).map(item => <a href={getTempleDetailUrl(collection, item)} class="pd-related-card">
           <div class="pd-related-image"><img src={item.imageUrl || placeholderImage} alt={item.imageAlt || item.name} loading="lazy" decoding="async" data-fallback-src={placeholderImage} />{Number(item.rank) > 0 && <span>#{String(item.rank).padStart(2, "0")}</span>}</div>
-          <strong>{item.name}</strong><small>{[item.province, item.district].filter(Boolean).join(" · ")}</small>
+          <div class="pd-related-copy"><div><strong>{item.name}</strong><small>{[item.province, item.district].filter(Boolean).join(" · ")}</small></div><SiteIcon name="chevron-right" /></div>
         </a>)}
       </div>
       <div class="pd-rail-controls" data-related-controls hidden><button type="button" aria-label="สถานที่ก่อนหน้า" data-related-prev><SiteIcon name="chevron-left" /></button><span data-related-count role="status">1 / {Math.min(relatedTemples.length, 3)}</span><button type="button" aria-label="สถานที่ถัดไป" data-related-next><SiteIcon name="chevron-right" /></button></div>
