@@ -14,6 +14,13 @@
 
 ## Session Lifecycle
 
+The initial `/admin/` HTML contains only a neutral session-check screen, never
+the Dashboard or its navigation. The browser keeps this screen while checking
+`GET /api/admin/session` and constructs the Admin shell only after success.
+Signed-out, revoked and unavailable sessions show the login/error screen without
+mounting the Dashboard. This is a presentation gate; API authorization remains
+the security boundary. No-JavaScript visits show an explicit enable-JavaScript note.
+
 The browser receives HttpOnly, SameSite=Strict cookies. Hosted environments use
 Secure cookies. Tokens and keys are never returned in login JSON or put in browser
 localStorage. Access/refresh cookies have a 12-hour sliding browser lifetime.
@@ -63,6 +70,9 @@ confirmed email/password. Recovery, SMTP and MFA are separate rollout decisions.
 a local mock Supabase HTTP boundary, plus PostgreSQL grant/RLS tests in PGlite.
 `tests/e2e/admin-auth.spec.ts` uses the same real login handlers, a mock Auth
 provider and a disposable CMS fixture. This is not evidence of live Supabase login.
+`tests/e2e/admin-loading.spec.ts` guards initial HTML, slow session checks, denied
+and unavailable sessions, and authorized reloads on desktop/mobile. It observes
+DOM mutations so an intermediate Dashboard flash cannot pass a final-state check.
 
 Existing activities/commerce previews may explicitly enable
 `MONGKOLWELA_ADMIN_PREVIEW=1` with password `admin`. This adapter requires a

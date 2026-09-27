@@ -66,6 +66,8 @@ const DELETE_ACTIONS = new Set([
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+// Reuse the server-rendered pending screen on each session check, including sign-in.
+const authPendingScreen = $("[data-admin-auth-pending]").cloneNode(true);
 
 function readStoredFlag(key) {
   try {
@@ -181,12 +183,14 @@ function icon(name) {
 }
 
 async function boot() {
-  renderAppShell();
-  renderSideNav();
-  renderAdminLoading("ภาพรวม", "กำลังตรวจสอบสิทธิ์", "กำลังเตรียมระบบจัดการเว็บ");
+  state.session = null;
+  $("#adminApp").replaceChildren(authPendingScreen.cloneNode(true));
   try {
     state.secondaryReady = false;
     state.session = await api("/api/admin/session");
+    renderAppShell();
+    renderSideNav();
+    renderAdminLoading("ภาพรวม", "กำลังโหลดข้อมูล", "กำลังเตรียมระบบจัดการเว็บ");
     $(".mw-admin-profile strong").textContent = state.session.email || state.session.actor || "ผู้ดูแลระบบ";
     $(".mw-admin-profile > span").textContent = (state.session.email || "A").charAt(0).toUpperCase();
     setStatus("กำลังโหลดข้อมูลหลัก...", "info");
@@ -332,6 +336,9 @@ function toggleSidebar() {
 }
 
 function renderLogin(message = "") {
+  state.session = null;
+  state.mobileNavOpen = false;
+  document.body.classList.remove("mw-admin-nav-locked");
   const brand = adminBrand();
   $("#adminApp").innerHTML = `<main class="mw-admin-login">
     <form class="mw-admin-login-card" id="loginForm">

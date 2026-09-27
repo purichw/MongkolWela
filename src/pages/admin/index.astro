@@ -48,48 +48,14 @@ const config = siteConfig.th;
       data-brand-mark-width={brandAssets.mark.width}
       data-brand-mark-height={brandAssets.mark.height}
     >
-      <div class="mw-admin-shell">
-        <aside class="mw-admin-sidebar">
-          <header class="mw-admin-header">
-            <a class="mw-admin-logo" href="/admin/" aria-label={config.brandLabel}>
-              <img class="mw-admin-logo-mark" src={brandAssets.mark.src} width={brandAssets.mark.width} height={brandAssets.mark.height} alt="" aria-hidden="true" decoding="async" />
-              <div><strong>{config.brandName}</strong><small>ADMIN CONSOLE</small></div>
-            </a>
-          </header>
-          <nav class="mw-admin-nav" aria-label="Admin navigation">
-          <span class="mw-admin-ghost is-active">⌁ <strong>ภาพรวม</strong></span>
-          <span class="mw-admin-ghost">▦ <strong>สถิติการใช้งาน</strong></span>
-          <span class="mw-admin-ghost">⌂ <strong>หน้าแรก</strong></span>
-          <span class="mw-admin-ghost">≣ <strong>เมนูนำทาง</strong></span>
-          <span class="mw-admin-ghost">๙ <strong>วัดและสถานที่</strong></span>
-          </nav>
-          <div class="mw-admin-sidebar-foot">
-            <button class="mw-admin-btn" type="button" disabled>↗ เปิดหน้าเว็บผู้ใช้</button>
-            <div class="mw-admin-profile"><span>A</span><div><strong>ผู้ดูแลระบบ</strong><small>กำลังตรวจสอบบัญชี</small></div></div>
-            <div class="mw-admin-header-actions"><span class="mw-admin-status">กำลังโหลด</span></div>
-          </div>
-        </aside>
-        <main class="mw-admin-main">
-          <header class="mw-admin-top">
-            <div><p>ภาพรวมระบบ</p><h1>แดชบอร์ด</h1></div>
-          </header>
-          <section class="mw-admin-content">
-            <div class="mw-admin-grid mw-admin-loading-grid" aria-hidden="true">
-              <article class="mw-admin-stat mw-admin-skeleton-card"><i></i><span></span></article>
-              <article class="mw-admin-stat mw-admin-skeleton-card"><i></i><span></span></article>
-              <article class="mw-admin-stat mw-admin-skeleton-card"><i></i><span></span></article>
-              <article class="mw-admin-stat mw-admin-skeleton-card"><i></i><span></span></article>
-            </div>
-            <div class="mw-admin-card mw-admin-skeleton-panel" role="status" aria-live="polite">
-              <div>
-                <strong>กำลังโหลดข้อมูล</strong>
-                <p>กำลังเตรียมข้อมูลสำหรับระบบจัดการเว็บ</p>
-              </div>
-              <span></span><span></span><span></span>
-            </div>
-          </section>
-        </main>
-      </div>
+      <main class="mw-admin-login" data-admin-auth-pending>
+        <section class="mw-admin-login-card mw-admin-auth-pending" aria-labelledby="adminAuthTitle">
+          <img class="mw-admin-login-mark" src={brandAssets.mark.src} width={brandAssets.mark.width} height={brandAssets.mark.height} alt="" decoding="async" />
+          <h1 id="adminAuthTitle">ระบบจัดการเว็บ</h1>
+          <p role="status" aria-live="polite">กำลังตรวจสอบสิทธิ์ กรุณารอสักครู่</p>
+          <noscript><p>กรุณาเปิดใช้งาน JavaScript เพื่อเข้าสู่ระบบ</p></noscript>
+        </section>
+      </main>
     </div>
     <script>
       import "../../scripts/admin-portal.js";
