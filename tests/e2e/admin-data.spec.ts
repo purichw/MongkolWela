@@ -95,6 +95,7 @@ test("temple CMS edit survives real publish handlers, reload, and public project
     const edit = page.locator("[data-edit-temple]").first();
     const key = await edit.getAttribute("data-edit-temple");
     await edit.click();
+    await page.locator('[data-editor-panel="extra"] > summary').click();
     await page.locator("[data-temple-field=travelModes]").fill("เรือทดสอบ; รถไฟทดสอบ");
     await page.locator("[data-temple-field=placeType]").fill("ประเภททดสอบ CMS");
     await page.getByRole("button", { name: "บันทึก", exact: true }).click();
