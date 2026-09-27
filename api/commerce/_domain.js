@@ -2,6 +2,7 @@ import { randomUUID, createHash } from "node:crypto";
 import { isIP } from "node:net";
 import { validDate, bangkokToday } from "../../src/lib/temple-activities.js";
 import { RD_DONATION_DIRECTORY } from "../../src/lib/commerce-format.js";
+import { PRODUCT_CATEGORIES } from "../../src/lib/commerce-catalog.js";
 
 export const TABLES = ["organizations", "members", "products", "campaigns", "channels", "orders", "bookings"];
 export const emptyCommerce = () => ({ revision: 0, ...Object.fromEntries(TABLES.map(key => [key, []])) });
@@ -61,7 +62,7 @@ export function publicCommerce(state, { templeId = "", now = Date.now(), templeI
   const matches = row => (!templeId || row.templeId === templeId) && (!row.templeId || !templeIds || templeIds.has(row.templeId));
   const organizations = state.organizations.filter(o => o.status === "active").map(o => pick(o, ["id", "version", "name", "kind", "contact", "fulfillment", "shippingSatang", "returnPolicy"]));
   const visible = row => activeListing(state, row, templeIds) && matches(row);
-  const products = state.products.filter(p => p.status === "published" && visible(p)).map(p => ({ ...pick(p, [...commonFields, "title", "templeId", "description", "sku", "material", "size", "imageUrl", "imageAlt", "priceSatang", "sourceUrl"]), available: availableStock(state, p.id, now) }));
+  const products = state.products.filter(p => p.status === "published" && visible(p)).map(p => ({ ...pick(p, [...commonFields, "title", "templeId", "description", "sku", "category", "material", "size", "imageUrl", "imageAlt", "priceSatang", "sourceUrl"]), available: availableStock(state, p.id, now) }));
   const channels = state.channels.filter(c => c.status === "published" && visible(c)).map(c => pick(c, [...commonFields, "templeId", "recipientName", "province", "recipientId", "destinationKind", "url", "sourceUrl", "verifiedAt"]));
   const campaigns = state.campaigns.filter(c => ["published", "paused", "closed", "cancelled"].includes(c.status) && visible(c)).map(c => ({ ...pick(c, [...commonFields, "templeId", "title", "description", "kind", "eventDate", "closeDate", "amountSatang", "capacity", "channelId", "sourceUrl", "cancellationPolicy"]), available: availableUnits(state, c.id, now), closed: c.closeDate < bangkokToday(new Date(now)) }));
   return { organizations, products, channels, campaigns, directoryUrl: RD_DONATION_DIRECTORY, payments: { enabled: false, reason: "ยังไม่เปิดรับชำระเงินออนไลน์" } };
@@ -102,6 +103,7 @@ function validateRecord(table, input, state, actor, templeIds, now) {
   }
   if (table === "products") {
     const p = { orgId, templeId, title: text(d, "title", 160, true), description: text(d, "description", 4000, true), sku: text(d, "sku", 80, true), material: text(d, "material", 120), size: text(d, "size", 120), imageUrl: productImage(d.imageUrl), imageAlt: text(d, "imageAlt", 160), sourceUrl: externalUrl(d.sourceUrl), priceSatang: integer(d.priceSatang, 100000000, 1), stock: integer(d.stock, 100000), status: enumValue(d.status, ["draft", "published", "archived"]) };
+    p.category = enumValue(d.category ?? (d.id ? find(state, "products", d.id).category : "") ?? "", ["", ...PRODUCT_CATEGORIES.map(category => category.id)]);
     if (p.status === "published" && (!p.imageUrl || !p.imageAlt || !p.sourceUrl)) fail("ก่อนเผยแพร่ กรุณาระบุรูป คำบรรยายภาพ และแหล่งที่มา");
     if (state.products.some(x => x.id !== d.id && x.orgId === orgId && x.sku === p.sku)) fail("SKU นี้มีอยู่แล้ว");
     if (d.id && p.stock < find(state, "products", d.id).stock - availableStock(state, d.id, now)) fail("สต็อกต้องไม่น้อยกว่าจำนวนที่ยืนยันไว้");

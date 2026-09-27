@@ -4,6 +4,7 @@ import path from "node:path";
 import { createCommercePreview } from "../helpers/commerce-preview.mjs";
 import { commerceFixture } from "../helpers/commerce-fixtures.mjs";
 import { loadTempleCatalog } from "../../api/admin/temples.js";
+import { chooseOption } from "./select-helpers";
 
 let server;
 let base;
@@ -105,10 +106,13 @@ test("seller edit persists, stale edit preserves input, cross-tenant requests de
   expect(cross.status()).toBe(403);
   await page.getByRole("button", { name: "แก้ไข", exact: true }).click();
   await page.getByLabel("ราคาต่อชิ้น (บาท)", { exact: true }).fill("420");
+  await page.getByLabel("หมวดสินค้า", { exact: true }).selectOption("amulets");
   await page.getByRole("button", { name: "บันทึกรายการ", exact: true }).click();
   await expect(page.getByText("บันทึกแล้ว", { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByText(/420/).first()).toBeVisible();
+  const publicCatalog = await (await page.request.get(`${base}/api/commerce`)).json();
+  expect(publicCatalog.products.find(product => product.id === fixture.product.id).category).toBe("amulets");
   await page.getByRole("button", { name: "แก้ไข", exact: true }).click();
   await page.getByLabel("ชื่อสินค้า", { exact: true }).fill("ชื่อที่ยังไม่บันทึก");
   const state = await (await page.request.get(`${base}/api/commerce?view=manage`)).json();
@@ -197,10 +201,11 @@ test("platform admin manages organizations and review; temple section uses share
   await page.getByLabel("ช่องทางติดต่อ", { exact: true }).fill("new@example.test");
   await page.getByLabel("ผู้รับผิดชอบการจัดส่ง", { exact: true }).fill("ร้านดำเนินการเอง");
   await page.getByLabel("เงื่อนไขจัดส่ง / คืนสินค้า", { exact: true }).fill("ข้อมูลทดสอบ ไม่มีการขายจริง");
-  await page.getByLabel("สถานะ", { exact: true }).selectOption("active");
+  await chooseOption(page, 'select[name="status"]', "active");
   await page.getByRole("button", { name: "บันทึกรายการ", exact: true }).click();
   await expect(page.getByText("บันทึกแล้ว", { exact: true })).toBeVisible();
-  await page.locator("[data-organization]").selectOption({ label: "ร้านใหม่สำหรับทดสอบ" });
+  const newOrganization = await page.locator("[data-organization] option").evaluateAll(options => (options.find(option => option.textContent === "ร้านใหม่สำหรับทดสอบ") as HTMLOptionElement).value);
+  await chooseOption(page, "[data-organization]", newOrganization);
   await expect(page.getByRole("cell", { name: "ร้านใหม่สำหรับทดสอบ", exact: true }).first()).toBeVisible();
   await page.getByRole("button", { name: "สิทธิ์ทีมงาน", exact: true }).click();
   await page.getByRole("button", { name: "เพิ่มรายการ", exact: true }).click();
@@ -208,7 +213,7 @@ test("platform admin manages organizations and review; temple section uses share
   await page.getByLabel("รหัสผู้ใช้ Supabase Auth (สำหรับบัญชีเดิม)", { exact: true }).fill("10000000-0000-4000-8000-000000000001");
   await page.getByRole("button", { name: "บันทึกรายการ", exact: true }).click();
   await expect(page.getByText("บันทึกแล้ว", { exact: true })).toBeVisible();
-  await page.locator("[data-organization]").selectOption(fixture.organization.id);
+  await chooseOption(page, "[data-organization]", fixture.organization.id);
   await page.getByRole("button", { name: "ช่องทาง e-Donation", exact: true }).click();
   await page.getByRole("button", { name: "แก้ไข", exact: true }).click();
   await page.getByRole("button", { name: "บันทึกรายการ", exact: true }).click();

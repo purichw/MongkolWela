@@ -1,6 +1,9 @@
 import { sitePlaceholderImage } from "../lib/image-placeholder.js";
-import { commerceApi, e, money, thaiCommerceDate, COMMERCE_STATUS, orgName, productMarkup, campaignMarkup, channelMarkup, inputField } from "./commerce-ui.js";
+import { commerceApi, e, money, thaiCommerceDate, COMMERCE_STATUS, orgName, channelMarkup, inputField } from "./commerce-ui.js";
 import { startContentRefresh } from "./content-refresh.js";
+import { filterCommerceRows } from "../lib/commerce-catalog.js";
+import { catalogControls, shopCollections, shopProductCard, meritCampaignCard } from "./commerce-catalog-ui.js";
+import { renderIcon } from "../lib/ui-markup.js";
 
 const root = document.querySelector("[data-commerce-public]");
 if (root) init(root);
@@ -14,6 +17,12 @@ function init(root) {
   let receipt;
   let search = "";
   let sellerFilter = "";
+  let category = params.get("category") === "all" ? "" : params.get("category") || "";
+  let province = "";
+  let kind = "";
+  let sort = "latest";
+  let favorites = [];
+  try { const stored = JSON.parse(localStorage.getItem("mw-commerce-favorites") || "[]"); if (Array.isArray(stored)) favorites = stored.filter(id => typeof id === "string"); } catch { /* Favorites remain usable in memory when storage is unavailable. */ }
   let cart;
   try { cart = JSON.parse(localStorage.getItem("mw-commerce-cart") || "[]"); if (!Array.isArray(cart)) cart = []; } catch { cart = []; }
   let secret;
@@ -21,21 +30,29 @@ function init(root) {
   let requestId = crypto.randomUUID();
   const notice = text => { message.textContent = text; };
   function setAvailability(state) {
-    if (mode !== "shop" || !root.querySelector("[data-shop-unavailable]")) return;
+    if (!root.querySelector("[data-commerce-unavailable]")) return;
     root.dataset.commerceState = state;
     const disabled = state === "disabled";
-    root.querySelectorAll("[data-shop-unavailable]").forEach(el => { el.hidden = !disabled; });
-    root.querySelector("[data-commerce-operational]").hidden = disabled;
+    const isCatalog = state === "ready" && !receipt && !params.has("product") && !params.has("campaign") && params.get("view") !== "cart";
+    root.dataset.commerceView = isCatalog ? "catalog" : "detail";
+    root.querySelectorAll("[data-commerce-unavailable]").forEach(el => { el.hidden = !disabled; });
+    root.querySelectorAll("[data-commerce-catalog]").forEach(el => { el.hidden = !isCatalog; });
+    root.querySelectorAll("[data-commerce-support]").forEach(el => { el.hidden = !(disabled || isCatalog); });
+    root.querySelectorAll("[data-commerce-operational]").forEach(el => { el.hidden = state !== "ready"; });
     content.hidden = disabled;
     content.setAttribute("aria-busy", "false");
   }
   function saveCart() { try { localStorage.setItem("mw-commerce-cart", JSON.stringify(cart)); } catch { notice("ตะกร้าจะอยู่เฉพาะหน้านี้ เนื่องจากเบราว์เซอร์ไม่อนุญาตให้บันทึก"); } document.querySelectorAll("[data-cart-count]").forEach(el => { el.textContent = String(cart.reduce((n, l) => n + l.quantity, 0)); }); }
-  const filters = () => `<div class="commerce-filters"><label>ค้นหา<input type="search" data-search value="${e(search)}" placeholder="ชื่อสินค้า งานบุญ หรือวัด" /></label><label>ผู้จำหน่าย / ผู้จัด<select data-seller><option value="">ทั้งหมด</option>${catalog.organizations.map(o => `<option value="${e(o.id)}" ${sellerFilter === o.id ? "selected" : ""}>${e(o.name)}</option>`).join("")}</select></label></div><div data-catalog-list></div>`;
+  const filters = () => catalogControls(catalog, mode, { search, seller: sellerFilter, category, province, kind, sort });
   function renderList() {
     const target = content.querySelector("[data-catalog-list]");
     if (!target) return;
-    const rows = (mode === "shop" ? catalog.products : catalog.campaigns).filter(row => (!sellerFilter || row.orgId === sellerFilter) && `${row.title} ${orgName(catalog, row.orgId)}`.toLowerCase().includes(search.toLowerCase()));
-    target.innerHTML = rows.length ? `<div class="${mode === "shop" ? "commerce-products" : "commerce-campaigns"}">${rows.map(row => mode === "shop" ? productMarkup(row, catalog) : campaignMarkup(row, catalog)).join("")}</div>` : '<p class="commerce-empty">ยังไม่มีรายการที่ตรงกับเงื่อนไข</p>';
+    const rows = filterCommerceRows(catalog, mode, { search, seller: sellerFilter, category: mode === "shop" ? category : "", province, kind, sort });
+    const total = mode === "shop" ? catalog.products.length : catalog.campaigns.length;
+    const count = content.querySelector("[data-catalog-count]");
+    if (count) count.textContent = `พบ ${rows.length.toLocaleString("th-TH")} ${mode === "shop" ? "สินค้า" : "รายการ"}`;
+    content.querySelectorAll(".shop-categories [data-category]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.category === category)));
+    target.innerHTML = rows.length ? `<div class="${mode === "shop" ? "commerce-products shop-products" : "merit-campaigns"}">${rows.map(row => mode === "shop" ? shopProductCard(row, catalog, favorites) : meritCampaignCard(row, catalog, favorites)).join("")}</div>` : `<div class="commerce-catalog-empty">${renderIcon(mode === "shop" ? "shopping-bag" : "heart")}<h2>${total ? "ไม่พบรายการที่ตรงกับการค้นหา" : mode === "shop" ? "ยังไม่มีสินค้าที่เผยแพร่" : "ยังไม่มีงานบุญที่เปิดรับรายการ"}</h2><p>${total ? "ลองใช้คำค้นอื่น หรือดูรายการทั้งหมดอีกครั้ง" : "เมื่อมีรายการใหม่ จะแสดงรายละเอียดให้คุณเลือกชมที่นี่"}</p>${total ? '<button class="commerce-button secondary" type="button" data-clear-filters>ล้างตัวกรอง</button>' : '<a class="commerce-button secondary" href="/temples/">สำรวจวัดและสถานที่</a>'}</div>`;
   }
   function render() {
     content.setAttribute("aria-busy", "false");
@@ -56,7 +73,7 @@ function init(root) {
       content.innerHTML = `<a href="/merit/">กลับไปรายการร่วมบุญ</a><div class="commerce-detail commerce-merit-detail"><section><p>${e(orgName(catalog, campaign.orgId))}</p><h2>${e(campaign.title)}</h2><p>${e(campaign.description)}</p><dl><dt>วันจัดงาน</dt><dd>${e(thaiCommerceDate(campaign.eventDate))}</dd><dt>ปิดรับจอง</dt><dd>${e(thaiCommerceDate(campaign.closeDate))}</dd><dt>รูปแบบ</dt><dd>${campaign.kind === "host" ? "ขอเป็นเจ้าภาพหลัก โดยวัดพิจารณายืนยัน" : `${money(campaign.amountSatang)} / กอง · คงเหลือ ${campaign.available} กอง`}</dd></dl><p>${e(campaign.cancellationPolicy)}</p><a href="${e(campaign.sourceUrl)}" target="_blank" rel="noopener noreferrer">ประกาศจากผู้จัด ↗</a>${channel ? `<h3>ช่องทางบริจาค</h3>${channelMarkup(channel)}` : '<p>ยังไม่มีช่องทาง e-Donation ของรายการนี้ที่ตรวจสอบแล้ว</p>'}<p class="commerce-note">การจองไม่ใช่หลักฐานรับเงินหรือการบันทึก e-Donation</p></section>${open ? `<form data-request="booking"><h3>${campaign.kind === "host" ? "ส่งคำขอเป็นเจ้าภาพหลัก" : "จองร่วมเป็นเจ้าภาพ"}</h3>${inputField("ชื่อผู้ติดต่อ", "name")}${inputField("อีเมลหรือเบอร์โทร", "contact")}${campaign.kind === "fund" ? inputField("จำนวนกอง", "quantity", "number", true, `min="1" max="${Math.min(campaign.available, 99)}" value="1"`) : ""}${inputField("ข้อความถึงผู้จัด", "note", "textarea", false)}<p>ข้อมูลติดต่อเปิดเผยเฉพาะผู้จัดและผู้ดูแล ไม่แสดงในรายชื่อสาธารณะ</p><label class="commerce-check"><input type="checkbox" required /> ยอมรับเงื่อนไขการจองและการติดต่อจากผู้จัด</label><button class="commerce-button" type="submit">${campaign.kind === "host" ? "ส่งคำขอ" : "ยืนยันการจองชั่วคราว"}</button></form>` : `<p class="commerce-empty">${e(COMMERCE_STATUS[campaign.status] || "ปิดรับจอง")}${!campaign.available ? " · ครบจำนวนแล้ว" : ""}</p>`}</div>`;
       return;
     }
-    content.innerHTML = `${filters()}${mode === "merit" ? `<section class="commerce-donations"><h2>ช่องทาง e-Donation ของวัด</h2>${catalog.channels.length ? catalog.channels.map(channelMarkup).join("") : '<p>ยังไม่มีช่องทางที่ผ่านการตรวจสอบ</p>'}<a href="${e(catalog.directoryUrl)}" target="_blank" rel="noopener noreferrer">ตรวจสอบรายชื่อหน่วยรับบริจาคกับกรมสรรพากร ↗</a></section>` : ""}`;
+    content.innerHTML = `${filters()}${mode === "shop" ? shopCollections(catalog) : ""}<div class="commerce-catalog-count"><h2>${mode === "shop" ? "สินค้าทั้งหมด" : "งานบุญและกฐิน"}</h2><p role="status" aria-live="polite" data-catalog-count></p></div><div data-catalog-list></div>${mode === "merit" ? `<section class="commerce-donations"><h2>ช่องทาง e-Donation ของวัด</h2>${catalog.channels.length ? catalog.channels.map(channelMarkup).join("") : '<p>ยังไม่มีช่องทางที่ผ่านการตรวจสอบ</p>'}<a href="${e(catalog.directoryUrl)}" target="_blank" rel="noopener noreferrer">ตรวจสอบรายชื่อหน่วยรับบริจาคกับกรมสรรพากร ↗</a></section>` : ""}`;
     renderList();
   }
   function renderCart() {
@@ -91,6 +108,7 @@ function init(root) {
     notice("อัปเดตข้อมูลล่าสุดแล้ว กรุณาตรวจสอบราคาและเงื่อนไขก่อนยืนยันอีกครั้ง");
   }
   function renderReceipt() {
+    setAvailability("ready");
     const r = receipt.record;
     const temporary = ["held", "accepted"].includes(r.status);
     const seller = catalog?.organizations.find(o => o.id === r.orgId);
@@ -117,10 +135,14 @@ function init(root) {
       const recovering = ["disabled", "error"].includes(root.dataset.commerceState);
       setAvailability("ready");
       if (receipt) await refreshReceipt(); else render();
+      if (params.has("campaign") && location.hash === "#booking") {
+        const booking = content.querySelector('form[data-request="booking"]');
+        if (booking) { booking.id = "booking"; booking.scrollIntoView({ block: "start", behavior: "instant" }); }
+      }
       if (!silent || recovering) notice("");
     } catch (error) {
       // A closed service is not a network failure or an empty catalog.
-      if (mode === "shop" && error.code === "COMMERCE_DISABLED" && root.querySelector("[data-shop-unavailable]")) {
+      if (error.code === "COMMERCE_DISABLED" && root.querySelector("[data-commerce-unavailable]")) {
         setAvailability("disabled");
         notice("");
         return;
@@ -136,11 +158,22 @@ function init(root) {
   });
   content.addEventListener("change", event => {
     if (event.target.matches("[data-seller]")) { sellerFilter = event.target.value; renderList(); }
+    if (event.target.matches("[data-sort]")) { sort = event.target.value; renderList(); }
+    if (event.target.matches("[data-province]")) { province = event.target.value; renderList(); }
+    if (event.target.matches("[data-kind]")) { kind = event.target.value; renderList(); }
     if (event.target.matches("[data-cart-quantity]")) { const quantity = Number(event.target.value); if (Number.isInteger(quantity) && quantity > 0 && quantity <= 99) { cart.find(l => l.productId === event.target.dataset.cartQuantity).quantity = quantity; saveCart(); updateCartTotals(); } else { event.target.value = cart.find(l => l.productId === event.target.dataset.cartQuantity).quantity; notice("จำนวนสินค้าต้องเป็นจำนวนเต็มระหว่าง 1–99"); } }
   });
   content.addEventListener("click", async event => {
     const button = event.target.closest("button"); if (!button || busy) return;
     try {
+      if (button.hasAttribute("data-category")) { category = button.dataset.category; renderList(); }
+      if (button.hasAttribute("data-clear-filters")) { search = ""; sellerFilter = ""; category = ""; province = ""; kind = ""; render(); content.querySelector("[data-search]")?.focus(); }
+      if (button.dataset.favorite) {
+        const id = button.dataset.favorite;
+        favorites = favorites.includes(id) ? favorites.filter(value => value !== id) : [...favorites, id];
+        button.setAttribute("aria-pressed", String(favorites.includes(id)));
+        try { localStorage.setItem("mw-commerce-favorites", JSON.stringify(favorites)); } catch { notice("รายการที่บันทึกจะอยู่เฉพาะหน้านี้ เนื่องจากเบราว์เซอร์ไม่อนุญาตให้บันทึก"); }
+      }
       if (button.hasAttribute("data-retry")) await load();
       if (button.hasAttribute("data-refresh-request")) await refreshRequest();
       if (button.dataset.add) {
@@ -160,6 +193,7 @@ function init(root) {
     } catch (error) { notice(error.message); }
   });
   content.addEventListener("submit", async event => {
+    if (event.target.matches("[data-catalog-search]")) { event.preventDefault(); renderList(); return; }
     const form = event.target.closest("[data-request]"); if (!form) return;
     event.preventDefault(); if (busy) return; busy = true;
     const submit = form.querySelector('[type="submit"]'); submit.disabled = true; notice("");

@@ -11,3 +11,26 @@ Transparent botanical/temple ornament. Decorative, not a real place.
 
 Both originals remain in the Codex generated_images output directory.
 Web copies are alpha-preserving WebP, with transparent outer padding trimmed.
+
+Commerce redesign, 2026-09-27, generated with OpenAI image generation.
+Direction: user-supplied shop closed/open and merit closed/open mockups.
+All new illustrations are editorial art, not real products or identified temples.
+Real inventory cards must use their own published product media.
+
+shop-sacred-still-life.webp
+Original: exec-182d2878-9614-4a9f-b710-deb09e5f0295.png
+Bronze Buddha, lotus, prayer beads and cloth bag. Optimized to 1200px WebP.
+
+shop-category-amulets.webp, shop-category-beads.webp,
+shop-category-talismans.webp, shop-category-offerings.webp
+Original: exec-f9eeb021-7450-40bc-96b4-6560394b4806.png
+Four editorial category previews, cropped and optimized to 320px WebP.
+
+merit-coming-soon.webp, merit-coming-soon-mobile.webp
+Original: exec-30fa9ee7-67f5-47a7-b678-9433bca62029.png
+Watercolor robe offering with temple/botanical ornament and clear copy area.
+Desktop 1800x600; mobile crop optimized to 700px.
+
+merit-robes-banner.webp
+Original: exec-1d1f67a8-fcee-4593-89fa-f481776e3cad.png
+Generated editorial robe still-life, not a specific campaign. 1800x600 WebP.

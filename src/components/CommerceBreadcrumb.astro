@@ -1,0 +1,9 @@
+---
+interface Props { page: "shop" | "merit" }
+const { page } = Astro.props;
+---
+<nav class="commerce-breadcrumb" aria-label="เส้นทางนำทาง">
+  <a data-cms-field={page === "shop" ? "3746c99e-1" : "merit-breadcrumb-home"} href="/">หน้าแรก</a>
+  <span aria-hidden="true">/</span>
+  {page === "merit" ? <><a data-cms-field="merit-breadcrumb-shop" href="/shop/">ร้านค้าและร่วมบุญ</a><span aria-hidden="true">/</span><span data-cms-field="merit-breadcrumb-current" aria-current="page">กฐินและร่วมบุญ</span></> : <span data-cms-field="3746c99e-2" aria-current="page">ร้านค้าและร่วมบุญ</span>}
+</nav>

@@ -17,7 +17,10 @@ export default async function handler(req, res) {
       const templeIds = new Set(temples.map(t => t.key));
       const templeId = url.searchParams.get("templeId") || "";
       if (templeId && !templeIds.has(templeId)) fail("ไม่พบวัดที่เปิดใช้งาน", 404);
-      return sendJson(res, 200, { ok: true, ...publicCommerce(await readCommerce({ publicOnly: true }), { templeId, templeIds }) });
+      const catalog = publicCommerce(await readCommerce({ publicOnly: true }), { templeId, templeIds });
+      const linked = new Set([...catalog.products, ...catalog.campaigns].map(row => row.templeId));
+      const locations = temples.filter(t => linked.has(t.key)).map(t => ({ id: t.key, name: t.temple.name, province: t.temple.province, imageUrl: t.temple.images?.card?.desktop?.url || t.temple.imageUrl || "" }));
+      return sendJson(res, 200, { ok: true, ...catalog, temples: locations });
     }
     const actor = await commerceActor(req, res);
     if (req.method === "GET") {

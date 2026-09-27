@@ -3,7 +3,11 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import CommerceNav from "../../components/CommerceNav.astro";
 import SiteIcon from "../../components/icons/SiteIcon.astro";
 import LinkArrow from "../../components/LinkArrow.astro";
+import CommerceBreadcrumb from "../../components/CommerceBreadcrumb.astro";
+import { iconAttributes } from "../../lib/ui-markup.js";
+import { PRODUCT_CATEGORIES } from "../../lib/commerce-catalog.js";
 import "../../styles/commerce.css";
+import "../../styles/commerce-landing.css";
 import "../../styles/shop.css";
 
 const destinations = [
@@ -18,38 +22,68 @@ const questions = [
 ];
 ---
 <BaseLayout title="วัตถุมงคลและเครื่องราง | มงคลเวลา" description="วัตถุมงคลจากวัดและผู้จำหน่าย พร้อมแหล่งที่มาและข้อมูลผู้ขาย" page="shop" robots="noindex,follow" analytics={false}>
-  <main class="commerce-page shop-page" data-commerce-public="shop" data-commerce-state="loading">
+  <main class="commerce-page commerce-landing shop-page" data-commerce-public="shop" data-commerce-state="loading">
     <section class="shop-intro" aria-labelledby="shop-title">
-      <div class="shop-frame">
-        <nav class="shop-breadcrumb" aria-label="เส้นทางนำทาง"><a data-cms-field="3746c99e-1" href="/">หน้าแรก</a><span aria-hidden="true">/</span><span data-cms-field="3746c99e-2" aria-current="page">ร้านค้าและร่วมบุญ</span></nav>
+      <div class="commerce-frame">
+        <CommerceBreadcrumb page="shop" />
         <header class="commerce-heading shop-heading">
+          <div>
           <p data-cms-field="3746c99e-3" class="section-kicker">ร้านค้ามงคลเวลา</p>
           <h1 data-cms-field="3746c99e-4" id="shop-title">วัตถุมงคลและเครื่องราง</h1>
           <p data-cms-field="3746c99e-5" class="shop-lead">วัตถุมงคลที่คัดสรรอย่างตั้งใจ เพื่อเสริมสิริมงคลในทุกการเดินทางของคุณ</p>
-        </header>
-        <div data-commerce-operational hidden><CommerceNav active="shop" /></div>
-        <div class="commerce-message" role="status" aria-live="polite" data-commerce-message></div>
-        <div data-commerce-content aria-busy="true"><p data-cms-field="3746c99e-6">กำลังตรวจสอบสถานะร้านค้า</p></div>
-        <section class="shop-closed" aria-labelledby="shop-closed-title" data-shop-unavailable hidden>
-          <img data-cms-field="3746c99e-7" class="shop-closed-art" src="/assets/images/shop-closed-kiosk.webp" alt="ร้านไม้เล็ก ๆ แขวนป้ายปิดให้บริการในขณะนี้" width="1000" height="604" fetchpriority="high" />
-          <div class="shop-closed-copy">
-            <h2 id="shop-closed-title"><span data-cms-field="3746c99e-8">ระบบร้านค้าและร่วมบุญ</span><span data-cms-field="3746c99e-9">ยังไม่เปิดบริการ</span></h2>
-            <p data-cms-field="3746c99e-10">เรากำลังเตรียมวัตถุมงคลและสินค้าที่คัดสรรอย่างดี<br class="shop-desktop-break" /> รวมถึงช่องทางร่วมบุญกับวัดและสถานที่ศักดิ์สิทธิ์ต่าง ๆ<br class="shop-desktop-break" /> เพื่อให้คุณได้ทำบุญและเสริมสิริมงคลได้อย่างสะดวกและมั่นใจ</p>
-            <p data-cms-field="3746c99e-11" class="shop-coming-soon">โปรดติดตามเร็ว ๆ นี้</p>
-            <div class="shop-lotus-rule" aria-hidden="true"><SiteIcon name="lotus" /></div>
           </div>
-        </section>
-        <p data-cms-field="3746c99e-12" class="shop-quote" data-shop-unavailable hidden>“บุญที่ตั้งใจ ย่อมเดินทางมาถึง”</p>
-        <noscript><p data-cms-field="3746c99e-13" class="shop-no-script">เปิด JavaScript เพื่อตรวจสอบสถานะร้านค้า หรือสำรวจ <a data-cms-field="3746c99e-14" href="/temples/">วัดดังเสริมมงคล</a> และ <a data-cms-field="3746c99e-15" href="/calendar/">ปฏิทินไทย</a></p></noscript>
+          <blockquote data-cms-field="shop-heading-quote">“สิ่งศักดิ์สิทธิ์<br />คือเพื่อนร่วมทางในทุกช่วงชีวิต”<cite>มงคลเวลา</cite></blockquote>
+        </header>
       </div>
     </section>
-    <section class="shop-explore" aria-labelledby="shop-explore-title" data-shop-unavailable hidden>
-      <div class="shop-frame">
-        <header class="shop-explore-heading">
+    <div class="commerce-frame shop-body">
+        <div class="shop-operational" data-commerce-operational hidden><CommerceNav active="shop" /><a class="commerce-cart-link" href="/shop/?view=cart" aria-label="ตะกร้าสินค้า" title="ตะกร้าสินค้า"><span {...iconAttributes("shopping-cart")} /><span data-cart-count aria-hidden="true">0</span></a></div>
+        <div class="commerce-message" role="status" aria-live="polite" data-commerce-message></div>
+        <div data-commerce-content aria-busy="true"><p class="commerce-loading" data-cms-field="3746c99e-6">กำลังตรวจสอบสถานะร้านค้า</p></div>
+        <section class="shop-closed" aria-labelledby="shop-closed-title" data-commerce-unavailable data-shop-unavailable hidden>
+          <img data-cms-field="3746c99e-7" class="shop-closed-art" src="/assets/images/shop-sacred-still-life.webp" alt="ภาพประกอบพระพุทธรูป ดอกบัว สายประคำ และถุงผ้าลายใบโพธิ์" width="1200" height="800" fetchpriority="high" />
+          <div class="shop-closed-copy">
+            <div class="shop-lotus-rule" aria-hidden="true"><SiteIcon name="lotus" /></div>
+            <h2 id="shop-closed-title"><span data-cms-field="3746c99e-8">ระบบร้านค้าและร่วมบุญ</span><span data-cms-field="3746c99e-9">ยังไม่เปิดบริการ</span></h2>
+            <p data-cms-field="3746c99e-10">เรากำลังเตรียมวัตถุมงคลที่คัดสรรอย่างตั้งใจ<br class="shop-desktop-break" /> และช่องทางร่วมบุญกับวัด เพื่อให้ทุกความศรัทธา<br class="shop-desktop-break" /> เดินทางได้อย่างสะดวกและมั่นใจ</p>
+            <div class="shop-closed-actions"><a class="commerce-button" data-cms-field="shop-follow-link" href="/contact/#contact-channel-data"><span {...iconAttributes("heart")} />ติดตามข่าวเปิดบริการ<SiteIcon name="arrow-right" /></a><a class="commerce-button secondary" data-cms-field="shop-planner-link" href="/temples/planner/"><SiteIcon name="map" />เริ่มวางแผนไหว้พระ<SiteIcon name="arrow-right" /></a></div>
+            <p data-cms-field="3746c99e-11" class="shop-coming-soon">พบกันเร็ว ๆ นี้ เมื่อพร้อมให้บริการ</p>
+          </div>
+        </section>
+        <section class="shop-upcoming" aria-labelledby="shop-upcoming-title" data-commerce-unavailable hidden>
+          <h2 data-cms-field="shop-upcoming-title" id="shop-upcoming-title">พบกับหมวดหมู่สินค้าและการร่วมบุญ เร็ว ๆ นี้</h2>
+          <div class="shop-category-previews">{PRODUCT_CATEGORIES.slice(0, 4).map(category => <article class="shop-category-preview">
+            <img data-cms-field={`shop-preview-${category.id}-image`} src={`/assets/images/shop-category-${category.id}.webp`} alt="" width="320" height="320" loading="lazy" />
+            <h3 data-cms-field={`shop-preview-${category.id}-label`}>{category.id === "beads" ? "สายมู" : category.label}</h3>
+            <p data-cms-field={`shop-preview-${category.id}-description`}>{category.description}</p><span class="shop-soon-badge">เร็ว ๆ นี้</span>
+          </article>)}</div>
+        </section>
+        <section class="shop-assurance" data-commerce-catalog hidden aria-label="ข้อมูลก่อนสั่งซื้อ">
+          {[
+            { icon: "shield-check", title: "มีข้อมูลแหล่งที่มา", detail: "ตรวจสอบรายละเอียดก่อนเลือกซื้อ" },
+            { icon: "package", title: "จัดส่งโดยผู้จำหน่าย", detail: "ดูค่าจัดส่งและเงื่อนไขของแต่ละร้าน" },
+            { icon: "scroll-text", title: "ส่งคำขอได้อย่างมั่นใจ", detail: "ยังไม่มีการเรียกเก็บเงินออนไลน์" },
+            { icon: "heart", title: "ร่วมบุญอย่างตั้งใจ", detail: "ตรวจสอบช่องทางของวัดโดยตรง" },
+          ].map((item, index) => <div><span {...iconAttributes(item.icon)} /><div><strong data-cms-field={`shop-assurance-${index}-title`}>{item.title}</strong><p data-cms-field={`shop-assurance-${index}-detail`}>{item.detail}</p></div></div>)}
+        </section>
+        <section class="shop-order-steps" data-commerce-catalog hidden aria-labelledby="shop-steps-title">
+          <h2 data-cms-field="shop-steps-title" id="shop-steps-title">วิธีส่งคำขอสั่งซื้อ</h2>
+          <ol>{[
+            { icon: "shopping-cart", title: "เลือกสินค้าที่สนใจ", detail: "อ่านรายละเอียด เลือกจำนวน และเพิ่มลงตะกร้า" },
+            { icon: "scroll-text", title: "ส่งคำขอให้ผู้ขาย", detail: "ตรวจสอบข้อมูลและค่าจัดส่ง ยังไม่ต้องชำระเงิน" },
+            { icon: "package", title: "รอผู้ขายยืนยัน", detail: "ติดตามสถานะและนัดหมายกับผู้ขายโดยตรง" },
+          ].map((item, index) => <li><span {...iconAttributes(item.icon)} /><div><strong data-cms-field={`shop-step-${index}-title`}>{index + 1}. {item.title}</strong><p data-cms-field={`shop-step-${index}-detail`}>{item.detail}</p></div></li>)}</ol>
+        </section>
+        <noscript><p data-cms-field="3746c99e-13" class="shop-no-script">เปิด JavaScript เพื่อตรวจสอบสถานะร้านค้า หรือสำรวจ <a data-cms-field="3746c99e-14" href="/temples/">วัดดังเสริมมงคล</a> และ <a data-cms-field="3746c99e-15" href="/calendar/">ปฏิทินไทย</a></p></noscript>
+    </div>
+    <div class="shop-quote-band" data-commerce-unavailable hidden><p data-cms-field="3746c99e-12" class="shop-quote">“ทุกการเตรียมการ คือการเดินทางสู่สิ่งดี ๆ ที่กำลังจะมาถึง”</p><span>มงคลเวลา</span></div>
+    <section class="shop-explore" aria-labelledby="shop-explore-title" data-commerce-support hidden>
+      <div class="commerce-frame">
+        <header class="shop-explore-heading" data-commerce-unavailable hidden>
           <h2 data-cms-field="3746c99e-16" id="shop-explore-title">ระหว่างนี้ คุณอาจสนใจ</h2>
           <p data-cms-field="3746c99e-17">สำรวจเนื้อหาอื่น ๆ ที่ช่วยเสริมสิริมงคลให้กับการเดินทางของคุณ</p>
         </header>
-        <div class="shop-destinations">
+        <div class="shop-destinations" data-commerce-unavailable hidden>
           {destinations.map(item => <a class="shop-destination" href={item.href}>
             <span data-cms-field="3746c99e-18" class:list={["shop-destination-art", `shop-destination-art--${item.kind}`]}>
               <SiteIcon name={item.icon} />
@@ -61,10 +95,15 @@ const questions = [
         </div>
         <section class="shop-faq" aria-labelledby="shop-faq-title">
           <h2 data-cms-field="3746c99e-22" id="shop-faq-title"><span class="shop-question-mark" aria-hidden="true">?</span>คำถามที่พบบ่อย</h2>
-          {questions.map(question => <details>
+          {questions.map(question => <details data-commerce-unavailable hidden>
             <summary data-cms-field="3746c99e-23">{question.title}<SiteIcon name="chevron-down" /></summary>
             <p data-cms-field="3746c99e-24">{question.answer}</p>
           </details>)}
+          {[
+            { title: "สั่งบูชาได้อย่างไร?", answer: "เปิดดูรายละเอียดสินค้า เลือกจำนวน แล้วเพิ่มลงตะกร้า ตรวจสอบข้อมูลผู้ขายและค่าจัดส่งก่อนส่งคำขอสั่งซื้อ จากนั้นรอผู้ขายติดต่อยืนยัน" },
+            { title: "ชำระเงินผ่านเว็บไซต์ได้ไหม?", answer: "ขณะนี้ยังไม่รับชำระเงินออนไลน์ การส่งคำขอสั่งซื้อไม่มีการเรียกเก็บเงิน โปรดรอการยืนยันและตรวจสอบเงื่อนไขกับผู้ขายโดยตรง" },
+            { title: "ใครเป็นผู้จัดส่งสินค้า?", answer: "แต่ละร้านหรือวัดเป็นผู้รับผิดชอบการจัดส่ง คุณสามารถตรวจสอบชื่อผู้จัดส่ง ค่าจัดส่ง และเงื่อนไขคืนสินค้าได้ในหน้ารายละเอียดก่อนส่งคำขอ" },
+          ].map((question, index) => <details data-commerce-catalog hidden><summary data-cms-field={`shop-live-faq-${index}-question`}>{question.title}<SiteIcon name="chevron-down" /></summary><p data-cms-field={`shop-live-faq-${index}-answer`}>{question.answer}</p></details>)}
         </section>
       </div>
     </section>
