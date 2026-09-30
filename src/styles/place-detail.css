@@ -36,9 +36,9 @@ body.temples-hub-page.place-detail-page { padding-bottom: 0; background: #faf7ec
 .pd-image-credit:empty { display: none; }
 .pd-image-credit a { display: inline-flex; align-items: center; min-height: 24px; text-decoration: underline; text-underline-offset: 3px; }
 .pd-hero-copy { position: relative; padding: 32px 0 8px; align-self: center; min-width: 0; }
-.pd-hero-copy > .pd-title-mark { position: absolute; width: 52px; height: 52px; left: 0; top: 36px; }
+.pd-hero-copy > .pd-title-mark { position: absolute; width: 52px; height: 52px; left: 0; top: 24px; }
 .pd-kicker { display: none; }
-.place-detail .pd-hero h1 { padding-left: 62px; font-size: 44px; font-weight: 750; color: #102e2b; overflow-wrap: anywhere; margin-bottom: 10px; }
+.place-detail .pd-hero h1 { padding-left: 62px; font-size: 44px; font-weight: 750; color: #102e2b; overflow-wrap: anywhere; margin-bottom: 10px; transform: translateY(calc(.12em - 12px)); }
 .pd-intro { color: #454039; }
 .pd-area { display: flex; align-items: flex-start; gap: 7px; font-size: 14px; margin-top: 14px !important; }
 .pd-area .pd-icon { width: 17px; height: 17px; flex-basis: 17px; margin-top: 3px; }
@@ -249,7 +249,7 @@ body.temples-hub-page.place-detail-page { padding-bottom: 0; background: #faf7ec
   .pd-hero { display: block; }
   .pd-hero-copy { padding: 14px 4px 0; }
   .pd-hero-copy > .pd-title-mark { display: none; }
-  .place-detail .pd-hero h1 { padding-left: 0; }
+  .place-detail .pd-hero h1 { padding-left: 0; transform: none; }
   .pd-hero-media { aspect-ratio: 16/9; }
   .pd-kicker { display: none; }
   .pd-stops { grid-template-columns: minmax(0,1fr); }
