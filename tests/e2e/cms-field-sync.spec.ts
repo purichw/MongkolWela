@@ -5,6 +5,10 @@ import { contentRevision } from "../../src/lib/content-revision.js";
 import { watArunPopularRoute } from "../../src/data/nfr-key-routes.js";
 import { sitePlaceholderImage } from "../../src/lib/image-placeholder.js";
 import { adminDesignFixture } from "../helpers/admin-design-fixture.mjs";
+import { createLegacyTempleSlug } from "../../src/data/temple-slugs.js";
+import popularTemples from "../../src/data/popular-temples.json" with { type: "json" };
+
+const watArunKey = `popular:${createLegacyTempleSlug(popularTemples.find(item => item.name === "วัดอรุณ"))}`;
 
 const defaults = JSON.parse(fs.readFileSync("public/admin/content/default.json", "utf8"));
 for (const entry of defaults.pages.filter(item => item.kind !== "custom")) {
@@ -79,14 +83,14 @@ for (const entry of defaults.pages.filter(item => item.kind !== "custom")) {
 
 test("place detail refresh restores overrides and re-enabled places; related cards and mobile clears stay synchronized", async ({ page }) => {
   const content = structuredClone(defaults);
-  const key = decodeURIComponent(watArunPopularRoute).replace(/^\/temples\//, "").replace(/\/$/, "").replace("/", ":");
+  const key = watArunKey;
   content.temples = { records: {} };
   await page.route("**/api/admin/content?*", route => route.fulfill({ json: { ok: true, content: publicContentForPath(content, new URL(route.request().url()).searchParams.get("path")) } }));
   await page.goto(watArunPopularRoute);
   await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "true");
   const oldName = await page.locator("#temple-detail-title").textContent();
   const related = page.locator(".pd-related-card").first();
-  const relatedKey = decodeURIComponent((await related.getAttribute("href"))!).replace(/^\/temples\//, "").replace(/\/$/, "").replace("/", ":");
+  const relatedKey = (await related.getAttribute("data-temple-key"))!;
   const oldRelatedName = await related.locator("strong").textContent();
   content.temples.records[key] = { fields: { name: "Current CMS name", imageAlt: "" }, images: { hero: { desktop: { url: "/assets/images/brand/mongkol-wela-logo-mark.png" }, mobile: { url: "" } } } };
   content.temples.records[relatedKey] = { fields: { name: "Current related name", province: "CMS province", district: "" }, images: { card: { desktop: { url: "" } } } };
@@ -132,7 +136,7 @@ test("removing section overrides restores visibility and document order without 
 test("an open collection map refreshes names, coordinates, images and removals from CMS", async ({ page }) => {
   const content = structuredClone(defaults);
   content.temples = { records: {} };
-  const key = decodeURIComponent(watArunPopularRoute).replace(/^\/temples\//, "").replace(/\/$/, "").replace("/", ":");
+  const key = watArunKey;
   await page.route("**/api/admin/content?*", route => route.fulfill({ json: { ok: true, content } }));
   await page.goto("/temples/popular/");
   await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "true");

@@ -23,7 +23,7 @@ const {
   regionAriaLabel = "กรองตามภาค",
   provinceAriaLabel = "กรองตามจังหวัด",
   purposeAriaLabel = "กรองตามวัตถุประสงค์",
-} = Astro.props;
+} = Astro.props as Props;
 
 const isPlanner = mode === "planner";
 ---

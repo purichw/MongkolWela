@@ -1,16 +1,28 @@
 # Architecture
 
-Last updated: 2026-09-05
+Last updated: 2026-09-30
 
 ## Project Shape
 
-`hora-astro` is a Thai-first Astro static site for Mongkol Wela. The deployed production site is:
+`hora-astro` is a Thai-first, mostly prerendered Astro site for Mongkol Wela. The production target is:
 
 - `https://mongkolwela.vercel.app`
 - Vercel project: `mongkolwela`
 - GitHub repository: `purichw/hora-astro`
 
-The app is built as static Astro pages. Client-side behavior is small, route-specific JavaScript loaded through `BaseLayout.astro`.
+Most pages are static Astro pages. Place detail routes under `/temples/popular/`,
+`/temples/mu/` and `/temples/sacred/`, plus `/sitemap.xml`, render on demand with
+`@astrojs/vercel`. They read the same authoritative CMS document as Admin, so
+new places and edited URL slugs do not require a rebuild. These responses are
+`no-store`; old slugs redirect directly to the current slug with HTTP 308.
+See [Temple URL Slugs](docs/temple-slugs.md) for identity and migration contracts.
+
+Static build artifacts are in `dist/client/`; Vercel output is in
+`.vercel/output/`. The adapter adds one `_render` function. Commerce's legacy
+`/api/commerce/index` path rewrites to `/api/commerce`, whose private `_handler`
+keeps one commerce function rather than two. This preserves the existing
+12-function deployment ceiling. Client behavior remains route-specific code
+loaded through `BaseLayout.astro`.
 
 ## Top-Level Structure
 

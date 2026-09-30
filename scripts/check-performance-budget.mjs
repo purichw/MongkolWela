@@ -2,12 +2,16 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { nfrKeyRoutePaths } from "../src/data/nfr-key-routes.js";
+import { builtStaticDir, builtRouteContent } from "./qa/built-route-content.mjs";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const distDir = path.join(rootDir, "dist");
+const distDir = builtStaticDir;
 const budgetPath = path.join(rootDir, "config/nfr-budgets.json");
 const budget = JSON.parse(fs.readFileSync(budgetPath, "utf8"));
 const failures = [];
+const measuredRoutes = new Set([...nfrKeyRoutePaths, ...Object.keys(budget.assets.css.routes || {})]);
+const rendered = await builtRouteContent(measuredRoutes);
+const htmlFiles = new Map([...rendered].map(([route, html]) => [path.join(distDir, route, route.endsWith("/") ? "index.html" : ""), html]));
 
 if (!fs.existsSync(distDir)) {
   console.error("dist/ ยังไม่มี กรุณารัน npm run build ก่อน");
@@ -54,8 +58,8 @@ function checkAssetBudget(kind, matchedFiles) {
 function checkHtmlBudget() {
   const limit = budget.assets.html.maxFileKb;
   getKeyRouteHtmlFiles().forEach((file) => {
-    if (!fs.existsSync(file)) { failures.push(`Missing key route: ${relative(file)}`); return; }
-    const sizeKb = fs.statSync(file).size / 1024;
+    if (!htmlFiles.has(file)) { failures.push(`Missing key route: ${relative(file)}`); return; }
+    const sizeKb = Buffer.byteLength(htmlFiles.get(file)) / 1024;
     if (sizeKb > limit) failures.push(`${relative(file)} HTML ${formatKb(sizeKb)} เกินงบ ${limit}KB`);
   });
 }
@@ -64,8 +68,8 @@ function checkRouteStyles() {
   const routes = new Set([...nfrKeyRoutePaths, ...Object.keys(budget.assets.css.routes || {})]);
   for (const route of routes) {
     const htmlFile = route === "/404.html" ? path.join(distDir, "404.html") : path.join(distDir, route, "index.html");
-    if (!fs.existsSync(htmlFile)) { failures.push(`Missing CSS budget route: ${route}`); continue; }
-    const html = fs.readFileSync(htmlFile, "utf8");
+    if (!htmlFiles.has(htmlFile)) { failures.push(`Missing CSS budget route: ${route}`); continue; }
+    const html = htmlFiles.get(htmlFile);
     const sheets = [...html.matchAll(/<link\b[^>]*>/gi)].filter(([tag]) => /rel=["']stylesheet["']/i.test(tag)).map(([tag]) => tag.match(/href=["']([^"']+)["']/i)?.[1]).filter((href) => href?.startsWith("/"));
     if (!sheets.length) failures.push(`${route}: no local stylesheets`);
     let bytes = 0;
@@ -84,8 +88,8 @@ function checkRouteStyles() {
 function checkKeyRouteImages() {
   const limits = budget.assets.keyRouteImages;
   getKeyRouteHtmlFiles().forEach((htmlFile) => {
-    if (!htmlFile || !fs.existsSync(htmlFile)) return;
-    const html = fs.readFileSync(htmlFile, "utf8");
+    if (!htmlFile || !htmlFiles.has(htmlFile)) return;
+    const html = htmlFiles.get(htmlFile);
     const imageFiles = findLocalImages(html, path.dirname(htmlFile));
     const totalKb = sumBytes(imageFiles) / 1024;
     if (totalKb > limits.totalKb) {

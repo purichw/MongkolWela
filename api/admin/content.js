@@ -13,6 +13,7 @@ import { contentCatalog, validateContentLibrary } from "../../src/data/content-c
 import { validateContentPatches } from "../../src/lib/content-patches.js";
 import { validateHomepageContent } from "../../src/lib/homepage-content.js";
 import { validateNavigation } from "../../src/lib/site-navigation.js";
+import { prepareTempleSlugPublication } from "../../src/lib/temple-routing.js";
 
 function normalizeContent(content, actor) {
   const now = new Date().toISOString();
@@ -74,7 +75,7 @@ export default async function handler(req, res) {
       sendJson(res, 409, { ok: false, error: "เนื้อหามีเวอร์ชันใหม่แล้ว กรุณาบันทึกฉบับร่างและโหลดข้อมูลล่าสุดก่อนเผยแพร่" });
       return;
     }
-    const content = normalizeContent(body.content, session.actor);
+    const content = normalizeContent(prepareTempleSlugPublication(body.content, current), session.actor);
     const publish = await publishLiveContent(content, session.actor, { expectedPublishedAt: current.publishedAt ?? null });
     sendJson(res, 200, {
       ok: true,

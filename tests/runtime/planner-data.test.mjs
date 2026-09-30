@@ -2,10 +2,10 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { getTemplePlannerData } from "../../src/data/temple-planner.js";
 import popular from "../../src/data/popular-temples.json" with { type: "json" };
-import { createTempleSlug } from "../../src/data/temple-slugs.js";
+import { createLegacyTempleSlug } from "../../src/data/temple-slugs.js";
 
 const base = popular.find((item) => Number(item.latitude) && Number(item.longitude));
-const key = `popular:${createTempleSlug(base)}`;
+const key = `popular:${createLegacyTempleSlug(base)}`;
 const content = (record) => ({ temples: { records: { [key]: { key, collection: "popular", ...record } } } });
 
 test("planner uses published edits and keeps identity when a name changes", () => {

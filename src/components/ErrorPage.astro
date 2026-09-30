@@ -9,7 +9,7 @@ interface Props {
 
 type Action = { label: string; href?: string; icon?: string; retry?: boolean };
 
-const { status } = Astro.props;
+const { status } = Astro.props as Props;
 const home: Action = { label: "กลับหน้าหลัก", href: "/" };
 const homePrimary: Action = { ...home, icon: "house" };
 const retry: Action = { label: "ลองใหม่อีกครั้ง", icon: "rotate-ccw", retry: true };

@@ -37,6 +37,8 @@ export function templeCatalogFromContent(content) {
         collection,
         collectionLabel: templeCollectionConfig[collection]?.label || COLLECTION_LABELS[collection],
         slug,
+        slugMode: temple.cmsSlugMode,
+        slugAliases: temple.cmsSlugAliases,
         detailUrl,
         source: temple.cmsSource || "dataset",
         temple: {

@@ -177,7 +177,7 @@ export function createTempleEditorControls({ state, getRecord, getEdit, render, 
     if (!root) return false;
     const name = root.querySelector('[data-temple-field="name"]');
     name.setCustomValidity(name.value.trim() ? "" : "กรุณาระบุชื่อสถานที่");
-    const invalid = [...root.querySelectorAll("[data-temple-field], [data-temple-visit]")].find(input => !input.checkValidity());
+    const invalid = [...root.querySelectorAll("[data-temple-field], [data-temple-visit], [data-temple-slug]")].find(input => !input.checkValidity());
     if (!invalid) return true;
     for (let parent = invalid.parentElement; parent && parent !== root; parent = parent.parentElement) if (parent.matches("details")) parent.open = true;
     setActive(invalid.closest('[id^="temple-editor-"]')?.dataset.editorPanel || "place");

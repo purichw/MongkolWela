@@ -2,9 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getTempleDetailUrl } from "../src/data/temple-slugs.js";
+import { builtStaticDir, builtRouteContent } from "./qa/built-route-content.mjs";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const distDir = path.join(rootDir, "dist");
+const distDir = builtStaticDir;
 const siteUrl = "https://mongkolwela.vercel.app";
 const popularTemples = JSON.parse(fs.readFileSync(path.join(rootDir, "src/data/popular-temples.json"), "utf8"));
 const watArunRoute = getTempleDetailUrl("popular", popularTemples.find((temple) => temple.name === "วัดอรุณ"));
@@ -39,16 +40,16 @@ const noindexRoutes = [
 ];
 
 const errors = [];
+const rendered = await builtRouteContent([...indexedRoutes, ...noindexRoutes, "/sitemap.xml"]);
 
 main();
 
 function main() {
-  requireFile("sitemap.xml");
   requireFile("robots.txt");
   requireFile("llms.txt");
   requireFile("site.webmanifest");
 
-  const sitemap = readDist("sitemap.xml");
+  const sitemap = rendered.get("/sitemap.xml");
   const robots = readDist("robots.txt");
 
   indexedRoutes.forEach((route) => {
@@ -116,6 +117,7 @@ function validateHtml(route, { shouldIndex }) {
 }
 
 function readRoute(route) {
+  if (rendered.has(route)) return rendered.get(route);
   const filePath = route === "/404.html"
     ? path.join(distDir, "404.html")
     : route === "/"

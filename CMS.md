@@ -1,5 +1,28 @@
 # CMS Content
 
+## Place URL Slugs
+
+The place editor has automatic and custom URL modes. Automatic mode uses a
+reviewed English name for existing places and offline Thai romanization for new
+names; custom mode retains the editor's value when the place name changes.
+Saving the drawer updates the draft. Publishing validates and applies the URL.
+
+`temples.records[key].slug` is separate from the immutable legacy CMS `key`.
+`slugMode` is `auto` or `custom`; `slugAliases` is server-maintained publication
+history, not an editable list. Existing Thai URLs remain HTTP 308 aliases, and
+previously published ASCII URLs remain reserved after rename or deletion.
+Canonical detail URLs, sitemap, search, planner, cards and map links consume
+the same published slug. Page-level patches associated with an old place URL
+continue to apply under its new canonical URL.
+
+All 625 curated collection records have English/romanized URL mappings.
+Existing valid custom ASCII slugs are preserved. The mappings apply when the
+new runtime reads the current CMS; the next normal revision-checked publication
+persists normalized slugs and aliases without replacing non-URL fields.
+Do not run a CMS seed or overwrite the live document to migrate URLs.
+This is not a rewrite of the separate all-Thailand location index.
+See [Temple URL Slugs](docs/temple-slugs.md) for verification and rollout details.
+
 ## Content Workspace
 
 The central Admin now includes page fields, shared website copy, the reading

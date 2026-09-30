@@ -13,7 +13,7 @@ export function getStaticPaths() {
   }));
 }
 
-const { card } = Astro.props;
+const { card } = Astro.props as { card: (typeof tarotMeaningCards)[number] };
 const currentIndex = tarotMeaningCards.findIndex((item) => item.slug === card.slug);
 const previousCard = tarotMeaningCards[(currentIndex - 1 + tarotMeaningCards.length) % tarotMeaningCards.length];
 const nextCard = tarotMeaningCards[(currentIndex + 1) % tarotMeaningCards.length];

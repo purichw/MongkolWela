@@ -8,7 +8,7 @@ interface Props {
   ornamentSrc?: string;
   bindings?: Record<string, Record<string, string>>;
 }
-const { title, kicker, lead, breadcrumbs, quote, bindings = {}, ornamentSrc = "/assets/images/ornament-lotus-bodhi.webp" } = Astro.props;
+const { title, kicker, lead, breadcrumbs, quote, bindings = {}, ornamentSrc = "/assets/images/ornament-lotus-bodhi.webp" } = Astro.props as Props;
 ---
 
 <section class="tools-hero" aria-labelledby="tools-title">

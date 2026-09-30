@@ -10,6 +10,7 @@ import { prepareContentFields } from "../lib/page-content-fields.js";
 import { contentPatchNodes, safeContentHtml, validContentPatch } from "../lib/content-patches.js";
 import { applyHomepageCollections, resetHomepageCollections } from "../lib/homepage-content.js";
 import { collectionIntent } from "../lib/temple-collection-card.js";
+import { publishedTempleUrl } from "../lib/temple-url.js";
 
 const CMS_CONTENT_URL = "/api/admin/content";
 const CMS_CONSENT_KEY = "mongkolwela.pdpa.analytics";
@@ -347,7 +348,9 @@ function applyRelatedTempleOverrides(content) {
   document.querySelectorAll(".pd-related-card").forEach(card => {
     if (!relatedCardSeeds.has(card)) relatedCardSeeds.set(card, card.innerHTML);
     card.innerHTML = relatedCardSeeds.get(card);
-    const override = getTempleOverride(content, templeKeyFromHref(card.getAttribute("href")));
+    const key = card.dataset.templeKey || templeKeyFromHref(card.getAttribute("href"));
+    const override = getTempleOverride(content, key);
+    card.href = publishedTempleUrl(content, key, card.getAttribute("href"));
     card.hidden = override?.status === "deleted" || override?.enabled === false;
     if (!override || card.hidden) return;
     const fields = override.fields || {};
@@ -399,7 +402,7 @@ function applyTempleCardOverrides(content) {
   }
   document.querySelectorAll("[data-popular-temple-card]").forEach((card) => {
     const detailHref = card.getAttribute("href") || card.querySelector("[data-popular-temple-detail]")?.getAttribute("href");
-    const key = templeKeyFromHref(detailHref);
+    const key = card.dataset.templeKey || templeKeyFromHref(detailHref);
     const override = getTempleOverride(content, key) || {};
     const rank = content.temples?.order?.[key.split(":")[0]]?.indexOf(key) ?? -1;
     const seed = templeCardSeeds.get(card);
@@ -407,7 +410,13 @@ function applyTempleCardOverrides(content) {
       card.innerHTML = seed.html;
       Object.assign(card.dataset, seed.data);
     } else if (Object.keys(override).length || rank >= 0) templeCardSeeds.set(card, { html: card.innerHTML, data: { ...card.dataset } });
-    else return;
+    else {
+      const link = card.matches("a") ? card : card.querySelector("[data-popular-temple-detail]");
+      if (link) link.href = publishedTempleUrl(content, key, detailHref);
+      return;
+    }
+    const detailLink = card.matches("a") ? card : card.querySelector("[data-popular-temple-detail]");
+    if (detailLink) detailLink.href = publishedTempleUrl(content, key, detailHref);
     if (override.status === "deleted" || override.enabled === false) {
       removedTempleCards.set(card, card.parentElement);
       card.remove();
@@ -606,10 +615,10 @@ function normalizeVisitTimetable(rows) {
 }
 
 function applyTempleDetailOverride(content) {
-  const key = templeKeyFromPath();
-  const override = getTempleOverride(content, key) || {};
   const root = document.querySelector(".temple-detail");
   if (!root) return;
+  const key = root.dataset.placeKey || templeKeyFromPath();
+  const override = getTempleOverride(content, key) || {};
   if (override.status === "deleted" || override.enabled === false) {
     root.dispatchEvent(new CustomEvent("mw:place-detail-unavailable"));
     if (!disabledTempleChildren.has(root)) disabledTempleChildren.set(root, [...root.childNodes]);

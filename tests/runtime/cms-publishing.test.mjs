@@ -65,7 +65,9 @@ test("CMS publish validates content, checks current membership and prevents stal
     assert.equal(live.contentLibrary["seamsi.seamsiFortunes"]["1"].title, "Published reading");
     assert.equal(live.pages.find(page => page.id === "contact").patches[0].value, "support@example.com");
     const published = await (await fetch(`${base}?path=${encodeURIComponent("/temples/popular/test-sync/")}`)).json();
-    assert.deepEqual(published.content.temples, edited.temples);
+    assert.deepEqual(published.content.temples.records["popular:test-sync"].fields, edited.temples.records["popular:test-sync"].fields);
+    assert.equal(published.content.temples.records["popular:test-sync"].slug, "test");
+    assert.equal(published.content.temples.routes["popular:test-sync"], "/temples/popular/test/");
     const guide = await (await fetch(`${base}?path=${encodeURIComponent("/guide/")}`)).json();
     assert.deepEqual(guide.content.pages[0].patches, edited.pages.find(page => page.id === "travelGuide").patches);
     assert.equal((await post({ content: edited, expectedRevision: original.revision })).status, 409);

@@ -7,6 +7,7 @@ const configPath = path.join(rootDir, "vercel.json");
 const errors = [];
 
 const config = readJson(configPath);
+assert(config.framework === "astro", "Vercel must build the Astro static and SSR routes together");
 validateRewrites(config.rewrites || []);
 validateHeaders(config.headers || []);
 
@@ -71,7 +72,7 @@ function validateHeaders(headers) {
   requireCache(headers, "/_astro/(.*)", "public, max-age=31536000, immutable");
   requireCache(headers, "/api/temple-planner/(.*)", "no-store");
   requireCache(headers, "/site.webmanifest", "public, max-age=86400, stale-while-revalidate=604800");
-  requireCache(headers, "/sitemap.xml", "public, max-age=3600, stale-while-revalidate=86400");
+  requireCache(headers, "/sitemap.xml", "no-store");
   requireCache(headers, "/robots.txt", "public, max-age=3600, stale-while-revalidate=86400");
   requireCache(headers, "/llms.txt", "public, max-age=3600, stale-while-revalidate=86400");
   requireHeader(getHeaderMap(headers, "/assets/data/(.*)"), "X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");

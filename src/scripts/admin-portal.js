@@ -1494,6 +1494,7 @@ function handleInput(event) {
 }
 
 function updateTempleFromInput(target) {
+  if (target.matches("[data-temple-slug], [data-temple-slug-mode]")) return updateTempleSlug(target);
   if (!target.matches("[data-temple-field], [data-temple-visit]")) return false;
   const edit = currentTempleEdit();
   if (!edit) return true;
@@ -1512,6 +1513,7 @@ function updateTempleFromInput(target) {
     if (catalogRecord) {
       catalogRecord.temple[key] = value;
       syncTempleEditorLabels(catalogRecord);
+      updateTempleSlug(target);
     }
   }
 
@@ -1946,7 +1948,8 @@ function addTemple() {
   const edit = {
     key,
     collection,
-    slug: `${String(maxRank + 1).padStart(3, "0")}-สถานที่ใหม่-thailand-${createdAt}`,
+    slug: "new-place",
+    slugMode: "auto",
     source: "admin",
     status: "active",
     fields: {
@@ -1966,6 +1969,7 @@ function addTemple() {
     collection,
     collectionLabel,
     slug: edit.slug,
+    slugMode: edit.slugMode,
     detailUrl: `/temples/${collection}/${edit.slug}/`,
     source: "admin",
     temple: { ...edit.fields, images: {} },
@@ -2003,7 +2007,8 @@ function closeTempleEditor() {
   renderTemples();
 }
 
-function saveTempleEditor() {
+async function saveTempleEditor() {
+  if (!await prepareTempleSlug()) return;
   if (!templeEditorControls.validate()) return;
   state.templeEditorOpen = false;
   templeEditorControls.finish();
@@ -2061,7 +2066,7 @@ window.addEventListener("beforeunload", (event) => {
   event.returnValue = "";
 });
 
-const { templeRecords, templeOrders, currentTempleRecord, currentTempleEdit, templeValue, filteredTempleCatalog, normalizeAdminSearch, renderTemples, renderTempleTableRow, templeConfidence, renderTempleDrawer, renderTempleListItem, renderTempleEmptyState, renderTempleEditor, renderTempleImageGroup, renderTempleImageField, templeImageValue, templeList, templeEditorControls } = createTempleEditor({ state, rememberTempleListScroll, setTitle, setTopActions, setStatus, closeTempleEditor, escapeHtml, $, TEMPLE_COLLECTIONS, empty, restoreTempleListScroll, collectionTemples, TEMPLE_IMAGE_FIELDS });
+const { templeRecords, templeOrders, currentTempleRecord, currentTempleEdit, templeValue, filteredTempleCatalog, normalizeAdminSearch, renderTemples, renderTempleTableRow, templeConfidence, renderTempleDrawer, renderTempleListItem, renderTempleEmptyState, renderTempleEditor, renderTempleImageGroup, renderTempleImageField, templeImageValue, templeList, templeEditorControls, updateTempleSlug, prepareTempleSlug } = createTempleEditor({ state, rememberTempleListScroll, setTitle, setTopActions, setStatus, closeTempleEditor, escapeHtml, $, TEMPLE_COLLECTIONS, empty, restoreTempleListScroll, collectionTemples, TEMPLE_IMAGE_FIELDS });
 
 const { imageFieldFromButton, setTempleImage, useTempleImageUrl, verifyImageLoads, cropTempleImage, reuseTempleImage, clearTempleImage, handleTempleImageUpload, templeImageFilename, detectImageProvider, uploadAdminMedia, openTempleCropper, initializeTempleCrop, bindTempleCropPointerEvents, pickCropBox, moveTempleCrop, resizeTempleCrop, updateTempleCropSelection, applyTempleCrop, closeTempleCropper } = createAdminMedia({ markDirty, setStatus, state, api, $, TEMPLE_IMAGE_FIELDS, escapeHtml, currentTempleEdit, currentTempleRecord, renderTemples, templeImageValue });
 

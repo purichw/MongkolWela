@@ -5,6 +5,15 @@ import { renderVisitEditor, renderVisitSummary } from "./visit-content.js";
 import { createTempleList } from "./temple-list.js";
 import { createTempleEditorControls } from "./temple-editor-controls.js";
 import { dateLabel } from "../../lib/place-detail-view.js";
+import { templeSlugError, uniqueTempleSlug } from "../../lib/temple-slug-format.js";
+
+let slugGenerator;
+let slugGeneratorLoading;
+function loadSlugGenerator() {
+  return slugGeneratorLoading ||= import("../../data/temple-slugs.js").then(module => {
+    slugGenerator = module.generateTempleSlug;
+  }).catch(error => { slugGeneratorLoading = null; throw error; });
+}
 
 export function createTempleEditor({ state, rememberTempleListScroll, setTitle, setTopActions, setStatus, closeTempleEditor, escapeHtml, $, TEMPLE_COLLECTIONS, empty, restoreTempleListScroll, collectionTemples, TEMPLE_IMAGE_FIELDS }) {
 const templeList = createTempleList({ state, collections: TEMPLE_COLLECTIONS, imageValue: templeImageValue, rerender: renderTemples, setStatus });
@@ -40,6 +49,7 @@ function currentTempleEdit({ create = true } = {}) {
     key: record.key,
     collection: record.collection,
     slug: record.slug,
+    slugMode: record.slugMode || "auto",
     source: record.source || "dataset",
     status: "active",
     fields: {},
@@ -50,6 +60,78 @@ function currentTempleEdit({ create = true } = {}) {
 
 function templeValue(record, edit, field) {
   return edit?.fields?.[field] ?? record?.temple?.[field] ?? "";
+}
+
+function occupiedTempleSlugs(record) {
+  const rows = state.templeCatalog.filter(item => item.collection === record.collection && item.key !== record.key);
+  const slugs = rows.flatMap(item => [templeRecords()[item.key]?.slug || item.slug, ...(item.slugAliases || [])]);
+  for (const [key, value] of Object.entries(templeRecords())) {
+    if (key !== record.key && value.collection === record.collection) slugs.push(value.slug, ...(value.slugAliases || []));
+  }
+  return new Set(slugs.filter(Boolean));
+}
+
+function updateTempleSlug(target) {
+  const record = currentTempleRecord();
+  if (!record) return false;
+  const isSlug = target.matches("[data-temple-slug], [data-temple-slug-mode]");
+  if (!isSlug && !target.matches('[data-temple-field="name"], [data-temple-field="province"]')) return false;
+  const edit = currentTempleEdit();
+  edit.slugMode ||= record.slugMode || "auto";
+  if (target.matches("[data-temple-slug-mode]")) edit.slugMode = target.value;
+  const slugInput = $("[data-temple-slug]");
+  if (slugInput) slugInput.readOnly = edit.slugMode === "auto";
+  if (target.matches("[data-temple-slug]")) edit.slug = target.value;
+  else if (edit.slugMode === "auto") {
+    if (!slugGenerator) {
+      const session = state.templeEditorSession;
+      void loadSlugGenerator().then(() => {
+        if (!state.templeEditorOpen || state.templeEditorSession !== session || state.selectedTempleKey !== record.key) return;
+        const nameInput = $("[data-temple-field='name']");
+        if (nameInput && currentTempleEdit().slugMode === "auto") updateTempleSlug(nameInput);
+      }).catch(() => setStatus("โหลดตัวช่วยสร้าง URL ไม่สำเร็จ กรุณาลองอีกครั้ง", "warn"));
+      return isSlug;
+    }
+    edit.slug = uniqueTempleSlug(slugGenerator({ ...record.temple, ...edit.fields }), occupiedTempleSlugs(record));
+  } else if (templeSlugError(edit.slug)) edit.slug = record.slug;
+  record.slug = edit.slug;
+  record.slugMode = edit.slugMode;
+  record.detailUrl = `/temples/${record.collection}/${edit.slug}/`;
+  const input = $("[data-temple-slug]");
+  if (input) {
+    if (input !== target) input.value = edit.slug;
+    input.readOnly = edit.slugMode === "auto";
+    const error = templeSlugError(edit.slug) || (occupiedTempleSlugs(record).has(edit.slug) ? "ชื่อ URL นี้ถูกใช้แล้ว กรุณาใช้ชื่ออื่น" : "");
+    input.setCustomValidity(error);
+    input.setAttribute("aria-invalid", String(Boolean(error)));
+    $("[data-temple-slug-error]").textContent = error;
+    $("[data-temple-slug-preview]").textContent = record.detailUrl;
+  }
+  return isSlug;
+}
+
+async function prepareTempleSlug() {
+  const input = $("[data-temple-slug]");
+  if (!input) return true;
+  const recordKey = state.selectedTempleKey;
+  if (currentTempleEdit().slugMode === "auto") {
+    try { await loadSlugGenerator(); }
+    catch { setStatus("โหลดตัวช่วยสร้าง URL ไม่สำเร็จ กรุณาลองอีกครั้ง", "warn"); return false; }
+  }
+  if (!input.isConnected || state.selectedTempleKey !== recordKey) return false;
+  updateTempleSlug(currentTempleEdit().slugMode === "auto" ? $("[data-temple-field='name']") : input);
+  return true;
+}
+
+function renderTempleSlug(record, edit) {
+  const mode = edit?.slugMode || record.slugMode || "auto";
+  const slug = edit?.slug !== undefined && edit?.slugMode ? edit.slug : record.slug;
+  return `<fieldset class="mw-place-slug"><legend>ชื่อ URL ของสถานที่</legend>
+    <div class="mw-place-slug-modes">${[["auto", "อัตโนมัติ"], ["custom", "กำหนดเอง"]].map(([value, label]) => `<label><input type="radio" name="temple-slug-mode" data-temple-slug-mode value="${value}" ${mode === value ? "checked" : ""}><span>${label}</span></label>`).join("")}</div>
+    <input aria-label="ชื่อ URL" aria-describedby="temple-slug-preview temple-slug-error" data-temple-slug value="${escapeHtml(slug)}" required maxlength="100" pattern="[a-z0-9]+(-[a-z0-9]+)*" autocapitalize="none" spellcheck="false" ${mode === "auto" ? "readonly" : ""}>
+    <output id="temple-slug-preview" data-temple-slug-preview>/temples/${escapeHtml(record.collection)}/${escapeHtml(slug)}/</output>
+    <span id="temple-slug-error" data-temple-slug-error role="status"></span>
+  </fieldset>`;
 }
 
 function filteredTempleCatalog() {
@@ -171,6 +253,7 @@ function renderTempleEditor(record, edit) {
     <div class="mw-place-editor-fields">
       ${field("name", "ชื่อสถานที่", "mw-place-field-name", "required maxlength=200")}
       ${area("region", "ภูมิภาค")}${area("province", "จังหวัด / เขต")}${area("district", "อำเภอ / เขต")}
+      ${renderTempleSlug(record, edit)}
       ${text("coordinateAddress", "ที่อยู่", "mw-place-field-address", 2)}
       <div class="mw-place-coordinates">${field("plusCode", "Plus Code")}${field("latitude", "พิกัด LAT", "", 'type="number" step="any" min="-90" max="90" inputmode="decimal"')}${field("longitude", "พิกัด LNG", "", 'type="number" step="any" min="-180" max="180" inputmode="decimal"')}</div>
       ${text("summary", "คำแนะนำสถานที่", "mw-place-field-summary", 3)}${text("description", "รายละเอียดสถานที่", "mw-place-field-description", 3)}
@@ -234,5 +317,5 @@ function templeImageValue(record, edit, role, viewport) {
   );
 }
 
-return { templeRecords, templeOrders, currentTempleRecord, currentTempleEdit, templeValue, filteredTempleCatalog, normalizeAdminSearch, renderTemples, renderTempleTableRow, templeConfidence, renderTempleDrawer, renderTempleListItem, renderTempleEmptyState, renderTempleEditor, renderTempleImageGroup, renderTempleImageField, templeImageValue, templeList, templeEditorControls };
+return { templeRecords, templeOrders, currentTempleRecord, currentTempleEdit, templeValue, filteredTempleCatalog, normalizeAdminSearch, renderTemples, renderTempleTableRow, templeConfidence, renderTempleDrawer, renderTempleListItem, renderTempleEmptyState, renderTempleEditor, renderTempleImageGroup, renderTempleImageField, templeImageValue, templeList, templeEditorControls, updateTempleSlug, prepareTempleSlug };
 }

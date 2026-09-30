@@ -1,3 +1,5 @@
+import { publishedTempleUrl } from "./temple-url.js";
+
 const imageUrl = value => typeof value === "string" ? value : value?.url;
 const coordinate = (value, limit) => ["number", "string"].includes(typeof value) && String(value).trim() !== "" && Number.isFinite(Number(value)) && Math.abs(Number(value)) <= limit;
 
@@ -9,6 +11,7 @@ export function templeMapItems(items, content = {}, collection) {
     if (record.enabled === false || record.status === "deleted") return [];
     const fields = record.fields || {};
     const next = { ...item };
+    next.detailUrl = publishedTempleUrl(content, key, next.detailUrl);
     for (const field of ["name", "region", "province", "district", "latitude", "longitude", "rank", "imageAlt"]) {
       if (Object.hasOwn(fields, field)) next[field] = fields[field];
     }

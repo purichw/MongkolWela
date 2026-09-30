@@ -60,6 +60,7 @@ function getCollectionItems(collection: CollectionKey) {
 
       return {
         key: `${collection}:${temple.rank}`,
+        cmsKey: temple.cmsKey,
         collection,
         rank: temple.rank,
         name: temple.name,

@@ -132,8 +132,7 @@ test("collection sort, CMS refresh and compact card actions preserve their contr
   const names = await page.locator(cards).evaluateAll(nodes => nodes.map(node => (node as HTMLElement).dataset.name!));
   expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b, "th")));
   const firstCard = page.locator('[data-popular-temple-card][data-rank="1"]');
-  const href = await firstCard.locator("[data-popular-temple-detail]").getAttribute("href");
-  const key = decodeURIComponent(href!).split("/").filter(Boolean).slice(-2).join(":");
+  const key = (await firstCard.getAttribute("data-temple-key"))!;
   updatedContent.temples ||= { records: {} };
   updatedContent.temples.records[key] = {
     enabled: true, status: "published",

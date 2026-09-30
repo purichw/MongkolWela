@@ -3,6 +3,7 @@ import { getTempleDetailUrl } from "../data/temple-slugs.js";
 import { templeMapItems } from "../lib/temple-map-content.js";
 
 interface TempleMapItem {
+  cmsKey?: string;
   rank: number;
   name: string;
   region: string;
@@ -35,6 +36,7 @@ const mapItems = temples
     const cardImage = temple.imageUrl || "";
     const cardMobileImage = temple.imageMobileUrl ?? cardImage;
     return {
+      key: temple.cmsKey,
       rank: temple.rank,
       name: temple.name,
       region: temple.region,

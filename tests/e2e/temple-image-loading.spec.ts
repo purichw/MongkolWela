@@ -76,7 +76,7 @@ for (const collection of ["popular", "sacred", "mu"]) {
       // Wait for the last staggered card as well, not just the first image.
       await expect.poll(() => page.locator(`${cardSelector}:visible`).evaluateAll(cards => cards.every(card => getComputedStyle(card).opacity === "1"))).toBe(true);
       const published = await first.evaluate(card => ({
-        key: decodeURIComponent(card.querySelector("[data-popular-temple-detail]")!.getAttribute("href")!).split("/").filter(Boolean).slice(-2).join(":"),
+        key: card.getAttribute("data-temple-key")!,
         desktop: card.querySelector("img")!.getAttribute("src"),
         mobile: card.querySelector("source")?.getAttribute("srcset") || card.querySelector("img")!.getAttribute("src"),
       }));
@@ -125,7 +125,7 @@ for (const width of [1440, 390]) {
     const first = page.locator(cardSelector).first();
     await first.scrollIntoViewIfNeeded();
     const original = await first.evaluate(card => ({
-      key: decodeURIComponent(card.querySelector("[data-popular-temple-detail]")!.getAttribute("href")!).split("/").filter(Boolean).slice(-2).join(":"),
+      key: card.getAttribute("data-temple-key")!,
       desktop: card.querySelector("img")!.getAttribute("src")!,
       mobile: card.querySelector("source")?.getAttribute("srcset") || card.querySelector("img")!.getAttribute("src")!,
     }));

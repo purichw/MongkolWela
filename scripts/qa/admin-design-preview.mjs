@@ -5,7 +5,7 @@ import temples from "../../api/admin/temples.js";
 import analytics from "../../api/admin/analytics.js";
 import media from "../../api/admin/media.js";
 import activities from "../../api/admin/activities.js";
-import commerce from "../../api/commerce/index.js";
+import commerce from "../../api/commerce.js";
 
 // Review the real read handlers without bypassing authentication or publishing.
 const handlers = { session, content, temples, analytics, media, activities };

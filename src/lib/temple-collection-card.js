@@ -16,6 +16,7 @@ export function renderTempleCollectionCard(item, placeholderSrc) {
     district: item.district, blessings: item.blessings, "place-type": item.placeType,
     "object-hero": item.objectHero, latitude: item.latitude, longitude: item.longitude,
     "card-key": item.key,
+    "temple-key": item.cmsKey || "",
     "search-text": [item.name, item.region, item.province, item.district, item.blessings, item.objectHero].filter(Boolean).join(" "),
   };
   return `<article class="popular-temple-card temple-collection-v2-card${hasImage ? "" : " is-placeholder"}"

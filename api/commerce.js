@@ -1,1 +1,1 @@
-export { default } from "./commerce/index.js";
+export { default } from "./commerce/_handler.js";

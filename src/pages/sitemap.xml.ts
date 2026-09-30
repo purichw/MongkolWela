@@ -1,5 +1,7 @@
 import type { APIRoute } from "astro";
-import { applyTempleImageOverrides, templePlaceholderImage } from "../data/temple-images.js";
+import { templePlaceholderImage } from "../data/temple-images.js";
+import { applyTempleCmsRecords } from "../data/temple-cms.js";
+import { readLiveContent } from "../../api/admin/_shared.js";
 import { getTempleDetailUrl } from "../data/temple-slugs.js";
 import { tarotMeaningCards } from "../data/tarot-meanings.js";
 import popularTemples from "../data/popular-temples.json";
@@ -43,11 +45,7 @@ const staticEntries: SitemapEntry[] = [
   { path: "/temples/thailand/", priority: "0.92", changefreq: "weekly" },
 ];
 
-const templeEntries: SitemapEntry[] = [
-  ...createTempleEntries("popular", popularTemples, "0.82"),
-  ...createTempleEntries("mu", muTemples, "0.8"),
-  ...createTempleEntries("sacred", sacredTemples, "0.78"),
-];
+export const prerender = false;
 
 const tarotMeaningEntries: SitemapEntry[] = tarotMeaningCards.map((card) => ({
   path: `/tarot/meanings/${card.slug}/`,
@@ -57,6 +55,14 @@ const tarotMeaningEntries: SitemapEntry[] = tarotMeaningCards.map((card) => ({
 }));
 
 export const GET: APIRoute = async () => {
+  let content;
+  try { content = await readLiveContent(); }
+  catch { return new Response("Sitemap temporarily unavailable", { status: 503, headers: { "Cache-Control": "no-store", "Retry-After": "60" } }); }
+  const templeEntries = [
+    ...createTempleEntries("popular", popularTemples, "0.82", content),
+    ...createTempleEntries("mu", muTemples, "0.8", content),
+    ...createTempleEntries("sacred", sacredTemples, "0.78", content),
+  ];
   const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${[
     ...staticEntries,
     ...tarotMeaningEntries,
@@ -68,12 +74,13 @@ export const GET: APIRoute = async () => {
   return new Response(body, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "no-store",
     },
   });
 };
 
-function createTempleEntries(collection: "popular" | "mu" | "sacred", temples: unknown[], priority: string) {
-  const rows = applyTempleImageOverrides(collection, [...temples]);
+function createTempleEntries(collection: "popular" | "mu" | "sacred", temples: unknown[], priority: string, content: any) {
+  const rows = applyTempleCmsRecords(collection, [...temples], content);
   return rows.map((temple: any) => {
     const image = temple.imageUrl && temple.imageUrl !== templePlaceholderImage
       ? imageEntry(temple.imageUrl, temple.imageAlt || `${temple.name} ${temple.province}`, `${temple.name} ${temple.province}`)

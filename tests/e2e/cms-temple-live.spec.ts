@@ -1,9 +1,11 @@
 import { sitePlaceholderImage } from "../../src/lib/image-placeholder.js";
 import { expect, test } from "@playwright/test";
 import { watArunPopularRoute } from "../../src/data/nfr-key-routes.js";
+import { createLegacyTempleSlug } from "../../src/data/temple-slugs.js";
+import popularTemples from "../../src/data/popular-temples.json" with { type: "json" };
 
 test("published image clears and deleted places override built pages", async ({ page }) => {
-  const slug = decodeURIComponent(watArunPopularRoute).split("/").filter(Boolean).at(-1);
+  const slug = createLegacyTempleSlug(popularTemples.find(item => item.name === "วัดอรุณ"));
   const record = { enabled: true, status: "published", fields: { name: "ชื่อจากข้อมูลสด", imageUrl: "", imageAlt: "" }, images: { card: { desktop: { url: "" }, mobile: { url: "" } }, hero: { desktop: { url: "" }, mobile: { url: "" } } } };
   const content = { schemaVersion: 1, cmsContractVersion: 2, navigation: { tabs: [], utility: [] }, pages: [], temples: { records: { [`popular:${slug}`]: record } } };
   await page.route("**/api/admin/content?*", (route) => route.fulfill({ json: { ok: true, content } }));

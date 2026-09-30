@@ -9,7 +9,7 @@ import BrandOrnament from "./BrandOrnament.astro";
 import { getTempleTravel } from "../data/temple-travel.js";
 import { getTempleVisitInfo } from "../data/temple-visit-info.js";
 import { getTempleCmsRecordMap } from "../data/temple-cms.js";
-import { getTempleDetailUrl, createTempleSlug } from "../data/temple-slugs.js";
+import { getTempleDetailUrl, createLegacyTempleSlug } from "../data/temple-slugs.js";
 import { absoluteUrl, createTempleJsonLd } from "../lib/seo.js";
 import { createPlaceModel, renderIdentity, renderImageCredit, renderHighlights, renderLocation, renderVisit, renderTravel, icon } from "../lib/place-detail-view.js";
 import "../styles/place-detail.css";
@@ -72,12 +72,13 @@ interface Props {
   };
   placeholderImage: string;
   relatedTemples?: Props["temple"][];
+  content?: any;
 }
 
 
-const { collection, collectionLabel, collectionHref, temple, placeholderImage, relatedTemples = [] } = Astro.props as Props;
-const key = temple.cmsKey || `${collection}:${createTempleSlug(temple)}`;
-const override = getTempleCmsRecordMap()[key] || {};
+const { collection, collectionLabel, collectionHref, temple, placeholderImage, relatedTemples = [], content } = Astro.props as Props;
+const key = temple.cmsKey || `${collection}:${createLegacyTempleSlug(temple)}`;
+const override = getTempleCmsRecordMap(content)[key] || {};
 const seed = { key, record: temple, visit: getTempleVisitInfo(temple), collectionLabel, collectionHref, placeholderImage };
 const vm = createPlaceModel(seed, override);
 const imageUrl = (temple.detailImageUrl ?? temple.imageUrl) || placeholderImage;
@@ -151,7 +152,7 @@ const rank = Number(temple.rank);
     {relatedTemples.length > 0 && <section class="pd-related" aria-labelledby="pd-related-title">
       <header class="pd-section-heading"><IconMedallion class="pd-medallion"><SiteIcon name="temple" /></IconMedallion><div><h2 id="pd-related-title">แนะนำในชุดเดียวกัน</h2><p>{collectionLabel}</p></div><a class="pd-all-link" href={collectionHref}>ดูทั้งหมด <SiteIcon name="arrow-right" /></a></header>
       <div class="pd-related-rail" data-related-rail>
-        {relatedTemples.slice(0, 3).map(item => <a href={getTempleDetailUrl(collection, item)} class="pd-related-card">
+        {relatedTemples.slice(0, 3).map(item => <a href={getTempleDetailUrl(collection, item)} data-temple-key={item.cmsKey || `${collection}:${createLegacyTempleSlug(item)}`} class="pd-related-card">
           <div class="pd-related-image"><TempleResponsiveImage desktopSrc={item.imageUrl || placeholderImage} mobileSrc={item.imageMobileUrl === "" ? placeholderImage : item.imageMobileUrl ?? item.imageUrl} alt={item.imageAlt ?? item.name} loading="lazy" decoding="async" fallbackSrc={placeholderImage} />{Number(item.rank) > 0 && <span>#{String(item.rank).padStart(2, "0")}</span>}</div>
           <div class="pd-related-copy"><div><strong>{item.name}</strong><small>{[item.province, item.district].filter(Boolean).join(" · ")}</small></div><SiteIcon name="chevron-right" /></div>
         </a>)}

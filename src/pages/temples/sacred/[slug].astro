@@ -1,35 +1,20 @@
 ---
 import TempleDetail from "../../../components/TempleDetail.astro";
-import sacredTemples from "../../../data/sacred-temples.json";
-import { applyTempleImageOverrides, templePlaceholderImage } from "../../../data/temple-images.js";
-import { createTempleSlug } from "../../../data/temple-slugs.js";
-import { templeDirectoryPages } from "../../../data/temple-directory-content.js";
+import { templePlaceholderImage } from "../../../data/temple-images.js";
+import { loadTemplePage } from "../../../server/temple-page.js";
 
-const temples = applyTempleImageOverrides("sacred", [...sacredTemples]);
-const pageContent = templeDirectoryPages.sacred;
-type Temple = (typeof temples)[number];
-
-export function getStaticPaths() {
-  const staticTemples = applyTempleImageOverrides("sacred", [...sacredTemples]) as Temple[];
-  return staticTemples.map((temple: Temple) => {
-    const byProvince = staticTemples.filter((item) => item.name !== temple.name && item.province === temple.province);
-    const byRegion = staticTemples.filter((item) => item.name !== temple.name && item.province !== temple.province && item.region === temple.region);
-    const rest = staticTemples.filter((item) => item.name !== temple.name && item.province !== temple.province && item.region !== temple.region);
-    return {
-      params: { slug: createTempleSlug(temple) },
-      props: { temple, relatedTemples: [...byProvince, ...byRegion, ...rest].slice(0, 3) },
-    };
-  });
-}
-
-const { temple, relatedTemples } = Astro.props;
+export const prerender = false;
+const page = await loadTemplePage("sacred", Astro.params.slug, Astro.url);
+if (page.response) return page.response;
+Astro.response.headers.set("Cache-Control", "no-store");
 ---
 
 <TempleDetail
   collection="sacred"
-  collectionLabel={pageContent.mapTitle}
-  collectionHref={pageContent.collectionHref}
-  temple={temple}
+  collectionLabel="วัดเด่นขอพร"
+  collectionHref="/temples/sacred/"
+  temple={page.temple}
+  content={page.content}
   placeholderImage={templePlaceholderImage}
-  relatedTemples={relatedTemples}
+  relatedTemples={page.relatedTemples}
 />

@@ -1,7 +1,7 @@
 import { normalizePlaceholderImage } from "../lib/image-placeholder.js";
 import liveContent from "../../public/admin/content/live.json" with { type: "json" };
 import templeImageOverrides from "./temple-image-overrides.json" with { type: "json" };
-import { createTempleSlug } from "./temple-slugs.js";
+import { createLegacyTempleSlug, generateTempleSlug, templeSlugError, uniqueTempleSlug } from "./temple-slugs.js";
 
 export const templeCollectionConfig = {
   popular: {
@@ -102,7 +102,13 @@ function mergeTempleRecord(baseTemple, record, collection, key) {
   const fallbackImage = fields.imageUrl ?? merged.imageUrl ?? "";
   const fallbackAlt = fields.imageAlt ?? merged.imageAlt ?? `${merged.name || "สถานที่"} ${merged.province || ""}`.trim();
   const images = normalizeTempleImages(record?.images, fallbackImage, fallbackAlt);
-  const slug = record?.slug || merged.cmsSlug || createTempleSlug(merged);
+  const storedSlug = record?.slug || merged.cmsSlug || "";
+  const slug = !templeSlugError(storedSlug) ? storedSlug : generateTempleSlug(baseTemple?.name ? baseTemple : merged);
+  const aliases = [...new Set([
+    ...(baseTemple?.name ? [createLegacyTempleSlug(baseTemple), generateTempleSlug(baseTemple)] : []),
+    storedSlug,
+    ...(Array.isArray(record?.slugAliases) ? record.slugAliases : []),
+  ].filter(value => typeof value === "string" && value && !/[/?#\\]/.test(value)))];
 
   return {
     ...merged,
@@ -112,6 +118,10 @@ function mergeTempleRecord(baseTemple, record, collection, key) {
       ? `${baseTemple.name}|${baseTemple.province}`.normalize("NFC").replace(/\s+/g, "").toLocaleLowerCase("th")
       : key,
     cmsSlug: slug,
+    cmsSlugAliases: aliases.filter(value => value !== slug),
+    cmsSlugMode: record?.slugMode || (storedSlug && !templeSlugError(storedSlug) ? "custom" : "auto"),
+    cmsSlugExplicit: Boolean(storedSlug && !templeSlugError(storedSlug)),
+    cmsHidden: record?.status === "deleted" || record?.enabled === false,
     cmsSource: record?.source || (baseTemple ? "dataset" : "admin"),
     cmsImages: images,
     imageUrl: normalizePlaceholderImage(images.card.desktop.url),
@@ -125,7 +135,7 @@ function mergeTempleRecord(baseTemple, record, collection, key) {
   };
 }
 
-export function applyTempleCmsRecords(collection, temples, content = liveContent) {
+export function applyTempleCmsRecords(collection, temples, content = liveContent, { includeHidden = false } = {}) {
   const records = recordsFromContent(content);
   const legacyOverrides = content?.temples?.overrides || {};
   const explicitOrder = collectionOrderFromContent(content, collection);
@@ -133,20 +143,28 @@ export function applyTempleCmsRecords(collection, temples, content = liveContent
   const merged = [];
 
   temples.map((temple) => applyImageOverride(collection, temple)).forEach((temple) => {
-    const baseSlug = createTempleSlug(temple);
+    const baseSlug = createLegacyTempleSlug(temple);
     const key = `${collection}:${baseSlug}`;
     const record = records[key] || legacyOverrides[key];
     usedKeys.add(key);
-    if (record?.status === "deleted" || record?.enabled === false) return;
     merged.push(mergeTempleRecord(temple, record, collection, key));
   });
 
   Object.entries(records).forEach(([key, record]) => {
-    if (usedKeys.has(key) || record?.collection !== collection || record?.status === "deleted" || record?.enabled === false) return;
+    if (usedKeys.has(key) || record?.collection !== collection) return;
     merged.push(mergeTempleRecord({}, record, collection, key));
   });
 
-  const ranked = merged.sort((a, b) => {
+  const occupied = new Set(merged.filter(item => item.cmsSlugExplicit).flatMap(item => [item.cmsSlug, ...item.cmsSlugAliases]));
+  for (const item of [...merged].sort((a, b) => a.cmsKey.localeCompare(b.cmsKey))) {
+    if (item.cmsSlugExplicit) continue;
+    const proposed = item.cmsSlug;
+    item.cmsSlug = uniqueTempleSlug(proposed, occupied);
+    item.cmsSlugAliases = item.cmsSlugAliases.filter(alias => alias !== item.cmsSlug);
+    occupied.add(item.cmsSlug);
+    for (const alias of item.cmsSlugAliases) occupied.add(alias);
+  }
+  const ranked = merged.filter(item => includeHidden || !item.cmsHidden).sort((a, b) => {
     const rankDifference = (Number(a.rank) || Number.MAX_SAFE_INTEGER) - (Number(b.rank) || Number.MAX_SAFE_INTEGER);
     return rankDifference || String(a.name || "").localeCompare(String(b.name || ""), "th");
   });

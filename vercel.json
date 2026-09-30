@@ -1,5 +1,11 @@
 {
+  "framework": "astro",
+  "buildCommand": "npm run build",
   "rewrites": [
+    {
+      "source": "/api/commerce/index",
+      "destination": "/api/commerce"
+    },
     {
       "source": "/api/temple-search",
       "destination": "/api/temple-planner/data?view=search"
@@ -126,7 +132,7 @@
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=3600, stale-while-revalidate=86400"
+          "value": "no-store"
         }
       ]
     },

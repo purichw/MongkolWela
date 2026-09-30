@@ -38,7 +38,7 @@ const securityHeaders = [
 const cacheChecks = [
   {
     path: "/sitemap.xml",
-    expected: "public, max-age=3600, stale-while-revalidate=86400",
+    expected: "no-store",
   },
   {
     path: "/assets/data/temples-thailand.json",
