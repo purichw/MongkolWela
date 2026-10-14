@@ -1,4 +1,5 @@
 import { requestJson } from "./request.js";
+import { settlePageContent } from "./page-content-ready.js";
 import { startContentRefresh } from "./content-refresh.js";
 import { ACTIVITY_TYPES, activityDateLabel, safeActivityUrl, safeActivityImageUrl } from "../lib/temple-activities.js";
 import { icon } from "../lib/place-detail-view.js";
@@ -96,7 +97,7 @@ document.querySelectorAll("[data-temple-activities]").forEach((root) => {
     } catch {
       failed = true;
       render();
-    } finally { loading = false; result.setAttribute("aria-busy", "false"); }
+    } finally { loading = false; result.setAttribute("aria-busy", "false"); settlePageContent(root); }
   }
 
   root.querySelectorAll("[data-activity-period]").forEach((button) => button.addEventListener("click", () => {

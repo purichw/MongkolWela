@@ -5,7 +5,7 @@ import SiteIcon from "../../components/icons/SiteIcon.astro";
 import { iconAttributes } from "../../lib/ui-markup.js";
 ---
 <BaseLayout title="ค้นหาวัดและสถานที่ | มงคลเวลา" description="ค้นหาวัดดังน่าไป วัดเด่นขอพร และพิกัดสายมู ตามจังหวัดและความตั้งใจ" page="templeSearch" canonicalPath="/search/" robots="noindex, follow">
-  <main class="temple-search-page" data-search-page data-cms-preserve-section-order>
+  <main class="temple-search-page" data-page-pending="search" data-search-page data-cms-preserve-section-order>
     <nav class="temple-search-page__breadcrumb" aria-label="เส้นทางนำทาง"><a data-cms-field="1e6d4bcc-1" href="/">หน้าแรก</a><span>/</span><span data-cms-field="1e6d4bcc-2">ค้นหาวัดและสถานที่</span></nav>
     <h1 data-cms-field="1e6d4bcc-3">ค้นหาวัดและสถานที่</h1>
     <TempleSearchForm id="results-temple-search" variant="results" />

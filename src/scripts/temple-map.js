@@ -387,6 +387,7 @@ function loadStylesheet(href) {
   if (document.querySelector(`link[href="${href}"]`)) return Promise.resolve();
   const link = document.createElement("link");
   link.rel = "stylesheet";
+  link.dataset.pageNonblocking = "";
   link.href = href;
   document.head.appendChild(link);
   return Promise.resolve();

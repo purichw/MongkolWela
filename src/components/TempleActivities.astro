@@ -6,7 +6,7 @@ import TempleSectionEmpty from "./TempleSectionEmpty.astro";
 interface Props { templeId: string; }
 const { templeId } = Astro.props;
 ---
-<section class="temple-activities temple-community-section" data-temple-activities data-temple-id={templeId} aria-labelledby="temple-activities-heading">
+<section class="temple-activities temple-community-section" data-page-pending="activities" data-temple-activities data-temple-id={templeId} aria-labelledby="temple-activities-heading">
   <header class="temple-community-heading">
     <div class="temple-community-title"><IconMedallion class="temple-community-medallion"><SiteIcon name="calendar-days" /></IconMedallion><div><h2 data-cms-field="c2d8d4a2-1" id="temple-activities-heading">กิจกรรมและงานบุญ</h2></div></div>
     <div class="temple-activities-tabs" role="group" aria-label="ช่วงเวลากิจกรรม" data-activity-enhanced hidden>

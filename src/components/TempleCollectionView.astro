@@ -175,6 +175,7 @@ const cardKeyFor = (temple: TempleCard) => `${collection}:${temple.rank}`;
         class="popular-temple-grid temple-collection-v2-grid"
         aria-label={meta.gridLabel}
         data-popular-temple-grid
+        data-page-pending="collection"
         data-collection={collection}
         data-collection-data-src={collectionDataSrc}
         data-result-unit={collection === "popular" ? "วัด" : "สถานที่"}

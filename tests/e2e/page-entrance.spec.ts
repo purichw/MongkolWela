@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 test("shared entry waits for fonts on Home, temples and tools, then fades once", async ({ page }) => {
   await page.addInitScript(() => {
     const ready = new Promise(resolve => { (window as any).releaseFonts = resolve; });
-    Object.defineProperty(document.fonts, "ready", { get: () => ready });
+    document.fonts.load = (() => ready) as any;
     document.addEventListener("animationstart", event => {
       if (event.animationName !== "page-content-enter" || (event.target as Element).tagName !== "MAIN") return;
       (window as any).entryStart = {
@@ -58,14 +58,38 @@ test("a fast font response does not flash the loading screen", async ({ page }) 
   expect(await page.evaluate(() => (window as any).fontLoaderShown)).toBe(false);
 });
 
-test("failed or indefinitely pending fonts never leave content hidden", async ({ page }) => {
+test("a pending decorative image cannot block the ready page", async ({ page }) => {
+  let releaseImage!: () => void;
+  const imageReady = new Promise<void>(resolve => { releaseImage = resolve; });
+  await page.route(/(?:\/|%2F)stupa[.]/, async route => {
+    await imageReady;
+    await route.abort();
+  });
+  try {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("html")).toHaveClass(/page-fonts-ready/);
+    // Cross the slow-load threshold while an eager loader image is still pending.
+    await page.waitForTimeout(1200);
+    expect(await page.evaluate(() => document.readyState)).toBe("interactive");
+    await expect(page.locator("html")).not.toHaveClass(/\bis-loading\b/);
+    await expect(page.locator("[data-page-loader]")).toHaveAttribute("aria-hidden", "true");
+    await expect(page.locator("#hero-title")).toBeVisible();
+  } finally {
+    releaseImage();
+  }
+});
+
+test("indefinitely pending fonts offer recovery instead of revealing an unfinished page", async ({ page }) => {
+  await page.clock.install();
   await page.addInitScript(() => {
-    Object.defineProperty(document.fonts, "ready", { get: () => new Promise(() => {}) });
+    document.fonts.load = () => new Promise(() => {});
   });
   await page.goto("/", { waitUntil: "domcontentloaded" });
-  await expect(page.locator("html")).toHaveClass(/page-fonts-ready/, { timeout: 3500 });
-  await expect(page.locator("#hero-title")).toBeVisible();
-  await expect(page.locator("main")).toHaveCSS("opacity", "1");
+  await page.clock.runFor(31000);
+  await expect(page.locator("html")).toHaveClass(/page-fonts-pending/);
+  await expect(page.locator("[data-page-recovery]")).toBeVisible();
+  await expect(page.getByRole("button", { name: "ลองโหลดใหม่" })).toBeVisible();
+  await expect(page.locator("main")).toHaveCSS("opacity", "0");
 });
 
 test("lazy images fade through intermediate frames without changing card geometry", async ({ page }) => {

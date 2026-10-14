@@ -6,7 +6,7 @@ import TempleSectionEmpty from "./TempleSectionEmpty.astro";
 interface Props { templeId: string }
 const { templeId } = Astro.props;
 ---
-<section class="temple-commerce temple-community-section" data-temple-commerce={templeId} aria-labelledby="temple-commerce-heading">
+<section class="temple-commerce temple-community-section" data-page-pending="temple-commerce" data-temple-commerce={templeId} aria-labelledby="temple-commerce-heading">
   <header class="temple-community-heading">
     <div class="temple-community-title">
       <IconMedallion class="temple-community-medallion"><SiteIcon name="coins" /></IconMedallion>

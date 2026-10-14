@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import fs from "node:fs";
 
 const iconNames = [
   "temple", "stupa", "incense", "lotus", "amulet",
@@ -7,8 +8,7 @@ const iconNames = [
 
 test.beforeEach(async ({ page }) => {
   await page.route("**/api/admin/content*", (route) => route.fulfill({
-    path: "public/admin/content/live.json",
-    contentType: "application/json",
+    json: { ok: true, content: JSON.parse(fs.readFileSync("public/admin/content/live.json", "utf8")) },
   }));
 });
 
@@ -23,12 +23,8 @@ test("loading images preserve the existing animation and release behavior", asyn
   for (let index = 0; index < iconNames.length; index += 1) {
     const icon = icons.nth(index);
     const source = new URL((await icon.getAttribute("src"))!, page.url());
-    if (source.pathname === "/_image") {
-      expect(source.searchParams.get("href")).toMatch(new RegExp(`/${iconNames[index]}\\.png(?:\\?|$)`));
-      expect(source.searchParams.get("f")).toBe("webp");
-    } else {
-      expect(source.pathname).toMatch(new RegExp(`/${iconNames[index]}\\..*\\.webp$`));
-    }
+    expect(source.pathname).not.toBe("/_image");
+    expect(source.pathname).toMatch(new RegExp(`/${iconNames[index]}(?:\\.[^/]+)?\\.webp$`));
     await expect(icon).toHaveCSS("animation-name", "loader-icon-cycle");
     await expect(icon).toHaveCSS("animation-duration", "8.2s");
     await expect(icon).toHaveCSS("animation-delay", `${Number((index * 0.82).toFixed(2))}s`);

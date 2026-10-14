@@ -342,7 +342,7 @@ function ensureLeaflet() {
   if (leafletPromise) return leafletPromise;
   leafletPromise = new Promise((resolve, reject) => {
     if (!document.querySelector("link[data-pd-leaflet]")) {
-      const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"; css.dataset.pdLeaflet = ""; document.head.append(css);
+      const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"; css.dataset.pdLeaflet = ""; css.dataset.pageNonblocking = ""; document.head.append(css);
     }
     const script = document.createElement("script");
     script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"; script.async = true;

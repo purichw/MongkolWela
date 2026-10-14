@@ -24,5 +24,7 @@ test("timeouts, malformed responses and HTTP errors are recoverable failures", a
     await assert.rejects(requestJson("http://test"), (error) => error.status === 409 && error.payload.code === "CATALOG_CHANGED");
     globalThis.fetch = async (_url, options) => { assert.equal(options.cache, "no-store"); return Response.json({ ok: true }); };
     assert.deepEqual(await requestJson("http://test"), { ok: true });
+    globalThis.fetch = async (_url, options) => { assert.equal(options.cache, "force-cache"); return Response.json({ items: [] }); };
+    assert.deepEqual(await requestJson("http://test/static-index.json", { cache: "force-cache" }), { items: [] });
   } finally { globalThis.fetch = original; }
 });

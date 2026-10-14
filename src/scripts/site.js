@@ -19,3 +19,4 @@ initHeroCarousel();
 initMobileNavigation();
 initTempleSearch();
 initPublicSelects();
+window.MongkolWelaPageReady?.settle("runtime");

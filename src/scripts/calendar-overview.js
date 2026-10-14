@@ -1,6 +1,7 @@
 import { thaiMonthNames, toIsoDate, weekdayNames } from "./thai-calendar-core.js";
 import { renderIconMedallion } from "../lib/ui-markup.js";
 import { syncPublicSelects } from "./public-select.js";
+import { settlePageContent } from "./page-content-ready.js";
 import { calendarUrl, createCalendarStore, eventTypes, getImportantDays, getPeriodSummary, monthShortNames, readCalendarState, shiftMonth } from "./calendar-view-model.js";
 
 export function mountCalendar(root) {
@@ -83,6 +84,7 @@ export function mountCalendar(root) {
     } finally {
       workspace.setAttribute("aria-busy", "false");
       summary.setAttribute("aria-busy", "false");
+      settlePageContent(root);
     }
   }
 

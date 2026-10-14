@@ -19,7 +19,7 @@ const guides = [
 ] as const;
 ---
 <BaseLayout title="วางแผนไหว้พระ | มงคลเวลา" description="เลือกสถานที่และจัดลำดับเส้นทาง พร้อมเวลาและระยะทางประมาณสำหรับวางแผนไหว้พระ" lang="th" locale="th" page="templesPlanner" bodyClass="temple-planner-page" canonicalPath="/temples/planner/" image={banner.imageUrl} imageAlt={banner.imageAlt}>
-  <main class="temple-planner" data-temple-planner data-planner-data-src="/api/temple-planner/data" data-planner-default-purpose="การงาน" data-workspace-view="initial">
+  <main class="temple-planner" data-page-pending="planner" data-temple-planner data-planner-data-src="/api/temple-planner/data" data-planner-default-purpose="การงาน" data-workspace-view="initial">
     <TempleSearchHero banner={banner} breadcrumbs={[{label:"หน้าแรก",href:"/"},{label:"วัด",href:"/temples/"},{label:"วางแผนไหว้พระ"}]} kicker="เครื่องมือหลักของมงคลเวลา" title="วางแผนไหว้พระ" description="กำหนดจำนวนสถานที่ พื้นที่ เวลา และวัตถุประสงค์ด้านมงคล แล้วจัดลำดับเส้นทางจากพิกัด พร้อมระยะและเวลาโดยประมาณ">
       <Fragment slot="quote">“ทุกเส้นทาง<br />อาจพาคุณไปพบสิ่งที่ดีขึ้น”</Fragment>
     </TempleSearchHero>

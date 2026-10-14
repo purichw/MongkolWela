@@ -12,6 +12,8 @@ import { createMediaLibrary } from "./admin/media-library.js";
 import { createAdminAnalytics } from "./admin/analytics.js";
 import { createTempleEditor } from "./admin/editor.js";
 import { requestJson } from "./request.js";
+import { settlePageContent } from "./page-content-ready.js";
+import { initPageLoader } from "./page-loader.js";
 import { adminIcon, createAdminDesign } from "./admin/design.js";
 import { catalogTaxonomy, mediaProviderStatus } from "./admin/data.js";
 const state = {
@@ -202,9 +204,11 @@ async function boot() {
     await loadContent();
     renderAdmin();
     setStatus("กำลังโหลดข้อมูลเสริม...", "info");
-    void loadSecondaryAdminData();
+    await loadSecondaryAdminData();
   } catch (error) {
     renderLogin(error.status === 401 ? "" : error.message);
+  } finally {
+    settlePageContent($("#adminApp"));
   }
 }
 
@@ -2099,4 +2103,5 @@ document.addEventListener("keydown", event => {
   }
 });
 
+initPageLoader();
 boot();

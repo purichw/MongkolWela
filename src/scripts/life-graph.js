@@ -3,10 +3,16 @@ import { calculateLifeGraph } from "./life-graph-engine.js";
 import { ThaiCalendarProvider } from "./thai-calendar-provider.js";
 import { renderIcon } from "../lib/ui-markup.js";
 import { onCmsContent } from "./content-ready.js";
+import { settlePageContent } from "./page-content-ready.js";
 
 const form = document.querySelector("[data-life-graph-form]");
 const output = document.querySelector("[data-life-graph-output]");
-onCmsContent(() => { if (form && output) initLifeGraph(form, output); }, { once: true });
+onCmsContent(() => { if (form && output) initLifeGraph(form, output); }, { once: true, onUnavailable: () => {
+  if (!output) return;
+  output.innerHTML = `<div class="output-empty" role="status">${renderIcon("info")}<strong>ยังเตรียมกราฟชีวิตไม่ได้</strong><p>ไม่สามารถโหลดคำอ่านล่าสุดได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง</p></div>`;
+  output.setAttribute("aria-busy", "false");
+  settlePageContent(output);
+} });
 
 function initLifeGraph(form, output) {
   const provider = new ThaiCalendarProvider();
@@ -56,6 +62,7 @@ function initLifeGraph(form, output) {
       if (current === request) {
         submit.disabled = false;
         output.setAttribute("aria-busy", "false");
+        settlePageContent(output);
       }
     }
   }

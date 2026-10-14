@@ -217,7 +217,10 @@ const topicResults = {
   },
 };
 
-onCmsContent(initSpreadResult);
+onCmsContent(initSpreadResult, { onUnavailable: () => {
+  const root = document.querySelector("[data-tarot-spread-result]");
+  if (root) root.innerHTML = renderEmptyReading("ยังโหลดคำทำนายไม่ได้", "ไม่สามารถโหลดคำอ่านล่าสุดได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง");
+} });
 
 function initSpreadResult() {
   const root = document.querySelector("[data-tarot-spread-result]");

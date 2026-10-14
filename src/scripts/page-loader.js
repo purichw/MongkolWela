@@ -49,10 +49,11 @@ export function initPageLoader() {
   document.documentElement.classList.remove("is-loading");
   scheduleSlowLoad(state);
 
-  if (document.readyState === "complete") {
+  // The head gate owns initial CSS, fonts and route data. Images/analytics do not.
+  if (window.MongkolWelaPageReady?.ready) {
     finishLoader(state);
   } else {
-    window.addEventListener("load", () => finishLoader(state), { once: true });
+    document.addEventListener("mw:page-ready", () => finishLoader(state), { once: true });
   }
 
   window.addEventListener("pageshow", (event) => {
@@ -158,11 +159,11 @@ function resetLoader(state) {
 }
 
 function scheduleSlowLoad(state) {
-  if (document.readyState === "complete") return;
+  if (window.MongkolWelaPageReady?.ready) return;
 
   window.clearTimeout(state.slowTimer);
   state.slowTimer = window.setTimeout(() => {
-    if (document.readyState === "complete" || state.visible) return;
+    if (window.MongkolWelaPageReady?.ready || state.visible) return;
 
     startLoader(state, {
       className: "is-loading",

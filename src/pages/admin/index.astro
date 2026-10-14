@@ -1,5 +1,7 @@
 ---
 import { brandAssets, siteConfig } from "../../config/site.js";
+import PageEntrance from "../../components/PageEntrance.astro";
+import LoadingScreen from "../../components/LoadingScreen.astro";
 import { stylesForPath } from "../../config/styles.js";
 import adminDesign from "../../styles/admin-design.css?url";
 import adminContentLibrary from "../../styles/admin-content-library.css?url";
@@ -24,6 +26,7 @@ const config = siteConfig.th;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ระบบจัดการเว็บ | มงคลเวลา</title>
     <meta name="robots" content="noindex,nofollow" />
+    <PageEntrance cms={false} runtime={false} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -48,8 +51,10 @@ const config = siteConfig.th;
     <link rel="stylesheet" href={adminMediaLibrary} />
   </head>
   <body class="admin-page admin-design">
+    <LoadingScreen />
     <div
       id="adminApp"
+      data-page-pending="admin"
       data-admin-app
       data-brand-name={config.brandName}
       data-brand-subtitle="ADMIN CONSOLE"

@@ -171,6 +171,7 @@ function loadStylesheet(href) {
   return new Promise((resolve, reject) => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
+    link.dataset.pageNonblocking = "";
     link.href = href;
     link.onload = resolve;
     link.onerror = event => { link.remove(); reject(event); };

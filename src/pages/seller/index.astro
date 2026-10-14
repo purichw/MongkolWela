@@ -1,6 +1,9 @@
 ---
 import { brandAssets } from "../../config/site.js";
 import tokens from "../../styles/tokens.css?url";
+import base from "../../styles/base.css?url";
+import PageEntrance from "../../components/PageEntrance.astro";
+import LoadingScreen from "../../components/LoadingScreen.astro";
 import "../../styles/commerce.css";
 ---
 <!doctype html>
@@ -9,18 +12,23 @@ import "../../styles/commerce.css";
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex,nofollow" /><meta name="referrer" content="no-referrer" />
     <title>จัดการร้านค้าและร่วมบุญ | มงคลเวลา</title>
+    <PageEntrance cms={false} runtime={false} />
     <link rel="icon" href={brandAssets.favicon.src} />
     <link rel="stylesheet" href={tokens} />
+    <link rel="stylesheet" href={base} />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body class="commerce-console">
+    <LoadingScreen />
     <header class="commerce-console-header"><a href="/"><img src={brandAssets.mark.src} width="40" height="40" alt="" /><strong>มงคลเวลา</strong></a><span>ร้านค้าและร่วมบุญ</span><nav><a href="/shop/">หน้าร้าน</a><a href="/admin/">Admin ส่วนกลาง</a><button class="commerce-button secondary" type="button" data-seller-logout hidden>ออกจากระบบผู้ขาย</button></nav></header>
-    <main class="commerce-console-main" data-commerce-console>
+    <main class="commerce-console-main" data-page-pending="seller" data-commerce-console>
       <div class="commerce-message" role="status" aria-live="polite" data-seller-message></div>
       <div data-seller-content aria-busy="true">กำลังตรวจสอบสิทธิ์</div>
     </main>
     <script>
       import { mountCommerceConsole } from "../../scripts/commerce-console.js";
+      import { initPageLoader } from "../../scripts/page-loader.js";
+      initPageLoader();
       const root = document.querySelector("[data-commerce-console]");
       if (root) mountCommerceConsole(root);
     </script>

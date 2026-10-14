@@ -19,6 +19,7 @@ const CMS_EDITABLE_CONTRACT_VERSION = 2;
 let activeContent = null;
 let activeRevision = "";
 let contentLoading = false;
+let bootstrapChecked = false;
 let pageviewTracked = false;
 let disabledPageChildren = null;
 const appliedPatches = new Map();
@@ -55,6 +56,22 @@ function normalizeCmsContent(content) {
 }
 
 async function loadContent(signal) {
+  if (!bootstrapChecked) {
+    bootstrapChecked = true;
+    const bootstrap = document.querySelector("script[data-cms-bootstrap]");
+    if (bootstrap) {
+      bootstrap.remove();
+      try {
+        const payload = JSON.parse(bootstrap.textContent);
+        const content = normalizeCmsContent(payload.content);
+        if (payload.ok === true && payload.path === window.location.pathname && typeof payload.revision === "string" && payload.revision && content) {
+          return { content, revision: payload.revision };
+        }
+      } catch {
+        // Invalid bootstrap data must still use the live API, not a seed fallback.
+      }
+    }
+  }
   const path = encodeURIComponent(window.location.pathname);
   const revision = activeRevision ? `&revision=${encodeURIComponent(activeRevision)}` : "";
   const payload = await requestJson(`${CMS_CONTENT_URL}?path=${path}${revision}`, { signal });
@@ -815,6 +832,10 @@ async function bootCmsRuntime() {
   } catch (error) {
     if (!request.isCurrent()) return;
     document.documentElement.dataset.cmsReady = "false";
+    if (!activeContent) {
+      const shell = document.querySelector("[data-cms-page-shell]");
+      if (shell) shell.innerHTML = '<section class="section-shell"><h1>ยังเปิดหน้านี้ไม่ได้</h1><p>ไม่สามารถโหลดเนื้อหาล่าสุดได้ในขณะนี้</p></section>';
+    }
     if (!document.querySelector("[data-cms-load-error]")) {
       const notice = document.createElement("div");
       notice.dataset.cmsLoadError = "true";
@@ -829,10 +850,12 @@ async function bootCmsRuntime() {
       document.querySelector("main")?.prepend(notice);
     }
     console.warn("CMS runtime unavailable", error);
+    document.dispatchEvent(new Event("mw:cms-content-failed"));
   } finally {
     if (request.isCurrent()) {
       contentLoading = false;
       markCmsNavigationReady();
+      window.MongkolWelaPageReady?.settle("cms");
     }
   }
 }

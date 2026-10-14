@@ -3,6 +3,13 @@ import { libraryForPath } from "../data/content-catalog.js";
 import { templeRouteCatalog, resolveTempleRoute } from "./temple-routing.js";
 import { getTempleDetailUrl } from "../data/temple-slugs.js";
 
+export function publicContentPayload(content, pathname) {
+  const projected = pathname ? publicContentForPath(content, pathname) : content;
+  // Publication timestamps alone do not indicate changes to the current page.
+  const { publishedAt, updatedAt, ...revisionContent } = projected;
+  return { ok: true, revision: contentRevision(revisionContent), content: projected };
+}
+
 export function publicContentForPath(content, pathname) {
   const route = `/${String(pathname || "").replace(/^\/+|\/+$/g, "")}/`.replace(/^\/\/$/, "/");
   const detail = route.match(/^\/temples\/(popular|mu|sacred)\/([^/]+)\/$/);

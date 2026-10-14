@@ -7,7 +7,7 @@ import {
   sendJson,
 } from "./_shared.js";
 import { requireAdmin } from "./_auth.js";
-import { publicContentForPath } from "../../src/lib/public-content.js";
+import { publicContentPayload } from "../../src/lib/public-content.js";
 import { contentRevision } from "../../src/lib/content-revision.js";
 import { contentCatalog, validateContentLibrary } from "../../src/data/content-catalog.js";
 import { validateContentPatches } from "../../src/lib/content-patches.js";
@@ -39,13 +39,11 @@ export default async function handler(req, res) {
         return;
       }
       const pathname = params.get("path");
-      const projected = pathname ? publicContentForPath(content, pathname) : content;
-      // Publication timestamps alone do not indicate changes to the current page.
-      const { publishedAt, updatedAt, ...revisionContent } = projected;
-      const revision = contentRevision(revisionContent);
+      const payload = publicContentPayload(content, pathname);
+      const { revision } = payload;
       sendJson(res, 200, params.get("revision") === revision
         ? { ok: true, revision, unchanged: true }
-        : { ok: true, revision, content: projected });
+        : payload);
       return;
     }
 

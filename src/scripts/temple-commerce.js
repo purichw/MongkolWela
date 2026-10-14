@@ -1,5 +1,6 @@
 import { commerceApi, campaignMarkup, channelMarkup, e, money, orgName } from "./commerce-ui.js";
 import { startContentRefresh } from "./content-refresh.js";
+import { settlePageContent } from "./page-content-ready.js";
 import { renderIcon } from "../lib/ui-markup.js";
 import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 
@@ -66,6 +67,7 @@ for (const root of document.querySelectorAll("[data-temple-commerce]")) {
       content.innerHTML = '<div class="temple-commerce-error" role="status"><p>ยังโหลดข้อมูลร้านค้าและร่วมบุญไม่ได้</p><button type="button" class="commerce-button secondary" data-commerce-retry>ลองใหม่</button></div>';
     } finally {
       content.setAttribute("aria-busy", "false");
+      settlePageContent(root);
     }
   }
   root.addEventListener("click", event => {
