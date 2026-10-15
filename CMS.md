@@ -8,6 +8,13 @@ names; custom mode retains the editor's value when the place name changes.
 Saving the drawer updates the draft. Publishing validates and applies the URL.
 
 `temples.records[key].slug` is separate from the immutable legacy CMS `key`.
+The compact `thailand` directory collection does not need a detail slug: it
+reuses the same place editor and publication API with fewer fields, and links
+to a directory row plus Maps. See `docs/thailand-directory.md` and
+`docs/admin-place-editor.md` for coordinate/Plus Code validation and sourcing.
+Source metadata is retained independently of the compact form, with per-fact
+provenance and unknown fields preserved for later search enhancements. Directory
+publication merges that metadata rather than replacing it with visible fields.
 `slugMode` is `auto` or `custom`; `slugAliases` is server-maintained publication
 history, not an editable list. Existing Thai URLs remain HTTP 308 aliases, and
 previously published ASCII URLs remain reserved after rename or deletion.

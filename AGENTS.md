@@ -93,8 +93,8 @@ npm run smoke:production
 - Do not build English routes/copy unless explicitly requested.
 - Keep UI copy concise, Thai, and consistent with Mongkol Wela.
 - Avoid long visible explanations about data sources or internal implementation.
-- Use the exact source text for the all-Thailand temple directory:
-  `ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ`
+- The all-Thailand public directory now uses mapped places, not the raw registry.
+  Preserve visible OSM attribution and do not claim complete national coverage.
 
 ## Design Rules
 
@@ -168,9 +168,16 @@ Keep fields data-driven for future Admin Portal replacement.
 
 ### Thailand Temple Directory
 
-All-Thailand temple directory data must come from the provided `Report_Temple 2.numbers` source only unless the user explicitly changes this.
-
-Do not scrape/export that data from a website on your own.
+The user changed the registry-only direction in October 2026: OpenStreetMap
+sources and manual CMS coordinates/Plus Codes are allowed, without Google Places
+billing. Follow `docs/thailand-directory.md` for quality gates and limits. The
+raw registry contains 41,316 retained rows after the user-approved 3,389-row cleanup
+on 2026-10-16. The shared CMS area lookup is preserved separately; the registry
+is not a public runtime fallback. See `docs/thailand-registry-cleanup.json`. The three
+curated collections must remain untouched and included in the national directory.
+Preserve raw metadata/provenance even for fields not displayed publicly.
+Do not bulk-query public Nominatim or equate an outbound Maps link with a verified
+Google POI. Existing curated collections keep their own source data and routes.
 
 ## Temple Feature Map
 

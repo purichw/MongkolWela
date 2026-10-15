@@ -23,7 +23,7 @@ import admin from "../styles/admin.css?url";
 import adminActivities from "../styles/admin-activities.css?url";
 import site from "../styles/site.css?url";
 import planner from "../styles/temple-planner.css?url";
-import thailand from "../styles/temple-thailand.css?url";
+import thailand from "../styles/directory-places.css?url";
 import popularFilters from "../styles/popular-filters.css?url";
 import publicSelect from "../styles/public-select.css?url";
 import tools from "../styles/tools.css?url";

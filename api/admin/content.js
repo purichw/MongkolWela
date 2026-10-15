@@ -14,6 +14,7 @@ import { validateContentPatches } from "../../src/lib/content-patches.js";
 import { validateHomepageContent } from "../../src/lib/homepage-content.js";
 import { validateNavigation } from "../../src/lib/site-navigation.js";
 import { prepareTempleSlugPublication } from "../../src/lib/temple-routing.js";
+import { thailandDirectoryPage } from "../../src/data/thailand-places.js";
 
 function normalizeContent(content, actor) {
   const now = new Date().toISOString();
@@ -33,6 +34,13 @@ export default async function handler(req, res) {
       const content = await readLiveContent();
       validateContentLibrary(content.contentLibrary);
       const params = new URL(req.url, "http://localhost").searchParams;
+      if (params.get("view") === "directory") {
+        const page = thailandDirectoryPage(content, params);
+        if (params.get("revision") && params.get("revision") !== page.revision) {
+          sendJson(res, 409, { ok: false, error: "รายการสถานที่มีการปรับปรุง กรุณาโหลดผลการค้นหาใหม่" });
+        } else sendJson(res, 200, { ok: true, page });
+        return;
+      }
       if (params.get("view") === "catalog") {
         if (!await requireAdmin(req, res)) return;
         sendJson(res, 200, { ok: true, catalog: contentCatalog() });

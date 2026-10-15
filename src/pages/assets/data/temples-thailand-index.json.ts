@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import fs from "node:fs";
 import path from "node:path";
+import adminAreas from "../../../data/thailand-admin-areas.json";
 
 const DATASET_PATH = path.join(process.cwd(), "public/assets/data/temples-thailand.json");
 const PREVIEW_ROW_COUNT = 20;
@@ -153,7 +154,7 @@ function buildIndex(dataset: { meta?: Record<string, unknown>; rows?: string[][]
       ...(dataset.meta || {}),
       rowCount: Number(dataset.meta?.rowCount) || rows.length,
       sourceLabel: SOURCE_LABEL,
-      indexVersion: 1,
+      indexVersion: 2,
       previewRowCount: Math.min(PREVIEW_ROW_COUNT, rows.length),
     },
     columns: dataset.meta?.columns || [],
@@ -181,7 +182,11 @@ function buildIndex(dataset: { meta?: Record<string, unknown>; rows?: string[][]
 }
 
 function createAreaMap() {
-  return new Map(regionOrder.map((region) => [region, new Map<string, Map<string, Set<string>>>()]));
+  return new Map(adminAreas.regions.map(region => [region.name,
+    new Map(region.provinces.map(province => [province.name,
+      new Map(province.districts.map(district => [district.name, new Set(district.subdistricts)])),
+    ])),
+  ]));
 }
 
 function addClean(set: Set<string>, value: unknown) {

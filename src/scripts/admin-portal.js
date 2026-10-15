@@ -1,4 +1,6 @@
 import { applyImageFallback } from "../lib/image-placeholder.js";
+import { directoryAdminCatalog } from "../lib/directory-places.js";
+import { directorySnapshotBase } from "../lib/directory-snapshot.js";
 import { createAdminPublishing } from "./admin/publishing.js";
 import { createContentLibrary } from "./admin/content-library.js";
 import { createPageContentEditor } from "./admin/page-content.js";
@@ -49,6 +51,7 @@ const TEMPLE_COLLECTIONS = [
   { key: "popular", label: "วัดดังน่าไป" },
   { key: "mu", label: "พิกัดสายมู" },
   { key: "sacred", label: "วัดเด่นขอพร" },
+  { key: "thailand", label: "วัดทั่วประเทศไทย" },
 ];
 
 const TEMPLE_IMAGE_FIELDS = [
@@ -415,8 +418,25 @@ async function loadAnalytics() {
 async function loadTemples() {
   try {
     const payload = await api("/api/admin/temples");
+    const temples = [...(payload.temples || [])];
+    let cursor = payload.page?.nextOffset;
+    while (cursor != null) {
+      const next = await api(`/api/admin/temples?offset=${cursor}&revision=${payload.page.revision}`);
+      if (next.page?.revision !== payload.page.revision || next.page.nextOffset !== null && next.page.nextOffset <= cursor) throw new Error("Catalog version mismatch");
+      temples.push(...next.temples); cursor = next.page.nextOffset;
+    }
+    const directory = payload.directory;
+    let places = [];
+    if (directory) {
+      const response = await fetch(directory.snapshot.url, { signal: AbortSignal.timeout(30000) });
+      if (!response.ok) throw new Error("Directory data unavailable");
+      const snapshot = await response.json();
+      if (snapshot.meta?.datasetRevision !== directory.snapshot.revision) throw new Error("Directory version mismatch");
+      places = directoryAdminCatalog({ temples: { records: directory.records, order: { thailand: directory.order } } },
+        directorySnapshotBase(directory.curated, snapshot));
+    }
     state.templeLoadError = false;
-    state.templeCatalog = payload.temples || [];
+    state.templeCatalog = [...temples, ...places];
     state.publishedTempleKeys = new Set(state.templeCatalog.map(record => record.key));
     const currentExists = state.templeCatalog.some((item) => item.key === state.selectedTempleKey);
     if (!currentExists) {
@@ -1306,6 +1326,8 @@ function handleGlobalClick(event) {
         const saved = JSON.parse(localStorage.getItem("mongkolwela.admin.draft") || "null");
         if (!saved || !Array.isArray(saved.pages)) throw new Error();
         state.content = saved;
+        const base = state.templeCatalog.filter(item => item.collection === "thailand" && state.publishedTempleKeys.has(item.key));
+        state.templeCatalog = [...state.templeCatalog.filter(item => item.collection !== "thailand"), ...directoryAdminCatalog(saved, base)];
         state.baseRevision = localStorage.getItem("mongkolwela.admin.draftRevision") || "";
         state.dirty = true;
         $("#adminDraftNotice").hidden = true;
@@ -1974,7 +1996,7 @@ function addTemple() {
     collectionLabel,
     slug: edit.slug,
     slugMode: edit.slugMode,
-    detailUrl: `/temples/${collection}/${edit.slug}/`,
+    detailUrl: collection === "thailand" ? `/temples/thailand/?place=${encodeURIComponent(key)}#directory-managed` : `/temples/${collection}/${edit.slug}/`,
     source: "admin",
     temple: { ...edit.fields, images: {} },
     visitInfo: {},

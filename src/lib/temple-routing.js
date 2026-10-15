@@ -3,6 +3,7 @@ import mu from "../data/mu-temples.json" with { type: "json" };
 import sacred from "../data/sacred-temples.json" with { type: "json" };
 import { applyTempleCmsRecords } from "../data/temple-cms.js";
 import { getTempleDetailUrl, templeSlugError } from "../data/temple-slugs.js";
+import { validateDirectoryRecords } from "./directory-places.js";
 
 export const templeDatasets = { popular, mu, sacred };
 
@@ -36,6 +37,7 @@ function invalid(message) {
 // remain untouched. Existing publications are the authority for redirect history.
 export function prepareTempleSlugPublication(next, current) {
   const content = structuredClone(next);
+  validateDirectoryRecords(content);
   content.temples ||= {};
   content.temples.records ||= {};
   const records = content.temples.records;
@@ -48,6 +50,8 @@ export function prepareTempleSlugPublication(next, current) {
     }
   }
   for (const [key, record] of Object.entries(records)) {
+    // Directory entries link to their list row and Maps, not a curated detail URL.
+    if (record?.collection === "thailand") continue;
     if (!record || !Object.hasOwn(templeDatasets, record.collection)) invalid(`หมวดสถานที่ไม่ถูกต้อง: ${key}`);
     if (!key.startsWith(`${record.collection}:`) || (record.key && record.key !== key)) invalid(`รหัสสถานที่ไม่ตรงกัน: ${key}`);
     if (record.slugMode !== undefined && !["auto", "custom"].includes(record.slugMode)) invalid("รูปแบบ URL ไม่ถูกต้อง");
@@ -79,6 +83,7 @@ export function prepareTempleSlugPublication(next, current) {
   }
   const claims = new Map();
   for (const record of Object.values(records)) {
+    if (record.collection === "thailand") continue;
     for (const slug of [record.slug, ...record.slugAliases]) {
       const path = `${record.collection}/${slug}`;
       if (claims.has(path) && claims.get(path) !== record.key) invalid(`ชื่อ URL ถูกใช้แล้วหรือเป็นลิงก์เดิมของสถานที่อื่น: ${slug}`);

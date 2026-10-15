@@ -425,33 +425,31 @@ Route:
 
 - `src/pages/temples/thailand/index.astro`
 
-Client JS:
+Client JS: `src/scripts/directory-places.js`; styles: `directory-places.css`.
 
-- `src/scripts/temple-directory.js`
+The user's October 2026 direction supersedes the registry-only source constraint:
+show navigable places, allow OSM sources and manual CMS coordinates/Plus Codes,
+and avoid Google Places billing. See `docs/thailand-directory.md` for exact
+quality gates, current coverage and limits. The dated national OSM import covers
+all 77 provinces, not every temple or a field-verified visitor entrance.
 
-Runtime data:
-
-- `/assets/data/temples-thailand-index.json` is a build-generated lightweight index for form facets, area dependencies, counts, and the first-page preview.
-- `/assets/data/temples-thailand.json` remains the full raw dataset and is fetched only when the full table/search result set is needed.
-- The public JSON assets stay under `/assets/data/` with noindex/noarchive response headers and same-origin CORS.
-- Structured data for this route should describe the dataset source, but should not advertise the raw JSON file as a public `DataDownload` while anti-scraping controls are enabled.
-
-Expected UX:
-
-- Search field should not feel squeezed.
-- Region must be selected before province.
-- Province must be selected before district.
-- District must be selected before subdistrict.
-- Includes filters for ZIP code and `ได้รับวิสุงคามสีมา`.
-- Does not display the temple code column.
-- No `ดู` button in the table.
-- Source text should be: `ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ`
-- Avoid long explanatory copy like "ใช้ข้อมูลจากไฟล์..."
-
-Data source constraint:
-
-- The all-Thailand temple directory uses the attached/provided `Report_Temple 2.numbers` only.
-- Do not scrape/export that data from the web unless the user explicitly changes this constraint.
+- Public data comes from the current CMS projection at
+  `/api/admin/content?path=/temples/thailand/`, not a bundled fallback.
+- The baseline merges 7,721 named OSM places with all 378 unique curated places
+  (625 protected collection memberships), yielding 7,918 records before CMS edits.
+- Public search is server-paged at 24 rows; Admin pages rich curated rows and
+  loads the OSM snapshot separately to stay within serverless payload limits.
+- Source metadata is retained independently from the public projection, including
+  unknown fields and evidence for multiple category facets.
+- Search by name/area, region and province; cards link to map/directions.
+- CMS reuses the place editor in compact `thailand` mode, without a detail slug.
+- Home/hub counts use the same published directory.
+- The raw registry now retains 41,316 rows after the approved 3,389-row cleanup.
+  Its index uses an independent area-only snapshot to preserve all original
+  geographic options in the shared Admin editor. The public directory no longer
+  fetches either registry asset or claims 44,705 available places.
+- OSM attribution is visible. Outbound Google Maps links require no key and do
+  not prove that a Google POI or current visitor entrance exists.
 
 ## API And Admin Hardening
 

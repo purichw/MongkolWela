@@ -1,0 +1,88 @@
+{
+  "reviewedAt": "2026-10-15",
+  "policy": "Factual place identities and short classifications only. Editorial mentions are not legal temple status or proof of current opening. No article prose, photographs, ratings or prices are copied.",
+  "sources": [
+    {
+      "provider": "agoda",
+      "url": "https://www.agoda.com/travel-guides/thailand/chiang-rai/places-to-visit-in-chiang-rai-temples-markets-golden-triangle-park/",
+      "evidence": "editorial",
+      "places": [
+        {"name": "วัดร่องขุ่น", "province": "เชียงราย"},
+        {"name": "วัดร่องเสือเต้น", "province": "เชียงราย"},
+        {"name": "วัดห้วยปลากั้ง", "province": "เชียงราย"},
+        {"name": "วัดสันติคีรี", "province": "เชียงราย"},
+        {"name": "วัดพระธาตุดอยปูเข้า", "province": "เชียงราย"},
+        {"name": "วัดสบรวก", "province": "เชียงราย"}
+      ]
+    },
+    {
+      "provider": "traveloka",
+      "url": "https://www.traveloka.com/th-th/explore/destination/30-unique-temples-near-bangkok/58931",
+      "evidence": "editorial",
+      "places": [{"name": "วัดสมานรัตนาราม", "province": "ฉะเชิงเทรา"}]
+    },
+    {
+      "provider": "trueid",
+      "url": "https://travel.trueid.net/detail/kz3RRgqlYmx0",
+      "evidence": "editorial",
+      "places": [{"name": "วัดป่าไทรงาม", "province": "อุบลราชธานี", "district": "เดชอุดม", "coordinates": {"latitude": 14.899830, "longitude": 105.059743}, "assertions": [{"facet": "setting", "value": "พื้นที่ป่าร่มรื่น"}, {"facet": "landmark", "value": "อุโมงค์ต้นไม้"}]}]
+    },
+    {
+      "provider": "trueid",
+      "url": "https://travel.trueid.net/detail/5AKnklGLlpJr/",
+      "evidence": "editorial",
+      "places": [{"name": "วัดสุปัฏนารามวรวิหาร", "province": "อุบลราชธานี", "assertions": [{"facet": "visitorFeature", "value": "พิพิธภัณฑ์"}, {"facet": "architecture", "value": "ผสมไทย ญวน และตะวันตก"}]}]
+    },
+    {
+      "provider": "trueid",
+      "url": "https://travel.trueid.net/detail/rNQ3eYLoKY4W/",
+      "evidence": "editorial",
+      "places": [{"name": "วัดทุ่งศรีเมือง", "province": "อุบลราชธานี", "assertions": [{"facet": "landmark", "value": "หอพระไตรปิฎกกลางน้ำ"}]}]
+    },
+    {
+      "provider": "chillpainai",
+      "url": "https://chillpainai.com/scoop/16449",
+      "evidence": "editorial",
+      "places": [
+        {"name": "วัดพระบรมธาตุสวี", "province": "ชุมพร", "assertions": [{"facet": "visitorFeature", "value": "พิพิธภัณฑ์"}]},
+        {"name": "วัดถ้ำเขาพลู", "province": "ชุมพร", "assertions": [{"facet": "setting", "value": "ถ้ำ"}, {"facet": "landmark", "value": "พระพุทธรูปภายในถ้ำ"}]}
+      ]
+    },
+    {
+      "provider": "trip",
+      "url": "https://th.trip.com/travel-guide/attraction/yala/wat-khuhapimuk-143842399",
+      "evidence": "editorial",
+      "places": [{"name": "วัดคูหาภิมุข", "province": "ยะลา", "plusCode": "G6GF+WHC ตำบลหน้าถ้ำ อำเภอเมืองยะลา ยะลา", "aliases": ["วัดหน้าถ้ำ"]}]
+    },
+    {
+      "provider": "trip",
+      "url": "https://th.trip.com/travel-guide/attraction/yala/wat-mueang-yala-143821280",
+      "evidence": "editorial",
+      "places": [{"name": "วัดเมืองยะลา", "province": "ยะลา", "address": "48 ถนนสุขยางค์ สะเตง อำเภอเมืองยะลา ยะลา 95000"}]
+    },
+    {
+      "provider": "trip",
+      "url": "https://th.trip.com/travel-guide/attraction/than-to/wat-than-to-143838202/",
+      "evidence": "editorial",
+      "places": [{"name": "วัดธารโต", "province": "ยะลา", "plusCode": "555Q+78C ตำบลธารโต อำเภอธารโต ยะลา"}]
+    },
+    {
+      "provider": "kapook",
+      "url": "https://travel.kapook.com/view290812.html",
+      "evidence": "editorial",
+      "places": [{"name": "วัดเขาอ้อ", "province": "พัทลุง", "district": "ควนขนุน", "assertions": [{"facet": "setting", "value": "เชิงเขา"}, {"facet": "culturalPractice", "value": "พิธีแช่ว่าน"}]}]
+    },
+    {
+      "provider": "temple-official",
+      "url": "https://www.watpahnanachat.org/",
+      "evidence": "first-party",
+      "places": [{"name": "วัดป่านานาชาติ", "province": "อุบลราชธานี", "district": "วารินชำราบ", "assertions": [{"facet": "practice", "value": "สายวัดป่า"}, {"facet": "lineage", "value": "หลวงพ่อชา"}, {"facet": "tradition", "value": "เถรวาท"}, {"facet": "teachingLanguage", "value": "ภาษาอังกฤษ"}, {"facet": "establishedYearCE", "value": "1975"}]}]
+    },
+    {
+      "provider": "onab-provincial",
+      "url": "https://stn.onab.go.th/th/content/category/detail/id/110/iid/124376",
+      "evidence": "first-party",
+      "places": [{"name": "วัดชนาธิปเฉลิม", "province": "สตูล", "assertions": [{"facet": "templeType", "value": "พระอารามหลวง"}]}]
+    }
+  ]
+}

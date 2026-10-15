@@ -10,3 +10,5 @@ playwright-report
 test-results
 test-results-*
 .local
+scripts/__pycache__/
+tests/runtime/__pycache__/

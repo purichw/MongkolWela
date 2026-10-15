@@ -1,3 +1,5 @@
+import { directoryLocationErrors } from "../../lib/directory-places.js";
+
 export function createTempleEditorControls({ state, getRecord, getEdit, render, setStatus, cancel }) {
   let snapshot;
   let panels = {};
@@ -177,6 +179,10 @@ export function createTempleEditorControls({ state, getRecord, getEdit, render, 
     if (!root) return false;
     const name = root.querySelector('[data-temple-field="name"]');
     name.setCustomValidity(name.value.trim() ? "" : "กรุณาระบุชื่อสถานที่");
+    if (getRecord()?.collection === "thailand") {
+      const errors = directoryLocationErrors({ ...getRecord().temple, ...getEdit({ create: false })?.fields });
+      for (const key of ["latitude", "longitude", "plusCode"]) root.querySelector(`[data-temple-field="${key}"]`)?.setCustomValidity(errors[key] || "");
+    }
     const invalid = [...root.querySelectorAll("[data-temple-field], [data-temple-visit], [data-temple-slug]")].find(input => !input.checkValidity());
     if (!invalid) return true;
     for (let parent = invalid.parentElement; parent && parent !== root; parent = parent.parentElement) if (parent.matches("details")) parent.open = true;

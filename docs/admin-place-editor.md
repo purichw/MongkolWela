@@ -57,6 +57,33 @@ assets are not deleted from the remote media provider.
 
 ## Verification And Evidence
 
+### Compact Thailand Directory
+
+The `thailand` collection uses this same editor, list, media controls, draft,
+cancel and publication lifecycle. It has two sections: place and card images
+(desktop/mobile). It omits URL slugs, visiting details, travel modes and blessing
+fields. Name plus either a complete latitude/longitude pair or a valid Plus Code
+are required at both editor save and server publication. Short Plus Codes require
+an explicit locality; padded/coarse codes are rejected. Full codes are validated
+with Google's `open-location-code` library, not a paid API. If both coordinates
+and Plus Code are supplied, the valid Plus Code is the navigation destination.
+The preview link lets an operator inspect that exact destination before publishing.
+
+Records remain in `temples.records` with `collection: "thailand"`; order remains
+in `temples.order.thailand`. There is no second CMS, database or publish endpoint.
+Public links use `/temples/thailand/?place=<key>` rather than inventing curated
+detail routes. See `docs/thailand-directory.md` for sourcing and exclusions.
+
+The national catalog keeps source metadata outside the compact visible form.
+Editing a name, image or location merges hidden metadata with current base data;
+an older draft cannot erase newly researched source facts. The three curated
+collections retain their rich editor and all original fields.
+
+The Admin catalog transport pages curated records at 125 per request with a
+consistent CMS revision, then loads the separately versioned national snapshot.
+This is a transport change, not a second editor or publication system. A revision
+mismatch fails the load instead of combining incompatible catalog versions.
+
 Scoped browser checks: `tests/e2e/admin-place-editor.spec.ts`,
 `admin-temples.spec.ts` and `admin-temple-list.spec.ts` (12 cases).
 Runtime checks: `admin-data.test.mjs` and `admin-temple-list.test.mjs` (8 cases).

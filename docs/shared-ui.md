@@ -10,7 +10,7 @@ in `admin-content-library.css`. Commerce mounts its existing controller inside
 Admin, retaining its separate transactional state and save actions. See
 `cms-workspace-coverage.md` for ownership and verification boundaries.
 
-Admin Popular, Mu and Sacred collections share `admin/temple-list.js`,
+Admin Popular, Mu, Sacred and Thailand collections share `admin/temple-list.js`,
 `lib/admin-temple-list.js` and `admin-temples.css`: desktop photo grid/list,
 mobile thumbnail rows, filtering, pagination and truthful draft badges. The
 existing drawer and CMS publication controls remain shared, not copied into

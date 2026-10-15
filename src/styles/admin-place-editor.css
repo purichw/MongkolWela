@@ -10,6 +10,11 @@ html.mw-place-editor-open { overflow: hidden; scrollbar-gutter: stable; }
 .admin-design .mw-place-editor > header .mw-place-editor-reviewed { color: #e1e9da; font-size: 11px; line-height: 1.65; font-weight: 400; letter-spacing: 0; }
 .admin-design .mw-place-editor > header > button { flex: 0 0 40px; width: 40px; height: 40px; }
 .mw-place-editor-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; padding: 12px 26px; background: var(--admin-paper); }
+.mw-place-editor.is-directory .mw-place-editor-steps { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.mw-place-location-help { grid-column: 1 / -1; color: var(--admin-ink-soft); font-size: 13px; }
+.mw-place-location-help p { margin: 0 0 8px; }
+.mw-place-editor.is-directory .mw-place-coordinates { grid-column: 1 / -1; }
+.mw-place-editor.is-directory .mw-admin-temple-image-groups { grid-template-columns: minmax(0,1fr); }
 .mw-place-editor-steps button { display: flex; align-items: center; gap: 14px; padding: 12px 18px; min-height: 68px; text-align: left; border: 1px solid var(--admin-line); border-radius: 8px; background: #fffdf9; color: var(--admin-ink); cursor: pointer; font-family: inherit; }
 .mw-place-editor-steps button > b { display: grid; place-items: center; width: 34px; height: 34px; flex: 0 0 34px; border-radius: 50%; background: #f0eadb; color: var(--admin-jade); font-size: 14px; }
 .mw-place-editor-steps button strong { display: block; font-size: 14px; font-weight: 650; }

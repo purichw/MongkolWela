@@ -2,6 +2,8 @@ import { nfrKeyRoutePaths } from "../src/data/nfr-key-routes.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
+import { thailandDirectoryPage } from "../src/data/thailand-places.js";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const defaultSiteUrl = "https://mongkolwela.vercel.app";
@@ -97,6 +99,7 @@ async function main() {
   await Promise.all(cacheChecks.map(checkCacheHeader));
   await Promise.all(headerChecks.map(checkResponseHeader));
   await checkCmsContent();
+  await checkNationalDirectory();
   await checkPlannerApi();
 
   if (failures.length) {
@@ -107,6 +110,37 @@ async function main() {
 
   console.log(`Production smoke passed across ${statusRoutes.length} routes.`);
   process.exit(0);
+}
+
+async function checkNationalDirectory() {
+  const receipt = JSON.parse(fs.readFileSync(path.join(rootDir, "docs/thailand-registry-cleanup.json"), "utf8"));
+  const registryResponse = await fetchRoute("/assets/data/temples-thailand.json");
+  if (registryResponse?.ok) {
+    const body = await registryResponse.text();
+    if (createHash("sha256").update(body).digest("hex") !== receipt.retainedSha256) {
+      failures.push("National registry: deployed bytes do not match the approved cleanup");
+    }
+  } else failures.push("National registry: missing deployed data");
+  const indexResponse = await fetchRoute("/assets/data/temples-thailand-index.json");
+  if (indexResponse?.ok) {
+    const index = await indexResponse.json();
+    const areas = JSON.parse(fs.readFileSync(path.join(rootDir, "src/data/thailand-admin-areas.json"), "utf8"));
+    if (index.meta?.rowCount !== receipt.retained || JSON.stringify(index.facets?.regions) !== JSON.stringify(areas.regions)) {
+      failures.push("National registry: CMS geographic choices/count differ from the approved snapshot");
+    }
+  } else failures.push("National registry: missing CMS geographic index");
+  const contentResponse = await fetchRoute("/api/admin/content");
+  const pageResponse = await fetchRoute("/api/admin/content?view=directory");
+  if (!contentResponse?.ok || !pageResponse?.ok) {
+    failures.push("National directory: content/page API unavailable");
+    return;
+  }
+  const { content } = await contentResponse.json();
+  const { page } = await pageResponse.json();
+  const expected = thailandDirectoryPage(content);
+  if (JSON.stringify(page) !== JSON.stringify(expected)) failures.push("National directory: deployed page differs from published CMS and source snapshot");
+  if (page?.summary?.provinceCount !== 77 || page.places?.length !== 24) failures.push("National directory: province coverage or pagination incomplete");
+  console.log(`National directory: ${page?.summary?.templeCount} navigable places; registry ${receipt.retained} rows.`);
 }
 
 async function checkResponseHeader({ path, header, expected }) {

@@ -130,8 +130,8 @@ const tools = [
 
     <section class="home-stat-ticker" aria-label="ข้อมูลสำหรับวางแผน">
       <dl>
-        <div><dt data-cms-field="95d291e9-22"><HomeSymbol name="stupa" />วัดในฐานข้อมูล</dt><dd><span data-cms-field="95d291e9-23" data-temple-count>{templeCount}</span></dd></div>
-        <div><dt data-cms-field="95d291e9-24"><HomeSymbol name="map-pin" />จังหวัด</dt><dd data-cms-field="95d291e9-25">{provinceCount}</dd></div>
+        <div><dt data-cms-field="home-directory-label"><HomeSymbol name="stupa" />สถานที่พร้อมพิกัด</dt><dd><span data-directory-summary="templeCount" data-temple-count>{templeCount}</span></dd></div>
+        <div><dt data-cms-field="95d291e9-24"><HomeSymbol name="map-pin" />จังหวัด</dt><dd data-directory-summary="provinceCount">{provinceCount}</dd></div>
         <div><dt data-cms-field="95d291e9-26"><HomeSymbol name="route" />สถานที่ต่อแผน</dt><dd>3 / 5 / 9</dd></div>
         <div class="home-stat-note"><dt data-cms-field="95d291e9-27"><HomeSymbol name="quote" />ก่อนออกเดินทาง</dt><dd data-cms-field="95d291e9-28">ตรวจสอบเวลาเปิด–ปิด<br />และข้อมูลของแต่ละสถานที่</dd></div>
       </dl>
@@ -193,7 +193,7 @@ const tools = [
         </div>
         <aside class="home-database-panel" id="directory" aria-labelledby="directory-title">
           <CmsImage mediaId="home-directory-map" image={media("home-directory-map")} width={100} height={160} />
-          <div><h3 data-cms-field="95d291e9-51" id="directory-title">ค้นหาวัดทั่วประเทศไทย</h3><p data-cms-field="95d291e9-52"><strong data-cms-field="95d291e9-53" data-temple-count>{templeCount}</strong> รายการในฐานข้อมูล<br />ค้นหาตามจังหวัด อำเภอ และตำบล</p><a data-cms-field="95d291e9-54" href="/temples/thailand/">เปิดฐานข้อมูล <span aria-hidden="true">→</span></a></div>
+          <div><h3 data-cms-field="95d291e9-51" id="directory-title">ค้นหาวัดทั่วประเทศไทย</h3><p><strong data-directory-summary="templeCount" data-temple-count>{templeCount}</strong> สถานที่พร้อมพิกัด<br />ค้นหาวัดและเปิดเส้นทางเดินทาง</p><a data-cms-field="95d291e9-54" href="/temples/thailand/">เปิดฐานข้อมูล <span aria-hidden="true">→</span></a></div>
         </aside>
       </div>
     </section>

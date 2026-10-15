@@ -2,6 +2,7 @@ import { sitePlaceholderImage } from "../../src/lib/image-placeholder.js";
 import { expect, test, type Page } from "@playwright/test";
 import fs from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
+import { homeDirectorySummary } from "../../src/data/home-directory-summary.js";
 
 function fixture() {
   const content = JSON.parse(fs.readFileSync("public/admin/content/live.json", "utf8"));
@@ -24,8 +25,7 @@ async function setup(page: Page, content = fixture(), consent = "declined") {
 test("responsive geometry, six intents and truthful canonical counts", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   const errors = await setup(page);
-  const registry = JSON.parse(fs.readFileSync("public/assets/data/temples-thailand.json", "utf8"));
-  const count = registry.rows.length.toLocaleString("en-US");
+  const count = homeDirectorySummary.templeCount.toLocaleString("en-US");
   await expect(page.locator("[data-temple-count]")).toHaveText([count, count]);
   await expect(page.locator(".home-intent-card")).toHaveCount(6);
   await expect(page.locator(".home-collection-card")).toHaveCount(3);

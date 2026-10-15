@@ -6,6 +6,7 @@ import { createTempleList } from "./temple-list.js";
 import { createTempleEditorControls } from "./temple-editor-controls.js";
 import { dateLabel } from "../../lib/place-detail-view.js";
 import { templeSlugError, uniqueTempleSlug } from "../../lib/temple-slug-format.js";
+import { directoryMapLinks } from "../../lib/directory-places.js";
 
 let slugGenerator;
 let slugGeneratorLoading;
@@ -52,8 +53,8 @@ function currentTempleEdit({ create = true } = {}) {
     slugMode: record.slugMode || "auto",
     source: record.source || "dataset",
     status: "active",
-    fields: {},
-    images: {},
+    fields: record.collection === "thailand" ? Object.fromEntries(Object.entries(record.temple).filter(([key]) => key !== "images")) : {},
+    images: record.collection === "thailand" ? structuredClone(record.temple.images || {}) : {},
   };
   return records[record.key];
 }
@@ -74,6 +75,7 @@ function occupiedTempleSlugs(record) {
 function updateTempleSlug(target) {
   const record = currentTempleRecord();
   if (!record) return false;
+  if (record.collection === "thailand") { updateDirectoryMapPreview(record); return false; }
   const isSlug = target.matches("[data-temple-slug], [data-temple-slug-mode]");
   if (!isSlug && !target.matches('[data-temple-field="name"], [data-temple-field="province"]')) return false;
   const edit = currentTempleEdit();
@@ -193,11 +195,12 @@ function templeConfidence(record) {
 function renderTempleDrawer(record, edit) {
   const confidence = templeConfidence(record);
   const reviewed = dateLabel(edit?.visitInfo?.reviewedAt ?? record.visitInfo?.reviewedAt);
-  const steps = [["place", "ข้อมูลสถานที่", "ข้อมูลพื้นฐานของวัด/สถานที่"], ["visit", "ข้อมูลเข้าชม", "เวลา ค่าเข้าชม และการติดต่อ"], ["images", "รูปภาพ", "รูปภาพและสื่อประกอบ"]];
+  const compact = record.collection === "thailand";
+  const steps = [["place", "ข้อมูลสถานที่", "ข้อมูลพื้นฐานของวัด/สถานที่"], ...(!compact ? [["visit", "ข้อมูลเข้าชม", "เวลา ค่าเข้าชม และการติดต่อ"]] : []), ["images", "รูปภาพ", "รูปภาพและสื่อประกอบ"]];
   return `<div class="mw-admin-drawer-overlay mw-place-editor-overlay is-open" data-drawer-overlay>
-    <aside class="mw-admin-drawer mw-place-editor" role="dialog" aria-modal="true" aria-labelledby="templeDrawerTitle">
+    <aside class="mw-admin-drawer mw-place-editor ${compact ? "is-directory" : ""}" role="dialog" aria-modal="true" aria-labelledby="templeDrawerTitle">
       <header>
-        <div class="mw-place-editor-heading"><div><h2 id="templeDrawerTitle" tabindex="-1">แก้ไขข้อมูลวัด/สถานที่</h2><p data-temple-editor-name>${escapeHtml(templeValue(record, edit, "name") || "สถานที่ใหม่")}</p></div><span class="mw-place-editor-confidence"><i style="background:${confidence.color}"></i>${escapeHtml(confidence.label)}</span></div>
+        <div class="mw-place-editor-heading"><div><h2 id="templeDrawerTitle" tabindex="-1">แก้ไขข้อมูลวัด/สถานที่</h2><p data-temple-editor-name>${escapeHtml(templeValue(record, edit, "name") || "สถานที่ใหม่")}</p></div>${compact ? "" : `<span class="mw-place-editor-confidence"><i style="background:${confidence.color}"></i>${escapeHtml(confidence.label)}</span>`}</div>
         ${reviewed ? `<p class="mw-place-editor-reviewed">ตรวจทานข้อมูลเข้าชม<br><time>${escapeHtml(reviewed)}</time></p>` : ""}
         <button type="button" data-action="close-temple-editor" aria-label="ปิด" title="ปิด">${adminIcon("x")}</button>
       </header>
@@ -243,6 +246,7 @@ function renderTempleEmptyState() {
 }
 
 function renderTempleEditor(record, edit) {
+  const compact = record.collection === "thailand";
   const provider = mediaProviderStatus(state.media, state.mediaLoadError);
   const field = (key, label, classes = "", attrs = "") => `<label class="${classes}"><span>${label}${key === "name" ? '<i class="mw-place-required" aria-hidden="true">*</i>' : ""}</span><input aria-label="${label}" data-temple-field="${key}" value="${escapeHtml(templeValue(record, edit, key))}" ${attrs}></label>`;
   const area = (key, label) => `<label class="mw-place-field-${key}"><span>${label}<button type="button" data-editor-manual="${key}" aria-label="กรอก${label}เอง" title="กรอก${label}เอง">${adminIcon("pencil-line")}</button></span><span class="mw-place-location-control"><select data-temple-field="${key}" aria-label="${label}"><option value="">ยังไม่ระบุ</option>${templeEditorControls.choices(key).map(value => `<option value="${escapeHtml(value)}" ${templeValue(record, edit, key) === value ? "selected" : ""}>${escapeHtml(value)}</option>`).join("")}</select></span></label>`;
@@ -253,24 +257,36 @@ function renderTempleEditor(record, edit) {
     <div class="mw-place-editor-fields">
       ${field("name", "ชื่อสถานที่", "mw-place-field-name", "required maxlength=200")}
       ${area("region", "ภูมิภาค")}${area("province", "จังหวัด / เขต")}${area("district", "อำเภอ / เขต")}
-      ${renderTempleSlug(record, edit)}
+      ${compact ? "" : renderTempleSlug(record, edit)}
       ${text("coordinateAddress", "ที่อยู่", "mw-place-field-address", 2)}
       <div class="mw-place-coordinates">${field("plusCode", "Plus Code")}${field("latitude", "พิกัด LAT", "", 'type="number" step="any" min="-90" max="90" inputmode="decimal"')}${field("longitude", "พิกัด LNG", "", 'type="number" step="any" min="-180" max="180" inputmode="decimal"')}</div>
-      ${text("summary", "คำแนะนำสถานที่", "mw-place-field-summary", 3)}${text("description", "รายละเอียดสถานที่", "mw-place-field-description", 3)}
+      ${compact ? `<div class="mw-place-location-help"><p>ระบุพิกัดให้ครบคู่ หรือใช้ Plus Code แบบเต็ม / รหัสย่อพร้อมชื่อพื้นที่</p><div data-directory-map-preview>${directoryMapPreview(record, edit)}</div></div>` : ""}
+      ${text("summary", "คำแนะนำสถานที่", "mw-place-field-summary", 3)}${compact ? "" : text("description", "รายละเอียดสถานที่", "mw-place-field-description", 3)}
     </div>
-    <details class="mw-place-editor-extra" data-editor-panel="extra" ${templeEditorControls.isOpen("extra") ? "open" : ""}><summary>${adminIcon("chevron-down")}<strong>ข้อมูลเพิ่มเติม</strong><small>ประเภท การเดินทาง และข้อมูลประกอบ</small></summary><div class="mw-admin-form-grid">
-      ${field("placeType", "ประเภท")}${field("travelModes", "รูปแบบการเดินทาง")}${field("blessings", "พรที่นิยมขอ")}${field("objectHero", "สิ่งที่นิยมสักการะ")}${text("imageAlt", "คำอธิบาย", "mw-admin-form-grid--span")}${field("imageSourceLabel", "เครดิตภาพ")}${field("imageSourceUrl", "ลิงก์แหล่งที่มาของภาพ", "", 'type="url"')}
+    <details class="mw-place-editor-extra" data-editor-panel="extra" ${templeEditorControls.isOpen("extra") ? "open" : ""}><summary>${adminIcon("chevron-down")}<strong>ข้อมูลเพิ่มเติม</strong><small>${compact ? "คำอธิบายและเครดิตภาพ" : "ประเภท การเดินทาง และข้อมูลประกอบ"}</small></summary><div class="mw-admin-form-grid">
+      ${compact ? "" : `${field("placeType", "ประเภท")}${field("travelModes", "รูปแบบการเดินทาง")}${field("blessings", "พรที่นิยมขอ")}${field("objectHero", "สิ่งที่นิยมสักการะ")}`}${text("imageAlt", "คำอธิบาย", "mw-admin-form-grid--span")}${field("imageSourceLabel", "เครดิตภาพ")}${field("imageSourceUrl", "ลิงก์แหล่งที่มาของภาพ", "", 'type="url"')}
     </div><div class="mw-place-editor-record-actions">${state.publishedTempleKeys.has(record.key) ? `<a class="mw-admin-btn" target="_blank" rel="noopener" href="${escapeHtml(record.detailUrl)}">${adminIcon("external-link")}เปิดหน้าจริง</a>` : '<span>ฉบับร่างใหม่ · ยังไม่เผยแพร่</span>'}<button class="mw-admin-btn mw-admin-btn-danger" type="button" data-action="delete-temple">${adminIcon("trash")}นำออกจากหมวด</button></div></details>
   </details></section>
-  <section class="mw-place-editor-section mw-place-editor-visit"><details id="temple-editor-visit" data-editor-panel="visit" ${templeEditorControls.isOpen("visit") ? "open" : ""}>
+  ${compact ? "" : `<section class="mw-place-editor-section mw-place-editor-visit"><details id="temple-editor-visit" data-editor-panel="visit" ${templeEditorControls.isOpen("visit") ? "open" : ""}>
     ${heading("02", "clock", "ข้อมูลเข้าชม", "เวลาเปิด–ปิด ค่าเข้าชม และช่องทางติดต่อ")}
     <div class="mw-place-editor-visit-fields">${renderVisitEditor(record, edit, escapeHtml, templeEditorControls.isOpen)}</div>
-  </details>${renderVisitSummary(record, edit, escapeHtml)}</section>
+  </details>${renderVisitSummary(record, edit, escapeHtml)}</section>`}
   <section class="mw-place-editor-section mw-place-editor-images"><details id="temple-editor-images" data-editor-panel="images" ${templeEditorControls.isOpen("images") ? "open" : ""}>
-    ${heading("03", "image", "รูปภาพ", "ภาพหน้ารายการ หน้ารายละเอียด และแผนที่")}
+    ${heading(compact ? "02" : "03", "image", "รูปภาพ", compact ? "ภาพหน้ารายการ" : "ภาพหน้ารายการ หน้ารายละเอียด และแผนที่")}
     <div class="mw-place-media-toolbar" title="${escapeHtml(provider)}"><div role="group" aria-label="รูปภาพตามอุปกรณ์">${[["desktop", "monitor", "เดสก์ท็อป"], ["mobile", "smartphone", "มือถือ"]].map(([view, icon, label]) => `<button type="button" data-editor-viewport="${view}" aria-pressed="${templeEditorControls.variant() === view}">${adminIcon(icon)}${label}</button>`).join("")}</div><span>${escapeHtml(provider)}</span></div>
-    <div class="mw-admin-temple-image-groups">${TEMPLE_IMAGE_FIELDS.map((field) => renderTempleImageGroup(record, edit, field)).join("")}</div>
+    <div class="mw-admin-temple-image-groups">${TEMPLE_IMAGE_FIELDS.filter(field => !compact || field.role === "card").map((field) => renderTempleImageGroup(record, edit, field)).join("")}</div>
   </details></section>`;
+}
+
+function directoryMapPreview(record, edit) {
+  const links = directoryMapLinks({ ...record.temple, ...edit?.fields });
+  return links ? `<a class="mw-admin-btn" href="${escapeHtml(links.search)}" target="_blank" rel="noopener">${adminIcon("map-pin")}ตรวจตำแหน่งบน Google Maps${adminIcon("external-link")}</a>` : '<span>กรอกตำแหน่งให้ครบเพื่อเปิดตรวจสอบแผนที่</span>';
+}
+
+function updateDirectoryMapPreview(record) {
+  const preview = $("[data-directory-map-preview]");
+  if (preview) preview.innerHTML = directoryMapPreview(record, currentTempleEdit({ create: false }));
+  for (const key of ["latitude", "longitude", "plusCode"]) $(`[data-temple-field="${key}"]`)?.setCustomValidity("");
 }
 
 function renderTempleImageGroup(record, edit, field) {

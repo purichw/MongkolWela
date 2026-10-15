@@ -2,10 +2,13 @@ import { test, expect } from "@playwright/test";
 import fs from "node:fs";
 import { commerceFixture } from "../helpers/commerce-fixtures.mjs";
 import { publicCommerce } from "../../api/commerce/_domain.js";
+import { thailandDirectoryPage } from "../../src/data/thailand-places.js";
 
 test.beforeEach(async ({ page }) => {
   const content = JSON.parse(fs.readFileSync("public/admin/content/live.json", "utf8"));
-  await page.route("**/api/admin/content*", route => route.fulfill({ json: { ok: true, content } }));
+  await page.route("**/api/admin/content*", route => route.fulfill({ json: {
+    ok: true, content: { ...content, directoryPage: thailandDirectoryPage(content) },
+  } }));
   await page.route("https://fonts.googleapis.com/**", route => route.fulfill({ contentType: "text/css", body: "" }));
   await page.addInitScript(() => localStorage.setItem("mongkolwela.pdpa.analytics", "declined"));
 });
@@ -111,12 +114,12 @@ for (const [path, url, marker] of [
   ["/temples/popular/", "**/assets/data/temple-collections/popular.json*", "collection"],
   ["/temples/sacred/", "**/assets/data/temple-collections/sacred.json*", "collection"],
   ["/temples/mu/", "**/assets/data/temple-collections/mu.json*", "collection"],
-  ["/temples/thailand/", "**/assets/data/temples-thailand-index.json*", "directory"],
+  ["/temples/thailand/", "**/api/admin/content?*", "directory"],
 ]) {
   test(`${path} waits for its initial ${marker} data`, async ({ page }) => {
     let release!: () => void;
     const pending = new Promise<void>(resolve => { release = resolve; });
-    await page.route(url, async route => { await pending; await route.continue(); });
+    await page.route(url, async route => { await pending; await route.fallback(); });
     try {
       await page.goto(path, { waitUntil: "domcontentloaded" });
       await expect(page.locator(`[data-page-pending="${marker}"]`)).toHaveCount(1);

@@ -1,5 +1,6 @@
 import { validateHomepageContent } from "../../lib/homepage-content.js";
 import { validateNavigation } from "../../lib/site-navigation.js";
+import { validateDirectoryRecords } from "../../lib/directory-places.js";
 
 export function createAdminPublishing({ queryAll, $, api, sleep, state, setStatus, renderAdmin }) {
 const PUBLISH_VERIFY_TIMEOUT_MS = 90000;
@@ -73,6 +74,7 @@ async function publish() {
   try {
     validateHomepageContent(submitted);
     validateNavigation(submitted.navigation);
+    validateDirectoryRecords(submitted);
     setStatus("กำลัง publish...", "info");
     setPublishProgress(8, "กำลังส่งข้อมูล", "กำลังบันทึกข้อมูลใหม่");
     const payload = await api("/api/admin/content", {

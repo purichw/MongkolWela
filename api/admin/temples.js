@@ -8,6 +8,8 @@ import { normalizeVisit } from "../../src/lib/place-detail-view.js";
 import { applyTempleCmsRecords, templeCollectionConfig } from "../../src/data/temple-cms.js";
 import { createTempleSlug } from "../../src/data/temple-slugs.js";
 import { readLiveContent } from "./_shared.js";
+import { thailandAdminCatalog, thailandCuratedBasePlaces, thailandSnapshotDescriptor } from "../../src/data/thailand-places.js";
+import { contentRevision } from "../../src/lib/content-revision.js";
 
 const DATASETS = {
   popular: popularTemples,
@@ -27,7 +29,7 @@ const COLLECTION_ORDER = {
   sacred: 3,
 };
 
-export function templeCatalogFromContent(content) {
+export function templeCatalogFromContent(content, { includeDirectory = true } = {}) {
   const collections = Object.entries(DATASETS).map(([collection, temples]) =>
     applyTempleCmsRecords(collection, temples, content).map((temple) => {
       const slug = temple.cmsSlug || createTempleSlug(temple);
@@ -68,10 +70,11 @@ export function templeCatalogFromContent(content) {
     }),
   );
 
-  return collections.flat().sort((a, b) => {
+  return [...collections.flat(), ...(includeDirectory ? thailandAdminCatalog(content) : [])].sort((a, b) => {
     if (a.collection !== b.collection) {
       return (COLLECTION_ORDER[a.collection] || 99) - (COLLECTION_ORDER[b.collection] || 99);
     }
+    if (a.collection === "thailand") return 0;
     return (Number(a.temple.rank) || 0) - (Number(b.temple.rank) || 0);
   });
 }
@@ -90,9 +93,25 @@ export default async function handler(req, res) {
   if (!session) return;
 
   try {
+    const content = await readLiveContent();
+    const params = new URL(req.url, "http://localhost").searchParams;
+    const revision = contentRevision(content.temples || {});
+    if (params.get("revision") && params.get("revision") !== revision) {
+      sendJson(res, 409, { ok: false, error: "รายการสถานที่มีเวอร์ชันใหม่ กรุณาโหลดใหม่" });
+      return;
+    }
+    const temples = templeCatalogFromContent(content, { includeDirectory: false });
+    const offset = Math.max(0, Math.floor(Number(params.get("offset")) || 0));
     sendJson(res, 200, {
       ok: true,
-      temples: await loadTempleCatalog(),
+      temples: temples.slice(offset, offset + 125),
+      page: { revision, total: temples.length, nextOffset: offset + 125 < temples.length ? offset + 125 : null },
+      ...(offset === 0 ? { directory: {
+        snapshot: thailandSnapshotDescriptor,
+        curated: thailandCuratedBasePlaces(content),
+        records: Object.fromEntries(Object.entries(content.temples?.records || {}).filter(([, record]) => record.collection === "thailand")),
+        order: content.temples?.order?.thailand || [],
+      } } : {}),
     });
   } catch (error) {
     sendJson(res, 500, { ok: false, error: error.message || "Temple catalog unavailable" });

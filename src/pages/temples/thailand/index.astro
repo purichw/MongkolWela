@@ -2,167 +2,32 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import TempleSearchHero from "../../../components/TempleSearchHero.astro";
 import templePageBanners from "../../../data/temple-page-banners.json";
-import { absoluteUrl } from "../../../lib/seo.js";
 import SiteIcon from "../../../components/icons/SiteIcon.astro";
-import IconMedallion from "../../../components/IconMedallion.astro";
 import { iconAttributes } from "../../../lib/ui-markup.js";
-
-const pageDescription =
-  "ค้นหารายการวัดทั่วประเทศไทยจากระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ พร้อมตัวกรองชื่อวัด ประเภทวัด นิกาย ภาค จังหวัด อำเภอ ตำบล รหัสไปรษณีย์ และสถานะวิสุงคามสีมา";
-const datasetJsonLd = {
-  "@type": "Dataset",
-  "@id": `${absoluteUrl("/temples/thailand/")}#dataset`,
-  name: "ฐานข้อมูลวัดทั่วประเทศไทย",
-  description: pageDescription,
-  inLanguage: "th-TH",
-  url: absoluteUrl("/temples/thailand/"),
-  isAccessibleForFree: true,
-  license: absoluteUrl("/temples/thailand/"),
-  keywords: ["วัดทั่วประเทศไทย", "ทะเบียนวัด", "สำนักงานพระพุทธศาสนาแห่งชาติ", "ค้นหาวัด", "วัดไทย"],
-  creator: {
-    "@type": "Organization",
-    name: "สำนักงานพระพุทธศาสนาแห่งชาติ",
-  },
-  isBasedOn: {
-    "@type": "CreativeWork",
-    name: "ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ",
-  },
-  publisher: {
-    "@type": "Organization",
-    name: "มงคลเวลา",
-    url: absoluteUrl("/"),
-  },
-};
+const description = "ค้นหาวัดและสถานที่ที่มีพิกัดสำหรับเดินทาง เลือกตามจังหวัดและเปิดเส้นทางบน Google Maps";
 ---
 
-<BaseLayout
-  title="วัดทั่วประเทศไทย | มงคลเวลา"
-  description={pageDescription}
-  lang="th"
-  locale="th"
-  page="templesThailand"
-  bodyClass="temple-directory-page"
-  canonicalPath="/temples/thailand/"
-  image="/assets/images/hero-temple-red.jpg"
-  imageAlt="ค้นหาวัดทั่วประเทศไทยจากทะเบียนวัด"
-  breadcrumbs={[
-    { label: "หน้าแรก", href: "/" },
-    { label: "วัดดังเสริมมงคล", href: "/temples/" },
-    { label: "วัดทั่วประเทศไทย", href: "/temples/thailand/" },
-  ]}
-  structuredData={datasetJsonLd}
->
-  <main class="temple-directory" data-page-pending="directory" data-temple-directory data-locale="th">
-    <TempleSearchHero
-      banner={templePageBanners.thailand}
-      breadcrumbs={[
-        { label: "หน้าแรก", href: "../../" },
-        { label: "วัดดังเสริมมงคล", href: "../" },
-        { label: "วัดทั่วประเทศไทย" },
-      ]}
-      kicker="ทะเบียนวัด"
-      title="วัดทั่วประเทศไทย"
-      description="ค้นหาและตรวจสอบข้อมูลทะเบียนวัดจากฐานข้อมูลอย่างเป็นทางการ ทั้งประเภทวัด นิกาย และที่ตั้ง"
-    >
-      <Fragment slot="quote">“ทุกวัด<br />คือรากของความศรัทธา”</Fragment>
-      <section slot="panel" class="temple-search-panel" aria-label="ค้นหาวัดทั่วประเทศไทย">
-        <header class="registry-search-heading">
-          <h2 data-cms-field="098f361c-1"><IconMedallion class="registry-medallion"><SiteIcon name="search" /></IconMedallion>ค้นหาวัดจากทะเบียน</h2>
-          <details class="registry-source-info">
-            <summary><SiteIcon name="info" /><span data-cms-field="098f361c-2">เกี่ยวกับข้อมูลนี้</span></summary>
-            <div class="registry-source-popover">
-              <strong data-cms-field="098f361c-3">ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ</strong>
-              <p data-cms-field="098f361c-4">ข้อมูลทะเบียนจากชุดข้อมูลที่นำเข้าระบบ ไม่ใช่ข้อมูลเวลาเปิดทำการหรือประกาศกิจกรรมของวัด</p>
-              <p data-temple-dataset-date></p>
-            </div>
-          </details>
-        </header>
-        <form class="temple-search-form" data-temple-form>
-          <label class="temple-field temple-field-wide registry-primary-field">
-            <span data-cms-field="098f361c-5">ชื่อวัด</span>
-            <span class="registry-search-input"><SiteIcon name="search" /><input data-cms-field="098f361c-6" type="search" name="name" placeholder="พิมพ์ชื่อวัด เช่น พระธาตุ บางจาก" autocomplete="off" data-temple-name /></span>
-          </label>
-
-          <label class="temple-field registry-primary-field">
-            <span data-cms-field="098f361c-7">ประเภทวัด</span>
-            <select name="type" data-temple-type></select>
-          </label>
-
-          <label class="temple-field registry-primary-field">
-            <span data-cms-field="098f361c-8">นิกาย</span>
-            <select name="sect" data-temple-sect></select>
-          </label>
-
-          <label class="temple-field">
-            <span data-cms-field="098f361c-9">ภาค</span>
-            <select name="region" data-temple-region></select>
-          </label>
-
-          <label class="temple-field">
-            <span data-cms-field="098f361c-10">จังหวัด</span>
-            <select name="province" data-temple-province></select>
-          </label>
-
-          <label class="temple-field">
-            <span data-cms-field="098f361c-11">อำเภอ / เขต</span>
-            <select name="district" data-temple-district></select>
-          </label>
-
-          <label class="temple-field">
-            <span data-cms-field="098f361c-12">ตำบล / แขวง</span>
-            <select name="subdistrict" data-temple-subdistrict></select>
-          </label>
-
-          <label class="temple-field">
-            <span data-cms-field="098f361c-13">รหัสไปรษณีย์</span>
-            <input data-cms-field="098f361c-14" type="search" name="postalCode" inputmode="numeric" placeholder="เช่น 10150" autocomplete="off" data-temple-postal />
-          </label>
-
-          <label class="temple-field">
-            <span data-cms-field="098f361c-15">ได้รับวิสุงคามสีมา</span>
-            <select name="wisung" data-temple-wisung>
-              <option data-cms-field="098f361c-16" value="">-- ทั้งหมด --</option>
-              <option data-cms-field="098f361c-17" value="ไม่ได้รับ">ไม่ได้รับ</option>
-              <option data-cms-field="098f361c-18" value="ได้รับ">ได้รับ</option>
-            </select>
-          </label>
-
-          <div class="temple-actions">
-            <button data-cms-field="098f361c-19" class="temple-search-button" type="submit"><SiteIcon name="search" />ค้นหา</button>
-            <button data-cms-field="098f361c-20" class="temple-clear-button" type="button" data-temple-clear><span {...iconAttributes("rotate-ccw", "registry-icon")}></span>ล้างตัวกรอง</button>
-          </div>
-        </form>
-        <div class="registry-search-art" aria-hidden="true"><SiteIcon name="stupa" /><SiteIcon name="temple" /></div>
-      </section>
+<BaseLayout title="วัดทั่วประเทศไทย | มงคลเวลา" description={description} lang="th" locale="th" page="templesThailand" bodyClass="temple-directory-page" canonicalPath="/temples/thailand/"
+  image={templePageBanners.thailand.imageUrl} imageAlt="วัดทั่วประเทศไทย"
+  breadcrumbs={[{ label: "หน้าแรก", href: "/" }, { label: "วัดดังเสริมมงคล", href: "/temples/" }, { label: "วัดทั่วประเทศไทย", href: "/temples/thailand/" }]}>
+  <main class="directory-places" data-directory-places data-page-pending="directory">
+    <TempleSearchHero banner={templePageBanners.thailand} breadcrumbs={[{ label: "หน้าแรก", href: "/" }, { label: "วัดดังเสริมมงคล", href: "/temples/" }, { label: "วัดทั่วประเทศไทย" }]}
+      kicker="ค้นหาพิกัดวัด" title="วัดทั่วประเทศไทย" description={description}>
+      <Fragment slot="quote">“ทุกการเดินทาง<br />เริ่มจากความตั้งใจ”</Fragment>
+      <form slot="panel" class="directory-search" data-directory-form aria-label="ค้นหาวัดทั่วประเทศไทย">
+        <label class="directory-search-name"><span>ชื่อวัดหรือพื้นที่</span><span class="directory-input"><SiteIcon name="search" /><input type="search" name="name" placeholder="ค้นหาชื่อวัด จังหวัด หรืออำเภอ" autocomplete="off" /></span></label>
+        <label><span>ภาค</span><select name="region" aria-label="ภาค"><option value="">ทุกภาค</option></select></label>
+        <label><span>จังหวัด</span><select name="province" aria-label="จังหวัด"><option value="">ทุกจังหวัด</option></select></label>
+        <button type="submit" class="directory-button is-primary"><SiteIcon name="search" />ค้นหา</button>
+        <button type="reset" class="directory-button"><span {...iconAttributes("rotate-ccw")}></span>ล้างตัวกรอง</button>
+      </form>
     </TempleSearchHero>
-
-    <section class="temple-results" aria-labelledby="registry-results-title">
-      <div class="temple-results-head">
-        <div>
-          <p data-cms-field="098f361c-21" class="section-kicker"><IconMedallion class="registry-medallion"><SiteIcon name="temple" /></IconMedallion>ผลการค้นหา</p>
-          <h2 data-cms-field="098f361c-22" id="registry-results-title" data-temple-count role="status">กำลังโหลดข้อมูลวัด</h2>
-        </div>
-        <div class="registry-results-meta"><p data-cms-field="098f361c-23" data-temple-source>แหล่งที่มา: ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ</p><p data-temple-dataset-date></p></div>
-      </div>
-
-      <div class="temple-table-wrap" tabindex="0" role="region" aria-label="ตารางผลการค้นหาวัดทั่วประเทศไทย">
-        <table class="temple-table">
-          <caption class="registry-sr-only">ผลการค้นหาจากทะเบียนวัด กดปุ่มข้อมูลวัดเพื่อดูรายละเอียดทะเบียนและที่ตั้ง</caption>
-          <thead data-temple-table-head></thead>
-          <tbody data-temple-table-body>
-            <tr>
-              <td>กำลังโหลดข้อมูล</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="temple-pagination" data-temple-pagination></div>
-      <button class="registry-load-all" type="button" data-temple-load-all hidden><span {...iconAttributes("list-filter", "registry-icon")}></span><span><span data-cms-field="098f361c-24">ค้นหาจากทะเบียนทั้งหมด</span><span data-temple-load-label></span></span></button>
+    <section class="directory-results" aria-labelledby="directory-title" id="directory-managed">
+      <header class="directory-results-heading"><div><h2 id="directory-title">วัดและสถานที่พร้อมพิกัด</h2><p role="status" data-directory-count></p></div><p class="directory-caution">ตรวจสอบทางเข้าและเวลาเปิดกับสถานที่ก่อนเดินทาง</p></header>
+      <div class="directory-grid" data-directory-results></div>
+      <button type="button" class="directory-button directory-more" data-directory-more hidden>แสดงเพิ่มเติม <SiteIcon name="chevron-down" /></button>
+      <p class="directory-attribution">ข้อมูลพิกัดบางส่วน © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> ภายใต้ ODbL (<a href="/assets/data/thailand-mapped-osm.json" download>ดาวน์โหลดข้อมูล</a>) และข้อมูลที่ทีมงานเพิ่ม ไม่ใช่ทะเบียนวัดทั้งหมดหรือการรับรองว่ายังเปิดให้เข้าชม</p>
     </section>
   </main>
-
-  <script>
-    import "../../../scripts/temple-directory.js";
-  </script>
+  <script>import "../../../scripts/directory-places.js";</script>
 </BaseLayout>

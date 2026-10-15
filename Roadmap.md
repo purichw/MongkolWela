@@ -137,16 +137,19 @@ Current fallback:
 
 ### All-Thailand Temple Directory
 
-Continue refining `/temples/thailand/`:
+The user changed direction in October 2026: use navigable mapped places, allow
+OpenStreetMap and manual CMS entries, and do not require Google Places billing.
+The initial implementation replaces the public registry table with a quality-gated
+OSM-derived catalog and compact shared CMS editor. The raw registry retains
+41,316 rows after the approved 3,389-row cleanup on 2026-10-16.
+See `docs/thailand-directory.md` for coverage, source policy and verification.
 
-- Use only `Report_Temple 2.numbers` as the source unless the user changes direction.
-- Keep region -> province -> district -> subdistrict dependency.
-- Keep ZIP code filter.
-- Keep `ได้รับวิสุงคามสีมา` filter.
-- Do not show temple code column.
-- Keep source text short: `ระบบทะเบียนวัด สำนักงานพระพุทธศาสนาแห่งชาติ`
-- Avoid long source/process explanations in the UI.
-- Keep `/assets/data/temples-thailand-index.json` as the lightweight initial payload; load the full raw dataset only when full search/table results are needed.
+The dated national OSM import now provides a 7,918-place merged baseline in all
+77 provinces, protecting all 625 curated memberships. Raw source metadata is
+retained for future multi-facet search. Watportal indexing/detail coverage and
+deletion proposals are separate artifacts: a full index does not imply all detail
+pages or coordinates were fetched. The approved cleanup has an exact receipt and
+preserves the shared CMS geographic choices independently of temple records.
 
 ## Medium-Priority Backlog
 

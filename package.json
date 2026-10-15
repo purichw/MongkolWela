@@ -61,6 +61,7 @@
     "@pcampus/thai-romanization": "1.0.0",
     "@supabase/supabase-js": "^2.107.0",
     "choices.js": "11.2.4",
+    "open-location-code": "1.0.3",
     "web-vitals": "^6.2.1"
   }
 }

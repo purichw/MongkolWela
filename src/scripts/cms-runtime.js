@@ -819,6 +819,11 @@ async function bootCmsRuntime() {
       }
     }
     if (!previous || !unchanged(previous.site?.pdpa, content.site?.pdpa)) renderPdpaBanner(content);
+    if (content.directorySummary) {
+      for (const [key, value] of Object.entries(content.directorySummary)) {
+        document.querySelectorAll(`[data-directory-summary="${key}"]`).forEach(node => { node.textContent = Number(value).toLocaleString("th-TH"); });
+      }
+    }
     activeContent = content;
     activeRevision = payload.revision;
     window.MongkolWelaCMS = {
