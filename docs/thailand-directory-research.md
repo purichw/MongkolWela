@@ -75,3 +75,15 @@ An initial mobile outage check raced the SDK's existing 1/2/4-second retry
 backoff. The diagnostic trace showed a 503 response after 7.59 seconds and the
 UI error immediately afterward. The test now awaits that real response before
 asserting recovery UI, with unchanged timeouts and unchanged production behavior.
+
+## Release Verification, 2026-10-16
+
+- Source includes current `origin/main` (`186b3e8`) without modifying its Tarot implementation.
+- Astro check: 83 files, zero diagnostics. Browser bindings: 89 modules. Production build passes.
+- Registry receipt, protected collection hashes and all 77 provinces pass. The generated CMS index preserves the original 925 district choices exactly.
+- Data, visit-info, SEO, CMS, temple-CMS and Vercel configuration checks pass. Existing source-data completeness warnings remain; no unsupported facts were filled in.
+- Full-site performance budget remains **failing**, not waived or relabelled as passing. The already-deployed Admin script is 497,009 bytes (above the existing 240 KB budget); this change is 511,698 bytes. The 494,053-byte Tarot editorial chunk is byte-size/hash-identical to production. Home, calendar and daily Tarot route CSS are unchanged at 88.7, 82.9 and 110.6 KB. Aggregate JavaScript/CSS remain above their pre-existing budgets. No limits were changed.
+- The touched national route CSS is 149.7 KB, below its 230 KB limit; its new stylesheet is 4,769 bytes. Visitor requests remain paged at 24 records without downloading the registry or full metadata snapshot.
+- Rich-editor fixtures retain their original three curated collections. The national catalog/paging is tested separately through the real handler. Mobile tests now open the actual navigation drawer before choosing a section; timeouts were not increased.
+- Targeted E2E: all 18 desktop/mobile scenarios pass after the fixture/navigation repair (12 directory/home/readiness cases plus 6 shared-editor cases). Python import parser: 3 tests pass. Registry cleanup: 2 runtime checks pass. Full runtime suite before integration: 139 tests pass; the exact pushed revision is additionally gated by CI.
+- Full cross-browser/whole-site E2E and live CMS mutation are intentionally excluded. Production smoke is read-only.

@@ -18,8 +18,14 @@ async function setup(page) {
   });
   await page.goto("/admin/");
   await expect(page.locator("#adminStatus")).toHaveText("พร้อมใช้งาน");
-  await page.locator('#adminNav [data-section="temples"]').click();
+  await openTemples(page);
   return { errors, fixture };
+}
+
+async function openTemples(page) {
+  const nav = page.locator('#adminNav [data-section="temples"]');
+  if (!await nav.isVisible()) await page.getByRole("button", { name: "เปิดเมนู", exact: true }).click();
+  await nav.click();
 }
 
 async function openFirst(page) {
@@ -128,7 +134,7 @@ test("place editor cancel restores values, creation and focus; save validates an
   await expect(page.locator("[data-publish-progress-title]")).toHaveText("หน้าเว็บอัปเดตแล้ว");
   await page.reload();
   await expect(page.locator("#adminStatus")).toHaveText("พร้อมใช้งาน");
-  await page.locator('#adminNav [data-section="temples"]').click();
+  await openTemples(page);
   await openFirst(page);
   await expect(page.getByLabel("คำแนะนำสถานที่", { exact: true })).toHaveValue("ข้อมูลสถานที่ฉบับทดสอบ");
   expect(errors).toEqual([]);
