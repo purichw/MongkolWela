@@ -52,7 +52,8 @@ function initTarotDraw(form) {
       const index = deck.indexOf(card);
       const buttons = [...grid.querySelectorAll("button")];
       const next = [...buttons.slice(index + 1), ...buttons.slice(0, index)].find(button => !button.disabled);
-      next?.focus({ preventScroll: event.detail !== 0 });
+      next?.focus({ preventScroll: true });
+      if (event.detail === 0) next?.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
     }
   });
   async function rearrange(cut) {

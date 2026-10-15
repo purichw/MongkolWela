@@ -198,6 +198,7 @@ test("grid keyboard navigation, partial cut reset and reduced-motion accessibili
   await page.keyboard.press("Enter");
   await expect(page.locator("[data-card-id]").first()).toBeFocused();
   await expect(page.locator("[data-card-id]").first()).toBeInViewport();
+  await page.screenshot({ path: `${output}/keyboard-focus-390.png` });
   await page.keyboard.press("Space");
   await expect(page.locator("[data-tarot-count]")).toHaveValue("2");
   await page.locator("[data-tarot-cut]").click();
