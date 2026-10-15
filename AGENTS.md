@@ -33,9 +33,12 @@ change.
 
 This is the Mongkol Wela Astro site.
 
-- Workspace: `/Users/point/Website Projects/hora-astro`
+- Primary checkout: `/Users/point/Website Projects/hora-astro`. Keep using the
+  current task's selected worktree when one exists; this path is not an instruction
+  to switch checkouts or inspect another chat.
 - Production: `https://mongkolwela.vercel.app`
-- GitHub: `purichw/hora-astro`
+- GitHub: `purichw/Mongkol-Wela` (legacy `purichw/hora-astro` remote redirected here
+  during the 2026-09-30 release; inspect the current remote before release work).
 - Default branch: `main`
 
 Also read `CMS.md` when changing Admin Portal content, page registry, or navigation.
@@ -66,11 +69,9 @@ Build:
 npm run build
 ```
 
-Deploy production:
-
-```sh
-vercel --prod --yes
-```
+Deploy production only with current user authorization. Follow
+`Roadmap.md#release-workflow`: inspect Git-triggered deployment first and avoid
+starting a duplicate CLI deployment after pushing.
 
 Smoke-test production after deploy:
 
@@ -91,6 +92,8 @@ npm run smoke:production
 
 - The site is Thai-first.
 - Do not build English routes/copy unless explicitly requested.
+- Approved English/romanized place slugs are URL identifiers, not English locale
+  pages. Preserve their aliases and stable CMS/planner IDs; see `docs/temple-slugs.md`.
 - Keep UI copy concise, Thai, and consistent with Mongkol Wela.
 - Avoid long visible explanations about data sources or internal implementation.
 - Use the exact source text for the all-Thailand temple directory:
@@ -161,10 +164,13 @@ Temple data used by the site:
 
 - `src/data/popular-temples.json`
 - `src/data/mu-temples.json`
+- `src/data/sacred-temples.json`
 - `src/data/temple-image-overrides.json`
 - `src/data/temple-page-banners.json`
 
-Keep fields data-driven for future Admin Portal replacement.
+These are curated base records. `src/data/temple-cms.js` merges published Admin
+overrides; keep supported fields synchronized with the existing Portal. Public
+slugs are distinct from immutable record keys. Do not rename keys to change URLs.
 
 ### Thailand Temple Directory
 
@@ -179,9 +185,11 @@ Important routes:
 - `/temples/`
 - `/temples/popular/`
 - `/temples/mu/`
+- `/temples/sacred/`
 - `/temples/thailand/`
 - `/temples/popular/[slug]/`
 - `/temples/mu/[slug]/`
+- `/temples/sacred/[slug]/`
 
 Important components:
 
@@ -232,6 +240,13 @@ Tarot:
 - `src/scripts/tarot-spread.js`
 - `src/scripts/tarot-spread-result.js`
 - `src/styles/tarot.css`
+
+For Tarot editorial work, read `docs/tarot-redesign.md` and
+`docs/research/tarot-78-deep-research-prompt.md`. The latter is a research prompt,
+not finished research or a CMS schema. Preserve legacy IDs in both
+`tarot.tarotCards` and `tarot.tarotMeaningCards`; follow the mapping/import
+boundary in `CMS.md`. Do not infer draw eligibility or reversed-draw support
+from research coverage or existing meaning fields.
 
 ## Verification Expectations
 
@@ -317,9 +332,12 @@ For map changes, verify:
 For deployment tasks:
 
 1. Commit only intended files.
-2. Push `main`.
-3. Run `vercel --prod --yes`.
-4. Smoke-test production.
+2. Push the authorized revision to the intended branch and record its full SHA.
+3. Follow `Roadmap.md#release-workflow` to track required CI, Vercel build and
+   promotion separately. Check existing runs/deployments before any retry or
+   manual deployment; a ready candidate is not proof of the production revision.
+4. Verify the production alias's SHA and run the existing read-only smoke harness.
+   Do not weaken firewall/gates or write production CMS data to get a passing smoke.
 
 ## Temple Detail Confidence UI
 

@@ -8,6 +8,7 @@ const fieldNames = {
   topic: "ความหมายภพ", role: "บทบาทดาว", tone: "ลักษณะเด่น", keywords: "คำสำคัญ", keywordsUpright: "คำสำคัญไพ่ตั้งตรง", keywordsReversed: "คำสำคัญไพ่กลับหัว",
   health: "สุขภาพและพลังชีวิต", career: "การงาน", love: "ความรัก", money: "การเงิน", finance: "การเงิน", fate: "โชคชะตา", personality: "บุคลิกภาพ",
   upright: "ไพ่ตั้งตรง", reversed: "ไพ่กลับหัว", uprightDetails: "ความหมายแยกด้าน", symbolism: "สัญลักษณ์", meaning: "ความหมาย", symbol: "สัญลักษณ์",
+  contexts: "คำอ่านตามบริบท", daily: "รายวัน", monthly: "รายเดือน", luck: "โชคลาภ", focus: "ประเด็นของตำแหน่ง", general: "ภาพรวม", relatedCards: "ไพ่ที่เกี่ยวข้อง", relationship: "ความต่างและความเชื่อมโยง",
   variants: "ลักษณะเส้น", overview: "ภาพรวม", overall: "ภาพรวม", life_line: "เส้นชีวิต", head_line: "เส้นสมอง", heart_line: "เส้นหัวใจ",
   fate_line: "เส้นวาสนา", sun_line: "เส้นอาทิตย์", mercury_line: "เส้นพุธ", marriage_line: "เส้นสมรส", long_clear: "ยาวชัดเจน", short: "สั้น", broken: "ขาดตอน",
 };

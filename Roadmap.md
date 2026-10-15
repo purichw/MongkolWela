@@ -1,6 +1,8 @@
 # Roadmap
 
-Last updated: 2026-06-19
+Updated: 2026-10-15. Release preparation covers this chat's Tarot editorial
+integration, full-deck draw layout and documentation updates. Remote baseline
+`e4ee69b` already has successful CI and Production Smoke; it must be preserved.
 
 ## Current Status
 
@@ -17,16 +19,33 @@ Production is live at:
 
 - `https://mongkolwela.vercel.app`
 
-Latest known code state:
+Previous release verified in this chat (2026-09-30):
 
-- Branch: `main`
-- Latest production commit: `4392f7b Keep CMS API navigation aligned with bundled content`.
-- Latest pushed commits include `e24d601 Prefer bundled navigation in CMS runtime` and `4392f7b Keep CMS API navigation aligned with bundled content`.
-- The current production release fixes the header calendar navigation so the top-level nav item is `วันพระ` linking to `/calendar/`, with no `ฤกษ์และปฏิทิน` submenu after browser hydration.
-- `/api/admin/content` now aligns page registry and navigation with bundled `live.json`/`default.json` even when the Supabase CMS copy is stale.
-- The worktree should be clean after the latest deploy; inspect status and stage only intended files.
+- Commit: `303d84cea0b1dff6d0f4151dd58f2a1a10035087`, pushed to `main`, CI passed
+  and production promotion verified for the same SHA.
+- Admin supports automatic/custom English place slugs across popular, mu and
+  sacred collections. All 625 curated records have mappings; stable CMS/planner
+  keys and old URL aliases are retained.
+- Place details and sitemap use live CMS-backed SSR. New places/slug edits need
+  no rebuild. CMS failure returns 503, never a stale bundled document.
+- Astro/Vercel output is `dist/client/` plus `.vercel/output/`; framework config
+  and the 12-function deployment limit were checked.
+- See [slug release evidence](docs/temple-slugs.md#release-evidence-2026-09-30)
+  for exact CI/deployment references and read-only production checks.
+- These are dated release facts, not a claim that production cannot have changed
+  since. Inspect current checkout status and remote state before the next release.
 
-## Recently Completed
+Earlier editorial handoff (2026-10-04): the
+[78-card Tarot Deep Research prompt](docs/research/tarot-78-deep-research-prompt.md)
+was prepared. The accepted reduced research bundle was integrated on 2026-10-15;
+see [Tarot editorial integration](docs/tarot-editorial-integration.md). Release
+completion requires CI, production revision verification and read-only smoke.
+
+## Earlier Feature Milestones
+
+Historical implementation list; current CMS authority and release status above
+supersede older deployment assumptions. Feature presence does not imply complete
+data coverage or a fresh all-route QA pass.
 
 - Built Thai-first temple hub and subroutes.
 - Added `สายไหว้พระ 9 วัด` page at `/temples/popular/`.
@@ -52,28 +71,28 @@ Latest known code state:
 - Added focused Tarot pages for love, money, and career.
 - Added the 78-card Tarot meaning index and individual card pages using original Rider-Waite-Smith imagery.
 - Added detailed Thai-first Major Arcana interpretations with restrained Western context.
-- Added the Palmistry and Tarot pages to the code-owned Admin Portal page registry/navigation.
+- Registered the Palmistry and Tarot pages in Admin bootstrap data; published
+  page/navigation edits now belong to the configured live CMS.
 - Added Admin Portal drag-and-drop temple ranking plus compact manual up/down controls for the selected sidebar item.
 - Added `/temples/planner/` for trip planning with auto trip generation, manual selection, nearby search, radius controls, route estimates, draggable selected-place chips, replace/reorder controls, and trip-condition filtering.
 - Refined planner UX so search/filter criteria are applied explicitly, auto trip actions warn only after a trip/list exists, and manual selection remains separate from generated trip criteria.
 - Added staggered reveal animation and manual `ดูเพิ่ม` behavior for temple card lists while keeping page performance predictable.
 - Added a lightweight all-Thailand temple directory index so filters and the first-page preview do not require loading the full raw dataset immediately.
 - Cleaned the calendar navigation: `วันพระ` is now the direct top-level nav link to `/calendar/`; stale `ฤกษ์และปฏิทิน` menu items are no longer restored by CMS hydration.
-- Deployed latest changes to production.
+- Delivered the initial temple/planner/calendar navigation milestones. See the
+  dated release evidence above rather than treating this list as a release log.
 
 ## Current Working Set
 
-No temple planner or calendar-nav implementation remains pending after the current release.
-Keep unrelated Admin Portal/Tarot changes, visual snapshots, `.claude/`, Playwright reports, `public/images/hand.png`, `outputs/`, and test artifacts out of unrelated commits unless explicitly requested.
+The user authorized push/deploy of this chat's work on 2026-10-15: 78-card / 468
+context editorial data, CMS mappings, six full-deck draw pages, focused tests and
+the related documentation. Preserve unrelated files and existing visual artifacts;
+exclude generated screenshots, test reports and baseline source copies from Git.
 
-Checks already completed for the latest production release:
-
-- `git diff --check`
-- `npm run check`
-- `npm run nfr:cms`
-- `npm run build`
-- `npm run smoke:production`
-- Production browser verification after hydration: `วันพระ` links to `/calendar/` and has no submenu; stale `ฤกษ์และปฏิทิน` tab is absent.
+The September release passed targeted runtime, browser, CMS, SEO, build and
+production smoke checks. Full-site performance budgets still had six failures
+also present in the comparison baseline; thresholds were not weakened. Details
+and coverage boundaries are in [Temple URL Slugs](docs/temple-slugs.md#verification).
 
 ## CMS Content Guardrail
 
@@ -91,30 +110,53 @@ Live-source errors are explicit and retryable; bundled content never overrides a
 
 ## High-Priority Backlog
 
-### Admin Portal
+### CMS Coverage Maintenance
 
-Build an Admin Portal or content management path so these can be edited without code changes:
+Admin is implemented, not a future replacement for JSON. Use [CMS.md](CMS.md),
+[workspace coverage](docs/cms-workspace-coverage.md) and the
+[place editor](docs/admin-place-editor.md) as the ownership map.
 
-- Temple/place names.
-- Card images and fallback images.
-- Detail hero images.
-- Detail annotation pin placement/editing, including x/y position and label fields. Pins are currently hidden on the public detail hero.
-- Banner images per page.
-- Plus Codes and coordinates, with Plus Code as the Google Maps default and coordinates as fallback.
-- Travel modes.
-- Blessings/object hero/type fields.
-- Detail content sections.
+- For any new supported Visitor field, trace editor -> local draft -> validated
+  publication -> live read -> every relevant Visitor consumer, including an
+  explicit empty value and reset behavior.
+- Preserve stored overrides, permissions and revision conflicts during schema
+  changes. Do not use a seed deployment as a substitute for content migration.
+- Distinguish missing place data from missing editor/runtime support. Add only
+  evidenced gaps to the backlog rather than rebuilding existing controls.
 
-Keep current JSON fields data-driven so Admin data can replace static JSON later.
+### Tarot Research And Integration
+
+- Integrated locally on 2026-10-15: 78 cards, six upright contexts (468 blocks),
+  general reversed meanings, card-specific Minor meanings and topic results.
+  The user accepted this reduced scope instead of the earlier 936/1,560 matrix.
+- Original IDs, names, media, existing CMS overrides and field paths are retained.
+  Five new context branches and monthly position guidance are editable in CMS.
+- Monthly uses card-specific monthly content plus position guidance, not an
+  automatic ten-card synthesis engine. Research spread examples remain references.
+- Remaining release work: authorized publication/deploy and production smoke;
+  optional independent Thai editorial proofreading. See the
+  [integration record](docs/tarot-editorial-integration.md).
+- Extending four topic draws beyond Major Arcana or implementing reversed draws
+  requires separate behavior changes and tests. See the research prompt and
+  [CMS import boundary](CMS.md#tarot-research-and-editorial-import).
+
+### Performance Debt
+
+Reduce the recorded aggregate JS/CSS, Admin chunk and route stylesheet budget
+overruns. Re-measure the intended revision against a clean baseline before
+claiming a fix; keep comparison source outside typecheck discovery and retain
+the existing budget thresholds.
 
 ### Temple Detail Content Expansion
 
-Detail pages currently use available dataset fields. Future content can add:
+Detail pages already support descriptions, visit information and images. Improve
+source-backed coverage per place; do not confuse an empty field with a missing
+feature. Candidate enrichment includes:
 
 - Full description.
 - Visit notes.
 - Worship flow.
-- Opening hours if available.
+- Verified opening hours and entry fees where missing.
 - Official/source links.
 - Gallery images.
 - Related route packages.
@@ -154,7 +196,8 @@ Continue refining `/temples/thailand/`:
 
 Project direction is Thai-first. Check for stale English navigation/routes/copy if the user asks for cleanup.
 
-Current README may still mention `/en/` from earlier project state; verify actual route/code before changing.
+English/romanized place slugs are explicitly approved URL identifiers, not an
+English-language version of the site. Do not revert them during language cleanup.
 
 ### Detail Page Interaction Polish
 
@@ -191,9 +234,8 @@ Keep workbook writing through artifact-tool, not Python/openpyxl.
 
 ## Low-Priority Backlog
 
-- Update `README.md` to match the current Thai-first site and temple architecture.
-- Add screenshots for key routes.
-- Add a lightweight smoke-test script using Playwright if the project starts running frequent UI edits.
+- Refresh route documentation and screenshots when their owning features change.
+- Extend the existing smoke/Playwright suites for evidenced coverage gaps.
 - Add source attribution docs for image and coordinate providers.
 
 ## Known Data Files
@@ -207,6 +249,7 @@ Runtime JSON:
 
 - `src/data/popular-temples.json`
 - `src/data/mu-temples.json`
+- `src/data/sacred-temples.json`
 - `src/data/temple-image-overrides.json`
 - `src/data/temple-page-banners.json`
 
@@ -218,7 +261,9 @@ Scratch generator:
 
 Use proportional verification to conserve usage during normal iteration.
 
-Quick CI is always required before commit/deploy:
+Documentation-only work checks references and `git diff --check`; it does not
+require a build, screenshot or production request. For an authorized code release,
+required checks include:
 
 - `git diff --check`
 - `npm run check`
@@ -230,7 +275,8 @@ Workflow modes:
 - Quick patch: make only the requested change; do not commit, push, or deploy.
 - Batch mode: collect multiple requests, then test and deploy once.
 - Production mode: run full commit, push, deploy, and production smoke.
-- Skip Browser verification when the change is not behavior-critical.
+- Skip browser verification for documentation-only changes; visible edits need
+  targeted visual evidence even when behavior is unchanged.
 - Keep final summaries short: files changed plus test results.
 
 For every feature with new or changed behavior:
@@ -246,7 +292,8 @@ During small iterative edits:
 - Do not run `npm run nfr`.
 - Do not run full E2E.
 - Run `git diff --check`.
-- For UI edits, use Browser spot-checks only on the touched page/flow at desktop and mobile sizes.
+- For tiny visual edits, use one relevant viewport/computed-style check. Add
+  desktop/mobile coverage when responsive or shared-interaction risk is touched.
 
 Before commit:
 
@@ -271,14 +318,40 @@ For visual work:
 - Check no text overlap.
 - Check card/tag/image state.
 
-For production deploy:
+### Release Workflow
 
-```sh
-git push origin main
-vercel --prod --yes
-```
+1. Require explicit current-task authorization. Inspect the active checkout and
+   commit only intended files; do not switch worktrees or deploy another chat's work.
+2. Record the full intended commit SHA and check the remote after pushing. Track
+   push completion, required CI, build readiness and production promotion separately.
+3. Inspect existing GitHub runs and Vercel Git-triggered deployments before any
+   manual workflow dispatch or CLI deployment. Use the full SHA: a short-SHA
+   `gh run list --commit` lookup missed an existing run during the slug release.
+   Do not automatically follow a Git push with a duplicate `vercel --prod`.
+4. Use recent comparable successful runs to set checkpoints. Without better
+   evidence, investigate a push without progress at 2 minutes, missing CI/deploy
+   at 3 minutes, queued/no-progress work at 5 minutes, or build/CI at 10 minutes.
+   These are diagnostic checkpoints, not permission to retry, cancel or weaken gates.
+   Investigate failures immediately and promotion still pending 2 minutes after
+   build/check readiness. Compare actual step/log progress, not status alone.
+   With a baseline, investigate beyond the greater of 1.5 times normal duration
+   or normal duration plus 2 minutes; adjust only for evidenced long phases.
+5. On a trigger, inspect the exact SHA/run/deployment and first causal errors.
+   Recheck remote state before retrying uncertain pushes. Allow at most one
+   unchanged diagnostic rerun with transient-cause evidence; repeated causes or
+   two failed repairs require a new hypothesis before retrying.
+6. Verify the production alias serves the intended SHA, then run
+   `npm run smoke:production` and targeted read-only route/asset checks. Record
+   uncovered surfaces and pre-existing failures rather than claiming all gates pass.
 
-Then review the smoke output before sharing the deployment.
+Use `scripts/smoke-production.mjs` and its existing request headers for the
+approved production harness. Plain requests may receive a Vercel Security
+Checkpoint 429; protected candidates may require the authenticated `vercel curl`
+flow as well. Distinguish these from application responses, never disable the
+firewall to obtain a green check, and never put bypass credentials in docs/logs.
+CMS mutation tests belong in fixtures or explicitly authorized UAT, not a routine
+read-only production smoke. See [slug evidence](docs/temple-slugs.md) for the
+previous release's boundaries.
 
 ### Deferred Batch Checks
 
@@ -299,6 +372,9 @@ Do not defer focused CMS validation when changing Admin Portal page registry or 
 - Audience is Thai.
 - Do not continue English version work unless explicitly requested.
 - The `วัดดังเสริมมงคล` section includes temple collection pages and the all-Thailand directory as distinct sections.
-- `สายไหว้พระ 9 วัด` and `สายมู` collection pages should be similar in search/filter/card/lazy-load/map/detail behavior.
-- Data and images should remain editable in a future Admin Portal.
+- Popular, mu and sacred collections share search/filter/card/load-more/map/detail
+  contracts; their current default labels are `วัดดังน่าไป`, `พิกัดสายมู` and
+  `วัดเด่นขอพร`. Do not fix a shared behavior in only one collection.
+- Keep supported data/images editable through the existing Admin Portal and
+  synchronized with their Visitor consumers.
 - Use source-backed data for temple facts; do not invent unsupported content.

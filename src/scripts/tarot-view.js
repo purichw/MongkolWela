@@ -1,5 +1,6 @@
 import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 import { renderIcon, escapeHtml } from "../lib/ui-markup.js";
+import { readingForContext } from "../data/tarot-editorial.js";
 
 export function renderCardBack() {
   return `<img class="tarot-back-image" src="/assets/images/tarot/celestial-card-back.webp" alt="" aria-hidden="true" draggable="false" width="360" height="540">`;
@@ -38,6 +39,21 @@ export function renderSingleReading(card, { verdict, labels = {}, reading = card
 
 export function renderReadingActions(label = "จับไพ่ใหม่") {
   return `<div class="tarot-result-actions"><a class="primary-action" href="../">${escapeHtml(label)}${renderIcon("arrow-right")}</a><a class="secondary-action" href="/">กลับหน้าหลัก</a></div>`;
+}
+
+export function renderMonthlyCard(card, position, index) {
+  const reading = readingForContext(card, "monthly");
+  return `<article class="tarot-monthly-card" data-monthly-position="${escapeHtml(position.id)}">
+    <header><span class="tarot-position-number">${String(index + 1).padStart(2, "0")}</span><div><h3>${escapeHtml(position.title)}</h3><p>${escapeHtml(position.focus)}</p></div></header>
+    <div class="tarot-monthly-content"><a class="tarot-monthly-image" href="/tarot/meanings/${card.id}/" aria-label="ความหมายไพ่ ${escapeHtml(card.thName)}">${renderCardFace(card, "spread")}</a>
+      <div><h4>${escapeHtml(card.thName)}</h4><p class="tarot-result-name">${escapeHtml(card.name)}</p><p class="tarot-card-theme">${escapeHtml(card.theme)}</p>
+      ${renderReadingSections([
+        { label: "คำอ่านรายเดือน", text: reading.reading, icon: "book-open" },
+        { label: "คำแนะนำ", text: reading.advice, icon: "lightbulb" },
+        { label: "ข้อควรระวัง", text: reading.caution, icon: "info" },
+        { label: "ทบทวนตำแหน่งนี้", text: position.advice, icon: "message-circle" },
+      ], `position-${index}`)}</div></div>
+  </article>`;
 }
 
 export function renderEmptyReading(title, copy) {

@@ -1,0 +1,79 @@
+﻿order,legacy_id,name_en,name_th,arcana,suit,rank,rank_key,number,rank_order,research_status,publication_readiness,image_status
+0,the-fool,The Fool,ผู้เริ่มเดินทาง,major,,,,0,,researched,editorial_review,viewed
+1,the-magician,The Magician,นักมายากล,major,,,,1,,researched,editorial_review,viewed
+2,the-high-priestess,The High Priestess,มหาปุโรหิตหญิง,major,,,,2,,researched,editorial_review,viewed
+3,the-empress,The Empress,จักรพรรดินี,major,,,,3,,researched,editorial_review,viewed
+4,the-emperor,The Emperor,จักรพรรดิ,major,,,,4,,researched,editorial_review,viewed
+5,the-hierophant,The Hierophant,มหาปุโรหิต,major,,,,5,,researched,editorial_review,viewed
+6,the-lovers,The Lovers,คู่รัก,major,,,,6,,researched,editorial_review,viewed
+7,the-chariot,The Chariot,ราชรถ,major,,,,7,,researched,editorial_review,viewed
+8,the-strength,Strength,พละกำลัง,major,,,,8,,researched,editorial_review,viewed
+9,the-hermit,The Hermit,ฤๅษี,major,,,,9,,researched,editorial_review,viewed
+10,the-wheel-of-fortune,Wheel of Fortune,กงล้อแห่งโชคชะตา,major,,,,10,,researched,editorial_review,viewed
+11,the-justice,Justice,ความยุติธรรม,major,,,,11,,researched,editorial_review,viewed
+12,the-hanged-man,The Hanged Man,คนห้อยหัว,major,,,,12,,researched,editorial_review,viewed
+13,the-death,Death,ความตาย,major,,,,13,,researched,editorial_review,viewed
+14,temperance,Temperance,ความพอดี,major,,,,14,,researched,editorial_review,viewed
+15,the-devil,The Devil,ปีศาจ,major,,,,15,,researched,editorial_review,viewed
+16,the-tower,The Tower,หอคอย,major,,,,16,,researched,editorial_review,viewed
+17,the-star,The Star,ดวงดาว,major,,,,17,,researched,editorial_review,viewed
+18,the-moon,The Moon,ดวงจันทร์,major,,,,18,,researched,editorial_review,viewed
+19,the-sun,The Sun,ดวงอาทิตย์,major,,,,19,,researched,editorial_review,viewed
+20,the-judgment,Judgement,การตื่นรู้,major,,,,20,,researched,editorial_review,viewed
+21,the-world,The World,โลก,major,,,,21,,researched,editorial_review,viewed
+22,the-ace-of-wands,Ace of Wands,หนึ่งไม้เท้า,minor,wands,ace,ace,1,1,researched,editorial_review,viewed
+23,the-two-of-wands,Two of Wands,สองไม้เท้า,minor,wands,two,two,2,2,researched,editorial_review,viewed
+24,the-three-of-wands,Three of Wands,สามไม้เท้า,minor,wands,three,three,3,3,researched,editorial_review,viewed
+25,the-four-of-wands,Four of Wands,สี่ไม้เท้า,minor,wands,four,four,4,4,researched,editorial_review,viewed
+26,the-fives-of-wands,Five of Wands,ห้าไม้เท้า,minor,wands,five,fives,5,5,researched_with_visual_gap,editorial_review,text_description_only
+27,the-sixs-of-wands,Six of Wands,หกไม้เท้า,minor,wands,six,sixs,6,6,researched,editorial_review,viewed
+28,the-sevens-of-wands,Seven of Wands,เจ็ดไม้เท้า,minor,wands,seven,sevens,7,7,researched_with_visual_gap,editorial_review,text_description_only
+29,the-eights-of-wands,Eight of Wands,แปดไม้เท้า,minor,wands,eight,eights,8,8,researched,editorial_review,viewed
+30,the-nines-of-wands,Nine of Wands,เก้าไม้เท้า,minor,wands,nine,nines,9,9,researched,editorial_review,viewed
+31,the-tens-of-wands,Ten of Wands,สิบไม้เท้า,minor,wands,ten,tens,10,10,researched_with_visual_gap,editorial_review,text_description_only
+32,the-pages-of-wands,Page of Wands,มหาดเล็กไม้เท้า,minor,wands,page,pages,,11,researched,editorial_review,viewed
+33,the-knights-of-wands,Knight of Wands,อัศวินไม้เท้า,minor,wands,knight,knights,,12,researched,editorial_review,viewed
+34,the-queens-of-wands,Queen of Wands,ราชินีไม้เท้า,minor,wands,queen,queens,,13,researched,editorial_review,viewed
+35,the-kings-of-wands,King of Wands,ราชาไม้เท้า,minor,wands,king,kings,,14,researched,editorial_review,viewed
+36,the-ace-of-cups,Ace of Cups,หนึ่งถ้วย,minor,cups,ace,ace,1,1,researched,editorial_review,viewed
+37,the-two-of-cups,Two of Cups,สองถ้วย,minor,cups,two,two,2,2,researched,editorial_review,viewed
+38,the-three-of-cups,Three of Cups,สามถ้วย,minor,cups,three,three,3,3,researched,editorial_review,viewed
+39,the-four-of-cups,Four of Cups,สี่ถ้วย,minor,cups,four,four,4,4,researched,editorial_review,viewed
+40,the-fives-of-cups,Five of Cups,ห้าถ้วย,minor,cups,five,fives,5,5,researched,editorial_review,viewed
+41,the-sixs-of-cups,Six of Cups,หกถ้วย,minor,cups,six,sixs,6,6,researched,editorial_review,viewed
+42,the-sevens-of-cups,Seven of Cups,เจ็ดถ้วย,minor,cups,seven,sevens,7,7,researched,editorial_review,viewed
+43,the-eights-of-cups,Eight of Cups,แปดถ้วย,minor,cups,eight,eights,8,8,researched,editorial_review,viewed
+44,the-nines-of-cups,Nine of Cups,เก้าถ้วย,minor,cups,nine,nines,9,9,researched,editorial_review,viewed
+45,the-tens-of-cups,Ten of Cups,สิบถ้วย,minor,cups,ten,tens,10,10,researched,editorial_review,viewed
+46,the-pages-of-cups,Page of Cups,มหาดเล็กถ้วย,minor,cups,page,pages,,11,researched,editorial_review,viewed
+47,the-knights-of-cups,Knight of Cups,อัศวินถ้วย,minor,cups,knight,knights,,12,researched,editorial_review,viewed
+48,the-queens-of-cups,Queen of Cups,ราชินีถ้วย,minor,cups,queen,queens,,13,researched,editorial_review,viewed
+49,the-kings-of-cups,King of Cups,ราชาถ้วย,minor,cups,king,kings,,14,researched,editorial_review,viewed
+50,the-ace-of-swords,Ace of Swords,หนึ่งดาบ,minor,swords,ace,ace,1,1,researched,editorial_review,viewed
+51,the-two-of-swords,Two of Swords,สองดาบ,minor,swords,two,two,2,2,researched,editorial_review,viewed
+52,the-three-of-swords,Three of Swords,สามดาบ,minor,swords,three,three,3,3,researched,editorial_review,viewed
+53,the-four-of-swords,Four of Swords,สี่ดาบ,minor,swords,four,four,4,4,researched_with_visual_gap,editorial_review,text_description_only
+54,the-fives-of-swords,Five of Swords,ห้าดาบ,minor,swords,five,fives,5,5,researched,editorial_review,viewed
+55,the-sixs-of-swords,Six of Swords,หกดาบ,minor,swords,six,sixs,6,6,researched,editorial_review,viewed
+56,the-sevens-of-swords,Seven of Swords,เจ็ดดาบ,minor,swords,seven,sevens,7,7,researched_with_visual_gap,editorial_review,text_description_only
+57,the-eights-of-swords,Eight of Swords,แปดดาบ,minor,swords,eight,eights,8,8,researched_with_visual_gap,editorial_review,text_description_only
+58,the-nines-of-swords,Nine of Swords,เก้าดาบ,minor,swords,nine,nines,9,9,researched,editorial_review,viewed
+59,the-tens-of-swords,Ten of Swords,สิบดาบ,minor,swords,ten,tens,10,10,researched_with_visual_gap,editorial_review,text_description_only
+60,the-pages-of-swords,Page of Swords,มหาดเล็กดาบ,minor,swords,page,pages,,11,researched,editorial_review,viewed
+61,the-knights-of-swords,Knight of Swords,อัศวินดาบ,minor,swords,knight,knights,,12,researched,editorial_review,viewed
+62,the-queens-of-swords,Queen of Swords,ราชินีดาบ,minor,swords,queen,queens,,13,researched,editorial_review,viewed
+63,the-kings-of-swords,King of Swords,ราชาดาบ,minor,swords,king,kings,,14,researched,editorial_review,viewed
+64,the-ace-of-pentacles,Ace of Pentacles,หนึ่งเหรียญ,minor,pentacles,ace,ace,1,1,researched,editorial_review,viewed
+65,the-two-of-pentacles,Two of Pentacles,สองเหรียญ,minor,pentacles,two,two,2,2,researched,editorial_review,viewed
+66,the-three-of-pentacles,Three of Pentacles,สามเหรียญ,minor,pentacles,three,three,3,3,researched,editorial_review,viewed
+67,the-four-of-pentacles,Four of Pentacles,สี่เหรียญ,minor,pentacles,four,four,4,4,researched,editorial_review,viewed
+68,the-fives-of-pentacles,Five of Pentacles,ห้าเหรียญ,minor,pentacles,five,fives,5,5,researched,editorial_review,viewed
+69,the-sixs-of-pentacles,Six of Pentacles,หกเหรียญ,minor,pentacles,six,sixs,6,6,researched,editorial_review,viewed
+70,the-sevens-of-pentacles,Seven of Pentacles,เจ็ดเหรียญ,minor,pentacles,seven,sevens,7,7,researched,editorial_review,viewed
+71,the-eights-of-pentacles,Eight of Pentacles,แปดเหรียญ,minor,pentacles,eight,eights,8,8,researched,editorial_review,viewed
+72,the-nines-of-pentacles,Nine of Pentacles,เก้าเหรียญ,minor,pentacles,nine,nines,9,9,researched,editorial_review,viewed
+73,the-tens-of-pentacles,Ten of Pentacles,สิบเหรียญ,minor,pentacles,ten,tens,10,10,researched,editorial_review,viewed
+74,the-pages-of-pentacles,Page of Pentacles,มหาดเล็กเหรียญ,minor,pentacles,page,pages,,11,researched,editorial_review,viewed
+75,the-knights-of-pentacles,Knight of Pentacles,อัศวินเหรียญ,minor,pentacles,knight,knights,,12,researched,editorial_review,viewed
+76,the-queens-of-pentacles,Queen of Pentacles,ราชินีเหรียญ,minor,pentacles,queen,queens,,13,researched,editorial_review,viewed
+77,the-kings-of-pentacles,King of Pentacles,ราชาเหรียญ,minor,pentacles,king,kings,,14,researched,editorial_review,viewed

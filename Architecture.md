@@ -1,6 +1,6 @@
 # Architecture
 
-Last updated: 2026-09-30
+Last updated: 2026-10-15 (Tarot editorial integration and release preparation).
 
 ## Project Shape
 
@@ -8,7 +8,7 @@ Last updated: 2026-09-30
 
 - `https://mongkolwela.vercel.app`
 - Vercel project: `mongkolwela`
-- GitHub repository: `purichw/hora-astro`
+- GitHub repository: `purichw/Mongkol-Wela` (the legacy `purichw/hora-astro` remote redirected here during the 2026-09-30 release).
 
 Most pages are static Astro pages. Place detail routes under `/temples/popular/`,
 `/temples/mu/` and `/temples/sacred/`, plus `/sitemap.xml`, render on demand with
@@ -177,6 +177,35 @@ The 78-card knowledge base uses:
 
 The public reading tone is Thai-first, with restrained Western context such as elements, astrology, numerology, and archetypes when it improves interpretation.
 
+Reading data and meanings are separate editorial registries:
+
+- `src/scripts/tarot-data.js`: `tarot.tarotCards`, used by draw/results.
+- `src/data/tarot-meanings.js`: `tarot.tarotMeaningCards`, used by the library.
+- `src/scripts/tarot-draw.js`: daily/monthly use 78 cards; luck/love/money/career
+  currently use 22 Major Arcana. Monthly requires ten distinct ordered cards;
+  the other modes require one.
+- `src/scripts/tarot-result.js` and `src/scripts/tarot-spread-result.js`: result
+  consumers. Results use per-card context text; monthly combines the monthly
+  context with separately editable position guidance.
+- `src/data/tarot-editorial-content.json` and `tarot-editorial.js`: generated
+  projection/mapping of the archived 78-card editorial bundle, applied before
+  the existing managed registries so published overrides retain precedence.
+- `src/data/tarot-monthly-positions.js`: ten position titles and reflection prompts.
+
+The two registries share 78 legacy IDs, including spellings such as
+`the-fives-of-cups` and `the-judgment`. Preserve these IDs, artwork links, URL
+parameters and storage keys when improving the prose. The 2026-10-15 local
+integration replaces templated core Minor meanings and grouped topic results
+with card-specific research content. Existing supplemental fields are retained.
+
+The [original research prompt](docs/research/tarot-78-deep-research-prompt.md) is
+historical. The accepted scope is 468 upright contexts plus general reversed
+meanings, not the original full context/position/orientation matrix. See the
+[integration record](docs/tarot-editorial-integration.md) for source evidence,
+CMS mapping and the boundary between monthly guidance and automatic synthesis.
+Do not infer reversed drawing support from a meaning field named `reversed`.
+See [CMS](CMS.md#tarot-research-and-editorial-import) before mapping results.
+
 ### Temple Hub
 
 The temple section is under:
@@ -184,16 +213,18 @@ The temple section is under:
 - `/temples/`
 - `/temples/popular/`
 - `/temples/mu/`
+- `/temples/sacred/`
 - `/temples/thailand/`
 - `/temples/popular/[slug]/`
 - `/temples/mu/[slug]/`
+- `/temples/sacred/[slug]/`
 
-Current Thai labels:
+Default Thai route/hub labels (published navigation can override its own copy):
 
 - Top-level nav item: `วัดดังเสริมมงคล`
-- Section/tab label for popular route package page: `สายไหว้พระ 9 วัด`
-- Section/tab label for mu route package page: `สายมู`
-- Hub section naming from previous UX direction: `วัดเด่นวัดดัง`
+- Popular collection: `วัดดังน่าไป`
+- Mu collection: `พิกัดสายมู`
+- Sacred collection: `วัดเด่นขอพร`
 
 The target audience is Thai. Do not build English variants unless explicitly requested.
 
@@ -372,6 +403,7 @@ Routes:
 
 - `src/pages/temples/popular/[slug].astro`
 - `src/pages/temples/mu/[slug].astro`
+- `src/pages/temples/sacred/[slug].astro`
 
 Component:
 
@@ -404,8 +436,12 @@ Detail URL helper:
 
 Slug convention:
 
-- Rank is included and padded to 3 digits.
-- Thai text is normalized and non-letter/number characters become hyphens.
+- Public canonical slugs are English/romanized ASCII names, either automatic or
+  Admin-customized. Ranking is not part of the current canonical URL.
+- Legacy ranked Thai identifiers remain stable CMS/planner keys and HTTP 308
+  aliases. A rename never renames record identity or discards page overrides.
+- `src/lib/temple-routing.js` owns runtime resolution and publication validation.
+  See [Temple URL Slugs](docs/temple-slugs.md) for collisions, tombstones and recovery.
 
 ### Temple Search Hero And Banners
 
@@ -468,11 +504,13 @@ npm run check
 npm run build
 ```
 
-Verification is intentionally proportional to reduce unnecessary usage:
+Verification is proportional to the current request, not the previous task:
 
-- Small UI changes: targeted desktop/mobile browser checks plus `check` and `build`.
-- Full E2E: tested-route changes, shared interaction changes, visual baseline work, or a planned release sweep.
-- Broad NFR: periodic maintenance/release sweep, except focused CMS validation remains mandatory for page registry/navigation changes.
+- Documentation-only: validate changed references, factual claims and `git diff --check`.
+- Tiny visible changes: owner files, diff check and one targeted browser/style check.
+- Components/flows: targeted tests; add desktop/mobile coverage for responsive risk.
+- CMS, routing, auth, migrations and release: use the stricter targeted contracts
+  and required release checks. Broad suites need an evidenced scope trigger.
 
 Development server:
 
@@ -480,23 +518,16 @@ Development server:
 npm run dev -- --host 127.0.0.1 --port 4324
 ```
 
-Production deployment:
+Production changes require current user authorization. Follow the
+[release workflow](Roadmap.md#release-workflow): confirm the intended full SHA,
+inspect Git-triggered deployment before starting a CLI deployment, and track push,
+CI, build readiness and promotion separately. A successful build alone is not
+proof that production serves that revision. Historical release evidence lives in
+[Temple URL Slugs](docs/temple-slugs.md#release-evidence-2026-09-30).
 
-```sh
-vercel --prod --yes
-```
-
-Git workflow:
-
-```sh
-git status --short
-git add <files>
-git commit -m "<message>"
-git push origin main
-vercel --prod --yes
-```
-
-Do not add `outputs/` unless explicitly requested.
+Do not add `outputs/`, raw CMS snapshots or generated build/test artifacts unless
+explicitly requested. Keep baseline source copies outside Astro's diagnostic
+discovery; an ignored deployment folder does not necessarily exclude typechecking.
 
 ## Design Constraints
 

@@ -123,7 +123,9 @@ empty/error/retry, focus and accessibility. Captures: `artifacts/temple-search/`
 
 All six tarot draw modes use `tarot/TarotDraw.astro` and `scripts/tarot-draw.js`.
 Spread type/count/storage key remain page-owned; the shared controller preserves
-ordered selections, paging, keyboard focus, shuffle/cut and explicit submission.
+ordered selections, keyboard focus, shuffle/cut and explicit submission. The full
+eligible deck wraps into one non-overlapping table; no paging or horizontal tray
+scroll is required. Desktop/mobile share the same card order across resizes.
 `scripts/tarot-view.js` shares card imagery, reading disclosures and single-card
 results while topic verdicts/monthly positions retain their domain owners.
 `tarot-experience.css` is loaded only for `/tarot/` and also aligns the meanings

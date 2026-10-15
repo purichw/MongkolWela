@@ -23,6 +23,34 @@ Do not run a CMS seed or overwrite the live document to migrate URLs.
 This is not a rewrite of the separate all-Thailand location index.
 See [Temple URL Slugs](docs/temple-slugs.md) for verification and rollout details.
 
+## Tarot Research And Editorial Import
+
+The 2026-10-15 authorized local integration now uses the delivered
+`mongkol-tarot-editorial-v1` bundle: 78 cards and 468 upright contexts, plus
+general reversed meanings. See [integration and field ownership](docs/tarot-editorial-integration.md)
+for exact CMS paths, preserved overrides, monthly limitations and QA. This is
+not a production publication. The older research brief below remains historical.
+
+The [78-card research prompt](docs/research/tarot-78-deep-research-prompt.md) is a
+research/editorial brief, not a completed dataset or a CMS import file. Its
+proposed `tarot-research-v1` schema is not the live CMS schema.
+
+- Meanings owner: `src/data/tarot-meanings.js`, registry `tarot.tarotMeaningCards`.
+- Reading owner: `src/scripts/tarot-data.js`, registry `tarot.tarotCards`.
+- Both contain 78 matching legacy IDs. Preserve ID spellings, artwork references,
+  existing overrides and draw/storage contracts; display names may differ from IDs.
+- Imported readings distinguish each card and upright context. General reversed
+  meanings are present; reversed context matrices and automatic monthly synthesis
+  are not implemented. Monthly positions have separate editable guidance.
+- Before import, review sources and Thai copy, map only supported editorial fields
+  through `managedContent`, and record unmapped fields as pending implementation.
+  New nested context/orientation fields require explicit schema, Admin and Visitor
+  work; they must not be silently dropped or described as already synchronized.
+- Merge against the current live revision, preview the diff and test both library
+  and result consumers using fixtures/UAT. Publishing, changing draw eligibility
+  or enabling reversed draws are separate authorized implementation decisions.
+  Never seed over live edits to import research.
+
 ## Content Workspace
 
 The central Admin now includes page fields, shared website copy, the reading
