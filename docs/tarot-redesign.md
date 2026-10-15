@@ -1,6 +1,51 @@
 # Shared Tarot Reference Adaptation
 
+Content update (2026-10-15): the 78-card editorial bundle is now integrated
+locally, including all six upright contexts and CMS fields. See
+[Tarot editorial integration](tarot-editorial-integration.md) for current scope,
+ownership and verification; earlier research plans below are historical.
+
 Date: 2026-09-23. Local implementation; no CMS writes or deployment.
+
+## Full-Deck Grid Update (2026-10-15)
+
+The latest reference `codex-clipboard-81df084c-36f2-4fbf-bdd5-25e5fe6535fb.png`
+supersedes the paged fan below for **all six draw pages**. The table now shows all
+eligible cards as non-overlapping rows, using the existing jade/gold artwork,
+hero, steps, guidance and site shell. The final row is centered. The real 78-card
+deck requires four desktop rows rather than the illustrative reference's three;
+no cards are omitted to reproduce the image height.
+
+- Daily/monthly still use 78 cards; the four topic modes still use 22 Major
+  Arcana. Selection requirements, shuffle/cut, result URLs, storage and editorial
+  readings are unchanged.
+- Mobile uses normal vertical page scrolling and at least 44px-wide card targets.
+  The action toolbar stays below the site header while scrolling the deck.
+- Chosen cards retain their original table slots; the ordered preview wraps,
+  including all ten monthly picks. Single-card choices also have a larger preview.
+- Resizing never changes deck order or selections. Keyboard picks continue to
+  the next unselected card and scroll it into view; completing the required
+  count focuses the visible read action. Shuffle/cut clear the selection.
+- The shared owners are still `TarotDraw.astro`, `tarot-draw.js` and
+  `tarot-experience.css`. Existing CMS field identifiers and page-owned bindings
+  remain intact; no CMS documents are written.
+
+Focused acceptance: all six modes at 1440/390, full 78/22 unique decks without
+pagers/overlap, 320-1440 reflow, fixed table geometry after selection, ordered
+monthly results, keyboard continuation, sticky actions, cut/shuffle reset,
+storage-denied recovery and draw-region Axe. Screenshots live in
+`artifacts/tarot-grid/`; local fixtures are not production data. Full-site E2E,
+production, Safari/Firefox and the known unrelated artifact-copy type-check
+errors are outside this visual change's checks. No push/deploy in this update.
+
+Result: six focused browser scenarios passed across the targeted runs, including
+the contrast repair and keyboard/cut check. Build, 86 browser-module binding
+checks and `git diff --check` passed. Built-preview daily desktop/mobile renders
+were inspected alongside the supplied reference; `artifacts/tarot-grid/proof.json`
+records source hashes, viewports and full-deck geometry without API interception.
+
+The sections below document the earlier adaptation; the paged fan behavior is
+historical, not the current draw contract.
 
 ## Scope And Design Authority
 
@@ -123,3 +168,22 @@ the focused suite. Visual evidence: `artifacts/tarot-meanings/comparison.html`.
 Desktop detail is an adaptation because the reference only shows mobile detail.
 The mobile library reference stops mid-list; a matching top crop is paired with
 it, while full-page captures document all categories and the existing footer.
+
+## Content Research Handoff (2026-10-04)
+
+The [78-card Deep Research prompt](research/tarot-78-deep-research-prompt.md) is
+prepared; it is not completed research, a deployed content update or an importable
+live CMS schema. Source ownership was reconfirmed in the 2026-10-11 docs pass.
+
+- Existing Minor text still uses rank/suit templates. Monthly results repeat
+  general advice by position; topic results also rely on shared grouped text.
+- Requested research covers 78 cards x six contexts x two orientations (936
+  blocks), plus 78 x ten monthly positions x two orientations (1,560 readings).
+  Source-supported meanings and editorial applications must remain distinguishable.
+- Preserve the exact 78 legacy IDs shared by `tarot.tarotCards` and
+  `tarot.tarotMeaningCards`, even where display-name spelling differs from the ID.
+- Researching all 78 cards does not change the existing topic draw restriction
+  to Major Arcana or implement reversed drawing. Those are separate product tasks.
+- Review sources, map supported fields and test both meanings/results before an
+  authorized import. Follow [CMS import boundaries](../CMS.md#tarot-research-and-editorial-import)
+  instead of seeding over live editorial overrides.

@@ -41,10 +41,11 @@ resolved place without rewriting their stored page IDs.
 The Vercel adapter is paired with Astro 7.3.5. Astro was upgraded because the
 earlier version was affected by the [AVIF security advisory](https://github.com/withastro/astro/security/advisories/GHSA-26w7-cxv4-gfx2).
 `compressHTML: true` preserves previous output behavior. Four Astro prop casts
-are type-only compatibility fixes. Production dependencies pass `npm audit
---omit=dev`; this is not a claim that the entire app has been security-audited.
-The full development dependency audit still reports one moderate `fast-uri`
-advisory; no broad dependency cleanup was included in this task.
+are type-only compatibility fixes. At release verification on 2026-09-30,
+`npm audit --omit=dev` reported no production dependency vulnerabilities; this
+is not a current security audit or a claim that the whole app was audited.
+The full development audit then reported one moderate `fast-uri` advisory;
+no broad dependency cleanup was included in this task.
 
 Reference spelling for the example: the Tourism Authority of Thailand's
 [Khlong tours brochure](https://www.thailandtourismus.de/fileadmin/user_upload/E_Broschueren/Spezialthemen/Khlong_tours.pdf).
@@ -54,7 +55,8 @@ a hand-written phonetic engine.
 
 ## Verification
 
-Completed locally: `npm run check`, `npm run build`, 129 runtime tests, two new
+Release verification (2026-09-30), not rerun for the 2026-10-11 documentation update:
+`npm run check`, `npm run build`, 129 runtime tests, two new
 slug browser journeys plus four existing place/CMS/map/filter regression tests,
 SEO, temple-CMS, Vercel configuration and runtime-data validation. Runtime-data
 validation retains warnings about incomplete existing travel/visit source data.
@@ -82,20 +84,57 @@ validation retains warnings about incomplete existing travel/visit source data.
   because the local baseline comparison under ignored deploy artifacts contains
   another complete copy of the old source. Browser binding checks pass for all
   86 modules. Baseline artifacts are excluded by `.vercelignore` and are not
-  committed. Full browser-matrix testing was not repeated for this release.
+  committed. Clean GitHub CI passed the normal full `npm run check`; the scoped
+  local check is not a new default or permission to hide diagnostics. Future
+  baseline copies should live outside automatic source discovery. Full
+  browser-matrix testing was not repeated for this release.
+
+## Release Evidence (2026-09-30)
+
+- Intended and verified production revision:
+  `303d84cea0b1dff6d0f4151dd58f2a1a10035087`, branch `main`.
+- [GitHub CI](https://github.com/purichw/Mongkol-Wela/actions/runs/36701944270)
+  succeeded for that revision. The legacy `purichw/hora-astro` remote redirected
+  to `purichw/Mongkol-Wela`.
+- The CLI candidate was
+  [mongkolwela-8gz84tw64](https://mongkolwela-8gz84tw64-purich-w.vercel.app),
+  `dpl_6x2MbWAc3AvqYeaY84s5VWo48Edu`. After its promotion, the Git integration
+  completed a deployment of the same SHA:
+  [mongkolwela-mvaf7ji5j](https://mongkolwela-mvaf7ji5j-purich-w.vercel.app),
+  `dpl_29rHfKk5zmzuZmuz1pbuaBmYYvJn`. The final production alias and Vercel
+  metadata were verified against this READY Git deployment, not just the candidate.
+- Production smoke passed 16 routes. Read-only checks covered 625 canonical
+  sitemap entries and representative current 200 / legacy 308 URLs in popular,
+  mu and sacred, including query preservation. The candidate also returned 404
+  for a missing place.
+- The inspected live CMS revision was `0151b1b080d0d11612a3efe6`, with two stored
+  place overrides over the 625 curated records. An in-memory publication
+  normalization dry run passed; no production CMS write was performed.
+- Both `/api/commerce` and `/api/commerce/index` returned the expected disabled
+  service response: 503 `COMMERCE_DISABLED`, not an accidental missing handler.
+- Candidate check results are in `artifacts/slug-release/candidate-report.json`;
+  that report identifies the candidate, not the later production deployment.
+  Admin create/rename/publication tests used the loopback fixture described
+  above, not live production edits. Do not commit raw CMS snapshots as evidence.
+
+These are historical checks. Reconfirm the current revision and run the relevant
+gates for a future release. The six performance budget failures above remain
+recorded debt; this evidence does not claim full NFR passed.
 
 ## Rollout And Recovery
 
 1. Review the current live document and save a secured, access-controlled backup
    using the existing CMS operational workflow. Never publish the local seed over
-   it. A read-only production request in this pass returned HTTP 429, so additional
-   live-only records have not been inventoried.
+   it. An initial plain request received a firewall 429; the authorized harness
+   later completed the read-only inventory recorded above. Use the existing smoke
+   harness/protected-deployment access flow, not disabled firewall rules.
 2. Deploy only the reviewed changes with the existing CMS server credentials. Do
    not run `db:seed:cms`. English mappings and redirects become effective on read;
    a normal Admin publication subsequently persists the normalized metadata.
-3. Smoke old Thai and current ASCII URLs in all three collections, custom rename,
-   newly added place, canonical/OG tags, sitemap, search, planner and map links.
-   Verify the Vercel function count and fresh CMS reads in the deployed environment.
+3. Read-only smoke old Thai and current ASCII URLs in all three collections,
+   canonical/OG tags, sitemap, search, planner and map links. Test custom rename
+   and newly added places in the fixture or explicitly authorized UAT. Verify
+   the Vercel function count and fresh CMS reads in the deployed environment.
 4. Recover names by a normal revision-checked publication while retaining
    `slugAliases`. Do not revert to the pre-SSR build alone after distributing new
    URLs: that build cannot serve their redirects or newly created routes.

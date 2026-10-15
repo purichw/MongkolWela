@@ -29,12 +29,7 @@ const { spreadType, requiredCount = 1, deckCount = 22, storageKey, intentionTitl
     <input data-cms-field="2b94653e-11" type="hidden" data-tarot-count name="tarot_card_count" value="0" />
     <div class="tarot-table" data-tarot-table>
       <header><p data-cms-field="2b94653e-12">{deckCount === 78 ? "สำรับไพ่ 78 ใบ" : "Major Arcana 22 ใบ"}</p><h2 data-cms-field="2b94653e-13">เลือกไพ่ {requiredCount} ใบ ที่สะดุดใจคุณ</h2></header>
-      <div class="tarot-fan" data-tarot-deck aria-label={`สำรับไพ่ ${deckCount} ใบ`}></div>
-      <nav class="tarot-deck-pager" aria-label="หน้าสำรับไพ่">
-        <button type="button" data-tarot-prev aria-label="ไพ่ชุดก่อนหน้า"><SiteIcon name="chevron-left" /></button>
-        <span data-tarot-page aria-live="polite"></span>
-        <button type="button" data-tarot-next aria-label="ไพ่ชุดถัดไป"><SiteIcon name="chevron-right" /></button>
-      </nav>
+      <div class:list={["tarot-card-grid", { "tarot-card-grid--major": deckCount === 22 }]} data-tarot-deck role="group" aria-label={`สำรับไพ่ ${deckCount} ใบ`}></div>
       <p data-cms-field="2b94653e-14" class="tarot-status" data-tarot-status role="status">ตั้งจิต แล้วเลือกไพ่ {requiredCount} ใบ</p>
     </div>
     <div class="tarot-selection" data-tarot-selection hidden aria-label="ไพ่ที่เลือกตามลำดับ"></div>

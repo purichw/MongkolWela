@@ -4,6 +4,7 @@ import { sitePlaceholderImage } from "../../../lib/image-placeholder.js";
 import ToolsLayout from "../../../layouts/ToolsLayout.astro";
 import { renderIcon } from "../../../lib/ui-markup.js";
 import { getTarotCardById } from "../../../scripts/tarot-data.js";
+import { readingForContext } from "../../../data/tarot-editorial.js";
 import { tarotMeaningCards, tarotMeaningGroups } from "../../../data/tarot-meanings.js";
 
 export function getStaticPaths() {
@@ -27,12 +28,20 @@ const relatedCards = (card.relatedCards || []).map((relatedCard) => {
   };
 });
 const groupLabel = group?.id === "major" ? "ไพ่ชุดใหญ่ (Major Arcana)" : `${group?.thTitle} (${group?.title})`;
-const advice = "advice" in card ? card.advice : getTarotCardById(card.slug)?.advice;
+const advice = card.advice;
 const caution = "caution" in card ? card.caution : "";
 const number = "number" in card ? card.number : null;
 const astrology = "astrology" in card ? card.astrology || card.rulingPlanet : "";
-const keywords = "keywordsUpright" in card ? card.keywordsUpright : card.keywords;
+const keywords = card.keywordsUpright;
 const uprightDetails = "uprightDetails" in card ? card.uprightDetails : null;
+const readingCard = getTarotCardById(card.id);
+const readingContexts = [
+  { key: "daily", label: "รายวัน" },
+  { key: "monthly", label: "รายเดือน" },
+  { key: "luck", label: "โชคลาภ" },
+].map(context => ({ ...context, ...readingForContext(readingCard, context.key) }));
+const readingPath = (context: string, field: string) => context === "daily"
+  ? (field === "reading" ? "interpretation" : field) : `contexts/${context}/${field}`;
 const topics = [
   ...(uprightDetails?.career || uprightDetails?.finance ? [
     { path: "uprightDetails/career", label: "การงาน", text: uprightDetails.career },
@@ -83,10 +92,16 @@ const topics = [
           <div><dt data-cms-field="55ff47f2-16">คีย์เวิร์ด</dt><dd data-cms-field="55ff47f2-17" {...contentBinding("tarot.tarotMeaningCards", card.slug, "keywordsUpright" in card ? "keywordsUpright" : "keywords", { join: " · ", seed: keywords })}>{keywords.join(" · ")}</dd></div>
         </dl>
         <section class="tarot-card-prose"><h2 data-cms-field="55ff47f2-18">ความหมายโดยรวม</h2><p data-cms-field="55ff47f2-19" {...contentBinding("tarot.tarotMeaningCards", card.slug, "upright")}>{card.upright}</p></section>
-        {advice && <section class="tarot-card-prose"><h2 data-cms-field="55ff47f2-20">คำแนะนำ</h2><p data-cms-field="55ff47f2-21">{advice}</p></section>}
+        {advice && <section class="tarot-card-prose"><h2 data-cms-field="55ff47f2-20">คำแนะนำ</h2><p data-cms-field="55ff47f2-21" {...contentBinding("tarot.tarotMeaningCards", card.slug, "advice")}>{advice}</p></section>}
         <section class="tarot-card-topics" aria-labelledby="tarot-topics-title">
           <h2 data-cms-field="55ff47f2-22" id="tarot-topics-title">ในด้านต่าง ๆ</h2>
-          <div class="tarot-detail-disclosures">{topics.map(topic => <details><summary data-cms-field="55ff47f2-23">{topic.label}<Fragment set:html={renderIcon("chevron-down")} /></summary><p data-cms-field="55ff47f2-24" {...contentBinding("tarot.tarotMeaningCards", card.slug, topic.path)}>{topic.text}</p></details>)}</div>
+          <div class="tarot-detail-disclosures">{topics.map(topic => <details><summary data-cms-field="55ff47f2-23">{topic.label}<Fragment set:html={renderIcon("chevron-down")} /></summary><p data-cms-field="55ff47f2-24" {...contentBinding("tarot.tarotMeaningCards", card.slug, topic.path)}>{topic.text}</p></details>)}
+            {readingContexts.map(context => <details data-reading-context={context.key}><summary>{context.label}<Fragment set:html={renderIcon("chevron-down")} /></summary>
+              <p {...contentBinding("tarot.tarotCards", card.id, readingPath(context.key, "reading"))}>{context.reading}</p>
+              <p><strong>คำแนะนำ: </strong><span {...contentBinding("tarot.tarotCards", card.id, readingPath(context.key, "advice"))}>{context.advice}</span></p>
+              <p><strong>ข้อควรระวัง: </strong><span {...contentBinding("tarot.tarotCards", card.id, readingPath(context.key, "caution"))}>{context.caution}</span></p>
+            </details>)}
+          </div>
         </section>
         <details class="tarot-detail-more">
           <summary data-cms-field="55ff47f2-25">เมื่อไพ่กลับหัว และความหมายเพิ่มเติม<Fragment set:html={renderIcon("chevron-down")} /></summary>

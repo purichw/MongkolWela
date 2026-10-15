@@ -1,4 +1,5 @@
 import { managedContent } from "../lib/managed-content.js";
+import { withReadingEditorial } from "../data/tarot-editorial.js";
 const majorCards = [
   {
     id: "the-fool",
@@ -406,7 +407,7 @@ function withCardImage(card) {
   };
 }
 
-export const tarotCards = managedContent("tarot.tarotCards", [...majorCards, ...createMinorCards()].map(withCardImage), {"title":"คำทำนายไพ่ 78 ใบ","group":"ไพ่ยิปซี","routes":["/tarot/"]});
+export const tarotCards = managedContent("tarot.tarotCards", [...majorCards, ...createMinorCards()].map(withCardImage).map(withReadingEditorial), {"title":"คำทำนายไพ่ 78 ใบ","group":"ไพ่ยิปซี","routes":["/tarot/"]});
 
 export function getTarotCardById(id) {
   return tarotCards.find((card) => card.id === id);

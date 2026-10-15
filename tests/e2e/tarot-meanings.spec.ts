@@ -71,14 +71,14 @@ for (const width of [1440, 390]) {
     await expect(page.locator('.tarot-card-facts')).toContainText('ลม');
     await expect(page.locator('.tarot-detail-image img')).toBeVisible();
     expect(await page.locator('.tarot-detail-image img').evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
-    await expect(page.locator('.tarot-detail-disclosures details')).toHaveCount(4);
+    await expect(page.locator('.tarot-detail-disclosures details')).toHaveCount(7);
     await page.locator('.tarot-detail-disclosures summary').first().focus();
     await page.keyboard.press('Enter');
     await expect(page.locator('.tarot-detail-disclosures details').first()).toHaveAttribute('open', '');
     await page.keyboard.press('Enter');
     await page.locator('.tarot-detail-more summary').click();
     await expect(page.locator('.tarot-detail-expanded')).toContainText('คำถามทบทวนตัวเอง');
-    await expect(page.locator('.tarot-detail-expanded a')).toHaveCount(3);
+    await expect(page.locator('.tarot-detail-expanded a')).toHaveCount(4);
     await page.locator('.tarot-detail-more summary').click();
     await fits(page); await accessible(page);
     await page.evaluate(() => scrollTo(0,0));

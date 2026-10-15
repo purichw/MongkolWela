@@ -3,7 +3,7 @@ import { readFileSync, mkdirSync } from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
 
 const content = JSON.parse(readFileSync("public/admin/content/live.json", "utf8"));
-const output = "artifacts/tarot-redesign";
+const output = "artifacts/tarot-grid";
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(() => localStorage.setItem("mongkolwela.pdpa.analytics", "declined"));
@@ -19,6 +19,25 @@ async function ready(page) {
 async function fits(page) {
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
 }
+async function deckFits(page, expected: number) {
+  await expect(page.locator("[data-card-id]")).toHaveCount(expected);
+  await expect(page.locator("[data-tarot-next], [data-tarot-prev]")).toHaveCount(0);
+  const geometry = await page.locator("[data-tarot-deck]").evaluate(deck => {
+    const box = deck.getBoundingClientRect();
+    const cards = [...deck.querySelectorAll("button")].map(card => card.getBoundingClientRect());
+    return {
+      noScroll: deck.scrollWidth <= deck.clientWidth + 1 && deck.scrollHeight <= deck.clientHeight + 1,
+      contained: cards.every(card => card.left >= box.left - 1 && card.right <= box.right + 1 && card.top >= box.top - 1 && card.bottom <= box.bottom + 1),
+      overlap: cards.some((card, i) => cards.slice(i + 1).some(other => Math.min(card.right, other.right) - Math.max(card.left, other.left) > 1 && Math.min(card.bottom, other.bottom) - Math.max(card.top, other.top) > 1)),
+      minimum: Math.min(...cards.map(card => card.width)),
+      width: innerWidth,
+    };
+  });
+  expect(geometry.noScroll).toBe(true);
+  expect(geometry.contained).toBe(true);
+  expect(geometry.overlap).toBe(false);
+  expect(geometry.minimum).toBeGreaterThanOrEqual(geometry.width <= 720 ? 44 : 24);
+}
 
 for (const width of [1440, 390]) {
   test(`all single-card consumers and result views at ${width}`, async ({ page }) => {
@@ -31,7 +50,8 @@ for (const width of [1440, 390]) {
       await ready(page);
       await fits(page);
       await expect(page.locator("[data-tarot-read]")).toBeDisabled();
-      await expect(page.locator("[data-card-id]")).toHaveCount(width === 390 ? 9 : 13);
+      await deckFits(page, slug === "daily" ? 78 : 22);
+      expect(await page.locator(".tarot-back-image").first().evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
       if (slug === "daily") {
         await page.screenshot({ path: `${output}/draw-${width}.png`, fullPage: true });
         await page.screenshot({ path: `${output}/draw-viewport-${width}.png` });
@@ -40,13 +60,17 @@ for (const width of [1440, 390]) {
       await expect(page.locator("[data-tarot-deck]")).not.toHaveClass(/is-shuffling/);
       await page.locator("[data-tarot-cut]").click();
       await expect(page.locator("[data-tarot-cut]")).toBeEnabled();
+      const deckHeight = await page.locator("[data-tarot-deck]").evaluate(node => node.getBoundingClientRect().height);
       const card = page.locator("[data-card-id]").nth(4);
       const id = await card.getAttribute("data-card-id");
       await card.focus();
       await page.keyboard.press("Enter");
       await expect(page.locator("[data-tarot-count]")).toHaveValue("1");
       await expect(page.locator(".tarot-face-pick img")).toBeVisible();
-      await expect(page.locator("[data-tarot-read-bottom]")).toBeFocused();
+      await expect(page.locator("[data-tarot-read]")).toBeFocused();
+      expect(await page.locator("[data-tarot-deck]").evaluate(node => node.getBoundingClientRect().height)).toBeCloseTo(deckHeight, 0);
+      await expect(page.locator("[data-card-id]:not(:disabled)")).toHaveCount(0);
+      if (slug === "love") await page.screenshot({ path: `${output}/selected-major-${width}.png`, fullPage: true });
       await page.locator("[data-tarot-read-bottom]").click();
       await expect(page).toHaveURL(new RegExp(`/tarot/${slug}/result/`));
       await ready(page);
@@ -78,10 +102,10 @@ for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/tarot/monthly/");
     await ready(page);
+    await deckFits(page, 78);
     const ids: string[] = [];
-    for (let i = 0; i < 10; i++) {
-      if (!(await page.locator("[data-card-id]:not(:disabled)").count())) await page.locator("[data-tarot-next]").click();
-      const card = page.locator("[data-card-id]:not(:disabled)").first();
+    for (const [i, index] of [77, 15, 68, 5, 42, 21, 56, 33, 1, 70].entries()) {
+      const card = page.locator("[data-card-id]").nth(index);
       ids.push((await card.getAttribute("data-card-id"))!);
       await card.click();
       if (i < 9) await expect(page.locator("[data-tarot-read]")).toBeDisabled();
@@ -89,6 +113,11 @@ for (const width of [1440, 390]) {
     expect(new Set(ids).size).toBe(10);
     await expect(page.locator("[data-tarot-selection] figure")).toHaveCount(10);
     await expect(page.locator("[data-tarot-count]")).toHaveValue("10");
+    await expect(page.locator("[data-card-id]:not(:disabled)")).toHaveCount(0);
+    await expect(page.locator("[data-tarot-selected]")).toHaveValue(ids.join(","));
+    expect(await page.locator("[data-tarot-selection]").evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
+    await page.evaluate(() => window.scrollTo({top: 0, behavior: "instant"}));
+    await page.screenshot({ path: `${output}/monthly-selected-${width}.png`, fullPage: true });
     await page.setViewportSize({ width: width === 390 ? 1440 : 390, height: 1000 });
     await expect(page.locator("[data-tarot-count]")).toHaveValue("10");
     await fits(page);
@@ -118,21 +147,35 @@ for (const width of [1440, 390]) {
   });
 }
 
-test("all 78 cards remain reachable; shuffle resets; storage denial and invalid results recover", async ({ page }) => {
+test("full deck reflows without paging; shuffle resets; storage denial and invalid results recover", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 1000 });
   await page.goto("/tarot/daily/");
   await ready(page);
-  const ids = new Set<string>();
-  for (;;) {
-    for (const id of await page.locator("[data-card-id]").evaluateAll(nodes => nodes.map(node => node.getAttribute("data-card-id")!))) ids.add(id);
-    if (await page.locator("[data-tarot-next]").isDisabled()) break;
-    await page.locator("[data-tarot-next]").click();
-  }
+  const order = await page.locator("[data-card-id]").evaluateAll(nodes => nodes.map(node => node.getAttribute("data-card-id")!));
+  const ids = new Set(order);
   expect(ids.size).toBe(78);
-  await page.locator("[data-card-id]").first().click();
+  for (const width of [320, 360, 441, 600, 720, 768, 900, 1024, 1051, 1440]) {
+    await page.setViewportSize({width, height: 1000});
+    await fits(page);
+    await deckFits(page, 78);
+    expect(await page.locator("[data-card-id]").evaluateAll(nodes => nodes.map(node => node.getAttribute("data-card-id")))).toEqual(order);
+  }
+  await page.setViewportSize({width: 390, height: 1000});
+  await page.locator("[data-card-id]").last().click();
+  await expect(page.locator("[data-tarot-selected]")).toHaveValue(order[77]);
+  const toolbar = await page.locator(".tarot-draw-controls").evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    return {top: rect.top, bottom: rect.bottom, viewport: innerHeight, header: parseFloat(getComputedStyle(node).top)};
+  });
+  expect(toolbar.top).toBeGreaterThanOrEqual(toolbar.header - 1);
+  expect(toolbar.bottom).toBeLessThan(toolbar.viewport);
+  await page.screenshot({path: `${output}/daily-selected-sticky-390.png`});
+  await page.setViewportSize({width: 1440, height: 1000});
+  await expect(page.locator("[data-tarot-selected]")).toHaveValue(order[77]);
   await page.locator("[data-tarot-shuffle]").click();
   await expect(page.locator("[data-tarot-count]")).toHaveValue("0");
   await expect(page.locator("[data-tarot-read]")).toBeDisabled();
+  expect(new Set(await page.locator("[data-card-id]").evaluateAll(nodes => nodes.map(node => node.getAttribute("data-card-id"))))).toEqual(ids);
   await page.evaluate(() => { Storage.prototype.setItem = () => { throw new Error("blocked"); }; });
   await page.locator("[data-card-id]").first().click();
   await page.locator("[data-tarot-read-bottom]").click();
@@ -143,4 +186,24 @@ test("all 78 cards remain reachable; shuffle resets; storage denial and invalid 
   await expect(page.locator(".tarot-empty-result")).toBeVisible();
   await page.goto("/tarot/luck/result/?cards=the-two-of-wands");
   await expect(page.locator(".tarot-empty-result")).toBeVisible();
+});
+
+test("grid keyboard navigation, partial cut reset and reduced-motion accessibility", async ({ page }) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto("/tarot/monthly/");
+  await ready(page);
+  const axe = await new AxeBuilder({ page }).include("main").withTags(["wcag2a", "wcag2aa"]).analyze();
+  expect(axe.violations.filter(v => ["serious", "critical"].includes(v.impact!))).toEqual([]);
+  await page.locator("[data-card-id]").last().focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("[data-card-id]").first()).toBeFocused();
+  await expect(page.locator("[data-card-id]").first()).toBeInViewport();
+  await page.screenshot({ path: `${output}/keyboard-focus-390.png` });
+  await page.keyboard.press("Space");
+  await expect(page.locator("[data-tarot-count]")).toHaveValue("2");
+  await page.locator("[data-tarot-cut]").click();
+  await expect(page.locator("[data-tarot-count]")).toHaveValue("0");
+  await expect(page.locator("[data-tarot-read]")).toBeDisabled();
+  await expect(page.locator("[data-tarot-selection]")).toBeHidden();
+  await expect(page.locator("[data-card-id]:not(:disabled)")).toHaveCount(78);
 });
