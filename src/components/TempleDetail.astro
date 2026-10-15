@@ -91,7 +91,7 @@ const templeJsonLd = createTempleJsonLd({ temple, collectionLabel, collectionHre
 const rank = Number(temple.rank);
 ---
 <BaseLayout title={title} description={detailDescription} lang="th" locale="th" page="temples" bodyClass="temples-hub-page place-detail-page"
-  canonicalPath={detailUrl} image={imageUrl} imageAlt={temple.imageAlt || temple.name} breadcrumbs={detailBreadcrumbs} structuredData={templeJsonLd}>
+  canonicalPath={detailUrl} image={imageUrl} imageAlt={temple.imageAlt || temple.name} breadcrumbs={detailBreadcrumbs} structuredData={templeJsonLd} liveCmsContent={content}>
   <main class="temple-detail place-detail" data-place-key={key} data-place-detail>
     <div class="pd-page-ornaments" aria-hidden="true"><BrandOrnament /><BrandOrnament mirrored /></div>
     <script is:inline type="application/json" data-place-seed set:html={JSON.stringify(seed).replace(/</g, "\\u003c")} />

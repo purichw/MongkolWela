@@ -1,4 +1,5 @@
 import { requestJson, createLatestRequest } from "./request.js";
+import { settlePageContent } from "./page-content-ready.js";
 import { iconAttributes } from "../lib/ui-markup.js";
 import { syncPublicSelects } from "./public-select.js";
 import { startContentRefresh } from "./content-refresh.js";
@@ -214,7 +215,7 @@ function initResults(root) {
     } catch {
       if (!request.isCurrent()) return;
       title.textContent = "โหลดผลค้นหาไม่สำเร็จ"; copy.textContent = "คำค้นและตัวกรองของคุณยังอยู่ กรุณาลองอีกครั้ง"; retry.hidden = false;
-    } finally { if (request.isCurrent()) root.setAttribute("aria-busy", "false"); }
+    } finally { if (request.isCurrent()) { root.setAttribute("aria-busy", "false"); settlePageContent(root); } }
   }
 
   function submit() {

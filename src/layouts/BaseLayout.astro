@@ -6,6 +6,7 @@ import LoadingScreen from "../components/LoadingScreen.astro";
 import PageEntrance from "../components/PageEntrance.astro";
 import { brandAssets } from "../config/site.js";
 import { stylesForPath } from "../config/styles.js";
+import { publicContentPayload } from "../lib/public-content.js";
 import {
   SEO_DEFAULT_IMAGE,
   SEO_DEFAULT_IMAGE_HEIGHT,
@@ -39,6 +40,7 @@ interface Props {
   analytics?: boolean;
   breadcrumbs?: { label: string; href?: string }[];
   structuredData?: Record<string, unknown> | Record<string, unknown>[];
+  liveCmsContent?: Record<string, unknown>;
 }
 
 type BreadcrumbItem = { label: string; href?: string };
@@ -60,9 +62,14 @@ const {
   analytics = true,
   breadcrumbs = [],
   structuredData = [],
+  liveCmsContent,
 } = Astro.props as Props;
 
 const pagePath = canonicalPath || Astro.url.pathname;
+// Only the fresh request-time CMS read may bootstrap a page, never build-time data.
+const cmsBootstrap = liveCmsContent && !Astro.isPrerendered
+  ? JSON.stringify({ path: Astro.url.pathname, ...publicContentPayload(liveCmsContent, Astro.url.pathname) }).replace(/</g, "\\u003c")
+  : null;
 const pageUrl = canonicalUrl(pagePath);
 const seoDescription = cleanDescription(description);
 const seoImage = absoluteUrl(image);
@@ -136,6 +143,8 @@ const jsonLd = toJsonLdGraph([
     <TempleSearchDialog />
     <slot />
     <Footer locale={locale} page={page} />
+
+    {cmsBootstrap && <script is:inline type="application/json" data-cms-bootstrap set:html={cmsBootstrap} />}
 
     <script>
       import "../scripts/site.js";

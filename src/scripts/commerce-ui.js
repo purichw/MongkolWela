@@ -1,10 +1,16 @@
 import { sitePlaceholderImage } from "../lib/image-placeholder.js";
+import { requestJson } from "./request.js";
 import { escapeCommerce as e, money, thaiCommerceDate, COMMERCE_STATUS } from "../lib/commerce-format.js";
 export { e, money, thaiCommerceDate, COMMERCE_STATUS };
 export async function commerceApi(body, query = "") {
-  const response = await fetch(`/api/commerce${query}`, { method: body ? "POST" : "GET", cache: "no-store", credentials: "same-origin", headers: body ? { "Content-Type": "application/json" } : {}, ...(body ? { body: JSON.stringify(body) } : {}) });
-  const data = await response.json();
-  if (!response.ok || !data.ok) throw Object.assign(new Error(data.error || "โหลดข้อมูลไม่สำเร็จ"), { status: response.status, code: data.code });
+  let data;
+  try {
+    data = await requestJson(`/api/commerce${query}`, { method: body ? "POST" : "GET", credentials: "same-origin", headers: body ? { "Content-Type": "application/json" } : {}, ...(body ? { body: JSON.stringify(body) } : {}) });
+  } catch (error) {
+    error.code = error.payload?.code;
+    throw error;
+  }
+  if (!data.ok) throw Object.assign(new Error(data.error || "โหลดข้อมูลไม่สำเร็จ"), { code: data.code });
   return data;
 }
 export function orgName(data, id) { return data.organizations.find(o => o.id === id)?.name || "ผู้จัดจำหน่าย"; }

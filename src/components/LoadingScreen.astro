@@ -1,15 +1,14 @@
 ---
-import { Image } from "astro:assets";
-import temple from "../assets/loading/temple.png";
-import stupa from "../assets/loading/stupa.png";
-import incense from "../assets/loading/incense.png";
-import lotus from "../assets/loading/lotus.png";
-import amulet from "../assets/loading/amulet.png";
-import altar from "../assets/loading/altar.png";
-import gate from "../assets/loading/gate.png";
-import sacredThread from "../assets/loading/sacred-thread.png";
-import candle from "../assets/loading/candle.png";
-import templeMap from "../assets/loading/temple-map.png";
+import temple from "../assets/loading/temple.webp";
+import stupa from "../assets/loading/stupa.webp";
+import incense from "../assets/loading/incense.webp";
+import lotus from "../assets/loading/lotus.webp";
+import amulet from "../assets/loading/amulet.webp";
+import altar from "../assets/loading/altar.webp";
+import gate from "../assets/loading/gate.webp";
+import sacredThread from "../assets/loading/sacred-thread.webp";
+import candle from "../assets/loading/candle.webp";
+import templeMap from "../assets/loading/temple-map.webp";
 
 const icons = [temple, stupa, incense, lotus, amulet, altar, gate, sacredThread, candle, templeMap];
 ---
@@ -38,15 +37,14 @@ const icons = [temple, stupa, incense, lotus, amulet, altar, gate, sacredThread,
     <div class="loader-core">
       <div class="loader-icon-stage" aria-hidden="true">
         {icons.map((src, index) => (
-          <Image
-            src={src}
+          <img
+            src={src.src}
             class={`loader-vector-icon loader-vector-icon-${index + 1}`}
             alt=""
             width={384}
             height={384}
-            format="webp"
-            quality={90}
             loading="eager"
+            fetchpriority="low"
             decoding="async"
           />
         ))}

@@ -19,7 +19,7 @@ const media = (id: string) => patches.find(patch => patch.id === id && patch.ena
   page="calendar"
   bodyClass="thai-calendar-page"
 >
-  <main id="calendar-top" class="calendar-app" data-calendar-app data-state="loading">
+  <main id="calendar-top" class="calendar-app" data-page-pending="calendar" data-calendar-app data-state="loading">
     {(["lotus", "stupa", "calendar-days", "chevron-left", "chevron-right", "arrow-right"] as const).map(name => (
       <template data-calendar-symbol={name}><SiteIcon name={name} /></template>
     ))}

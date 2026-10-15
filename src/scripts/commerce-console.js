@@ -3,6 +3,7 @@ import { commerceApi, e, money, thaiCommerceDate } from "./commerce-ui.js";
 import { renderIcon } from "../lib/ui-markup.js";
 import { commerceDashboardHeader, commercePreparation, commerceSetupGuide } from "./admin/commerce-dashboard.js";
 import { PRODUCT_CATEGORIES } from "../lib/commerce-catalog.js";
+import { settlePageContent } from "./page-content-ready.js";
 
 export function mountCommerceConsole(root, { embedded = false } = {}) {
   const lifecycle = new AbortController();
@@ -31,6 +32,7 @@ export function mountCommerceConsole(root, { embedded = false } = {}) {
   function login() {
     content.innerHTML = `<form class="commerce-login" data-seller-login><h1>${invitation ? "ตั้งรหัสผ่านผู้ขาย" : "เข้าสู่ระบบผู้ขาย"}</h1>${invitation ? '<p>ยืนยันบัญชีที่ได้รับเชิญและกำหนดรหัสผ่านใหม่</p>' : '<label class="commerce-field">อีเมล<input name="email" type="email" autocomplete="username" required /></label>'}<label class="commerce-field">${invitation ? "รหัสผ่านใหม่" : "รหัสผ่าน"}<input name="password" type="password" autocomplete="${invitation ? "new-password" : "current-password"}" ${invitation ? 'minlength="12"' : ""} required /></label><button class="commerce-button" type="submit">${invitation ? "ยืนยันบัญชี" : "เข้าสู่ระบบ"}</button><a href="/admin/">เข้าสู่ระบบผู้ดูแลส่วนกลาง</a></form>`;
     content.setAttribute("aria-busy", "false");
+    settlePageContent(root);
   }
   async function load() {
     content.setAttribute("aria-busy", "true");
@@ -62,6 +64,8 @@ export function mountCommerceConsole(root, { embedded = false } = {}) {
         if (embedded && disabled) content.innerHTML = commercePreparation(section);
       }
       content.setAttribute("aria-busy", "false");
+    } finally {
+      settlePageContent(root);
     }
   }
   function render() {

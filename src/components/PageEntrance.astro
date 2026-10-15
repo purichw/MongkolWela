@@ -1,49 +1,35 @@
+---
+import readiness from "../scripts/page-readiness.js?raw";
+const { cms = true, runtime = true } = Astro.props;
+---
 <style is:inline>
-  html.page-fonts-pending body > :not([data-page-loader]):not(script):not(style) {
+  html.page-fonts-pending body > :not([data-page-loader]):not([data-page-recovery]):not(script):not(style) {
     opacity: 0;
     visibility: hidden;
   }
-  html.page-fonts-pending .loader-core p {
-    visibility: hidden;
+  html.page-fonts-pending { background: #fbf7ed; }
+  html.page-fonts-pending body { overflow: hidden; }
+  html:not(.page-styles-ready).is-font-loading [data-page-loader] {
+    position: fixed; inset: 0; z-index: 10000; height: 100dvh !important;
+    display: grid; place-items: center; opacity: 1 !important; visibility: visible;
+    background: #fbf7ed; color: #174637; font: 16px/1.7 sans-serif; text-align: center;
   }
+  html:not(.page-styles-ready) [data-page-loader] .loader-skeleton,
+  html:not(.page-styles-ready) [data-page-loader] .loader-icon-stage,
+  html:not(.page-styles-ready) [data-page-loader] .loader-timeout { display: none; }
+  [data-page-recovery] { display: none; }
+  html.page-load-stalled [data-page-recovery] {
+    position: fixed; inset: 0; z-index: 10002; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px; padding: 28px;
+    box-sizing: border-box; background: #fbf7ed; color: #174637;
+    font: 16px/1.7 "Noto Sans Thai", sans-serif; text-align: center;
+  }
+  [data-page-recovery] h1 { margin: 0; font-size: 24px; line-height: 1.5; }
+  [data-page-recovery] p { margin: 0; max-width: 34em; }
+  [data-page-recovery] button {
+    font: inherit; padding: 10px 24px; min-height: 44px; border: 0; border-radius: 6px;
+    background: #9e2b24; color: #fff; cursor: pointer;
+  }
+  [data-page-recovery] button:focus-visible { outline: 3px solid #b98936; outline-offset: 4px; }
 </style>
-<script is:inline>
-  (() => {
-    if (!document.fonts) return;
-    const root = document.documentElement;
-    root.classList.add("page-fonts-pending");
-    let finished = false;
-    let shownAt = 0;
-    let releaseTimer;
-    const loaderDelay = setTimeout(() => {
-      shownAt = performance.now();
-      root.classList.add("is-font-loading");
-      document.querySelector("[data-page-loader]")?.setAttribute("aria-hidden", "false");
-    }, 180);
-    const reveal = () => {
-      if (finished) return;
-      clearTimeout(deadline);
-      clearTimeout(loaderDelay);
-      clearTimeout(releaseTimer);
-      const remaining = shownAt ? Math.max(0, shownAt + 360 - performance.now()) : 0;
-      if (remaining > 0) {
-        releaseTimer = setTimeout(reveal, remaining);
-        return;
-      }
-      finished = true;
-      root.classList.replace("page-fonts-pending", "page-fonts-ready");
-      root.classList.remove("is-font-loading");
-      if (!root.matches(".is-loading, .is-navigating")) {
-        document.querySelector("[data-page-loader]")?.setAttribute("aria-hidden", "true");
-      }
-    };
-    // A blocked font host must never leave the page hidden indefinitely.
-    const deadline = setTimeout(reveal, 2500);
-    document.addEventListener("DOMContentLoaded", () => {
-      document.fonts.ready.then(reveal, reveal);
-    }, { once: true });
-    window.addEventListener("pageshow", event => {
-      if (event.persisted) reveal();
-    });
-  })();
-</script>
+<script is:inline data-cms={String(cms)} data-runtime={String(runtime)} set:html={readiness} />

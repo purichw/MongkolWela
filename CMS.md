@@ -123,6 +123,13 @@ current page's editable content. Temple records are included for temple pages
 and Home, not unrelated tool pages. The database currently stores one CMS JSON
 document, so this projection reduces browser payload, not database reads.
 
+Live-rendered temple detail pages embed this same public, path-scoped payload
+and revision from the server's fresh CMS read. The browser consumes it once on
+initialization instead of immediately requesting the same document again. The
+HTML remains `no-store`; prerendered pages never embed this bootstrap. Invalid
+or mismatched bootstrap data triggers a live API read. Every later refresh still
+checks the configured source normally, including failure/retry behavior below.
+
 Visitor pages check again on tab focus, visibility restoration, restored
 back/forward navigation, reconnection, and every 60 seconds while visible.
 Concurrent focus/visibility events are combined; hidden tabs do not poll.

@@ -7,6 +7,7 @@ import { getThailandNow, formatClock, formatMinutes, formatMinutesRange, formatD
 import { createLatestRequest } from "./request.js";
 import { loadPlannerCatalog, requestPlannerPlan } from "./planner/api.js";
 import { syncPublicSelects } from "./public-select.js";
+import { settlePageContent } from "./page-content-ready.js";
 import { copy, observeDraft, freshness, responseIsCurrent, validatePlan, stageReplacement } from "./planner/workspace-state.js";
 
 const root = document.querySelector("[data-temple-planner]");
@@ -36,7 +37,7 @@ async function load() {
     retry.type = "button";
     retry.onclick = load;
     status.append(retry);
-  } finally { root.removeAttribute("aria-busy"); }
+  } finally { root.removeAttribute("aria-busy"); settlePageContent(root); }
 }
 
 function collectElements() {

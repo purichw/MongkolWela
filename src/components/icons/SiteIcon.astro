@@ -1,11 +1,10 @@
 ---
-import { Image } from "astro:assets";
 import SearchIcon from "./SearchIcon.astro";
 import { iconAttributes } from "../../lib/ui-markup.js";
-import lotus from "../../assets/loading/lotus.png";
-import temple from "../../assets/loading/temple.png";
-import stupa from "../../assets/loading/stupa.png";
-import altar from "../../assets/loading/altar.png";
+import lotus from "../../assets/loading/lotus.webp";
+import temple from "../../assets/loading/temple.webp";
+import stupa from "../../assets/loading/stupa.webp";
+import altar from "../../assets/loading/altar.webp";
 
 export interface Props {
   name: "lotus" | "temple" | "stupa" | "altar" | "route" | "map-pin" | "calendar-days" | "arrow-right" | "chevron-left" | "chevron-right" | "pause" | "play" | "quote" | "search" | "coins" | "sprout" | "sunrise" | "flame" | "hand" | "scroll-text" | "layers-2" | "arrow-left" | "chevron-down" | "leaf" | "ban" | "lightbulb" | "book-open" | "compass" | "orbit" | "moon-star" | "maximize-2" | "info" | "x" | "sparkles" | "briefcase-business" | "heart" | "shield-check" | "map" | "pencil-line" | "plus" | "shopping-bag" | "handbag";
@@ -18,7 +17,7 @@ const opticalScale = name === "stupa" ? 1.4 : name === "altar" ? 1.65 : 1.8;
 ---
 
 <span class:list={["site-icon", className]} aria-hidden="true">
-  {raster ? <Image src={raster} width={128} height={128} format="webp" alt="" style={{ "--icon-optical-scale": opticalScale }} />
+  {raster ? <img src={raster.src} width={128} height={128} alt="" decoding="async" style={{ "--icon-optical-scale": opticalScale }} />
     : name === "search" ? <SearchIcon />
     : <span {...iconAttributes(name, "site-icon-mask")}></span>}
 </span>

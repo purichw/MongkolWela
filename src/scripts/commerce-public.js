@@ -4,6 +4,7 @@ import { startContentRefresh } from "./content-refresh.js";
 import { filterCommerceRows } from "../lib/commerce-catalog.js";
 import { catalogControls, shopCollections, shopProductCard, meritCampaignCard } from "./commerce-catalog-ui.js";
 import { renderIcon } from "../lib/ui-markup.js";
+import { settlePageContent } from "./page-content-ready.js";
 
 const root = document.querySelector("[data-commerce-public]");
 if (root) init(root);
@@ -151,6 +152,8 @@ function init(root) {
       content.setAttribute("aria-busy", "false");
       notice(error.message);
       if (!catalog || receipt) content.innerHTML = '<button class="commerce-button secondary" data-retry>ลองใหม่</button>';
+    } finally {
+      settlePageContent(root);
     }
   }
   content.addEventListener("input", event => {

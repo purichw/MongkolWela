@@ -58,7 +58,8 @@ for (const outcome of ["signed-out", "revoked", "unavailable"]) {
       await page.goto(`${preview.base}/admin/`, { waitUntil: "domcontentloaded" });
       await held.requested;
       await expect(page.locator(".mw-admin-shell")).toHaveCount(0);
-      await expect(page.locator("[data-admin-auth-pending]")).toBeVisible();
+      await expect(page.locator("[data-page-loader]")).toHaveAttribute("aria-hidden", "false");
+      await expect(page.locator("#adminApp")).toHaveCSS("visibility", "hidden");
       expect(dataRequests).toEqual([]);
       if (outcome === "signed-out") {
         await page.evaluate(() => document.fonts.ready);
@@ -88,7 +89,8 @@ test("valid session renders the Dashboard only after verification, including rel
       if (attempt) await page.reload({ waitUntil: "domcontentloaded" });
       else await page.goto(`${preview.base}/admin/`, { waitUntil: "domcontentloaded" });
       await held.requested;
-      await expect(page.locator("[data-admin-auth-pending]")).toBeVisible();
+      await expect(page.locator("[data-page-loader]")).toHaveAttribute("aria-hidden", "false");
+      await expect(page.locator("#adminApp")).toHaveCSS("visibility", "hidden");
       await expect(page.locator(".mw-admin-shell")).toHaveCount(0);
       held.release();
       await expect(page.locator(".mw-admin-profile strong")).toHaveText(TEST_ADMIN_EMAIL);

@@ -2,6 +2,8 @@ import { applyImageFallback as setImageFallback } from "../lib/image-placeholder
 import { renderIcon } from "../lib/ui-markup.js";
 import { renderTempleCollectionCard } from "../lib/temple-collection-card.js";
 import { initializePopularFilters, filterSnapshotKey } from "./popular-filters.js";
+import { requestJson } from "./request.js";
+import { settlePageContent } from "./page-content-ready.js";
 import { syncPublicSelects } from "./public-select.js";
 
 const root = document.querySelector("[data-temple-directory]");
@@ -399,7 +401,7 @@ function initializePopularTempleGrid(grid) {
   });
 
   updateLoadMoreButton();
-  loadCollectionCards({ applyFilters: true });
+  loadCollectionCards({ applyFilters: true }).finally(() => settlePageContent(grid));
 
   function readDraft() {
     return { query: filterName?.value || "", regions: new Set(activeRegions), provinces: new Set(activeProvinces), purposes: new Set(activePurposes) };
@@ -742,15 +744,12 @@ function initializePopularTempleGrid(grid) {
     if (!collectionDataLoad) {
       loadState = "loading";
       refreshCompactView();
-      collectionDataLoad = fetch(`${dataSrc}${dataSrc.includes("?") ? "&" : "?"}ts=${Date.now()}`, {
+      collectionDataLoad = requestJson(`${dataSrc}${dataSrc.includes("?") ? "&" : "?"}ts=${Date.now()}`, {
         cache: "no-store",
         headers: {
           "Cache-Control": "no-cache",
           Pragma: "no-cache",
         },
-      }).then((response) => {
-        if (!response.ok) throw new Error(`Collection data failed: ${response.status}`);
-        return response.json();
       });
     }
 
@@ -1014,19 +1013,11 @@ function toRadians(value) {
 }
 
 async function fetchTempleThailandIndex() {
-  const response = await fetch(`${thailandIndexUrl}?v=1`, {
-    cache: "force-cache",
-  });
-  if (!response.ok) throw new Error(`Temple index failed: ${response.status}`);
-  return response.json();
+  return requestJson(`${thailandIndexUrl}?v=1`, { cache: "force-cache" });
 }
 
 async function fetchTempleThailandData() {
-  const response = await fetch(thailandDataUrl, {
-    cache: "force-cache",
-  });
-  if (!response.ok) throw new Error(`Temple data failed: ${response.status}`);
-  return response.json();
+  return requestJson(thailandDataUrl, { cache: "force-cache" });
 }
 
 function getThailandColumns(payload) {
@@ -1099,6 +1090,8 @@ async function initializeTempleDirectory(rootElement) {
       countNode.textContent = t.loadError;
       showFailure();
     }
+  } finally {
+    settlePageContent(rootElement);
   }
 
   form.addEventListener("submit", async (event) => {
