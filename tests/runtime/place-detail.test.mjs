@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { coordinates, mapUrl, createPlaceModel, normalizeVisit, hoursSummary, renderVisit, renderHighlights, renderTravel, safeLink } from "../../src/lib/place-detail-view.js";
+import { coordinates, mapUrl, createPlaceModel, normalizeVisit, hoursSummary, renderVisit, renderHighlights, renderLocation, renderTravel, safeLink } from "../../src/lib/place-detail-view.js";
 import { getTempleTravel } from "../../src/data/temple-travel.js";
 
 test("coordinates reject absent/invalid values but accept zero", () => {
@@ -18,6 +18,14 @@ test("links allow verified protocols, never active content", () => {
   assert.equal(safeLink("https://"), "");
   assert.equal(safeLink("tel:+6621234567", true), "tel:+6621234567");
   assert.equal(safeLink("mailto:hello@example.com", true), "mailto:hello@example.com");
+});
+test("additional location facts are always visible and preserve CMS values", () => {
+  const vm = createPlaceModel({ record: { name: "วัด", province: "กรุงเทพมหานคร", district: "พระนคร", placeType: "วัด", travelModes: "รถไฟ;เรือ" } }, { fields: { district: "บางกอกใหญ่" } });
+  const html = renderLocation(vm);
+  assert.ok(html.includes("<h3>ข้อมูลสถานที่เพิ่มเติม</h3>"));
+  for (const value of ["กรุงเทพมหานคร", "บางกอกใหญ่", "รถไฟ · เรือ"]) assert.ok(html.includes(value), value);
+  assert.doesNotMatch(html, /<details|<summary|data-pd-disclosure|chevron-down/);
+  assert.doesNotMatch(renderLocation({ record: {}, coords: null }), /pd-location-details/);
 });
 test("daily hours need all seven distinct weekdays with the same time", () => {
   const days = ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์", "อาทิตย์"];
@@ -42,6 +50,30 @@ test("CMS clears preserve stable identity, travel source and all highlights", ()
   assert.equal(vm.record.travelDetail, seed.record.travelDetail);
   assert.ok(renderHighlights(vm).includes("หัวข้อ 9"));
   assert.ok(renderHighlights(vm).includes("<details"));
+});
+test("missing place descriptions never generate generic collection prose", () => {
+  for (const collectionLabel of ["วัดดังน่าไป", "วัดเด่นขอพร", "พิกัดสายมู"]) {
+    for (const description of [undefined, null, "", "   "]) {
+      const html = renderHighlights({ collectionLabel, record: {
+        name: "วัดทดสอบ", province: "กรุงเทพมหานคร", district: "บางกอกน้อย",
+        description, blessings: "ชื่อเสียง;แคล้วคลาด", objectHero: "พระประธาน;ระฆัง",
+      } });
+      assert.doesNotMatch(html, /<p>|เป็นหนึ่งใน|เลือกเส้นทาง|วางแผนการเดินทาง/);
+      assert.ok(!html.includes(collectionLabel));
+      for (const value of ["ชื่อเสียง", "แคล้วคลาด", "สิ่งที่นิยมสักการะ", "พระประธาน", "ระฆัง"]) assert.ok(html.includes(value), value);
+    }
+  }
+});
+test("authored place descriptions remain escaped and CMS can replace or clear them", () => {
+  const seed = { record: { name: "วัดทดสอบ", description: "รายละเอียดตั้งต้น" }, visit: {} };
+  assert.match(renderHighlights(createPlaceModel(seed)), /<p>รายละเอียดตั้งต้น<\/p>/);
+  const updated = createPlaceModel(seed, { fields: { description: "ข้อความจาก CMS <script> & ข้อมูลสถานที่" } });
+  const html = renderHighlights(updated);
+  assert.match(html, /ข้อความจาก CMS &lt;script&gt; &amp; ข้อมูลสถานที่/);
+  assert.doesNotMatch(html, /รายละเอียดตั้งต้น|<script>/);
+  for (const description of ["", null]) {
+    assert.equal(renderHighlights(createPlaceModel(seed, { fields: { description } })), "");
+  }
 });
 test("transport retains directions, unknown modes, stop links and stable keys", () => {
   const routes = [{ mode: "rail", stop: "สถานีเดียวกัน", direction: "เหนือ", operator: "A", distance: "~ 1.4 กม.", locationUrl: "https://example.com/stop" }, { mode: "rail", stop: "สถานีเดียวกัน", direction: "ใต้", operator: "A", distance: "~ 2 กม." }, { mode: "shuttle", stop: "จุดรถรับส่ง", distance: "ไม่ทราบ" }];

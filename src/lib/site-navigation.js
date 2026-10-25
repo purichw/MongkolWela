@@ -11,6 +11,12 @@ export function navigationHref(value) {
   return href.startsWith("/") ? href : `/${href}`;
 }
 
+export function navigationLabel(label, href) {
+  // Keep custom CMS copy; only retire the previous default shop name.
+  return label === "ร้านค้ากลาง" && routePath(navigationHref(href) || "") === "/shop/"
+    ? "วัตถุมงคลและเครื่องราง" : label;
+}
+
 export function validateNavigation(navigation) {
   if (navigation === undefined) return;
   const fail = () => { throw Object.assign(new Error("ข้อมูลเมนูไม่ถูกต้อง กรุณาตรวจสอบชื่อเมนู ลิงก์ และรูปภาพ"), { statusCode: 400 }); };
@@ -47,9 +53,9 @@ export function navigationModel(navigation = {}) {
       const href = navigationHref(item.href);
       const children = normalize(item.items, id);
       if (!item.section && !href && !children.length) return [];
-      return [{ id, label: String(item.label), href, section: item.section === true, items: children,
+      return [{ id, label: navigationLabel(String(item.label), href), href, section: item.section === true, items: children,
         desktop: item.desktop !== false, mobile: item.mobile !== false,
-        desktopLabel: String(item.desktopLabel || ""), mobileLabel: String(item.mobileLabel || ""),
+        desktopLabel: navigationLabel(String(item.desktopLabel || ""), href), mobileLabel: navigationLabel(String(item.mobileLabel || ""), href),
         description: item.description === undefined ? undefined : String(item.description),
         eyebrow: item.eyebrow === undefined ? undefined : String(item.eyebrow),
         image: /^(\/[^/]|https?:\/\/)/.test(item.image || "") ? item.image : "",

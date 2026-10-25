@@ -39,6 +39,55 @@ const read = page => page.evaluate(() => {
 });
 const build = async page => { await page.locator("[data-planner-auto]").click(); await expect(page.locator("[data-planner-stop]")).toHaveCount(3); };
 
+for (const width of [1440, 390]) test(`route map expansion preserves the map and plan at ${width}px`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 900 });
+  const control = await setup(page);
+  await build(page);
+  const disclosure = page.locator("[data-planner-route-disclosure]");
+  if (!await disclosure.evaluate(node => (node as HTMLDetailsElement).open)) await disclosure.locator("summary").click();
+  await expect(page.locator("[data-planner-route-map] .planner-leaflet-marker")).toHaveCount(3);
+  const initial = await read(page), requests = control.posts.length;
+  await page.evaluate(() => {
+    const state = (document.querySelector("[data-temple-planner]") as any)._plannerState.state;
+    (window as any).__routeMap = state.routeMap;
+  });
+  const opener = page.getByRole("button", { name: "ขยายแผนที่เส้นทาง", exact: true });
+  await opener.click();
+  const dialog = page.getByRole("dialog", { name: "แผนที่เส้นทาง", exact: true });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator(".planner-leaflet-marker")).toHaveCount(3);
+  await expect(dialog.locator("[data-cms-field='370ae036-67']")).toBeVisible();
+  await dialog.getByRole("button", { name: "ปิดแผนที่เส้นทาง" }).focus();
+  await page.keyboard.press("Shift+Tab");
+  expect(await dialog.evaluate(el => el.contains(document.activeElement))).toBe(true);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(opener).toBeFocused();
+  await expect(disclosure.locator(".planner-leaflet-marker")).toHaveCount(3);
+  expect(await page.evaluate(() => (document.querySelector("[data-temple-planner]") as any)._plannerState.state.routeMap === (window as any).__routeMap)).toBe(true);
+  expect((await read(page)).plan).toEqual(initial.plan);
+  expect(control.posts).toHaveLength(requests);
+  await opener.click();
+  await dialog.getByRole("button", { name: "ปิดแผนที่เส้นทาง" }).click();
+  await expect(opener).toBeFocused();
+});
+
+test("route map expansion keeps load failure and retry inside the modal", async ({ page }) => {
+  await page.route("**/leaflet.js", route => route.abort());
+  await setup(page);
+  await build(page);
+  await expect(page.locator('[data-planner-map-error="route"]')).toBeVisible();
+  await page.locator("[data-planner-map-expand]").click();
+  const dialog = page.locator("[data-planner-route-dialog]");
+  await expect(dialog.locator('[data-planner-map-error="route"]')).toBeVisible();
+  await page.unroute("**/leaflet.js");
+  await dialog.locator('[data-planner-map-retry="route"]').click();
+  await expect(dialog.locator(".planner-leaflet-marker")).toHaveCount(3);
+  await expect(dialog.locator('[data-planner-map-error="route"]')).toBeHidden();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("[data-planner-map-expand]")).toBeFocused();
+});
+
 test("workspace views, partial selection, dirty snapshot, limit, confirm and revert", async ({ page }) => {
   const control = await setup(page);
   await expect(page.locator("[data-planner-view-control]")).toBeHidden();

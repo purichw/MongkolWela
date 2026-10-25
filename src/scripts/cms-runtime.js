@@ -2,7 +2,7 @@ import { normalizePlaceholderImage, sitePlaceholderImage } from "../lib/image-pl
 import { requestJson, createLatestRequest } from "./request.js";
 import { applyPlaceDetailOverride } from "./place-detail-content.js";
 import { startContentRefresh } from "./content-refresh.js";
-import { updateHeaderNavigation } from "./navigation.js";
+import { updateHeaderNavigation, updateNavigationBreadcrumbs } from "./navigation.js";
 import { homeHeroAttributes, homeHeroMetadata } from "../lib/home-hero-media.js";
 import { applyContentLibrary } from "../lib/managed-content.js";
 import { applyContentBindings } from "../lib/content-bindings.js";
@@ -673,12 +673,15 @@ function applyTempleDetailOverride(content) {
 
   const summary = splitTempleList(blessings).length
     ? `${name} เหมาะสำหรับ${splitTempleList(blessings).slice(0, 3).join(" · ")}`
-    : `${name} หนึ่งในพิกัดแนะนำใน${province}`;
+    : [name, district, province].filter(Boolean).join(" · ");
   setText(".temple-detail-hero__copy > p:not(.section-kicker)", summary, root);
   const tags = root.querySelector(".temple-detail-tags");
   if (tags) tags.innerHTML = [placeType, region, province].filter(Boolean).map((item) => `<span>${escapeHtml(item)}</span>`).join("");
   const story = root.querySelector(".temple-detail-story > p:nth-of-type(2)");
-  if (story) story.textContent = `${name} อยู่ใน${province}${district ? ` เขต/อำเภอ ${district}` : ""} เป็นหนึ่งในสถานที่ที่ถูกจัดไว้ในมงคลเวลา เพื่อช่วยเลือกเส้นทางไหว้พระและวางแผนการเดินทาง`;
+  if (story) {
+    story.textContent = String(fieldValue(override, "description", "") || "");
+    story.hidden = !story.textContent.trim();
+  }
 
   const chips = root.querySelector(".temple-detail-chip-group");
   const blessingItems = splitTempleList(blessings);
@@ -787,6 +790,7 @@ async function bootCmsRuntime() {
         if (page?.id === "home") applyHomepageCollections(document, page.homepage);
       }
     }
+    updateNavigationBreadcrumbs(content);
     if (!previous || !unchanged(previous.site?.pdpa, content.site?.pdpa)) renderPdpaBanner(content);
     if (content.directorySummary) {
       for (const [key, value] of Object.entries(content.directorySummary)) {

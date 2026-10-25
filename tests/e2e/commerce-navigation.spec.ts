@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { editableNavigationGroups } from "../../src/lib/site-navigation.js";
 
 const seed = JSON.parse(readFileSync(new URL("../../public/admin/content/live.json", import.meta.url), "utf8"));
 
@@ -45,6 +46,35 @@ async function openCommerceMenu(page) {
   return group;
 }
 
+test("commerce breadcrumbs follow live CMS hierarchy and keep the shared schema in sync", async ({ page }) => {
+  const store = await mockContent(page);
+  const breadcrumb = page.locator(".commerce-breadcrumb");
+  const labels = () => breadcrumb.locator(':scope > :not([aria-hidden="true"])');
+  await page.goto("/shop/");
+  await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "true");
+  await expect(labels()).toHaveText(["หน้าแรก", "ร้านค้าและร่วมบุญ", "วัตถุมงคลและเครื่องราง"]);
+  const group = store.content().navigation.tabs.find(item => item.id === "commerce");
+  group.label = "ร้านค้าและงานบุญ";
+  group.items[0].label = "สินค้าจากชุมชน";
+  group.items[0].href = "shop/?category=all";
+  await page.evaluate(() => (window as any).MongkolWelaCMS.reload());
+  await expect(labels()).toHaveText(["หน้าแรก", "ร้านค้าและงานบุญ", "สินค้าจากชุมชน"]);
+  const schema = JSON.parse(await page.locator("[data-navigation-breadcrumb-jsonld]").textContent());
+  expect(schema.itemListElement.map(item => item.name)).toEqual(["หน้าแรก", "ร้านค้าและงานบุญ", "สินค้าจากชุมชน"]);
+  group.enabled = false;
+  await page.evaluate(() => (window as any).MongkolWelaCMS.reload());
+  await expect(labels()).toHaveText(["หน้าแรก", "วัตถุมงคลและเครื่องราง"]);
+  group.enabled = true;
+  group.items[0].label = "ร้านค้ากลาง";
+  await page.evaluate(() => (window as any).MongkolWelaCMS.reload());
+  await expect(labels()).toHaveText(["หน้าแรก", "ร้านค้าและงานบุญ", "วัตถุมงคลและเครื่องราง"]);
+  await page.goto("/merit/");
+  await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "true");
+  await expect(labels()).toHaveText(["หน้าแรก", "ร้านค้าและงานบุญ", "กฐินและร่วมบุญ"]);
+  await expect(page.locator("main .commerce-nav")).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
 test("commerce navigation reaches both routes on desktop and mobile", async ({ page }, testInfo) => {
   await mockContent(page);
   const errors: string[] = [];
@@ -52,7 +82,7 @@ test("commerce navigation reaches both routes on desktop and mobile", async ({ p
   await page.goto("/shop/");
   const group = await openCommerceMenu(page);
   await expect(group.locator('[data-nav-id="shop"]')).toHaveAttribute("aria-current", "page");
-  await expect(group.getByRole("link", { name: "ร้านค้ากลาง", exact: true })).toHaveAttribute("href", "/shop/");
+  await expect(group.getByRole("link", { name: "วัตถุมงคลและเครื่องราง", exact: true })).toHaveAttribute("href", "/shop/");
   await expect(group.getByRole("link", { name: "กฐินและร่วมบุญ", exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   if (await page.locator(".mw-header").getAttribute("data-header-mode") === "compact") {
@@ -64,36 +94,51 @@ test("commerce navigation reaches both routes on desktop and mobile", async ({ p
   await expect(page).toHaveURL(/\/merit\/$/);
   const meritGroup = await openCommerceMenu(page);
   await expect(meritGroup.locator('[data-nav-id="merit"]')).toHaveAttribute("aria-current", "page");
-  await meritGroup.getByRole("link", { name: "ร้านค้ากลาง", exact: true }).click();
+  await meritGroup.getByRole("link", { name: "วัตถุมงคลและเครื่องราง", exact: true }).click();
   await expect(page).toHaveURL(/\/shop\/$/);
   expect(errors).toEqual([]);
 });
 
 test("Admin can publish commerce labels, destinations and visibility without restoring seeds", async ({ page }) => {
   const store = await mockContent(page);
-  await page.goto("/admin/");
-  await page.getByRole("button", { name: /เมนูเว็บไซต์/ }).click();
   const index = seed.navigation.tabs.findIndex((tab) => tab.id === "commerce");
-  const tab = page.locator(`[data-nav-tab="${index}"]`);
-  await expect(tab.locator('[data-nav-tab-field="label"]')).toHaveValue("ร้านค้าและร่วมบุญ");
-  await tab.locator('[data-nav-tab-field="label"]').fill("ร้านค้าและงานบุญ");
-  await tab.locator('[data-nav-item="0"] [data-nav-item-field="label"]').fill("สินค้าจากทุกสถานที่");
-  await tab.locator('[data-nav-item="0"] [data-nav-item-field="href"]').fill("shop/?category=all");
-  await tab.locator('[data-nav-item="1"] [data-nav-item-enabled]').uncheck();
-  await page.locator('[data-action="publish"]').click();
+  const editor = page.locator(".mw-menu-editor");
+  const field = (suffix, name) => editor.locator(`[data-menu-path="tabs.${index}${suffix}"][data-menu-field="${name}"]`);
+  const openEditor = async () => {
+    await expect(page.locator("#adminNav")).toBeAttached();
+    if (await page.locator(".mw-admin-sidebar").evaluate((el: HTMLElement) => el.inert)) await page.getByRole("button", { name: "เปิดเมนู", exact: true }).click();
+    await page.locator('#adminNav [data-section="navigation"]').click();
+    const menu = page.locator(`[data-menu-open="${index}"]`);
+    if (await menu.getAttribute("aria-expanded") !== "true") await menu.click();
+  };
+  const openItems = async () => {
+    const tab = editor.locator('[data-menu-pane-button="items"]');
+    if (await tab.isVisible()) await tab.click();
+  };
+  await page.goto("/admin/");
+  await openEditor();
+  await expect(field("", "label")).toHaveValue("ร้านค้าและร่วมบุญ");
+  await field("", "label").fill("ร้านค้าและงานบุญ");
+  await openItems();
+  await field(".items.0", "label").fill("สินค้าจากทุกสถานที่");
+  await field(".items.0", "href").fill("shop/?category=all");
+  await field(".items.1", "enabled").uncheck();
+  await page.locator('[data-action="publish"]:visible').first().click();
   await expect(page.locator("#adminStatus")).toContainText("เผยแพร่แล้ว");
   expect(store.publications()).toBe(1);
   await page.reload();
-  await page.getByRole("button", { name: /เมนูเว็บไซต์/ }).click();
-  await expect(tab.locator('[data-nav-tab-field="label"]')).toHaveValue("ร้านค้าและงานบุญ");
-  await expect(tab.locator('[data-nav-item="1"] [data-nav-item-enabled]')).not.toBeChecked();
+  await openEditor();
+  await expect(field("", "label")).toHaveValue("ร้านค้าและงานบุญ");
+  await openItems();
+  await expect(field(".items.1", "enabled")).not.toBeChecked();
   await page.goto("/shop/");
   const group = await openCommerceMenu(page);
   await expect(group.locator('[data-nav-id="commerce"]')).toHaveText("ร้านค้าและงานบุญ");
   await expect(group.getByRole("link", { name: "สินค้าจากทุกสถานที่", exact: true })).toHaveAttribute("href", "/shop/?category=all");
   await expect(group.locator('[data-nav-id="merit"]')).toHaveCount(0);
+  await expect(page.locator('.commerce-breadcrumb > :not([aria-hidden="true"])')).toHaveText(["หน้าแรก", "ร้านค้าและงานบุญ", "สินค้าจากทุกสถานที่"]);
   const unrelatedTabs = store.content().navigation.tabs.filter((entry) => entry.id !== "commerce");
-  expect(unrelatedTabs).toEqual(seed.navigation.tabs.filter((entry) => entry.id !== "commerce"));
+  expect(editableNavigationGroups(unrelatedTabs)).toEqual(editableNavigationGroups(seed.navigation.tabs.filter((entry) => entry.id !== "commerce")));
   store.content().navigation.tabs[index].enabled = false;
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-cms-ready", "true");

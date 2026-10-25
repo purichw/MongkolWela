@@ -184,7 +184,7 @@ test("catalog source failure is retryable; donation edit clears public approval"
   await expect(commerceSection).toBeVisible();
   await expect(commerceSection).toHaveCount(1);
   await expect(commerceSection).toContainText("ร้านค้าและการร่วมบุญออนไลน์ยังไม่เปิดบริการ");
-  await expect(commerceSection.getByRole("link", { name: "ดูร้านค้ากลาง" })).toHaveAttribute("href", "/shop/");
+  await expect(commerceSection.getByRole("link", { name: "ดูวัตถุมงคลและเครื่องราง" })).toHaveAttribute("href", "/shop/");
   expect(await commerceSection.evaluate(el => {
     let previous = el.previousElementSibling;
     while (previous && ["SCRIPT", "STYLE", "LINK"].includes(previous.tagName)) previous = previous.previousElementSibling;

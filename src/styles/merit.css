@@ -6,8 +6,8 @@ body[data-cms-page="merit"] { display: flex; flex-direction: column; min-height:
 .merit-closed-art img { width: 100%; height: 100%; object-fit: cover; object-position: center bottom; }
 .merit-closed-content { text-align: center; padding-block: 35px 45px; }
 .merit-closed-content > .site-icon { width: 48px; height: 48px; }
-.merit-closed h1 { margin: 12px auto; font-size: 30px; line-height: 1.4; }
-.merit-closed h1 span { display: block; }
+.merit-page .merit-closed h2 { margin: 12px auto; font-size: 30px; line-height: 1.4; }
+.merit-closed h2 span { display: block; }
 .merit-closed p { max-width: 450px; margin: 12px auto 22px; font-size: 16px; }
 .merit-closed .commerce-button { gap: 18px; font-size: 14px; }
 .merit-closed .commerce-button .site-icon { width: 18px; height: 18px; --site-icon-color: currentColor; }
@@ -19,7 +19,7 @@ body[data-cms-page="merit"] { display: flex; flex-direction: column; min-height:
 .merit-hero > img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
 .merit-hero-content { text-align: center; padding-block: 24px 48px; }
 .merit-page .merit-hero .section-kicker { margin: 0 0 4px; color: #2e5145; font-size: 17px; }
-.merit-hero h1 { font-size: 40px; line-height: 1.4; margin: 0; color: #233f32; }
+.merit-page .merit-hero h2 { font-size: 40px; line-height: 1.4; margin: 0; color: #233f32; }
 .merit-page .merit-hero-quote { font-size: 26px; line-height: 1.5; color: #955631; margin: 8px 0 16px; font-weight: 650; }
 .merit-principles { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; padding: 0; margin: 0; }
 .merit-principles li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #3e4638; }
@@ -61,7 +61,7 @@ body[data-cms-page="merit"] { display: flex; flex-direction: column; min-height:
 .merit-closed-art .merit-closed-mobile { display: none; }
 @media (max-width: 1000px) {
   .merit-campaigns { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-  .merit-hero h1 { font-size: 34px; }
+  .merit-page .merit-hero h2 { font-size: 34px; }
   .merit-hero-content { background: #fff8e675; }
 }
 @media (max-width: 700px) {
@@ -78,13 +78,13 @@ body[data-cms-page="merit"] { display: flex; flex-direction: column; min-height:
   .merit-closed-art .merit-closed-mobile { display: block; }
   .merit-closed-content { padding-top: 0; padding-bottom: 28px; }
   .merit-closed-content > .site-icon { display: none; }
-  .merit-closed h1 { font-size: 24px; margin: 0 0 12px; }
+  .merit-page .merit-closed h2 { font-size: 24px; margin: 0 0 12px; }
   .merit-closed p { font-size: 14px; margin: 0 auto 18px; }
   .merit-hero { min-height: 270px; align-items: end; }
   .merit-hero > img { object-position: left top; height: 180px; top: 0; }
   .merit-hero-content { width: 100%; background: linear-gradient(transparent, #fcf7e9 25%); padding: 90px 16px 48px; }
   .merit-page .merit-hero .section-kicker { font-size: 14px; }
-  .merit-hero h1 { font-size: 28px; }
+  .merit-page .merit-hero h2 { font-size: 28px; }
   .merit-page .merit-hero-quote { font-size: 20px; margin: 4px 0 12px; }
   .merit-principles { gap: 7px 14px; }
   .merit-principles li { font-size: 11px; gap: 5px; }

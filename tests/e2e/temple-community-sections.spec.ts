@@ -72,7 +72,7 @@ test("empty sections follow the reference without treating failures as empty dat
   const activities = page.locator("[data-temple-activities]"), shop = page.locator("[data-temple-commerce]");
   await expect(activities.locator(".temple-section-empty")).toContainText("ยังไม่มีประกาศกิจกรรมที่ยืนยันในระบบ");
   await expect(shop.locator(".temple-section-empty")).toContainText("ยังไม่เปิดบริการ");
-  await expect(shop.getByRole("link", { name: /ดูร้านค้ากลาง/ })).toHaveAttribute("href", "/shop/");
+  await expect(shop.getByRole("link", { name: /ดูวัตถุมงคลและเครื่องราง/ })).toHaveAttribute("href", "/shop/");
   await expect(shop.getByRole("link", { name: /ดูการร่วมบุญ/ })).toHaveAttribute("href", "/merit/");
   await expect(activities.locator(".temple-empty-disc .site-icon-mask")).toHaveCSS("mask-image", /calendar-days\.svg/);
   await expect(shop.locator(".temple-empty-disc .site-icon-mask")).toHaveCSS("mask-image", /handbag\.svg/);

@@ -45,6 +45,68 @@ async function hydrateImages(page) {
   });
 }
 
+test("place overview omits generic prose and preserves published descriptions", async ({ page }) => {
+  const response = await page.request.get(route);
+  expect(response.ok()).toBe(true);
+  const html = await response.text();
+  expect(html).not.toMatch(/เป็นหนึ่งในสถานที่|สำหรับเลือกเส้นทางไหว้พระ|ถูกจัดไว้ในมงคลเวลา/);
+  await page.goto(response.url());
+  await settle(page);
+  const overview = page.locator('[data-pd-domain="highlights"]');
+  await expect(page.locator("#pd-highlights-title")).toHaveText("รู้จักสถานที่แห่งนี้");
+  await expect(overview.locator(":scope > p")).toHaveCount(0);
+  const topics = await overview.locator(".pd-topics").textContent();
+  const objects = await overview.locator(".pd-objects").textContent();
+  const placeKey = await page.locator("[data-place-detail]").getAttribute("data-place-key");
+  content.temples.records[placeKey!] = {
+    key: placeKey, status: "published",
+    fields: { description: "รายละเอียดจาก CMS สำหรับทดสอบการเผยแพร่" },
+  };
+  await refresh(page);
+  await expect(overview.locator(":scope > p")).toHaveText("รายละเอียดจาก CMS สำหรับทดสอบการเผยแพร่");
+  content.temples.records[placeKey!].fields.description = "";
+  await refresh(page);
+  await expect(overview.locator(":scope > p")).toHaveCount(0);
+  await expect(overview.locator(".pd-topics")).toHaveText(topics!);
+  await expect(overview.locator(".pd-objects")).toHaveText(objects!);
+  await page.evaluate(() => {
+    const top = document.querySelector(".pd-overview")!.getBoundingClientRect().top + scrollY;
+    scrollTo({ top: Math.max(0, top - 150), behavior: "instant" });
+  });
+  await page.screenshot({ path: "artifacts/place-detail/overview-without-generic-copy.png" });
+});
+
+test("related cards, persistent location facts and centered map pins survive responsive layout", async ({ page }) => {
+  await page.goto(route); await settle(page);
+  await expect(page.locator(".pd-related-card")).toHaveCount(5);
+  await expect(page.locator(".pd-location-details > h3")).toHaveText("ข้อมูลสถานที่เพิ่มเติม");
+  await expect(page.locator("details.pd-location-details")).toHaveCount(0);
+  const centered = async selector => {
+    const marker = page.locator(selector);
+    await expect(marker).toBeVisible();
+    const delta = await marker.evaluate(node => {
+      const circle = node.getBoundingClientRect();
+      const icon = node.querySelector(".pd-icon")!.getBoundingClientRect();
+      return Math.max(Math.abs(circle.x + circle.width / 2 - icon.x - icon.width / 2), Math.abs(circle.y + circle.height / 2 - icon.y - icon.height / 2));
+    });
+    expect(delta).toBeLessThanOrEqual(1);
+  };
+  for (const width of [1440, 1280, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.locator(".pd-location").scrollIntoViewIfNeeded();
+    await centered("[data-temple-detail-map] .pd-marker");
+    await page.locator("[data-map-open]").click();
+    await centered(".pd-dialog-map .pd-marker");
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".pd-related-card:visible")).toHaveCount(width === 1280 ? 4 : 5);
+    const frame = await page.locator(".pd-related-image").first().boundingBox();
+    expect(Math.abs(frame!.width / frame!.height - 16 / 9)).toBeLessThan(.02);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+    await page.locator(".pd-related").scrollIntoViewIfNeeded();
+    await page.screenshot({ path: `artifacts/place-detail/combined-related-${width}.png` });
+  }
+});
+
 test("responsive composition, reserved media, three collection owners and screenshots", async ({ page }) => {
   test.setTimeout(120000);
   const errors = [];
@@ -176,7 +238,7 @@ test("share cancellation, canonical clipboard, fallback and related rail", async
   await page.keyboard.press("Escape");
   await expect(page.locator("[data-temple-detail-copy]")).toBeFocused();
   await page.locator("[data-related-next]").click();
-  await expect(page.locator("[data-related-count]")).toHaveText("2 / 3");
+  await expect(page.locator("[data-related-count]")).toHaveText("2 / 5");
 });
 
 test("activity loading, stale data, retry and registration gates", async ({ page }) => {

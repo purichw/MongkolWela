@@ -166,7 +166,7 @@
         "items": [
           {
             "id": "shop",
-            "label": "ร้านค้ากลาง",
+            "label": "วัตถุมงคลและเครื่องราง",
             "href": "shop/",
             "enabled": true
           },
@@ -780,7 +780,7 @@
     },
     {
       "id": "shop",
-      "label": "ร้านค้ากลาง",
+      "label": "วัตถุมงคลและเครื่องราง",
       "route": "/shop/",
       "enabled": true,
       "kind": "existing",

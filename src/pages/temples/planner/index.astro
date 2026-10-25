@@ -99,7 +99,17 @@ const guides = [
           <div class="planner-freshness" data-planner-freshness hidden><p></p><button data-cms-field="370ae036-63" type="button" class="planner-primary-button" data-planner-update>อัปเดตแผน</button><button data-cms-field="370ae036-64" type="button" class="planner-text-button" data-planner-revert>คืนค่าแผนเดิม</button></div>
           <p data-cms-field="370ae036-65" data-planner-unplanned>ยังไม่ได้จัดเส้นทาง</p>
           <div class="planner-route-layout">
-            <details class="planner-route-map" data-planner-route-disclosure><summary data-cms-field="370ae036-66"><SiteIcon name="map-pin" />แผนที่เส้นทาง <SiteIcon name="chevron-down" /></summary><div class="planner-map planner-map--route" data-planner-route-map aria-label="แผนที่ลำดับการเดินทาง"></div><p data-cms-field="370ae036-67" class="planner-map-note">เส้นเชื่อมแสดงลำดับสถานที่ ไม่ใช่แนวถนน ระยะและเวลาเป็นค่าประมาณ</p><div data-planner-map-error="route" hidden></div></details>
+            <details class="planner-route-map" data-planner-route-disclosure>
+              <summary data-cms-field="370ae036-66"><SiteIcon name="map-pin" />แผนที่เส้นทาง <SiteIcon name="chevron-down" /></summary>
+              <div class="planner-route-map-frame">
+                <div data-planner-route-map-content>
+                  <div class="planner-map planner-map--route" data-planner-route-map aria-label="แผนที่ลำดับการเดินทาง"></div>
+                  <p data-cms-field="370ae036-67" class="planner-map-note">เส้นเชื่อมแสดงลำดับสถานที่ ไม่ใช่แนวถนน ระยะและเวลาเป็นค่าประมาณ</p>
+                  <div data-planner-map-error="route" hidden></div>
+                </div>
+                <button type="button" class="planner-map-expand" data-planner-map-expand aria-label="ขยายแผนที่เส้นทาง" title="ขยายแผนที่เส้นทาง" aria-haspopup="dialog" aria-controls="planner-route-dialog" aria-expanded="false"><SiteIcon name="maximize-2" /></button>
+              </div>
+            </details>
             <div class="planner-route-facts">
               <div class="planner-summary" data-planner-summary></div>
               <details class="planner-trip-source" data-planner-trip-source hidden><summary data-cms-field="370ae036-68">เงื่อนไขที่ใช้จัดแผน <SiteIcon name="chevron-down" /></summary><div></div></details>
@@ -117,6 +127,10 @@ const guides = [
       <a data-cms-field="370ae036-82" class="planner-media-credit" href="/assets/images/planner-media-credits.txt" target="_blank" rel="noopener">ที่มาภาพประกอบ</a>
     </div>
     <div class="planner-mobile-bar" data-planner-mobile-bar hidden><span data-planner-mobile-status></span><button type="button" class="planner-primary-button" data-planner-mobile-primary></button><button type="button" class="planner-text-button" data-planner-mobile-secondary></button></div>
+    <dialog id="planner-route-dialog" class="planner-route-dialog" data-planner-route-dialog aria-labelledby="planner-route-dialog-title">
+      <header><h2 id="planner-route-dialog-title">แผนที่เส้นทาง</h2><button type="button" class="planner-map-close" data-planner-map-close aria-label="ปิดแผนที่เส้นทาง" title="ปิดแผนที่เส้นทาง" autofocus><SiteIcon name="x" /></button></header>
+      <div data-planner-route-dialog-body></div>
+    </dialog>
     <div class="planner-dialog" data-planner-dialog hidden aria-hidden="true"><div class="planner-dialog__overlay"></div><section class="planner-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="planner-dialog-title" aria-describedby="planner-dialog-message"><h2 id="planner-dialog-title" data-planner-dialog-title></h2><p id="planner-dialog-message" data-planner-dialog-message></p><div data-planner-dialog-options></div><div class="planner-dialog__actions"><button data-cms-field="370ae036-83" type="button" class="planner-secondary-button" data-planner-dialog-cancel>ยกเลิก</button><button data-cms-field="370ae036-84" type="button" class="planner-primary-button" data-planner-dialog-confirm>ยืนยัน</button></div></section></div>
   </main>
   <script>import "../../../scripts/temple-planner.js";</script>

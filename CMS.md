@@ -253,6 +253,24 @@ and `merit` links. Admin > Navigation controls their labels, destinations,
 order and visibility. Both routes are also registered as existing CMS pages.
 Adding these links does not enable commerce APIs or payments.
 
+Shop's default display name is `วัตถุมงคลและเครื่องราง`. The shared navigation
+model maps only the legacy `ร้านค้ากลาง` label on `/shop/` to this name, including
+device-specific labels; custom published names, URLs and visibility are preserved.
+Build seeds and the temple-to-shop link use the new name. This does not publish
+or replace the live CMS document.
+
+`CommerceBreadcrumb` derives its full ancestry from the same navigation model,
+preferring the deepest matching child when a group shares its landing URL.
+It renders the visible trail and BreadcrumbList from one helper and refreshes
+both after live CMS content arrives. Labels and hierarchy are edited through
+Navigation, not independent per-page breadcrumb patches. If navigation is removed,
+the current page registry label is used without restoring a removed group.
+The Merit route no longer has duplicate shop/merit tabs.
+Both routes use `CommerceIntro` for the top banner. Shop keeps its existing
+`3746c99e-3/4/5` and quote bindings; Merit adds `merit-intro-kicker/title/lead/quote`.
+The banner owns the page H1, while closed-state, campaign and detail headings
+remain below it as H2s with their existing CMS fields.
+
 The bundled entries are development/build seeds. For an existing production
 document, publish only the new group and page entries against the latest Admin
 content; do not replace the document with a bundled seed. An intentional

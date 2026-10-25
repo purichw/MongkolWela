@@ -1,7 +1,8 @@
 import { onCmsContent } from "./content-ready.js";
 import { settlePageContent } from "./page-content-ready.js";
 import { renderIcon, escapeHtml as esc } from "../lib/ui-markup.js";
-import { sitePlaceholderImage, applyImageFallback } from "../lib/image-placeholder.js";
+import { applyImageFallback } from "../lib/image-placeholder.js";
+import { renderDirectoryPlaceCard as card } from "../lib/directory-place-card.js";
 
 const root = document.querySelector("[data-directory-places]");
 if (root) initialize(root);
@@ -72,7 +73,12 @@ function initialize(root) {
     event.preventDefault(); search.value = ""; region.value = ""; provinces(""); submit();
   });
   grid.addEventListener("click", event => { if (event.target.closest("[data-directory-reset]")) form.reset(); });
-  grid.addEventListener("error", event => { if (event.target instanceof HTMLImageElement) applyImageFallback(event.target); }, true);
+  grid.addEventListener("error", event => {
+    if (!(event.target instanceof HTMLImageElement)) return;
+    applyImageFallback(event.target);
+    const figure = event.target.closest("figure");
+    if (figure) { figure.dataset.placeholderDesktop = "true"; figure.dataset.placeholderMobile = "true"; }
+  }, true);
   more.addEventListener("click", async () => { const index = grid.children.length; await fetchPage(true); grid.children[index]?.querySelector("a")?.focus({ preventScroll: true }); });
   onCmsContent(content => {
     const incoming = content.directoryPage;
@@ -92,20 +98,4 @@ function initialize(root) {
     grid.querySelector("[data-directory-retry]").addEventListener("click", () => initialized ? fetchPage() : location.reload());
     settlePageContent(root);
   }
-}
-
-function safeUrl(value, fallback = "") {
-  if (typeof value !== "string" || !value.trim()) return fallback;
-  try { const url = new URL(value, location.origin); return ["https:", "http:"].includes(url.protocol) ? url.href : fallback; } catch { return fallback; }
-}
-
-function card(place) {
-  const credit = safeUrl(place.imageSourceUrl);
-  const image = safeUrl(place.image, sitePlaceholderImage), mobile = safeUrl(place.imageMobile, sitePlaceholderImage);
-  return `<article class="directory-card" data-directory-key="${esc(place.key)}">
-    <figure><picture>${mobile !== image ? `<source media="(max-width: 767px)" srcset="${esc(mobile)}">` : ""}<img src="${esc(image)}" alt="${esc(place.imageAlt || place.name)}" width="480" height="300" loading="lazy" decoding="async" data-fallback-src="${sitePlaceholderImage}"></picture>${place.imageSourceLabel ? `<figcaption>${credit ? `<a href="${esc(credit)}" target="_blank" rel="noopener">${esc(place.imageSourceLabel)}</a>` : esc(place.imageSourceLabel)}</figcaption>` : ""}</figure>
-    <div class="directory-card-body"><p class="directory-locality">${renderIcon("map-pin")}${esc([place.province, place.district].filter(Boolean).join(" / ") || "ยังไม่ระบุพื้นที่")}</p><h3>${esc(place.name)}</h3>
-    ${place.summary ? `<p class="directory-summary">${esc(place.summary)}</p>` : ""}${place.address ? `<details class="directory-address"><summary>ที่อยู่</summary><p>${esc(place.address)}</p></details>` : ""}
-    <p class="directory-source">พิกัด: ${place.source === "osm" ? "OpenStreetMap" : place.source === "curated" ? "ชุดคัดสรรมงคลเวลา" : "ทีมงานมงคลเวลา"}</p><div class="directory-card-actions"><a class="directory-button" href="${esc(safeUrl(place.links.search))}" target="_blank" rel="noopener">${renderIcon("map")}ดูแผนที่</a><a class="directory-button is-primary" href="${esc(safeUrl(place.links.directions))}" target="_blank" rel="noopener">${renderIcon("navigation")}นำทาง</a></div></div>
-  </article>`;
 }

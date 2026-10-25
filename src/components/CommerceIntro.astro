@@ -1,0 +1,26 @@
+---
+import CommerceBreadcrumb from "./CommerceBreadcrumb.astro";
+
+interface Props {
+  headingId: string;
+  title: string;
+  kicker: string;
+  lead: string;
+  fields: { title: string; kicker: string; lead: string };
+  class?: string;
+}
+const { headingId, title, kicker, lead, fields, class: className } = Astro.props;
+---
+<section class:list={["commerce-intro", className]} aria-labelledby={headingId}>
+  <div class="commerce-frame">
+    <CommerceBreadcrumb />
+    <header class="commerce-heading commerce-intro-heading">
+      <div>
+        <p class="section-kicker" data-cms-field={fields.kicker}>{kicker}</p>
+        <h1 id={headingId} data-cms-field={fields.title}>{title}</h1>
+        <p class="commerce-intro-lead" data-cms-field={fields.lead}>{lead}</p>
+      </div>
+      <slot name="quote" />
+    </header>
+  </div>
+</section>

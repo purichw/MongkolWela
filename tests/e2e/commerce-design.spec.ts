@@ -45,6 +45,10 @@ for (const route of ["shop", "merit"]) {
     await expect(page.getByRole("button", { name: "ลองใหม่", exact: true })).toHaveCount(0);
     await expect(page.locator(".commerce-nav").getByRole("link", { name: /ตะกร้า|จัดการร้านค้า/ })).toHaveCount(0);
     await expect(page.locator(".commerce-breadcrumb")).toBeVisible();
+    await expect(page.locator(".commerce-intro h1")).toHaveText(route === "shop" ? "วัตถุมงคลและเครื่องราง" : "กฐินและร่วมบุญ");
+    await expect(page.locator("main h1")).toHaveCount(1);
+    await expect(page.locator('.commerce-breadcrumb > :not([aria-hidden="true"])')).toHaveText(["หน้าแรก", "ร้านค้าและร่วมบุญ", route === "shop" ? "วัตถุมงคลและเครื่องราง" : "กฐินและร่วมบุญ"]);
+    if (route === "merit") await expect(page.locator("main .commerce-nav")).toHaveCount(0);
     if (route === "shop") {
       await expect(page.locator(".shop-category-preview")).toHaveCount(4);
       await expect(page.getByRole("link", { name: /ติดตามข่าวเปิดบริการ/ })).toHaveAttribute("href", "/contact/#contact-channel-data");
@@ -63,6 +67,9 @@ for (const route of ["shop", "merit"]) {
     await setup(page, sampleCatalog());
     await page.goto(`/${route}/`);
     await expect(page.locator("[data-commerce-state=ready]")).toBeVisible();
+    await expect(page.locator(".commerce-intro")).toBeVisible();
+    await expect(page.locator("main h1")).toHaveCount(1);
+    if (route === "merit") await expect(page.locator("main .commerce-nav")).toHaveCount(0);
     await capture(page, `${route}-catalog`, info);
     const card = page.locator(route === "shop" ? ".shop-product" : ".merit-campaign");
     await expect(card).toHaveCount(route === "shop" ? 8 : 4);
@@ -137,4 +144,26 @@ test("merit desktop and mobile art remain CMS-owned", async ({ page }, info) => 
   await expect(image).toBeVisible();
   await expect(image).toHaveAttribute("src", "/assets/images/merit-robes-banner.webp");
   await expect.poll(() => image.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+});
+
+test("shop and merit share banner geometry while merit copy remains CMS-editable", async ({ page }) => {
+  await setup(page, { ok: false, code: "COMMERCE_DISABLED" }, 503, [
+    { selector: '[data-cms-field="merit-intro-title"]', kind: "text", value: "งานบุญจาก CMS" },
+    { selector: '[data-cms-field="merit-intro-lead"]', kind: "text", value: "คำอธิบายการร่วมบุญจาก CMS" },
+  ], "merit");
+  const geometry = [];
+  for (const route of ["shop", "merit"]) {
+    await page.goto(`/${route}/`);
+    await expect(page.locator("[data-commerce-state=disabled]")).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+    geometry.push(await page.locator(".commerce-intro").evaluate(element => {
+      const frame = element.querySelector(".commerce-frame").getBoundingClientRect();
+      const heading = getComputedStyle(element.querySelector("h1"));
+      const intro = getComputedStyle(element);
+      return { left: frame.left, width: frame.width, fontSize: heading.fontSize, lineHeight: heading.lineHeight, background: intro.backgroundImage, padding: intro.paddingBottom };
+    }));
+  }
+  expect(geometry[1]).toEqual(geometry[0]);
+  await expect(page.getByRole("heading", { name: "งานบุญจาก CMS", level: 1 })).toBeVisible();
+  await expect(page.locator(".commerce-intro-lead")).toHaveText("คำอธิบายการร่วมบุญจาก CMS");
 });

@@ -1,13 +1,5 @@
 .commerce-page.shop-page { width: 100%; margin: 0; padding: 0; color: var(--ink); }
 .shop-page [hidden] { display: none !important; }
-.shop-intro { position: relative; padding: 0 0 28px; background: url("/assets/images/shop-temple-frieze.webp") right bottom / auto 270px no-repeat; }
-.shop-intro::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #fcf8ef 30%, #fcf8efde 58%, #fcf8ef40); pointer-events: none; }
-.commerce-page .shop-heading { display: grid; grid-template-columns: minmax(0, 1fr) 250px; align-items: center; gap: 28px; margin: 16px 0 12px; }
-.shop-page .shop-heading .section-kicker { margin: 0 0 4px; color: #95261e; font-size: 18px; font-weight: 700; }
-.shop-page .shop-heading h1 { margin: 0; font-family: var(--font-thai); font-size: 44px; font-weight: 800; line-height: 1.35; letter-spacing: 0; }
-.shop-page .shop-lead { margin: 8px 0 0; font-size: 18px; line-height: 1.6; }
-.shop-heading blockquote { margin: 0; color: #996539; font-size: 20px; font-style: italic; text-align: center; line-height: 1.8; }
-.shop-heading cite { display: block; margin-top: 6px; font-size: 13px; font-style: normal; }
 .shop-page[data-commerce-state="ready"][data-commerce-view="catalog"] .shop-intro { background-image: url("/assets/images/shop-sacred-still-life.webp"); background-size: auto 270px; }
 .shop-body { padding-bottom: 28px; }
 .shop-operational { display: flex; align-items: flex-start; gap: 20px; margin-top: 16px; }
@@ -123,8 +115,6 @@
   .shop-destination-copy strong { font-size: 16px; }
   .shop-destination-copy > span { font-size: 13px; }
   .shop-destination .link-arrow { width: 28px; height: 28px; }
-  .shop-page .shop-heading h1 { font-size: 36px; }
-  .shop-heading blockquote { font-size: 16px; }
   .shop-closed { padding: 0; gap: 0; }
   .shop-closed-copy { padding: 24px; }
   .shop-closed-actions { flex-direction: column; }
@@ -133,8 +123,6 @@
   .shop-products { gap: 12px; }
 }
 @media (max-width: 900px) {
-  .shop-page .shop-heading .section-kicker { font-size: 15px; margin-bottom: 3px; }
-  .shop-page .shop-lead { max-width: 36em; font-size: 15px; line-height: 1.55; }
   .shop-page .shop-closed-copy > p { font-size: 14px; line-height: 1.6; }
   .shop-lotus-rule { gap: 24px; }
   .shop-lotus-rule::before, .shop-lotus-rule::after { width: 22%; }
@@ -148,8 +136,6 @@
   .shop-faq details { margin-top: 6px; }
   .shop-faq summary { padding: 8px 10px; font-size: 14px; }
   .shop-page .shop-faq details p { font-size: 14px; padding-inline: 10px; }
-  .commerce-page .shop-heading { grid-template-columns: 1fr; margin: 10px 0 6px; }
-  .shop-heading blockquote { display: none; }
   .shop-closed { grid-template-columns: 1fr; padding: 0; min-height: 0; }
   .shop-closed-art { max-width: none; min-height: 0; height: auto; aspect-ratio: 2; object-fit: cover; object-position: center 55%; }
   .shop-closed-copy { padding: 8px 24px 20px; }
@@ -165,9 +151,6 @@
   .shop-destination-copy > span { font-size: 12px; }
 }
 @media (max-width: 600px) {
-  .shop-intro { padding: 0 0 18px; background-size: auto 200px; }
-  .shop-page .shop-heading h1 { font-size: 30px; line-height: 1.35; }
-  .shop-page .shop-lead { font-size: 15px; line-height: 1.55; }
   .shop-closed-art { aspect-ratio: 1.85; }
   .shop-closed-copy { padding: 4px 16px 18px; }
   .shop-page .shop-closed-copy h2 { font-size: 20px; }
@@ -229,7 +212,4 @@
   .shop-page .shop-order-steps h2 { font-size: 20px; }
   .shop-order-steps ol { grid-template-columns: 1fr; gap: 18px; }
   .shop-order-steps .ui-icon-mask { width: 30px; height: 30px; }
-}
-@media (max-width: 359px) {
-  .shop-page .shop-heading h1 { font-size: 27px; }
 }

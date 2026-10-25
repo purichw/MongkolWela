@@ -32,8 +32,23 @@ test("mapped directory uses published data, filters, paging, navigation and resp
   const firstImage = page.locator(".directory-card img").first();
   await expect.poll(() => firstImage.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   const first = page.locator(".directory-card").first();
-  expect(new URL(await first.getByRole("link", { name: "นำทาง", exact: true }).getAttribute("href")).searchParams.get("destination")).toMatch(/^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/);
-  await expect(first).toContainText("ชุดคัดสรรมงคลเวลา");
+  expect(new URL(await first.getByRole("link", { name: "ดูแผนที่", exact: true }).getAttribute("href")).searchParams.get("query")).toMatch(/^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/);
+  await expect(page.locator(".directory-source")).toHaveCount(0);
+  await expect(page.locator("[data-directory-results]")).not.toContainText("แหล่งพิกัด:");
+  await expect(first).toHaveAttribute("data-place-card", "");
+  await expect(page.locator(".directory-card").getByRole("link", { name: "เพิ่มลงแผน", exact: true })).toHaveCount(0);
+  await expect(first.locator(".place-card__actions a")).toHaveCount(1);
+  await expect(page.locator(".directory-card").getByRole("link", { name: "นำทาง", exact: true })).toHaveCount(0);
+  const columns = await page.locator(".directory-grid").evaluate(node => getComputedStyle(node).gridTemplateColumns.split(" ").length);
+  expect(columns).toBe(isMobile ? 1 : 4);
+  await expect(first.locator(".directory-address p")).toBeHidden();
+  await first.locator("summary").focus();
+  await page.keyboard.press("Enter");
+  await expect(first.locator(".directory-address p")).toBeVisible();
+  await page.keyboard.press("Enter");
+  await expect(first.locator(".directory-address p")).toBeHidden();
+  expect(await first.locator(".place-card__action--outline").evaluate(node => getComputedStyle(node).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
+  for (const action of await first.locator(".place-card__actions a").all()) expect((await action.boundingBox())!.height).toBeGreaterThanOrEqual(44);
   fs.mkdirSync(output, { recursive: true });
   await page.evaluate(() => document.fonts.ready);
   await expect(page.locator("html")).toHaveClass(/page-fonts-ready/);
@@ -72,6 +87,30 @@ test("CMS outage has a retry state and never substitutes the old registry", asyn
   fixture.state.outage = false;
   await page.locator("[data-directory-retry]").click();
   await expect(page.locator(".directory-card")).toHaveCount(24);
+});
+
+test("directory card fallback, credits and map icons remain usable at narrow widths", async ({ page }) => {
+  const original = thailandPublicPlaces(fixture.state.content)[0];
+  const brokenPath = new URL(original.image, fixture.url).pathname;
+  await page.route(url => url.pathname === brokenPath, route => route.fulfill({ status: 404, body: "missing fixture image" }));
+  await page.goto(fixture.url + "/temples/thailand/");
+  const first = page.locator(".directory-card").first();
+  await expect(first.locator("img")).toHaveAttribute("data-fallback-applied", "true");
+  await expect(first.locator(".directory-image-missing")).toBeVisible();
+  await expect(first.locator(".directory-image-credit")).toBeHidden();
+  await expect(first.locator("figcaption")).not.toContainText("Placeholder");
+  for (const width of [320, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+    const columns = await page.locator(".directory-grid").evaluate(node => getComputedStyle(node).gridTemplateColumns.split(" ").length);
+    expect(columns).toBe(width === 320 ? 1 : width === 768 ? 2 : 4);
+    await expect(first.locator(".directory-image-missing")).toBeVisible();
+    for (const icon of await first.locator(".ui-icon-mask").all()) {
+      const mask = await icon.evaluate(node => getComputedStyle(node).maskImage);
+      expect((await page.request.get(mask.slice(5, -2))).ok()).toBe(true);
+    }
+  }
+  await expect(page.locator(".directory-attribution a").first()).toHaveAttribute("href", "https://www.openstreetmap.org/copyright");
 });
 
 test("compact shared editor validates, cancels, saves a draft, restores and publishes a manual Plus Code place", async ({ page, context, isMobile }) => {
@@ -129,8 +168,8 @@ test("compact shared editor validates, cancels, saves a draft, restores and publ
   await page.goto(fixture.url + "/temples/thailand/?place=" + encodeURIComponent(record.key));
   await expect(page.locator(".directory-card")).toHaveCount(1);
   await expect(page.locator(".directory-card h3")).toHaveText("วัดทดสอบ CMS พิกัด");
-  await expect(page.getByRole("link", { name: "นำทาง", exact: true })).toHaveAttribute("href", /destination=QF2P%2BW6\+Bangkok/);
-  await expect(page.locator(".directory-source")).toContainText("ทีมงานมงคลเวลา");
+  await expect(page.getByRole("link", { name: "ดูแผนที่", exact: true })).toHaveAttribute("href", /query=QF2P%2BW6\+Bangkok/);
+  await expect(page.locator(".directory-source, .directory-address")).toHaveCount(0);
   await page.goto(fixture.url + "/");
   await expect(page.locator('[data-directory-summary="templeCount"]').first()).toHaveText((baselineCount + 1).toLocaleString("th-TH"));
   await expect(page.locator('[data-directory-summary="templeCount"]').last()).toHaveText((baselineCount + 1).toLocaleString("th-TH"));

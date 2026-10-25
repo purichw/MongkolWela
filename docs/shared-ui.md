@@ -35,8 +35,10 @@ points. A different task layout must still sit on the same site frame.
 | `scripts/planner/place-card.js` | One escaped, semantic place-selection renderer for desktop tiles and mobile rows | Planner list in picker-only and combined views |
 | `PopularFilters.astro`, `scripts/popular-filters.js`, `popular-filters.css` | Shared collection search panel, compact selectors and one responsive editor; adapts the existing collection matcher rather than duplicating it | Popular, Sacred and Mu through `TempleCollectionView`; historical Popular filenames/hooks remain stable |
 | `TempleCollectionView.astro`, `lib/temple-collection-card.js`, `temple-collection.css` | Collection composition and one escaped card renderer for SSR and incremental results; responsive image, rank, location, intent, plan and detail links | Popular, Sacred and Mu indexes only |
+| `place-card.css` | Shared place-card frame, media ratio, type, body rhythm, action hierarchy and responsive grid; opt-in `data-place-card` and `place-card__*` classes | Three curated indexes and Thailand directory; data/renderers remain domain-owned |
 | `ChoiceChip.astro`, `lib/choice-chip.js`, `public-ui.css` | Centered toggle-button/native-checkbox chips; balanced check inset, 44px target, wrapping, focus and disabled states | Popular/Sacred/Mu regions, province/purpose options and All; Planner chips retain their own contract |
-| `CommerceBreadcrumb.astro`, `CommerceNav.astro`, `commerce-landing.css` | Shared page-token frame, breadcrumb semantics, public two-link navigation and catalog state primitives; route compositions remain separate | Shop and Merit |
+| `CommerceBreadcrumb.astro`, `lib/navigation-breadcrumbs.js`, `commerce-landing.css` | Shared page-token frame, navigation-derived breadcrumbs/JSON-LD and catalog state primitives; Merit has no duplicate tab nav | Shop and Merit |
+| `CommerceIntro.astro`, `commerce-landing.css` | Shared illustrated intro, heading/lead/quote typography, responsive spacing and breadcrumb frame; page copy and CMS field IDs are passed by the route | Shop and Merit, closed and available states |
 | `commerce-catalog.js`, `commerce-catalog-ui.js` | Optional category taxonomy, pure combined filtering/sorting, shared controls and distinct product/campaign renderers; existing chips/icons/dropdowns | Shop/Merit catalogs and seller/Admin category editor |
 | `TempleSearchForm.astro`, `TempleSearchDialog.astro`, `scripts/temple-search.js`, `temple-search.css` | One search form, suggestion/result row renderer and responsive overlay; fresh CMS-backed search | Home hero, Header on all public routes, `/search/` |
 | `icons/SiteIcon.astro` | Decorative heritage raster or Lucide icon; parent provides the accessible action name | Header/footer, Home, Calendar, Calendar Day, Place Detail |
@@ -48,6 +50,25 @@ points. A different task layout must still sit on the same site frame.
 | `CarouselControls.astro`, `LinkArrow.astro`, `BrandOrnament.astro` | Existing shared control, link affordance and decorative motif | Existing Home/Calendar/detail/shell consumers |
 
 ## Usage
+
+### Place Cards
+
+The Thailand directory uses the curated card's visual anatomy, with four desktop
+columns and one mobile column. Its renderer (`lib/directory-place-card.js`) keeps
+only a map action, never a separate directions action, plan, rank, blessing or a fabricated detail
+route. Addresses remain available in native disclosures; coordinate provenance
+is retained in metadata but not rendered on each card. Cards without addresses
+omit the disclosure rather than leaving an empty control;
+real image attribution stays linked on the image. Missing-image labels are Thai
+and follow the actual desktop/mobile fallback. Curated CMS hooks and plan/detail
+actions are unchanged. Shared geometry lives in `place-card.css`, not duplicated
+in `directory-places.css` and `temple-collection.css`.
+
+| Scenario | Expected result | Evidence | Priority |
+| --- | --- | --- | --- |
+| Directory cards, paging and search | Shared responsive frame; map destinations unchanged; no plan actions | Directory runtime renderer tests and targeted directory E2E | P1 |
+| Secondary information and absent media | Keyboard-operable disclosure; attribution retained; honest fallback label | Targeted browser desktop/mobile and renderer tests | P1 |
+| Curated cards after shared-style extraction | Existing rank, CMS hooks, plan/detail links and responsive composition preserved | Collection renderer tests and representative Popular desktop/mobile capture | P1 |
 
 ### Cookie Consent
 

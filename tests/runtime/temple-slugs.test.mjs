@@ -31,6 +31,26 @@ test("all 625 dataset routes have reviewed ASCII names and preserve CMS identity
   assert.equal(rows[0].cmsSlug, "wat-rakhang-khositaram");
 });
 
+test("all place collections recommend five distinct published neighbors in proximity order", () => {
+  for (const collection of Object.keys(templeDatasets)) {
+    const slug = createLegacyTempleSlug(templeDatasets[collection][0]);
+    const { temple, relatedTemples } = resolveTempleRoute(collection, slug, {});
+    assert.equal(relatedTemples.length, 5);
+    assert.equal(new Set(relatedTemples.map(item => item.cmsKey)).size, 5);
+    assert.ok(relatedTemples.every(item => item.cmsKey !== temple.cmsKey && item.collection === collection));
+    const score = item => item.province === temple.province ? 0 : item.region === temple.region ? 1 : 2;
+    assert.deepEqual(relatedTemples.map(score), relatedTemples.map(score).sort((a, b) => a - b));
+    const [disabled, deleted] = relatedTemples;
+    const content = { temples: { records: {
+      [disabled.cmsKey]: { key: disabled.cmsKey, collection, enabled: false },
+      [deleted.cmsKey]: { key: deleted.cmsKey, collection, status: "deleted" },
+    } } };
+    const updated = resolveTempleRoute(collection, slug, content).relatedTemples;
+    assert.equal(updated.length, 5);
+    assert.ok(updated.every(item => ![temple.cmsKey, disabled.cmsKey, deleted.cmsKey].includes(item.cmsKey)));
+  }
+});
+
 test("automatic generation romanizes new Thai names and bounds duplicate suffixes", () => {
   assert.equal(generateTempleSlug({ name: "วัดอรุณ" }), "wat-arun");
   assert.equal(generateTempleSlug({ name: "วัดทดสอบใหม่" }), "wat-thot-sop-mai");

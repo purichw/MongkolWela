@@ -31,6 +31,7 @@ import errorPages from "../styles/error-pages.css?url";
 import templeSearch from "../styles/temple-search.css?url";
 import travelGuide from "../styles/travel-guide.css?url";
 import contact from "../styles/contact.css?url";
+import placeCard from "../styles/place-card.css?url";
 
 // Keep the existing cascade order while loading only the route's feature styles.
 export function stylesForPath(path, page = "") {
@@ -49,5 +50,5 @@ export function stylesForPath(path, page = "") {
     : path.startsWith("/temples/") ? [temples, map]
     : [];
   const isTool = path.startsWith("/tarot/") || /^\/horoscope\/(life-graph|palmistry|seamsi|thai-astrology)\//.test(path);
-  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : []), ...(path === "/temples/thailand/" ? [thailand] : []), publicSelect, ...(isTool ? [tools] : []), ...(path.startsWith("/tarot/") ? [tarotExperience] : []), ...(path.startsWith("/tarot/meanings/") ? [tarotLibrary] : []), ...(/^\/temples\/(popular|sacred|mu)\/$/.test(path) ? [popularFilters] : []), ...(/^error-(401|403|404|429|500|502|503|504)$/.test(page) ? [errorPages] : []), templeSearch];
+  return [tokens, base, publicUi, header, pdpa, ...(path === "/" ? [home] : []), feature, ...featureStyles, responsive, headlines, site, ...(path === "/temples/planner/" ? [planner] : []), ...(path === "/temples/thailand/" ? [thailand] : []), publicSelect, ...(isTool ? [tools] : []), ...(path.startsWith("/tarot/") ? [tarotExperience] : []), ...(path.startsWith("/tarot/meanings/") ? [tarotLibrary] : []), ...(/^\/temples\/(popular|sacred|mu)\/$/.test(path) ? [popularFilters] : []), ...(/^error-(401|403|404|429|500|502|503|504)$/.test(page) ? [errorPages] : []), templeSearch, ...(/^\/temples\/(popular|sacred|mu|thailand)\/$/.test(path) ? [placeCard] : [])];
 }

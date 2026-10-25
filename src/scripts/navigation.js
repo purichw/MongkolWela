@@ -1,8 +1,20 @@
 import { siteConfig } from "../config/site.js";
 import { navigationModel, navigationForDevice, navigationUtilities, drawerUtilities, renderDesktopNavigation, renderMobileNavigation, renderMobileHub, renderUtilityNavigation, findNavigationLink, navEscape } from "../lib/site-navigation.js";
 import { renderIcon } from "../lib/ui-markup.js";
+import { navigationBreadcrumbs, renderNavigationBreadcrumbs, navigationBreadcrumbJsonLd } from "../lib/navigation-breadcrumbs.js";
 
 let controller;
+
+export function updateNavigationBreadcrumbs(content) {
+  for (const breadcrumb of document.querySelectorAll("[data-navigation-breadcrumb]")) {
+    const pathname = breadcrumb.dataset.navigationBreadcrumb;
+    const items = navigationBreadcrumbs(content, pathname);
+    reconcile(breadcrumb, renderNavigationBreadcrumbs(items));
+    const schema = [...document.querySelectorAll("[data-navigation-breadcrumb-jsonld]")]
+      .find(node => node.dataset.navigationBreadcrumbJsonld === pathname);
+    if (schema) schema.textContent = navigationBreadcrumbJsonLd(items, pathname);
+  }
+}
 
 /* Keyed navigation-only reconciliation: retain live details, focus, and scroll.
    Request ordering and revision ownership remain in cms-runtime/content-refresh. */

@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import CommerceNav from "../../components/CommerceNav.astro";
 import SiteIcon from "../../components/icons/SiteIcon.astro";
 import LinkArrow from "../../components/LinkArrow.astro";
-import CommerceBreadcrumb from "../../components/CommerceBreadcrumb.astro";
+import CommerceIntro from "../../components/CommerceIntro.astro";
 import { iconAttributes } from "../../lib/ui-markup.js";
 import { PRODUCT_CATEGORIES } from "../../lib/commerce-catalog.js";
 import "../../styles/commerce.css";
@@ -23,19 +23,11 @@ const questions = [
 ---
 <BaseLayout title="วัตถุมงคลและเครื่องราง | มงคลเวลา" description="วัตถุมงคลจากวัดและผู้จำหน่าย พร้อมแหล่งที่มาและข้อมูลผู้ขาย" page="shop" robots="noindex,follow" analytics={false}>
   <main class="commerce-page commerce-landing shop-page" data-page-pending="commerce" data-commerce-public="shop" data-commerce-state="loading">
-    <section class="shop-intro" aria-labelledby="shop-title">
-      <div class="commerce-frame">
-        <CommerceBreadcrumb page="shop" />
-        <header class="commerce-heading shop-heading">
-          <div>
-          <p data-cms-field="3746c99e-3" class="section-kicker">ร้านค้ามงคลเวลา</p>
-          <h1 data-cms-field="3746c99e-4" id="shop-title">วัตถุมงคลและเครื่องราง</h1>
-          <p data-cms-field="3746c99e-5" class="shop-lead">วัตถุมงคลที่คัดสรรอย่างตั้งใจ เพื่อเสริมสิริมงคลในทุกการเดินทางของคุณ</p>
-          </div>
-          <blockquote data-cms-field="shop-heading-quote">“สิ่งศักดิ์สิทธิ์<br />คือเพื่อนร่วมทางในทุกช่วงชีวิต”<cite>มงคลเวลา</cite></blockquote>
-        </header>
-      </div>
-    </section>
+    <CommerceIntro class="shop-intro" headingId="shop-title" kicker="ร้านค้ามงคลเวลา" title="วัตถุมงคลและเครื่องราง"
+      lead="วัตถุมงคลที่คัดสรรอย่างตั้งใจ เพื่อเสริมสิริมงคลในทุกการเดินทางของคุณ"
+      fields={{ kicker: "3746c99e-3", title: "3746c99e-4", lead: "3746c99e-5" }}>
+      <blockquote slot="quote" data-cms-field="shop-heading-quote">“สิ่งศักดิ์สิทธิ์<br />คือเพื่อนร่วมทางในทุกช่วงชีวิต”<cite>มงคลเวลา</cite></blockquote>
+    </CommerceIntro>
     <div class="commerce-frame shop-body">
         <div class="shop-operational" data-commerce-operational hidden><CommerceNav active="shop" /><a class="commerce-cart-link" href="/shop/?view=cart" aria-label="ตะกร้าสินค้า" title="ตะกร้าสินค้า"><span {...iconAttributes("shopping-cart")} /><span data-cart-count aria-hidden="true">0</span></a></div>
         <div class="commerce-message" role="status" aria-live="polite" data-commerce-message></div>

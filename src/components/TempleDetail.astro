@@ -118,7 +118,7 @@ const rank = Number(temple.rank);
     </section>
     <div class="pd-overview">
       <section class="pd-highlights pd-surface" aria-labelledby="pd-highlights-title">
-        <header class="pd-section-heading"><IconMedallion class="pd-medallion"><SiteIcon name="lotus" /></IconMedallion><h2 id="pd-highlights-title">จุดเด่นของสถานที่นี้</h2></header>
+        <header class="pd-section-heading"><IconMedallion class="pd-medallion"><SiteIcon name="lotus" /></IconMedallion><h2 id="pd-highlights-title">รู้จักสถานที่แห่งนี้</h2></header>
         <div class="pd-highlight-copy" data-pd-domain="highlights" set:html={renderHighlights(vm)} />
       </section>
       <section class="pd-location pd-surface" aria-label="พิกัดและที่อยู่">
@@ -152,12 +152,12 @@ const rank = Number(temple.rank);
     {relatedTemples.length > 0 && <section class="pd-related" aria-labelledby="pd-related-title">
       <header class="pd-section-heading"><IconMedallion class="pd-medallion"><SiteIcon name="temple" /></IconMedallion><div><h2 id="pd-related-title">แนะนำในชุดเดียวกัน</h2><p>{collectionLabel}</p></div><a class="pd-all-link" href={collectionHref}>ดูทั้งหมด <SiteIcon name="arrow-right" /></a></header>
       <div class="pd-related-rail" data-related-rail>
-        {relatedTemples.slice(0, 3).map(item => <a href={getTempleDetailUrl(collection, item)} data-temple-key={item.cmsKey || `${collection}:${createLegacyTempleSlug(item)}`} class="pd-related-card">
+        {relatedTemples.map(item => <a href={getTempleDetailUrl(collection, item)} data-temple-key={item.cmsKey || `${collection}:${createLegacyTempleSlug(item)}`} class="pd-related-card">
           <div class="pd-related-image"><TempleResponsiveImage desktopSrc={item.imageUrl || placeholderImage} mobileSrc={item.imageMobileUrl === "" ? placeholderImage : item.imageMobileUrl ?? item.imageUrl} alt={item.imageAlt ?? item.name} loading="lazy" decoding="async" fallbackSrc={placeholderImage} />{Number(item.rank) > 0 && <span>#{String(item.rank).padStart(2, "0")}</span>}</div>
           <div class="pd-related-copy"><div><strong>{item.name}</strong><small>{[item.province, item.district].filter(Boolean).join(" · ")}</small></div><SiteIcon name="chevron-right" /></div>
         </a>)}
       </div>
-      <div class="pd-rail-controls" data-related-controls hidden><button type="button" aria-label="สถานที่ก่อนหน้า" data-related-prev><SiteIcon name="chevron-left" /></button><span data-related-count role="status">1 / {Math.min(relatedTemples.length, 3)}</span><button type="button" aria-label="สถานที่ถัดไป" data-related-next><SiteIcon name="chevron-right" /></button></div>
+      <div class="pd-rail-controls" data-related-controls hidden><button type="button" aria-label="สถานที่ก่อนหน้า" data-related-prev><SiteIcon name="chevron-left" /></button><span data-related-count role="status">1 / {relatedTemples.length}</span><button type="button" aria-label="สถานที่ถัดไป" data-related-next><SiteIcon name="chevron-right" /></button></div>
     </section>}
     <div class="pd-sr-only" role="status" data-place-status></div>
   </main>

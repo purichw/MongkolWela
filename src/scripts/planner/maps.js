@@ -87,7 +87,8 @@ function renderRouteMap(state, elements) {
     return;
   }
   if (!state.routeMap) {
-    state.routeMap = window.L.map(elements.routeMap, { minZoom: 5, maxZoom: 18, scrollWheelZoom: false }).setView([13.7563, 100.5018], 6);
+    // This canvas moves into a dialog; a pending zoom transition must not overwrite its restored view.
+    state.routeMap = window.L.map(elements.routeMap, { minZoom: 5, maxZoom: 18, scrollWheelZoom: false, zoomAnimation: false }).setView([13.7563, 100.5018], 6);
     addTiles(state.routeMap, elements.routeMap);
   }
   if (state.routeLayer) state.routeLayer.remove();
@@ -102,7 +103,7 @@ function renderRouteMap(state, elements) {
         elements.timeline.querySelectorAll(".is-map-focused").forEach(node => node.classList.remove("is-map-focused"));
         stop.classList.add("is-map-focused");
         stop.setAttribute("tabindex", "-1");
-        stop.focus({ preventScroll: true });
+        if (!elements.routeDialog?.open) stop.focus({ preventScroll: true });
       })
       .addTo(group);
   });
@@ -114,6 +115,50 @@ function renderRouteMap(state, elements) {
     state.routeMap.invalidateSize();
     state.routeMap.fitBounds(window.L.latLngBounds(coordinates), { padding: [36, 36], maxZoom: 15, animate: false });
   }, 40);
+}
+
+function bindRouteDialog(state, elements, ensureRoute) {
+  const dialog = elements.routeDialog;
+  const content = elements.routeMapContent;
+  const home = content.parentElement;
+  const next = content.nextSibling;
+  let previousView;
+
+  elements.mapExpand.addEventListener("click", async () => {
+    if (!state.plan.length || dialog.open) return;
+    previousView = state.routeMap ? { center: state.routeMap.getCenter(), zoom: state.routeMap.getZoom() } : null;
+    // Reparent the existing map so its markers, popups and retry state stay intact.
+    elements.routeDialogBody.append(content);
+    dialog.showModal();
+    document.body.classList.add("has-planner-dialog");
+    elements.mapExpand.setAttribute("aria-expanded", "true");
+    elements.mapClose.focus();
+    await ensureRoute();
+    if (!dialog.open || !state.routeMap) return;
+    state.routeMap.invalidateSize();
+    state.routeMap.fitBounds(window.L.latLngBounds(state.plan.map(item => [item.latitude, item.longitude])), { padding: [36, 36], maxZoom: 15, animate: false });
+  });
+  elements.mapClose.addEventListener("click", () => dialog.close());
+  dialog.addEventListener("keydown", event => {
+    if (event.key !== "Tab") return;
+    const controls = [...dialog.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter(node => node.getClientRects().length && !node.closest("[hidden]"));
+    if (event.shiftKey && document.activeElement === controls[0]) { event.preventDefault(); controls.at(-1)?.focus(); }
+    else if (!event.shiftKey && document.activeElement === controls.at(-1)) { event.preventDefault(); controls[0]?.focus(); }
+  });
+  dialog.addEventListener("click", event => {
+    const rect = dialog.getBoundingClientRect();
+    if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
+  });
+  dialog.addEventListener("close", () => {
+    state.routeMap?.stop();
+    home.insertBefore(content, next);
+    if (elements.dialog.hidden) document.body.classList.remove("has-planner-dialog");
+    state.routeMap?.closePopup();
+    state.routeMap?.invalidateSize({ pan: false });
+    if (previousView && state.routeMap) state.routeMap.setView(previousView.center, previousView.zoom, { animate: false });
+    elements.mapExpand.setAttribute("aria-expanded", "false");
+    elements.mapExpand.focus({ preventScroll: true });
+  });
 }
 
 function addTiles(map, container) {
@@ -192,5 +237,5 @@ function loadScript(src) {
   });
 }
 
-return { refreshSelectionMap, ensureSelectionMap, updateSelectionMarker, createSelectionIcon, renderSelectionPopup, renderRouteMap, addTiles, ensureLeaflet, loadStylesheet, loadScript };
+return { refreshSelectionMap, ensureSelectionMap, updateSelectionMarker, createSelectionIcon, renderSelectionPopup, renderRouteMap, bindRouteDialog, addTiles, ensureLeaflet, loadStylesheet, loadScript };
 }

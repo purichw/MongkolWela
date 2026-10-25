@@ -25,7 +25,7 @@ export function resolveTempleRoute(collection, slug, content) {
     relatedTemples: others.sort((a, b) => {
       const score = item => item.province === temple.province ? 0 : item.region === temple.region ? 1 : 2;
       return score(a) - score(b);
-    }).slice(0, 3),
+    }).slice(0, 5),
   };
 }
 

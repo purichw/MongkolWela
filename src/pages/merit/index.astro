@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import CommerceNav from "../../components/CommerceNav.astro";
-import CommerceBreadcrumb from "../../components/CommerceBreadcrumb.astro";
+import CommerceIntro from "../../components/CommerceIntro.astro";
 import SiteIcon from "../../components/icons/SiteIcon.astro";
 import { iconAttributes } from "../../lib/ui-markup.js";
 import "../../styles/commerce.css";
@@ -10,7 +9,11 @@ import "../../styles/merit.css";
 ---
 <BaseLayout title="กฐินและร่วมบุญ | มงคลเวลา" description="ค้นหารายการกฐิน จองร่วมเป็นเจ้าภาพ และตรวจสอบช่องทาง e-Donation ของวัด" page="merit" robots="noindex,follow" analytics={false}>
   <main class="commerce-page commerce-landing merit-page" data-page-pending="commerce" data-commerce-public="merit" data-commerce-state="loading">
-    <div class="commerce-frame"><CommerceBreadcrumb page="merit" /><CommerceNav active="merit" /></div>
+    <CommerceIntro headingId="merit-intro-title" kicker="ร่วมบุญกับวัด" title="กฐินและร่วมบุญ"
+      lead="ร่วมสืบสานประเพณีและส่งต่อศรัทธา ผ่านงานกฐินและการร่วมบุญกับวัด"
+      fields={{ kicker: "merit-intro-kicker", title: "merit-intro-title", lead: "merit-intro-lead" }}>
+      <blockquote slot="quote" data-cms-field="merit-intro-quote">“บุญที่ตั้งใจ<br />ย่อมเดินทางมาถึง”<cite>มงคลเวลา</cite></blockquote>
+    </CommerceIntro>
     <section class="merit-closed" data-commerce-unavailable hidden aria-labelledby="merit-closed-title">
       <div class="merit-closed-art">
         <img class="merit-closed-desktop" data-cms-field="merit-closed-image" src="/assets/images/merit-coming-soon.webp" width="1800" height="600" alt="ภาพประกอบผ้าไตรบนพานทอง ท่ามกลางลายวัดและใบโพธิ์" />
@@ -18,7 +21,7 @@ import "../../styles/merit.css";
       </div>
       <div class="commerce-frame merit-closed-content">
         <SiteIcon name="lotus" />
-        <h1 id="merit-closed-title"><span data-cms-field="f9c40326-2">กฐินและร่วมบุญ</span><span data-cms-field="merit-closed-status">ยังไม่เปิดให้บริการ</span></h1>
+        <h2 id="merit-closed-title"><span data-cms-field="f9c40326-2">กฐินและร่วมบุญ</span><span data-cms-field="merit-closed-status">ยังไม่เปิดให้บริการ</span></h2>
         <p data-cms-field="merit-closed-description">เรากำลังเตรียมระบบเพื่อให้คุณร่วมบุญได้อย่างสะดวก<br />พร้อมข้อมูลของวัดและผู้จัดที่ตรวจสอบได้</p>
         <a class="commerce-button secondary" href="/shop/" data-cms-field="merit-back-shop">กลับหน้าร้านค้า<SiteIcon name="arrow-right" /></a>
       </div>
@@ -27,7 +30,7 @@ import "../../styles/merit.css";
       <img data-cms-field="merit-banner-image" src="/assets/images/merit-robes-banner.webp" alt="" width="1800" height="600" />
       <div class="commerce-frame merit-hero-content">
         <p data-cms-field="f9c40326-1" class="section-kicker">ร่วมทอดกฐินและทำบุญ</p>
-        <h1 id="merit-title" data-cms-field="f9c40326-2">กฐินและร่วมบุญ</h1>
+        <h2 id="merit-title" data-cms-field="f9c40326-2">กฐินและร่วมบุญ</h2>
         <p data-cms-field="merit-hero-quote" class="merit-hero-quote">“บุญที่ตั้งใจ ย่อมเดินทางมาถึง”</p>
         <ul class="merit-principles">
           <li><span {...iconAttributes("shield-check")} /><span data-cms-field="merit-principle-source">ข้อมูลจากวัดและผู้จัด</span></li>
@@ -37,7 +40,7 @@ import "../../styles/merit.css";
       </div>
     </section>
     <div class="commerce-frame merit-content">
-      <h1 class="merit-detail-heading" data-cms-field="merit-detail-heading">กฐินและร่วมบุญ</h1>
+      <h2 class="merit-detail-heading" data-cms-field="merit-detail-heading">กฐินและร่วมบุญ</h2>
       <div class="commerce-message" role="status" aria-live="polite" data-commerce-message></div>
       <div data-commerce-content aria-busy="true"><p data-cms-field="f9c40326-3" class="commerce-loading">กำลังโหลดรายการร่วมบุญ</p></div>
     </div>

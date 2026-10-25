@@ -49,6 +49,7 @@ function collectElements() {
     grid: "place-grid", moreButton: "more", empty: "empty", selectedTray: "selected-tray", selectedCount: "selected-count",
     targetCount: "target-count", pickerSearch: "picker-search", pickerNote: "picker-note", pickerToggleScope: "picker-toggle-scope",
     selectionMap: "selection-map", routeMap: "route-map", result: "result", timeline: "timeline", summary: "summary",
+    routeMapContent: "route-map-content", routeDialog: "route-dialog", routeDialogBody: "route-dialog-body", mapExpand: "map-expand", mapClose: "map-close",
     warnings: "warnings", googleLink: "google", saveButton: "save", tripSource: "trip-source",
     criteriaNotice: "criteria-notice", freshness: "freshness", unplanned: "unplanned", recoveryNotice: "recovery-notice",
     dialog: "dialog", dialogTitle: "dialog-title", dialogMessage: "dialog-message",
@@ -267,6 +268,7 @@ function bindControls(state, elements) {
   elements.routeDisclosure.addEventListener("toggle", () => {
     if (elements.routeDisclosure.open && state.plan.length && !elements.result.hidden) openMap(state, elements, "route");
   });
+  maps.bindRouteDialog(state, elements, () => openMap(state, elements, "route"));
   root.querySelector(".planner-tray-wrap").addEventListener("toggle", event => {
     elements.trayToggle.setAttribute("aria-expanded", String(event.target.open));
   });

@@ -74,12 +74,13 @@ export function renderImageCredit(vm) {
 export function renderHighlights(vm) {
   const r = vm.record;
   const objects = list(r.objectHero), topics = list(r.blessings);
-  return `<p>${esc(r.description ?? `${r.name} อยู่ใน${r.province || "ประเทศไทย"}${r.district ? ` เขต/อำเภอ ${r.district}` : ""} เป็นหนึ่งในสถานที่ใน${vm.collectionLabel} สำหรับเลือกเส้นทางไหว้พระและวางแผนการเดินทาง`)}</p>${topics.length ? `<div class="pd-topics">${expandable(topics, 6, "topics", t => `<span>${icon("sparkles")}${esc(t)}</span>`)}</div>` : ""}${objects.length ? `<div class="pd-worship"><h3>สิ่งที่นิยมสักการะ</h3><div class="pd-objects">${expandable(objects, 5, "objects", t => `<span>${esc(t)}</span>`)}</div></div>` : ""}`;
+  const description = String(r.description ?? "").trim();
+  return `${description ? `<p>${esc(description)}</p>` : ""}${topics.length ? `<div class="pd-topics">${expandable(topics, 6, "topics", t => `<span>${icon("sparkles")}${esc(t)}</span>`)}</div>` : ""}${objects.length ? `<div class="pd-worship"><h3>สิ่งที่นิยมสักการะ</h3><div class="pd-objects">${expandable(objects, 5, "objects", t => `<span>${esc(t)}</span>`)}</div></div>` : ""}`;
 }
 export function renderLocation(vm) {
   const r = vm.record;
   const secondary = [["จังหวัด", r.province], ["เขต / อำเภอ", r.district], ["ประเภท", r.placeType], ["การเดินทาง", list(r.travelModes).join(" · ")]].filter(([, value]) => value).map(([term, value]) => ({ term, value }));
-  return `<div class="pd-map-meta"><div><h3>พิกัดและที่อยู่</h3><p>${vm.coords ? esc(vm.coords.map(v => v.toFixed(6)).join(", ")) : "ยังไม่มีพิกัดสำหรับแผนที่ภายใน"}</p></div></div>${r.coordinateAddress ? `<p class="pd-address">${icon("map-pin")}<span>${esc(r.coordinateAddress)}</span></p>` : ""}${secondary.length ? `<details class="pd-disclosure pd-location-details" data-pd-disclosure="location"><summary>ข้อมูลสถานที่เพิ่มเติม ${icon("chevron-down")}</summary>${detailList(secondary)}</details>` : ""}`;
+  return `<div class="pd-map-meta"><div><h3>พิกัดและที่อยู่</h3><p>${vm.coords ? esc(vm.coords.map(v => v.toFixed(6)).join(", ")) : "ยังไม่มีพิกัดสำหรับแผนที่ภายใน"}</p></div></div>${r.coordinateAddress ? `<p class="pd-address">${icon("map-pin")}<span>${esc(r.coordinateAddress)}</span></p>` : ""}${secondary.length ? `<div class="pd-location-details"><h3>ข้อมูลสถานที่เพิ่มเติม</h3>${detailList(secondary)}</div>` : ""}`;
 }
 export function hoursSummary(section) {
   if (!known(section)) return "ยังไม่มีข้อมูลเวลาเปิด–ปิดที่ยืนยัน";
