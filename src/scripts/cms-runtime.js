@@ -11,9 +11,9 @@ import { contentPatchNodes, safeContentHtml, validContentPatch } from "../lib/co
 import { applyHomepageCollections, resetHomepageCollections } from "../lib/homepage-content.js";
 import { collectionIntent } from "../lib/temple-collection-card.js";
 import { publishedTempleUrl } from "../lib/temple-url.js";
+import { getAnalyticsConsent, renderCookieConsent } from "./cookie-consent.js";
 
 const CMS_CONTENT_URL = "/api/admin/content";
-const CMS_CONSENT_KEY = "mongkolwela.pdpa.analytics";
 const CMS_EDITABLE_CONTRACT_VERSION = 2;
 
 let activeContent = null;
@@ -737,42 +737,11 @@ function shouldTrackAnalytics(content) {
   if (document.body.dataset.analyticsDisabled === "true") return false;
   if (!content?.analytics?.enabled) return false;
   if (!content.site?.pdpa?.analyticsConsentRequired) return true;
-  return localStorage.getItem(CMS_CONSENT_KEY) === "accepted";
+  return getAnalyticsConsent() === "accepted";
 }
 
 function renderPdpaBanner(content) {
-  document.querySelector(".pdpa-consent")?.remove();
-  if (document.body.dataset.analyticsDisabled === "true") return;
-  if (!content?.site?.pdpa?.analyticsConsentRequired) return;
-  if (localStorage.getItem(CMS_CONSENT_KEY)) return;
-  const pdpa = content.site.pdpa;
-  const banner = document.createElement("aside");
-  banner.className = "pdpa-consent";
-  banner.setAttribute("aria-label", pdpa.titleText || "การใช้คุกกี้และข้อมูลการใช้งาน");
-  const policyLink = pdpa.policyHref
-    ? `<a class="pdpa-consent__link" href="${escapeHtml(resolveHref(pdpa.policyHref))}">${escapeHtml(
-        pdpa.policyLabel || "นโยบายความเป็นส่วนตัว",
-      )}</a>`
-    : "";
-  banner.innerHTML = `<div class="pdpa-consent__copy">
-      <strong class="pdpa-consent__title">${escapeHtml(pdpa.titleText || "การใช้คุกกี้และข้อมูลการใช้งาน")}</strong>
-      <p>${escapeHtml(pdpa.bannerText || "")}</p>
-      ${policyLink}
-    </div>
-    <div class="pdpa-consent__actions">
-      <button type="button" data-pdpa-accept>${escapeHtml(pdpa.acceptLabel || "ยอมรับ")}</button>
-      <button type="button" data-pdpa-decline>${escapeHtml(pdpa.declineLabel || "ไม่ใช้งาน")}</button>
-    </div>`;
-  document.body.appendChild(banner);
-  banner.querySelector("[data-pdpa-accept]")?.addEventListener("click", () => {
-    localStorage.setItem(CMS_CONSENT_KEY, "accepted");
-    banner.remove();
-    trackPageview(content);
-  });
-  banner.querySelector("[data-pdpa-decline]")?.addEventListener("click", () => {
-    localStorage.setItem(CMS_CONSENT_KEY, "declined");
-    banner.remove();
-  });
+  renderCookieConsent(content, () => trackPageview(activeContent || content));
 }
 
 function trackPageview(content) {

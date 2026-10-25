@@ -27,6 +27,7 @@ points. A different task layout must still sit on the same site frame.
 | --- | --- | --- |
 | `tokens.css` page tokens | 1220px maximum, 32/20/12/8px responsive gutters; 56/44/32/30px page-title scale; 64/52/36/32px editorial display role | Public content/footer, Home, Calendar/Day, planner, temple hub/collections/directory/details, tarot and horoscope tools, shop/merit |
 | `Header.astro`, `Footer.astro` | One public shell; Footer keeps only the approved ivory Day variant and contextual links | All public routes through `BaseLayout.astro`; admin/seller workspaces remain separate |
+| `scripts/cookie-consent.js`, `lib/cookie-consent.js`, `pdpa.css` | Shared consent banner, settings dialog, persisted analytics choice and footer reopening action | Public CMS runtime; excluded where analytics is disabled or consent UI is disabled |
 | `ErrorPage.astro`, `error-pages.css` | Shared status illustration, copy, recovery actions and responsive composition inside the existing public shell | 401, 403, 404, 429, 500, 502, 503 and 504; see `docs/error-pages-redesign.md` for static-hosting boundaries |
 | `auth-entry-points.ts`, `login.astro` | Role-neutral login entry rendering configured real portal destinations; authentication remains portal-owned | 401 recovery and future role entry points |
 | `Topbar.astro`, `lib/site-navigation.js`, `scripts/navigation.js`, `header.css` | One published navigation model for SSR/CMS; split links/disclosures, opaque panels, compact dialog drawer and intrinsic fit guard | Every shared Header consumer |
@@ -47,6 +48,45 @@ points. A different task layout must still sit on the same site frame.
 | `CarouselControls.astro`, `LinkArrow.astro`, `BrandOrnament.astro` | Existing shared control, link affordance and decorative motif | Existing Home/Calendar/detail/shell consumers |
 
 ## Usage
+
+### Cookie Consent
+
+The October 2026 reference-led update keeps the bottom banner nonblocking and
+uses a native modal only for settings. The longer approved Thai copy requires
+a taller banner than the two-button reference; mobile stacks all three actions.
+The lotus medallion is generated decorative artwork; botanical edges reuse
+`ornament-lotus-bodhi.webp`. Text and controls remain native HTML.
+
+`site.pdpa` remains CMS-owned. `resolveConsentCopy` supplies missing labels and
+upgrades only exact previously shipped default strings to the user's new copy.
+Other authored CMS strings and the optional policy link stay authoritative.
+`default.json`/`live.json` are updated seeds, not permission to overwrite a live
+CMS document. The optional new copy key is `settingsLabel`.
+
+The storage key `mongkolwela.pdpa.analytics` and `accepted`/`declined` values are
+unchanged. Essential cookies are always on; analytics starts off and only an
+explicit acceptance enables tracking when consent is required. Escape/close
+discards the draft. Footer settings support withdrawal. Cross-tab storage
+changes synchronize the UI; unavailable storage uses a page-local choice and
+announces that it could not persist. No extra analytics categories are invented.
+`cms-runtime.js` still owns actual pageview submission and deduplication.
+
+Both consent surfaces are excluded from the general page-entrance animation so
+the newly opened dialog is immediately opaque and readable. Other page content
+retains its existing entrance behavior.
+
+| Scenario | Expected result / source of truth | Evidence | Priority |
+| --- | --- | --- | --- |
+| Fresh visit / necessary only / accept | Exact approved copy; no optional analytics before opt-in; existing storage values survive reload | `tests/e2e/cookie-consent.spec.ts`, `tests/runtime/cookie-consent.test.mjs` | P0 |
+| Settings / cancel / save / reopen / withdraw | Default-off analytics, native dialog, contained keyboard focus, restoration, no save on cancel | Focused Playwright desktop/mobile | P0 |
+| CMS refresh / authored labels / storage failure / another tab | Preserve live authoring and drafts, no duplicate analytics, fail safely and synchronize | Focused Playwright desktop/mobile | P1 |
+| Responsive banner and dialog | No content overflow at 1440/390/320px, 44px actions, local images/icons resolve, automated a11y checks | Focused Playwright and inspected captures in `artifacts/cookie-consent/` | P1 |
+
+Local comparison captures use `/temples/planner/`, the local CMS seed and a
+synthetic planner catalog with no selected places. They are not production
+screenshots. Release verification additionally covers the production build,
+runtime suite and quick CMS/Vercel checks. Full-site E2E remains outside this
+component-scoped change; production is checked after deployment.
 
 ### Collection Filters
 

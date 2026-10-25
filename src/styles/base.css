@@ -21,7 +21,7 @@ body {
   hyphens: manual;
 }
 
-html.page-fonts-ready body > :not([data-page-loader]):not(script):not(style) {
+html.page-fonts-ready body > :not([data-page-loader]):not(script):not(style):not(.pdpa-consent):not(.pdpa-settings) {
   animation: page-content-enter 800ms ease-in-out;
 }
 
@@ -31,7 +31,7 @@ html.page-fonts-ready body > :not([data-page-loader]):not(script):not(style) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.page-fonts-ready body > :not([data-page-loader]):not(script):not(style) { animation: none; }
+  html.page-fonts-ready body > :not([data-page-loader]):not(script):not(style):not(.pdpa-consent):not(.pdpa-settings) { animation: none; }
 }
 
 :lang(en) {
