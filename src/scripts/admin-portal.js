@@ -391,7 +391,7 @@ function renderLogin(message = "") {
 }
 
 async function loadContent() {
-  const payload = await api("/api/admin/content");
+  const payload = await api("/api/admin/content?view=editor");
   state.content = payload.content;
   state.publishedTempleRecords = structuredClone(payload.content.temples?.records || {});
   state.baseRevision = payload.revision || "";

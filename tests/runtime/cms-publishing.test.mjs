@@ -42,7 +42,8 @@ test("CMS publish validates content, checks current membership and prevents stal
   try {
     assert.equal((await fetch(`${base}?view=catalog`)).status, 401);
     assert.equal((await fetch(`${base}?view=catalog`, { headers })).status, 200);
-    const original = await (await fetch(base)).json();
+    assert.equal((await fetch(`${base}?view=editor`)).status, 401);
+    const original = await (await fetch(`${base}?view=editor`, { headers })).json();
     const edited = structuredClone(original.content);
     edited.contentLibrary = { "seamsi.seamsiFortunes": { "1": { title: "Published reading" } } };
     edited.pages.find(page => page.id === "contact").patches = [
@@ -51,6 +52,7 @@ test("CMS publish validates content, checks current membership and prevents stal
       { selector: "#usage a", kind: "attr", attr: "data-email-subject", value: "สอบถามการใช้งาน" },
     ];
     edited.temples = { records: { "popular:test-sync": { collection: "popular", fields: { name: "Test", summary: "Published summary", description: "Published description", coordinateAddress: "Published address", imageAlt: "" }, images: { hero: { desktop: { url: "/test.webp" }, mobile: { url: "" } } }, visitInfo: { hours: { status: "verified", summary: "Updated hours", timetable: [{ day: "Monday", time: "10:00-16:00" }] } } } } };
+    edited.temples.records["popular:test-sync"].historyResearch = { key: "same-place", sources: [{ url: "https://example.com/history", title: "Research for editors" }] };
     edited.pages.find(page => page.id === "travelGuide").patches = [{ selector: "#guide-hero", kind: "image", src: "/test.webp", alt: "Test", position: "30% 50%", credit: "Test credit", sourceUrl: "https://example.com/source", license: "CC", licenseUrl: "https://example.com/license" }];
     assert.equal((await post({ content: edited, expectedRevision: "stale" })).status, 409);
     assert.equal(writes, 0);
@@ -68,10 +70,15 @@ test("CMS publish validates content, checks current membership and prevents stal
     assert.deepEqual(published.content.temples.records["popular:test-sync"].fields, edited.temples.records["popular:test-sync"].fields);
     assert.equal(published.content.temples.records["popular:test-sync"].slug, "test");
     assert.equal(published.content.temples.routes["popular:test-sync"], "/temples/popular/test/");
+    assert.equal(published.content.temples.records["popular:test-sync"].historyResearch, undefined);
+    const fullPublic = await (await fetch(base)).json();
+    assert.equal(fullPublic.content.temples.records["popular:test-sync"].historyResearch, undefined);
+    const editor = await (await fetch(`${base}?view=editor`, { headers })).json();
+    assert.deepEqual(editor.content.temples.records["popular:test-sync"].historyResearch, edited.temples.records["popular:test-sync"].historyResearch);
     const guide = await (await fetch(`${base}?path=${encodeURIComponent("/guide/")}`)).json();
     assert.deepEqual(guide.content.pages[0].patches, edited.pages.find(page => page.id === "travelGuide").patches);
     assert.equal((await post({ content: edited, expectedRevision: original.revision })).status, 409);
-    const latest = await (await fetch(base)).json();
+    const latest = await (await fetch(`${base}?view=editor`, { headers })).json();
     race = true;
     assert.equal((await post({ content: edited, expectedRevision: latest.revision })).status, 409);
     assert.equal(writes, 1);

@@ -52,7 +52,7 @@ async function waitForPublishedContent(expectedContent) {
       "กำลังตรวจหน้าเว็บจริง",
       attempt === 1 ? "กำลังอ่านข้อมูล live หลัง publish" : `รอตรวจซ้ำครั้งที่ ${attempt}`,
     );
-    const payload = await api(`/api/admin/content?verify=${Date.now()}`, {
+    const payload = await api(`/api/admin/content?view=editor&verify=${Date.now()}`, {
       cache: "no-store",
       headers: { "Cache-Control": "no-cache" },
     });

@@ -15,6 +15,7 @@ import { validateHomepageContent } from "../../src/lib/homepage-content.js";
 import { validateNavigation } from "../../src/lib/site-navigation.js";
 import { prepareTempleSlugPublication } from "../../src/lib/temple-routing.js";
 import { thailandDirectoryPage } from "../../src/data/thailand-places.js";
+import { synchronizePlaceHistories } from "../../src/lib/place-history.js";
 
 function normalizeContent(content, actor) {
   const now = new Date().toISOString();
@@ -34,6 +35,12 @@ export default async function handler(req, res) {
       const content = await readLiveContent();
       validateContentLibrary(content.contentLibrary);
       const params = new URL(req.url, "http://localhost").searchParams;
+      if (params.get("view") === "editor") {
+        if (!await requireAdmin(req, res)) return;
+        const { publishedAt, updatedAt, ...fields } = content;
+        sendJson(res, 200, { ok: true, revision: contentRevision(fields), content });
+        return;
+      }
       if (params.get("view") === "directory") {
         const page = thailandDirectoryPage(content, params);
         if (params.get("revision") && params.get("revision") !== page.revision) {
@@ -81,7 +88,7 @@ export default async function handler(req, res) {
       sendJson(res, 409, { ok: false, error: "เนื้อหามีเวอร์ชันใหม่แล้ว กรุณาบันทึกฉบับร่างและโหลดข้อมูลล่าสุดก่อนเผยแพร่" });
       return;
     }
-    const content = normalizeContent(prepareTempleSlugPublication(body.content, current), session.actor);
+    const content = normalizeContent(prepareTempleSlugPublication(synchronizePlaceHistories(body.content, current), current), session.actor);
     const publish = await publishLiveContent(content, session.actor, { expectedPublishedAt: current.publishedAt ?? null });
     sendJson(res, 200, {
       ok: true,

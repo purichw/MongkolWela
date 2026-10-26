@@ -171,6 +171,55 @@ describe data shape; they do not determine which document is newest.
 
 ## Temple Collection Labels
 
+### Curated Place Histories
+
+`temples.records[key].fields.description` owns the public overview paragraph
+under **รู้จักสถานที่แห่งนี้**. Admin edits it as **ประวัติและเรื่องน่ารู้**.
+An explicit empty value stays empty. The renderer does not invent generic prose.
+
+Reviewed evidence is stored separately in each record's `historyResearch`
+(`key`, `reviewedAt`, `importedDescription`, `sources`, `factNotes`). The editor
+shows source links in a collapsed disclosure. `GET /api/admin/content?view=editor`
+requires current Admin membership and returns the full document/revision.
+Public full/path projections and SSR bootstrap omit `historyResearch`. Evidence
+is editorial metadata, not a public citation or image-credit replacement.
+
+On publication, records linked by the reviewed history key share description
+edits, including an intentional clear. Conflicting edits to the same place in
+different collections fail validation. Immutable record keys, routes, visibility,
+photos, coordinates, visit information and collection ordering do not change.
+
+`scripts/publish-place-histories.mjs` imports the reviewed dataset only when all
+378 source identities / 625 memberships are present and evidence-backed. It is
+dry-run by default and rejects existing Admin-description conflicts. Direct
+publication requires an expected revision and records a backup plus CMS revision.
+Its `--sql <project-local-file> --checksum <current-database-md5>` mode prepares
+an equivalent transaction for an authorized Supabase SQL Editor session without
+exporting credentials. SQL checks the locked live document, merges only history
+fields, saves before/after revisions and writes the audit event atomically.
+Never run a seed or raw research crawler as a production content migration.
+
+Focused coverage: `tests/runtime/place-history.test.mjs` (coverage, conflicts,
+idempotence, metadata projection and real PostgreSQL transaction),
+`tests/runtime/cms-publishing.test.mjs` (auth/revision boundary), and
+`tests/e2e/place-history.spec.ts` (real handlers, edit/save/reload, cross-collection
+sync and public SSR). Private raw research remains in ignored/local artifacts;
+only rewritten editorial content and provenance belong in the reviewed dataset.
+
+The 2026-10-26 dataset contains 378 source name/province identities, linked into
+371 history groups across 625 collection memberships. Seven evidence-confirmed
+alias pairs share prose; nearby landmarks are not merged merely by proximity.
+For example, the curated `วัดโนนกุ่ม` entry explicitly refers to the Somdet To
+foundation in its original guide and worship-object fields, not the older
+registered temple with the same popular name. The import preserves that intent.
+Known district/pin discrepancies remain in backend `factNotes` for a separate
+location-data review; this publication does not certify or modify those pins.
+
+Recovery: the SQL import saves `history-import-before` and
+`curated-place-history-import` revisions in the same transaction. Inspect the
+latest live revision before restoring anything; merge only affected history
+fields if newer Admin work exists. Do not blindly restore the whole document.
+
 ### Shared Search Projection
 
 `GET /api/temple-search` reads the current configured CMS once per request and

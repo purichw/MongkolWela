@@ -58,6 +58,16 @@ html.mw-place-editor-open { overflow: hidden; scrollbar-gutter: stable; }
 .mw-place-editor-extra > summary > .mw-admin-icon { width: 20px; height: 20px; background-color: currentColor; }
 .mw-place-editor-extra[open] > summary > .mw-admin-icon { transform: rotate(180deg); }
 .mw-place-editor-extra > .mw-admin-form-grid { padding-block: 14px; }
+.mw-place-history { margin: 0 20px 14px; padding-block: 8px; border-top: 1px solid var(--admin-line); font-size: 13px; }
+.mw-place-history > summary { display: flex; align-items: center; gap: 8px; min-height: 44px; list-style: none; cursor: pointer; color: var(--admin-jade); }
+.mw-place-history > summary small { margin-left: auto; color: var(--admin-ink-soft); font-size: 11px; }
+.mw-place-history > summary .mw-admin-icon { flex: none; width: 16px; height: 16px; }
+.mw-place-history[open] > summary .mw-admin-icon { transform: rotate(180deg); }
+.mw-place-history p { margin: 0 0 8px; color: var(--admin-ink-soft); }
+.mw-place-history ul { margin: 0; padding-left: 20px; }
+.mw-place-history li + li { margin-top: 8px; }
+.mw-place-history a { display: inline-flex; align-items: center; gap: 6px; overflow-wrap: anywhere; }
+.mw-place-history a .mw-admin-icon { flex: none; width: 14px; height: 14px; }
 .mw-place-editor-record-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 12px; }
 .mw-place-visit-summary { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); padding: 0 20px 14px; }
 .mw-place-visit-summary > button { display: flex; align-items: flex-start; gap: 10px; border: 0; background: transparent; padding: 8px 12px; border-right: 1px solid var(--admin-line); color: var(--admin-ink); text-align: left; cursor: pointer; font-family: inherit; min-width: 0; }

@@ -63,6 +63,16 @@ function templeValue(record, edit, field) {
   return edit?.fields?.[field] ?? record?.temple?.[field] ?? "";
 }
 
+function renderHistoryResearch(edit) {
+  const research = edit?.historyResearch;
+  if (!research?.sources?.length) return "";
+  const sources = research.sources.filter(source => /^https?:\/\//i.test(source.url));
+  return `<details class="mw-place-history" data-editor-panel="history-sources" ${templeEditorControls.isOpen("history-sources") ? "open" : ""}><summary>${adminIcon("chevron-down")}<strong>แหล่งอ้างอิงประวัติ</strong><small>สำหรับผู้ดูแลเท่านั้น</small></summary>
+    <p>ประวัตินี้ใช้ร่วมกันในทุกหมวดที่มีสถานที่เดียวกัน</p>
+    <ul>${sources.map(source => `<li><a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.title || source.provider || "อ่านแหล่งข้อมูล")}${adminIcon("external-link")}</a></li>`).join("")}</ul>
+  </details>`;
+}
+
 function occupiedTempleSlugs(record) {
   const rows = state.templeCatalog.filter(item => item.collection === record.collection && item.key !== record.key);
   const slugs = rows.flatMap(item => [templeRecords()[item.key]?.slug || item.slug, ...(item.slugAliases || [])]);
@@ -261,8 +271,9 @@ function renderTempleEditor(record, edit) {
       ${text("coordinateAddress", "ที่อยู่", "mw-place-field-address", 2)}
       <div class="mw-place-coordinates">${field("plusCode", "Plus Code")}${field("latitude", "พิกัด LAT", "", 'type="number" step="any" min="-90" max="90" inputmode="decimal"')}${field("longitude", "พิกัด LNG", "", 'type="number" step="any" min="-180" max="180" inputmode="decimal"')}</div>
       ${compact ? `<div class="mw-place-location-help"><p>ระบุพิกัดให้ครบคู่ หรือใช้ Plus Code แบบเต็ม / รหัสย่อพร้อมชื่อพื้นที่</p><div data-directory-map-preview>${directoryMapPreview(record, edit)}</div></div>` : ""}
-      ${text("summary", "คำแนะนำสถานที่", "mw-place-field-summary", 3)}${compact ? "" : text("description", "รายละเอียดสถานที่", "mw-place-field-description", 3)}
+      ${text("summary", "คำแนะนำสถานที่", "mw-place-field-summary", 3)}${compact ? "" : text("description", "ประวัติและเรื่องน่ารู้", "mw-place-field-description", 5)}
     </div>
+    ${compact ? "" : renderHistoryResearch(edit)}
     <details class="mw-place-editor-extra" data-editor-panel="extra" ${templeEditorControls.isOpen("extra") ? "open" : ""}><summary>${adminIcon("chevron-down")}<strong>ข้อมูลเพิ่มเติม</strong><small>${compact ? "คำอธิบายและเครดิตภาพ" : "ประเภท การเดินทาง และข้อมูลประกอบ"}</small></summary><div class="mw-admin-form-grid">
       ${compact ? "" : `${field("placeType", "ประเภท")}${field("travelModes", "รูปแบบการเดินทาง")}${field("blessings", "พรที่นิยมขอ")}${field("objectHero", "สิ่งที่นิยมสักการะ")}`}${text("imageAlt", "คำอธิบาย", "mw-admin-form-grid--span")}${field("imageSourceLabel", "เครดิตภาพ")}${field("imageSourceUrl", "ลิงก์แหล่งที่มาของภาพ", "", 'type="url"')}
     </div><div class="mw-place-editor-record-actions">${state.publishedTempleKeys.has(record.key) ? `<a class="mw-admin-btn" target="_blank" rel="noopener" href="${escapeHtml(record.detailUrl)}">${adminIcon("external-link")}เปิดหน้าจริง</a>` : '<span>ฉบับร่างใหม่ · ยังไม่เผยแพร่</span>'}<button class="mw-admin-btn mw-admin-btn-danger" type="button" data-action="delete-temple">${adminIcon("trash")}นำออกจากหมวด</button></div></details>

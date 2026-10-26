@@ -3,15 +3,17 @@ import { libraryForPath } from "../data/content-catalog.js";
 import { templeRouteCatalog, resolveTempleRoute } from "./temple-routing.js";
 import { getTempleDetailUrl } from "../data/temple-slugs.js";
 import { thailandDirectoryPage, thailandDirectoryState } from "../data/thailand-places.js";
+import { withoutHistoryResearch } from "./place-history.js";
 
 export function publicContentPayload(content, pathname) {
-  const projected = pathname ? publicContentForPath(content, pathname) : content;
+  const projected = pathname ? publicContentForPath(content, pathname) : withoutHistoryResearch(content);
   // Publication timestamps alone do not indicate changes to the current page.
   const { publishedAt, updatedAt, ...revisionContent } = projected;
   return { ok: true, revision: contentRevision(revisionContent), content: projected };
 }
 
 export function publicContentForPath(content, pathname) {
+  content = withoutHistoryResearch(content);
   const route = `/${String(pathname || "").replace(/^\/+|\/+$/g, "")}/`.replace(/^\/\/$/, "/");
   const detail = route.match(/^\/temples\/(popular|mu|sacred)\/([^/]+)\/$/);
   const normalize = value => {
