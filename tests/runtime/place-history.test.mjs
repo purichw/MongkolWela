@@ -4,7 +4,7 @@ import { synchronizePlaceHistories, withoutHistoryResearch } from "../../src/lib
 import { publicContentPayload, publicContentForPath } from "../../src/lib/public-content.js";
 import { importPlaceHistories } from "../../scripts/lib/place-history-import.mjs";
 import { templeDatasets } from "../../src/lib/temple-routing.js";
-import { placeHistoryImportSql } from "../../scripts/lib/place-history-sql.mjs";
+import { placeHistoryImportSql, placeHistoryImportBatches } from "../../scripts/lib/place-history-sql.mjs";
 import { PGlite } from "@electric-sql/pglite";
 import histories from "../../docs/research/curated-place-histories.json" with { type: "json" };
 
@@ -110,5 +110,21 @@ test("SQL transport atomically checks the revision, preserves data and records b
     assert.equal((await db.query("select count(*) as count from cms_revisions")).rows[0].count, 2);
     assert.deepEqual((await db.query("select content from cms_revisions where source='history-import-before'")).rows[0].content, original);
     assert.equal((await db.query("select count(*) as count from admin_audit_events")).rows[0].count, 1);
+    await db.exec("create role anon; create role authenticated;");
+    const newChecksum = (await db.query("select md5(content::text) as checksum from cms_documents")).rows[0].checksum;
+    const batches = placeHistoryImportBatches(histories, newChecksum);
+    assert.ok(batches.parts.every(sql => Buffer.byteLength(sql) < 50000));
+    await db.exec(batches.setup);
+    assert.equal((await db.query("select relrowsecurity from pg_class where oid='cms_history_import_batches'::regclass")).rows[0].relrowsecurity, true);
+    await db.exec(batches.parts[0]);
+    await db.exec(batches.parts[0]);
+    await assert.rejects(db.exec(batches.publish), /Incomplete history import/);
+    assert.equal((await db.query("select count(*) as count from cms_revisions")).rows[0].count, 2);
+    for (const sql of batches.parts.slice(1)) await db.exec(sql);
+    // Existing test-only descriptions are marked as imported, so real history can replace them.
+    await db.exec(batches.publish);
+    const stagedActual = (await db.query("select content from cms_documents")).rows[0].content;
+    assert.deepEqual(stagedActual.temples, importPlaceHistories(actual, histories, { reviewedAt: "2026-10-26" }).content.temples);
+    assert.equal((await db.query("select count(*) as count from cms_revisions")).rows[0].count, 4);
   } finally { await db.close(); }
 });

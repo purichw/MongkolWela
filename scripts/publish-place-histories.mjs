@@ -9,15 +9,26 @@ import { validateContentPatches } from "../src/lib/content-patches.js";
 import { validateHomepageContent } from "../src/lib/homepage-content.js";
 import { validateNavigation } from "../src/lib/site-navigation.js";
 import { validateDirectoryRecords } from "../src/lib/directory-places.js";
-import { placeHistoryImportSql } from "./lib/place-history-sql.mjs";
+import { placeHistoryImportSql, placeHistoryImportBatches } from "./lib/place-history-sql.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const { values } = parseArgs({ options: {
   env: { type: "string" }, input: { type: "string", default: "docs/research/curated-place-histories.json" },
   publish: { type: "boolean", default: false }, "expected-revision": { type: "string" },
   sql: { type: "string" }, checksum: { type: "string" },
+  "sql-batch-dir": { type: "string" },
 } });
 const histories = JSON.parse(await fs.readFile(path.resolve(root, values.input), "utf8"));
+if (values["sql-batch-dir"]) {
+  const dir = path.resolve(root, values["sql-batch-dir"]);
+  if (!dir.startsWith(root + path.sep)) throw new Error("SQL output must stay inside the project");
+  const batches = placeHistoryImportBatches(histories, values.checksum);
+  await fs.mkdir(dir, { recursive: true });
+  const files = { "00-setup.sql": batches.setup, ...Object.fromEntries(batches.parts.map((sql, i) => [`part-${String(i).padStart(3, "0")}.sql`, sql])), "99-publish.sql": batches.publish };
+  for (const [name, sql] of Object.entries(files)) await fs.writeFile(path.join(dir, name), sql, { flag: "wx", mode: 0o600 });
+  console.log(JSON.stringify({ dir, parts: batches.parts.length, digests: batches.digests, databaseWritten: false }));
+  process.exit(0);
+}
 if (values.sql) {
   const sql = placeHistoryImportSql(histories, values.checksum);
   const file = path.resolve(root, values.sql);

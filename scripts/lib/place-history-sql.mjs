@@ -1,11 +1,11 @@
 import { importPlaceHistories } from "./place-history-import.mjs";
 import { templeDatasets } from "../../src/lib/temple-routing.js";
 import { createLegacyTempleSlug } from "../../src/data/temple-slugs.js";
+import { createHash } from "node:crypto";
 
 // Browser SQL Editor transport for the same reviewed import, without exporting
 // credentials. The transaction locks and checks the live revision before merging.
-export function placeHistoryImportSql(histories, checksum, reviewedAt = "2026-10-26") {
-  if (!/^[a-f0-9]{32}$/.test(checksum)) throw new Error("Expected the current database content checksum");
+function historyImportPayload(histories, reviewedAt) {
   const { report } = importPlaceHistories({}, histories, { reviewedAt });
   const payload = {
     histories: Object.fromEntries(histories.map(row => [row.key, {
@@ -15,13 +15,19 @@ export function placeHistoryImportSql(histories, checksum, reviewedAt = "2026-10
     records: Object.entries(templeDatasets).flatMap(([collection, rows]) => rows.map(row => ({ key: `${collection}:${createLegacyTempleSlug(row)}`, collection, historyKey: `${row.name}|${row.province}`.normalize("NFC") }))),
   };
   if (payload.records.some(row => !row.historyKey)) throw new Error("Missing history mapping");
+  return { payload, report };
+}
+
+export function placeHistoryImportSql(histories, checksum, reviewedAt = "2026-10-26", { stagedPayload } = {}) {
+  if (!/^[a-f0-9]{32}$/.test(checksum)) throw new Error("Expected the current database content checksum");
+  const { payload, report } = historyImportPayload(histories, reviewedAt);
   const json = JSON.stringify(payload);
   if (json.includes("$place_history_data$")) throw new Error("Unsafe SQL literal delimiter");
   return `-- Reviewed place histories: ${report.places} identities, ${report.memberships} memberships.
 -- Atomic merge; existing fields, media, slugs, status and ordering are preserved.
 DO $place_history_import$
 DECLARE
-  payload jsonb := $place_history_data$${json}$place_history_data$::jsonb;
+  payload jsonb := ${stagedPayload || `$place_history_data$${json}$place_history_data$::jsonb`};
   before_content jsonb;
   next_content jsonb;
   old_record jsonb;
@@ -31,7 +37,8 @@ DECLARE
   record_key text;
   stamp text := to_char(clock_timestamp() AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"');
 BEGIN
-  SELECT content INTO STRICT before_content FROM public.cms_documents WHERE id = 'live' AND status = 'published' FOR UPDATE;
+  before_content := (SELECT content FROM public.cms_documents WHERE id = 'live' AND status = 'published' FOR UPDATE);
+  IF before_content IS NULL THEN RAISE EXCEPTION 'Published CMS document not found'; END IF;
   IF md5(before_content::text) <> '${checksum}' THEN
     RAISE EXCEPTION 'CMS changed since review. Nothing imported; inspect the latest revision.';
   END IF;
@@ -70,4 +77,50 @@ SELECT content->>'publishedAt' AS published_at,
   md5(content::text) AS content_checksum
 FROM public.cms_documents WHERE id='live';
 `;
+}
+
+// Supabase's browser editor caps query size. Stage bounded chunks in an RLS-locked
+// table, then verify every checksum before the single atomic live publication.
+export function placeHistoryImportBatches(histories, checksum, { runId = "curated-history-20261026", maxBytes = 48000 } = {}) {
+  if (!/^[a-z0-9-]{1,80}$/.test(runId)) throw new Error("Invalid import run ID");
+  const { payload } = historyImportPayload(histories, "2026-10-26");
+  const chunks = [];
+  let chunk = { histories: {}, records: [] };
+  for (const [key, history] of Object.entries(payload.histories)) {
+    const records = payload.records.filter(row => row.historyKey === key);
+    const candidate = { histories: { ...chunk.histories, [key]: history }, records: [...chunk.records, ...records] };
+    if (Buffer.byteLength(JSON.stringify(candidate)) > maxBytes && chunk.records.length) {
+      chunks.push(chunk);
+      chunk = { histories: { [key]: history }, records };
+    } else chunk = candidate;
+  }
+  if (chunk.records.length) chunks.push(chunk);
+  const digests = chunks.map(part => createHash("md5").update(JSON.stringify(part)).digest("hex"));
+  const setup = `CREATE TABLE IF NOT EXISTS public.cms_history_import_batches (
+    run_id text NOT NULL, part integer NOT NULL, payload text NOT NULL,
+    payload_md5 text NOT NULL CHECK (payload_md5 = md5(payload)),
+    created_at timestamptz NOT NULL DEFAULT now(), PRIMARY KEY (run_id, part)
+  );
+  ALTER TABLE public.cms_history_import_batches ENABLE ROW LEVEL SECURITY;
+  REVOKE ALL ON public.cms_history_import_batches FROM PUBLIC, anon, authenticated;
+  SELECT relrowsecurity FROM pg_class WHERE oid='public.cms_history_import_batches'::regclass;`;
+  const parts = chunks.map((part, index) => `DO $stage_history$
+    BEGIN
+      IF EXISTS (SELECT 1 FROM public.cms_history_import_batches WHERE run_id='${runId}' AND part=${index} AND payload_md5<>'${digests[index]}') THEN
+        RAISE EXCEPTION 'Staged part conflicts with this reviewed import';
+      END IF;
+      INSERT INTO public.cms_history_import_batches(run_id,part,payload,payload_md5)
+      VALUES ('${runId}',${index},$place_history_data$${JSON.stringify(part)}$place_history_data$,'${digests[index]}') ON CONFLICT DO NOTHING;
+    END $stage_history$;
+    SELECT part,payload_md5 FROM public.cms_history_import_batches WHERE run_id='${runId}' AND part=${index};`);
+  const expected = digests.map((digest, part) => `(${part},'${digest}')`).join(",");
+  const stagedPayload = `(WITH verified AS (
+      SELECT s.part,s.payload::jsonb AS payload FROM public.cms_history_import_batches s
+      JOIN (VALUES ${expected}) AS expected(part,digest) ON s.part=expected.part AND s.payload_md5=expected.digest
+      WHERE s.run_id='${runId}' AND md5(s.payload)=expected.digest
+    ) SELECT CASE WHEN (SELECT count(*) FROM verified)=${chunks.length} THEN jsonb_build_object(
+      'histories',(SELECT jsonb_object_agg(item.key,item.value) FROM verified CROSS JOIN LATERAL jsonb_each(payload->'histories') item),
+      'records',(SELECT jsonb_agg(item.value) FROM verified CROSS JOIN LATERAL jsonb_array_elements(payload->'records') item)
+    ) ELSE '{}'::jsonb END)`;
+  return { runId, setup, parts, publish: placeHistoryImportSql(histories, checksum, "2026-10-26", { stagedPayload }), digests };
 }

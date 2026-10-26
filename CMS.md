@@ -198,6 +198,12 @@ an equivalent transaction for an authorized Supabase SQL Editor session without
 exporting credentials. SQL checks the locked live document, merges only history
 fields, saves before/after revisions and writes the audit event atomically.
 Never run a seed or raw research crawler as a production content migration.
+When the browser editor rejects a large query, `--sql-batch-dir <local-directory>`
+creates bounded staging queries plus one final publication query. Staging uses
+`cms_history_import_batches`, with RLS enabled and no public/authenticated grants.
+Each part is checksum-verified; an incomplete or altered batch cannot publish.
+Staging never changes live content. Retain it as import evidence until separately
+authorized cleanup; it is not a CMS content source or a new public API.
 
 Focused coverage: `tests/runtime/place-history.test.mjs` (coverage, conflicts,
 idempotence, metadata projection and real PostgreSQL transaction),
