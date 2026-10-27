@@ -36,8 +36,8 @@ export function renderTempleCollectionCard(item, placeholderSrc) {
       <p>${escapeHtml(`${item.province || ""}${item.district ? ` / ${item.district}` : ""}`)}</p>
       <strong data-collection-intent ${intent ? "" : "hidden"}>${escapeHtml(intent)}</strong>
       <div class="temple-collection-v2-card-actions place-card__actions">
-        <a class="temple-collection-v2-card-plan place-card__action--outline" href="${escapeHtml(item.plannerUrl)}">เพิ่มลงแผน</a>
-        <a class="temple-collection-v2-card-detail place-card__action--text" href="${escapeHtml(item.detailUrl)}" data-popular-temple-detail>รายละเอียด ${renderIcon("arrow-right")}</a>
+        <a class="temple-collection-v2-card-detail place-card__action--outline" href="${escapeHtml(item.detailUrl)}" data-popular-temple-detail>รายละเอียด</a>
+        <a class="temple-collection-v2-card-plan place-card__action--text" href="${escapeHtml(item.plannerUrl)}">${renderIcon("plus")}เพิ่มลงแผน</a>
       </div>
     </div>
   </article>`;

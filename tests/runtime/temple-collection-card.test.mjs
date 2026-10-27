@@ -12,6 +12,13 @@ test("shared card keeps image, CMS, plan and detail contracts without speculativ
   assert.ok(!html.includes("heart"));
   assert.equal(collectionIntent(item), "สุขภาพ");
 });
+test("card actions put outlined details first and use a plus for the plan text link", () => {
+  const html = renderTempleCollectionCard(item, "/placeholder.webp");
+  assert.ok(html.indexOf('class="temple-collection-v2-card-detail ') < html.indexOf('class="temple-collection-v2-card-plan '));
+  assert.match(html, /class="temple-collection-v2-card-detail place-card__action--outline"[^>]*data-popular-temple-detail>รายละเอียด<\/a>/);
+  assert.match(html, /class="temple-collection-v2-card-plan place-card__action--text"[^>]*href="\/temples\/planner\/\?start=example&amp;province=bangkok">.*lucide\/plus\.svg.*เพิ่มลงแผน<\/a>/);
+  assert.ok(!html.includes("arrow-right.svg"));
+});
 test("missing images use the real fallback and empty intent does not fabricate a blessing", () => {
   const html = renderTempleCollectionCard({ ...item, imageUrl: "", blessings: "" }, "/placeholder.webp");
   assert.ok(html.includes('src="/placeholder.webp"'));

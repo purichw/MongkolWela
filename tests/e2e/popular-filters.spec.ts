@@ -160,7 +160,7 @@ test("collection mobile 320px, tablet and full-page visual evidence", async ({ p
     const plan = await card.locator(".temple-collection-v2-card-plan").boundingBox();
     const detail = await card.locator(".temple-collection-v2-card-detail").boundingBox();
     expect(Math.abs(plan!.y - detail!.y)).toBeLessThan(2);
-    expect(plan!.x + plan!.width).toBeLessThanOrEqual(detail!.x);
+    expect(detail!.x + detail!.width).toBeLessThanOrEqual(plan!.x);
   }
   fs.mkdirSync("artifacts/visitor-collections", { recursive: true });
   for (const collection of ["popular", "mu", "sacred"]) {
