@@ -106,6 +106,24 @@ test("server paging, selection and province filters keep results bounded and rev
   assert.equal(thailandDirectoryPage({}, new URLSearchParams({ place: first.places[0].key })).total, 1);
 });
 
+test("private history research cannot change public directory pagination revisions", () => {
+  const draft = contentWith({ latitude: 13, longitude: 100 });
+  draft.temples.records[key].historyResearch = { key: "private-history", sources: [{ title: "Internal evidence" }] };
+  const before = structuredClone(draft);
+  const projected = publicContentForPath(draft, "/temples/thailand/").directoryPage;
+  assert.deepEqual(thailandDirectoryPage(draft), projected);
+  assert.deepEqual(thailandDirectoryPage(publicContentPayload(draft).content), projected);
+  draft.temples.records[key].historyResearch.sources[0].title = "Revised evidence";
+  const next = thailandDirectoryPage(draft, new URLSearchParams({ offset: "24", revision: projected.revision }));
+  assert.equal(next.revision, projected.revision);
+  assert.equal(next.offset, 24);
+  assert.equal(JSON.stringify(next).includes("Revised evidence"), false);
+  assert.equal(before.temples.records[key].historyResearch.sources[0].title, "Internal evidence");
+  assert.equal(draft.temples.records[key].historyResearch.sources[0].title, "Revised evidence");
+  draft.temples.records[key].fields.longitude = 100.1;
+  assert.notEqual(thailandDirectoryPage(draft).revision, projected.revision);
+});
+
 test("metadata preserves unknown source fields, multiple facets, provenance and missing values", () => {
   const source = { provider: "watportal", id: "34383", url: "https://www.watportal.com/th/wat/region/detail/iid/34383",
     fields: { "นิกาย": "มหานิกาย", "ประเภทวัด": "วัดราษฎร์, วิปัสนากรรมฐาน", "futureField": "retain me", "ชนิด": "" } };

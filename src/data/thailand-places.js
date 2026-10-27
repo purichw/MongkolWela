@@ -6,6 +6,7 @@ import watportal from "./watportal-temple-details.json" with { type: "json" };
 import { directorySnapshotBase } from "../lib/directory-snapshot.js";
 import { placeMetadata, mergePlaceMetadata } from "../lib/place-metadata.js";
 import { contentRevision } from "../lib/content-revision.js";
+import { withoutHistoryResearch } from "../lib/place-history.js";
 
 // Curated collections are protected inputs. Never edit or prune them during imports.
 export function thailandCuratedBasePlaces(content) {
@@ -45,6 +46,7 @@ export const thailandPublicPlaces = content => directoryPublicPlaces(content, di
 
 let cached;
 export function thailandDirectoryState(content) {
+  content = withoutHistoryResearch(content);
   const revision = contentRevision({ temples: content.temples || {}, dataset: snapshot.meta.datasetRevision, metadata: enrichment.meta.datasetRevision });
   if (cached?.revision === revision) return cached;
   const places = thailandPublicPlaces(content);
