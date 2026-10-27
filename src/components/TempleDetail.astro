@@ -124,7 +124,7 @@ const rank = Number(temple.rank);
       <section class="pd-location pd-surface" aria-label="พิกัดและที่อยู่">
         <header class="pd-section-heading"><IconMedallion class="pd-medallion"><SiteIcon name="map-pin" /></IconMedallion><h2>ตำแหน่งที่ตั้ง</h2></header>
         <div class="pd-map-frame" data-place-map-frame>
-          <div class="pd-map-canvas" data-temple-detail-map data-lat={vm.coords?.[0] ?? ""} data-lng={vm.coords?.[1] ?? ""} data-title={vm.record.name} data-map-url={vm.mapHref} data-address={vm.record.coordinateAddress || ""} aria-hidden="true"></div>
+          <div class="pd-map-canvas" data-temple-detail-map data-lat={vm.coords?.[0] ?? ""} data-lng={vm.coords?.[1] ?? ""} data-title={vm.record.name} data-map-url={vm.mapHref} data-address={vm.record.coordinateAddress || ""} role="region" aria-label={`แผนที่ ${vm.record.name}`}></div>
           <p class="pd-map-status" data-map-status role="status">{vm.coords ? "เปิดพิกัดผ่าน Google Maps ด้านล่าง" : "ยังไม่มีพิกัดสำหรับแผนที่ภายใน"}</p>
           <button type="button" class="pd-map-expand" data-map-open data-pd-enhanced hidden><span class="pd-button"><SiteIcon name="maximize-2" />ขยายแผนที่</span></button>
           <a class="pd-map-external pd-button pd-button--jade" href={vm.mapHref} hidden={!vm.mapHref} data-place-map-link target="_blank" rel="noopener">Google Maps <SiteIcon name="arrow-right" /></a>

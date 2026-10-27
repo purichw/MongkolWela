@@ -79,7 +79,7 @@ body.temples-hub-page.place-detail-page { padding-bottom: 0; background: #faf7ec
 .pd-map-frame { position: relative; height: 162px; border-radius: 6px; overflow: hidden; background: #ede9dc; isolation: isolate; }
 .pd-map-canvas { position: absolute; inset: 0; z-index: 0; }
 .pd-map-status { position: absolute; left: 14px; right: 14px; top: 28%; font-size: 14px; text-align: center; padding: 8px; background: #fffdf1e6; z-index: 2; border-radius: 4px; }
-.pd-map-expand { position: absolute; inset: 0; z-index: 3; display: flex; align-items: flex-end; justify-content: flex-start; padding: 10px 10px 18px; width: 100%; border: 0; background: transparent; text-align: left; }
+.pd-map-expand { position: absolute; left: 10px; bottom: 18px; z-index: 3; display: flex; padding: 0; border: 0; background: transparent; text-align: left; }
 .pd-map-expand:hover > span { background: #f8f1e4; }
 .pd-map-expand > .pd-button { min-width: 36px; min-height: 36px; font-size: 0; padding: 8px; gap: 0; }
 .pd-map-external { position: absolute; right: 10px; bottom: 18px; z-index: 4; min-height: 36px; padding: 7px 10px; font-size: 12px; }
@@ -332,8 +332,8 @@ body.temples-hub-page.place-detail-page { padding-bottom: 0; background: #faf7ec
   .pd-location .pd-medallion, .pd-visit .pd-medallion { width: 27px; height: 27px; flex-basis: 27px; }
   .pd-location .pd-section-heading, .pd-visit .pd-section-heading { gap: 5px; align-items: flex-start; }
   .pd-map-frame { height: 140px; }
-  .pd-map-expand { padding: 8px 6px 17px; }
-  .pd-map-expand { align-items: flex-start; justify-content: flex-end; padding-top: 6px; }
+  .pd-map-expand { left: auto; right: 6px; top: 6px; bottom: auto; }
+  .pd-map-frame:has(.map-place-preview-shell) .pd-map-expand { visibility: hidden; }
   .pd-map-expand .pd-button { padding: 5px; min-height: 32px; min-width: 32px; font-size: 0; }
   .pd-map-external { left: 6px; right: 6px; bottom: 17px; font-size: 11px; min-height: 32px; padding: 6px; }
   .pd-map-meta { padding: 8px 0; gap: 8px; }

@@ -1,5 +1,6 @@
 import { sitePlaceholderImage } from "../lib/image-placeholder.js";
 import { templeMapItems } from "../lib/temple-map-content.js";
+import { bindMapPlacePreview } from "../lib/map-place-preview.js";
 const TEMPLE_MAP_CONFIG = {
   thailandBounds: [[5.2, 96.6], [21.2, 106.5]],
   thailandCenter: [13.7563, 100.5018],
@@ -195,17 +196,16 @@ function renderMarkers(state) {
   state.activeMarker = null;
   state.payload.items.forEach((item) => {
     const cardImages = state.cardData.get(item.detailUrl);
-    const marker = window.L.marker([item.latitude, item.longitude], { icon: icons.defaultIcon })
-      .bindPopup(renderTemplePopup(item, cardImages, state.payload.placeholderImage), {
+    const marker = bindMapPlacePreview(window.L.marker([item.latitude, item.longitude], { icon: icons.defaultIcon }),
+      renderTemplePopup(item, cardImages, state.payload.placeholderImage), {
+        label: item.name,
         maxWidth: 300,
         minWidth: 250,
         autoPan: true,
         className: "temple-map-popup-shell",
       });
     marker._templeItem = item;
-    marker._defaultIcon = icons.defaultIcon;
-    marker._activeIcon = icons.activeIcon;
-    bindTempleMarkerHover(marker, state);
+    bindTempleMarkerActiveState(marker, state);
     state.clusterGroup.addLayer(marker);
     state.markers.push(marker);
   });
@@ -225,26 +225,20 @@ function createTempleMarkerIcons() {
     <div class="temple-map-marker-dot">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M4 10h16M6 10v11M18 10v11M8 14v3M12 14v3M16 14v3M5 7l7-4 7 4"/></svg>
     </div>`;
-  const activeHtml = `
-    <div class="temple-map-marker-dot is-active">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M4 10h16M6 10v11M18 10v11M8 14v3M12 14v3M16 14v3M5 7l7-4 7 4"/></svg>
-    </div>`;
   return {
     defaultIcon: window.L.divIcon({ className: "temple-map-marker", html: defaultHtml, iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -18] }),
-    activeIcon: window.L.divIcon({ className: "temple-map-marker is-active", html: activeHtml, iconSize: [40, 40], iconAnchor: [20, 20], popupAnchor: [0, -22] }),
   };
 }
 
-function bindTempleMarkerHover(marker, state) {
+function bindTempleMarkerActiveState(marker, state) {
   const activate = () => {
-    if (state.activeMarker && state.activeMarker !== marker) state.activeMarker.setIcon(state.activeMarker._defaultIcon);
+    if (state.activeMarker && state.activeMarker !== marker) state.activeMarker.getElement()?.classList.remove("is-active");
     state.activeMarker = marker;
-    marker.setIcon(marker._activeIcon);
-    marker.openPopup();
+    marker.getElement()?.classList.add("is-active");
   };
-  marker.on("mouseover click", activate);
+  marker.on("popupopen", activate);
   marker.on("popupclose", () => {
-    marker.setIcon(marker._defaultIcon);
+    marker.getElement()?.classList.remove("is-active");
     if (state.activeMarker === marker) state.activeMarker = null;
   });
 }

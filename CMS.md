@@ -215,6 +215,13 @@ only rewritten editorial content and provenance belong in the reviewed dataset.
 The 2026-10-26 dataset contains 378 source name/province identities, linked into
 371 history groups across 625 collection memberships. Seven evidence-confirmed
 alias pairs share prose; nearby landmarks are not merged merely by proximity.
+Editorial revisions should explain why each place matters: a revered teacher,
+worship object, religious tradition, community role or significant history.
+Use additional space for supported context, not filler or a fixed word target.
+Distinguish documented history from legend and devotees' beliefs; never promise
+miracles or outcomes. Keep sources and identity caveats in backend research,
+and verify expanded copy together with topics and worship objects in the
+existing overview card without increasing its layout or truncating the prose.
 For example, the curated `วัดโนนกุ่ม` entry explicitly refers to the Somdet To
 foundation in its original guide and worship-object fields, not the older
 registered temple with the same popular name. The import preserves that intent.

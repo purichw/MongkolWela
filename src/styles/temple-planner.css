@@ -253,7 +253,8 @@ body.has-planner-dialog { overflow: hidden; }
 .planner-leaflet-marker span { display: grid; place-items: center; height: 100%; width: 100%; border-radius: 50%; background: var(--jade); border: 2px solid white; box-shadow: 0 2px 6px #0004; color: white; font: 600 14px var(--font-thai); }
 .planner-leaflet-marker.is-selected span { background: var(--lacquer); }
 .planner-map-popup { font-family: var(--font-thai); font-size: 14px; }
-.planner-map-popup > :is(strong,span) { display: block; }
+.planner-map-popup__actions { display: grid; gap: 8px; padding: 0 14px 14px; }
+.planner-map-popup__actions p { margin: 0; color: var(--ink-soft); }
 .planner-map-popup button { background: var(--jade-dark); color: white; min-height: 44px; border: 0; border-radius: 5px; padding: 8px 16px; }
 .planner-map .leaflet-control-attribution { font-size: 10px; line-height: 1.4; }
 .planner-map-tile-error { position: absolute; z-index: 600; left: 8px; right: 8px; bottom: 20px; margin: 0; padding: 8px; background: #fff9e9; color: #573e24; font-size: 12px; }

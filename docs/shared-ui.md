@@ -33,6 +33,7 @@ points. A different task layout must still sit on the same site frame.
 | `Topbar.astro`, `lib/site-navigation.js`, `scripts/navigation.js`, `header.css` | One published navigation model for SSR/CMS; split links/disclosures, opaque panels, compact dialog drawer and intrinsic fit guard | Every shared Header consumer |
 | `PageBanner.astro`, `page-banner.css` | Shared full-width image layer, shade, motifs, breadcrumb/copy scale, quote and content alignment | Calendar, Day, temple hub, three temple collections, planner and Thailand directory via `TempleSearchHero` |
 | `scripts/planner/place-card.js` | One escaped, semantic place-selection renderer for desktop tiles and mobile rows | Planner list in picker-only and combined views |
+| `lib/map-place-preview.js`, `temple-map.css` | Photo/name preview and shared Leaflet hover, focus, tap, Escape and image-fallback lifecycle; one open preview at a time | Planner route/picker maps, place detail mini/expanded maps, collection map interaction |
 | `PopularFilters.astro`, `scripts/popular-filters.js`, `popular-filters.css` | Shared collection search panel, compact selectors and one responsive editor; adapts the existing collection matcher rather than duplicating it | Popular, Sacred and Mu through `TempleCollectionView`; historical Popular filenames/hooks remain stable |
 | `TempleCollectionView.astro`, `lib/temple-collection-card.js`, `temple-collection.css` | Collection composition and one escaped card renderer for SSR and incremental results; responsive image, rank, location, intent, plan and detail links | Popular, Sacred and Mu indexes only |
 | `place-card.css` | Shared place-card frame, media ratio, type, body rhythm, action hierarchy and responsive grid; opt-in `data-place-card` and `place-card__*` classes | Three curated indexes and Thailand directory; data/renderers remain domain-owned |
@@ -50,6 +51,22 @@ points. A different task layout must still sit on the same site frame.
 | `CarouselControls.astro`, `LinkArrow.astro`, `BrandOrnament.astro` | Existing shared control, link affordance and decorative motif | Existing Home/Calendar/detail/shell consumers |
 
 ## Usage
+
+### Map Marker Previews
+
+`bindMapPlacePreview` owns hover/focus/tap opening, pointer passage into the
+preview, dismissal, one-open-preview coordination and listener cleanup. Leaflet
+continues to own map positioning. `renderMapPlacePreview` uses the caller's
+current place image/name and the existing placeholder; it does not fetch another
+catalog or change CMS fields. Detail minimaps use the compact layout, with the
+expand control temporarily hidden on narrow screens while its preview is open.
+Planner selection actions and collection detail links remain caller-owned.
+
+| Scenario | Expected result | Evidence | Priority |
+| --- | --- | --- | --- |
+| Hover, keyboard focus, Escape and touch | Photo/name opens without clicking on desktop; hover passage works; first Escape closes only the preview | `tests/e2e/map-place-preview.spec.ts` | P1 |
+| Small maps, mobile and absent photos | Preview fits map bounds, avoids zoom controls, preserves real image or honest fallback | Same E2E at 1440/390, inspected local snapshots | P1 |
+| Picker and collection actions | Add/remove changes the draft only; published detail links survive | Same E2E; renderer escaping in `tests/runtime/map-place-preview.test.mjs` | P1 |
 
 ### Place Cards
 

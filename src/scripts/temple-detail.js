@@ -1,5 +1,6 @@
 import { applyImageFallback } from "../lib/image-placeholder.js";
 import { coordinates, esc, icon } from "../lib/place-detail-view.js";
+import { bindMapPlacePreview, renderMapPlacePreview } from "../lib/map-place-preview.js";
 
 const root = document.querySelector("[data-place-detail]");
 const TILE_URL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
@@ -221,7 +222,15 @@ function initializeMaps(page) {
   const retry = page.querySelector("[data-map-retry]");
   const state = { coords: null, mini: null, miniMarker: null, miniLayer: null, modal: null, modalMap: null, modalMarker: null, modalLayer: null, loading: false };
   const read = () => ({ coords: coordinates({ latitude: canvas.dataset.lat, longitude: canvas.dataset.lng }), title: canvas.dataset.title || "พิกัด", url: canvas.dataset.mapUrl || "", address: canvas.dataset.address || "" });
-  const marker = () => window.L.divIcon({ className: "pd-marker", html: icon("map-pin"), iconSize: [36, 36], iconAnchor: [18, 18] });
+  const marker = () => window.L.divIcon({ className: "pd-marker", html: icon("map-pin"), iconSize: [36, 36], iconAnchor: [18, 18], popupAnchor: [0, -18] });
+  const preview = compact => {
+    const image = page.querySelector("[data-place-media] img");
+    return renderMapPlacePreview({ name: read().title, imageUrl: image?.currentSrc || image?.src, imageAlt: image?.alt }, { compact });
+  };
+  const placeMarker = (data, map, compact = false) => bindMapPlacePreview(
+    window.L.marker(data.coords, { icon: marker() }), () => preview(compact),
+    { label: () => read().title, ...(compact ? { className: "map-place-preview-shell map-place-preview-shell--compact", autoPanPaddingTopLeft: [6, 6], autoPanPaddingBottomRight: [6, 6] } : {}) },
+  ).addTo(map);
   function reportError(scope) { document.dispatchEvent(new CustomEvent("mw:map-load-error", { detail: { scope, title: read().title, reason: "map_load_failed" } })); }
   function tileLayer(map, modal) {
     let loaded = false;
@@ -252,7 +261,7 @@ function initializeMaps(page) {
         state.mini = window.L.map(canvas, { zoomControl: false, attributionControl: false, dragging: false, touchZoom: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false }).setView(data.coords, 15);
         state.miniLayer = tileLayer(state.mini, false);
       } else { state.miniLayer.redraw(); state.mini.setView(data.coords, 15); }
-      if (!state.miniMarker) state.miniMarker = window.L.marker(data.coords, { icon: marker(), interactive: false, keyboard: false }).addTo(state.mini);
+      if (!state.miniMarker) state.miniMarker = placeMarker(data, state.mini, true);
       else state.miniMarker.setLatLng(data.coords);
       status.hidden = true;
     } catch {
@@ -271,8 +280,9 @@ function initializeMaps(page) {
       if (state.modalMarker) { state.modalMarker.remove(); state.modalMarker = null; }
       status.hidden = false; status.textContent = "ยังไม่มีพิกัดสำหรับแผนที่ภายใน"; retry.hidden = true;
     } else if (state.mini) {
-      if (!state.miniMarker) state.miniMarker = window.L.marker(data.coords, { icon: marker(), interactive: false, keyboard: false }).addTo(state.mini);
+      if (!state.miniMarker) state.miniMarker = placeMarker(data, state.mini, true);
       state.miniMarker.setLatLng(data.coords);
+      state.miniMarker.setPopupContent(() => preview(true));
       if (changed) state.mini.setView(data.coords, 15);
       status.hidden = true;
     } else void loadMini();
@@ -286,8 +296,9 @@ function initializeMaps(page) {
       if (!data.coords) recenter.hidden = true;
       else if (changed) recenter.hidden = false;
       if (data.coords && state.modalMap) {
-        if (!state.modalMarker) state.modalMarker = window.L.marker(data.coords, { icon: marker(), keyboard: false }).addTo(state.modalMap);
+        if (!state.modalMarker) state.modalMarker = placeMarker(data, state.modalMap);
         state.modalMarker.setLatLng(data.coords);
+        state.modalMarker.setPopupContent(() => preview(false));
       }
       if (!data.coords) {
         const note = state.modal.querySelector("[data-modal-status]");
@@ -306,7 +317,7 @@ function initializeMaps(page) {
       if (!state.modalMap) {
         state.modalMap = window.L.map(dialog.querySelector(".pd-dialog-map"), { zoomControl: true, scrollWheelZoom: true }).setView(data.coords, 15);
         state.modalLayer = tileLayer(state.modalMap, true);
-        state.modalMarker = window.L.marker(data.coords, { icon: marker(), keyboard: false }).addTo(state.modalMap);
+        state.modalMarker = placeMarker(data, state.modalMap);
       } else state.modalLayer.redraw();
       state.modalMap.invalidateSize();
       note.hidden = true;

@@ -1,3 +1,5 @@
+import { bindMapPlacePreview, renderMapPlacePreview } from "../../lib/map-place-preview.js";
+
 export function createPlannerMaps({ getPickerItems, getStartPoint, toggleSelection, haversineKm, formatDistance, escapeHtml }) {
 function refreshSelectionMap(state, elements) {
   if (!state.selectionMap || !state.selectionCluster) return;
@@ -31,7 +33,7 @@ async function ensureSelectionMap(state, elements) {
       icon: createSelectionIcon(state.selected.indexOf(item.id)),
     });
     marker._plannerItem = item;
-    marker.bindPopup(renderSelectionPopup(item, state.selected.includes(item.id), getStartPoint(state, elements)), { minWidth: 230, maxWidth: 280 });
+    bindMapPlacePreview(marker, renderSelectionPopup(item, state.selected.includes(item.id), getStartPoint(state, elements)), { label: item.name });
     marker.on("popupopen", (event) => {
       const popup = event.popup.getElement();
       popup?.querySelector("[data-planner-map-toggle]")?.addEventListener("click", () => {
@@ -72,11 +74,12 @@ function renderSelectionPopup(item, selected, origin) {
   const distanceText = Number.isFinite(distance) ? `<span class="planner-map-popup__distance">${formatDistance(distance)} จากจุดเริ่มต้น</span>` : "";
   return `
     <article class="planner-map-popup">
-      <strong>${escapeHtml(item.name)}</strong>
-      <span>${escapeHtml([item.province, item.district].filter(Boolean).join(" / "))}</span>
+      ${renderMapPlacePreview(item)}
+      <div class="planner-map-popup__actions">
       ${distanceText}
       <p>${escapeHtml(item.blessings.slice(0, 2).join(" · ") || "ไหว้พระและเสริมสิริมงคล")}</p>
       <button type="button" data-planner-map-toggle>${selected ? "นำออกจากแผน" : "เพิ่มลงแผน"}</button>
+      </div>
     </article>`;
 }
 
@@ -95,8 +98,8 @@ function renderRouteMap(state, elements) {
   const group = window.L.layerGroup();
   const coordinates = state.plan.map((item) => [item.latitude, item.longitude]);
   state.plan.forEach((item, index) => {
-    window.L.marker([item.latitude, item.longitude], { icon: createSelectionIcon(index) })
-      .bindPopup(`<strong>${(index + 1).toLocaleString("th-TH")}. ${escapeHtml(item.name)}</strong>`)
+    bindMapPlacePreview(window.L.marker([item.latitude, item.longitude], { icon: createSelectionIcon(index) }),
+      renderMapPlacePreview(item, { number: (index + 1).toLocaleString("th-TH") }), { label: item.name })
       .on("click", () => {
         const stop = [...elements.timeline.querySelectorAll("[data-planner-stop]")].find(node => node.dataset.plannerStop === item.id);
         if (!stop) return;
