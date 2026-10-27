@@ -19,7 +19,14 @@ test("CMS publish validates content, checks current membership and prevents stal
     const url = new URL(req.url, "http://localhost");
     const send = (value, status = 200) => { res.writeHead(status, { "Content-Type": "application/json" }); res.end(JSON.stringify(value)); };
     if (url.pathname === "/rest/v1/cms_documents") {
-      if (req.method === "GET") return send({ content: live });
+      if (req.method === "GET") {
+        const select = url.searchParams.get("select");
+        if (select === "content") return send({ content: live });
+        return send(Object.fromEntries(select.split(",").map(item => {
+          const [alias, field] = item.split(":content->");
+          return [alias, live[field] ?? null];
+        })));
+      }
       if (req.method === "PATCH") {
         const next = await body(req);
         if (race) { race = false; live = { ...live, publishedAt: "2099-01-01T00:00:00Z" }; }
@@ -66,14 +73,19 @@ test("CMS publish validates content, checks current membership and prevents stal
     assert.equal(writes, 1); assert.equal(revisions, 1);
     assert.equal(live.contentLibrary["seamsi.seamsiFortunes"]["1"].title, "Published reading");
     assert.equal(live.pages.find(page => page.id === "contact").patches[0].value, "support@example.com");
-    const published = await (await fetch(`${base}?path=${encodeURIComponent("/temples/popular/test-sync/")}`)).json();
+    const published = await (await fetch(`${base}?path=${encodeURIComponent("/temples/popular/test/")}`)).json();
     assert.deepEqual(published.content.temples.records["popular:test-sync"].fields, edited.temples.records["popular:test-sync"].fields);
     assert.equal(published.content.temples.records["popular:test-sync"].slug, "test");
     assert.equal(published.content.temples.routes["popular:test-sync"], "/temples/popular/test/");
     assert.equal(published.content.temples.records["popular:test-sync"].historyResearch, undefined);
+    const listing = await (await fetch(`${base}?path=${encodeURIComponent("/temples/popular/")}`)).json();
+    assert.equal(listing.content.temples.records["popular:test-sync"].fields.description, undefined);
+    assert.equal(listing.content.temples.records["popular:test-sync"].fields.summary, "Published summary");
     const fullPublic = await (await fetch(base)).json();
     assert.equal(fullPublic.content.temples.records["popular:test-sync"].historyResearch, undefined);
+    assert.equal(fullPublic.content.temples.records["popular:test-sync"].fields.description, "Published description");
     const editor = await (await fetch(`${base}?view=editor`, { headers })).json();
+    assert.equal(editor.content.temples.records["popular:test-sync"].fields.description, "Published description");
     assert.deepEqual(editor.content.temples.records["popular:test-sync"].historyResearch, edited.temples.records["popular:test-sync"].historyResearch);
     const guide = await (await fetch(`${base}?path=${encodeURIComponent("/guide/")}`)).json();
     assert.deepEqual(guide.content.pages[0].patches, edited.pages.find(page => page.id === "travelGuide").patches);

@@ -15,12 +15,22 @@ test("authenticated publish -> persisted HTTP read -> planner, with outage and c
   let published = fixture();
   let unavailable = false;
   let reads = 0;
+  const selections = [];
   const auth = createAuthFixture();
   const database = http.createServer(async (req, res) => {
     if (await auth.handle(req, res)) return;
     res.setHeader("Content-Type", "application/json");
     if (unavailable) { res.statusCode = 503; res.end('{"message":"test outage"}'); return; }
-    if (req.method === "GET") { reads++; res.end(JSON.stringify({ content: published })); return; }
+    if (req.method === "GET") {
+      reads++;
+      const select = new URL(req.url, "http://localhost").searchParams.get("select");
+      selections.push(select);
+      const result = select === "content" ? { content: published } : Object.fromEntries(select.split(",").map(item => {
+        const [alias, expression] = item.split(":");
+        return [alias, published[expression.replace("content->", "")] ?? null];
+      }));
+      res.end(JSON.stringify(result)); return;
+    }
     const chunks = [];
     for await (const chunk of req) chunks.push(chunk);
     const body = JSON.parse(Buffer.concat(chunks).toString() || "{}");
@@ -65,6 +75,8 @@ test("authenticated publish -> persisted HTTP read -> planner, with outage and c
     assert.equal(plan.items.length, 3);
     assert.ok(plan.items.some((item) => item.name === "Published replacement"));
     const projected = await fetch(`${base}/api/admin/content?path=/calendar/`).then((response) => response.json());
+    assert.notEqual(selections.at(-1), "content", "unrelated pages must not fetch the entire CMS document");
+    assert.equal(selections.at(-1).includes("temples"), false);
     assert.equal(projected.content.pages.length, 1);
     assert.equal(projected.content.temples, undefined);
     assert.match(projected.revision, /^[a-f0-9]{24}$/);
@@ -82,6 +94,7 @@ test("authenticated publish -> persisted HTTP read -> planner, with outage and c
     assert.notEqual(direct.revision, projected.revision);
     assert.equal(direct.content.pages[0].label, "Direct database edit");
     const plannerShell = await fetch(`${base}/api/admin/content?path=/temples/planner/`).then((response) => response.json());
+    assert.equal(selections.at(-1), "content", "planner revisions still need the full current source");
     assert.match(plannerShell.content.plannerDataRevision, /^[a-f0-9]{24}$/);
     assert.equal(plannerShell.content.temples, undefined);
     const sameCatalog = await fetch(`${base}/api/temple-planner/data?revision=${latest.revision}`).then((response) => response.json());

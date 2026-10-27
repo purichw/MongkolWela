@@ -127,8 +127,19 @@ run `db:seed:cms` during routine deploys: it can overwrite live Admin changes.
 
 `/api/admin/content?path=/calendar/` returns shared shell settings and only the
 current page's editable content. Temple records are included for temple pages
-and Home, not unrelated tool pages. The database currently stores one CMS JSON
-document, so this projection reduces browser payload, not database reads.
+and Home, not unrelated tool pages. For non-place routes, Supabase selects only
+the shell fields from the CMS JSON, without transferring temple records/research.
+Every request still reads the authoritative published row with `no-store`;
+Admin/editor, planner, directory and unscoped reads retain the full document.
+Listing payloads omit unused long histories. Detail payloads include the current
+place's history and lightweight records/route URLs from its own collection.
+Sibling records retain hide/delete updates for already-rendered related cards. This
+does not remove any stored history, private evidence or editable CMS fields.
+
+Prerendered visitor pages start their first CMS request in the head, alongside
+styles and modules. The runtime consumes this request once, including errors;
+subsequent refresh/retry requests remain fresh. The entrance still waits for
+CSS, fonts, CMS and route data, so this does not reveal unfinished content.
 
 Live-rendered temple detail pages embed this same public, path-scoped payload
 and revision from the server's fresh CMS read. The browser consumes it once on

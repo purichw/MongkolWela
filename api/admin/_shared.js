@@ -212,11 +212,11 @@ export async function readGithubContent() {
   return response.json();
 }
 
-export async function readLiveContent() {
+export async function readLiveContent({ includeTemples = true } = {}) {
   const source = hasReadableDatabase() ? "database"
     : githubContentConfig().token ? "github"
     : !process.env.VERCEL && !isProductionRuntime() ? "local" : "unconfigured";
-  const read = { database: readDatabaseContent, github: readGithubContent, local: readBundledLiveContent }[source]
+  const read = { database: () => readDatabaseContent({ includeTemples }), github: readGithubContent, local: readBundledLiveContent }[source]
     || (async () => { throw new Error("Live source is not configured"); });
   try {
     return await readPublishedContent({ read, normalize: normalizeCmsContent });

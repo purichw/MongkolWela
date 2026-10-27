@@ -5,6 +5,26 @@ import { getTempleDetailUrl } from "../data/temple-slugs.js";
 import { thailandDirectoryPage, thailandDirectoryState } from "../data/thailand-places.js";
 import { withoutHistoryResearch } from "./place-history.js";
 
+const publicRoute = pathname => `/${String(pathname || "").replace(/^\/+|\/+$/g, "")}/`.replace(/^\/\/$/, "/");
+
+export function publicContentNeedsTempleData(pathname) {
+  const route = publicRoute(pathname);
+  return !pathname || route === "/" || route.startsWith("/temples/");
+}
+
+function visitorTempleRecords(records, place) {
+  // Keep lightweight siblings, including tombstones: a previously rendered
+  // related card must still receive hide/edit updates after its ranking changes.
+  const collection = place?.temple.collection;
+  return Object.fromEntries(Object.entries(records || {})
+    .filter(([key]) => !collection || key.startsWith(`${collection}:`))
+    .map(([key, record]) => {
+      if (!record?.fields || key === place?.temple.cmsKey) return [key, record];
+      const { description, ...fields } = record.fields;
+      return [key, { ...record, fields }];
+    }));
+}
+
 export function publicContentPayload(content, pathname) {
   const projected = pathname ? publicContentForPath(content, pathname) : withoutHistoryResearch(content);
   // Publication timestamps alone do not indicate changes to the current page.
@@ -14,7 +34,7 @@ export function publicContentPayload(content, pathname) {
 
 export function publicContentForPath(content, pathname) {
   content = withoutHistoryResearch(content);
-  const route = `/${String(pathname || "").replace(/^\/+|\/+$/g, "")}/`.replace(/^\/\/$/, "/");
+  const route = publicRoute(pathname);
   const detail = route.match(/^\/temples\/(popular|mu|sacred)\/([^/]+)\/$/);
   const normalize = value => {
     try { return decodeURIComponent(value); } catch { return value; }
@@ -37,7 +57,11 @@ export function publicContentForPath(content, pathname) {
     }).map(page => place ? { ...page, route } : page),
     ...(templesNeeded ? { temples: {
       ...content.temples,
-      routes: Object.fromEntries(templeRouteCatalog(content).map(item => [item.cmsKey, getTempleDetailUrl(item.collection, item)])),
+      records: visitorTempleRecords(content.temples?.records, place),
+      overrides: visitorTempleRecords(content.temples?.overrides, place),
+      routes: Object.fromEntries(templeRouteCatalog(content)
+        .filter(item => !place || item.collection === place.temple.collection)
+        .map(item => [item.cmsKey, getTempleDetailUrl(item.collection, item)])),
     } } : {}),
     ...(route === "/temples/planner/" ? { plannerDataRevision: contentRevision(content.temples) } : {}),
     ...(route === "/temples/thailand/" ? { directoryPage: thailandDirectoryPage(content) } : {}),

@@ -90,6 +90,23 @@ test("SSR bootstrap is consumed once; subsequent refreshes use live revisions an
   expect(fixture.state.writes).toBe(0);
 });
 
+test("lightweight detail payloads still update and hide already-rendered related cards", async ({ page }) => {
+  await page.goto(fixture.url + path);
+  const card = page.locator(".pd-related-card").first();
+  const relatedKey = (await card.getAttribute("data-temple-key"))!;
+  fixture.state.content.temples.records[relatedKey] = {
+    ...fixture.state.content.temples.records[relatedKey], key: relatedKey, collection: "popular", enabled: false,
+  };
+  await page.evaluate(() => (window as any).MongkolWelaCMS.reload());
+  await expect(card).toBeHidden();
+  fixture.state.content.temples.records[relatedKey].enabled = true;
+  fixture.state.content.temples.records[relatedKey].fields = { name: "Updated related place", province: "Different province" };
+  await page.evaluate(() => (window as any).MongkolWelaCMS.reload());
+  await expect(card).toBeVisible();
+  await expect(card.locator("strong")).toHaveText("Updated related place");
+  expect(fixture.state.writes).toBe(0);
+});
+
 for (const invalid of ["malformed", "wrong-path"]) {
   test(`${invalid} bootstrap falls back to a live read, never static data`, async ({ page }) => {
     await page.route(fixture.url + path, async route => {

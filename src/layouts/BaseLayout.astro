@@ -4,6 +4,7 @@ import TempleSearchDialog from "../components/TempleSearchDialog.astro";
 import Footer from "../components/Footer.astro";
 import LoadingScreen from "../components/LoadingScreen.astro";
 import PageEntrance from "../components/PageEntrance.astro";
+import cmsPrefetch from "../scripts/cms-prefetch.js?raw";
 import { brandAssets } from "../config/site.js";
 import { stylesForPath } from "../config/styles.js";
 import { publicContentPayload } from "../lib/public-content.js";
@@ -118,6 +119,7 @@ const jsonLd = toJsonLdGraph([
     <meta name="application-name" content={SEO_SITE_NAME} />
     <meta name="apple-mobile-web-app-title" content={SEO_SITE_NAME} />
     <PageEntrance />
+    {!cmsBootstrap && <script is:inline set:html={cmsPrefetch} />}
     <script is:inline>
       document.documentElement.classList.add("cms-navigation-pending");
     </script>

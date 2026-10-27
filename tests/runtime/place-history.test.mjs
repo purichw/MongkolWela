@@ -19,8 +19,9 @@ test("public content excludes research in full, projected and revision payloads"
   const content = fixture();
   for (const projected of [withoutHistoryResearch(content), publicContentPayload(content).content, publicContentForPath(content, "/temples/popular/")]) {
     assert.equal(JSON.stringify(projected).includes("Internal evidence"), false);
-    assert.equal(projected.temples.records["popular:one"].fields.description, "Previous");
   }
+  assert.equal(publicContentPayload(content).content.temples.records["popular:one"].fields.description, "Previous");
+  assert.equal(publicContentForPath(content, "/temples/popular/").temples.records["popular:one"].fields.description, undefined);
   const revision = publicContentPayload(content).revision;
   const changed = structuredClone(content);
   changed.temples.records["popular:one"].historyResearch.sources[0].title = "Updated evidence";

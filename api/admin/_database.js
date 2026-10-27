@@ -40,13 +40,16 @@ export function supabaseClient({ service = false } = {}) {
   });
 }
 
-export async function readDatabaseContent() {
+export async function readDatabaseContent({ includeTemples = true } = {}) {
   const supabase = supabaseClient();
   if (!supabase) return null;
 
+  // Non-place pages need a fresh shell, not every temple's history/research.
+  // Project in Postgres so the unused JSON never crosses the database connection.
+  const shellFields = ["schemaVersion", "cmsContractVersion", "publishedAt", "site", "analytics", "navigation", "pages", "contentLibrary"];
   const { data, error, status } = await supabase
     .from("cms_documents")
-    .select("content")
+    .select(includeTemples ? "content" : shellFields.map(field => `${field}:content->${field}`).join(","))
     .eq("id", LIVE_DOCUMENT_ID)
     .eq("status", "published")
     .maybeSingle();
@@ -55,8 +58,11 @@ export async function readDatabaseContent() {
     console.error("Published CMS database request failed", { status, code: error.code || null });
     throw new Error("Published content read failed", { cause: error });
   }
-  if (!data?.content) console.error("Published CMS document missing", { status, rowFound: Boolean(data) });
-  return data?.content || null;
+  const content = includeTemples ? data?.content : data;
+  // JSON-path projections return SQL null for an absent optional library.
+  if (!includeTemples && content?.contentLibrary === null) delete content.contentLibrary;
+  if (!content) console.error("Published CMS document missing", { status, rowFound: Boolean(data) });
+  return content || null;
 }
 
 export async function writeDatabaseContent(content, actor = "admin", meta = {}) {

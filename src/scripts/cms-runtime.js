@@ -71,6 +71,16 @@ async function loadContent(signal) {
         // Invalid bootstrap data must still use the live API, not a seed fallback.
       }
     }
+    const early = window.MongkolWelaCMSRequest;
+    delete window.MongkolWelaCMSRequest;
+    if (early?.path === window.location.pathname) {
+      const result = await early.promise;
+      if (signal.aborted) throw signal.reason;
+      if (result.error) throw result.error;
+      const content = normalizeCmsContent(result.payload?.content);
+      if (!content) throw new Error("Live CMS payload is invalid");
+      return { content, revision: result.payload.revision || "" };
+    }
   }
   const path = encodeURIComponent(window.location.pathname);
   const revision = activeRevision ? `&revision=${encodeURIComponent(activeRevision)}` : "";

@@ -23,7 +23,14 @@ export async function createTempleRoutingServer() {
     const send = (value, status = 200) => { res.writeHead(status, { "Content-Type": "application/json" }); res.end(JSON.stringify(value)); };
     if (url.pathname === "/rest/v1/cms_documents") {
       if (state.outage) return send({ error: "fixture outage" }, 503);
-      if (req.method === "GET") return send({ content: state.content });
+      if (req.method === "GET") {
+        const select = url.searchParams.get("select");
+        if (select === "content") return send({ content: state.content });
+        return send(Object.fromEntries(select.split(",").map(item => {
+          const [alias, expression] = item.split(":");
+          return [alias, state.content[expression.replace("content->", "")] ?? null];
+        })));
+      }
       if (req.method === "PATCH") {
         const next = await readBody(req);
         const expected = state.content.publishedAt ? `eq.${state.content.publishedAt}` : "is.null";

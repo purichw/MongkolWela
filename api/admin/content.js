@@ -7,7 +7,7 @@ import {
   sendJson,
 } from "./_shared.js";
 import { requireAdmin } from "./_auth.js";
-import { publicContentPayload } from "../../src/lib/public-content.js";
+import { publicContentPayload, publicContentNeedsTempleData } from "../../src/lib/public-content.js";
 import { contentRevision } from "../../src/lib/content-revision.js";
 import { contentCatalog, validateContentLibrary } from "../../src/data/content-catalog.js";
 import { validateContentPatches } from "../../src/lib/content-patches.js";
@@ -32,9 +32,9 @@ function normalizeContent(content, actor) {
 export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
-      const content = await readLiveContent();
-      validateContentLibrary(content.contentLibrary);
       const params = new URL(req.url, "http://localhost").searchParams;
+      const content = await readLiveContent({ includeTemples: Boolean(params.get("view")) || publicContentNeedsTempleData(params.get("path")) });
+      validateContentLibrary(content.contentLibrary);
       if (params.get("view") === "editor") {
         if (!await requireAdmin(req, res)) return;
         const { publishedAt, updatedAt, ...fields } = content;
