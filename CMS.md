@@ -215,6 +215,10 @@ creates bounded staging queries plus one final publication query. Staging uses
 Each part is checksum-verified; an incomplete or altered batch cannot publish.
 Staging never changes live content. Retain it as import evidence until separately
 authorized cleanup; it is not a CMS content source or a new public API.
+Set `--reviewed-at YYYY-MM-DD` to the actual editorial review date (the CLI
+defaults to today's UTC date). SQL batches derive their run ID from that date;
+use `--run-id` for a distinct reviewed batch on the same day. Never reuse a run
+ID with different payloads. Preparing SQL is not publication.
 
 Focused coverage: `tests/runtime/place-history.test.mjs` (coverage, conflicts,
 idempotence, metadata projection and real PostgreSQL transaction),
@@ -233,11 +237,26 @@ Distinguish documented history from legend and devotees' beliefs; never promise
 miracles or outcomes. Keep sources and identity caveats in backend research,
 and verify expanded copy together with topics and worship objects in the
 existing overview card without increasing its layout or truncating the prose.
+The import guard permits up to 850 characters for the enriched edition; this is
+a safety ceiling, not a writing target. New facts have per-place private
+`expansionEvidence` and `expansionReviewedAt` in the research dataset. Their
+source links and editorial notes enter the existing CMS `historyResearch` fields,
+not the public description. If evidence is insufficient, record
+`expansionStatus: limited-evidence` and an `expansionNote` instead of padding.
 For example, the curated `วัดโนนกุ่ม` entry explicitly refers to the Somdet To
 foundation in its original guide and worship-object fields, not the older
 registered temple with the same popular name. The import preserves that intent.
 Known district/pin discrepancies remain in backend `factNotes` for a separate
 location-data review; this publication does not certify or modify those pins.
+
+The 2026-10-28 enriched edition retains all 371 history groups, 378 identities
+and 625 memberships. Total prose length grows by 45% (median per-place growth:
+46%), with 1,030 new-fact evidence entries across the unique groups. Wat Luang
+Phi Saem remains `limited-evidence`: its two supported additions increase the
+description by 30%, without forcing an arbitrary target. Verification covers
+CMS edit/save/reload and synchronization, all 625 overview variants at 980,
+1280 and 1440px, and representative 390px rendering. Data preparation and local
+checks are separate from the revision-checked production CMS import.
 
 Recovery: the SQL import saves `history-import-before` and
 `curated-place-history-import` revisions in the same transaction. Inspect the

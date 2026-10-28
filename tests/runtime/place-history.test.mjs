@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { synchronizePlaceHistories, withoutHistoryResearch } from "../../src/lib/place-history.js";
 import { publicContentPayload, publicContentForPath } from "../../src/lib/public-content.js";
-import { importPlaceHistories } from "../../scripts/lib/place-history-import.mjs";
+import { importPlaceHistories, MAX_REVIEWED_HISTORY_LENGTH } from "../../scripts/lib/place-history-import.mjs";
 import { templeDatasets } from "../../src/lib/temple-routing.js";
 import { placeHistoryImportSql, placeHistoryImportBatches } from "../../scripts/lib/place-history-sql.mjs";
 import { PGlite } from "@electric-sql/pglite";
@@ -73,6 +73,19 @@ test("reviewed release dataset covers every curated identity and shares confirme
   assert.equal(byIdentity.size, 371);
 });
 
+test("every enriched history records its review and the evidence for new facts", () => {
+  for (const row of histories) {
+    assert.equal(row.expansionReviewedAt, "2026-10-28", row.key);
+    assert.ok(["expanded", "limited-evidence"].includes(row.expansionStatus), row.key);
+    if (row.expansionStatus === "expanded") assert.ok(row.expansionEvidence?.length, row.key);
+    else assert.ok(row.expansionNote?.trim(), row.key);
+    for (const evidence of row.expansionEvidence || []) {
+      assert.ok(evidence.fact?.trim() && evidence.evidence?.trim(), row.key);
+      assert.ok(row.sources.some(source => source.url === evidence.sourceUrl), row.key);
+    }
+  }
+});
+
 test("full import covers 378 identities and 625 memberships without changing other CMS fields", () => {
   const current = { navigation: { sentinel: true }, temples: { order: { popular: ["keep"] }, records: {} } };
   const first = importPlaceHistories(current, authored(), { reviewedAt: "2026-10-26" });
@@ -88,6 +101,14 @@ test("full import covers 378 identities and 625 memberships without changing oth
   first.content.temples.records[key].fields.description = "Admin edit";
   assert.throws(() => importPlaceHistories(first.content, authored()), /Preserved Admin descriptions/);
   assert.throws(() => importPlaceHistories(current, authored().slice(1)), /Missing 1 histories/);
+});
+
+test("expanded history import permits reviewed longer copy and still rejects overlong prose", () => {
+  const rows = authored();
+  rows[0].description = "ก".repeat(MAX_REVIEWED_HISTORY_LENGTH);
+  assert.doesNotThrow(() => importPlaceHistories({}, rows, { reviewedAt: "2026-10-28" }));
+  rows[0].description += "ก";
+  assert.throws(() => importPlaceHistories({}, rows), /History not ready or too long/);
 });
 
 test("SQL transport atomically checks the revision, preserves data and records before/after revisions", async () => {
@@ -113,7 +134,8 @@ test("SQL transport atomically checks the revision, preserves data and records b
     assert.equal((await db.query("select count(*) as count from admin_audit_events")).rows[0].count, 1);
     await db.exec("create role anon; create role authenticated;");
     const newChecksum = (await db.query("select md5(content::text) as checksum from cms_documents")).rows[0].checksum;
-    const batches = placeHistoryImportBatches(histories, newChecksum);
+    const batches = placeHistoryImportBatches(histories, newChecksum, { reviewedAt: "2026-10-28" });
+    assert.equal(batches.runId, "curated-history-20261028");
     assert.ok(batches.parts.every(sql => Buffer.byteLength(sql) < 50000));
     await db.exec(batches.setup);
     assert.equal((await db.query("select relrowsecurity from pg_class where oid='cms_history_import_batches'::regclass")).rows[0].relrowsecurity, true);
@@ -125,7 +147,7 @@ test("SQL transport atomically checks the revision, preserves data and records b
     // Existing test-only descriptions are marked as imported, so real history can replace them.
     await db.exec(batches.publish);
     const stagedActual = (await db.query("select content from cms_documents")).rows[0].content;
-    assert.deepEqual(stagedActual.temples, importPlaceHistories(actual, histories, { reviewedAt: "2026-10-26" }).content.temples);
+    assert.deepEqual(stagedActual.temples, importPlaceHistories(actual, histories, { reviewedAt: "2026-10-28" }).content.temples);
     assert.equal((await db.query("select count(*) as count from cms_revisions")).rows[0].count, 4);
   } finally { await db.close(); }
 });

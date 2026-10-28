@@ -3,13 +3,14 @@ import { createLegacyTempleSlug } from "../../src/data/temple-slugs.js";
 
 const identity = row => `${row.name}|${row.province}`.normalize("NFC");
 const failure = message => { throw new Error(message); };
+export const MAX_REVIEWED_HISTORY_LENGTH = 850;
 
 export function importPlaceHistories(current, histories, { reviewedAt } = {}) {
   const expected = new Set(Object.values(templeDatasets).flat().map(identity));
   const byKey = new Map();
   for (const entry of histories) {
     if (!expected.has(entry.key) || entry.key !== identity(entry) || byKey.has(entry.key)) failure(`Unexpected or duplicate history: ${entry.key}`);
-    if (entry.status !== "ready" || !entry.description?.trim() || entry.description.length > 650) failure(`History not ready or too long: ${entry.key}`);
+    if (entry.status !== "ready" || !entry.description?.trim() || entry.description.length > MAX_REVIEWED_HISTORY_LENGTH) failure(`History not ready or too long: ${entry.key}`);
     if (/<\/?[a-z][^>]*>|เป็นหนึ่งในสถานที่|สำหรับเลือกเส้นทางไหว้พระ/.test(entry.description)) failure(`Invalid history prose: ${entry.key}`);
     if (!entry.sources?.length || entry.sources.some(source => {
       try { return !["http:", "https:"].includes(new URL(source.url).protocol) || !source.title; } catch { return true; }

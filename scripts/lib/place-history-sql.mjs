@@ -81,9 +81,9 @@ FROM public.cms_documents WHERE id='live';
 
 // Supabase's browser editor caps query size. Stage bounded chunks in an RLS-locked
 // table, then verify every checksum before the single atomic live publication.
-export function placeHistoryImportBatches(histories, checksum, { runId = "curated-history-20261026", maxBytes = 48000 } = {}) {
+export function placeHistoryImportBatches(histories, checksum, { reviewedAt = "2026-10-26", runId = `curated-history-${reviewedAt.replaceAll("-", "")}`, maxBytes = 48000 } = {}) {
   if (!/^[a-z0-9-]{1,80}$/.test(runId)) throw new Error("Invalid import run ID");
-  const { payload } = historyImportPayload(histories, "2026-10-26");
+  const { payload } = historyImportPayload(histories, reviewedAt);
   const chunks = [];
   let chunk = { histories: {}, records: [] };
   for (const [key, history] of Object.entries(payload.histories)) {
@@ -122,5 +122,5 @@ export function placeHistoryImportBatches(histories, checksum, { runId = "curate
       'histories',(SELECT jsonb_object_agg(item.key,item.value) FROM verified CROSS JOIN LATERAL jsonb_each(payload->'histories') item),
       'records',(SELECT jsonb_agg(item.value) FROM verified CROSS JOIN LATERAL jsonb_array_elements(payload->'records') item)
     ) ELSE '{}'::jsonb END)`;
-  return { runId, setup, parts, publish: placeHistoryImportSql(histories, checksum, "2026-10-26", { stagedPayload }), digests };
+  return { runId, setup, parts, publish: placeHistoryImportSql(histories, checksum, reviewedAt, { stagedPayload }), digests };
 }

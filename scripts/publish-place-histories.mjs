@@ -17,12 +17,16 @@ const { values } = parseArgs({ options: {
   publish: { type: "boolean", default: false }, "expected-revision": { type: "string" },
   sql: { type: "string" }, checksum: { type: "string" },
   "sql-batch-dir": { type: "string" },
+  "reviewed-at": { type: "string", default: new Date().toISOString().slice(0, 10) },
+  "run-id": { type: "string" },
 } });
+const reviewedAt = values["reviewed-at"];
+if (!/^\d{4}-\d{2}-\d{2}$/.test(reviewedAt) || !Number.isFinite(Date.parse(reviewedAt)) || new Date(reviewedAt).toISOString().slice(0, 10) !== reviewedAt) throw new Error("Invalid review date");
 const histories = JSON.parse(await fs.readFile(path.resolve(root, values.input), "utf8"));
 if (values["sql-batch-dir"]) {
   const dir = path.resolve(root, values["sql-batch-dir"]);
   if (!dir.startsWith(root + path.sep)) throw new Error("SQL output must stay inside the project");
-  const batches = placeHistoryImportBatches(histories, values.checksum);
+  const batches = placeHistoryImportBatches(histories, values.checksum, { reviewedAt, ...(values["run-id"] ? { runId: values["run-id"] } : {}) });
   await fs.mkdir(dir, { recursive: true });
   const files = { "00-setup.sql": batches.setup, ...Object.fromEntries(batches.parts.map((sql, i) => [`part-${String(i).padStart(3, "0")}.sql`, sql])), "99-publish.sql": batches.publish };
   for (const [name, sql] of Object.entries(files)) await fs.writeFile(path.join(dir, name), sql, { flag: "wx", mode: 0o600 });
@@ -30,7 +34,7 @@ if (values["sql-batch-dir"]) {
   process.exit(0);
 }
 if (values.sql) {
-  const sql = placeHistoryImportSql(histories, values.checksum);
+  const sql = placeHistoryImportSql(histories, values.checksum, reviewedAt);
   const file = path.resolve(root, values.sql);
   if (!file.startsWith(root + path.sep)) throw new Error("SQL output must stay inside the project");
   await fs.mkdir(path.dirname(file), { recursive: true });
@@ -45,7 +49,6 @@ if (!hasWritableDatabase()) throw new Error("A writable production Supabase conf
 const current = await readLiveContent();
 const { publishedAt, updatedAt, ...fields } = current;
 const revision = contentRevision(fields);
-const reviewedAt = "2026-10-26";
 const { content, report } = importPlaceHistories(current, histories, { reviewedAt });
 validateContentLibrary(content.contentLibrary);
 validateContentPatches(content);
